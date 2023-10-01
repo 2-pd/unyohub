@@ -1,0 +1,133 @@
+--------------------------------------------------------------------------------
+
+  ユーザー投稿型鉄道運用データベース「運用観察Hub」設計案    ページ(1)
+
+--------------------------------------------------------------------------------
+
+_/_/_/_/ 構成概要 _/_/_/_/
+
+・サーバサイドをPHP、クライアントサイドを単一HTMLファイルに記述したJavascriptとするシングルページアプリケーション
+・データベースエンジンにはSQLiteを採用し、路線系統ごとに独立したデータベースファイルを作成する
+・Wakaranaによるユーザー登録機能を実装し、ユーザー投稿データはユーザーIDと紐付けて管理する
+・未登録ユーザーによる投稿を認めることも可能とするが、未登録ユーザーの投稿時にはZizai CAPTCHAによる画像認証を実施する
+・運用表及び時刻表はクライアント端末のIndexedDBにキャッシュし、通信量を削減する
+
+
+_/_/_/_/ ファイル構成 _/_/_/_/
+
+/
+└ index.html ・・・アプリケーションフロントエンド本体
+└ libs/
+   └ wakarana/ ・・・Wakarana一式
+   └ zizai_captcha/ ・・・Zizai CAPTCHA一式
+└ libs_data/
+   └ wakarana.db ・・・Wakaranaデータベース
+   └ zizai_captcha.db ・・・Zizai CAPTCHAデータベース
+└ config/
+   └ unyohub.json ・・・運用観察Hub基本設定ファイル
+   └ wakarana_config.ini ・・・Wakarana設定ファイル
+   └ zizai_captcha/
+      └ config.json ・・・Zizai CAPTCHA設定ファイル
+└ data/ ・・・路線系統ごとのデータフォルダ
+   └ ****/
+      └ railroad.db ・・・運用表・時刻表・ユーザー投稿データを格納するデータベース本体
+      └ railroad_info.json ・・・路線系統の設定ファイル
+      └ train_icons.json ・・・列車アイコン画像埋め込み処理後のアイコン設定ファイル
+      └ formations.json ・・・JSONに変換された編成表
+      └ formations.lst ・・・編成名を1行に1つずつ列挙したテキストファイル(編成表から生成)
+      └ standardization.json ・・・ユーザー投稿データの標準化処理設定ファイル
+      └ ****_operations.json ・・・JSONに変換された各ダイヤの運用表データ
+      └ ****_timetable.json ・・・JSONに変換された各ダイヤの時刻表データ
+└ api/
+   └ ****.php ・・・クライアント端末と情報をやり取りするエンドポイント(詳細は別記)
+└ README.html ・・・ユーザーマニュアル
+
+※サーバにアップロードする必要のない各種変換処理スクリプト類は上記に含まれない
+
+
+_/_/_/_/ 設定ファイル設定値 _/_/_/_/
+
+███ index.html ███
+
+※設定ファイルではないが、編集可能な定数が存在する
+  UNYOHUB_APP_NAME  アプリケーション名
+  UNYOHUB_VERSION  バージョン文字列
+  UNYOHUB_LICENSE_TEXT  ライセンス情報文
+  UNYOHUB_LICENSE_URL  ライセンスのURL
+
+
+███ unyohub.json ███
+
+{
+    "railroads" : dataフォルダ内の各路線系統のフォルダ名を配列で列挙,
+    "allow_sign_up" : 新規ユーザーの登録を認めるか(BOOL値),
+    "allow_guest_user" : ログインしていないユーザーの投稿を認めるか(BOOL値)
+}
+
+
+███ railroad_info.json ███
+
+{
+    "railroad_name" : 路線系統表示名,
+    "main_color" : 路線系統のテーマカラー,
+    "lines" : [ 個々の路線の情報
+        {
+            "line_id" : 路線識別名,
+            "line_name" : 路線名,
+            "line_color" : 路線のテーマカラー,
+            "stations" : [ 主要駅一覧
+              "station_name" : 駅名,
+              "connecting_line" : 直通路線の路線識別名を配列で列挙
+            ]...
+        }...
+    ],
+    "operations" : 運用パターンの一覧(ダイヤ識別名を配列で指定可能、この識別名は運用表JSONデータのファイル名に使用),
+    "operations_by_day" : [ 曜日と運用パターン(曜日別ダイヤ)の対応関係(0:日曜→6:土曜)
+        日曜日と祝日に使用するダイヤ識別名,
+        月曜日に使用するダイヤ識別名,
+        火曜日に使用するダイヤ識別名,
+        水曜日に使用するダイヤ識別名,
+        木曜日に使用するダイヤ識別名,
+        金曜日に使用するダイヤ識別名,
+        土曜日に使用するダイヤ識別名
+    ],
+    "operations_by_date" : { 特定の日付限定の運用パターン
+        "**-**" : キーに"MM-DD"形式の日付、値にダイヤ識別名を指定...
+    },
+    "train_color_rules" : [ 列車番号の色分け規則(配列で複数指定可能)
+        {
+            "pattern" : 列車番号の正規表現パターン,
+            "color" : 色コード文字列
+        }...
+    ]
+}
+
+
+███ train_icons.json ███
+
+※このファイルはスクリプトによりアイコン画像の埋め込み処理を実施してからサーバにアップロードする
+[
+    {
+        "pattern" : 編成名の正規表現パターン,
+        "icon" : アイコン画像のファイル名(スクリプトにより、ファイルバイナリのBASE64文字列に置き換えられる)
+    }...
+]
+
+
+███ standardization.json ███
+
+{
+    "delimiter" : 運用番号・列車番号と編成番号の間の区切り文字列を検出する正規表現,
+    "operation_prefixes" : 運用番号の接頭辞として用いられる文字列(配列で),
+    "standard_operation_prefix" : 運用番号の所定の接頭辞(使用しない場合は空文字列),
+    "operation_suffixes" : 運用番号の接尾辞として用いられる文字列(配列で),
+    "standard_operation_suffix" : 運用番号の所定の接頭辞(使用しない場合は空文字列),
+    "train_prefixes" : 列車番号の接頭辞として用いられる文字列(配列で),
+    "standard_train_prefix" : 列車番号の所定の接頭辞(使用しない場合は空文字列),
+    "train_suffixes" : 列車番号の接尾辞として用いられる文字列(配列で),
+    "standard_train_suffix" : 列車番号の所定の接頭辞(使用しない場合は空文字列),
+    "formation_prefixes" : 編成名の接頭辞として用いられる文字列(配列で),
+    "standard_formation_prefix" : 編成名の所定の接頭辞(使用しない場合は空文字列),
+    "formation_suffixes" : 編成名の接尾辞として用いられる文字列(配列で),
+    "standard_formation_suffix" : 編成名の所定の接頭辞(使用しない場合は空文字列)
+}
