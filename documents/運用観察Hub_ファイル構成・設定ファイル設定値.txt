@@ -75,9 +75,10 @@ _/_/_/_/ 設定ファイル設定値 _/_/_/_/
             "line_id" : 路線識別名,
             "line_name" : 路線名,
             "line_color" : 路線のテーマカラー,
+            "forward_direction_inbound" : 上り列車の進行方向と編成の前位側(奇数向き)方向が一致するかどうか(BOOL値),
             "stations" : [ 主要駅一覧
               "station_name" : 駅名,
-              "connecting_line" : 直通路線の路線識別名を配列で列挙
+              "connecting_lines" : 直通路線の路線識別名を配列で列挙
             ]...
         }...
     ],

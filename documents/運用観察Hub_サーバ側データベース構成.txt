@@ -1,0 +1,55 @@
+--------------------------------------------------------------------------------
+
+  ユーザー投稿型鉄道運用データベース「運用観察Hub」設計案    ページ(2)
+
+--------------------------------------------------------------------------------
+
+_/_/_/_/ データベース _/_/_/_/
+
+`unyohub_operations` 運用表データ
+  `operation_table` TEXT NOT NULL 運用表識別名
+  `operation_number` TEXT NOT NULL 運用番号(アルファベットなどを含む場合があるため文字列型)
+  `starting_location` TEXT 出庫場所(車庫または駅番線)
+  `ending_location` TEXT 入庫場所(車庫または駅番線)
+  `comment` TEXT コメント
+
+  PRIMARY KEY(`operation_table`,`operation_number`)
+  INDEX `idx_o1`(`starting_location`)
+  INDEX `idx_o2`(`ending_location`)
+
+
+`unyohub_trains` 列車データ
+  `operation_table` TEXT NOT NULL 運用表識別名
+  `operation_number` TEXT NOT NULL 運用番号(アルファベットなどを含む場合があるため文字列型)
+  `train_number` TEXT NOT NULL 列車番号(アルファベットなどを含む場合があるため文字列型)
+
+  PRIMARY KEY(`operation_table`,`operation_number`,`train_number`)
+  INDEX `idx_t1`(`train_number`)
+
+
+`unyohub_data` ユーザー投稿データ詳細
+  `operation_date` TEXT NOT NULL 「YYYY-MM-DD」形式の日付
+  `operation_number` TEXT NOT NULL 運用番号(アルファベットなどを含む場合があるため文字列型)
+  `coupling_position` INTEGER NOT NULL 併結位置(前位側(奇数向き)先頭の編成を1とし、2、3と順に付番)
+  `user_id` TEXT NOT NULL 投稿者ID
+  `formation` TEXT 編成名(複数編成併結による運用は複数レコードに分けて登録、データが「1000系」や「HE4??編成」のように曖昧な場合はNULLとする)
+  `posted_datetime` TEXT 「YYYY-MM-DD HH:MM:SS」形式の情報投稿日時
+  `comment` TEXT コメント
+
+  PRIMARY KEY(`operation_date`,`operation_number`,`coupling_position`,`user_id`)
+  INDEX `idx_d1`(`formation`,`operation_date`,`posted_datetime`)
+  INDEX `idx_d2`(`user_id`,`posted_datetime`)
+  INDEX `idx_d3`(`posted_datetime`)
+
+
+`unyohub_data_cache` 運用データキャッシュ
+  `operation_date` TEXT NOT NULL 「YYYY-MM-DD」形式の日付
+  `operation_number` TEXT NOT NULL 運用番号(アルファベットなどを含む場合があるため文字列型)
+  `coupling_position` INTEGER NOT NULL 併結位置(前位側(奇数向き)先頭の編成を1とし、2、3と順に付番)
+  `formation` TEXT 編成名(複数編成併結による運用は複数レコードに分けて登録、複数のユーザーが異なる編成を投稿していた場合はNULLとする)
+  `updated_datetime` TEXT 「YYYY-MM-DD HH:MM:SS」形式の情報投稿日時
+
+  PRIMARY KEY(`operation_date`,`operation_number`,`coupling_position`)
+  INDEX `idx_c1`(`formation`,`operation_date`)
+  INDEX `idx_c2`(`operation_date`,`updated_datetime`)
+  INDEX `idx_c3`(`updated_datetime`)
