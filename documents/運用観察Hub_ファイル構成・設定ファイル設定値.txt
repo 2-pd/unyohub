@@ -78,7 +78,7 @@ _/_/_/_/ 設定ファイル設定値 _/_/_/_/
             "inbound_forward_direction" : 上り列車の進行方向と編成の前位側(奇数向き)方向が一致するかどうか(BOOL値),
             "stations" : [ 主要駅一覧
               "station_name" : 駅名,
-              "station_initial" : 駅頭文字(他の駅と被る場合は別の文字を使用する),
+              "station_initial" : 駅頭文字(始発・終着列車のない非分岐駅では省略可能。他の駅と被る場合は別の文字を使用する),
               "connecting_lines" : 直通路線の路線識別名を配列で列挙
             ]...
         }...
@@ -134,3 +134,37 @@ _/_/_/_/ 設定ファイル設定値 _/_/_/_/
     "formation_suffixes" : 編成名の接尾辞として用いられる文字列(配列で),
     "standard_formation_suffix" : 編成名の所定の接頭辞(使用しない場合は空文字列)
 }
+
+
+███ ****_operations.json ███
+
+※ファイル名の「****」部分は、「路線系統識別名.ダイヤ識別名」が入る
+※このファイルは変換スクリプトにより自動生成されるものである
+{
+    "運用グループタイトル" : { 各運用グループの情報
+        "operations": {
+            "運用番号" : { 各運用の情報
+                "trains" : { 各列車の情報
+                    "列車番号" : [
+                        { 各区間組成の情報
+                            "line_id" : 走行路線の識別名,
+                            "first_departure_time" : 始発時刻,
+                            "final_arrival_time" : 終着時刻,
+                            "starting_station" : 始発駅,
+                            "terminal_station" : 終着駅,
+                            "position_forward" : 担当位置開始両数(進行方向から数えて何両目からがその運用か),
+                            "position_rear" : 担当位置終了両数(進行方向から数えて何両目までがその運用か),
+                            "direction" : 上り列車か下り列車か(上り列車なら「1」、下り列車なら「0」)
+                        }...
+                    ]...
+                },
+                "starting_location" : 出庫場所(車庫または駅番線),
+                "terminal_location" : 入庫場所(車庫または駅番線),
+                "car_count" : 編成両数,
+                "comment" : コメント
+            }...
+        },
+        "color" : テーマカラー
+    }...
+}
+

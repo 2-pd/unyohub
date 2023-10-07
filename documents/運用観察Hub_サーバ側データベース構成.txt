@@ -12,7 +12,7 @@ _/_/_/_/ データベース _/_/_/_/
   `operation_table` TEXT NOT NULL 運用表識別名
   `operation_number` TEXT NOT NULL 運用番号(アルファベットなどを含む場合があるため文字列型)
   `starting_location` TEXT 出庫場所(車庫または駅番線)
-  `ending_location` TEXT 入庫場所(車庫または駅番線)
+  `terminal_location` TEXT 入庫場所(車庫または駅番線)
   `comment` TEXT コメント
 
   PRIMARY KEY(`operation_table`,`operation_number`)
@@ -24,7 +24,7 @@ _/_/_/_/ データベース _/_/_/_/
   `operation_table` TEXT NOT NULL 運用表識別名
   `operation_number` TEXT NOT NULL 運用番号(アルファベットなどを含む場合があるため文字列型)
   `train_number` TEXT NOT NULL 列車番号(アルファベットなどを含む場合があるため文字列型)
-  `departure_time` TEXT NOT NULL 「HH:MM」形式の始発時刻
+  `first_departure_time` TEXT NOT NULL 「HH:MM」形式の始発時刻
   `position_forward` INTEGER NOT NULL 担当位置開始両数(進行方向から数えて何両目からがその運用か)
   `position_rear` INTEGER NOT NULL 担当位置終了両数(進行方向から数えて何両目までがその運用か)
   `direction` INTEGER NOT NULL 上り列車か下り列車か(上り列車なら「1」、下り列車なら「0」)
