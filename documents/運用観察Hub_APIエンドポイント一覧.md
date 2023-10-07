@@ -98,7 +98,7 @@
 
 ### 引数
 **$_POST["railroad_id"]** : 路線系統識別名  
-**$_POST["last_check_timestamp"]** : タイムスタンプ(UTC)
+**$_POST["last_updated_timestamp"]** : タイムスタンプ(UTC)
 
 ### 応答
 **railroad_info.jsonの変更日時がタイムスタンプより新しかった場合** :  
@@ -117,7 +117,7 @@ railroad_info.jsonの内容を返す
 
 ### 引数
 **$_POST["railroad_id"]** : 路線系統識別名  
-**$_POST["last_check_timestamp"]** : タイムスタンプ(UTC)
+**$_POST["last_updated_timestamp"]** : タイムスタンプ(UTC)
 
 ### 応答
 **train_icons.jsonの変更日時がタイムスタンプより新しかった場合** :  
@@ -136,7 +136,7 @@ train_icons.jsonの内容を返す
 
 ### 引数
 **$_POST["railroad_id"]** : 路線系統識別名  
-**$_POST["last_check_timestamp"]** : タイムスタンプ(UTC)
+**$_POST["last_updated_timestamp"]** : タイムスタンプ(UTC)
 
 ### 応答
 **formations.jsonの変更日時がタイムスタンプより新しかった場合** :  
@@ -156,7 +156,7 @@ formations.jsonの内容を返す
 ### 引数
 **$_POST["railroad_id"]** : 路線系統識別名  
 **$_POST["operation_table"]** : 運用表識別名  
-**$_POST["last_check_timestamp"]** : タイムスタンプ(UTC)
+**$_POST["last_updated_timestamp"]** : タイムスタンプ(UTC)
 
 ### 応答
 **JSON化された運用表の変更日時がタイムスタンプより新しかった場合** :  
@@ -177,7 +177,8 @@ JSON化された運用表の内容を返す
 **$_POST["railroad_id"]** : 路線系統識別名  
 **$_POST["operation_table"]** : 運用表識別名(運用表と時刻表は同一識別名のため)  
 **$_POST["line_id"]** : 路線識別名  
-**$_POST["last_check_timestamp"]** : タイムスタンプ(UTC)
+**$_POST["direction"]** : 「inbound」(上り)か「outbound」(下り)のいずれかの方面
+**$_POST["last_updated_timestamp"]** : タイムスタンプ(UTC)
 
 ### 応答
 **JSON化された時刻表の変更日時がタイムスタンプより新しかった場合** :  
@@ -198,7 +199,7 @@ JSON化された時刻表の内容を返す
 **$_POST["railroad_id"]** : 路線系統識別名  
 **$_POST["date"]** : YYYY-MM-DD形式の日付  
 **$_POST["operation_number"]** : 運用番号(省略時は全運用の概要を返す)  
-**$_POST["last_check_timestamp"]** : タイムスタンプ(UTC、運用番号指定時は不要)
+**$_POST["last_updated_timestamp"]** : タイムスタンプ(UTC、運用番号指定時は不要)
 
 ### 応答
 **運用番号指定時** :  
