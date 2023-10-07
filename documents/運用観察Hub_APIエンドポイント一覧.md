@@ -86,12 +86,11 @@
 (なし)
 
 ### 応答
-[  
-    {  
-        "railroad_id" : 路線系統識別名,   
-        "railroad_name" : 路線系統表示名  
+{  
+    "路線系統識別名" : {  
+      "railroad_name" : 路線系統表示名  
     }...  
-]
+}
 
 
 ## railroad_info.php

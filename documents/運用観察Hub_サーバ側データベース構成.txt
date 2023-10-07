@@ -8,6 +8,10 @@ _/_/_/_/ データベース _/_/_/_/
 
 ███ railroad.db ███
 
+`unyohub_formations` 編成データ
+  `formation_name` TEXT NOT NULL PRIMARY KEY 編成名
+  `car_count` INTEGER 編成両数
+
 `unyohub_operations` 運用表データ
   `operation_table` TEXT NOT NULL 運用表識別名
   `operation_number` TEXT NOT NULL 運用番号(アルファベットなどを含む場合があるため文字列型)
@@ -56,7 +60,7 @@ _/_/_/_/ データベース _/_/_/_/
   INDEX `unyohub_idx_f1`(`formation`,`operation_date`)
 
 
-`unyohub_data_cache` 運用データ概要キャッシュ
+`unyohub_data_caches` 運用データ概要キャッシュ
   `operation_date` TEXT NOT NULL 「YYYY-MM-DD」形式の日付
   `operation_number` TEXT NOT NULL 運用番号(アルファベットなどを含む場合があるため文字列型)
   `formations` TEXT 充当組成(複数編成併結による運用の場合も「+」で区切って1レコードに格納)

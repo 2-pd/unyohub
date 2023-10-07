@@ -1,0 +1,139 @@
+--------------------------------------------------------------------------------
+
+  ユーザー投稿型鉄道運用データベース「運用観察Hub」設計案    ページ(4)
+
+--------------------------------------------------------------------------------
+
+_/_/_/_/ クライアント側ローカルストレージ _/_/_/_/
+
+███ unyohub_config ███
+
+{
+    "guest_id" : ログインせずに運用情報を投稿する際の仮ID(「*」に続けて12桁の乱数値を付けた文字列),
+    "dark_mode" : ダークモードの有効無効(BOOL値),
+    "refresh interval" : 運用データを自動で再取得する間隔(分単位の整数値)
+}
+
+
+███ unyohub_common_caches ███
+
+{
+    "railroads" : railroads.phpのレスポンスを保存
+}
+
+
+_/_/_/_/ クライアント側IndexedDB "unyohub_caches" _/_/_/_/
+
+※「・」のある項目はKeyPathに指定する
+
+███ railroads ███
+
+{
+    ・railroad_id : 路線系統識別名,
+    last_check_timestamp : このデータをサーバから取得した日時のタイムスタンプ値(UTC、秒単位),
+    以降の項目はrailroad_info.phpのレスポンスをそのまま展開して使用
+}
+
+
+███ train_icons ███
+
+{
+    ・railroad_id : 路線系統識別名,
+    last_check_timestamp : このデータをサーバから取得した日時のタイムスタンプ値(UTC、秒単位),
+    icons : train_icons.phpのレスポンスをそのまま格納
+}
+
+
+███ formations ███
+
+{
+    ・railroad_id : 路線系統識別名,
+    last_check_timestamp : このデータをサーバから取得した日時のタイムスタンプ値(UTC、秒単位),
+    formations : formations.phpのレスポンスをそのまま格納
+}
+
+
+███ operations ███
+
+{
+    ・railroad_id : 路線系統識別名,
+    ・operation_table : 運用表識別名,
+    operations : {
+        運用番号 : { 各運用の情報
+            trains : { 各列車の情報
+                列車番号 : [
+                    { 各区間組成の情報(発車待ちの情報を含まない)
+                        line_id : 走行路線の識別名,
+                        first_departure_time : 始発時刻,
+                        final_arrival_time : 終着時刻,
+                        starting_station : 始発駅,
+                        terminal_station : 終着駅,
+                        position_forward : 担当位置開始両数(進行方向から数えて何両目からがその運用か),
+                        position_rear : 担当位置終了両数(進行方向から数えて何両目までがその運用か),
+                        direction : 上り列車か下り列車か(上り列車なら「1」、下り列車なら「0」)
+                    }...
+                ]...
+            },
+            starting_location : 出庫場所(車庫または駅番線),
+            terminal_location : 入庫場所(車庫または駅番線),
+            car_count : 編成両数,
+            comment : コメント
+        }...
+    }
+}
+
+
+███ operation_groups ███
+
+{
+    ・railroad_id : 路線系統識別名,
+    ・operation_table : 運用表識別名,
+    operation_groups : {
+        運用グループタイトル : {
+            operation_numbers : 運用番号を配列で順に列挙
+            color : 運用グループのテーマカラー
+        }...
+    }
+}
+
+
+███ line_operations ███
+
+{
+    ・railroad_id : 路線系統識別名,
+    ・line_id : 走行路線の識別名,
+    ・operation_table : 運用表識別名,
+    inbound_trains : { 上り列車と上り方面発車待ちの情報
+        列車番号または仮番号 : [
+            { 各区間組成の情報
+                first_departure_time : 始発時刻,
+                final_arrival_time : 終着時刻,
+                starting_station : 始発駅,
+                terminal_station : 終着駅,
+                operation_numbers : その区間組成を担当する運用の運用番号を配列で前位側(奇数側)から列挙
+            }...
+        ]...
+    },
+    outbound_trains : { 下り列車と下り方面発車待ちの情報
+        列車番号 : [
+            { 各区間組成の情報
+                first_departure_time : 始発時刻,
+                final_arrival_time : 終着時刻,
+                starting_station : 始発駅,
+                terminal_station : 終着駅,
+                operation_numbers : その区間組成を担当する運用の運用番号を配列で前位側(奇数側)から列挙
+            }...
+        ]...
+    }
+}
+
+
+███ operation_data ███
+
+{
+    ・railroad_id : 路線系統識別名,
+    ・operation_date : 「YYYY-MM-DD」形式の日付,
+    operations : {
+        情報投稿のあった運用番号 : 編成名(前位側・奇数向きから順に配列で。複数種類の情報がある場合はNULLとなる)...
+    }
+}
