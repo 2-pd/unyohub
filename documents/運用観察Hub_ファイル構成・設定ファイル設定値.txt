@@ -78,6 +78,7 @@ _/_/_/_/ 設定ファイル設定値 _/_/_/_/
             "inbound_forward_direction" : 上り列車の進行方向と編成の前位側(奇数向き)方向が一致するかどうか(BOOL値),
             "stations" : [ 主要駅一覧
               "station_name" : 駅名,
+              "station_initial" : 駅頭文字(他の駅と被る場合は別の文字を使用する),
               "connecting_lines" : 直通路線の路線識別名を配列で列挙
             ]...
         }...

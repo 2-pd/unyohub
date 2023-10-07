@@ -30,8 +30,8 @@
      showgrid="false"
      units="px"
      inkscape:zoom="0.51528125"
-     inkscape:cx="118.38195"
-     inkscape:cy="586.0877"
+     inkscape:cx="178.54327"
+     inkscape:cy="215.41634"
      inkscape:window-width="1920"
      inkscape:window-height="1052"
      inkscape:window-x="1920"
@@ -50,7 +50,7 @@
        inkscape:label=""
        inkscape:color="rgb(0,134,229)" />
     <sodipodi:guide
-       position="0,190.5"
+       position="0,195.79167"
        orientation="0,1"
        id="guide2"
        inkscape:locked="true"
@@ -102,7 +102,7 @@
        id="path5"
        sodipodi:nodetypes="ccccc" />
     <path
-       style="fill:#808080;fill-opacity:1;stroke:none;stroke-width:0;stroke-linecap:round;stroke-linejoin:round;stroke-dasharray:none;paint-order:stroke fill markers"
+       style="display:inline;fill:#808080;fill-opacity:1;stroke:none;stroke-width:0;stroke-linecap:round;stroke-linejoin:round;stroke-dasharray:none;paint-order:stroke fill markers"
        d="M 37.041666,42.333334 42.333334,25.135417 55.5625,21.166667 c 0,0 10.583333,-1.322917 23.8125,-1.322917 13.229167,0 23.8125,1.322917 23.8125,1.322917 l 13.22916,3.96875 5.29168,17.197917 z"
        id="path6"
        sodipodi:nodetypes="cccscccc" />
@@ -118,7 +118,7 @@
     <path
        id="rect1"
        style="fill:#808080;fill-opacity:1;stroke:none;stroke-width:0;stroke-linecap:round;stroke-linejoin:round;stroke-dasharray:none;paint-order:stroke fill markers"
-       d="m 5.2916667,66.145833 v 80.697927 c 0,19.84375 3.96875,35.71875 3.96875,35.71875 H 149.48958 c 0,0 3.96875,-15.875 3.96875,-35.71875 V 66.145833 C 153.45833,44.979167 127,39.687501 79.374998,39.6875 31.75,39.687499 5.2916667,44.979167 5.2916667,66.145833 Z"
+       d="m 5.2916667,60.854167 v 85.989593 c 0,19.84375 3.96875,35.71875 3.96875,35.71875 H 149.48958 c 0,0 3.96875,-15.875 3.96875,-35.71875 V 60.854167 C 153.45833,42.33333 127,39.687501 79.374998,39.6875 31.75,39.687499 5.2916667,42.33333 5.2916667,60.854167 Z"
        sodipodi:nodetypes="ssccssss" />
     <text
        xml:space="preserve"

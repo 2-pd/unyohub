@@ -177,6 +177,7 @@ JSON化された運用表の内容を返す
 ### 引数
 **$_POST["railroad_id"]** : 路線系統識別名  
 **$_POST["operation_table"]** : 運用表識別名(運用表と時刻表は同一識別名のため)  
+**$_POST["line_id"]** : 路線識別名  
 **$_POST["last_check_timestamp"]** : タイムスタンプ(UTC)
 
 ### 応答

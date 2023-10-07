@@ -20,38 +20,48 @@ _/_/_/_/ データベース _/_/_/_/
   INDEX `unyohub_idx_o2`(`ending_location`)
 
 
-`unyohub_trains` 列車データ
+`unyohub_trains` 列車データ(区間組成単位)
   `operation_table` TEXT NOT NULL 運用表識別名
   `operation_number` TEXT NOT NULL 運用番号(アルファベットなどを含む場合があるため文字列型)
   `train_number` TEXT NOT NULL 列車番号(アルファベットなどを含む場合があるため文字列型)
+  `departure_time` TEXT NOT NULL 「HH:MM」形式の始発時刻
+  `position_forward` INTEGER NOT NULL 担当位置開始両数(進行方向から数えて何両目からがその運用か)
+  `position_rear` INTEGER NOT NULL 担当位置終了両数(進行方向から数えて何両目までがその運用か)
+  `direction` INTEGER NOT NULL 上り列車か下り列車か(上り列車なら「1」、下り列車なら「0」)
 
-  PRIMARY KEY(`operation_table`,`operation_number`,`train_number`)
-  INDEX `unyohub_idx_t1`(`operation_table`,`train_number`)
+  PRIMARY KEY(`operation_table`,`operation_number`,`train_number`,`departure_time`,`position_forward`)
+  INDEX `unyohub_idx_t1`(`operation_table`,`train_number`,`departure_time`,`position_forward`)
 
 
-`unyohub_data` ユーザー投稿データ詳細
+`unyohub_data` ユーザー投稿データ
+  `operation_date` TEXT NOT NULL 「YYYY-MM-DD」形式の日付
+  `operation_number` TEXT NOT NULL 運用番号(アルファベットなどを含む場合があるため文字列型)
+  `user_id` TEXT NOT NULL 投稿者ID(未登録ユーザーの場合、クライアント端末が生成する12桁の乱数値の頭に「*」を付加した文字列を記録する)
+  `formations` TEXT 充当組成(複数編成併結による運用の場合も「+」で区切って1レコードに格納)
+  `posted_datetime` TEXT 「YYYY-MM-DD HH:MM:SS」形式の情報投稿日時
+  `comment` TEXT コメント
+
+  PRIMARY KEY(`operation_date`,`operation_number`,`user_id`)
+  INDEX `unyohub_idx_d1`(`user_id`,`posted_datetime`)
+
+
+`unyohub_formation_data` 編成別検索用運用データキャッシュ
   `operation_date` TEXT NOT NULL 「YYYY-MM-DD」形式の日付
   `operation_number` TEXT NOT NULL 運用番号(アルファベットなどを含む場合があるため文字列型)
   `coupling_position` INTEGER NOT NULL 併結位置(前位側(奇数向き)先頭の編成を1とし、2、3と順に付番)
   `user_id` TEXT NOT NULL 投稿者ID(未登録ユーザーの場合、クライアント端末が生成する12桁の乱数値の頭に「*」を付加した文字列を記録する)
   `formation` TEXT 編成名(複数編成併結による運用は複数レコードに分けて登録、データが「1000系」や「HE4??編成」のように曖昧な場合はNULLとする)
-  `posted_datetime` TEXT 「YYYY-MM-DD HH:MM:SS」形式の情報投稿日時
-  `comment` TEXT コメント
 
   PRIMARY KEY(`operation_date`,`operation_number`,`coupling_position`,`user_id`)
-  INDEX `unyohub_idx_d1`(`formation`,`operation_date`,`posted_datetime`)
-  INDEX `unyohub_idx_d2`(`user_id`,`posted_datetime`)
-  INDEX `unyohub_idx_d3`(`posted_datetime`)
+  INDEX `unyohub_idx_f1`(`formation`,`operation_date`)
 
 
-`unyohub_data_cache` 運用データキャッシュ
+`unyohub_data_cache` 運用データ概要キャッシュ
   `operation_date` TEXT NOT NULL 「YYYY-MM-DD」形式の日付
   `operation_number` TEXT NOT NULL 運用番号(アルファベットなどを含む場合があるため文字列型)
-  `coupling_position` INTEGER NOT NULL 併結位置(前位側(奇数向き)先頭の編成を1とし、2、3と順に付番)
-  `formation` TEXT 編成名(複数編成併結による運用は複数レコードに分けて登録、複数のユーザーが異なる編成を投稿していた場合はNULLとする)
+  `formations` TEXT 充当組成(複数編成併結による運用の場合も「+」で区切って1レコードに格納)
   `updated_datetime` TEXT 「YYYY-MM-DD HH:MM:SS」形式の情報投稿日時
 
   PRIMARY KEY(`operation_date`,`operation_number`,`coupling_position`)
   INDEX `unyohub_idx_c1`(`formation`,`operation_date`)
   INDEX `unyohub_idx_c2`(`operation_date`,`updated_datetime`)
-  INDEX `unyohub_idx_c3`(`updated_datetime`)
