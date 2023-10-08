@@ -11,7 +11,7 @@ _/_/_/_/ クライアント側ローカルストレージ _/_/_/_/
 {
     "guest_id" : ログインせずに運用情報を投稿する際の仮ID(「*」に続けて12桁の乱数値を付けた文字列),
     "dark_mode" : ダークモードの有効無効(BOOL値),
-    "refresh interval" : 運用データを自動で再取得する間隔(分単位の整数値)
+    "refresh_interval" : 運用データを自動で再取得する間隔(分単位の整数値)
 }
 
 
@@ -30,7 +30,7 @@ _/_/_/_/ クライアント側IndexedDB "unyohub_caches" _/_/_/_/
 
 {
     ・railroad_id : 路線系統識別名,
-    last_updated_timestamp : このデータをサーバから取得した日時のタイムスタンプ値(UTC、秒単位),
+    last_modified_timestamp : このデータの元になったJSONファイルが更新された日時のタイムスタンプ値(UTC、秒単位),
     以降の項目はrailroad_info.phpのレスポンスをそのまま展開して使用
 }
 
@@ -39,7 +39,7 @@ _/_/_/_/ クライアント側IndexedDB "unyohub_caches" _/_/_/_/
 
 {
     ・railroad_id : 路線系統識別名,
-    last_updated_timestamp : このデータをサーバから取得した日時のタイムスタンプ値(UTC、秒単位),
+    last_modified_timestamp : このデータの元になったJSONファイルが更新された日時のタイムスタンプ値(UTC、秒単位),
     icons : train_icons.phpのレスポンスをパースしてそのまま格納
 }
 
@@ -48,7 +48,7 @@ _/_/_/_/ クライアント側IndexedDB "unyohub_caches" _/_/_/_/
 
 {
     ・railroad_id : 路線系統識別名,
-    last_updated_timestamp : このデータをサーバから取得した日時のタイムスタンプ値(UTC、秒単位),
+    last_modified_timestamp : このデータの元になったJSONファイルが更新された日時のタイムスタンプ値(UTC、秒単位),
     formations : formations.phpのレスポンスをパースしてそのまま格納
 }
 
@@ -58,7 +58,7 @@ _/_/_/_/ クライアント側IndexedDB "unyohub_caches" _/_/_/_/
 {
     ・railroad_id : 路線系統識別名,
     ・operation_table : 運用表識別名,
-    last_updated_timestamp : このデータをサーバから取得した日時のタイムスタンプ値(UTC、秒単位),
+    last_modified_timestamp : このデータの元になったJSONファイルが更新された日時のタイムスタンプ値(UTC、秒単位),
     operations : {
         運用番号 : { 各運用の情報
             trains : { 各列車の情報
@@ -89,7 +89,7 @@ _/_/_/_/ クライアント側IndexedDB "unyohub_caches" _/_/_/_/
 {
     ・railroad_id : 路線系統識別名,
     ・operation_table : 運用表識別名,
-    last_updated_timestamp : このデータをサーバから取得した日時のタイムスタンプ値(UTC、秒単位),
+    last_modified_timestamp : このデータの元になったJSONファイルが更新された日時のタイムスタンプ値(UTC、秒単位),
     operation_groups : {
         運用グループタイトル : {
             operation_numbers : 運用番号を配列で順に列挙
@@ -105,7 +105,7 @@ _/_/_/_/ クライアント側IndexedDB "unyohub_caches" _/_/_/_/
     ・railroad_id : 路線系統識別名,
     ・line_id : 走行路線の識別名,
     ・operation_table : 運用表識別名,
-    last_updated_timestamp : このデータをサーバから取得した日時のタイムスタンプ値(UTC、秒単位),
+    last_modified_timestamp : このデータの元になったJSONファイルが更新された日時のタイムスタンプ値(UTC、秒単位),
     inbound_trains : { 上り列車と上り方面発車待ちの情報
         列車番号または仮番号 : [
             { 各区間組成の情報
@@ -137,7 +137,7 @@ _/_/_/_/ クライアント側IndexedDB "unyohub_caches" _/_/_/_/
     ・railroad_id : 路線系統識別名,
     ・line_id : 走行路線の識別名,
     ・operation_table : 運用表識別名,
-    last_updated_timestamp : このデータをサーバから取得した日時のタイムスタンプ値(UTC、秒単位),
+    last_modified_timestamp : このデータの元になったJSONファイルが更新された日時のタイムスタンプ値(UTC、秒単位),
     inbound_timetable : 上り時刻表(timetable.phpのレスポンスをパースしてそのまま格納),
     outbound_timetable : 下り時刻表(timetable.phpのレスポンスをパースしてそのまま格納)
 }
@@ -148,7 +148,7 @@ _/_/_/_/ クライアント側IndexedDB "unyohub_caches" _/_/_/_/
 {
     ・railroad_id : 路線系統識別名,
     ・operation_date : 「YYYY-MM-DD」形式の日付,
-    last_updated_timestamp : このデータをサーバから取得した日時のタイムスタンプ値(UTC、秒単位),
+    last_modified_timestamp : サーバに最新のデータが投稿された日時のタイムスタンプ値(UTC、秒単位),
     operations : {
         情報投稿のあった運用番号 : 編成名(前位側・奇数向きから順に配列で。複数種類の情報がある場合はNULLとなる)...
     }

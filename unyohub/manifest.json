@@ -1,0 +1,23 @@
+{
+    "name": "運用観察Hub",
+    "short_name": "運用観察Hub",
+    "display": "standalone",
+    "start_url": "./",
+    "scope":"./",
+    "background_color": "#ffffff",
+    "theme_color": "#f7f7f7",
+    "icons": [
+        {
+            "src": "apple-touch-icon.webp",
+            "type": "image/wewbp",
+            "sizes": "192x192",
+            "purpose": "any"
+        },
+        {
+            "src": "maskable_icon.webp",
+            "type": "image/webp",
+            "sizes": "192x192",
+            "purpose": "maskable"
+        }
+    ]
+}

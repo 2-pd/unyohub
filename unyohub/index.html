@@ -1,0 +1,731 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1,interactive-widget=resizes-content">
+<script>
+    const UNYOHUB_APP_NAME = "運用観察Hub";
+    const UNYOHUB_VERSION = "23.10-1"
+    const UNYOHUB_INDEXEDDB_VERSION = 2310001;
+    const UNYOHUB_LICENSE_TEXT = "このアプリケーションは無権利創作宣言に準拠して著作権放棄されています。";
+    const UNYOHUB_LICENSE_URL = "https://www.2pd.jp/license/";
+</script>
+    <title></title>
+    <link rel="apple-touch-icon" href="apple-touch-icon.webp">
+    <link rel="shortcut icon" href="favicon.ico">
+    <link rel="manifest" href="manifest.json">
+<style>
+* {
+    font-family: "Noto Sans CJK JP", "Meiryo", "Hiragino Kaku Gothic ProN", sans-serif;
+    
+    outline: 0 !important;
+}
+
+*::-webkit-scrollbar {
+    display: none;
+}
+
+html, body {
+    position: relative;
+    
+    height: 100%;
+    margin: 0;
+}
+
+.dark_mode {
+    color: #ffffff;
+}
+
+header {
+    position: relative;
+    
+    height: 50px;
+    
+    background-color: #f7f7f7;
+    
+    line-height: 50px;
+    font-size: 20px;
+    
+    box-shadow: 0 0 4px 4px rgba(0,0,0,0.3);
+    
+    z-index: 5;
+}
+
+.dark_mode header {
+    background-color: #181818;
+}
+
+.railroad_select_mode {
+    background-image: url(data:image/webp;base64,UklGRpoAAABXRUJQVlA4TI4AAAAvGIADEE9AIAgRY/0fYAiZMMQIq38AB5kwxAirfwAHgQSE/HDNeH4QwLYjGIbCbZmE/wVGsW21eenZ0gQggVUmBr4OJKQaaMr5Dw0R/VfYtg3SQemT/IMm/5A4EyTOwZwamzODGCIxcc7ePKr35gEKEQOFmDURa2IGFpNWkyYAmgyxqqkH1aiMVBjAdusD);
+    background-repeat: no-repeat;
+    background-position: calc(100vw - 80px) 18px;
+}
+
+.dark_mode .railroad_select_mode {
+    background-image: url(data:image/webp;base64,UklGRqQAAABXRUJQVlA4TJgAAAAvGIADEE9AIGmzv3+3JzqrQSBps79/tyc6I5C02d+/2xOdKWQkifmm0fwpnuXfYxOAbJv/qKFm2wUOACDJg20kSU6GegsPj8L7KBCBvArgA0AlcKlzSwwR/VfYtg3SQemTeCATD6wHgfXQ0uwxlTRaErLUQ6xpdX1NK3wkDB8pexL2pAxnep/0DoCnJOxq6ZGan7EfBqbFHw==);
+}
+
+#app_name {
+    margin-left: 10px;
+}
+
+#railroad_select {
+    display: none;
+    
+    position: absolute;
+    left: 0;
+    
+    width: calc(100% - 50px);
+    height: 50px;
+    
+    border: none;
+    
+    background-color: transparent;
+    
+    appearance: none;
+}
+
+.railroad_select_mode #railroad_select {
+    display: block;
+}
+
+#menu_button {
+    position: absolute;
+    right: 0;
+    
+    width: 50px;
+    height: 50px;
+    
+    border: none;
+    border-radius: 0;
+    padding: 0;
+    
+    background-image: url(data:image/webp;base64,UklGRjQAAABXRUJQVlA4TCgAAAAvMUAMEA8wZmM2ZvMf8FDUthFT/pjXtzcARPR/AvAt07rNtG4zrXcB);
+    background-color: transparent;
+}
+
+.dark_mode #menu_button {
+    background-image: url(data:image/webp;base64,UklGRjQAAABXRUJQVlA4TCgAAAAvMUAMEA8wzMM8zPMf8FDUthFT/pjXtzcARPR/AvAt07rNtG4zrXcB);
+}
+
+.menu_button_active {
+    background-color: #dddddd !important;
+}
+
+.dark_mode .menu_button_active {
+    background-color: #333333 !important;
+}
+
+#menu {
+    position: absolute;
+    top: 50px;
+    right: 0;
+    
+    width: 250px;
+    max-height: 0;
+    
+    opacity: 0.5;
+    
+    background-color: #ffffff;
+    
+    line-height: 40px;
+    
+    overflow-y: scroll;
+    
+    transition-duration: 0.25s;
+    transition-property: all;
+}
+
+.dark_mode #menu {
+    background-color: #101010;
+    
+    border-color: #333333;
+}
+
+.menu_open {
+    max-height: calc(100vh - 72px) !important;
+    
+    opacity: 1.0 !important;
+    
+    padding: 9px 0;
+
+    border: 1px solid #dddddd;
+    
+    box-shadow: 0 4px 4px 0 rgba(0,0,0,0.3);
+}
+
+#menu button {
+    width: 100%;
+    height: 40px;
+    
+    border: none;
+    border-radius: 0;
+    
+    background-color: transparent;
+
+    color: #333333;
+}
+
+.dark_mode #menu button {
+    color: #eeeeee;
+}
+
+#menu hr {
+    width: 90%;
+    height: 2px;
+    
+    margin: 9px auto;
+    
+    border: none;
+    
+    background-color: #dddddd;
+}
+
+.dark_mode #menu hr {
+    background-color: #333333;
+}
+
+#splash_screen {
+    position: absolute;
+    top: 0;
+    
+    width: 100%;
+    height: calc(100vh - 70px);
+    
+    padding-top: 70px;
+    
+    background-color: #ffffff;
+    
+    z-index: 10;
+}
+
+.dark_mode #splash_screen {
+    background-color: #101010;
+}
+
+.splash_screen_loaded {
+    z-index: 4 !important;
+}
+
+#splash_screen:after {
+    content: "";
+    
+    display: block;
+    
+    position: absolute;
+    
+    width: 100%;
+    height: calc(100vh - 70px);
+    
+    background-image: url("splash_screen_image.webp");
+    background-size: contain;
+    background-repeat: no-repeat;
+    background-position: bottom;
+    
+    transition-duration: 1s;
+    transition-property: all;
+}
+
+.splash_screen_loaded:after {
+    opacity: 0.25;
+}
+
+.popup {
+    position: fixed;
+    top: 0;
+    
+    display: none;
+    
+    width: 100%;
+    height: 100%;
+    
+    box-sizing: border-box;
+    
+    padding: 10px;
+    padding-top: 50px;
+    
+    background-color: #ffffff;
+    
+    overflow: scroll;
+    
+    z-index: 10;
+}
+
+.dark_mode .popup {
+    background-color: #101010;
+}
+
+.popup_close_button {
+    position: fixed;
+    top: 10px;
+    right: 10px;
+    
+    width: 40px;
+    height: 40px;
+    
+    background-image: url(data:image/webp;base64,UklGRtAAAABXRUJQVlA4TMMAAAAvHUAHEH9gkG2k3vurPdM0DKRtk92/tWuqgbRtsvu3dk1VzEgSNP0bhkVYlvWXOQOqAP+/qOq3JYwAcPV3Jzx628FRZNtS84ph/wsF7H+xusxDEgnxggIkICCrSEBCJHwbcfHvexkFRPSfkdu2YdR2vHu/kD8714Qqc6711L5SF4QkuiCLuR4+ipAQG45E3IBKRKPUFKTBkzRA1OCMR2I24G62A/C2NxyJZSh6DQ+xMXolp1ArEW8NK23Fk6yvf8p/HQEA);
+    background-repeat: no-repeat;
+    background-position: center;
+    
+    border: none;
+}
+
+h2 {
+    margin: 10px 0;
+}
+
+a {
+    color: #999999;
+}
+
+.popup input, .popup select {
+    display: block;
+    
+    width: 90%;
+    
+    margin: 10px auto;
+    
+    background-color: transparent;
+    
+    font-size: large;
+}
+
+.popup input[type="number"] {
+    display: inline-block;
+    
+    width: 50px;
+    
+    margin-left: 20px;
+    
+    font-size: large;
+}
+
+.popup select {
+    margin-bottom: 30px;
+    
+    background-color: #ffffff;
+    
+    border: none;
+    border-bottom: 1px solid #eeeeee;
+}
+
+.dark_mode .popup select {
+    background-color: #101010;
+    
+    border-color: #333333;
+    
+    color: #ffffff;
+}
+
+.popup button {
+    display: block;
+    
+    margin: 10px auto;
+    padding: 5px 10px;
+}
+
+#popup_screen {
+    display: none;
+    
+    position: fixed;
+    top:0;
+    left: 0;
+    
+    width: 100%;
+    height: 100%;
+    
+    z-index: 200;
+    
+    background-color: rgba(0,0,0,0.75);
+}
+
+#popup_screen_blank_area {
+    width: 100%;
+    height: 100%;
+    
+    z-index: 201;
+}
+
+.square_popup, .preview_popup {
+    display: none;
+    
+    position: fixed;
+    top: calc(50% - 160px);
+    left: calc(50% - 160px);
+    
+    width: 310px;
+    height: 280px;
+    
+    z-index: 202;
+    
+    padding: 40px 5px 0 5px;
+    
+    background-color: #ffffff;
+    
+    text-align: center;
+}
+
+.dark_mode .square_popup, .dark_mode .preview_popup {
+    background-color: #101010;
+}
+
+.preview_popup {
+    width: calc(100% - 50px);
+    height: calc(100% - 70px);
+    
+    padding: 40px 10px 0 10px;
+    
+    top: 15px;
+    left: 15px;
+}
+
+.square_popup input {
+    width: 235px;
+    
+    margin: 0 2px 0 5px;
+    
+    background-color: transparent;
+    
+    line-height: 24px;
+    font-size: large;
+}
+
+.square_popup input[type="number"] {
+    width: 60px;
+    
+    text-align: center;
+}
+
+.square_popup button, .preview_popup button {
+    min-width: 50px;
+    
+    line-height: 22px;
+}
+
+.preview_popup button {
+    font-size: 18px;
+    line-height: 27px;
+}
+
+.square_popup_button {
+    display: block;
+    
+    width: 290px !important;
+    
+    margin: 10px 10px;
+    padding: 10px 10px;
+    
+    font-size: large;
+}
+
+.square_popup .popup_close_button {
+    top: calc(50% - 150px);
+    right: calc(50% - 150px);
+}
+
+input[type="text"], input[type="number"], input[type="search"] {
+    border: none;
+    border-bottom: 1px solid #eeeeee;
+}
+
+.dark_mode input[type="text"], .dark_mode input[type="number"], .dark_mode input[type="search"] {
+    border-color: #333333;
+    
+    color: #ffffff
+}
+
+input[type="checkbox"] {
+    display: none;
+}
+
+input[type="checkbox"] + label {
+    display: block;
+    
+    position: relative;
+    
+    margin: 20px 0 0 10px;
+    
+    padding-left: 54px;
+    
+    line-height: 24px;
+    font-size: 18px;
+}
+
+input[type="checkbox"] + label:before {
+    content: "";
+    
+    display: inline-block;
+    
+    position: absolute;
+    
+    top: 0;
+    left: 0;
+    
+    width: 44px;
+    height: 24px;
+    
+    background-color: #dddddd;
+    
+    border-radius: 12px;
+    
+    box-shadow: 1px 1px 2px rgba(0,0,0,0.25) inset;
+    
+    transition-duration: 0.25s;
+    transition-property: all;
+}
+
+.dark_mode input[type="checkbox"] + label:before {
+    background-color: #333333;
+}
+
+input[type="checkbox"]:checked + label:before {
+    background-color: #66ccff;
+}
+
+.dark_mode input[type="checkbox"]:checked + label:before {
+    background-color: #0088cc;
+}
+
+input[type="checkbox"] + label:after {
+    content: "";
+    
+    display: inline-block;
+    
+    position: absolute;
+    
+    top: 2px;
+    left: 2px;
+    
+    width: 20px;
+    height: 20px;
+    
+    background-color: #ffffff;
+    
+    border-radius: 10px;
+    
+    box-shadow: 1px 1px 2px rgba(0,0,0,0.25);
+    
+    transition-duration: 0.2s;
+    transition-property: all;
+}
+
+input[type="checkbox"]:checked + label:after {
+    left: 22px;
+}
+
+button {
+    background-color: rgba(255,255,255,0.75);
+    
+    border: 1px solid #dddddd;
+    border-left-width: 3px;
+    border-right-width: 3px;
+    border-radius: 5px;
+    
+    color: #333333;
+}
+
+.dark_mode button {
+    background-color: #101010;
+    
+    border-color: #333333;
+    
+    color: #eeeeee;
+}
+
+#unyo_icon {
+    display: block;
+    
+    width: 96px;
+    
+    margin: 10px auto;
+    
+    filter: drop-shadow(1px 2px 1px rgba(0,0,0,0.25));
+}
+</style>
+</head>
+<body>
+    <header><span id="app_name"></span><select id="railroad_select"></select><button type="button" id="menu_button" onclick="menu_click();"></button><div id="menu">
+        <button onclick="edit_config();">各種設定</button>
+        <hr>
+        <button onclick="open_square_popup('about_popup');">このアプリについて</button>
+    </div></header>
+    <div id="splash_screen">
+        
+    </div>
+    <div class="popup" id="config_popup">
+        <button class="popup_close_button" onclick="popup_close();"></button>
+        <h2>各種設定</h2>
+        <input type="checkbox" id="dark_mode_check" onchange="change_config();"><label for="dark_mode_check">ダークモード</label>
+        <h3>運用情報の自動更新間隔</h3>
+        <input type="number" id="refresh_interval" min="5" max="60" onchange="change_config();">分ごと<br>
+        <br>
+        <span style="color: #666666;">変更内容は自動で保存されます</span>
+    </div>
+    <div id="popup_screen">
+        <div id="popup_screen_blank_area" onclick="close_square_popup();"></div>
+        <div class="square_popup" id="about_popup">
+            <button class="popup_close_button" onclick="close_square_popup();"></button>
+            <div style="text-align: center;">
+                <img src="apple-touch-icon.webp" alt="" id="unyo_icon">
+                <b style="font-size: 20px;"><script> document.write(UNYOHUB_APP_NAME + " " + UNYOHUB_VERSION); </script></b>
+            </div>
+            <div style="padding: 10px; color: #999999; font-size: small;"><script> document.write("<a href='" + UNYOHUB_LICENSE_URL + "' target='_blank'>" + UNYOHUB_LICENSE_TEXT + "</a>"); </script></div>
+            <button class="square_popup_button" onclick="window.open('README.html');">このアプリの使い方</button>
+        </div>
+    </div>
+<script>
+document.getElementsByTagName("title")[0].innerText = UNYOHUB_APP_NAME;
+document.getElementById("app_name").innerText = UNYOHUB_APP_NAME;
+
+
+function get_default_config () {
+    return function () {/*
+{
+    "guest_id" : null,
+    "dark_mode" : false,
+    "refresh_interval" : 30
+}
+*/}.toString().split("\n").slice(1,-1).join("\n");
+}
+
+var config = new Object();
+(function () {
+    var config_json = localStorage.getItem("unyohub_config");
+    
+    if (config_json === null) {
+        config_json = get_default_config();
+        localStorage.setItem("unyohub_config", config_json);
+    }
+    config = JSON.parse(config_json);
+}());
+
+function save_config () {
+    localStorage.setItem("unyohub_config", JSON.stringify(config));
+}
+
+
+function switch_dark_mode () {
+    if (config["dark_mode"]) {
+        document.getElementsByTagName("body")[0].className = "dark_mode";
+    } else {
+        document.getElementsByTagName("body")[0].className = "";
+    }
+}
+
+switch_dark_mode();
+
+
+var header_elm = document.getElementsByTagName("header")[0];
+
+var menu_elm = document.getElementById("menu");
+var menu_button_elm = document.getElementById("menu_button");
+
+function menu_click (force_close = false) {
+    if (menu_elm.className === "menu_open" || force_close) {
+        menu_elm.className = "";
+        menu_button_elm.className = "";
+    } else {
+        menu_elm.className = "menu_open";
+        menu_button_elm.className = "menu_button_active";
+    }
+}
+
+var popup_history = new Array();
+var square_popup_is_open = false;
+
+function open_popup (id) {
+    var elm = document.getElementById(id);
+    
+    if (elm.style.display !== "block") {
+        elm.style.display = "block";
+        elm.style.zIndex = popup_history.length + 10;
+        
+        popup_history.push(id);
+        
+        menu_click(true);
+    }
+}
+
+function popup_close() {
+    var id = popup_history.pop();
+    
+    document.getElementById(id).style.display = "none";
+}
+
+var screen_elm = document.getElementById("popup_screen");
+
+function open_square_popup (id) {
+    screen_elm.style.display = "block";
+    document.getElementById(id).style.display = "block";
+    
+    popup_history.push(id);
+    square_popup_is_open = true;
+}
+
+function close_square_popup () {
+    var id = popup_history.pop();
+    
+    screen_elm.style.display = "none";
+    
+    document.getElementById(id).style.display = "none";
+    
+    square_popup_is_open = false;
+    
+    menu_click(true);
+}
+
+
+var splash_screen_elm = document.getElementById("splash_screen");
+
+
+var dark_mode_check_elm = document.getElementById("dark_mode_check");
+var refresh_interval_elm = document.getElementById("refresh_interval");
+
+function edit_config () {
+    open_popup("config_popup");
+    
+    dark_mode_check_elm.checked = config["dark_mode"];
+    refresh_interval_elm.value = config["refresh_interval"];
+}
+
+function change_config () {
+    config["dark_mode"] = dark_mode_check_elm.checked;
+    config["refresh_interval"] = refresh_interval_elm.value;
+    
+    switch_dark_mode();
+    
+    save_config();
+}
+
+function reset_config_value () {
+    if (confirm("設定をリセットしますか？")) {
+        var dafault_config = JSON.parse(get_default_config());
+        
+        dark_mode_check_elm.checked = dafault_config["dark_mode"];
+        refresh_interval_elm.value = dafault_config["refresh_interval"];
+        
+        change_config();
+    }
+}
+
+
+history.pushState(null, null, location.href);
+
+window.onpopstate = function () {
+    if (square_popup_is_open) {
+        close_square_popup();
+    } else if (popup_history.length >= 1) {
+        popup_close();
+    } else if (menu_elm.className === "menu_open") {
+        menu_click(true);
+    }
+    
+    history.pushState(null, null, null);
+};
+
+window.onload = function () {
+    splash_screen_elm.className = "splash_screen_loaded";
+}
+</script>
+</body>
+</html>

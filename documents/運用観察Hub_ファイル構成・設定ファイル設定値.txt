@@ -52,7 +52,7 @@ _/_/_/_/ 設定ファイル設定値 _/_/_/_/
 ※設定ファイルではないが、編集可能な定数が存在する
   UNYOHUB_APP_NAME  アプリケーション名
   UNYOHUB_VERSION  バージョン文字列
-  UNYOHUB_INDEXEDDB_VERSION　IndexedDBのデータベースバージョン数値
+  UNYOHUB_INDEXEDDB_VERSION  IndexedDBのデータベースバージョン数値
   UNYOHUB_LICENSE_TEXT  ライセンス情報文
   UNYOHUB_LICENSE_URL  ライセンスのURL
 
