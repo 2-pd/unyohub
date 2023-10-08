@@ -7,7 +7,7 @@ import base64
 
 print("train_icons_org.jsonを読み込んでいます...")
 try:
-    json_f = open("./train_icons_org.json", "r", encoding="utf-8")
+    json_f = open("train_icons_org.json", "r", encoding="utf-8")
     train_icons = json.load(json_f)
 except:
     print("【エラー】train_icons_org.jsonの読み込みに失敗しました")
