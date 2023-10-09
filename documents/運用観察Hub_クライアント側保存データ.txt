@@ -18,7 +18,8 @@ _/_/_/_/ クライアント側ローカルストレージ _/_/_/_/
 ███ unyohub_common_caches ███
 
 {
-    "railroads" : railroads.phpのレスポンスを保存
+    "railroads" : railroads.phpのレスポンスを保存,
+    "last_modified_timestamp" : このデータの元になったJSONファイルが更新された日時のタイムスタンプ値(UTC、秒単位)
 }
 
 

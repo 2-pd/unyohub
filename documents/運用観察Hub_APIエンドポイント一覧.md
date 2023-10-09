@@ -83,14 +83,21 @@
 サーバに登録されている路線系統の一覧を取得する
 
 ### 引数
-(なし)
+**$_POST["last_modified_timestamp"]** : タイムスタンプ(UTC)
 
 ### 応答
+**unyohub.jsonまたは各路線データフォルダのrailroad_info.jsonの変更日時がタイムスタンプより新しかった場合** :  
 {  
     "路線系統識別名" : {  
       "railroad_name" : 路線系統表示名  
     }...  
-}
+}  
+  
+**unyohub.json及び各路線データフォルダのrailroad_info.jsonの変更日時がいずれもタイムスタンプ以前だった場合** :  
+文字列「NO_UPDATES_AVAILABLE」  
+  
+**エラーの場合** :  
+文字列「ERROR: 」とそれに続くエラー内容文
 
 
 ## railroad_info.php

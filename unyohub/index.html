@@ -196,6 +196,8 @@ header {
     
     background-color: #ffffff;
     
+    text-align: center;
+    
     z-index: 10;
 }
 
@@ -213,21 +215,28 @@ header {
     display: block;
     
     position: absolute;
+    top: 0;
     
     width: 100%;
-    height: calc(100vh - 70px);
+    height: 100%;
     
     background-image: url("splash_screen_image.webp");
     background-size: contain;
     background-repeat: no-repeat;
-    background-position: bottom;
+    background-position: right bottom;
     
     transition-duration: 1s;
-    transition-property: all;
+    transition-property: opacity;
 }
 
 .splash_screen_loaded:after {
     opacity: 0.25;
+}
+
+#splash_screen div {
+    position: relative;
+    
+    z-index: 4;
 }
 
 .popup {
@@ -402,17 +411,12 @@ a {
     line-height: 22px;
 }
 
-.preview_popup button {
-    font-size: 18px;
-    line-height: 27px;
-}
-
-.square_popup_button {
+.wide_button {
     display: block;
     
-    width: 290px !important;
+    width: calc(100% - 20px) !important;
     
-    margin: 10px 10px;
+    margin: 10px auto;
     padding: 10px 10px;
     
     font-size: large;
@@ -545,15 +549,16 @@ button {
 </head>
 <body>
     <header><span id="app_name"></span><select id="railroad_select"></select><button type="button" id="menu_button" onclick="menu_click();"></button><div id="menu">
-        <button onclick="edit_config();">各種設定</button>
+        <button type="button" onclick="edit_config();">各種設定</button>
         <hr>
-        <button onclick="open_square_popup('about_popup');">このアプリについて</button>
+        <button type="button" onclick="open_square_popup('about_popup');">このアプリについて</button>
     </div></header>
     <div id="splash_screen">
-        
+        <div id="splash_screen_login_status">サーバに接続しています...</div>
+        <div id="splash_screen_buttons">しばらくお待ちください</div>
     </div>
     <div class="popup" id="config_popup">
-        <button class="popup_close_button" onclick="popup_close();"></button>
+        <button type="button" class="popup_close_button" onclick="popup_close();"></button>
         <h2>各種設定</h2>
         <input type="checkbox" id="dark_mode_check" onchange="change_config();"><label for="dark_mode_check">ダークモード</label>
         <h3>運用情報の自動更新間隔</h3>
@@ -564,18 +569,23 @@ button {
     <div id="popup_screen">
         <div id="popup_screen_blank_area" onclick="close_square_popup();"></div>
         <div class="square_popup" id="about_popup">
-            <button class="popup_close_button" onclick="close_square_popup();"></button>
+            <button type="button" class="popup_close_button" onclick="close_square_popup();"></button>
             <div style="text-align: center;">
                 <img src="apple-touch-icon.webp" alt="" id="unyo_icon">
                 <b style="font-size: 20px;"><script> document.write(UNYOHUB_APP_NAME + " " + UNYOHUB_VERSION); </script></b>
             </div>
             <div style="padding: 10px; color: #999999; font-size: small;"><script> document.write("<a href='" + UNYOHUB_LICENSE_URL + "' target='_blank'>" + UNYOHUB_LICENSE_TEXT + "</a>"); </script></div>
-            <button class="square_popup_button" onclick="window.open('README.html');">このアプリの使い方</button>
+            <button type="button" class="wide_button" onclick="window.open('README.html');">このアプリの使い方</button>
         </div>
     </div>
 <script>
 document.getElementsByTagName("title")[0].innerText = UNYOHUB_APP_NAME;
 document.getElementById("app_name").innerText = UNYOHUB_APP_NAME;
+
+
+function escape_html (text) {
+    return text.replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;");
+}
 
 
 function get_default_config () {
@@ -675,7 +685,96 @@ function close_square_popup () {
 }
 
 
+var user_data = null;
+
+
 var splash_screen_elm = document.getElementById("splash_screen");
+var splash_screen_login_status_elm = document.getElementById("splash_screen_login_status");
+var splash_screen_buttons_elm = document.getElementById("splash_screen_buttons");
+
+function splash_screen_print_buttons (railroads) {
+    var buttons_html = "";
+    
+    var keys = Object.keys(railroads);
+    for (var cnt = 0; cnt < keys.length; cnt++) {
+        buttons_html += "<button type='button' class='wide_button'>" + escape_html(railroads[keys[cnt]]["railroad_name"]) + "</button>";
+    }
+    
+    splash_screen_buttons_elm.innerHTML = buttons_html;
+    
+    splash_screen_elm.className = "splash_screen_loaded";
+}
+
+window.onload = function () {
+    var cache_json = localStorage.getItem("unyohub_common_caches");
+    
+    if (cache_json !== null) {
+        var common_caches = JSON.parse(cache_json);
+    } else {
+        var common_caches = {
+            railroads : [],
+            last_modified_timestamp : 0
+        };
+    }
+    
+    
+    if (navigator.onLine) {
+        var check_logged_in_request = new XMLHttpRequest();
+        check_logged_in_request.onreadystatechange = function () {
+            if (check_logged_in_request.readyState === 4) {
+                if (check_logged_in_request.status === 200) {
+                    if (check_logged_in_request.responseText !== "NOT_LOGGED_IN"){
+                        user_data = JSON.parse(check_logged_in_request.responseText);
+                        splash_screen_login_status.innerText = escape_html(user_data["user_name"]) + " さんとしてログインしています";
+                    } else {
+                        splash_screen_login_status.innerText = "ログインしていません<br>ログイン　新規登録";
+                    }
+                } else {
+                    splash_screen_login_status.innerText = "【!】ログイン状態の確認に失敗しました";
+                }
+            }
+        };
+        
+        check_logged_in_request.ontimeout = function () {
+            splash_screen_login_status.innerText = "【!】ネットワークが不安定です";
+        }
+        
+        check_logged_in_request.open("POST", "api/check_logged_in.php", true);
+        check_logged_in_request.timeout = 5000;
+        check_logged_in_request.send();
+        
+        
+        var railroads_request = new XMLHttpRequest();
+        railroads_request.onreadystatechange = function () {
+            if (railroads_request.readyState === 4) {
+                if (railroads_request.responseText.substring(0,6) === "ERROR:") {
+                    alert(railroads_request.responseText);
+                } else if (railroads_request.status === 200 && railroads_request.responseText !== "NO_UPDATES_AVAILABLE") {
+                    common_caches["railroads"] = JSON.parse(railroads_request.responseText);
+                    
+                    var last_modified_date = new Date(railroads_request.getResponseHeader("last-modified"));
+                    common_caches["last_modified_timestamp"] = Math.floor(last_modified_date.getTime() / 1000);
+                    
+                    localStorage.setItem("unyohub_common_caches", JSON.stringify(common_caches));
+                }
+                
+                splash_screen_print_buttons(common_caches["railroads"]);
+            }
+        };
+        
+        check_logged_in_request.ontimeout = function () {
+            splash_screen_print_buttons(common_caches["railroads"]);
+        }
+        
+        railroads_request.open("POST", "api/railroads.php", true);
+        railroads_request.setRequestHeader("Content-Type","application/x-www-form-urlencoded;charset=UTF-8");
+        railroads_request.timeout = 3000;
+        railroads_request.send("last_modified_timestamp=" + common_caches["last_modified_timestamp"]);
+    } else {
+        splash_screen_login_status.innerText = "端末がオフラインです";
+        splash_screen_print_buttons(common_caches["railroads"]);
+    }
+}
 
 
 var dark_mode_check_elm = document.getElementById("dark_mode_check");
@@ -722,10 +821,6 @@ window.onpopstate = function () {
     
     history.pushState(null, null, null);
 };
-
-window.onload = function () {
-    splash_screen_elm.className = "splash_screen_loaded";
-}
 </script>
 </body>
 </html>
