@@ -216,7 +216,7 @@ header {
 }
 
 .splash_screen_loaded {
-    z-index: 4 !important;
+    z-index: 3 !important;
 }
 
 #splash_screen:after {
@@ -303,6 +303,38 @@ header {
 
 .dark_mode #tab_area .active_tab {
     background-color: #101010 !important;
+}
+
+article {
+    display: none;
+    
+    width: calc(100vw - 10px);
+    height: calc(100vh - 220px);
+    
+    padding: 10px 5px 60px 5px;
+    
+    overflow: scroll;
+}
+
+.train_icon {
+    max-width: 40px;
+    max-height: 40px;
+}
+
+footer {
+    position: absolute;
+    bottom: 0;
+    
+    width: 100%;
+    height: 50px;
+    
+    line-height: 50px;
+    
+    background-color: #f7f7f7;
+    
+    box-shadow: 0 0 2px 2px rgba(0,0,0,0.2);
+    
+    z-index: 2;
 }
 
 .popup {
@@ -624,6 +656,12 @@ button {
         <div id="splash_screen_buttons">しばらくお待ちください</div>
     </div>
     <div id="tab_area"><button type="button" onclick="change_mode(0);" style="background-color: #dd55ff;">運用データ</button><button type="button" onclick="change_mode(1);" style="background-color: #ffdd55;">走行位置</button><button type="button" onclick="change_mode(2);" style="background-color: #55ffdd;">時刻表</button><button type="button" onclick="change_mode(3);" style="background-color: #ff55dd;">運用表</button><button type="button" onclick="change_mode(4);" style="background-color: #ddff55;">編成表</button></div>
+    <article></article>
+    <article></article>
+    <article></article>
+    <article></article>
+    <article id="formation_table_area"></article>
+    <footer></footer>
     <div class="popup" id="config_popup">
         <button type="button" class="popup_close_button" onclick="popup_close();"></button>
         <h2>各種設定</h2>
@@ -654,7 +692,7 @@ document.getElementsByTagName("title")[0].innerText = UNYOHUB_APP_NAME;
 document.getElementById("app_name").innerText = UNYOHUB_APP_NAME;
 
 
-const UNYOHUB_UNKNOWN_TRAIN_BIN = "data:image/webp;base64,UklGRqADAABXRUJQVlA4TJMDAAAvT8AdELVQuq03kST1T3+OaO5eMQ8zM/OOeXbMzMwQUY6wrMGVWo2FMUWRldBVEVIACCDAyGa2bXtLNpvjlmzb0Yu22b0l27b9uAmwv+qFRQhPPi+MIP5C8vFEVGnAqwvsBoK2y7PtTt1wOHRnftjiwH04HI7cp5fEIMSoO1PXCJuZO73WooOb2fSG++pYCkXu7KBgqWyHLBvgFAoJgfwD3gojS2elHs/Of8JEoM+L839iEmwy62voS6DFfWi1hZk7V8yGVfbDJc+8r4df8OX1dZ5GZ1lhdta9MKuxoTstEia80YqQGSI4U3HCE3JCU/DfI242fZo3giRUCWDgrCc/Oz1vchHi2kVyc42wHJxdaOEkhyopVMphWwq7YtB3saWelJAuhzQpzMphRsbKSf7JCf9wXUozLixCdL/KmQufZ7InqrAYt7JHnDB6ePBsuac7hCLWBBmyuPPMZ0LmLumok5y6gpwUThEE8MdV5Be/KUodvlxJPkutOnpBzeUaZE7rwfcO2QqOrij2lRDY2m5u5kU+4Ft+4Vcad9/wHs9zAztpLQRWQnhLl/A6v9An7F7mOC0N2zvA/K8kf4k9iLqeH+gFfs81CHqYX5HZ3YuYW+mldjch5FI6Mf3PXIiIko/4FcEfUiBhoRd9JwJKvkbWV/yf7ir62F94nEOUeOPNHOVZovorSPcEMd3EW76NqMdI9zYxj+Ktv0DMW6QbxeyjvaWYr0k3HTEdaG8HMT+Tro9c9fa3ENP/9ZP592sjZlqHpZhlHZ4j5oQKN9PHPk4e21k7FXF+8Cx99JXk8Ah9yuUSbe7HlfmMrSgzfTGuzO24Mg/iunzPdbgur7AX0KR7hQvwdrPoRu/xHDewE29b3l146v9oEJJMdAiu4KdJ8K3goUlwrxRumqxVMNekMKtsVtME1QpymuyQrRgfevRWy3aqR/iVyLtIxVYd03owVUezHjTVkaNHyK4jQo9BXWGlB5Z1e8T5o8UpJOqMTS3YsCnpSiR4PFVI1IKEqcx41IAHi2ZZA5bixhrQGUeJBhTHhVgNiInDVYPCJW6zkgYoxm0S5CO/fhBnrOfHmjVkKD8Gm1CbHzVNiM8vxDUJnvnh0aTUyg/NJojwm9upw6JNjP3c2LPG87mtNqM+N+qaheTcSGqGagiPrwyTVobxG82aVixpxUT/9eHdnbc06+5nZVHrTnWa8+4Lsgz705b49Gn7qw4A";
+const UNYOHUB_UNKNOWN_TRAIN_ICON = "data:image/webp;base64,UklGRqADAABXRUJQVlA4TJMDAAAvT8AdELVQuq03kST1T3+OaO5eMQ8zM/OOeXbMzMwQUY6wrMGVWo2FMUWRldBVEVIACCDAyGa2bXtLNpvjlmzb0Yu22b0l27b9uAmwv+qFRQhPPi+MIP5C8vFEVGnAqwvsBoK2y7PtTt1wOHRnftjiwH04HI7cp5fEIMSoO1PXCJuZO73WooOb2fSG++pYCkXu7KBgqWyHLBvgFAoJgfwD3gojS2elHs/Of8JEoM+L839iEmwy62voS6DFfWi1hZk7V8yGVfbDJc+8r4df8OX1dZ5GZ1lhdta9MKuxoTstEia80YqQGSI4U3HCE3JCU/DfI242fZo3giRUCWDgrCc/Oz1vchHi2kVyc42wHJxdaOEkhyopVMphWwq7YtB3saWelJAuhzQpzMphRsbKSf7JCf9wXUozLixCdL/KmQufZ7InqrAYt7JHnDB6ePBsuac7hCLWBBmyuPPMZ0LmLumok5y6gpwUThEE8MdV5Be/KUodvlxJPkutOnpBzeUaZE7rwfcO2QqOrij2lRDY2m5u5kU+4Ft+4Vcad9/wHs9zAztpLQRWQnhLl/A6v9An7F7mOC0N2zvA/K8kf4k9iLqeH+gFfs81CHqYX5HZ3YuYW+mldjch5FI6Mf3PXIiIko/4FcEfUiBhoRd9JwJKvkbWV/yf7ir62F94nEOUeOPNHOVZovorSPcEMd3EW76NqMdI9zYxj+Ktv0DMW6QbxeyjvaWYr0k3HTEdaG8HMT+Tro9c9fa3ENP/9ZP592sjZlqHpZhlHZ4j5oQKN9PHPk4e21k7FXF+8Cx99JXk8Ah9yuUSbe7HlfmMrSgzfTGuzO24Mg/iunzPdbgur7AX0KR7hQvwdrPoRu/xHDewE29b3l146v9oEJJMdAiu4KdJ8K3goUlwrxRumqxVMNekMKtsVtME1QpymuyQrRgfevRWy3aqR/iVyLtIxVYd03owVUezHjTVkaNHyK4jQo9BXWGlB5Z1e8T5o8UpJOqMTS3YsCnpSiR4PFVI1IKEqcx41IAHi2ZZA5bixhrQGUeJBhTHhVgNiInDVYPCJW6zkgYoxm0S5CO/fhBnrOfHmjVkKD8Gm1CbHzVNiM8vxDUJnvnh0aTUyg/NJojwm9upw6JNjP3c2LPG87mtNqM+N+qaheTcSGqGagiPrwyTVobxG82aVixpxUT/9eHdnbc06+5nZVHrTnWa8+4Lsgz705b49Gn7qw4A";
 
 
 function escape_html (text) {
@@ -982,7 +1020,7 @@ function switch_railroad (railroad_info_next, load_icon = true) {
                             if (icon_request.responseText.substring(0,6) === "ERROR:") {
                                 alert(icon_request.responseText);
                             } else if (icon_request.status === 200 && icon_request.responseText !== "NO_UPDATES_AVAILABLE") {
-                                train_icons = JSON.parse(icon_request.responseText);
+                                train_icons = {icons : JSON.parse(icon_request.responseText)};
                                 
                                 train_icons["railroad_id"] = railroad_id;
                                 
@@ -1004,9 +1042,21 @@ function switch_railroad (railroad_info_next, load_icon = true) {
                 }
             }
         };
+        
+        schedule_change_mode();
     }
-    
-    change_mode(0);
+}
+
+function schedule_change_mode (cnt = 0) {
+    if (railroad_info["railroad_id"] !== train_icons["railroad_id"] && cnt < 100) {
+        setTimeout(schedule_change_mode, 50, cnt + 1);
+    } else {
+        for (var cnt_2 = 0; cnt_2 < train_icons["icons"].length; cnt_2++) {
+            train_icons["icons"][cnt_2]["regexp"] = new RegExp(train_icons["icons"][cnt_2]["pattern"]);
+        }
+        
+        change_mode(0);
+    }
 }
 
 
@@ -1015,14 +1065,125 @@ var tab_area_elm = document.getElementById("tab_area");
 tab_area_elm.onselectstart = function () { return false; };
 
 function change_mode (num) {
+    var articles = document.getElementsByTagName("article");
     var tab_buttons = tab_area_elm.getElementsByTagName("button");
-    for (cnt = 0; cnt < tab_buttons.length; cnt++) {
+    for (var cnt = 0; cnt < articles.length; cnt++) {
         if (cnt === num) {
+            articles[cnt].style.display = "block";
             tab_buttons[cnt].className = "active_tab";
         } else {
+            articles[cnt].style.display = "none";
             tab_buttons[cnt].className = "";
         }
     }
+    
+    switch (num) {
+        case 4:
+            formation_table_mode();
+            break;
+    }
+}
+
+
+function formation_table_mode () {
+    var railroad_id = railroad_info["railroad_id"];
+    
+    var open_request = indexedDB.open("unyohub_caches", UNYOHUB_INDEXEDDB_VERSION);
+    
+    open_request.onsuccess = function () {
+        var transaction = open_request.result.transaction("formations", "readonly");
+        
+        var formations_store = transaction.objectStore("formations");
+        var get_request = formations_store.get(railroad_id);
+        
+        get_request.onsuccess = function (evt) {
+            if (evt.target.result !== undefined) {
+                var formations = evt.target.result;
+                var last_modified_timestamp = formations["last_modified_timestamp"];
+            } else {
+                var formations = null;
+                var last_modified_timestamp = 0;
+            }
+            
+            if (navigator.onLine) {
+                if (formations !== null){
+                    draw_formation_table(formations["formations"]);
+                }
+                
+                var formations_request = new XMLHttpRequest();
+                formations_request.onreadystatechange = function () {
+                    if (formations_request.readyState === 4) {
+                        if (formations_request.responseText.substring(0,6) === "ERROR:") {
+                            alert(formations_request.responseText);
+                        } else if (formations_request.status === 200 && formations_request.responseText !== "NO_UPDATES_AVAILABLE") {
+                            formations = {formations : JSON.parse(formations_request.responseText)};
+                            
+                            formations["railroad_id"] = railroad_id;
+                            
+                            var last_modified_date = new Date(formations_request.getResponseHeader("last-modified"));
+                            formations["last_modified_timestamp"] = Math.floor(last_modified_date.getTime() / 1000);
+                            
+                            var transaction = open_request.result.transaction("formations", "readwrite");
+                            
+                            var formations_store = transaction.objectStore("formations");
+                            formations_store.put(formations);
+                        }
+                        
+                        draw_formation_table(formations["formations"]);
+                    }
+                };
+                
+                formations_request.open("POST", "api/formations.php", true);
+                formations_request.setRequestHeader("Content-Type","application/x-www-form-urlencoded;charset=UTF-8");
+                formations_request.timeout = 5000;
+                formations_request.send("railroad_id=" + railroad_id + "&last_modified_timestamp=" + last_modified_timestamp);
+            } else {
+                draw_formation_table(formations["formations"]);
+            }
+        }
+    };
+}
+
+
+function get_icon (formation_name) {
+    for (var cnt = 0; cnt < train_icons["icons"].length; cnt++) {
+        if (train_icons["icons"][cnt]["regexp"].test(formation_name)) {
+            return train_icons["icons"][cnt]["icon"];
+        }
+    }
+    
+    return UNYOHUB_UNKNOWN_TRAIN_ICON;
+}
+
+
+function draw_formation_table (formations) {
+    if (formations === null){
+        alert("編成表が取得できません");
+        return;
+    }
+    
+    var buf = ""
+    var keys = Object.keys(formations);
+    for (var cnt = 0; cnt < keys.length; cnt++) {
+        buf += "<h3>" + escape_html(keys[cnt]) + "</h3>";
+        
+        var keys_2 = Object.keys(formations[keys[cnt]]);
+        for (var cnt_2 = 0; cnt_2 < keys_2.length; cnt_2++){
+            buf += "<img src='" + get_icon(keys_2[cnt_2]) + "' alt='' class='train_icon'>";
+            
+            buf += escape_html(keys_2[cnt_2]);
+            
+            for (var cnt_3 = 0; cnt_3 < formations[keys[cnt]][keys_2[cnt_2]]["cars"].length; cnt_3++) {
+                buf += escape_html(formations[keys[cnt]][keys_2[cnt_2]]["cars"][cnt_3]);
+            }
+            
+            buf += "<br>";
+        }
+        
+        buf += "<br>";
+    }
+    
+    document.getElementById("formation_table_area").innerHTML = buf;
 }
 
 
