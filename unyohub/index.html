@@ -563,6 +563,10 @@ button {
         <input type="checkbox" id="dark_mode_check" onchange="change_config();"><label for="dark_mode_check">ダークモード</label>
         <h3>運用情報の自動更新間隔</h3>
         <input type="number" id="refresh_interval" min="5" max="60" onchange="change_config();">分ごと<br>
+        <h3>運用情報のキャッシュ保管日数</h3>
+        <input type="number" id="operation_data_cache_period" min="2" max="14" onchange="change_config();">日前のデータまで<br>
+        <br>
+        <div style="text-align: right;"><a href="javascript:void(0)" onclick="reset_config_value();">デフォルト値に戻す</a></div>
         <br>
         <span style="color: #666666;">変更内容は自動で保存されます</span>
     </div>
@@ -593,7 +597,8 @@ function get_default_config () {
 {
     "guest_id" : null,
     "dark_mode" : false,
-    "refresh_interval" : 30
+    "refresh_interval" : 30,
+    "operation_data_cache_period" : 7
 }
 */}.toString().split("\n").slice(1,-1).join("\n");
 }
@@ -612,6 +617,29 @@ var config = new Object();
 function save_config () {
     localStorage.setItem("unyohub_config", JSON.stringify(config));
 }
+
+
+(function () {
+    var open_request = indexedDB.open("unyohub_caches", UNYOHUB_INDEXEDDB_VERSION);
+    
+    open_request.onerror = function () {
+        alert("ご利用のブラウザではIndexedDBが使用できないため" + UNYOHUB_APP_NAME + "は正常に動作できません");
+    };
+    
+    open_request.onupgradeneeded = function () {
+        var db = open_request.result;
+        
+        db.createObjectStore("railroads", {keyPath : "railroad_id"});
+        db.createObjectStore("train_icons", {keyPath : "railroad_id"});
+        db.createObjectStore("formations", {keyPath : "railroad_id"});
+        db.createObjectStore("operations", {keyPath : ["railroad_id", "operation_table"]});
+        db.createObjectStore("operation_groups", {keyPath : ["railroad_id", "operation_table"]});
+        db.createObjectStore("line_operations", {keyPath : ["railroad_id", "line_id", "operation_table"]});
+        db.createObjectStore("timetables", {keyPath : ["railroad_id", "line_id", "operation_table"]});
+        var operation_data_store = db.createObjectStore("operation_data", {keyPath : ["railroad_id", "operation_date"]});
+        operation_data_store.createIndex("idx_od1", {keyPath : "operation_date"});
+    };
+}());
 
 
 function switch_dark_mode () {
@@ -697,7 +725,7 @@ function splash_screen_print_buttons (railroads) {
     
     var keys = Object.keys(railroads);
     for (var cnt = 0; cnt < keys.length; cnt++) {
-        buttons_html += "<button type='button' class='wide_button'>" + escape_html(railroads[keys[cnt]]["railroad_name"]) + "</button>";
+        buttons_html += "<button type='button' class='wide_button' onclick='select_railroad(\"" + keys[cnt] + "\");'>" + escape_html(railroads[keys[cnt]]["railroad_name"]) + "</button>";
     }
     
     splash_screen_buttons_elm.innerHTML = buttons_html;
@@ -777,19 +805,89 @@ window.onload = function () {
 }
 
 
+var railroad_info;
+
+function select_railroad (railroad_id) {
+    var open_request = indexedDB.open("unyohub_caches", UNYOHUB_INDEXEDDB_VERSION);
+    
+    open_request.onsuccess = function () {
+        var transaction = open_request.result.transaction("railroads", "readonly");
+        
+        var railroads_store = transaction.objectStore("railroads");
+        var get_request = railroads_store.get(railroad_id);
+        
+        get_request.onsuccess = function (evt) {
+            if (evt.target.result !== undefined) {
+                var railroad_info_next = evt.target.result;
+                var last_modified_timestamp = railroad_info_next["last_modified_timestamp"];
+            } else {
+                var railroad_info_next = null;
+                var last_modified_timestamp = 0;
+            }
+            
+            var railroad_info_request = new XMLHttpRequest();
+            railroad_info_request.onreadystatechange = function () {
+                if (railroad_info_request.readyState === 4) {
+                    if (railroad_info_request.responseText.substring(0,6) === "ERROR:") {
+                        alert(railroad_info_request.responseText);
+                    } else if (railroad_info_request.status === 200 && railroad_info_request.responseText !== "NO_UPDATES_AVAILABLE") {
+                        railroad_info_next = JSON.parse(railroad_info_request.responseText);
+                        
+                        railroad_info_next["railroad_id"] = railroad_id;
+                        
+                        var last_modified_date = new Date(railroad_info_request.getResponseHeader("last-modified"));
+                        railroad_info_next["last_modified_timestamp"] = Math.floor(last_modified_date.getTime() / 1000);
+                        
+                        var transaction = open_request.result.transaction("railroads", "readwrite");
+                        
+                        var railroads_store = transaction.objectStore("railroads");
+                        railroads_store.put(railroad_info_next);
+                    }
+                    
+                    switch_railroad(railroad_info_next);
+                }
+            };
+            
+            railroad_info_request.ontimeout = function () {
+                switch_railroad(railroad_info_next);
+            }
+            
+            railroad_info_request.open("POST", "api/railroad_info.php", true);
+            railroad_info_request.setRequestHeader("Content-Type","application/x-www-form-urlencoded;charset=UTF-8");
+            railroad_info_request.timeout = 3000;
+            railroad_info_request.send("railroad_id=" + railroad_id + "&last_modified_timestamp=" + last_modified_timestamp);
+        }
+    };
+}
+
+function switch_railroad (railroad_info_next) {
+    if (railroad_info_next === null){
+        alert("路線系統情報が取得できません");
+        return;
+    }
+    
+    railroad_info = railroad_info_next;
+    
+    splash_screen_elm.style.display = "none";
+}
+
+
 var dark_mode_check_elm = document.getElementById("dark_mode_check");
 var refresh_interval_elm = document.getElementById("refresh_interval");
+var operation_data_cache_period_elm = document.getElementById("operation_data_cache_period");
 
 function edit_config () {
     open_popup("config_popup");
     
     dark_mode_check_elm.checked = config["dark_mode"];
     refresh_interval_elm.value = config["refresh_interval"];
+    operation_data_cache_period_elm.value = config["operation_data_cache_period"];
 }
 
 function change_config () {
     config["dark_mode"] = dark_mode_check_elm.checked;
     config["refresh_interval"] = refresh_interval_elm.value;
+    config["operation_data_cache_period"] = operation_data_cache_period_elm.value;
     
     switch_dark_mode();
     
@@ -802,6 +900,7 @@ function reset_config_value () {
         
         dark_mode_check_elm.checked = dafault_config["dark_mode"];
         refresh_interval_elm.value = dafault_config["refresh_interval"];
+        operation_data_cache_period_elm.value = dafault_config["operation_data_cache_period"];
         
         change_config();
     }
