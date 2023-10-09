@@ -41,12 +41,12 @@ html, body {
 header {
     position: relative;
     
-    height: 50px;
+    height: 40px;
     
     background-color: #f7f7f7;
     
-    line-height: 50px;
-    font-size: 20px;
+    line-height: 40px;
+    font-size: 18px;
     
     box-shadow: 0 0 3px 3px rgba(0,0,0,0.2);
     
@@ -58,13 +58,14 @@ header {
 }
 
 .railroad_select_mode {
-    background-image: url(data:image/webp;base64,UklGRpoAAABXRUJQVlA4TI4AAAAvGIADEE9AIAgRY/0fYAiZMMQIq38AB5kwxAirfwAHgQSE/HDNeH4QwLYjGIbCbZmE/wVGsW21eenZ0gQggVUmBr4OJKQaaMr5Dw0R/VfYtg3SQemT/IMm/5A4EyTOwZwamzODGCIxcc7ePKr35gEKEQOFmDURa2IGFpNWkyYAmgyxqqkH1aiMVBjAdusD);
+    background-image: url(data:image/webp;base64,UklGRpoAAABXRUJQVlA4TI0AAAAvJ8AFEC8gECCo9V9gQyBAUOu/gECAoNZ/ASEBQfPY/QCo/gP8U4er2LadZlMEYIL/lkiIgHb9awmce46FiP6rcds26sVBW9BXsM0AAABI+778krZVeaR9qwJ3e9dFsNalLoI1IgRBSKIEG8GO1WB1GC1Gj5gm+byd/hMPdH3W7mkGmgkxImbE+HfMTAAA);
     background-repeat: no-repeat;
-    background-position: calc(100vw - 80px) 18px;
+    background-size: 20px 12px;
+    background-position: calc(100vw - 80px) 15px;
 }
 
 .dark_mode .railroad_select_mode {
-    background-image: url(data:image/webp;base64,UklGRqQAAABXRUJQVlA4TJgAAAAvGIADEE9AIGmzv3+3JzqrQSBps79/tyc6I5C02d+/2xOdKWQkifmm0fwpnuXfYxOAbJv/qKFm2wUOACDJg20kSU6GegsPj8L7KBCBvArgA0AlcKlzSwwR/VfYtg3SQemTeCATD6wHgfXQ0uwxlTRaErLUQ6xpdX1NK3wkDB8pexL2pAxnep/0DoCnJOxq6ZGan7EfBqbFHw==);
+    background-image: url(data:image/webp;base64,UklGRpoAAABXRUJQVlA4TI4AAAAvJ8AFEC8gECD4X9OkQ0BC8P+aTRKQEPy/ZpOEBATNY/cDoFrtVw0YrmLbdppNEYAJ/lsiIQLa9a8lcO45FiL6r8Zt26gXB21BX8E2AwAAIO378kvaVuWR9q0K3O1dF8Fal7oI1ogQBCGJEmwEO1aD1WG0GD1imuTzdvpPPND1WbunGWgmxIiYEePfMTMB);
 }
 
 #app_name {
@@ -82,14 +83,14 @@ header {
     left: 0;
     
     width: calc(100vw - 50px);
-    height: 50px;
+    height: 40px;
     
     border: none;
     
     background-color: transparent;
     
-    line-height: 50px;
-    font-size: 20px;
+    line-height: 40px;
+    font-size: 18px;
     text-indent: 10px;
     
     appearance: none;
@@ -104,18 +105,19 @@ header {
     right: 0;
     
     width: 50px;
-    height: 50px;
+    height: 40px;
     
     border: none;
     border-radius: 0;
     padding: 0;
     
-    background-image: url(data:image/webp;base64,UklGRjQAAABXRUJQVlA4TCgAAAAvMUAMEA8wZmM2ZvMf8FDUthFT/pjXtzcARPR/AvAt07rNtG4zrXcB);
+    background-image: url(data:image/webp;base64,UklGRjYAAABXRUJQVlA4TCoAAAAvY8ATEA8wZmM2ZvMf8DAUwMyaqa7ZFcC+Ef2fgHupQQleaVCCVxqU4Kc=);
+    background-size: 50px 40px;
     background-color: transparent;
 }
 
 .dark_mode #menu_button {
-    background-image: url(data:image/webp;base64,UklGRjQAAABXRUJQVlA4TCgAAAAvMUAMEA8wzMM8zPMf8FDUthFT/pjXtzcARPR/AvAt07rNtG4zrXcB);
+    background-image: url(data:image/webp;base64,UklGRjYAAABXRUJQVlA4TCoAAAAvY8ATEA8wzMM8zPMf8DAUwMyaqa7ZFcC+Ef2fgHupQQleaVCCVxqU4Kc=);
 }
 
 .menu_button_active {
@@ -128,7 +130,7 @@ header {
 
 #menu {
     position: absolute;
-    top: 50px;
+    top: 40px;
     right: 0;
     
     width: 250px;
@@ -309,7 +311,7 @@ article {
     display: none;
     
     width: calc(100vw - 10px);
-    height: calc(100vh - 220px);
+    height: calc(100vh - 210px);
     
     padding: 10px 5px 60px 5px;
     
@@ -335,6 +337,10 @@ footer {
     box-shadow: 0 0 2px 2px rgba(0,0,0,0.2);
     
     z-index: 2;
+}
+
+.dark_mode footer {
+    background-color: #181818;
 }
 
 .popup {
@@ -655,12 +661,12 @@ button {
         <div id="splash_screen_login_status">サーバに接続しています...</div>
         <div id="splash_screen_buttons">しばらくお待ちください</div>
     </div>
-    <div id="tab_area"><button type="button" onclick="change_mode(0);" style="background-color: #dd55ff;">運用データ</button><button type="button" onclick="change_mode(1);" style="background-color: #ffdd55;">走行位置</button><button type="button" onclick="change_mode(2);" style="background-color: #55ffdd;">時刻表</button><button type="button" onclick="change_mode(3);" style="background-color: #ff55dd;">運用表</button><button type="button" onclick="change_mode(4);" style="background-color: #ddff55;">編成表</button></div>
-    <article></article>
+    <div id="tab_area"><button type="button" onclick="change_mode(0);" style="background-color: #dd55ff;">走行位置</button><button type="button" onclick="change_mode(1);" style="background-color: #ffdd55;">時刻表</button><button type="button" onclick="change_mode(2);" style="background-color: #55ffdd;">運用データ</button><button type="button" onclick="change_mode(3);" style="background-color: #ff55dd;">編成表</button><button type="button" onclick="change_mode(4);" style="background-color: #ddff55;">運用表</button></div>
     <article></article>
     <article></article>
     <article></article>
     <article id="formation_table_area"></article>
+    <article></article>
     <footer></footer>
     <div class="popup" id="config_popup">
         <button type="button" class="popup_close_button" onclick="popup_close();"></button>
@@ -1078,7 +1084,7 @@ function change_mode (num) {
     }
     
     switch (num) {
-        case 4:
+        case 3:
             formation_table_mode();
             break;
     }
