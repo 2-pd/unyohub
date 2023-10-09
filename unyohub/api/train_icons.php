@@ -4,10 +4,10 @@ if (!isset($_POST["railroad_id"], $_POST["last_modified_timestamp"])) {
     exit;
 }
 
-$path = "../data/".basename($_POST["railroad_id"])."/railroad_info.json";
+$path = "../data/".basename($_POST["railroad_id"])."/train_icons.json";
 
 if (!file_exists($path)) {
-    print "ERROR: 路線系統データがありません";
+    print "ERROR: アイコンデータがありません";
     exit;
 }
 
