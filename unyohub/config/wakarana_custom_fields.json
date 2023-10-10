@@ -1,0 +1,7 @@
+{
+    "website_url" : {
+        "maximum_length" : 500,
+        "records_per_user" : 1,
+        "allow_nonunique_value" : true
+    }
+}
