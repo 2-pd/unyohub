@@ -19,7 +19,8 @@ print "ユーザーロールと管理者ユーザーを作成しています...\
 
 $wakarana = new wakarana($wakarana_base_dir);
 
-$wakarana->set_permission_value("moderator","moderate");
+$wakarana->set_permission_value(WAKARANA_ADMIN_ROLE, "administrate");
+$wakarana->set_permission_value("moderator", "moderate");
 
 $password = wakarana::create_random_password();
 $admin_user = $wakarana->add_user($admin_user_id, $password, "管理人");

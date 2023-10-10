@@ -17,7 +17,10 @@
 {  
     "user_id" : ユーザーID,  
     "user_name" : ハンドルネーム,  
-    "role" : ロール(「ADMIN」、「MODERATOR」、「BASE」のいずれか)  
+    "role" : ロール(「ADMIN」、「MODERATOR」、「BASE」のいずれか),  
+    "created" : YYYY-MM-DD HH:MM:SS形式のユーザー登録日時,  
+    "email_address" : メールアドレス,  
+    "website_url" : ユーザーのwebサイトのURL  
 }  
   
 **ログインしていない場合** :  
@@ -39,7 +42,10 @@
 {  
     "user_id" : ユーザーID,  
     "user_name" : ハンドルネーム,  
-    "role" : ロール(「ADMIN」、「MODERATOR」、「BASE」のいずれか)  
+    "role" : ロール(「ADMIN」、「MODERATOR」、「BASE」のいずれか),  
+    "created" : YYYY-MM-DD HH:MM:SS形式のユーザー登録日時,  
+    "email_address" : メールアドレス,  
+    "website_url" : ユーザーのwebサイトのURL  
 }  
   
 **登録に失敗した場合** :  
@@ -58,7 +64,10 @@
 {  
     "user_id" : ユーザーID,  
     "user_name" : ハンドルネーム,  
-    "role" : ロール(「ADMIN」、「MODERATOR」、「BASE」のいずれか)  
+    "role" : ロール(「ADMIN」、「MODERATOR」、「BASE」のいずれか),  
+    "created" : YYYY-MM-DD HH:MM:SS形式のユーザー登録日時,  
+    "email_address" : メールアドレス,  
+    "website_url" : ユーザーのwebサイトのURL  
 }  
   
 **ログインに失敗した場合** :  

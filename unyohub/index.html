@@ -202,9 +202,9 @@ header {
     top: 0;
     
     width: 100%;
-    height: calc(100vh - 70px);
+    height: calc(100vh - 60px);
     
-    padding-top: 70px;
+    padding-top: 60px;
     
     background-color: #ffffff;
     
@@ -249,6 +249,14 @@ header {
     position: relative;
     
     z-index: 4;
+}
+
+#splash_screen_login_status {
+    height: 70px;
+}
+
+#splash_screen_login_status b {
+    font-size: 20px;
 }
 
 #tab_area {
@@ -401,6 +409,10 @@ h2 {
     margin: 10px 0;
 }
 
+h4 {
+    margin-bottom: 10px;
+}
+
 a {
     color: #999999;
 }
@@ -451,7 +463,7 @@ a {
     padding: 5px 10px;
 }
 
-#popup_screen {
+#popup_screen, #wait_screen {
     display: none;
     
     position: fixed;
@@ -515,6 +527,7 @@ a {
     
     line-height: 24px;
     font-size: large;
+    text-align: center;
 }
 
 .square_popup input[type="number"] {
@@ -545,9 +558,20 @@ a {
     right: calc(50% - 150px);
 }
 
-input[type="text"], input[type="number"], input[type="search"] {
+#wait_screen {
+    background-color: rgba(0,0,0,0.9);
+    
+    line-height: 100vh;
+    font-size: 20px;
+    color: #ffffff;
+    text-align: center;
+    
+    z-index: 300 !important;
+}
+
+input[type="text"], input[type="number"], input[type="password"], input[type="search"] {
     border: none;
-    border-bottom: 1px solid #eeeeee;
+    border-bottom: 2px solid #dddddd;
 }
 
 .dark_mode input[type="text"], .dark_mode input[type="number"], .dark_mode input[type="search"] {
@@ -667,8 +691,9 @@ button {
 </head>
 <body>
     <header><span id="app_name"></span><select id="railroad_select" onchange="select_railroad(this.value);"></select><button type="button" id="menu_button" onclick="menu_click();"></button><div id="menu">
-        <button type="button" onclick="edit_config();">各種設定</button>
+        <div id="menu_login_status"></div>
         <hr>
+        <button type="button" onclick="edit_config();">各種設定</button>
         <button type="button" onclick="open_square_popup('about_popup');">このアプリについて</button>
     </div></header>
     <div id="splash_screen">
@@ -697,16 +722,25 @@ button {
     </div>
     <div id="popup_screen">
         <div id="popup_screen_blank_area" onclick="close_square_popup();"></div>
+        <div class="square_popup" id="login_popup">
+            <button type="button" class="popup_close_button" onclick="close_square_popup();"></button>
+            <h4>IDまたはメールアドレス</h4>
+            <input type="text" id="login_user_id">
+            <h4>パスワード</h4>
+            <input type="password" id="login_password">
+            <br>
+            <br>
+            <button type="button" class="wide_button" onclick="challenge_login();">ログイン</button>
+        </div>
         <div class="square_popup" id="about_popup">
             <button type="button" class="popup_close_button" onclick="close_square_popup();"></button>
-            <div style="text-align: center;">
-                <img src="apple-touch-icon.webp" alt="" id="unyo_icon">
-                <b style="font-size: 20px;"><script> document.write(UNYOHUB_APP_NAME + " " + UNYOHUB_VERSION); </script></b>
-            </div>
+            <img src="apple-touch-icon.webp" alt="" id="unyo_icon">
+            <b style="font-size: 20px;"><script> document.write(UNYOHUB_APP_NAME + " " + UNYOHUB_VERSION); </script></b>
             <div style="padding: 10px; color: #999999; font-size: small;"><script> document.write("<a href='" + UNYOHUB_LICENSE_URL + "' target='_blank'>" + UNYOHUB_LICENSE_TEXT + "</a>"); </script></div>
             <button type="button" class="wide_button" onclick="window.open('README.html');">このアプリの使い方</button>
         </div>
     </div>
+    <div id="wait_screen">しばらくお待ちください...</div>
 <script>
 document.getElementsByTagName("title")[0].innerText = UNYOHUB_APP_NAME;
 document.getElementById("app_name").innerText = UNYOHUB_APP_NAME;
@@ -819,6 +853,7 @@ function popup_close() {
 }
 
 var screen_elm = document.getElementById("popup_screen");
+var wait_screen_elm = document.getElementById("wait_screen");
 
 function open_square_popup (id) {
     screen_elm.style.display = "block";
@@ -840,12 +875,32 @@ function close_square_popup () {
     menu_click(true);
 }
 
+function open_wait_screen (id) {
+    wait_screen_elm.style.display = "block";
+    screen_elm.style.backgroundColor = "transparent";
+}
+
+function close_wait_screen (id) {
+    wait_screen_elm.style.display = "none";
+    screen_elm.style.backgroundColor = "";
+}
+
 
 var user_data = null;
 
+function update_user_data (user_data_next = null) {
+    user_data = user_data_next;
+    
+    if (user_data !== null) {
+        splash_screen_login_status_elm.innerHTML = "<b>" + escape_html(user_data["user_name"]) + "</b> さんとしてログインしています<br><a href='javascript:void(0)' onclick='user_logout();'>ログアウト</a>";
+    } else {
+        splash_screen_login_status_elm.innerHTML = "<b>ログインしていません</b><br><a href='javascript:void(0)' onclick='open_square_popup(\"login_popup\");'>ログイン</a>　新規登録";
+    }
+}
+
 
 var splash_screen_elm = document.getElementById("splash_screen");
-var splash_screen_login_status_elm = document.getElementById("splash_screen_login_status");//使用回数によっては削除検討
+var splash_screen_login_status_elm = document.getElementById("splash_screen_login_status");
 
 function update_railroad_list (railroads) {
     var select_html = "";
@@ -882,19 +937,18 @@ window.onload = function () {
             if (check_logged_in_request.readyState === 4) {
                 if (check_logged_in_request.status === 200) {
                     if (check_logged_in_request.responseText !== "NOT_LOGGED_IN"){
-                        user_data = JSON.parse(check_logged_in_request.responseText);
-                        splash_screen_login_status.innerText = escape_html(user_data["user_name"]) + " さんとしてログインしています";
+                        update_user_data(JSON.parse(check_logged_in_request.responseText));
                     } else {
-                        splash_screen_login_status.innerText = "ログインしていません<br>ログイン　新規登録";
+                        update_user_data();
                     }
                 } else {
-                    splash_screen_login_status.innerText = "【!】ログイン状態の確認に失敗しました";
+                    splash_screen_login_status_elm.innerText = "【!】ログイン状態の確認に失敗しました";
                 }
             }
         };
         
         check_logged_in_request.ontimeout = function () {
-            splash_screen_login_status.innerText = "【!】ネットワークが不安定です";
+            splash_screen_login_status_elm.innerText = "【!】ネットワークが不安定です";
         }
         
         check_logged_in_request.open("POST", "api/check_logged_in.php", true);
@@ -929,7 +983,7 @@ window.onload = function () {
         railroads_request.timeout = 3000;
         railroads_request.send("last_modified_timestamp=" + common_caches["last_modified_timestamp"]);
     } else {
-        splash_screen_login_status.innerText = "端末がオフラインです";
+        splash_screen_login_status_elm.innerHTML = "<b>端末がオフラインです</b><br>前回アクセス時のデータを表示します";
         update_railroad_list(common_caches["railroads"]);
     }
 }
@@ -1204,6 +1258,79 @@ function draw_formation_table (formations) {
     }
     
     document.getElementById("formation_table_area").innerHTML = buf;
+}
+
+
+function challenge_login () {
+    open_wait_screen();
+    
+    var user_id = document.getElementById("login_user_id").value;
+    var password = document.getElementById("login_password").value;
+    
+    var login_request = new XMLHttpRequest();
+    login_request.onreadystatechange = function () {
+        if (login_request.readyState === 4) {
+            close_wait_screen();
+            
+            if (login_request.status === 200) {
+                if (login_request.responseText.substring(0,6) === "ERROR:"){
+                    alert(login_request.responseText);
+                } else {
+                    alert("ログインしました");
+                    
+                    update_user_data(JSON.parse(login_request.responseText));
+                    close_square_popup();
+                }
+            } else {
+                alert("【!】サーバへのアクセスに失敗しました");
+            }
+        }
+    };
+    
+    login_request.ontimeout = function () {
+        close_wait_screen();
+        
+        alert("【!】ネットワークが不安定です");
+    }
+    
+    login_request.open("POST", "api/login.php", true);
+    login_request.setRequestHeader("Content-Type","application/x-www-form-urlencoded;charset=UTF-8");
+    login_request.timeout = 5000;
+    login_request.send("user_id=" + user_id + "&password=" + password);
+}
+
+function user_logout () {
+    open_wait_screen();
+    
+    var logout_request = new XMLHttpRequest();
+    logout_request.onreadystatechange = function () {
+        if (logout_request.readyState === 4) {
+            close_wait_screen();
+            
+            if (logout_request.status === 200) {
+                if (logout_request.responseText.substring(0,6) === "ERROR:"){
+                    alert(logout_request.responseText);
+                } else {
+                    alert("ログアウトしました");
+                    
+                    update_user_data();
+                    close_square_popup();
+                }
+            } else {
+                alert("【!】サーバへのアクセスに失敗しました");
+            }
+        }
+    };
+    
+    logout_request.ontimeout = function () {
+        close_wait_screen();
+        
+        alert("【!】ネットワークが不安定です");
+    }
+    
+    logout_request.open("POST", "api/logout.php", true);
+    logout_request.timeout = 5000;
+    logout_request.send();
 }
 
 
