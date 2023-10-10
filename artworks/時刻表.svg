@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!-- Created with Inkscape (http://www.inkscape.org/) -->
+
+<svg
+   width="80"
+   height="80"
+   viewBox="0 0 21.166666 21.166667"
+   version="1.1"
+   id="svg5"
+   inkscape:version="1.3 (0e150ed6c4, 2023-07-21)"
+   sodipodi:docname="時刻表.svg"
+   inkscape:export-filename="時刻表.webp"
+   inkscape:export-xdpi="96"
+   inkscape:export-ydpi="96"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:svg="http://www.w3.org/2000/svg"
+   xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+   xmlns:cc="http://creativecommons.org/ns#">
+  <sodipodi:namedview
+     id="namedview7"
+     pagecolor="#ffffff"
+     bordercolor="#666666"
+     borderopacity="1.0"
+     inkscape:pageshadow="2"
+     inkscape:pageopacity="0.0"
+     inkscape:pagecheckerboard="false"
+     inkscape:document-units="px"
+     showgrid="false"
+     units="px"
+     inkscape:zoom="5.8297418"
+     inkscape:cx="35.336042"
+     inkscape:cy="50.087981"
+     inkscape:window-width="1920"
+     inkscape:window-height="1052"
+     inkscape:window-x="1920"
+     inkscape:window-y="0"
+     inkscape:window-maximized="1"
+     inkscape:current-layer="layer1"
+     inkscape:showpageshadow="2"
+     inkscape:deskcolor="#d1d1d1" />
+  <defs
+     id="defs2" />
+  <g
+     inkscape:label="レイヤー 1"
+     inkscape:groupmode="layer"
+     id="layer1">
+    <path
+       id="path1"
+       style="fill:#ffdd55;fill-opacity:0.75;stroke-width:2.64583;stroke-linecap:round;stroke-linejoin:round;paint-order:stroke fill markers"
+       d="M 10.583333,0 C 4.7383196,0 0,4.7383196 0,10.583333 c 0,5.845013 4.7383196,10.583333 10.583333,10.583333 5.845013,0 10.583333,-4.73832 10.583333,-10.583333 C 21.166666,4.7383196 16.428346,0 10.583333,0 Z m 0,0.52916666 c 0.365314,-3.8e-7 0.661459,0.29614472 0.661459,0.66145834 0,0.3653136 -0.296145,0.6614587 -0.661459,0.6614583 -0.365313,-1e-7 -0.6614581,-0.296145 -0.6614581,-0.6614583 0,-0.36531327 0.2961451,-0.66145822 0.6614581,-0.66145834 z m 5.17e-4,2.44686664 c 0.54797,1.1e-6 0.992187,0.4442179 0.992188,0.9921875 v 5.6234417 h 4.299491 c 0.547969,1.7e-6 0.992186,0.4442185 0.992187,0.9921875 -1e-6,0.547969 -0.444218,0.992186 -0.992187,0.992188 H 10.58385 C 10.035903,11.575982 9.5917184,11.131797 9.5916625,10.58385 V 3.9682208 C 9.5916639,3.4202514 10.035881,2.9760347 10.58385,2.9760333 Z M 1.190625,9.9218749 c 0.3653133,0 0.6614582,0.2961451 0.6614583,0.6614581 4e-7,0.365314 -0.2961447,0.661459 -0.6614583,0.661459 -0.36531362,0 -0.66145872,-0.296145 -0.66145834,-0.661459 1.2e-7,-0.365313 0.29614507,-0.6614581 0.66145834,-0.6614581 z m 18.785417,0 c 0.365313,2e-7 0.661458,0.2961451 0.661458,0.6614581 0,0.365313 -0.296145,0.661459 -0.661458,0.661459 -0.365314,0 -0.661459,-0.296145 -0.661459,-0.661459 0,-0.365314 0.296145,-0.6614585 0.661459,-0.6614581 z m -9.392709,9.3927081 c 0.365314,0 0.661459,0.296145 0.661459,0.661459 0,0.365313 -0.296146,0.661458 -0.661459,0.661458 -0.365313,0 -0.6614579,-0.296145 -0.6614581,-0.661458 -4e-7,-0.365314 0.2961441,-0.661459 0.6614581,-0.661459 z"
+       sodipodi:nodetypes="ssssssssssccccscccccsssssssssssssss" />
+  </g>
+  <metadata
+     id="metadata824">
+    <rdf:RDF>
+      <cc:Work
+         rdf:about="">
+        <cc:license
+           rdf:resource="http://creativecommons.org/publicdomain/zero/1.0/" />
+      </cc:Work>
+      <cc:License
+         rdf:about="http://creativecommons.org/publicdomain/zero/1.0/">
+        <cc:permits
+           rdf:resource="http://creativecommons.org/ns#Reproduction" />
+        <cc:permits
+           rdf:resource="http://creativecommons.org/ns#Distribution" />
+        <cc:permits
+           rdf:resource="http://creativecommons.org/ns#DerivativeWorks" />
+      </cc:License>
+    </rdf:RDF>
+  </metadata>
+</svg>
