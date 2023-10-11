@@ -17,11 +17,10 @@ _/_/_/_/ データベース _/_/_/_/
   `operation_number` TEXT NOT NULL 運用番号(アルファベットなどを含む場合があるため文字列型)
   `starting_location` TEXT 出庫場所(車庫または駅番線)
   `terminal_location` TEXT 入庫場所(車庫または駅番線)
-  `comment` TEXT コメント
 
   PRIMARY KEY(`operation_table`,`operation_number`)
   INDEX `unyohub_idx_o1`(`starting_location`)
-  INDEX `unyohub_idx_o2`(`ending_location`)
+  INDEX `unyohub_idx_o2`(`terminal_location`)
 
 
 `unyohub_trains` 列車データ(区間組成単位)
@@ -33,8 +32,8 @@ _/_/_/_/ データベース _/_/_/_/
   `position_rear` INTEGER NOT NULL 担当位置終了両数(進行方向から数えて何両目までがその運用か)
   `direction` INTEGER NOT NULL 上り列車か下り列車か(上り列車なら「1」、下り列車なら「0」)
 
-  PRIMARY KEY(`operation_table`,`operation_number`,`train_number`,`departure_time`,`position_forward`)
-  INDEX `unyohub_idx_t1`(`operation_table`,`train_number`,`departure_time`,`position_forward`)
+  PRIMARY KEY(`operation_table`,`operation_number`,`train_number`,`first_departure_time`,`position_forward`)
+  INDEX `unyohub_idx_t1`(`operation_table`,`train_number`,`first_departure_time`,`position_forward`)
 
 
 `unyohub_data` ユーザー投稿データ
@@ -66,6 +65,6 @@ _/_/_/_/ データベース _/_/_/_/
   `formations` TEXT 充当組成(複数編成併結による運用の場合も「+」で区切って1レコードに格納)
   `updated_datetime` TEXT 「YYYY-MM-DD HH:MM:SS」形式の情報投稿日時
 
-  PRIMARY KEY(`operation_date`,`operation_number`,`coupling_position`)
-  INDEX `unyohub_idx_c1`(`formation`,`operation_date`)
+  PRIMARY KEY(`operation_date`,`operation_number`)
+  INDEX `unyohub_idx_c1`(`formations`,`operation_date`)
   INDEX `unyohub_idx_c2`(`operation_date`,`updated_datetime`)
