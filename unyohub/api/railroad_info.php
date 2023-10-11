@@ -17,5 +17,11 @@ if (intval($_POST["last_modified_timestamp"]) >= $last_modified) {
     print "NO_UPDATES_AVAILABLE";
 } else {
     header("Last-Modified: ".gmdate("D, d M Y H:i:s", $last_modified)." GMT");
-    readfile($path);
+    
+    if (!empty($_SERVER["HTTP_ACCEPT_ENCODING"]) && strpos($_SERVER["HTTP_ACCEPT_ENCODING"], "gzip") !== FALSE) {
+        header("Content-Encoding: gzip");
+        print gzencode(file_get_contents($path));
+    } else {
+        readfile($path);
+    }
 }
