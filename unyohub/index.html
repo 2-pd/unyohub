@@ -144,6 +144,8 @@ header {
     
     overflow-y: scroll;
     
+    z-index: 7;
+    
     transition-duration: 0.25s;
     transition-property: all;
 }
@@ -516,9 +518,11 @@ a {
     
     top: 15px;
     left: 15px;
+    
+    overflow: scroll;
 }
 
-.square_popup input {
+.square_popup input, .preview_popup input {
     width: 235px;
     
     margin: 0 2px 0 5px;
@@ -530,7 +534,7 @@ a {
     text-align: center;
 }
 
-.square_popup input[type="number"] {
+.square_popup input[type="number"], .preview_popup input[type="number"] {
     width: 60px;
     
     text-align: center;
@@ -556,6 +560,32 @@ a {
 .square_popup .popup_close_button {
     top: calc(50% - 150px);
     right: calc(50% - 150px);
+}
+
+.preview_popup .popup_close_button {
+    top: 20px;
+    right: 20px;
+}
+
+.informational_text {
+    padding: 0 10px 10px 15px;
+    
+    color: #666666;
+    text-align: left;
+}
+
+#captcha_info {
+    margin-top: -30px;
+}
+
+#captcha_area {
+    margin-bottom: 30px;
+}
+
+#captcha_area button {
+    min-width: 0 !important;
+    
+    border-radius: 0;
 }
 
 #wait_screen {
@@ -597,7 +627,7 @@ input[type="text"], input[type="number"], input[type="password"], input[type="se
     border-bottom: 2px solid #dddddd;
 }
 
-.dark_mode input[type="text"], .dark_mode input[type="number"], .dark_mode input[type="search"] {
+.dark_mode input[type="text"], .dark_mode input[type="number"], .dark_mode input[type="search"], .dark_mode input[type="password"], .dark_mode select {
     border-color: #333333;
     
     color: #ffffff
@@ -694,7 +724,7 @@ button {
 }
 
 .dark_mode button {
-    background-color: #101010;
+    background-color: rgba(16,16,16,0.75);
     
     border-color: #333333;
     
@@ -713,15 +743,16 @@ button {
 </style>
 </head>
 <body>
-    <header><span id="app_name"></span><select id="railroad_select" onchange="select_railroad(this.value);"></select><button type="button" id="menu_button" onclick="menu_click();"></button><div id="menu">
+    <header><span id="app_name"></span><select id="railroad_select" onchange="select_railroad(this.value);"></select><button type="button" id="menu_button" onclick="menu_click();"></button></header>
+    <div id="menu">
         <div id="menu_login_status"></div>
         <hr>
         <button type="button" onclick="edit_config();">各種設定</button>
         <button type="button" onclick="open_square_popup('about_popup');">このアプリについて</button>
-    </div></header>
+    </div>
     <div id="splash_screen">
         <div id="splash_screen_login_status">サーバに接続しています...</div>
-        <div id="splash_screen_buttons">しばらくお待ちください</div>
+        <div id="splash_screen_buttons" class="wait_icon"></div>
     </div>
     <div id="tab_area"><button type="button" onclick="change_mode(0);" style="background-image: url(data:image/webp;base64,UklGRi4CAABXRUJQVlA4TCICAAAvT8ATEEfDGpIkS9n7twoHeNxHcAL7aA0GbdsIcjf+HP95/K/z77CNJEVaUu8xPeaf0QXxzHjYswGl9Yt7CJDvUeyIb/SoS9xC0Q5Vp3DxWA20QniFi2VbMKzaAIgVi0dcBDWAGABggRAwQzAIwsPAwQDwMAAMYjjVoUNfAK2IUhhoGEOFPnUHLwpfUBAvdAONsiVFHGu06BQNqi5EKEUGhHAZEueMdkTa9dg/8YEDp3Pg8zqR7/Fda5xr+792CtiSJKlW9rrfi18X3J3B3d3dHf7/F3SnF16JM3si+j8B6k99v05otY4xngppdj2m5Knv3Mqk/baQta7kDWmYG7tRQivq25aU3E7Mp424GxqpFz1SNzP8aICnjTLqQ8tDOJ5K1zppccO25YNkqM2D510qKrnKNtGPm+yVkuKSD09EjpZI85JVhjaT9m5DAnP65m/NOCDGSzN2ObaNeJjmcC3YVc1m3ygxW3fDCYK8V7cRbN/hO8BVO0G3PLO9jBP44hPXBcHnuHrwurkG8Aa4BvHsfyOm8CxXP94yVy9eC9cq3hpXI94WVxlvg+sU74LrAK+KK4UX5QrhWS4ZQ5tU7I1oDt91J5Zr+eQUq6AAD7GOEZJYEYRbrBCCLCCNeiBakdoU5A7SDkYJ6Qwjg7SPkUKKYTwj3WH4Z3FmHQwJJ74k6XI1OiLul2GFTrKuNK6TKGN/nw460bFHK+a83iutb9YcMwE=); border-color: #dd55ff;">走行位置</button><button type="button" onclick="change_mode(1);" style="background-image: url(data:image/webp;base64,UklGRpADAABXRUJQVlA4TIQDAAAvT8ATEO/juJEkKYpq8N9S3rBnlxvz7ziSJEfJvj3Jj8A2/I/AAv4n2m1tu23DDxzDVi6dQ+0pPZ8nccuKNMQvBFIDX+EtbMKHl1/3d24YfkLubjz1heLIg2KDkkBXOHDw1UchRSE6EqXQPU8UKwU5OPkXi0gUUUQEGb/FkBeLcaiRT4vwT3+xL4zbD6fzeg8aPHRMr0Kc0JFABAVQaF0URgEvig4LLHTo0JGAg0TQBQEgMBoIaAkIgB1ANIqwkYqMUjYEVhCBFQEHqWApjgcQGmloPGnphi/DC0dvt34g0ba2442ef4KpbTeoObVt2+3//rXHSCZXn78f3wuI6P8EQHdPftnit9vNo6uro83b58W60l5YHIwv37ok7W6MlwxY4bTOXJPgcl9fwi/9YjrPMS1VfkPCTwCcrwJEtNkQMCk4ekiS8wCwJEZ0WB00Jv6TpB8BOF9liPYiZrT9J5WJzMxZUrmaYUDTERl9UaQrsEzG/wto6X4gC7+GNWTekpW/vyhr3yfl3r9YZMpTRn+7FH3ZJ+VeAQDEPGW036mk+zepn4LvpDraDisIPJDGiF+JBloPyC2Qzla/PB20LNVCtlGxRNu5fac5Yq9kH70LNREHFBEI/uThZuCjeuKBxj4I/ODiMOVXTlxQpY9zw8eWkzZIfFBu2jQnkwAGzjm5GADixAkVAMu8zAO3vNyhx+XF68gnXihaxk3FIjeJZ27Wdk3qj0pHpjy5jT2ip+STIUpjnshT8ono5pjGASSswaTAOIAEnVxRH4BMeyICfQAy6dKMiI4SuWNaBpxZTZM6JgSWAWeWTvaIHpNfSbMXURfxBOgx+ZXoZpeMdCdKokrjEy5JbzybYfLaIjeJMm4q8rmJ9rq8eN245eUeGOdlHijhpRAYOOfkfADACidTANDKyXCas8nHLycNDXzUwDfwg4uDgB+quCjDh8E9HrZSH2GEhwKIrnLwBuGMU/uOvogh5trmNkN22bYkpAPrdj2F5PB5x6btMFRm/7TnIANqu/7a8jcLqvs27PjzBerD6zY89UPnpznXNHc5BM3xI7MuGqE/Z1XJcl9fQsnbFxgZu5F7AuB8ldsqhKkDY99l5gFgSeagNgWDA5VbYo8AnK9iv2pCMNzJnTwXoERm5iwJnk4NO7AxVZC88/xEvfulwhQs7hiqmH3Z2Ty7ujrb3FmbrYh2Qzc=); border-color: #ffdd55;">時刻表</button><button type="button" onclick="change_mode(2);" style="background-image: url(data:image/webp;base64,UklGRvQDAABXRUJQVlA4TOgDAAAvT8ATEGeloG0bxvxJtzsgHESS7Cq97/9Pjo7wrwIXGdaN20aSRFfPRPv//2268UZz2o1tq3FjTPwlj5mTLvtvs4BsKJWpSL6NRDZpsydp70ATFTdqSx3srlqPH/wO+KdXPS/okTdgFMJYKnXfJhgvcCfEkZD0OKIH0CsB0AMQZAg6CFoAgg4KQXcfkAG0AC2oKNhRQFT8EdhQsaE+Dj8lRHEE0NNAgKB0A2FwEnAQDopKAVOJAkbIKHoclQBEYXAKCgA9YBAACgDE4YRqQEJGwhO9FAAApQ0UjkAgtAETL1Yg+3uLL5yQ0L9FrLyhjKGkN2aF+9xJHkghjgBzNTy0B3k+3Ab6zuwX+iyaPyq7mp7e7v+zbHT/7goJAgCWkdS1bduevcHatm3btm3bvl+O0uTMIKL/jtw2ciQae4odqzH9BA48z8Z1ZSW9A0mxUZPTNFRIGKWTODbJvbekrM74gYMalcOGTd9lIc8sY+eGQxUo3raTF4TQQlnNOU/PNYFC6AmwewCnWrokRBJ8owroLFOILPFmYAqECOMJZh0lDCYdJQ8wZvHo5L6Dfu0mAg269ZkDzkP76jxsNLMcfN1fEmnM7VLC4QnHzFy2yWA23Izk6oaRbVFiyDw/GyGJQ9dGcnXD1G0DjJDMe9u+KmiGxqFea4uzm3dgFBZMhwkJpoIozLzdnFta9Uw1FDTvvcFnXkhAEUJEeU2W6hy0fGZNeVRICDD5zPg5N+ia8XWm28b8PwkJITwoL4IBaUW323tXx0fE7OmFIy8MHxG6v7ftWJQWKFdK+YKb30IWURKAKUXphgNL8ywqGPRFiNGgBAXmasTxyOON3wZcGwmdJ+Dvdb/IVvzqwgkRHOLYwuozmaZq9gD+kKD5TK4JH9atxekxa+BYTHrxtqGaXCO1HATg615SUKF42LQOD+rLS4dZn8voGCWYDbPS8vqDwzOFTTup8JrjuY824p3qzTlIOWdOeAPSvowc767Rv/vM43zGrKZnPBL+PhcvTySmjnR1MrvynVqCy1kn6xpJpRNToi+vTv6iN48SBZONUgyYgzV0QjEHFp1MVOKOOeBYj88jkFEHfB0i8/ynbZ8khnri044jmSaDia6X7eC9jUPBMgzL6Q76mrLPhfXRoOs+p/xFwXOSxfVtf152pBhgKCJpXv/troWCw/ClPJbPPprLbzVR1hrNCwN2ZWVTSyi+YuxCU1mrTCq95/jvyyC3xoNTDkLwQSMNhrfPN1YSB0v3rA/PVJRTOTu0riodTAzZQFU3BFmZONEnf4wSlohxtODLq7u/8s2hJPkxvcckqO4x+QXBPSaMQL7HBEEA); border-color: #55ffdd;">運用データ</button><button type="button" onclick="change_mode(3);" style="background-image: url(data:image/webp;base64,UklGRhYCAABXRUJQVlA4TAkCAAAvT8ATEGfCqG0kSa4ersP/t/cWjfl30EaSI3kTf4pHI/0Xg8i2lfDeF9xdMtGTNgQgg7u+gGKw4beLXXJ//7i41f9z0jTGwrF+A8glSQdVARl6oOIVIAY9EINDQgNjAC6cINxhJxeyEtAK4UYcgPFDQAKApIBBAAHhhwtWCISfITCVOf4nOkw15ljjT7uscVSMPb3uht/DXUN+hn04vQKCALCJGmDu45j7hru7u/7/Q3BNaTO3JhfRfweSJClRN5xL4vAF1yeoJ1kmVD5vqc7VLh6fx19faWCBxLcfY2ZjmNkQCt9WfmVSVya6caTOt/aiEC0U3T7bVAJTrtU3ijJzYhNkSPtaCnz9PDM/TkUQdurM+b6k7wn2FSR8FjOHIIphZkvOF1bimxfA6fW0lzdzCV+emf0esU/yhkZx6OU4sHiIQBDIVbS+3Mh+7Vpm/cO23qva3nbVbb/o9hv492uHVlfc5DJJR67r+8yQyH0xriNq+crtZWQ9TWNLs4ItDv+5VgfdmMGWlA9besiuK0zHRbTneyF6LguuNS5hhr0KeL4Dl713dUHDMgw53j3MEPeYhTUgQwOPKCJOEGRo4BEVxcmBDA08opI4NZChjIf75lacB5ChgUe0A6whIEMDj4hCwjUYZKjjAZnF7InOQIY6HtTF+WQZOpuCDHU8iQ62LcMbIEMd7/NSAgA=); border-color: #ff55dd;">編成表</button><button type="button" onclick="change_mode(4);" style="background-image: url(data:image/webp;base64,UklGRroAAABXRUJQVlA4TK0AAAAvT8ATEIcw/wratmE8/kDH4Stq20hyyQyO4U9nnrOHokiSmrsj/hCBD574d5NhAvLbUyqnqG2W+CB+54MoAjZARfYGAQwkSTLUa97M/f+5thXRf4Vt2zb0A93zA0BqX9CAAAA1Ml2ZCm8kABWqss5iWKKCDLQkFKWmZSHrlibx0jAtDd0fcPiyvHl0Pvyv7oO8NOXy3qnN4t7RZVzYO7+Aigv7hwCETbwMnK0AAAA=); border-color: #ddff55;">運用表</button></div>
     <article class="wait_icon"></article>
@@ -730,6 +761,20 @@ button {
     <article id="formation_table_area" class="wait_icon"></article>
     <article class="wait_icon"></article>
     <footer></footer>
+    <div class="popup" id="sign_up_popup">
+        <button type="button" class="popup_close_button" onclick="close_square_popup();"></button>
+        <h2>新規ユーザー登録</h2>
+        <h3>ユーザーID</h3>
+        <div class="informational_text">半角英数字とアンダーバーの組み合わせで5文字以上が利用可能です。</div>
+        <input type="text" id="sign_up_user_id">
+        <h3>ハンドルネーム</h3>
+        <input type="text" id="sign_up_user_name">
+        <h3>パスワード</h3>
+        <div class="informational_text">大文字・小文字・数字を全て含む10文字以上を設定してください。</div>
+        <input type="password" id="sign_up_password">
+        <br>
+        <button type="button" class="wide_button" onclick="check_sign_up();">ユーザー登録</button>
+    </div>
     <div class="popup" id="config_popup">
         <button type="button" class="popup_close_button" onclick="popup_close();"></button>
         <h2>各種設定</h2>
@@ -741,7 +786,7 @@ button {
         <br>
         <div style="text-align: right;"><a href="javascript:void(0)" onclick="reset_config_value();">デフォルト値に戻す</a></div>
         <br>
-        <span style="color: #666666;">変更内容は自動で保存されます</span>
+        <div class="informational_text">変更内容は自動で保存されます</div>
     </div>
     <div id="popup_screen">
         <div id="popup_screen_blank_area" onclick="close_square_popup();"></div>
@@ -754,6 +799,15 @@ button {
             <br>
             <br>
             <button type="button" class="wide_button" onclick="challenge_login();">ログイン</button>
+        </div>
+        <div class="square_popup" id="captcha_popup">
+            <button type="button" class="popup_close_button" onclick="close_square_popup();"></button>
+            <div id="captcha_info">
+                <h3>画像認証</h3>
+                <div class="informational_text">画像に表示されている文字を入力してください。</div>
+            </div>
+            <div id="captcha_area" class="wait_icon"></div>
+            <button type="button" id="captcha_submit_button" class="wide_button">送信</button>
         </div>
         <div class="square_popup" id="about_popup">
             <button type="button" class="popup_close_button" onclick="close_square_popup();"></button>
@@ -772,8 +826,99 @@ document.getElementById("app_name").innerText = UNYOHUB_APP_NAME;
 const UNYOHUB_UNKNOWN_TRAIN_ICON = "data:image/webp;base64,UklGRqADAABXRUJQVlA4TJMDAAAvT8AdELVQuq03kST1T3+OaO5eMQ8zM/OOeXbMzMwQUY6wrMGVWo2FMUWRldBVEVIACCDAyGa2bXtLNpvjlmzb0Yu22b0l27b9uAmwv+qFRQhPPi+MIP5C8vFEVGnAqwvsBoK2y7PtTt1wOHRnftjiwH04HI7cp5fEIMSoO1PXCJuZO73WooOb2fSG++pYCkXu7KBgqWyHLBvgFAoJgfwD3gojS2elHs/Of8JEoM+L839iEmwy62voS6DFfWi1hZk7V8yGVfbDJc+8r4df8OX1dZ5GZ1lhdta9MKuxoTstEia80YqQGSI4U3HCE3JCU/DfI242fZo3giRUCWDgrCc/Oz1vchHi2kVyc42wHJxdaOEkhyopVMphWwq7YtB3saWelJAuhzQpzMphRsbKSf7JCf9wXUozLixCdL/KmQufZ7InqrAYt7JHnDB6ePBsuac7hCLWBBmyuPPMZ0LmLumok5y6gpwUThEE8MdV5Be/KUodvlxJPkutOnpBzeUaZE7rwfcO2QqOrij2lRDY2m5u5kU+4Ft+4Vcad9/wHs9zAztpLQRWQnhLl/A6v9An7F7mOC0N2zvA/K8kf4k9iLqeH+gFfs81CHqYX5HZ3YuYW+mldjch5FI6Mf3PXIiIko/4FcEfUiBhoRd9JwJKvkbWV/yf7ir62F94nEOUeOPNHOVZovorSPcEMd3EW76NqMdI9zYxj+Ktv0DMW6QbxeyjvaWYr0k3HTEdaG8HMT+Tro9c9fa3ENP/9ZP592sjZlqHpZhlHZ4j5oQKN9PHPk4e21k7FXF+8Cx99JXk8Ah9yuUSbe7HlfmMrSgzfTGuzO24Mg/iunzPdbgur7AX0KR7hQvwdrPoRu/xHDewE29b3l146v9oEJJMdAiu4KdJ8K3goUlwrxRumqxVMNekMKtsVtME1QpymuyQrRgfevRWy3aqR/iVyLtIxVYd03owVUezHjTVkaNHyK4jQo9BXWGlB5Z1e8T5o8UpJOqMTS3YsCnpSiR4PFVI1IKEqcx41IAHi2ZZA5bixhrQGUeJBhTHhVgNiInDVYPCJW6zkgYoxm0S5CO/fhBnrOfHmjVkKD8Gm1CbHzVNiM8vxDUJnvnh0aTUyg/NJojwm9upw6JNjP3c2LPG87mtNqM+N+qaheTcSGqGagiPrwyTVobxG82aVixpxUT/9eHdnbc06+5nZVHrTnWa8+4Lsgz705b49Gn7qw4A";
 
 
+/* Zizai CAPTCHA 23.10-2 captcha.js */
+
+const ZIZAI_CAPTCHA_GENERATE_ID_ENDPOINT = "api/zizai_captcha/generate_id.php";
+const ZIZAI_CAPTCHA_IMAGE_PATH = "api/zizai_captcha/image.php";
+
+const ZIZAI_CAPTCHA_RELOAD_IMAGE_DARK = "data:image/webp;base64,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";
+const ZIZAI_CAPTCHA_RELOAD_IMAGE_LIGHT = "data:image/webp;base64,UklGRroGAABXRUJQVlA4TK4GAAAvZ8FZEJVQsm1bbttw/pPeDVUk8PH1WuYLQZU3FCIkAABYNlI7e2fbtm3f27ZtN2/btvY8PM62bduY0XYC+ur/q/+v/r/6/+r/q/+v/i9Qmjwstt8Fj/BkqNah2+SNEJ6P203PjxqZvnvsogOW8aJdQuhcrXXNX41E8AsTa5bito3cMcsGlbf9vmqlyIKh2v1whB96tWCJc0shCXyVZIrdtgC3TNg6Ko0kq/5S7oowpPJAFOqxYfgQjXstBqUwPkV5biwDNeWtONSaYOmKoQzXtKdcywHHZoUZtAo7KVUCM/fMZuDEXrCrAn54FPDRyxcPXhPwTkCwVG02UYP1yKuBwN8Ff3dV2UzdtiCt48h74M8KjdlUbdZ+rmDPe0CIymyuZvGL2/MOYImXTZbBaVlA5o+Kh+TwjabwjOaCIJk/i41kw03bi7iUI9PHVEo2XgHbZRyZPWSniHNOfMItCanzaAuAZPZYK4O/DNUl1cNPK4Syp0UZsZ9iUWPJW9yP015I10Y2ukQTt4tBMnngT6I8q8NH+/hinKDzI7OzxHk/9Q0tZE78XmbP5NGXniQEEuxg2ouka4Fr8siGlXwyvgQkkyfOZEIm0TKME7RkLNGuq4AOKmasPB8kc4foEiy6HaLaK6Rlk0SiISUeopxpz9zRlAlXbDFSrxXDXB/wRxRF9M4CydzxMaBGfK8bw1K/SMYTI0LOsGfurND+h9Drp2y3muGE4u9Ne6YOvLuP04Pk7qnZwSTuIL5uz9ShAbx7oDj2PgYTCZiv2TN1lO3A6rEiiJc2liin/dKeqcPl3gPmjAcdSXQyeQ6SqcOmeYLG/O0u8UBiiP0TRzN1KOg9bAaek48jRjl3QzJ3tx45Mx+gw4gp3pBM3ujZ+TWMkKY2unkpHMUlq6BvFususm5M50mKrJuZf1XWLV5PlTW2e9Ai6+ajqcoaDSArsm7utyrr/75gRdYtwkCVNXUJVdZge0mLrJubjiprHLwq65sjFEXWLdBIlTV95VXWmL5WWd8chRVZtyXEVdZ8jFZZM9daZU1VUZU1lv9V1ig+V1kjeFhl3c6XWTtaZn0vs7YTVmX3FNk9RXZPkd1TZPcU2T1Fdk+R3VNk9xTZPUV2T5HdU2RAiuxIkR0psiNFdqTIjhTZkSI7UmRHiuxIkR2psqv//6E+o4VU2d5FtneR7V1kexfZ3kW2d5HtXWR7F9neRbZ3ke1dZK50kT26yB5dZI8uskcX2aOL7NFF9ugie3SRPbrIHl1kMAerLNnLLI8yi+vgKouHf1UWv9CqLDJxqizKaVRZtDGvspgQVGUhtbbKEnf/qix4mFUWTayqLGbMqbJQOAouskQilSqLXj5VFnLgr8gSCdSrLEbEV1ni3U+VRRP3Ksv/7mIWWaJDcJUF6gF2kSUGramyRBabKguJi5hFltxtQSyyRIPo8iAYRSKJQ20ArPQPI7vPLIcGnjygm4nOYSTkXjEaFwbK3EG6u2mrG0cCxfsaFE2cnjqgn6WheiDJ7ge3EfHC7ak7+sVvqSNJItM8hMHg2Empp+7oVyJ7MZZEhwO4I+EHQe2pO/r1jsHGkuB7zmsUlD11EtxTB/RbLSEaTBL19lEbwK/1uiw5QXP9NqDfzknHcBJSiVZgrgtsgQZ9PE7Q3AF9TsqSx5OEwGfzMVeDbLlyuBTqJ2jugD4vgjPQASUh/rCV7hpoOWEg+/HXc3f02UUaHlISmGq3xGIvCtsaKRSJMZEnaMJfB/QFqUsY1FNyBW5YzGAZrO3zjwie5JtOTx7Ql7WFYFjPGpTkshWcUC+AJcAhPH15ltAO8AmaPKAvzULJ0J4l1yXbW2dtMV8AW1qUf57gHvS4iLbGEU9l6oXBX1bCoif9FUBfHtF+/NEtkchxpJ49SC+Sjh9bJ5Nlz/sLRy/VUkNbZvC3Z/45oJeL4yrJVpG6jXuC5g/Si6bvHWyTJDE7QZP/BOil81e2PUq/evqTHL18sLmqtkWdJbd+D0B6lTfxKrZDvTWI/R4M0Gu9WahkG1RaeOv34dFr5us7xeigfgs6QUXIxB0zIzPrLtMuRExr5cIGpcAmnK5GFq4YHM/9wapLElGwR4ZHYsRT4b9dl7+CPNA3BgMeCP49QeXJxBY8/HWRy3eUK7iLFF2Ui7IJ10Ek11VRGF2sSNzs8Uk92ZIoNPtsLw/kE1S1KBytdEWCWjOXwj8kumIVZ9SuYCpcLLAHcN8nKSp0/BgziQ/P42bi50elVJ89dM5eC7hSO0FX/1/9f/X/1f9X/1/9f/V/gQI=";
+
+var zizai_captcha_dir;
+(function(){
+    var path_splitted = location.href.split("/"); //captcha.jsから改変
+    path_splitted[path_splitted.length - 1] = "";
+    
+    zizai_captcha_dir = path_splitted.join("/");
+}());
+
+function zizai_captcha_get_id (callback_func, args = null) {
+    var request_obj = new XMLHttpRequest();
+    
+    request_obj.onreadystatechange = function () {
+        if (request_obj.readyState === 4) {
+            if (request_obj.status === 200) {
+                if (args === null) {
+                    callback_func(JSON.parse(request_obj.responseText));
+                } else {
+                    callback_func(JSON.parse(request_obj.responseText), args);
+                }
+            } else {
+                callback_func(false);
+            }
+        }
+    };
+    
+    request_obj.open("GET", zizai_captcha_dir + ZIZAI_CAPTCHA_GENERATE_ID_ENDPOINT, true);
+    request_obj.timeout = 10000;
+    request_obj.send();
+}
+
+function zizai_captcha_get_image_path (session_id) {
+    return zizai_captcha_dir + ZIZAI_CAPTCHA_IMAGE_PATH + "/" + session_id;
+}
+
+function zizai_captcha_reload_image_callback (data, args) {
+    document.getElementById(args[0]).src = zizai_captcha_get_image_path(data.session_id);
+    
+    if (args[1] !== null) {
+        document.getElementById(args[1]).value = data.session_id;
+    }
+}
+
+function zizai_captcha_reload_image (image_id, session_id_id = null) {
+    zizai_captcha_get_id(zizai_captcha_reload_image_callback, [image_id, session_id_id]);
+}
+
+function zizai_captcha_get_html_callback (data, args) {
+    var image_path = zizai_captcha_get_image_path(data.session_id);
+    var input_font_size = Math.round(data.image_height * 0.6);
+    
+    var rgb_sum = 0;
+    for (var cnt = 0; cnt < 3; cnt++) {
+        rgb_sum += parseInt(args[4].substring(cnt * 2 + 1, cnt * 2 + 3), 16);
+    }
+    
+    if (rgb_sum > 382) {
+        var button_image = ZIZAI_CAPTCHA_RELOAD_IMAGE_DARK;
+    } else {
+        var button_image = ZIZAI_CAPTCHA_RELOAD_IMAGE_LIGHT;
+    }
+    
+    if (button_image.substring(0, 5) !== "data:") {
+        button_image = zizai_captcha_dir + button_image;
+    }
+    
+    args[0](`
+<input type="hidden" name="${args[1]}" id="${args[1]}" value="${data.session_id}">
+<img src="${image_path}" alt="" id="${args[3]}" style="vertical-align: text-bottom;"><button type="button" onclick="zizai_captcha_reload_image('${args[3]}', '${args[1]}');" style="box-sizing: border-box; width: ${data.image_height}px; height: ${data.image_height}px; background-color: ${args[4]}; background-image: url('${button_image}'); background-size: cover; border: none; margin-left: 5px; vertical-align: text-bottom; cursor: pointer;"></button><br>
+<input type="text" name="${args[2]}" id="${args[2]}" style="box-sizing: border-box; width: ${data.image_width}px; height: ${data.image_height}px; font-size: ${input_font_size}px; letter-spacing: 0.5em; text-align: center;">
+`);
+}
+
+function zizai_captcha_get_html (callback_func, button_color = "#dddddd", id_name = "zizai_captcha_id", characters_name = "zizai_captcha_characters", image_id = "zizai_captcha_image") {
+    zizai_captcha_get_id(zizai_captcha_get_html_callback, [callback_func, id_name, characters_name, image_id, button_color]);
+}
+
+/* captcha.js ここまで */
+
+
 function escape_html (text) {
     return text.replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;");
+}
+
+function escape_form_data (data) {
+    return encodeURIComponent(data).replace(/%20/g, "+");
 }
 
 
@@ -827,11 +972,96 @@ function save_config () {
 }());
 
 
+var railroad_info = null;
+var train_icons = {railroad_id : null};
+
+
+function rgb2hsl (color_hex) {
+    var r = parseInt(color_hex.substring(1, 3), 16);
+    var g = parseInt(color_hex.substring(3, 5), 16);
+    var b = parseInt(color_hex.substring(5), 16);
+    
+    var rgb_max = Math.max(r, g, b);
+    var rgb_min = Math.min(r, g, b);
+    
+    var h = 0;
+    var s = 0;
+    
+    var l = Math.round((rgb_max + rgb_min) / 2);
+    
+    if (rgb_max !== rgb_min) {
+        if (r === rgb_max) {
+            h = Math.round((g - b) / (rgb_max - rgb_min) * 60);
+        } else if (g === rgb_max) {
+            h = Math.round((b - r) / (rgb_max - rgb_min) * 60 + 120);
+        } else {
+            h = Math.round((r - g) / (rgb_max - rgb_min) * 60 + 240);
+        }
+        
+        if (h < 0) {
+            h += 360;
+        }
+        
+        if (l <= 127) {
+            s = Math.round((rgb_max - rgb_min) / (rgb_max + rgb_min) * 255);
+        } else {
+            s = Math.round((rgb_max - rgb_min) / (510 - rgb_max - rgb_min) * 255);
+        }
+    }
+    
+    return [h, s, l];
+}
+
+function hsl2rgb (h, s, l) {
+    if (l <= 127) {
+        var rgb_max = Math.round(l + l * (s / 255));
+        var rgb_min = Math.round(l - l * (s / 255));
+    } else {
+        var rgb_max = Math.round(l + (255 - l) * (s / 255));
+        var rgb_min = Math.round(l - (255 - l) * (s / 255));
+    }
+    
+    if (h <= 60) {
+        return [rgb_max, Math.round((h / 60) * (rgb_max - rgb_min) + rgb_min), rgb_min];
+    } else if(h <= 120) {
+        return [Math.round(((120 - h) / 60) * (rgb_max - rgb_min) + rgb_min), rgb_max, rgb_min];
+    } else if(h <= 180) {
+        return [rgb_min, rgb_max, Math.round(((h - 120) / 60) * (rgb_max - rgb_min) + rgb_min)];
+    } else if(h <= 240) {
+        return [rgb_min, Math.round(((240 - h) / 60) * (rgb_max - rgb_min) + rgb_min), rgb_max];
+    } else if(h <= 300) {
+        return [Math.round(((h - 240) / 60) * (rgb_max - rgb_min) + rgb_min), rgb_min, rgb_max];
+    } else {
+        return [rgb_max, rgb_min, Math.round(((360 - h) / 60) * (rgb_max - rgb_min) + rgb_min)];
+    }
+}
+
+function convert_color_dark_mode (color_hex) {
+    var hsl = rgb2hsl(color_hex);
+    
+    hsl[2] = 271 - hsl[2];
+    if (hsl[2] > 255) {
+        hsl[2] = 255;
+    }
+    
+    var rgb = hsl2rgb(hsl[0], hsl[1], hsl[2]);
+    
+    return "rgb(" + rgb[0] + "," + rgb[1] + "," + rgb[2] + ")";
+}
+
 function switch_dark_mode () {
     if (config["dark_mode"]) {
         document.getElementsByTagName("body")[0].className = "dark_mode";
+        
+        if (railroad_info !== null) {
+            header_elm.style.backgroundColor = convert_color_dark_mode(railroad_info["main_color"]);
+        }
     } else {
         document.getElementsByTagName("body")[0].className = "";
+        
+        if (railroad_info !== null) {
+            header_elm.style.backgroundColor = railroad_info["main_color"];
+        }
     }
 }
 
@@ -917,7 +1147,7 @@ function update_user_data (user_data_next = null) {
     if (user_data !== null) {
         splash_screen_login_status_elm.innerHTML = "<b>" + escape_html(user_data["user_name"]) + "</b> さんとしてログインしています<br><a href='javascript:void(0)' onclick='user_logout();'>ログアウト</a>";
     } else {
-        splash_screen_login_status_elm.innerHTML = "<b>ログインしていません</b><br><a href='javascript:void(0)' onclick='open_square_popup(\"login_popup\");'>ログイン</a>　新規登録";
+        splash_screen_login_status_elm.innerHTML = "<b>ログインしていません</b><br><a href='javascript:void(0)' onclick='open_square_popup(\"login_popup\");'>ログイン</a>　<a href='javascript:void(0)' onclick='open_popup(\"sign_up_popup\");'>新規登録</a>";
     }
 }
 
@@ -1012,9 +1242,6 @@ window.onload = function () {
 }
 
 
-var railroad_info;
-var train_icons = {railroad_id : null};
-
 function select_railroad (railroad_id) {
     var open_request = indexedDB.open("unyohub_caches", UNYOHUB_INDEXEDDB_VERSION);
     
@@ -1064,7 +1291,7 @@ function select_railroad (railroad_id) {
                 railroad_info_request.open("POST", "api/railroad_info.php", true);
                 railroad_info_request.setRequestHeader("Content-Type","application/x-www-form-urlencoded;charset=UTF-8");
                 railroad_info_request.timeout = 5000;
-                railroad_info_request.send("railroad_id=" + railroad_id + "&last_modified_timestamp=" + last_modified_timestamp);
+                railroad_info_request.send("railroad_id=" + escape_form_data(railroad_id) + "&last_modified_timestamp=" + last_modified_timestamp);
             } else {
                 switch_railroad(railroad_info_next);
             }
@@ -1084,7 +1311,9 @@ function switch_railroad (railroad_info_next, load_icon = true) {
     if (select_elm.value !== railroad_info["railroad_id"]) {
         select_elm.value = railroad_info["railroad_id"];
     }
-    header_elm.style.backgroundColor = railroad_info["main_color"];
+    
+    switch_dark_mode();
+    
     
     header_elm.className = "railroad_select_mode";
     splash_screen_elm.style.display = "none";
@@ -1135,7 +1364,7 @@ function switch_railroad (railroad_info_next, load_icon = true) {
                     icon_request.open("POST", "api/train_icons.php", true);
                     icon_request.setRequestHeader("Content-Type","application/x-www-form-urlencoded;charset=UTF-8");
                     icon_request.timeout = 5000;
-                    icon_request.send("railroad_id=" + railroad_id + "&last_modified_timestamp=" + last_modified_timestamp);
+                    icon_request.send("railroad_id=" + escape_form_data(railroad_id) + "&last_modified_timestamp=" + last_modified_timestamp);
                 }
             }
         };
@@ -1233,7 +1462,7 @@ function formation_table_mode () {
                 formations_request.open("POST", "api/formations.php", true);
                 formations_request.setRequestHeader("Content-Type","application/x-www-form-urlencoded;charset=UTF-8");
                 formations_request.timeout = 5000;
-                formations_request.send("railroad_id=" + railroad_id + "&last_modified_timestamp=" + last_modified_timestamp);
+                formations_request.send("railroad_id=" + escape_form_data(railroad_id) + "&last_modified_timestamp=" + last_modified_timestamp);
             } else {
                 draw_formation_table(formations["formations"]);
             }
@@ -1284,6 +1513,29 @@ function draw_formation_table (formations) {
 }
 
 
+var captcha_submit_button_elm = document.getElementById("captcha_submit_button");
+
+function show_captcha () {
+    var info_elm = document.getElementById("captcha_info");
+    
+    info_elm.style.display = "none";
+    captcha_submit_button_elm.style.display = "none";
+    open_square_popup("captcha_popup");
+    
+    if (!config["dark_mode"]) {
+        var button_color = "#eeeeee";
+    } else {
+        var button_color = "#202020";
+    }
+    
+    zizai_captcha_get_html(function (html) {
+            document.getElementById("captcha_area").innerHTML = html;
+            info_elm.style.display = "block";
+            captcha_submit_button_elm.style.display = "block";
+        }, button_color);
+}
+
+
 function challenge_login () {
     open_wait_screen();
     
@@ -1319,7 +1571,7 @@ function challenge_login () {
     login_request.open("POST", "api/login.php", true);
     login_request.setRequestHeader("Content-Type","application/x-www-form-urlencoded;charset=UTF-8");
     login_request.timeout = 5000;
-    login_request.send("user_id=" + user_id + "&password=" + password);
+    login_request.send("user_id=" + escape_form_data(user_id) + "&password=" + escape_form_data(password));
 }
 
 function user_logout () {
@@ -1353,6 +1605,79 @@ function user_logout () {
     logout_request.open("POST", "api/logout.php", true);
     logout_request.timeout = 5000;
     logout_request.send();
+}
+
+function check_sign_up () {
+    open_wait_screen();
+    
+    var check_sign_up_request = new XMLHttpRequest();
+    check_sign_up_request.onreadystatechange = function () {
+        if (check_sign_up_request.readyState === 4) {
+            close_wait_screen();
+            
+            if (check_sign_up_request.status === 200) {
+                if (check_sign_up_request.responseText === "OK"){
+                    show_captcha();
+                    
+                    captcha_submit_button_elm.onclick = challenge_sign_up;
+                } else {
+                    alert(check_sign_up_request.responseText);
+                }
+            } else {
+                alert("【!】サーバへのアクセスに失敗しました");
+            }
+        }
+    };
+    
+    check_sign_up_request.ontimeout = function () {
+        close_wait_screen();
+        
+        alert("【!】ネットワークが不安定です");
+    }
+    
+    check_sign_up_request.open("POST", "api/check_sign_up.php", true);
+    check_sign_up_request.setRequestHeader("Content-Type","application/x-www-form-urlencoded;charset=UTF-8");
+    check_sign_up_request.timeout = 5000;
+    check_sign_up_request.send("user_id=" + escape_form_data(document.getElementById("sign_up_user_id").value) + "&password=" + escape_form_data(document.getElementById("sign_up_password").value));
+}
+
+function challenge_sign_up () {
+    open_wait_screen();
+    
+    var sign_up_request = new XMLHttpRequest();
+    sign_up_request.onreadystatechange = function () {
+        if (sign_up_request.readyState === 4) {
+            close_wait_screen();
+            
+            if (sign_up_request.status === 200) {
+                if (sign_up_request.responseText.substring(0,6) === "ERROR:"){
+                    alert(sign_up_request.responseText);
+                    
+                    zizai_captcha_reload_image("zizai_captcha_image", "zizai_captcha_id");
+                } else {
+                    update_user_data(JSON.parse(sign_up_request.responseText));
+                    
+                    close_square_popup();
+                    popup_close();
+                    
+                    alert("アカウントの作成に成功しました");
+                }
+            } else {
+                alert("【!】サーバへのアクセスに失敗しました");
+            }
+        }
+    };
+    
+    sign_up_request.ontimeout = function () {
+        close_wait_screen();
+        
+        alert("【!】ネットワークが不安定です");
+    }
+    
+    sign_up_request.open("POST", "api/sign_up.php", true);
+    sign_up_request.setRequestHeader("Content-Type","application/x-www-form-urlencoded;charset=UTF-8");
+    sign_up_request.timeout = 5000;
+    sign_up_request.send("user_id=" + escape_form_data(document.getElementById("sign_up_user_id").value) + "&password=" + escape_form_data(document.getElementById("sign_up_password").value) + "&user_name=" + escape_form_data(document.getElementById("sign_up_user_name").value) + "&zizai_captcha_id=" + escape_form_data(document.getElementById("zizai_captcha_id").value) + "&zizai_captcha_characters=" + escape_form_data(document.getElementById("zizai_captcha_characters").value));
 }
 
 

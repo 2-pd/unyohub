@@ -28,6 +28,7 @@ _/_/_/_/ ファイル構成 _/_/_/_/
    └ wakarana_config.ini ・・・Wakarana設定ファイル
    └ wakarana_custom_fields.json ・・・Wakaranaカスタムフィールド設定ファイル
    └ zizai_captcha_config.json ・・・Zizai CAPTCHA設定ファイル
+   └ fonts/ ・・・Zizai CAPTCHAが使用するフォントファイル
 └ data/ ・・・路線系統ごとのデータフォルダ
    └ ****/
       └ railroad.db ・・・運用表・時刻表・ユーザー投稿データを格納するデータベース本体
@@ -39,6 +40,7 @@ _/_/_/_/ ファイル構成 _/_/_/_/
       └ ****_timetable.json ・・・JSONに変換された各ダイヤの時刻表データ
 └ api/
    └ ****.php ・・・クライアント端末と情報をやり取りするエンドポイント(詳細は別記)
+   └ zizai_captcha/ ・・・Zizai CAPTCHAのエンドポイント
 └ README.html ・・・ユーザーマニュアル
 └ .htaccess
 
