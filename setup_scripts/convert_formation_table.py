@@ -4,6 +4,7 @@
 import sys
 import csv
 import json
+import sqlite3
 
 print("formations.csvを読み込んでいます...")
 try:
@@ -14,6 +15,14 @@ except:
     print("【エラー】formations.csvの読み込みに失敗しました")
     sys.exit()
 
+print("データベースに接続しています...")
+conn = sqlite3.connect("railroad.db")
+cur = conn.cursor()
+
+print("データベースから古いデータを削除しています...")
+cur.execute("DELETE FROM `unyohub_formations`")
+
+print("データを変換しています...")
 json_data = {}
 for formation in formation_data:
     if formation[0].startswith("# "):
@@ -22,6 +31,12 @@ for formation in formation_data:
     else:
         formation_name = formation.pop(0)
         json_data[series_name][formation_name] = {"cars" : list(filter(lambda car: car != "", formation))}
+        
+        cur.execute("INSERT INTO `unyohub_formations`(`formation_name`, `car_count`) VALUES (:formation_name, :car_count)", {"formation_name" : formation_name, "car_count" : len(json_data[series_name][formation_name]["cars"])})
+
+print("データベースの書き込み処理を完了しています...")
+conn.commit()
+conn.close()
 
 print("formations.jsonを作成しています...")
 try:
