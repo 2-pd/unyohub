@@ -43,6 +43,9 @@ header {
     
     height: 40px;
     
+    background-size: 30px;
+    background-repeat: no-repeat;
+    background-position: 5px 5px;
     background-color: #f7f7f7;
     
     line-height: 40px;
@@ -55,17 +58,6 @@ header {
 
 .dark_mode header {
     background-color: #181818;
-}
-
-.railroad_select_mode {
-    background-image: url(data:image/webp;base64,UklGRpoAAABXRUJQVlA4TI0AAAAvJ8AFEC8gECCo9V9gQyBAUOu/gECAoNZ/ASEBQfPY/QCo/gP8U4er2LadZlMEYIL/lkiIgHb9awmce46FiP6rcds26sVBW9BXsM0AAABI+778krZVeaR9qwJ3e9dFsNalLoI1IgRBSKIEG8GO1WB1GC1Gj5gm+byd/hMPdH3W7mkGmgkxImbE+HfMTAAA);
-    background-repeat: no-repeat;
-    background-size: 20px 12px;
-    background-position: calc(100vw - 80px) 15px;
-}
-
-.dark_mode .railroad_select_mode {
-    background-image: url(data:image/webp;base64,UklGRpoAAABXRUJQVlA4TI4AAAAvJ8AFEC8gECD4X9OkQ0BC8P+aTRKQEPy/ZpOEBATNY/cDoFrtVw0YrmLbdppNEYAJ/lsiIQLa9a8lcO45FiL6r8Zt26gXB21BX8E2AwAAIO378kvaVuWR9q0K3O1dF8Fal7oI1ogQBCGJEmwEO1aD1WG0GD1imuTzdvpPPND1WbunGWgmxIiYEePfMTMB);
 }
 
 #app_name {
@@ -87,9 +79,10 @@ header {
     
     border: none;
     
-    background-size: 30px;
+    background-image: url(data:image/webp;base64,UklGRpoAAABXRUJQVlA4TI0AAAAvJ8AFEC8gECCo9V9gQyBAUOu/gECAoNZ/ASEBQfPY/QCo/gP8U4er2LadZlMEYIL/lkiIgHb9awmce46FiP6rcds26sVBW9BXsM0AAABI+778krZVeaR9qwJ3e9dFsNalLoI1IgRBSKIEG8GO1WB1GC1Gj5gm+byd/hMPdH3W7mkGmgkxImbE+HfMTAAA);
     background-repeat: no-repeat;
-    background-position: 5px 5px;
+    background-size: 20px 12px;
+    background-position: calc(100vw - 80px) 15px;
     background-color: transparent;
     
     line-height: 40px;
@@ -97,6 +90,10 @@ header {
     text-indent: 40px;
     
     appearance: none;
+}
+
+.dark_mode #railroad_select {
+    background-image: url(data:image/webp;base64,UklGRpoAAABXRUJQVlA4TI4AAAAvJ8AFEC8gECD4X9OkQ0BC8P+aTRKQEPy/ZpOEBATNY/cDoFrtVw0YrmLbdppNEYAJ/lsiIQLa9a8lcO45FiL6r8Zt26gXB21BX8E2AwAAIO378kvaVuWR9q0K3O1dF8Fal7oI1ogQBCGJEmwEO1aD1WG0GD1imuTzdvpPPND1WbunGWgmxIiYEePfMTMB);
 }
 
 .railroad_select_mode #railroad_select {
@@ -898,7 +895,10 @@ button {
         <select id="position_line_select" class="line_select" onchange="position_change_lines(this.value);"></select>
         <div id="position_area" class="wait_icon"></div>
     </article>
-    <article class="wait_icon"></article>
+    <article>
+        <select id="timetable_line_select" class="line_select" onchange="timetable_change_lines(this.value);"></select>
+        <div id="timetable_area" class="wait_icon"></div>
+    </article>
     <article class="wait_icon"></article>
     <article id="formation_table_area" class="wait_icon"></article>
     <article class="wait_icon"></article>
@@ -1113,7 +1113,7 @@ function save_config () {
         db.createObjectStore("operations", {keyPath : ["railroad_id", "operation_table"]});
         db.createObjectStore("operation_groups", {keyPath : ["railroad_id", "operation_table"]});
         db.createObjectStore("line_operations", {keyPath : ["railroad_id", "line_id", "operation_table"]});
-        db.createObjectStore("timetables", {keyPath : ["railroad_id", "line_id", "operation_table"]});
+        db.createObjectStore("timetables", {keyPath : ["railroad_id", "operation_table"]});
         var operation_data_store = db.createObjectStore("operation_data", {keyPath : ["railroad_id", "operation_date"]});
         operation_data_store.createIndex("idx_od1", "operation_date");
     };
@@ -1470,11 +1470,11 @@ function switch_railroad (railroad_info_next, load_icon = true) {
     if (select_elm.value !== railroad_info["railroad_id"]) {
         select_elm.value = railroad_info["railroad_id"];
     }
-    select_elm.style.backgroundImage = "url(" + railroad_info["railroad_icon"] + ")";
     
     switch_dark_mode();
     
     header_elm.className = "railroad_select_mode";
+    header_elm.style.backgroundImage = "url(" + railroad_info["railroad_icon"] + ")";
     
     if (load_icon) {
         var railroad_id = railroad_info["railroad_id"];
@@ -1572,12 +1572,72 @@ function change_mode (num) {
         case 0:
             position_mode();
             break;
+        case 1:
+            timetable_mode();
+            break;
         case 3:
             formation_table_mode();
             break;
     }
     
     mode_val = num;
+}
+
+
+var timetable = null;
+
+function update_timetable (operation_table) {
+    var railroad_id = railroad_info["railroad_id"];
+    
+    var open_request = indexedDB.open("unyohub_caches", UNYOHUB_INDEXEDDB_VERSION);
+    
+    open_request.onsuccess = function () {
+        var transaction = open_request.result.transaction("timetables", "readonly");
+        
+        var formations_store = transaction.objectStore("timetables");
+        var get_request = formations_store.get([railroad_id, operation_table]);
+        
+        get_request.onsuccess = function (evt) {
+            if (evt.target.result !== undefined) {
+                timetable = evt.target.result;
+                var last_modified_timestamp = timetable["last_modified_timestamp"];
+            } else {
+                timetable = null;
+                var last_modified_timestamp = 0;
+            }
+            
+            if (navigator.onLine) {
+                var timetable_request = new XMLHttpRequest();
+                timetable_request.onreadystatechange = function () {
+                    if (timetable_request.readyState === 4) {
+                        if (timetable_request.responseText.substring(0,6) === "ERROR:") {
+                            alert(timetable_request.responseText);
+                        } else if (timetable_request.status === 200 && timetable_request.responseText !== "NO_UPDATES_AVAILABLE") {
+                            timetable = {timetable : JSON.parse(timetable_request.responseText)};
+                            
+                            timetable["railroad_id"] = railroad_id;
+                            timetable["operation_table"] = operation_table;
+                            
+                            var last_modified_date = new Date(timetable_request.getResponseHeader("last-modified"));
+                            timetable["last_modified_timestamp"] = Math.floor(last_modified_date.getTime() / 1000);
+                            
+                            var transaction = open_request.result.transaction("timetables", "readwrite");
+                            
+                            var timetable_store = transaction.objectStore("timetables");
+                            timetable_store.put(timetable);
+                        }
+                    }
+                };
+                
+                timetable_request.open("POST", "api/timetable.php", true);
+                timetable_request.setRequestHeader("Content-Type","application/x-www-form-urlencoded;charset=UTF-8");
+                timetable_request.timeout = 5000;
+                timetable_request.send("railroad_id=" + escape_form_data(railroad_id) + "&operation_table=" + escape_form_data(operation_table) + "&last_modified_timestamp=" + last_modified_timestamp);
+            } else if (timetable == null) {
+                alert("オフラインのためダウンロードが完了していない時刻表データは利用できません");
+            }
+        }
+    };
 }
 
 
@@ -1638,6 +1698,65 @@ function position_change_lines (line_id) {
     }
     
     position_area_elm.innerHTML = buf;
+}
+
+
+var timetable_line_select_elm = document.getElementById("timetable_line_select");
+var timetable_area_elm = document.getElementById("timetable_area");
+
+function update_timetable_line_select (lines) {
+    timetable_line_select_elm.innerHTML = "";
+    for (var cnt = 0; cnt < lines.length; cnt++) {
+        timetable_line_select_elm.innerHTML += "<option value='" + lines[cnt] + "'>" + escape_html(railroad_info["lines"][lines[cnt]]["line_name"]) + "</option>";
+    }
+}
+
+function timetable_mode () {
+    timetable = null;
+    update_timetable("weekday");//動作検証用仮指定
+    
+    timetable_change_lines(Object.keys(railroad_info["lines"])[0], true);
+}
+
+timetable_selected_station = null;
+
+function timetable_change_lines(line_id, force_station_select_mode = false) {
+    if (timetable_line_select_elm.value !== line_id) {
+        timetable_line_select_elm.value = line_id;
+    }
+    
+    if (timetable_selected_station === null || force_station_select_mode) {
+        update_timetable_line_select(Object.keys(railroad_info["lines"]));
+        
+        var keys = Object.keys(railroad_info["lines"][line_id]["stations"]);
+        
+        buf = "";
+        for (cnt = 0; cnt < keys.length; cnt++) {
+            buf += "<button class='wide_button' onclick='timetable_select_station(\"" + keys[cnt] + "\")'>" + escape_html(keys[cnt]) + "</button>";
+        }
+        
+        timetable_area_elm.innerHTML = buf;
+        timetable_selected_station = null;
+    } else {
+        timetable_select_station(timetable_selected_station);
+    }
+}
+
+function timetable_select_station (station_name, cnt = 0) {
+    timetable_area_elm.innerHTML = "";
+    
+    if (timetable === null && cnt < 100) {
+        setTimeout(timetable_select_station, 50, station_name, cnt + 1);
+        return;
+    }
+    
+    timetable_selected_station = station_name;
+    
+    var line_id = timetable_line_select_elm.value;
+    
+    update_timetable_line_select([line_id].concat(railroad_info["lines"][line_id]["stations"][station_name]["connecting_lines"]));
+    
+    
 }
 
 
@@ -1946,7 +2065,7 @@ function reset_config_value () {
 }
 
 
-history.pushState(null, null, location.href);
+history.pushState(null, null, location.href + "#");
 
 window.onpopstate = function () {
     if (square_popup_is_open) {
@@ -1955,10 +2074,23 @@ window.onpopstate = function () {
         popup_close();
     } else if (menu_elm.className === "menu_open") {
         menu_click(true);
+    } else{
+        switch (mode_val) {
+            case 1:
+                if (timetable_selected_station !== null) {
+                    timetable_change_lines(timetable_line_select_elm.value, true);
+                }
+                break;
+        }
     }
     
     history.pushState(null, null, null);
 };
+
+
+if (("serviceWorker" in navigator) && (window.location.protocol.substring(0, 4) === "http")) {
+    navigator.serviceWorker.register("service_worker.js");
+}
 </script>
 </body>
 </html>
