@@ -189,29 +189,36 @@ _/_/_/_/ 設定ファイル設定値 _/_/_/_/
 
 ███ timetable_****.json ███
 
-※ファイル名の「****」部分は「路線名.ダイヤ識別名.方向」が入る
+※ファイル名の「****」部分は「ダイヤ識別名」が入る
 　方向は「inbound」(上り)か「outbound」(下り)のいずれかとする必要がある
 ※このファイルは変換スクリプトにより自動生成されるものである
 {
-    "列車番号" : [
-        { 各区間組成の情報
-            "first_departure_time" : 「HH:MM」形式の始発時刻,
-            "train_type" : 列車種別,
-            "previous_trains" : [ 直通元の区間組成
-                {
-                    "line_id" : 走行路線の識別名,
-                    "train_number" : 列車番号,
-                    "first_departure_time" : 「HH:MM」形式の始発時刻
+    "路線識別名" : {
+        "inbound" : { 上り時刻表
+            "列車番号" : [
+                { 各区間組成の情報
+                    "first_departure_time" : 「HH:MM」形式の始発時刻,
+                    "train_type" : 列車種別,
+                    "previous_trains" : [ 直通元の区間組成
+                        {
+                            "line_id" : 走行路線の識別名,
+                            "train_number" : 列車番号,
+                            "first_departure_time" : 「HH:MM」形式の始発時刻
+                        }...
+                    ],
+                    "next_trains" : [ 直通先の区間組成
+                        {
+                            "line_id" : 走行路線の識別名,
+                            "train_number" : 列車番号,
+                            "first_departure_time" : 「HH:MM」形式の始発時刻
+                        }...
+                    ],
+                    "departure_times" : 路線内の各駅発車時刻を配列で(通過駅及び走行区間に含まれていない駅はnullとする)
                 }...
-            ],
-            "next_trains" : [ 直通先の区間組成
-                {
-                    "line_id" : 走行路線の識別名,
-                    "train_number" : 列車番号,
-                    "first_departure_time" : 「HH:MM」形式の始発時刻
-                }...
-            ],
-            "departure_times" : 路線内の各駅発車時刻を配列で(通過駅及び走行区間に含まれていない駅はnullとする)
-        }...
-    ]...
+            ]...
+        },
+        "outbound" : { 下り時刻表
+            ※"inbound"と同様
+        }
+    }
 }

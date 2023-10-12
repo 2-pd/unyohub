@@ -2,6 +2,7 @@
 # coding: utf-8
 
 import csv
+from operator import itemgetter
 
 print("変換対象のCSVファイル名を入力してください:")
 
@@ -59,8 +60,11 @@ for cnt in range(2, len(timetable_data_t)):
 
 print("データを新しいCSVファイルに書き込んでいます...")
 
+if file_name[0:10] == "timetable_":
+    file_name = file_name[10:]
+
 for line_id in line_list:
-    new_file_name = line_id + "." + file_name
+    new_file_name = "timetable_" + line_id + "." + file_name
     
     with open(new_file_name, "w", encoding="utf-8") as csv_f:
         csv_writer = csv.writer(csv_f)

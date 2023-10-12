@@ -137,11 +137,9 @@ _/_/_/_/ クライアント側IndexedDB "unyohub_caches" _/_/_/_/
 
 {
     ・railroad_id : 路線系統識別名,
-    ・line_id : 走行路線の識別名,
     ・operation_table : 運用表識別名,
     last_modified_timestamp : このデータの元になったJSONファイルが更新された日時のタイムスタンプ値(UTC、秒単位),
-    inbound_timetable : 上り時刻表(timetable.phpのレスポンスをパースしてそのまま格納),
-    outbound_timetable : 下り時刻表(timetable.phpのレスポンスをパースしてそのまま格納)
+    timetables : timetables.phpのレスポンスをパースしてそのまま格納
 }
 
 
