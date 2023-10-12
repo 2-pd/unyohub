@@ -35,9 +35,15 @@ if (intval($_POST["last_modified_timestamp"]) >= $last_modified_max) {
             print "ERROR: 路線系統設定ファイルが破損しています";
             exit;
         }
-        $railroads[$railroad] = array("railroad_name" => $railroad_info["railroad_name"]);
+        $railroads[$railroad] = array("railroad_name" => $railroad_info["railroad_name"], "railroad_icon" => $railroad_info["railroad_icon"]);
     }
     
     header("Last-Modified: ".gmdate("D, d M Y H:i:s", $last_modified_max)." GMT");
-    print json_encode($railroads, JSON_UNESCAPED_UNICODE);
+    
+    if (!empty($_SERVER["HTTP_ACCEPT_ENCODING"]) && strpos($_SERVER["HTTP_ACCEPT_ENCODING"], "gzip") !== FALSE) {
+        header("Content-Encoding: gzip");
+        print gzencode(json_encode($railroads, JSON_UNESCAPED_UNICODE));
+    } else {
+        print json_encode($railroads, JSON_UNESCAPED_UNICODE);
+    }
 }

@@ -113,9 +113,11 @@
 **unyohub.jsonまたは各路線データフォルダのrailroad_info.jsonの変更日時がタイムスタンプより新しかった場合** :  
 {  
     "路線系統識別名" : {  
-      "railroad_name" : 路線系統表示名  
+      "railroad_name" : 路線系統表示名,  
+      "railroad_icon" : BASE64エンコードされた路線系統のアイコンデータ  
     }...  
 }  
+▲クライアント端末からAccept-Encodingヘッダーが送信されていた場合、このデータは自動的にgzip圧縮される
   
 **unyohub.json及び各路線データフォルダのrailroad_info.jsonの変更日時がいずれもタイムスタンプ以前だった場合** :  
 文字列「NO_UPDATES_AVAILABLE」  

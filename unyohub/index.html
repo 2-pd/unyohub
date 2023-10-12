@@ -87,11 +87,14 @@ header {
     
     border: none;
     
+    background-size: 30px;
+    background-repeat: no-repeat;
+    background-position: 5px 5px;
     background-color: transparent;
     
     line-height: 40px;
     font-size: 18px;
-    text-indent: 10px;
+    text-indent: 40px;
     
     appearance: none;
 }
@@ -394,40 +397,27 @@ article, #blank_article {
 .position_station h4 {
     position: absolute;
     top: -14px;
+    left: -5px;
     
-    width: 100%;
-    height: 24px;
+    width: 98px;
+    height: 26px;
     
     margin: 0;
+    padding-left: 5px;
     
-    border-bottom: 2px solid #cccccc;
+    background-color: #eeeeee;
+    
+    border-radius: 0 13px 13px 0;
 }
 
 .dark_mode .position_station h4 {
-    border-color: #404040;
+    background-color: #202020;
 }
 
-.position_station h4::after {
-    content: "";
-    
-    display: block;
-    
-    position: absolute;
-    top: 0;
-    right: -14px;
-    
-    border-top: 13px solid transparent;
-    border-left: 14px solid #cccccc;
-    border-bottom: 13px solid transparent;
-}
 
 .connecting_line_button {
     position: absolute;
     top: 15px;
-}
-
-.dark_mode .position_station h4::after {
-    border-left-color: #404040;
 }
 
 .position_inbound, .position_outbound {
@@ -567,7 +557,7 @@ a {
     
     background-color: transparent;
     
-    font-size: large;
+    font-size: 18px;
 }
 
 .popup input[type="number"] {
@@ -577,7 +567,7 @@ a {
     
     margin-left: 20px;
     
-    font-size: large;
+    font-size: 18px;
 }
 
 .popup select {
@@ -669,7 +659,7 @@ a {
     background-color: transparent;
     
     line-height: 24px;
-    font-size: large;
+    font-size: 18px;
     text-align: center;
 }
 
@@ -693,7 +683,12 @@ a {
     margin: 10px auto;
     padding: 10px 10px;
     
-    font-size: large;
+    background-size: 30px;
+    background-repeat: no-repeat;
+    background-position: 10px 50%;
+    
+    line-height: 26px;
+    font-size: 18px;
 }
 
 .square_popup .popup_close_button {
@@ -1321,7 +1316,7 @@ function update_railroad_list (railroads) {
     var keys = Object.keys(railroads);
     for (var cnt = 0; cnt < keys.length; cnt++) {
         select_html += "<option value='" + keys[cnt] + "'>" + escape_html(railroads[keys[cnt]]["railroad_name"]) + "</option>";
-        buttons_html += "<button type='button' class='wide_button' onclick='select_railroad(\"" + keys[cnt] + "\");'>" + escape_html(railroads[keys[cnt]]["railroad_name"]) + "</button>";
+        buttons_html += "<button type='button' class='wide_button' onclick='select_railroad(\"" + keys[cnt] + "\");' style='background-image: url(" + railroads[keys[cnt]]["railroad_icon"] + ");'>" + escape_html(railroads[keys[cnt]]["railroad_name"]) + "</button>";
     }
     
     document.getElementById("railroad_select").innerHTML = select_html;
@@ -1475,6 +1470,7 @@ function switch_railroad (railroad_info_next, load_icon = true) {
     if (select_elm.value !== railroad_info["railroad_id"]) {
         select_elm.value = railroad_info["railroad_id"];
     }
+    select_elm.style.backgroundImage = "url(" + railroad_info["railroad_icon"] + ")";
     
     switch_dark_mode();
     
