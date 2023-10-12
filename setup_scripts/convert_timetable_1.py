@@ -2,8 +2,6 @@
 # coding: utf-8
 
 import csv
-import json
-from operator import itemgetter
 
 print("変換対象のCSVファイル名を入力してください:")
 
@@ -39,19 +37,22 @@ for cnt in range(2, len(timetable_data_t)):
         if sum([i != "" for i in train]) > 1:
             train = [timetable_data_t[cnt][0], timetable_data_t[cnt][1], "", "", "", "", "", ""] + train + ["", "", "", "", "", ""]
             
-            for line_id_2 in line_list:
-                line_data_last = len(new_timetable_t[line_id_2]) - 1
-                
-                if line_id_2 != line_id and line_data_last >= 0 and new_timetable_t[line_id_2][line_data_last][0] == train[0]:
-                    line_id_2_len = len(new_timetable_t[line_id_2][line_data_last])
+            for cnt_2 in range(8, len(train) - 6):
+                if train[cnt_2] != "":
+                    if train[cnt_2].find(":") == -1:
+                        train[cnt_2] = train[cnt_2][:-2] + ":" + train[cnt_2][-2:]
                     
+                    train[cnt_2] = train[cnt_2].zfill(5)
+            
+            for line_id_2 in line_list:
+                if line_id_2 != line_id and len(new_timetable_t[line_id_2]) >= 1 and new_timetable_t[line_id_2][-1][0] == train[0]:
                     train[2] = line_id_2
                     train[3] = train[0]
-                    train[4] = list(filter(lambda x: x != "", new_timetable_t[line_id_2][line_data_last][8:line_id_2_len - 6]))[0]
+                    train[4] = list(filter(lambda x: x != "", new_timetable_t[line_id_2][-1][8:-6]))[0]
                     
-                    new_timetable_t[line_id_2][line_data_last][line_id_2_len - 6] = line_id
-                    new_timetable_t[line_id_2][line_data_last][line_id_2_len - 5] = train[0]
-                    new_timetable_t[line_id_2][line_data_last][line_id_2_len - 4] = list(filter(lambda x: x != "", train[8:len(train) - 6]))[0]
+                    new_timetable_t[line_id_2][-1][-6] = line_id
+                    new_timetable_t[line_id_2][-1][-5] = train[0]
+                    new_timetable_t[line_id_2][-1][-4] = list(filter(lambda x: x != "", train[8:-6]))[0]
             
             new_timetable_t[line_id].append(train)
 
