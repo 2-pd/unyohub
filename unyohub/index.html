@@ -466,7 +466,18 @@ article, #blank_article {
 }
 
 #direction_radio_area h3 {
+    position: relative;
+    
     margin: 0 0 5px 0
+}
+
+#direction_radio_area .previous_button {
+    position: absolute;
+    left: 0;
+    
+    height: 30px;
+    
+    background-size: 10px 20px;
 }
 
 #timetable_area h4 {
@@ -522,7 +533,13 @@ footer {
     
     box-shadow: 0 0 2px 2px rgba(0,0,0,0.2);
     
+    overflow: hidden;
+    
     z-index: 2;
+}
+
+.dark_mode footer {
+    background-color: #181818;
 }
 
 footer div {
@@ -534,8 +551,23 @@ footer div {
     text-align: center;
 }
 
-.dark_mode footer {
-    background-color: #181818;
+.previous_button, .next_button {
+    width: 40px;
+    height: 50px;
+    
+    padding: 0;
+    
+    border: none;
+    
+    background-image: url(data:image/webp;base64,UklGRoQAAABXRUJQVlA4THgAAAAvHcAOEG9gkG2k5vwN3vWnYSBtmzD/Du71NZC2TZh/B/f6KgoAwvETQf+PIDsMCbgRgLuj/78oNB4+pPrbEFz9aqoEm8i26ryeFifLxwcSsBIJMRApERFLeT1dRP+FBAkmr0wo8W9DTbxwR9Lh7ANXYsGXmFDO5AM=);
+    background-repeat: no-repeat;
+    background-size: 15px 30px;
+    background-position: center;
+    background-color: transparent !important;
+}
+
+.previous_button {
+    transform: scale(-1, 1);
 }
 
 .popup {
@@ -913,7 +945,7 @@ input[type="radio"] + label {
 input[type="radio"]:checked + label {
     background-color: #ffffff;
     
-    box-shadow: 0 1px 3px rgba(0,0,0,0.25);
+    box-shadow: 0 1px 3px rgba(0,0,0,0.25) inset;
     
     color: #000000;
 }
@@ -921,7 +953,7 @@ input[type="radio"]:checked + label {
 .dark_mode input[type="radio"]:checked + label {
     background-color: #101010;
     
-    box-shadow: 0 1px 3px rgba(255,255,255,0.5);
+    box-shadow: 0 1px 3px rgba(0,0,0,0.5) inset;
     
     color: #ffffff;
 }
@@ -977,7 +1009,7 @@ button {
     <article>
         <select id="timetable_line_select" class="line_select" onchange="timetable_change_lines(this.value);"></select>
         <div id="direction_radio_area">
-            <h3><span id="timetable_station_name"></span></h3>
+            <h3><button type="button" class="previous_button" onclick="timetable_change_lines(timetable_line_select_elm.value, true);"></button><span id="timetable_station_name"></span></h3>
             <input type="radio" name="direction_radio" id="radio_inbound" value="inbound" checked="checked" onchange="timetable_select_station(timetable_selected_station);"><label for="radio_inbound" id="radio_inbound_label">上り方面</label>
             <input type="radio" name="direction_radio" id="radio_outbound" value="outbound" onchange="timetable_select_station(timetable_selected_station);"><label for="radio_outbound" id="radio_outbound_label">下り方面</label>
         </div>
@@ -987,11 +1019,11 @@ button {
     <article id="formation_table_area" class="wait_icon"></article>
     <article class="wait_icon"></article>
     <footer>
+        <div><button type="button" class="previous_button"></button><button type="button" class="next_button"></button><button type="button" class="previous_button"></button><button type="button" class="next_button"></button></div>
+        <div><button type="button" class="previous_button"></button><button type="button" class="next_button"></button></div>
+        <div><button type="button" class="previous_button"></button><button type="button" class="next_button"></button></div>
         <div></div>
-        <div></div>
-        <div></div>
-        <div></div>
-        <div></div>
+        <div><button type="button" class="previous_button"></button><button type="button" class="next_button"></button></div>
     </footer>
     <div class="popup" id="sign_up_popup">
         <button type="button" class="popup_close_button" onclick="close_square_popup();"></button>
@@ -1793,7 +1825,7 @@ function position_change_lines (line_id) {
 }
 
 
-function train_detail (line_id, train_name) {
+function train_detail (line_id, train_name, first_departure_time) {
     open_square_popup("train_detail_popup");
 }
 
@@ -1871,6 +1903,7 @@ function timetable_select_station (station_name, cnt = 0) {
     
     var keys = Object.keys(timetable["timetable"][line_id][train_direction]);
     var departure_times = {};
+    var first_departure_times = {};
     
     for (var cnt = 0; cnt < keys.length; cnt++) {
         for (var cnt_2 = 0; cnt_2 < timetable["timetable"][line_id][train_direction][keys[cnt]].length; cnt_2++){
@@ -1881,9 +1914,11 @@ function timetable_select_station (station_name, cnt = 0) {
                 
                 if (!(hh_and_mm[0] in departure_times)) {
                     departure_times[hh_and_mm[0]] = {};
+                    first_departure_times[hh_and_mm[0]] = {};
                 }
                 
                 departure_times[hh_and_mm[0]][hh_and_mm[1]] = keys[cnt];
+                first_departure_times[hh_and_mm[0]][hh_and_mm[1]] = timetable["timetable"][line_id][train_direction][keys[cnt]][cnt_2]["first_departure_time"];
             }
         }
     }
@@ -1899,7 +1934,7 @@ function timetable_select_station (station_name, cnt = 0) {
         keys_2.sort();
         
         for (cnt_2 = 0; cnt_2 < keys_2.length; cnt_2++) {
-            buf += "<a href='javascript:void(0)' onclick='train_detail(\"" + line_id + "\", \"" + departure_times[keys[cnt]][keys_2[cnt_2]] + "\");' class='timetable_train'>";
+            buf += "<a href='javascript:void(0)' onclick='train_detail(\"" + line_id + "\", \"" + departure_times[keys[cnt]][keys_2[cnt_2]] + "\", \"" + first_departure_times[keys[cnt]][keys_2[cnt_2]] + "\");' class='timetable_train'>";
             buf += "<img src='" + get_icon("****") + "' alt='' class='train_icon'>"; //動作検証用仮指定
             buf += "<b style='color: " + get_train_color(departure_times[keys[cnt]][keys_2[cnt_2]]) + ";'>" + Number(keys_2[cnt_2]) + "</b><br>";
             buf += "?";
