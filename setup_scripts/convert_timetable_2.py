@@ -61,9 +61,10 @@ for line_id in lines:
             if train[-3] != "":
                 direction_data[train[0]][train_cnt]["next_trains"].append({ "line_id" : train[-3], "train_number" : train[-2], "first_departure_time" : train[-1] })
             
-            direction_data[train[0]][train_cnt]["departure_times"] = departure_times
+            
+            direction_data[train[0]][train_cnt]["departure_times"] = [None if departure_time == "" else departure_time for departure_time in departure_times]
         
-        line_data[direction] = direction_data
+        line_data[direction + "_trains"] = direction_data
     
     output_data[line_id] = line_data
 

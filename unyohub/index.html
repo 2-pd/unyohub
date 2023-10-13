@@ -457,6 +457,14 @@ article, #blank_article {
     border-color: #181818;
 }
 
+#direction_radio_area {
+    display: none;
+    
+    padding-top: 10px;
+    
+    text-align: center;
+}
+
 .train_icon {
     max-width: 40px;
     max-height: 40px;
@@ -768,7 +776,7 @@ input[type="text"], input[type="number"], input[type="password"], input[type="se
     color: #ffffff
 }
 
-input[type="checkbox"] {
+input[type="checkbox"], input[type="radio"] {
     display: none;
 }
 
@@ -847,6 +855,40 @@ input[type="checkbox"]:checked + label:after {
     left: 22px;
 }
 
+input[type="radio"] + label {
+    display: inline-block;
+    
+    padding: 8px 12px;
+    
+    background-color: #cccccc;
+    
+    border-radius: 5px;
+    
+    color: #ffffff;
+}
+
+.dark_mode input[type="radio"] + label {
+    background-color: #202020;
+    
+    color: #666666;
+}
+
+input[type="radio"]:checked + label {
+    background-color: #ffffff;
+    
+    box-shadow: 0 1px 3px rgba(0,0,0,0.25);
+    
+    color: #000000;
+}
+
+.dark_mode input[type="radio"]:checked + label {
+    background-color: #101010;
+    
+    box-shadow: 0 1px 3px rgba(255,255,255,0.5);
+    
+    color: #ffffff;
+}
+
 button {
     background-color: rgba(255,255,255,0.75);
     
@@ -897,6 +939,10 @@ button {
     </article>
     <article>
         <select id="timetable_line_select" class="line_select" onchange="timetable_change_lines(this.value);"></select>
+        <div id="direction_radio_area">
+            <input type="radio" name="direction_radio" id="radio_inbound" value="inbound" checked="checked" onchange="timetable_select_station(timetable_selected_station);"><label for="radio_inbound" id="radio_inbound_label">上り方面</label>
+            <input type="radio" name="direction_radio" id="radio_outbound" value="outbound" onchange="timetable_select_station(timetable_selected_station);"><label for="radio_outbound" id="radio_outbound_label">下り方面</label>
+        </div>
         <div id="timetable_area" class="wait_icon"></div>
     </article>
     <article class="wait_icon"></article>
@@ -1544,6 +1590,7 @@ function schedule_change_mode (cnt = 0) {
 
 
 var tab_area_elm = document.getElementById("tab_area");
+var article_elms = document.getElementsByTagName("article");
 var footer_elm = document.getElementsByTagName("footer")[0];
 
 tab_area_elm.onselectstart = function () { return false; };
@@ -1553,16 +1600,15 @@ var mode_val = -1;
 function change_mode (num) {
     document.getElementById("blank_article").style.display = "none";
     
-    var articles = document.getElementsByTagName("article");
     var tab_buttons = tab_area_elm.getElementsByTagName("button");
     var footer_boxes = footer_elm.getElementsByTagName("div");
-    for (var cnt = 0; cnt < articles.length; cnt++) {
+    for (var cnt = 0; cnt < article_elms.length; cnt++) {
         if (cnt === num) {
-            articles[cnt].style.display = "block";
+            article_elms[cnt].style.display = "block";
             tab_buttons[cnt].className = "active_tab";
             footer_boxes[cnt].style.display = "block";
         } else {
-            articles[cnt].style.display = "none";
+            article_elms[cnt].style.display = "none";
             tab_buttons[cnt].className = "";
             footer_boxes[cnt].style.display = "none";
         }
@@ -1718,17 +1764,21 @@ function timetable_mode () {
     timetable_change_lines(Object.keys(railroad_info["lines"])[0], true);
 }
 
-timetable_selected_station = null;
+var timetable_selected_station = null;
+var direction_radio_area_elm = document.getElementById("direction_radio_area");
 
 function timetable_change_lines(line_id, force_station_select_mode = false) {
     if (timetable_line_select_elm.value !== line_id) {
         timetable_line_select_elm.value = line_id;
     }
     
+    var keys = Object.keys(railroad_info["lines"][line_id]["stations"]);
+    
+    document.getElementById("radio_inbound_label").innerText = "上り(" + keys[0] + ")方面";
+    document.getElementById("radio_outbound_label").innerText = "下り(" + keys[keys.length - 1] + ")方面";
+    
     if (timetable_selected_station === null || force_station_select_mode) {
         update_timetable_line_select(Object.keys(railroad_info["lines"]));
-        
-        var keys = Object.keys(railroad_info["lines"][line_id]["stations"]);
         
         buf = "";
         for (cnt = 0; cnt < keys.length; cnt++) {
@@ -1736,6 +1786,7 @@ function timetable_change_lines(line_id, force_station_select_mode = false) {
         }
         
         timetable_area_elm.innerHTML = buf;
+        direction_radio_area_elm.style.display = "none";
         timetable_selected_station = null;
     } else {
         timetable_select_station(timetable_selected_station);
@@ -1751,12 +1802,57 @@ function timetable_select_station (station_name, cnt = 0) {
     }
     
     timetable_selected_station = station_name;
+    direction_radio_area_elm.style.display = "block";
     
     var line_id = timetable_line_select_elm.value;
     
     update_timetable_line_select([line_id].concat(railroad_info["lines"][line_id]["stations"][station_name]["connecting_lines"]));
     
+    if (document.getElementById("radio_inbound").checked) {
+        train_direction = "inbound_trains";
+        station_index = Object.keys(railroad_info["lines"][line_id]["stations"]).reverse().indexOf(station_name);
+    } else {
+        train_direction = "outbound_trains";
+        station_index = Object.keys(railroad_info["lines"][line_id]["stations"]).indexOf(station_name);
+    }
     
+    var keys = Object.keys(timetable["timetable"][line_id][train_direction]);
+    var departure_times = {};
+    
+    for (var cnt = 0; cnt < keys.length; cnt++) {
+        for (var cnt_2 = 0; cnt_2 < timetable["timetable"][line_id][train_direction][keys[cnt]].length; cnt_2++){
+            var departure_time = timetable["timetable"][line_id][train_direction][keys[cnt]][cnt_2]["departure_times"][station_index];
+            
+            if (departure_time !== null){
+                hh_and_mm = departure_time.split(":");
+                
+                if (!(hh_and_mm[0] in departure_times)) {
+                    departure_times[hh_and_mm[0]] = {};
+                }
+                
+                departure_times[hh_and_mm[0]][hh_and_mm[1]] = keys[cnt];
+            }
+        }
+    }
+    
+    keys = Object.keys(departure_times);
+    keys.sort();
+    
+    var buf = "";
+    for (cnt = 0; cnt < keys.length; cnt++) {
+        buf += "<h4>" + Number(keys[cnt]) + "時</h4>";
+        
+        var keys_2 = Object.keys(departure_times[keys[cnt]]);
+        keys_2.sort();
+        
+        for (cnt_2 = 0; cnt_2 < keys_2.length; cnt_2++) {
+            buf += " " + keys_2[cnt_2];
+        }
+    }
+    
+    timetable_area_elm.innerHTML = buf;
+    
+    article_elms[1].scrollTop = 0;
 }
 
 
