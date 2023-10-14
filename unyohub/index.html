@@ -1799,11 +1799,13 @@ function position_change_lines (line_id) {
         buf += "<div class='position_row'><div class='position_station'>";
         
         if (cnt !== 0){
+            buf += "<h4 onclick='position_click_station(\"" + keys[cnt - 1] + "\")'>";
             if (keys[cnt - 1].length > 5) {
-                buf += "<h4>" + escape_html(keys[cnt - 1].substring(0, 4) + "..") + "</h4>";
+                buf += escape_html(keys[cnt - 1].substring(0, 4) + "..");
             } else{
-                buf += "<h4>" + escape_html(keys[cnt - 1]) + "</h4>";
+                buf += escape_html(keys[cnt - 1]);
             }
+            buf += "</h4>";
             
             for (var cnt_2 = 0; cnt_2 < railroad_info["lines"][line_id]["stations"][keys[cnt - 1]]["connecting_lines"].length; cnt_2++) {
                 buf += "<button type='button' class='connecting_line_button' onclick='position_change_lines(\"" + railroad_info["lines"][line_id]["stations"][keys[cnt - 1]]["connecting_lines"][cnt_2] + "\")'>" + escape_html(railroad_info["lines"][railroad_info["lines"][line_id]["stations"][keys[cnt - 1]]["connecting_lines"][cnt_2]]["line_name"]) + "</button>";
@@ -1827,6 +1829,14 @@ function position_change_lines (line_id) {
 
 function train_detail (line_id, train_name, first_departure_time) {
     open_square_popup("train_detail_popup");
+}
+
+function position_click_station (station_name) {
+    change_mode(1);
+    
+    timetable_select_station(station_name);
+    
+    timetable_change_lines(position_line_select_elm.value);
 }
 
 
@@ -1879,12 +1889,13 @@ function timetable_change_lines(line_id, force_station_select_mode = false) {
 function timetable_select_station (station_name, cnt = 0) {
     timetable_area_elm.innerHTML = "";
     
+    timetable_selected_station = station_name;
+    
     if (timetable === null && cnt < 100) {
         setTimeout(timetable_select_station, 50, station_name, cnt + 1);
         return;
     }
     
-    timetable_selected_station = station_name;
     direction_radio_area_elm.style.display = "block";
     
     document.getElementById("timetable_station_name").innerText = station_name;

@@ -8,6 +8,10 @@ print("変換対象のCSVファイル名を入力してください:")
 
 file_name = input()
 
+print("所定の桁数に満たない列車番号の前に「0」を付加する場合にはその桁数を、しない場合には0を入力してください:")
+
+digits_count = int(input())
+
 print(file_name + " を読み込んでいます...")
 with open(file_name, "r", encoding="utf-8") as csv_f:
     csv_reader = csv.reader(csv_f)
@@ -36,7 +40,7 @@ for cnt in range(2, len(timetable_data_t)):
         train = list(itemgetter(*line_stations[line_id])(timetable_data_t[cnt]))
         
         if sum([i != "" for i in train]) > 1:
-            train = [timetable_data_t[cnt][0], timetable_data_t[cnt][1], "", "", "", "", "", ""] + train + ["", "", "", "", "", ""]
+            train = [timetable_data_t[cnt][0].zfill(digits_count), timetable_data_t[cnt][1], "", "", "", "", "", ""] + train + ["", "", "", "", "", ""]
             
             for cnt_2 in range(8, len(train) - 6):
                 if train[cnt_2] != "":
