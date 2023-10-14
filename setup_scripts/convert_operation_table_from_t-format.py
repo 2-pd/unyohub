@@ -72,7 +72,10 @@ while cnt < len(operations):
                 output_row_3.append("")
             elif (operations[cnt][cnt_2] != "" and operations[cnt][cnt_2] != "○" and operations[cnt][cnt_2] != "△"):
                 train_name_car_count = operations[cnt][cnt_2].split("(")
-                train_name = train_name_car_count[0].zfill(digits_count)
+                if train_name_car_count[0][0:1] != "." and train_name_car_count[0][0:1] != "?":
+                    train_name = train_name_car_count[0].zfill(digits_count)
+                else:
+                    train_name = train_name_car_count[0]
                 
                 if len(train_name_car_count) == 2:
                     car_count = "(" + train_name_car_count[1]
@@ -106,14 +109,19 @@ while cnt < len(operations):
                                     last_departure_times.append(railroad_info["lines"][line]["stations"][station_list[line][cnt_3]]["station_initial"] + train["departure_times"][cnt_3])
                                     break
                 
-                first_departure_times.sort(key=lambda data : data[1:])
-                last_departure_times.sort(key=lambda data : data[1:])
-                
-                for cnt_3 in range(len(first_departure_times)):
-                    if first_departure_times[cnt_3][1:] >= first_departure_time and last_departure_times[cnt_3][1:] <= last_departure_time:
-                        output_row_1.append(train_name + car_count)
-                        output_row_2.append(first_departure_times[cnt_3])
-                        output_row_3.append(last_departure_times[cnt_3])
+                if len(first_departure_times) >= 1:
+                    first_departure_times.sort(key=lambda data : data[1:])
+                    last_departure_times.sort(key=lambda data : data[1:])
+                    
+                    for cnt_3 in range(len(first_departure_times)):
+                        if first_departure_times[cnt_3][1:] >= first_departure_time and last_departure_times[cnt_3][1:] <= last_departure_time:
+                            output_row_1.append(train_name + car_count)
+                            output_row_2.append(first_departure_times[cnt_3])
+                            output_row_3.append(last_departure_times[cnt_3])
+                else:
+                    output_row_1.append(train_name + car_count)
+                    output_row_2.append(operations[cnt + 1][cnt_2][0:1] + first_departure_time)
+                    output_row_3.append(operations[cnt + 2][cnt_2][0:1] + last_departure_time)
             
             cnt_2 += 1
         

@@ -527,9 +527,11 @@ footer {
     width: 100%;
     height: 50px;
     
-    line-height: 50px;
-    
     background-color: #f7f7f7;
+    
+    line-height: 50px;
+    font-size: 26px;
+    color: #333333;
     
     box-shadow: 0 0 2px 2px rgba(0,0,0,0.2);
     
@@ -540,6 +542,8 @@ footer {
 
 .dark_mode footer {
     background-color: #181818;
+    
+    color: #dddddd;
 }
 
 footer div {
@@ -564,6 +568,8 @@ footer div {
     background-size: 15px 30px;
     background-position: center;
     background-color: transparent !important;
+    
+    vertical-align: top;
 }
 
 .previous_button {
@@ -1020,7 +1026,7 @@ button {
     <article class="wait_icon"></article>
     <footer>
         <div><button type="button" class="previous_button"></button><button type="button" class="next_button"></button><button type="button" class="previous_button"></button><button type="button" class="next_button"></button></div>
-        <div><button type="button" class="previous_button"></button><button type="button" class="next_button"></button></div>
+        <div><button type="button" class="previous_button" onclick="timetable_operation_previous();"></button><span id="timetable_operation_name"></span><button type="button" class="next_button" onclick="timetable_operation_next();"></button></div>
         <div><button type="button" class="previous_button"></button><button type="button" class="next_button"></button></div>
         <div></div>
         <div><button type="button" class="previous_button"></button><button type="button" class="next_button"></button></div>
@@ -1090,6 +1096,8 @@ button {
 document.getElementsByTagName("title")[0].innerText = UNYOHUB_APP_NAME;
 document.getElementById("app_name").innerText = UNYOHUB_APP_NAME;
 
+
+const UNYOHUB_GENERIC_TRAIN_ICON = "data:image/webp;base64,UklGRngCAABXRUJQVlA4TGwCAAAvT8AdEJVIkm07bhst/QLu7Zlm2YK2CYgQP35pmv/Uls0uAgq2bcee31a2bc5bstkct2Tbjl60ze4t2bZtPRMQ53o2pNDRH8YI4BcYfVlNvSh4lsHnZOiTzqZEzTzPErPzCSdpnudFuv2aAcWwxMQBHRES3XFCAYqI2yb9LVYokNiCsUOMFV9U1gCRbyT58wfwklUxXrzIeBT/hJhAzpP4X8NCrHfNyC3QJFEQ1ayTuGA6LbObznnkdUvfgH63jYflyhLTdynrKjFLNFlYeaEZVAQYHCljCxiRIxqS7x6/Q8TtwgsBFkr86Ltq9OvtEXZBcQmY5OqAtoMjYDQ72KHCCuV22LTCthnkMvsis5JS7ZBihWk7TNn4w5E/O+kP50/6OAd0NqTIiQlOZPzB+ERENiwn2eMJoYs7dcstnSkYXAsUMrhR5/eU/kMehCPHgIMcZYcB+PEjF/nG58iLhA85yfuLqEY34OZvBcrFDz6/qAX2chTbIvl7ci9SqCfz/5EQ5EkKLPDxJHkXuHmSXIvs4slcoPck64pXnidwC2iefFGL4M2PKaps+sFGjUk/mKjR6AcNNbL8SJk1wvyYatnkB8baHs+PFxcItWDdC9biKB1eLMdSvBfEHYvg3gPuYjCLHrAwbPGA9mEUeUDhsBTtAVHDcPYgOw17ZXkAc9gOyVt/0w45LFjtj5VoZKA/+luo7o+qFmL7SzEtyb0/3FpeRP0hbAHDd2/8/MO2BLu9sRPNTPbGRBu1vVHTlhJ7I6ENbgodXsyjFvPwra21iFGLMH3+8CrxMs4mXW1RLVE5zio9bQW2lxj5colzHQ==";
 
 const UNYOHUB_UNKNOWN_TRAIN_ICON = "data:image/webp;base64,UklGRqADAABXRUJQVlA4TJMDAAAvT8AdELVQuq03kST1T3+OaO5eMQ8zM/OOeXbMzMwQUY6wrMGVWo2FMUWRldBVEVIACCDAyGa2bXtLNpvjlmzb0Yu22b0l27b9uAmwv+qFRQhPPi+MIP5C8vFEVGnAqwvsBoK2y7PtTt1wOHRnftjiwH04HI7cp5fEIMSoO1PXCJuZO73WooOb2fSG++pYCkXu7KBgqWyHLBvgFAoJgfwD3gojS2elHs/Of8JEoM+L839iEmwy62voS6DFfWi1hZk7V8yGVfbDJc+8r4df8OX1dZ5GZ1lhdta9MKuxoTstEia80YqQGSI4U3HCE3JCU/DfI242fZo3giRUCWDgrCc/Oz1vchHi2kVyc42wHJxdaOEkhyopVMphWwq7YtB3saWelJAuhzQpzMphRsbKSf7JCf9wXUozLixCdL/KmQufZ7InqrAYt7JHnDB6ePBsuac7hCLWBBmyuPPMZ0LmLumok5y6gpwUThEE8MdV5Be/KUodvlxJPkutOnpBzeUaZE7rwfcO2QqOrij2lRDY2m5u5kU+4Ft+4Vcad9/wHs9zAztpLQRWQnhLl/A6v9An7F7mOC0N2zvA/K8kf4k9iLqeH+gFfs81CHqYX5HZ3YuYW+mldjch5FI6Mf3PXIiIko/4FcEfUiBhoRd9JwJKvkbWV/yf7ir62F94nEOUeOPNHOVZovorSPcEMd3EW76NqMdI9zYxj+Ktv0DMW6QbxeyjvaWYr0k3HTEdaG8HMT+Tro9c9fa3ENP/9ZP592sjZlqHpZhlHZ4j5oQKN9PHPk4e21k7FXF+8Cx99JXk8Ah9yuUSbe7HlfmMrSgzfTGuzO24Mg/iunzPdbgur7AX0KR7hQvwdrPoRu/xHDewE29b3l146v9oEJJMdAiu4KdJ8K3goUlwrxRumqxVMNekMKtsVtME1QpymuyQrRgfevRWy3aqR/iVyLtIxVYd03owVUezHjTVkaNHyK4jQo9BXWGlB5Z1e8T5o8UpJOqMTS3YsCnpSiR4PFVI1IKEqcx41IAHi2ZZA5bixhrQGUeJBhTHhVgNiInDVYPCJW6zkgYoxm0S5CO/fhBnrOfHmjVkKD8Gm1CbHzVNiM8vxDUJnvnh0aTUyg/NJojwm9upw6JNjP3c2LPG87mtNqM+N+qaheTcSGqGagiPrwyTVobxG82aVixpxUT/9eHdnbc06+5nZVHrTnWa8+4Lsgz705b49Gn7qw4A";
 
@@ -1336,6 +1344,11 @@ function switch_dark_mode () {
         case 0:
             position_mode();
             break;
+        case 1:
+            if (timetable_selected_station !== null) {
+                timetable_select_station(timetable_selected_station);
+            }
+            break;
     }
 }
 
@@ -1422,6 +1435,67 @@ function update_user_data (user_data_next = null) {
         splash_screen_login_status_elm.innerHTML = "ようこそ <b>" + escape_html(user_data["user_name"]) + "</b> さん<br><a href='javascript:void(0)' onclick='user_logout();'>ログアウト</a>";
     } else {
         splash_screen_login_status_elm.innerHTML = "<b>ログインしていません</b><br><a href='javascript:void(0)' onclick='open_square_popup(\"login_popup\");'>ログイン</a>　<a href='javascript:void(0)' onclick='open_popup(\"sign_up_popup\");'>新規登録</a>";
+    }
+}
+
+
+function get_holiday_list (toshi) {
+    var holiday_list = ["1/1", "2/11", "2/23", "4/29", "5/3", "5/4", "5/5", "8/11", "11/3", "11/23"];
+    var happy_monday_list = ["1-2", "7-3", "9-3", "10-2"];
+    
+    holiday_list.push("3/" + String(Math.floor(20.8431 + 0.242194 * (toshi - 1980)) - Math.floor((toshi - 1980) / 4)));
+    var shubun = Math.floor(23.2488 + 0.242194 * (toshi - 1980)) - Math.floor((toshi - 1980) / 4);
+    holiday_list.push("9/" + String(shubun));
+    
+    var dt2;
+    var bunkatsu;
+    var yobi_val;
+    for (var hm_cnt = 0; hm_cnt < happy_monday_list.length; hm_cnt++) {
+        bunkatsu = happy_monday_list[hm_cnt].split("-");
+        dt2 = new Date(String(toshi) + "-" + ("0" + bunkatsu[0]).slice(-2) + "-01 12:00:00");
+        
+        yobi_val = dt2.getDay();
+        if (yobi_val <= 1) {
+            yobi_val += 7;
+        }
+        holiday_list.push(bunkatsu[0] + "/" + String((2 - yobi_val) + (7 * Number(bunkatsu[1]))));
+    }
+    
+    var furikae_cnt;
+    var hizuke;
+    for (var h_cnt = 0; h_cnt < holiday_list.length; h_cnt++) {
+        bunkatsu = holiday_list[h_cnt].split("/");
+        dt2 = new Date(String(toshi) + "-" + ("0" + bunkatsu[0]).slice(-2) + "-" + ("0" + bunkatsu[1]).slice(-2) + " 12:00:00");
+        
+        if (dt2.getDay() === 0) {
+            furikae_cnt = 0;
+            do {
+                furikae_cnt++;
+                hizuke = bunkatsu[0] + "/" + String(Number(bunkatsu[1]) + furikae_cnt);
+            } while (holiday_list.indexOf(hizuke) !== -1);
+            
+            holiday_list.push(hizuke);
+        }
+    }
+    
+    if (holiday_list.indexOf("9/" + String(shubun - 2)) !== -1) {
+        holiday_list.push("9/" + String(shubun - 1));
+    }
+    
+    return holiday_list;
+}
+
+function get_days_operation (ts) {
+    var dt = new Date(ts * 1000);
+    today = String(dt.getMonth() + 1) + "/" + String(dt.getDate());
+    today_mm_dd = "00" + String(dt.getMonth() + 1).substring(0,2) + "00" + String(dt.getDate()).substring(0,2);
+    
+    if (today_mm_dd in railroad_info["operations_by_date"]) {
+        return railroad_info["operations_by_date"][today_mm_dd];
+    } else if (today in get_holiday_list(dt.getFullYear())) {
+        return railroad_info["operations_by_day"][0];
+    } else {
+        return railroad_info["operations_by_day"][dt.getDay()];
     }
 }
 
@@ -1513,6 +1587,13 @@ window.onload = function () {
         splash_screen_login_status_elm.innerHTML = "<b>端末がオフラインです</b><br>前回アクセス時のデータを表示します";
         update_railroad_list(common_caches["railroads"]);
     }
+    
+    
+    /*
+    
+    ここに古い運用データキャッシュの削除処理
+    
+    */
 }
 
 
@@ -1710,8 +1791,16 @@ function change_mode (num) {
 
 var timetable = null;
 
+var timetable_operation_table;
+var timetable_operation_name_elm = document.getElementById("timetable_operation_name");
+
 function update_timetable (operation_table) {
+    timetable = null;
+    
     var railroad_id = railroad_info["railroad_id"];
+    
+    timetable_operation_table = operation_table;
+    timetable_operation_name_elm.innerText = railroad_info["operations"][operation_table]["operation_name"];
     
     var open_request = indexedDB.open("unyohub_caches", UNYOHUB_INDEXEDDB_VERSION);
     
@@ -1726,7 +1815,6 @@ function update_timetable (operation_table) {
                 timetable = evt.target.result;
                 var last_modified_timestamp = timetable["last_modified_timestamp"];
             } else {
-                timetable = null;
                 var last_modified_timestamp = 0;
             }
             
@@ -1834,9 +1922,9 @@ function train_detail (line_id, train_name, first_departure_time) {
 function position_click_station (station_name) {
     change_mode(1);
     
-    timetable_select_station(station_name);
-    
     timetable_change_lines(position_line_select_elm.value);
+    
+    timetable_select_station(station_name);
 }
 
 
@@ -1851,8 +1939,7 @@ function update_timetable_line_select (lines) {
 }
 
 function timetable_mode () {
-    timetable = null;
-    update_timetable("weekday");//動作検証用仮指定
+    update_timetable(get_days_operation(Date.now() / 1000 - 10800));
     
     timetable_change_lines(Object.keys(railroad_info["lines"])[0], true);
 }
@@ -1937,18 +2024,43 @@ function timetable_select_station (station_name, cnt = 0) {
     keys = Object.keys(departure_times);
     keys.sort();
     
+    var bgcolor = railroad_info["operations"][timetable_operation_table]["main_color"];
+    
+    if (config["dark_mode"]) {
+        bgcolor = convert_color_dark_mode(bgcolor);
+    }
+    
+    if (timetable_operation_table === get_days_operation(Date.now() / 1000 - 10800)) {
+        var is_today = true;
+    } else {
+        var is_today = false;
+    }
+    
     var buf = "";
     for (cnt = 0; cnt < keys.length; cnt++) {
-        buf += "<h4>" + Number(keys[cnt]) + "時</h4>";
+        buf += "<h4 style='background-color:" + bgcolor + "'>" + Number(keys[cnt]) + "時</h4>";
         
         var keys_2 = Object.keys(departure_times[keys[cnt]]);
         keys_2.sort();
         
         for (cnt_2 = 0; cnt_2 < keys_2.length; cnt_2++) {
             buf += "<a href='javascript:void(0)' onclick='train_detail(\"" + line_id + "\", \"" + departure_times[keys[cnt]][keys_2[cnt_2]] + "\", \"" + first_departure_times[keys[cnt]][keys_2[cnt_2]] + "\");' class='timetable_train'>";
-            buf += "<img src='" + get_icon("****") + "' alt='' class='train_icon'>"; //動作検証用仮指定
-            buf += "<b style='color: " + get_train_color(departure_times[keys[cnt]][keys_2[cnt_2]]) + ";'>" + Number(keys_2[cnt_2]) + "</b><br>";
-            buf += "?";
+            if (is_today) {
+                buf += "<img src='" + get_icon("****") + "' alt='' class='train_icon'>"; //動作検証用仮指定
+            } else {
+                buf += "<img src='" + UNYOHUB_GENERIC_TRAIN_ICON + "' alt='' class='train_icon'>";
+            }
+            
+            if (!config["dark_mode"]) {
+                buf += "<b style='color: " + get_train_color(departure_times[keys[cnt]][keys_2[cnt_2]]) + ";'>" + Number(keys_2[cnt_2]) + "</b><br>";
+            } else {
+                buf += "<b style='color: " + convert_color_dark_mode(get_train_color(departure_times[keys[cnt]][keys_2[cnt_2]])) + ";'>" + Number(keys_2[cnt_2]) + "</b><br>";
+            }
+            
+            if (is_today) {
+                buf += "?";//動作検証用仮指定
+            }
+            
             buf += "</a>";
         }
     }
@@ -1956,6 +2068,34 @@ function timetable_select_station (station_name, cnt = 0) {
     timetable_area_elm.innerHTML = buf;
     
     article_elms[1].scrollTop = 0;
+}
+
+function timetable_operation_previous () {
+    var keys = Object.keys(railroad_info["operations"]);
+    var key_index = keys.indexOf(timetable_operation_table) - 1;
+    
+    if (key_index < 0) {
+        key_index = keys.length - 1;
+    }
+    
+    update_timetable(keys[key_index]);
+    if (timetable_selected_station !== null) {
+        timetable_select_station(timetable_selected_station);
+    }
+}
+
+function timetable_operation_next () {
+    var keys = Object.keys(railroad_info["operations"]);
+    var key_index = keys.indexOf(timetable_operation_table) + 1;
+    
+    if (key_index >= keys.length) {
+        key_index = 0;
+    }
+    
+    update_timetable(keys[key_index]);
+    if (timetable_selected_station !== null) {
+        timetable_select_station(timetable_selected_station);
+    }
 }
 
 
