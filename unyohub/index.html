@@ -831,8 +831,20 @@ a {
     border-radius: 5px;
 }
 
+.train_detail_departure_times:last-of-type {
+    margin-bottom: 80px;
+}
+
 .dark_mode .train_detail_departure_times::before {
     background-color: #101010;
+}
+
+#train_detail_popup .wide_button {
+    position: fixed;
+    
+    width: calc(100% - 50px) !important;
+    
+    bottom: 20px;
 }
 
 #wait_screen {
@@ -2032,7 +2044,7 @@ function train_detail (line_id, train_number, first_departure_time) {
                     border_color = convert_color_dark_mode(border_color);
                 }
                 
-                buf += "<div class='train_detail_departure_times' style='border-color: " + border_color + ";'>" + escape_html(stations[cnt_2]) + "<span style='float: right;'>" + train_data[cnt]["departure_times"][cnt_2] + "</span></div>";
+                buf += "<div class='train_detail_departure_times' style='border-color: " + border_color + ";'><u onclick='close_square_popup(); timetable_select_station(\"" + stations[cnt_2] + "\");'>" + escape_html(stations[cnt_2]) + "</u><span style='float: right;'>" + train_data[cnt]["departure_times"][cnt_2] + "</span></div>";
             }
         }
     }
