@@ -12,7 +12,7 @@ def convert_time_style(time_data):
         time_str = time_str[:-2] + ":" + time_str[-2:]
     
     return time_data[0:1] + time_str.zfill(5)
-    
+
 
 print("railroad_info.json を読み込んでいます...")
 with open("railroad_info.json", "r", encoding="utf-8") as json_f:
