@@ -520,6 +520,104 @@ article, #blank_article {
     filter: drop-shadow(0 1px 2px rgba(0,0,0,0.25));
 }
 
+article input[type="checkbox"] + label {
+    background-color: #eeeeee;
+    height: 25px;
+    
+    margin: 5px 0;
+    padding: 10px;
+    
+    line-height: 25px;
+    font-weight: bold;
+    
+    z-index: 1;
+}
+
+.dark_mode article input[type="checkbox"] + label {
+    background-color: #202020;
+}
+
+article input[type="checkbox"] + label::before {
+    display: none;
+}
+
+article input[type="checkbox"] + label:after {
+    top: 0;
+    left: calc(100% - 45px) !important;
+    
+    width: 45px;
+    height: 45px;
+    
+    background-image: url(data:image/webp;base64,UklGRtwCAABXRUJQVlA4TM8CAAAvMUAMEPfDppEkR3Xp80fx/D4za0GoaRtJ8rbHH8Xxu+6JmraRJG97/FEcv+ueOG4kSZF2e8XMhqz/OmPuzTRUmmq1aRsweHbKG0juvYvnHInqo1xUjj5KAAALcuRRAsBECXLkuAEDAhQKBaFQRLC8WYAvtFhL8AVhoCAIBUAQEZxRMwPPWQLiC8IAwJlJIciQ44YI4kSOBg1yNMiRo0H+/885AYMrgDc8IgDCgXAgblGCJ0wUcEQZPL/3BP69V661LjCAKMm2aWfHNue82PZDbNu2bTz+fG7uO/fkByL6PwGiMXF9rKe5trS0tvlkbDFPnE/aaSXKtukPZ9KGS9DoOsvQlzKkACqPbza+v4qLv7Kf57yVAOrgU9NDDaC8y0GxHbviUUDto46YK4D+HNH41gewHxOVvwdoeRXNL82A2x9FfCdw6Rft8YdA2G8r5hTUpDh6oyAStHMF6lbsA9iTBQX7NlaAOXFKroG1P1JqYECck0uozrcagha/CYEmGLHIVfAqJsgWqLdfR3AkZsg5XIhIkguVY0qmwpUosgNeMUVOYUakFZbNWYV2SYSqoDmhCvi5A6+YI264H4Mbk7Zhrwc2THqC00bIMikbmusgwQLHLQqgvgxiTApC+X+ogwSTCqC+Eb4tov0lOlOhuQc2THqC03GYM2kWJu7Aa9IJ3CdCZaw5RRWQLG2wYs4DdIhMg8ccN8yKfLhQb6a8K0oSRaQf+kzxwYCISKaCFzM2QaX9kgNojjehsBFGxfKzFi5MGITaOCtZBmacmwKW5O99UAtOzQNjYrPYA+zai/4G6I6xI/4wMBDQV9gPdPnFvt8NNG3p2mwAPH6JNmYfoDdTx7sPYKxYND7WAup0NWQv9OBWQN2y6P0cUQAV7u2n1ISYmITUp9mTCgA1Gifac4ZL0Og6SxdHE6/bo+mYyRPnf+733K11ZWV1racT98miEQA=);
+    background-repeat: no-repeat;
+    background-size: 25px;
+    background-position: center;
+    background-color: transparent;
+    
+    box-shadow: none;
+}
+
+article input[type="checkbox"]:checked + label:after {
+    transform: rotate(45deg);
+}
+
+article input[type="checkbox"] + label + div {
+    height: 0;
+    
+    margin: -45px 0 45px 0;
+    
+    opacity: 0;
+    
+    overflow: hidden;
+    
+    transition: margin 0.1s, opacity 0.3s;
+}
+
+article input[type="checkbox"]:checked + label + div {
+    height: auto;
+    
+    margin: 0;
+    
+    opacity: 1;
+}
+
+.formation_box {
+    min-height: 60px;
+    
+    padding-left: 10px;
+    
+    line-height: 26px;
+}
+
+.formation_box .train_icon {
+    margin-top: 10px;
+}
+
+.formation_box span {
+    display: inline-block;
+    
+    margin: 0 1px;
+    padding: 1px 3px;
+    
+    border: 1px solid #dddddd;
+}
+
+.dark_mode .formation_box span {
+    border-color: #333333;
+}
+
+.formation_box span:first-of-type {
+    border-radius: 14px 0 0 14px;
+    
+    padding-left: 12px;
+}
+
+.formation_box span:last-of-type {
+    border-radius: 0 14px 14px 0;
+    
+    padding-right: 12px;
+}
+
 footer {
     position: absolute;
     bottom: 0;
@@ -609,8 +707,9 @@ footer div {
     width: 40px;
     height: 40px;
     
-    background-image: url(data:image/webp;base64,UklGRtAAAABXRUJQVlA4TMMAAAAvHUAHEH9gkG2k3vurPdM0DKRtk92/tWuqgbRtsvu3dk1VzEgSNP0bhkVYlvWXOQOqAP+/qOq3JYwAcPV3Jzx628FRZNtS84ph/wsF7H+xusxDEgnxggIkICCrSEBCJHwbcfHvexkFRPSfkdu2YdR2vHu/kD8714Qqc6711L5SF4QkuiCLuR4+ipAQG45E3IBKRKPUFKTBkzRA1OCMR2I24G62A/C2NxyJZSh6DQ+xMXolp1ArEW8NK23Fk6yvf8p/HQEA);
+    background-image: url(data:image/webp;base64,UklGRhwBAABXRUJQVlA4TA8BAAAvO8AOEJegEJIkp+v8SU7sCXLUUNC2kWMdfyRH7BHsqaBtI8c6/kiO2CPYU1HbSM52/lo8+1xO1+cClJlRa5W11kABAD4A/P8ZAoVEBGP9/xuzlJIOR24kKdLAMu/+/7VNlZm9pznxVET/HbmRJEXVDokTzNrwhmYoWz/yRZHzfXTMtLcPV+/Hjcl95YqYAqYUHmM8p+MnyLZ6Omf0ZMvV80P82ON3yKNSINKAUwHTgVIC0jJTM1I73IvpFZOyE7NSu+Tz1Dcvaz6vTd/NC+u4VahMnqVGzzeP2tiWK4vcE4v0GdSZtAGUQXSBVME0Ef7xHvrltphlcidv/PnuhMrCpRsbY+WfkRhr3WezgWzNAA==);
     background-repeat: no-repeat;
+    background-size: 30px;
     background-position: center;
     
     border: none;
@@ -802,6 +901,10 @@ a {
     border-radius: 0;
 }
 
+#train_detail_popup h4 {
+    font-size: 18px;
+}
+
 .train_detail_departure_times {
     position: relative;
     
@@ -835,7 +938,7 @@ a {
     margin-bottom: 80px;
 }
 
-.dark_mode .train_detail_departure_times::before {
+.dark_mode .train_detail_departure_times:before {
     background-color: #101010;
 }
 
@@ -2044,7 +2147,7 @@ function train_detail (line_id, train_number, first_departure_time) {
                     border_color = convert_color_dark_mode(border_color);
                 }
                 
-                buf += "<div class='train_detail_departure_times' style='border-color: " + border_color + ";'><u onclick='close_square_popup(); timetable_select_station(\"" + stations[cnt_2] + "\");'>" + escape_html(stations[cnt_2]) + "</u><span style='float: right;'>" + train_data[cnt]["departure_times"][cnt_2] + "</span></div>";
+                buf += "<div class='train_detail_departure_times' style='border-color: " + border_color + ";'><u onclick='close_square_popup(); timetable_change_lines(\"" + train_data[cnt]["line_id"] + "\", true); timetable_select_station(\"" + stations[cnt_2] + "\");'>" + escape_html(stations[cnt_2]) + "</u><span style='float: right;'>" + train_data[cnt]["departure_times"][cnt_2] + "</span></div>";
             }
         }
     }
@@ -2299,7 +2402,7 @@ function get_icon (formation_name) {
         }
     }
     
-    return UNYOHUB_UNKNOWN_TRAIN_ICON;
+    return UNYOHUB_GENERIC_TRAIN_ICON;
 }
 
 function get_train_color (train_name) {
@@ -2322,22 +2425,22 @@ function draw_formation_table (formations) {
     var buf = ""
     var keys = Object.keys(formations);
     for (var cnt = 0; cnt < keys.length; cnt++) {
-        buf += "<h3>" + escape_html(keys[cnt]) + "</h3>";
+        buf += "<input type='checkbox' id='" + keys[cnt] + "'><label for='" + keys[cnt] + "'>" + escape_html(keys[cnt]) + "</label><div>";
         
         var keys_2 = Object.keys(formations[keys[cnt]]);
         for (var cnt_2 = 0; cnt_2 < keys_2.length; cnt_2++){
-            buf += "<img src='" + get_icon(keys_2[cnt_2]) + "' alt='' class='train_icon'>";
+            buf += "<div class='formation_box'><img src='" + get_icon(keys_2[cnt_2]) + "' alt='' class='train_icon'>";
             
-            buf += escape_html(keys_2[cnt_2]);
+            buf += "<b>" + escape_html(keys_2[cnt_2]) + "</b><br>";
             
             for (var cnt_3 = 0; cnt_3 < formations[keys[cnt]][keys_2[cnt_2]]["cars"].length; cnt_3++) {
-                buf += escape_html(formations[keys[cnt]][keys_2[cnt_2]]["cars"][cnt_3]);
+                buf += "<span>" + escape_html(formations[keys[cnt]][keys_2[cnt_2]]["cars"][cnt_3]) + "</span>";
             }
             
-            buf += "<br>";
+            buf += "</div>";
         }
         
-        buf += "<br>";
+        buf += "</div>";
     }
     
     document.getElementById("formation_table_area").innerHTML = buf;
