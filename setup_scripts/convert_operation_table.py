@@ -147,8 +147,7 @@ while cnt < len(operations):
                         
                         output_data[operation_group]["operations"][operation_number]["trains"][stopped_train_number].insert(train_index, {})
                     else:
-                        stopped_train_number = "_" + str(id_cnt)
-                        id_cnt += 1
+                        stopped_train_number = "_" + train_number
                         stopped_train_index = 0
                         
                         tmp_train_data = output_data[operation_group]["operations"][operation_number]["trains"].pop(train_number)
