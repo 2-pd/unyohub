@@ -153,7 +153,10 @@ _/_/_/_/ クライアント側IndexedDB "unyohub_caches" _/_/_/_/
     ・operation_date : 「YYYY-MM-DD」形式の日付,
     last_modified_timestamp : サーバに最新のデータが投稿された日時のタイムスタンプ値(UTC、秒単位),
     operations : {
-        情報投稿のあった運用番号 : 編成名(前位側・奇数向きから順に配列で。複数種類の情報がある場合はNULLとなる)...
+        情報投稿のあった運用番号 : {
+            formations : 編成名(最も新しい投稿の情報を前位側・奇数向きから順に配列で),
+            variants_count : 投稿情報のバリエーション数
+        }...  
     }
 }
 

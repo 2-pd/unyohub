@@ -10,7 +10,8 @@ _/_/_/_/ データベース _/_/_/_/
 
 `unyohub_formations` 編成データ
   `formation_name` TEXT NOT NULL PRIMARY KEY 編成名
-  `car_count` INTEGER 編成両数
+  `cars_count` INTEGER 編成両数
+
 
 `unyohub_operations` 運用表データ
   `operation_table` TEXT NOT NULL 運用表識別名
@@ -48,21 +49,11 @@ _/_/_/_/ データベース _/_/_/_/
   INDEX `unyohub_idx_d1`(`user_id`,`posted_datetime`)
 
 
-`unyohub_formation_data` 編成別検索用運用データキャッシュ
-  `operation_date` TEXT NOT NULL 「YYYY-MM-DD」形式の日付
-  `operation_number` TEXT NOT NULL 運用番号(アルファベットなどを含む場合があるため文字列型)
-  `coupling_position` INTEGER NOT NULL 併結位置(前位側(奇数向き)先頭の編成を1とし、2、3と順に付番)
-  `user_id` TEXT NOT NULL 投稿者ID(未登録ユーザーの場合、クライアント端末が生成する12桁の乱数値の頭に「*」を付加した文字列を記録する)
-  `formation` TEXT 編成名(複数編成併結による運用は複数レコードに分けて登録、データが「1000系」や「HE4??編成」のように曖昧な場合はNULLとする)
-
-  PRIMARY KEY(`operation_date`,`operation_number`,`coupling_position`,`user_id`)
-  INDEX `unyohub_idx_f1`(`formation`,`operation_date`)
-
-
 `unyohub_data_caches` 運用データ概要キャッシュ
   `operation_date` TEXT NOT NULL 「YYYY-MM-DD」形式の日付
   `operation_number` TEXT NOT NULL 運用番号(アルファベットなどを含む場合があるため文字列型)
-  `formations` TEXT 充当組成(複数編成併結による運用の場合も「+」で区切って1レコードに格納)
+  `formations` TEXT 充当組成(最も新しい投稿の情報を格納、複数編成併結による運用の場合も「+」で区切って1レコードに格納)
+  `variants_count` INTEGER NOT NULL 投稿情報のバリエーション数
   `updated_datetime` TEXT 「YYYY-MM-DD HH:MM:SS」形式の情報投稿日時
 
   PRIMARY KEY(`operation_date`,`operation_number`)

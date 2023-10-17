@@ -27,7 +27,7 @@ for formation in formation_data:
         formation_name = formation.pop(0)
         json_data[series_name][formation_name] = {"cars" : list(filter(lambda car: car != "", formation))}
         
-        cur.execute("INSERT INTO `unyohub_formations`(`formation_name`, `car_count`) VALUES (:formation_name, :car_count)", {"formation_name" : formation_name, "car_count" : len(json_data[series_name][formation_name]["cars"])})
+        cur.execute("INSERT INTO `unyohub_formations`(`formation_name`, `cars_count`) VALUES (:formation_name, :cars_count)", {"formation_name" : formation_name, "cars_count" : len(json_data[series_name][formation_name]["cars"])})
 
 print("データベースの書き込み処理を完了しています...")
 conn.commit()
