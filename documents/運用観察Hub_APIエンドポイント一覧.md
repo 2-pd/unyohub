@@ -307,9 +307,10 @@ JSON化された時刻表の内容を返す
 **$_POST["railroad_id"]** : 路線系統識別名  
 **$_POST["date"]** : YYYY-MM-DD形式の日付  
 **$_POST["operation_number"]** : 運用番号  
-**$_POST["formations"]** : 編成を前位側(奇数側)から順に格納した配列のJSON  
+**$_POST["formations"]** : 編成を前位側(奇数側)から順に「+」で区切った文字列  
 **$_POST["comment"]** : コメント  
 **$_POST["one_time_token"]** : ワンタイムトークン(ログインしている場合)  
+**$_POST["guest_id"]** : 　「*」から始まる仮ユーザーID(ログインしていない場合)  
 **$_POST["zizai_captcha_id"]** : Zizai CAPTCHAのセッションID(ログインしていない場合)  
 **$_POST["zizai_captcha_characters"]** : Zizai CAPTCHAのユーザー入力文字列(ログインしていない場合)
 
@@ -332,6 +333,7 @@ JSON化された時刻表の内容を返す
 **$_POST["railroad_id"]** : 路線系統識別名  
 **$_POST["content"]** : 1行に1運用ずつ運用情報が記載されたテキストデータ  
 **$_POST["one_time_token"]** : ワンタイムトークン(ログインしている場合)  
+**$_POST["guest_id"]** : 　「*」から始まる仮ユーザーID(ログインしていない場合) 
 **$_POST["zizai_captcha_id"]** : Zizai CAPTCHAのセッションID(ログインしていない場合)  
 **$_POST["zizai_captcha_characters"]** : Zizai CAPTCHAのユーザー入力文字列(ログインしていない場合)
 

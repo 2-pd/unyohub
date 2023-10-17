@@ -7,7 +7,7 @@ if (!isset($_POST["railroad_id"], $_POST["operation_table"], $_POST["last_modifi
 $path = "../data/".basename($_POST["railroad_id"])."/operations_".basename($_POST["operation_table"]).".json";
 
 if (!file_exists($path)) {
-    print "ERROR: 時刻表データがありません";
+    print "ERROR: 運用表データがありません";
     exit;
 }
 
