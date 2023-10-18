@@ -14,8 +14,8 @@ print("テーブルを作成しています...")
 cur.execute("CREATE TABLE IF NOT EXISTS `unyohub_formations`(`formation_name` TEXT NOT NULL PRIMARY KEY,`cars_count` INTEGER)")
 
 cur.execute("CREATE TABLE IF NOT EXISTS `unyohub_operations`(`operation_table` TEXT NOT NULL, `operation_number` TEXT NOT NULL, `starting_location` TEXT, `terminal_location` TEXT, PRIMARY KEY(`operation_table`,`operation_number`))")
-cur.execute("CREATE INDEX IF NOT EXISTS `unyohub_idx_o1` ON `unyohub_operations`(`starting_location`)")
-cur.execute("CREATE INDEX IF NOT EXISTS `unyohub_idx_o2` ON `unyohub_operations`(`terminal_location`)")
+cur.execute("CREATE INDEX IF NOT EXISTS `unyohub_idx_o1` ON `unyohub_operations`(`operation_table`,`starting_location`)")
+cur.execute("CREATE INDEX IF NOT EXISTS `unyohub_idx_o2` ON `unyohub_operations`(`operation_table`,`terminal_location`)")
 
 cur.execute("CREATE TABLE IF NOT EXISTS `unyohub_trains`(`operation_table` TEXT NOT NULL, `operation_number` TEXT NOT NULL, `train_number` TEXT NOT NULL, `first_departure_time` TEXT NOT NULL, `position_forward` INTEGER NOT NULL, `position_rear` INTEGER NOT NULL, `direction` INTEGER NOT NULL, PRIMARY KEY(`operation_table`,`operation_number`,`train_number`,`first_departure_time`,`position_forward`))")
 cur.execute("CREATE INDEX IF NOT EXISTS `unyohub_idx_t1` ON `unyohub_trains`(`operation_table`,`train_number`,`first_departure_time`,`position_forward`)")

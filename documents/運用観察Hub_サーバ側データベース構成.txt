@@ -20,8 +20,8 @@ _/_/_/_/ データベース _/_/_/_/
   `terminal_location` TEXT 入庫場所(車庫または駅番線)
 
   PRIMARY KEY(`operation_table`,`operation_number`)
-  INDEX `unyohub_idx_o1`(`starting_location`)
-  INDEX `unyohub_idx_o2`(`terminal_location`)
+  INDEX `unyohub_idx_o1`(`operation_table`,`starting_location`)
+  INDEX `unyohub_idx_o2`(`operation_table`,`terminal_location`)
 
 
 `unyohub_trains` 列車データ(区間組成単位)

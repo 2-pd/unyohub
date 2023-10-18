@@ -84,8 +84,8 @@ if (array_search("9/".($shubun - 2), $holiday_list) !== FALSE) {
     $holiday_list[] = "9/".($shubun - 1);
 }
 
-$today = date("n/j");
-$today_mm_dd = date("m-d");
+$today = date("n/j", $ts);
+$today_mm_dd = date("m-d", $ts);
 if (array_key_exists($today_mm_dd, $railroad_info["operations_by_date"])) {
     $operation_table = $railroad_info["operations_by_date"][$today_mm_dd];
 } elseif (array_search($today, $holiday_list) !== FALSE) {
@@ -95,7 +95,9 @@ if (array_key_exists($today_mm_dd, $railroad_info["operations_by_date"])) {
 }
 
 
-$operation_data = $db_obj->querySingle("SELECT COUNT(*) FROM `unyohub_operations` WHERE `operation_table` = '".$operation_table."' AND `operation_number` = '".$db_obj->escapeString($_POST["operation_number"])."'", TRUE);
+$operation_number = $db_obj->escapeString($_POST["operation_number"]);
+
+$operation_data = $db_obj->querySingle("SELECT `operation_number`, `terminal_location` FROM `unyohub_operations` WHERE `operation_table` = '".$operation_table."' AND `operation_number` = '".$operation_number."'", TRUE);
 
 if (empty($operation_data)) {
     print "ERROR: 運用番号が不正です";
@@ -112,9 +114,48 @@ foreach ($formations_list as $formation) {
     }
 }
 
+
 $posted_datetime = date("Y-m-d H:i:s");
 
-$db_obj->query("INSERT OR REPLACE INTO `unyohub_data` (`operation_date`, `operation_number`, `user_id`, `formations`, `posted_datetime`, `comment`) VALUES ('".date("Y-m-d", $ts)."','".$db_obj->escapeString($_POST["operation_number"])."', '".$db_obj->escapeString($user_id)."', '".$db_obj->escapeString($formations)."', '".$posted_datetime."', '".$db_obj->escapeString(mb_substr($_POST["comment"], 0, 500))."')");
+$operation_date = date("Y-m-d", $ts);
 
-$data = array("posted_datetime" => $posted_datetime);
+$db_obj->query("INSERT OR REPLACE INTO `unyohub_data` (`operation_date`, `operation_number`, `user_id`, `formations`, `posted_datetime`, `comment`) VALUES ('".$operation_date."', '".$operation_number."', '".$db_obj->escapeString($user_id)."', '".$db_obj->escapeString($formations)."', '".$posted_datetime."', '".$db_obj->escapeString(mb_substr($_POST["comment"], 0, 500))."')");
+
+$variants_count = $db_obj->querySingle("SELECT COUNT(DISTINCT `formations`) FROM `unyohub_data` WHERE `operation_date` = '".$operation_date."' AND `operation_number` = '".$operation_number."'");
+
+$db_obj->query("INSERT OR REPLACE INTO `unyohub_data_caches` (`operation_date`, `operation_number`, `formations`, `variants_count`, `updated_datetime`) VALUES ('".$operation_date."', '".$operation_number."', '".$db_obj->escapeString($formations)."', ".$variants_count.", '".$posted_datetime."')");
+
+
+$day_next = date("n/j", $ts + 86400);
+$day_next_mm_dd = date("m-d", $ts + 86400);
+if (array_key_exists($day_next_mm_dd, $railroad_info["operations_by_date"])) {
+    $operation_table_next = $railroad_info["operations_by_date"][$day_next_mm_dd];
+} elseif (array_search($day_next, $holiday_list) !== FALSE) {
+    $operation_table_next = $railroad_info["operations_by_day"][0];
+} else {
+    $operation_table_next = $railroad_info["operations_by_day"][intval(date("w"))];
+}
+
+$operation_date_next = date("Y-m-d", $ts + 86400);
+
+$operation_numbers_r = $db_obj->query("SELECT `operation_number` FROM `unyohub_operations` WHERE `operation_table` = '".$operation_table_next."' AND `starting_location` = '".$db_obj->escapeString($operation_data["terminal_location"])."'");
+
+for ($operation_count = 0; $operation = $operation_numbers_r->fetchArray(SQLITE3_ASSOC); $operation_count++) {
+    if ($operation_count >= 2) {
+        break;
+    } else {
+        $operation_number = $db_obj->escapeString($operation["operation_number"]);
+    }
+}
+
+if ($operation_count === 1) {
+    $variants_count_next = $db_obj->querySingle("SELECT COUNT(DISTINCT `formations`) FROM `unyohub_data` WHERE `operation_date` = '".$operation_date_next."' AND `operation_number` = '".$operation_number."'");
+    
+    if ($variants_count_next === 0) {
+        $db_obj->query("INSERT OR REPLACE INTO `unyohub_data_caches` (`operation_date`, `operation_number`, `formations`, `variants_count`, `updated_datetime`) VALUES ('".$operation_date_next."', '".$operation_number."', '".$db_obj->escapeString($formations)."', 0, '".$posted_datetime."')");
+    }
+}
+
+
+$data = array($_POST["operation_number"] => array("formations" => $formations, "variants_count" => $variants_count));
 print json_encode($data, JSON_UNESCAPED_UNICODE);
