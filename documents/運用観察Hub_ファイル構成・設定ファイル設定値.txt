@@ -172,29 +172,27 @@ _/_/_/_/ 設定ファイル設定値 _/_/_/_/
 ※発車待ちの列車の列車番号は、発車後の列車番号の先頭に「_」を付加したものとなる
 {
     "運用グループタイトル" : { 各運用グループの情報
-        "operations": {
-            "運用番号" : { 各運用の情報
-                "trains" : { 各列車の情報(折返し等の発車待ちの情報も含む)
-                    "列車番号または仮番号" : [
-                        { 各区間組成の情報
-                            "line_id" : 走行路線の識別名,
-                            "first_departure_time" : 「HH:MM」形式の始発時刻,
-                            "final_arrival_time" : 「HH:MM」形式の終着時刻,
-                            "starting_station" : 始発駅,
-                            "terminal_station" : 終着駅,
-                            "position_forward" : 担当位置開始両数(進行方向から数えて何両目からがその運用か),
-                            "position_rear" : 担当位置終了両数(進行方向から数えて何両目までがその運用か),
-                            "direction" : 上り列車か下り列車か(上り列車か上り方面発車待ちなら「inbound」、下り列車か下り方面発車待ちなら「outbound」)
-                        }...
-                    ]...
-                },
-                "starting_location" : 出庫場所(車庫または駅番線),
-                "terminal_location" : 入庫場所(車庫または駅番線),
-                "car_count" : 編成両数,
-                "comment" : コメント
-            }...
-        },
-        "color" : テーマカラー
+        "運用番号" : { 各運用の情報
+            "trains" : { 各列車の情報(折返し等の発車待ちの情報も含む)
+                "列車番号または仮番号" : [
+                    { 各区間組成の情報
+                        "line_id" : 走行路線の識別名,
+                        "first_departure_time" : 「HH:MM」形式の始発時刻,
+                        "final_arrival_time" : 「HH:MM」形式の終着時刻,
+                        "starting_station" : 始発駅,
+                        "terminal_station" : 終着駅,
+                        "position_forward" : 担当位置開始両数(進行方向から数えて何両目からがその運用か),
+                        "position_rear" : 担当位置終了両数(進行方向から数えて何両目までがその運用か),
+                        "direction" : 上り列車か下り列車か(上り列車か上り方面発車待ちなら「inbound」、下り列車か下り方面発車待ちなら「outbound」)
+                    }...
+                ]...
+            },
+            "starting_location" : 出庫場所(車庫または駅番線),
+            "terminal_location" : 入庫場所(車庫または駅番線),
+            "car_count" : 編成両数,
+            "main_color" : テーマカラー,
+            "comment" : コメント
+        }...
     }...
 }
 

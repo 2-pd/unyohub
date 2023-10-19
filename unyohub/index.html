@@ -415,6 +415,8 @@ article, #blank_article {
     background-color: #eeeeee;
     
     border-radius: 0 13px 13px 0;
+    
+    text-decoration: underline;
 }
 
 .dark_mode .position_station h4 {
@@ -2303,23 +2305,20 @@ function update_operation_table(operation_table, last_modified_timestamp){
                     
                     var groups = Object.keys(operation_response);
                     for (cnt = 0; cnt < groups.length; cnt++) {
-                        operation_groups_data["operation_groups"][groups[cnt]] = {
-                            operation_numbers : [],
-                            color : operation_response[groups[cnt]]["color"]
-                        };
+                        operation_groups_data["operation_groups"][groups[cnt]] = [];
                         
-                        var operation_numbers = Object.keys(operation_response[groups[cnt]]["operations"]);
+                        var operation_numbers = Object.keys(operation_response[groups[cnt]]);
                         for (var cnt_2 = 0; cnt_2 < operation_numbers.length; cnt_2++) {
-                            operation_groups_data["operation_groups"][groups[cnt]]["operation_numbers"].push(operation_numbers[cnt_2]);
+                            operation_groups_data["operation_groups"][groups[cnt]].push({operation_number : operation_numbers[cnt_2], main_color : operation_response[groups[cnt]][operation_numbers[cnt_2]]["main_color"]});
                             
                             operations_data["operations"][operation_numbers[cnt_2]] = {
                                 trains : {},
-                                starting_location : operation_response[groups[cnt]]["operations"][operation_numbers[cnt_2]]["starting_location"],
-                                terminal_location : operation_response[groups[cnt]]["operations"][operation_numbers[cnt_2]]["terminal_location"],
-                                terminal_location : operation_response[groups[cnt]]["operations"][operation_numbers[cnt_2]]["car_count"]
+                                starting_location : operation_response[groups[cnt]][operation_numbers[cnt_2]]["starting_location"],
+                                terminal_location : operation_response[groups[cnt]][operation_numbers[cnt_2]]["terminal_location"],
+                                terminal_location : operation_response[groups[cnt]][operation_numbers[cnt_2]]["car_count"]
                             }
                             
-                            var train_numbers = Object.keys(operation_response[groups[cnt]]["operations"][operation_numbers[cnt_2]]["trains"]);
+                            var train_numbers = Object.keys(operation_response[groups[cnt]][operation_numbers[cnt_2]]["trains"]);
                             for (var cnt_3 = 0; cnt_3 < train_numbers.length; cnt_3++) {
                                 var train_initial = train_numbers[cnt_3].substring(0, 1);
                                 
@@ -2327,8 +2326,8 @@ function update_operation_table(operation_table, last_modified_timestamp){
                                     operations_data["operations"][operation_numbers[cnt_2]]["trains"][train_numbers[cnt_3]] = [];
                                 }
                                 
-                                for_4: for (var cnt_4 = 0; cnt_4 < operation_response[groups[cnt]]["operations"][operation_numbers[cnt_2]]["trains"][train_numbers[cnt_3]].length; cnt_4++) {
-                                    var train_data = operation_response[groups[cnt]]["operations"][operation_numbers[cnt_2]]["trains"][train_numbers[cnt_3]][cnt_4];
+                                for_4: for (var cnt_4 = 0; cnt_4 < operation_response[groups[cnt]][operation_numbers[cnt_2]]["trains"][train_numbers[cnt_3]].length; cnt_4++) {
+                                    var train_data = operation_response[groups[cnt]][operation_numbers[cnt_2]]["trains"][train_numbers[cnt_3]][cnt_4];
                                     
                                     if (train_initial !== "_") {
                                         operations_data["operations"][operation_numbers[cnt_2]]["trains"][train_numbers[cnt_3]].push(train_data);
@@ -3353,51 +3352,51 @@ function operation_data_draw (cnt = 0) {
         buf += "<h3>" + group_list[cnt] + "</h3>";
         
         buf += "<table>";
-        if (!config["dark_mode"]) {
-            var bgcolor = operation_groups["operation_groups"][group_list[cnt]]["color"];
-        } else {
-            var bgcolor = convert_color_dark_mode(operation_groups["operation_groups"][group_list[cnt]]["color"]);
-        }
-        
-        for (var cnt_2 = 0; cnt_2 < operation_groups["operation_groups"][group_list[cnt]]["operation_numbers"].length; cnt_2++) {
-            var operation_number = operation_groups["operation_groups"][group_list[cnt]]["operation_numbers"][cnt_2];
+        for (var cnt_2 = 0; cnt_2 < operation_groups["operation_groups"][group_list[cnt]].length; cnt_2++) {
+            var operation_number = operation_groups["operation_groups"][group_list[cnt]][cnt_2]["operation_number"];
+            
+            if (!config["dark_mode"]) {
+                var bgcolor = operation_groups["operation_groups"][group_list[cnt]][cnt_2]["main_color"];
+            } else {
+                var bgcolor = convert_color_dark_mode(operation_groups["operation_groups"][group_list[cnt]][cnt_2]["main_color"]);
+            }
             
             buf += "<tr><th style='background-color: " + bgcolor + ";'>" + operation_number + "</th>";
-                if (operation_number in operation_data["operations"]) {
-                    var formation_list = operation_data["operations"][operation_number]["formations"].split("+");
+            if (operation_number in operation_data["operations"]) {
+                var formation_list = operation_data["operations"][operation_number]["formations"].split("+");
+                
+                if (operation_data["operations"][operation_number]["variants_count"] >= 2) {
+                    var color = "#cc0000";
                     
-                    if (operation_data["operations"][operation_number]["variants_count"] >= 2) {
-                        var color = "#cc0000";
-                        
-                        if (config["dark_mode"]) {
-                            var color = convert_color_dark_mode(color);
-                        }
-                        
-                        buf += "<td style='color: " + color + ";'>";
-                    } else if (operation_data["operations"][operation_number]["variants_count"] === 0) {
-                        var color = "#0000cc";
-                        
-                        if (config["dark_mode"]) {
-                            var color = convert_color_dark_mode(color);
-                        }
-                        
-                        buf += "<td style='color: " + color + ";'>";
-                    } else {
-                        buf += "<td>";
+                    if (config["dark_mode"]) {
+                        var color = convert_color_dark_mode(color);
                     }
                     
-                    for (var cnt_3 = 0; cnt_3 < formation_list.length; cnt_3++){
-                        if (cnt_3 >= 1) {
-                            buf += " +";
-                        }
-                        
-                        buf += "<img src='" + get_icon(formation_list[cnt_3]) + "' alt='' class='train_icon'>" + formation_list[cnt_3];
+                    buf += "<td style='color: " + color + ";'>";
+                } else if (operation_data["operations"][operation_number]["variants_count"] === 0) {
+                    var color = "#0000cc";
+                    
+                    if (config["dark_mode"]) {
+                        var color = convert_color_dark_mode(color);
                     }
                     
-                    buf += "</td>";
+                    buf += "<td style='color: " + color + ";'>";
                 } else {
-                    buf += "<td><img src='" + UNYOHUB_UNKNOWN_TRAIN_ICON + "' alt='' class='train_icon'>?</td>";
+                    buf += "<td>";
                 }
+                
+                for (var cnt_3 = 0; cnt_3 < formation_list.length; cnt_3++){
+                    if (cnt_3 >= 1) {
+                        buf += " +";
+                    }
+                    
+                    buf += "<img src='" + get_icon(formation_list[cnt_3]) + "' alt='' class='train_icon'>" + formation_list[cnt_3];
+                }
+                
+                buf += "</td>";
+            } else {
+                buf += "<td><img src='" + UNYOHUB_UNKNOWN_TRAIN_ICON + "' alt='' class='train_icon'>?</td>";
+            }
             buf += "</tr>";
         }
         buf += "</table>";

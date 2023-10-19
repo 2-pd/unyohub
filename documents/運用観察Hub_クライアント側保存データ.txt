@@ -94,8 +94,10 @@ _/_/_/_/ クライアント側IndexedDB "unyohub_caches" _/_/_/_/
     last_modified_timestamp : このデータの元になったJSONファイルが更新された日時のタイムスタンプ値(UTC、秒単位),
     operation_groups : {
         運用グループタイトル : {
-            operation_numbers : 運用番号を配列で順に列挙
-            color : 運用グループのテーマカラー
+            [
+                operation_number : 運用番号
+                main_color : 運用のテーマカラー
+            ]...
         }...
     }
 }

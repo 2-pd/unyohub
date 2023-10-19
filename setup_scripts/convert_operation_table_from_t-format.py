@@ -55,14 +55,14 @@ output_data = []
 cnt = 0
 while cnt < len(operations):
     if operations[cnt][0].startswith("◆"):
-        output_data.append(["# " + operations[cnt][0][1:], "#ffffff"])
+        output_data.append(["# " + operations[cnt][0][1:]])
         
         cnt += 1
     else:
         output_row_1 = [operations[cnt][0]]
         output_row_2 = [operations[cnt][2]]
         output_row_3 = [operations[cnt][3]]
-        output_row_4 = [operations[cnt][1]]
+        output_row_4 = [operations[cnt][1], "#ffffff"]
         
         cnt_2 = 4
         while cnt_2 < len(operations[cnt]):
