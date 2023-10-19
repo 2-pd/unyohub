@@ -887,6 +887,22 @@ a {
     color: #999999;
 }
 
+.external_link:after {
+    content: "";
+    
+    display: inline-block;
+    
+    width: 18px;
+    height: 18px;
+    
+    margin-left: 2px;
+    
+    background-image: url(data:image/webp;base64,UklGRqYAAABXRUJQVlA4TJkAAAAvI8AIEDdAkG2z+hMc9h4Ekjazf4KHPRBI2sz+CR72QCRAAs1HVv+fMiq2HfsvilTCUSNJjlR77n0ptQbHQfAAhkEffxhjas4AiOj/BEiila70ZxQLrjOb+rHguiA7bDPFS7ziJV5pXlMJUBUzpTnqOpEAVVKMSnOSlIMLwFvtQAEcjStUGQqO1rXK0q5zZqb//+xvsb/E/RoA);
+    background-size: 18px;
+    
+    vertical-align: middle;
+}
+
 .popup input, .popup select {
     display: block;
     
@@ -1045,6 +1061,29 @@ a {
     
     color: #666666;
     text-align: left;
+}
+
+#about_railroad_data_popup {
+    text-align: center;
+}
+
+#about_railroad_data_popup img {
+    display: block;
+    
+    width: 40px;
+    
+    margin: 5px auto;
+}
+
+#about_railroad_data_popup .informational_text {
+    text-align: center;
+}
+
+#license_area {
+    margin: 20px 10px;
+    
+    text-align: left;
+    word-break: break-all;
 }
 
 #captcha_info {
@@ -1376,6 +1415,11 @@ button {
         <br>
         <div class="informational_text">変更内容は自動で保存されます</div>
     </div>
+    <div class="popup" id="about_railroad_data_popup">
+        <button type="button" class="popup_close_button" onclick="popup_close();"></button>
+        <h2>この路線系統データについて</h2>
+        <div id="about_railroad_data_area"></div>
+    </div>
     <div class="popup" id="write_operation_data_popup">
         <button type="button" class="popup_close_button" onclick="popup_close();"></button>
         <h2>運用情報の投稿</h2>
@@ -1408,7 +1452,7 @@ button {
         </div>
         <div class="square_popup" id="sub_menu_popup">
             <button type="button" class="popup_close_button" onclick="close_square_popup();"></button>
-            <button type="button" class="wide_button">この路線系統データについて</button>
+            <button type="button" class="wide_button" onclick="about_railroad_data();">この路線系統データについて</button>
             <button type="button" class="wide_button">運用情報の一括投稿</button>
         </div>
         <div class="square_popup" id="about_popup">
@@ -2426,7 +2470,7 @@ function update_timetable (operation_table) {
                 timetable_request.setRequestHeader("Content-Type","application/x-www-form-urlencoded;charset=UTF-8");
                 timetable_request.timeout = 5000;
                 timetable_request.send("railroad_id=" + escape_form_data(railroad_id) + "&operation_table=" + escape_form_data(operation_table) + "&last_modified_timestamp=" + last_modified_timestamp);
-            } else if (timetable == null) {
+            } else if (timetable === null) {
                 alert("オフラインのためダウンロードが完了していない時刻表データは利用できません");
             }
         }
@@ -3785,6 +3829,28 @@ function challenge_sign_up () {
     sign_up_request.setRequestHeader("Content-Type","application/x-www-form-urlencoded;charset=UTF-8");
     sign_up_request.timeout = 5000;
     sign_up_request.send("user_id=" + escape_form_data(document.getElementById("sign_up_user_id").value) + "&password=" + escape_form_data(document.getElementById("sign_up_password").value) + "&user_name=" + escape_form_data(document.getElementById("sign_up_user_name").value) + "&zizai_captcha_id=" + escape_form_data(document.getElementById("zizai_captcha_id").value) + "&zizai_captcha_characters=" + escape_form_data(document.getElementById("zizai_captcha_characters").value));
+}
+
+
+function about_railroad_data () {
+    open_popup("about_railroad_data_popup");
+    
+    var buf = "<h3><img src='" + railroad_info["railroad_icon"] + "' alt=''>" + railroad_info["railroad_name"] + "</h3>";
+    
+    buf += "<h4>製作者</h4>";
+    for (var cnt = 0; cnt < railroad_info["editors"].length; cnt++) {
+        if (railroad_info["editors"][cnt]["editor_url"] === null || railroad_info["editors"][cnt]["editor_url"] === "") {
+            buf += "<b>" + escape_html(railroad_info["editors"][cnt]["editor_name"]) + "</b><br>";
+        } else {
+            buf += "<b><a href='" + railroad_info["editors"][cnt]["editor_url"] + "' target='_blank' class='external_link'>" + escape_html(railroad_info["editors"][cnt]["editor_name"]) + "</a></b><br>";
+        }
+        
+        buf += "<div class='informational_text'>" + escape_html(railroad_info["editors"][cnt]["introduction_text"]).replace(/\n/g, "<br>") + "</div>";
+    }
+    
+    buf += "<div id='license_area'>" + escape_html(railroad_info["license_text"]).replace(/\n/g, "<br>").replace(/https?:\/\/[^\s\\`\|\[\]\{\}\^]+/g, " <a href='$&' target='_blank' class='external_link'>$&</a> ") + "</div>";
+    
+    document.getElementById("about_railroad_data_area").innerHTML = buf;
 }
 
 
