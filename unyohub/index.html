@@ -168,6 +168,28 @@ header {
     box-shadow: 0 4px 4px 0 rgba(0,0,0,0.3);
 }
 
+#menu div {
+    display: none;
+}
+
+#menu_user_name {
+    display: block;
+    
+    width: 90%;
+    height: 30px;
+    
+    margin: 0 5% 10px 5%;
+    
+    background-color: #eeeeee;
+    
+    line-height: 30px;
+    text-align: center;
+}
+
+.dark_mode #menu_user_name {
+    background-color: #202020;
+}
+
 #menu button {
     width: 100%;
     height: 40px;
@@ -905,6 +927,20 @@ a {
     vertical-align: middle;
 }
 
+.value_and_button b {
+    margin-left: 20px;
+    margin-right: 5px;
+    
+    line-height: 32px;
+    font-size: 24px;
+}
+
+.value_and_button button {
+    float: right;
+    
+    margin: 0 20px !important;
+}
+
 .popup input, .popup select {
     display: block;
     
@@ -1346,9 +1382,18 @@ button {
 <body>
     <header><span id="app_name"></span><select id="railroad_select" onchange="select_railroad(this.value);"></select><button type="button" id="menu_button" onclick="menu_click();"></button></header>
     <div id="menu">
-        <div id="menu_login_status"></div>
+        <div id="menu_logged_in">
+            <b id="menu_user_name"></b>
+            <button type="button" onclick="edit_user_data();">ユーザー情報の編集</button>
+            <button type="button" onclick="user_logout();">ログアウト</button>
+        </div>
+        <div id="menu_not_logged_in">
+            <button type="button" onclick="open_square_popup('login_popup');">ログイン</button>
+            <button type="button" onclick="open_popup('sign_up_popup');">新規登録</button>
+        </div>
         <hr>
         <button type="button" onclick="edit_config();">各種設定</button>
+        <hr>
         <button type="button" onclick="open_square_popup('about_popup');">このアプリについて</button>
     </div>
     <div id="splash_screen">
@@ -1404,6 +1449,28 @@ button {
         <br>
         <button type="button" class="wide_button" onclick="check_sign_up();">ユーザー登録</button>
     </div>
+    <div class="popup" id="edit_user_data_popup">
+        <button type="button" class="popup_close_button" onclick="popup_close();"></button>
+        <h2>ユーザー情報の編集</h2>
+        <h3>ユーザーID</h3>
+        <input type="text" id="edit_user_data_user_id" disabled="disabled">
+        <div class="informational_text">ユーザーIDを変更することはできません。</div>
+        <h3>パスワード</h3>
+        <div class="value_and_button">
+            <b>＊＊＊＊＊＊</b>
+            <button onclick="open_square_popup('change_password_popup');">変更</button>
+        </div>
+        <h3>ハンドルネーム</h3>
+        <input type="text" id="edit_user_data_user_name">
+        <h3>メールアドレス(省略可能)</h3>
+        <input type="text" id="edit_user_data_email_address">
+        <div class="informational_text">メールアドレスは他のユーザーには公開されません。</div>
+        <h3>webサイトのURL(省略可能)</h3>
+        <input type="text" id="edit_user_data_website_url">
+        <div class="informational_text">ブログやSNSのURLを登録することができます。</div>
+        <br>
+        <button type="button" class="wide_button" onclick="change_user_data();">保存</button>
+    </div>
     <div class="popup" id="config_popup">
         <button type="button" class="popup_close_button" onclick="popup_close();"></button>
         <h2>各種設定</h2>
@@ -1438,6 +1505,16 @@ button {
             <br>
             <br>
             <button type="button" class="wide_button" onclick="challenge_login();">ログイン</button>
+        </div>
+        <div class="square_popup" id="change_password_popup">
+            <button type="button" class="popup_close_button" onclick="close_square_popup();"></button>
+            <h4>現在のパスワード</h4>
+            <input type="password" id="old_password">
+            <h4>新しいパスワード</h4>
+            <input type="password" id="new_password">
+            <br>
+            <br>
+            <button type="button" class="wide_button" onclick="change_password();">保存</button>
         </div>
         <div class="square_popup" id="captcha_popup">
             <button type="button" class="popup_close_button" onclick="close_square_popup();"></button>
@@ -1827,8 +1904,16 @@ function update_user_data (user_data_next = null) {
     user_data = user_data_next;
     
     if (user_data !== null) {
+        document.getElementById("menu_logged_in").style.display = "block";
+        document.getElementById("menu_not_logged_in").style.display = "none";
+        
+        document.getElementById("menu_user_name").innerText = user_data["user_name"] + " さん";
+        
         splash_screen_login_status_elm.innerHTML = "ようこそ <b>" + escape_html(user_data["user_name"]) + "</b> さん<br><a href='javascript:void(0)' onclick='user_logout();'>ログアウト</a>";
     } else {
+        document.getElementById("menu_logged_in").style.display = "none";
+        document.getElementById("menu_not_logged_in").style.display = "block";
+        
         splash_screen_login_status_elm.innerHTML = "<b>ログインしていません</b><br><a href='javascript:void(0)' onclick='open_square_popup(\"login_popup\");'>ログイン</a>　<a href='javascript:void(0)' onclick='open_popup(\"sign_up_popup\");'>新規登録</a>";
     }
 }
@@ -3725,36 +3810,38 @@ function challenge_login () {
 }
 
 function user_logout () {
-    open_wait_screen();
-    
-    var logout_request = new XMLHttpRequest();
-    logout_request.onreadystatechange = function () {
-        if (logout_request.readyState === 4) {
+    if (confirm("ログアウトしますか？")){
+        open_wait_screen();
+        
+        var logout_request = new XMLHttpRequest();
+        logout_request.onreadystatechange = function () {
+            if (logout_request.readyState === 4) {
+                close_wait_screen();
+                
+                if (logout_request.status === 200) {
+                    if (logout_request.responseText.substring(0,6) === "ERROR:"){
+                        alert(logout_request.responseText);
+                    } else {
+                        alert("ログアウトしました");
+                        
+                        update_user_data();
+                    }
+                } else {
+                    alert("【!】サーバへのアクセスに失敗しました");
+                }
+            }
+        };
+        
+        logout_request.ontimeout = function () {
             close_wait_screen();
             
-            if (logout_request.status === 200) {
-                if (logout_request.responseText.substring(0,6) === "ERROR:"){
-                    alert(logout_request.responseText);
-                } else {
-                    alert("ログアウトしました");
-                    
-                    update_user_data();
-                }
-            } else {
-                alert("【!】サーバへのアクセスに失敗しました");
-            }
+            alert("【!】ネットワークが不安定です");
         }
-    };
-    
-    logout_request.ontimeout = function () {
-        close_wait_screen();
         
-        alert("【!】ネットワークが不安定です");
+        logout_request.open("POST", "api/logout.php", true);
+        logout_request.timeout = 5000;
+        logout_request.send();
     }
-    
-    logout_request.open("POST", "api/logout.php", true);
-    logout_request.timeout = 5000;
-    logout_request.send();
 }
 
 function check_sign_up () {
@@ -3828,6 +3915,113 @@ function challenge_sign_up () {
     sign_up_request.setRequestHeader("Content-Type","application/x-www-form-urlencoded;charset=UTF-8");
     sign_up_request.timeout = 5000;
     sign_up_request.send("user_id=" + escape_form_data(document.getElementById("sign_up_user_id").value) + "&password=" + escape_form_data(document.getElementById("sign_up_password").value) + "&user_name=" + escape_form_data(document.getElementById("sign_up_user_name").value) + "&zizai_captcha_id=" + escape_form_data(document.getElementById("zizai_captcha_id").value) + "&zizai_captcha_characters=" + escape_form_data(document.getElementById("zizai_captcha_characters").value));
+}
+
+var edit_user_data_user_id_elm = document.getElementById("edit_user_data_user_id");
+var edit_user_data_user_name_elm = document.getElementById("edit_user_data_user_name");
+var edit_user_data_email_address_elm = document.getElementById("edit_user_data_email_address");
+var edit_user_data_website_url_elm = document.getElementById("edit_user_data_website_url");
+
+function edit_user_data () {
+    open_popup("edit_user_data_popup");
+    
+    edit_user_data_user_id_elm.value = user_data["user_id"];
+    edit_user_data_user_name_elm.value = user_data["user_name"];
+    if (user_data["email_address"] !== null) {
+        edit_user_data_email_address_elm.value = user_data["email_address"];
+    } else {
+        edit_user_data_email_address_elm.value = "";
+    }
+    if (user_data["website_url"] !== null) {
+        edit_user_data_website_url_elm.value = user_data["website_url"];
+    } else {
+        edit_user_data_website_url_elm.value = "";
+    }
+    
+    get_one_time_token();
+}
+
+function change_user_data () {
+    open_wait_screen();
+    
+    if (one_time_token === null && cnt < 100) {
+        setTimeout(change_user_data, 50, cnt + 1);
+        
+        return;
+    } else if (cnt >= 100) {
+        close_wait_screen();
+        
+        return;
+    }
+    
+    var change_user_data_request = new XMLHttpRequest();
+    change_user_data_request.onreadystatechange = function () {
+        if (change_user_data_request.readyState === 4) {
+            close_wait_screen();
+            
+            if (change_user_data_request.status === 200) {
+                if (change_user_data_request.responseText.substring(0,6) === "ERROR:"){
+                    alert(change_user_data_request.responseText);
+                } else {
+                    close_wait_screen();
+                    
+                    update_user_data(JSON.parse(change_user_data_request.responseText));
+                    
+                    alert("ユーザー情報を変更しました");
+                }
+                
+                get_one_time_token();
+            } else {
+                alert("【!】サーバへのアクセスに失敗しました");
+            }
+        }
+    };
+    
+    change_user_data_request.ontimeout = function () {
+        close_wait_screen();
+        
+        alert("【!】ネットワークが不安定です");
+    }
+    
+    change_user_data_request.open("POST", "api/change_user_data.php", true);
+    change_user_data_request.setRequestHeader("Content-Type","application/x-www-form-urlencoded;charset=UTF-8");
+    change_user_data_request.timeout = 5000;
+    change_user_data_request.send("user_name=" + escape_form_data(edit_user_data_user_name_elm.value) + "&email_address=" + escape_form_data(edit_user_data_email_address_elm.value) + "&website_url=" + escape_form_data(edit_user_data_website_url_elm.value) + "&one_time_token=" + escape_form_data(one_time_token));
+}
+
+function change_password () {
+    open_wait_screen();
+    
+    var change_password_request = new XMLHttpRequest();
+    change_password_request.onreadystatechange = function () {
+        if (change_password_request.readyState === 4) {
+            close_wait_screen();
+            
+            if (change_password_request.status === 200) {
+                if (change_password_request.responseText === "SUCCEEDED"){
+                    close_wait_screen();
+                    close_square_popup();
+                    
+                    alert("パスワードを変更しました");
+                } else {
+                    alert(change_password_request.responseText);
+                }
+            } else {
+                alert("【!】サーバへのアクセスに失敗しました");
+            }
+        }
+    };
+    
+    change_password_request.ontimeout = function () {
+        close_wait_screen();
+        
+        alert("【!】ネットワークが不安定です");
+    }
+    
+    change_password_request.open("POST", "api/change_user_password.php", true);
+    change_password_request.setRequestHeader("Content-Type","application/x-www-form-urlencoded;charset=UTF-8");
+    change_password_request.timeout = 5000;
+    change_password_request.send("old_password=" + escape_form_data(document.getElementById("old_password").value) + "&new_password=" + escape_form_data(document.getElementById("new_password").value));
 }
 
 

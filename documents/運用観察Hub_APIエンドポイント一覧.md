@@ -261,9 +261,10 @@ JSON化された時刻表の内容を返す
 {  
     "運用番号" : [  
         [  
-            "user_id" : 情報提供者のユーザーID,  
+            "user_id" : 情報提供者のユーザーID(ログインしていないユーザーの場合はnull),  
             "user_name" : 情報提供者のハンドルネーム,  
             "is_moderator" : ユーザーがモデレーターか否か,  
+            "website_url" : ユーザーのwebサイトのURL,  
             "formations" : 編成名(前位側・奇数向きから順に配列で),  
             "posted_datetime" : YYYY-MM-DD HH:MM:SS形式の投稿日時,  
             "comment" : コメント  
@@ -271,26 +272,6 @@ JSON化された時刻表の内容を返す
     ]...
 }  
 ▲クライアント端末からAccept-Encodingヘッダーが送信されていた場合、このデータは自動的にgzip圧縮される  
-  
-**エラーの場合** :  
-文字列「ERROR: 」とそれに続くエラー内容文
-
-
-## user_data.php
-指定したユーザーの情報を取得する
-
-### 引数
-**$_POST["user_id"]** : ユーザーID
-
-### 応答
-**ユーザー情報の取得に成功した場合** :  
-{  
-    "user_id" : ユーザーID,  
-    "user_name" : ハンドルネーム,  
-    "role" : ロール(「ADMIN」、「MODERATOR」、「BASE」のいずれか),  
-    "created" : YYYY-MM-DD HH:MM:SS形式のユーザー登録日時,  
-    "website_url" : ユーザーのwebサイトのURL  
-}  
   
 **エラーの場合** :  
 文字列「ERROR: 」とそれに続くエラー内容文
@@ -381,7 +362,12 @@ JSON化された時刻表の内容を返す
 ### 応答
 **書き換えに成功した場合** :  
 {  
-  "updated" : ユーザー情報の更新日時  
+    "user_id" : ユーザーID,  
+    "user_name" : ハンドルネーム,  
+    "role" : ロール(「ADMIN」、「MODERATOR」、「BASE」のいずれか),  
+    "created" : YYYY-MM-DD HH:MM:SS形式のユーザー登録日時,  
+    "email_address" : メールアドレス,  
+    "website_url" : ユーザーのwebサイトのURL  
 } 
   
 **エラーの場合** :  
@@ -395,14 +381,11 @@ JSON化された時刻表の内容を返す
 **$_COOKIE["unyohub_login_token"]** : Wakaranaのログイントークン  
   
 **$_POST["old_password"]** : 古いパスワード  
-**$_POST["new_password"]** : 新しいパスワード  
-**$_POST["one_time_token"]** : ワンタイムトークン(ログインしている場合)
+**$_POST["new_password"]** : 新しいパスワード
 
 ### 応答
 **変更に成功した場合** :  
-{  
-  "updated" : ユーザー情報の更新日時  
-}  
+文字列「SUCCEEDED」  
   
 **エラーの場合** :  
 文字列「ERROR: 」とそれに続くエラー内容文
@@ -420,9 +403,7 @@ JSON化された時刻表の内容を返す
 
 ### 応答
 **変更に成功した場合** :  
-{  
-  "updated" : ユーザー情報の更新日時  
-}  
+文字列「SUCCEEDED」
   
 **エラーの場合** :  
 文字列「ERROR: 」とそれに続くエラー内容文
