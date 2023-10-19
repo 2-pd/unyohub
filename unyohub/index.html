@@ -3055,7 +3055,7 @@ function position_change_time (position_time_additions = null, draw_train_positi
 }
 
 function position_reload () {
-    
+    update_operation_data();
     
     position_change_time(null);
 }
@@ -3447,6 +3447,8 @@ function operation_data_draw (cnt = 0) {
             }
             
             buf += "<tr><th style='background-color: " + bgcolor + ";'>" + operation_number + "</th>";
+                
+            buf+= "<td onclick='write_operation_data(get_date_string(operation_data_date), \"" + operation_number + "\");'";
             if (operation_number in operation_data["operations"]) {
                 var formation_list = operation_data["operations"][operation_number]["formations"].split("+");
                 
@@ -3457,7 +3459,7 @@ function operation_data_draw (cnt = 0) {
                         var color = convert_color_dark_mode(color);
                     }
                     
-                    buf += "<td style='color: " + color + ";'>";
+                    buf += " style='color: " + color + ";'>";
                 } else if (operation_data["operations"][operation_number]["variants_count"] === 0) {
                     var color = "#0000cc";
                     
@@ -3465,9 +3467,9 @@ function operation_data_draw (cnt = 0) {
                         var color = convert_color_dark_mode(color);
                     }
                     
-                    buf += "<td style='color: " + color + ";'>";
+                    buf += " style='color: " + color + ";'>";
                 } else {
-                    buf += "<td>";
+                    buf += ">";
                 }
                 
                 for (var cnt_3 = 0; cnt_3 < formation_list.length; cnt_3++){
@@ -3720,6 +3722,9 @@ function post_operation_data (cnt = 0) {
                             break;
                         case 1:
                             timetable_select_station(timetable_selected_station);
+                            break;
+                        case 2:
+                            operation_data_draw();
                             break;
                     }
                 }
