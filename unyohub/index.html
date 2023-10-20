@@ -30,6 +30,8 @@ html, body {
     
     height: 100%;
     margin: 0;
+    
+    color: #333333;
 }
 
 .dark_mode {
@@ -88,6 +90,7 @@ header {
     line-height: 40px;
     font-size: 18px;
     text-indent: 40px;
+    color: #333333;
     
     appearance: none;
 }
@@ -198,8 +201,6 @@ header {
     border-radius: 0;
     
     background-color: transparent;
-
-    color: #333333;
 }
 
 .dark_mode #menu button {
@@ -789,7 +790,6 @@ footer {
     
     line-height: 45px;
     font-size: 25px;
-    color: #333333;
     
     box-shadow: 0 0 2px 2px rgba(0,0,0,0.2);
     
@@ -901,6 +901,16 @@ footer div {
 
 h2 {
     margin: 10px 0;
+}
+
+.popup h3 {
+    padding: 5px 10px;
+    
+    background-color: #eeeeee;
+}
+
+.dark_mode .popup h3 {
+    background-color: #202020;
 }
 
 h4 {
@@ -1303,6 +1313,8 @@ input[type="text"], input[type="number"], input[type="password"], input[type="se
     
     border: none;
     border-bottom: 2px solid #dddddd;
+    
+    color: #333333;
 }
 
 .dark_mode input[type="text"], .dark_mode input[type="number"], .dark_mode input[type="search"], .dark_mode input[type="password"], .dark_mode select {
@@ -2650,6 +2662,7 @@ function get_date_string (ts) {
 
 var operation_data = null;
 var operation_date_last;
+var operation_data_last_updated = null;
 
 function update_operation_data (operation_date = null) {
     if (operation_date === null) {
@@ -2722,6 +2735,8 @@ function update_operation_data (operation_date = null) {
             }
         }
     };
+    
+    operation_data_last_updated = Date.now() / 1000;
 }
 
 
@@ -2733,6 +2748,10 @@ setInterval(function () {
     
     if (mode_val === 0 && position_last_updated !== null && position_last_updated < hh_and_mm) {
         position_change_time();
+    }
+    
+    if (operation_data_last_updated !== null && operation_data_last_updated < date_now / 1000 - config["refresh_interval"] * 60) {
+        update_operation_data();
     }
 }, 5000);
 
