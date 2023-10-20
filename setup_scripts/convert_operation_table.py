@@ -58,7 +58,7 @@ while cnt < len(operations):
         
         output_data[operation_group][operation_number]["starting_location"] = operations[cnt + 1][0]
         output_data[operation_group][operation_number]["terminal_location"] = operations[cnt + 2][0]
-        output_data[operation_group][operation_number]["car_count"] = operations[cnt + 3][0]
+        output_data[operation_group][operation_number]["cars_count"] = operations[cnt + 3][0]
         output_data[operation_group][operation_number]["main_color"] = operations[cnt + 3][1]
         
         cnt_2 = 1
