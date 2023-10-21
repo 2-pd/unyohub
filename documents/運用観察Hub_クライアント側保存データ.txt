@@ -63,26 +63,26 @@ _/_/_/_/ クライアント側IndexedDB "unyohub_caches" _/_/_/_/
     last_modified_timestamp : このデータの元になったJSONファイルが更新された日時のタイムスタンプ値(UTC、秒単位),
     operations : {
         運用番号 : { 各運用の情報
-            trains : { 各列車の情報
-                列車番号 : [
-                    { 各区間組成の情報(発車待ちの情報を含まない)
-                        line_id : 走行路線の識別名,
-                        first_departure_time : 「HH:MM」形式の始発時刻,
-                        final_arrival_time : 「HH:MM」形式の終着時刻,
-                        starting_station : 始発駅,
-                        terminal_station : 終着駅,
-                        position_forward : 担当位置開始両数(進行方向から数えて何両目からがその運用か),
-                        position_rear : 担当位置終了両数(進行方向から数えて何両目までがその運用か),
-                        direction : 上り列車か下り列車か(上り列車なら「inbound」、下り列車なら「outbound」)
-                    }...
-                ]...
-            },
+            trains : [
+                { 各区間組成の情報(発車待ちの情報を含まない)
+                    train_number : 列車番号
+                    line_id : 走行路線の識別名,
+                    first_departure_time : 「HH:MM」形式の始発時刻,
+                    final_arrival_time : 「HH:MM」形式の終着時刻,
+                    starting_station : 始発駅,
+                    terminal_station : 終着駅,
+                    position_forward : 担当位置開始両数(進行方向から数えて何両目からがその運用か),
+                    position_rear : 担当位置終了両数(進行方向から数えて何両目までがその運用か),
+                    direction : 上り列車か下り列車か(上り列車なら「inbound」、下り列車なら「outbound」)
+                }...
+            ],
             group_name : 運用グループタイトル,
             starting_location : 出庫場所(車庫または駅番線),
             terminal_location : 入庫場所(車庫または駅番線),
             first_departure_time : 「HH:MM」形式の初列車始発時刻,
             final_arrival_time : 「HH:MM」形式の終列車終着時刻,
             cars_count : 編成両数,
+            main_color : 運用のテーマカラー,
             comment : コメント
         }...
     }
@@ -95,14 +95,12 @@ _/_/_/_/ クライアント側IndexedDB "unyohub_caches" _/_/_/_/
     ・railroad_id : 路線系統識別名,
     ・operation_table : 運用表識別名,
     last_modified_timestamp : このデータの元になったJSONファイルが更新された日時のタイムスタンプ値(UTC、秒単位),
-    operation_groups : {
-        運用グループタイトル : {
-            [
-                operation_number : 運用番号
-                main_color : 運用のテーマカラー
-            ]...
-        }...
-    }
+    operation_groups : [
+        {
+            "operation_group" : 運用グループタイトル,
+            "operation_numbers" : 運用番号を配列で
+        }
+    ]
 }
 
 
