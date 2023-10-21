@@ -77,8 +77,11 @@ _/_/_/_/ クライアント側IndexedDB "unyohub_caches" _/_/_/_/
                     }...
                 ]...
             },
+            group_name : 運用グループタイトル,
             starting_location : 出庫場所(車庫または駅番線),
             terminal_location : 入庫場所(車庫または駅番線),
+            first_departure_time : 「HH:MM」形式の初列車始発時刻,
+            final_arrival_time : 「HH:MM」形式の終列車終着時刻,
             cars_count : 編成両数,
             comment : コメント
         }...

@@ -379,7 +379,7 @@ article, #blank_article {
     display: block;
 }
 
-.line_select {
+.wide_select {
     display: block;
     
     width: 300px;
@@ -686,8 +686,10 @@ article input[type="checkbox"]:checked + label + div, .preview_popup input[type=
     border-color: #333333;
 }
 
-.timetable_train::after {
+.timetable_train:after {
     content: "";
+    
+    display: inline-block;
     
     clear: both;
 }
@@ -777,6 +779,36 @@ article input[type="checkbox"]:checked + label + div, .preview_popup input[type=
     border-radius: 0 14px 14px 0;
     
     padding-right: 12px;
+}
+
+#operation_table_area {
+    padding-top: 5px;
+}
+
+.operation_card b {
+    display: inline-block;
+    
+    width: 40%;
+    
+    font-size: 20px;
+}
+
+.operation_card span {
+    display: inline-block;
+    
+    width: 45%;
+    
+    text-align: center;
+}
+
+.operation_card span:first-of-type {
+    width: 60%;
+    
+    color: #999999;
+}
+
+.operation_card span:nth-of-type(3) {
+    width: 10%;
 }
 
 footer {
@@ -897,6 +929,8 @@ footer div {
     background-position: center;
     
     border: none;
+    
+    z-index: 2;
 }
 
 h2 {
@@ -997,6 +1031,14 @@ a {
     padding: 5px 10px;
 }
 
+.additional_setting_link {
+    display: block;
+    
+    width: fit-content;
+    
+    margin: 20px auto 10px auto;
+}
+
 #popup_screen, #wait_screen {
     display: none;
     
@@ -1078,10 +1120,10 @@ a {
     line-height: 22px;
 }
 
-.wide_button {
+.wide_button, .operation_card {
     display: block;
     
-    width: calc(100% - 20px) !important;
+    width: calc(100% - 40px) !important;
     
     margin: 10px auto;
     padding: 10px 10px;
@@ -1308,7 +1350,7 @@ a {
     }
 }
 
-input[type="text"], input[type="number"], input[type="password"], input[type="search"], .line_select {
+input[type="text"], input[type="number"], input[type="password"], input[type="search"], .wide_select {
     background-color: #ffffff;
     
     border: none;
@@ -1438,7 +1480,7 @@ input[type="radio"]:checked + label {
     color: #ffffff;
 }
 
-button {
+button, .operation_card {
     background-color: rgba(255,255,255,0.75);
     
     border: 1px solid #dddddd;
@@ -1449,7 +1491,7 @@ button {
     color: #333333;
 }
 
-.dark_mode button {
+.dark_mode button, .dark_mode .operation_card {
     background-color: rgba(16,16,16,0.75);
     
     border-color: #333333;
@@ -1492,11 +1534,11 @@ button {
     <div id="tab_area"><button type="button" onclick="change_mode(0);" style="background-image: url(data:image/webp;base64,UklGRi4CAABXRUJQVlA4TCICAAAvT8ATEEfDGpIkS9n7twoHeNxHcAL7aA0GbdsIcjf+HP95/K/z77CNJEVaUu8xPeaf0QXxzHjYswGl9Yt7CJDvUeyIb/SoS9xC0Q5Vp3DxWA20QniFi2VbMKzaAIgVi0dcBDWAGABggRAwQzAIwsPAwQDwMAAMYjjVoUNfAK2IUhhoGEOFPnUHLwpfUBAvdAONsiVFHGu06BQNqi5EKEUGhHAZEueMdkTa9dg/8YEDp3Pg8zqR7/Fda5xr+792CtiSJKlW9rrfi18X3J3B3d3dHf7/F3SnF16JM3si+j8B6k99v05otY4xngppdj2m5Knv3Mqk/baQta7kDWmYG7tRQivq25aU3E7Mp424GxqpFz1SNzP8aICnjTLqQ8tDOJ5K1zppccO25YNkqM2D510qKrnKNtGPm+yVkuKSD09EjpZI85JVhjaT9m5DAnP65m/NOCDGSzN2ObaNeJjmcC3YVc1m3ygxW3fDCYK8V7cRbN/hO8BVO0G3PLO9jBP44hPXBcHnuHrwurkG8Aa4BvHsfyOm8CxXP94yVy9eC9cq3hpXI94WVxlvg+sU74LrAK+KK4UX5QrhWS4ZQ5tU7I1oDt91J5Zr+eQUq6AAD7GOEZJYEYRbrBCCLCCNeiBakdoU5A7SDkYJ6Qwjg7SPkUKKYTwj3WH4Z3FmHQwJJ74k6XI1OiLul2GFTrKuNK6TKGN/nw460bFHK+a83iutb9YcMwE=); border-color: #dd55ff;">走行位置</button><button type="button" onclick="change_mode(1);" style="background-image: url(data:image/webp;base64,UklGRpADAABXRUJQVlA4TIQDAAAvT8ATEO/juJEkKYpq8N9S3rBnlxvz7ziSJEfJvj3Jj8A2/I/AAv4n2m1tu23DDxzDVi6dQ+0pPZ8nccuKNMQvBFIDX+EtbMKHl1/3d24YfkLubjz1heLIg2KDkkBXOHDw1UchRSE6EqXQPU8UKwU5OPkXi0gUUUQEGb/FkBeLcaiRT4vwT3+xL4zbD6fzeg8aPHRMr0Kc0JFABAVQaF0URgEvig4LLHTo0JGAg0TQBQEgMBoIaAkIgB1ANIqwkYqMUjYEVhCBFQEHqWApjgcQGmloPGnphi/DC0dvt34g0ba2442ef4KpbTeoObVt2+3//rXHSCZXn78f3wuI6P8EQHdPftnit9vNo6uro83b58W60l5YHIwv37ok7W6MlwxY4bTOXJPgcl9fwi/9YjrPMS1VfkPCTwCcrwJEtNkQMCk4ekiS8wCwJEZ0WB00Jv6TpB8BOF9liPYiZrT9J5WJzMxZUrmaYUDTERl9UaQrsEzG/wto6X4gC7+GNWTekpW/vyhr3yfl3r9YZMpTRn+7FH3ZJ+VeAQDEPGW036mk+zepn4LvpDraDisIPJDGiF+JBloPyC2Qzla/PB20LNVCtlGxRNu5fac5Yq9kH70LNREHFBEI/uThZuCjeuKBxj4I/ODiMOVXTlxQpY9zw8eWkzZIfFBu2jQnkwAGzjm5GADixAkVAMu8zAO3vNyhx+XF68gnXihaxk3FIjeJZ27Wdk3qj0pHpjy5jT2ip+STIUpjnshT8ono5pjGASSswaTAOIAEnVxRH4BMeyICfQAy6dKMiI4SuWNaBpxZTZM6JgSWAWeWTvaIHpNfSbMXURfxBOgx+ZXoZpeMdCdKokrjEy5JbzybYfLaIjeJMm4q8rmJ9rq8eN245eUeGOdlHijhpRAYOOfkfADACidTANDKyXCas8nHLycNDXzUwDfwg4uDgB+quCjDh8E9HrZSH2GEhwKIrnLwBuGMU/uOvogh5trmNkN22bYkpAPrdj2F5PB5x6btMFRm/7TnIANqu/7a8jcLqvs27PjzBerD6zY89UPnpznXNHc5BM3xI7MuGqE/Z1XJcl9fQsnbFxgZu5F7AuB8ldsqhKkDY99l5gFgSeagNgWDA5VbYo8AnK9iv2pCMNzJnTwXoERm5iwJnk4NO7AxVZC88/xEvfulwhQs7hiqmH3Z2Ty7ujrb3FmbrYh2Qzc=); border-color: #ffdd55;">時刻表</button><button type="button" onclick="change_mode(2);" style="background-image: url(data:image/webp;base64,UklGRvQDAABXRUJQVlA4TOgDAAAvT8ATEGeloG0bxvxJtzsgHESS7Cq97/9Pjo7wrwIXGdaN20aSRFfPRPv//2268UZz2o1tq3FjTPwlj5mTLvtvs4BsKJWpSL6NRDZpsydp70ATFTdqSx3srlqPH/wO+KdXPS/okTdgFMJYKnXfJhgvcCfEkZD0OKIH0CsB0AMQZAg6CFoAgg4KQXcfkAG0AC2oKNhRQFT8EdhQsaE+Dj8lRHEE0NNAgKB0A2FwEnAQDopKAVOJAkbIKHoclQBEYXAKCgA9YBAACgDE4YRqQEJGwhO9FAAApQ0UjkAgtAETL1Yg+3uLL5yQ0L9FrLyhjKGkN2aF+9xJHkghjgBzNTy0B3k+3Ab6zuwX+iyaPyq7mp7e7v+zbHT/7goJAgCWkdS1bduevcHatm3btm3bvl+O0uTMIKL/jtw2ciQae4odqzH9BA48z8Z1ZSW9A0mxUZPTNFRIGKWTODbJvbekrM74gYMalcOGTd9lIc8sY+eGQxUo3raTF4TQQlnNOU/PNYFC6AmwewCnWrokRBJ8owroLFOILPFmYAqECOMJZh0lDCYdJQ8wZvHo5L6Dfu0mAg269ZkDzkP76jxsNLMcfN1fEmnM7VLC4QnHzFy2yWA23Izk6oaRbVFiyDw/GyGJQ9dGcnXD1G0DjJDMe9u+KmiGxqFea4uzm3dgFBZMhwkJpoIozLzdnFta9Uw1FDTvvcFnXkhAEUJEeU2W6hy0fGZNeVRICDD5zPg5N+ia8XWm28b8PwkJITwoL4IBaUW323tXx0fE7OmFIy8MHxG6v7ftWJQWKFdK+YKb30IWURKAKUXphgNL8ywqGPRFiNGgBAXmasTxyOON3wZcGwmdJ+Dvdb/IVvzqwgkRHOLYwuozmaZq9gD+kKD5TK4JH9atxekxa+BYTHrxtqGaXCO1HATg615SUKF42LQOD+rLS4dZn8voGCWYDbPS8vqDwzOFTTup8JrjuY824p3qzTlIOWdOeAPSvowc767Rv/vM43zGrKZnPBL+PhcvTySmjnR1MrvynVqCy1kn6xpJpRNToi+vTv6iN48SBZONUgyYgzV0QjEHFp1MVOKOOeBYj88jkFEHfB0i8/ynbZ8khnri044jmSaDia6X7eC9jUPBMgzL6Q76mrLPhfXRoOs+p/xFwXOSxfVtf152pBhgKCJpXv/troWCw/ClPJbPPprLbzVR1hrNCwN2ZWVTSyi+YuxCU1mrTCq95/jvyyC3xoNTDkLwQSMNhrfPN1YSB0v3rA/PVJRTOTu0riodTAzZQFU3BFmZONEnf4wSlohxtODLq7u/8s2hJPkxvcckqO4x+QXBPSaMQL7HBEEA); border-color: #55ffdd;">運用データ</button><button type="button" onclick="change_mode(3);" style="background-image: url(data:image/webp;base64,UklGRhYCAABXRUJQVlA4TAkCAAAvT8ATEGfCqG0kSa4ersP/t/cWjfl30EaSI3kTf4pHI/0Xg8i2lfDeF9xdMtGTNgQgg7u+gGKw4beLXXJ//7i41f9z0jTGwrF+A8glSQdVARl6oOIVIAY9EINDQgNjAC6cINxhJxeyEtAK4UYcgPFDQAKApIBBAAHhhwtWCISfITCVOf4nOkw15ljjT7uscVSMPb3uht/DXUN+hn04vQKCALCJGmDu45j7hru7u/7/Q3BNaTO3JhfRfweSJClRN5xL4vAF1yeoJ1kmVD5vqc7VLh6fx19faWCBxLcfY2ZjmNkQCt9WfmVSVya6caTOt/aiEC0U3T7bVAJTrtU3ijJzYhNkSPtaCnz9PDM/TkUQdurM+b6k7wn2FSR8FjOHIIphZkvOF1bimxfA6fW0lzdzCV+emf0esU/yhkZx6OU4sHiIQBDIVbS+3Mh+7Vpm/cO23qva3nbVbb/o9hv492uHVlfc5DJJR67r+8yQyH0xriNq+crtZWQ9TWNLs4ItDv+5VgfdmMGWlA9besiuK0zHRbTneyF6LguuNS5hhr0KeL4Dl713dUHDMgw53j3MEPeYhTUgQwOPKCJOEGRo4BEVxcmBDA08opI4NZChjIf75lacB5ChgUe0A6whIEMDj4hCwjUYZKjjAZnF7InOQIY6HtTF+WQZOpuCDHU8iQ62LcMbIEMd7/NSAgA=); border-color: #ff55dd;">編成表</button><button type="button" onclick="change_mode(4);" style="background-image: url(data:image/webp;base64,UklGRroAAABXRUJQVlA4TK0AAAAvT8ATEIcw/wratmE8/kDH4Stq20hyyQyO4U9nnrOHokiSmrsj/hCBD574d5NhAvLbUyqnqG2W+CB+54MoAjZARfYGAQwkSTLUa97M/f+5thXRf4Vt2zb0A93zA0BqX9CAAAA1Ml2ZCm8kABWqss5iWKKCDLQkFKWmZSHrlibx0jAtDd0fcPiyvHl0Pvyv7oO8NOXy3qnN4t7RZVzYO7+Aigv7hwCETbwMnK0AAAA=); border-color: #ddff55;">運用表</button><button type="button" class="sub_menu_tab" onclick="open_square_popup('sub_menu_popup');">サブメニュー</button></div>
     <div id="blank_article" class="wait_icon"></div>
     <article>
-        <select id="position_line_select" class="line_select" onchange="position_change_lines(this.value);"></select>
+        <select id="position_line_select" class="wide_select" onchange="position_change_lines(this.value);"></select>
         <div id="position_area" class="wait_icon"></div>
     </article>
     <article>
-        <select id="timetable_line_select" class="line_select" onchange="timetable_change_lines(this.value);"></select>
+        <select id="timetable_line_select" class="wide_select" onchange="timetable_change_lines(this.value);"></select>
         <div id="direction_radio_area">
             <h3><button type="button" class="previous_button" onclick="timetable_change_lines(timetable_line_select_elm.value, true);"></button><span id="timetable_station_name"></span></h3>
             <input type="radio" name="direction_radio" id="radio_inbound" value="inbound" checked="checked" onchange="timetable_select_station(timetable_selected_station);"><label for="radio_inbound" id="radio_inbound_label">上り方面</label>
@@ -1506,7 +1548,31 @@ button {
     </article>
     <article id="operation_data_area" class="wait_icon"></article>
     <article id="formation_table_area" class="wait_icon"></article>
-    <article class="wait_icon">運用表機能は近日実装予定です</article>
+    <article>
+        <div id="operation_search_area">
+            <input type="checkbox" id="operation_search_menu"><label for="operation_search_menu">絞り込み条件</label>
+            <div>
+                <select class="wide_select" id="operation_search_group_name" onchange="operation_table_list_number();"><option value="" selected="selected"></option></select>
+                <select class="wide_select" id="operation_search_cars_count" onchange="operation_table_list_number();"><option value="" selected="selected"></option></select>
+                <select class="wide_select" id="operation_search_starting_location" onchange="operation_table_list_number();"><option value="" selected="selected"></option></select>
+                <select class="wide_select" id="operation_search_terminal_location" onchange="operation_table_list_number();"><option value="" selected="selected"></option></select>
+                <select class="wide_select" id="operation_search_first_departure_time" onchange="operation_table_list_number();">
+                    <option value="" selected="selected">出庫時間 指定なし</option>
+                    <option value="10:00">10時以降</option>
+                    <option value="14:00">14時以降</option>
+                    <option value="18:00">18時以降</option>
+                </select>
+                <select class="wide_select" id="operation_search_final_arrival_time" onchange="operation_table_list_number();">
+                    <option value="" selected="selected">入庫時間 指定なし</option>
+                    <option value="10:00">10時以前</option>
+                    <option value="14:00">14時以前</option>
+                    <option value="18:00">18時以前</option>
+                </select>
+                <a href="javascript:void(0);" class="additional_setting_link" onclick="reset_operation_narrow_down();">絞り込み条件のリセット</a>
+            </div>
+        </div>
+        <div id="operation_table_area" class="wait_icon"></div>
+    </article>
     <footer>
         <div>
             <button id="position_reload_button" class="reload_button" onclick="position_reload();"></button>
@@ -1521,7 +1587,7 @@ button {
         </div>
         <div></div>
         <div>
-            <button type="button" class="previous_button"></button><button type="button" class="next_button"></button>
+            <button type="button" class="previous_button" onclick="operation_table_previous();"></button><span id="operation_table_name" class="footer_value_wide"></span><button type="button" class="next_button" onclick="operation_table_next();"></button>
         </div>
     </footer>
     <div class="popup" id="sign_up_popup">
@@ -1568,9 +1634,7 @@ button {
         <input type="number" id="refresh_interval" min="5" max="60" onchange="change_config();">分ごと<br>
         <h3>運用情報のキャッシュ保管日数</h3>
         <input type="number" id="operation_data_cache_period" min="2" max="14" onchange="change_config();">日前のデータまで<br>
-        <br>
-        <div style="text-align: right;"><a href="javascript:void(0)" onclick="reset_config_value();">デフォルト値に戻す</a></div>
-        <br>
+        <a href="javascript:void(0);" class="additional_setting_link" onclick="reset_config_value();">デフォルト値に戻す</a>
         <div class="informational_text">変更内容は自動で保存されます</div>
     </div>
     <div class="popup" id="about_railroad_data_popup">
@@ -2002,12 +2066,12 @@ function update_user_data (user_data_next = null) {
         
         document.getElementById("menu_user_name").innerText = user_data["user_name"] + " さん";
         
-        splash_screen_login_status_elm.innerHTML = "ようこそ <b>" + escape_html(user_data["user_name"]) + "</b> さん<br><a href='javascript:void(0)' onclick='user_logout();'>ログアウト</a>";
+        splash_screen_login_status_elm.innerHTML = "ようこそ <b>" + escape_html(user_data["user_name"]) + "</b> さん<br><a href='javascript:void(0);' onclick='user_logout();'>ログアウト</a>";
     } else {
         document.getElementById("menu_logged_in").style.display = "none";
         document.getElementById("menu_not_logged_in").style.display = "block";
         
-        splash_screen_login_status_elm.innerHTML = "<b>ログインしていません</b><br><a href='javascript:void(0)' onclick='open_square_popup(\"login_popup\");'>ログイン</a>　<a href='javascript:void(0)' onclick='open_popup(\"sign_up_popup\");'>新規登録</a>";
+        splash_screen_login_status_elm.innerHTML = "<b>ログインしていません</b><br><a href='javascript:void(0);' onclick='open_square_popup(\"login_popup\");'>ログイン</a>　<a href='javascript:void(0);' onclick='open_popup(\"sign_up_popup\");'>新規登録</a>";
     }
 }
 
@@ -2364,6 +2428,9 @@ function change_mode (num, load_data = true) {
         case 3:
             formation_table_mode();
             break;
+        case 4:
+            operation_table_mode(get_days_operation(Date.now() / 1000));
+            break;
     }
 }
 
@@ -2491,12 +2558,17 @@ function update_operation_table(operation_table, last_modified_timestamp){
                             
                             operations_data["operations"][operation_numbers[cnt_2]] = {
                                 trains : {},
+                                group_name : groups[cnt],
                                 starting_location : operation_response[groups[cnt]][operation_numbers[cnt_2]]["starting_location"],
                                 terminal_location : operation_response[groups[cnt]][operation_numbers[cnt_2]]["terminal_location"],
                                 cars_count : operation_response[groups[cnt]][operation_numbers[cnt_2]]["cars_count"]
                             }
                             
                             var train_numbers = Object.keys(operation_response[groups[cnt]][operation_numbers[cnt_2]]["trains"]);
+                            
+                            operations_data["operations"][operation_numbers[cnt_2]]["first_departure_time"] = operation_response[groups[cnt]][operation_numbers[cnt_2]]["trains"][train_numbers[0]][0]["first_departure_time"];
+                            operations_data["operations"][operation_numbers[cnt_2]]["final_arrival_time"] = operation_response[groups[cnt]][operation_numbers[cnt_2]]["trains"][train_numbers[train_numbers.length - 1]][operation_response[groups[cnt]][operation_numbers[cnt_2]]["trains"][train_numbers[train_numbers.length - 1]].length - 1]["final_arrival_time"];
+                            
                             for (var cnt_3 = 0; cnt_3 < train_numbers.length; cnt_3++) {
                                 var train_initial = train_numbers[cnt_3].substring(0, 1);
                                 
@@ -3393,8 +3465,8 @@ function timetable_change_lines(line_id, force_station_select_mode = false) {
     }
 }
 
-radio_inbound_elm = document.getElementById("radio_inbound");
-radio_outbound_elm = document.getElementById("radio_outbound");
+var radio_inbound_elm = document.getElementById("radio_inbound");
+var radio_outbound_elm = document.getElementById("radio_outbound");
 
 function timetable_select_station (station_name, cnt = 0) {
     timetable_area_elm.innerHTML = "";
@@ -3476,7 +3548,7 @@ function timetable_select_station (station_name, cnt = 0) {
         keys_2.sort();
         
         for (cnt_2 = 0; cnt_2 < keys_2.length; cnt_2++) {
-            buf += "<a href='javascript:void(0)' onclick='train_detail(\"" + line_id + "\", \"" + departure_times[keys[cnt]][keys_2[cnt_2]] + "\", \"" + first_departure_times[keys[cnt]][keys_2[cnt_2]] + "\", \"" + train_direction + "\", " + is_today + ");' class='timetable_train'>";
+            buf += "<a href='javascript:void(0);' onclick='train_detail(\"" + line_id + "\", \"" + departure_times[keys[cnt]][keys_2[cnt_2]] + "\", \"" + first_departure_times[keys[cnt]][keys_2[cnt_2]] + "\", \"" + train_direction + "\", " + is_today + ");' class='timetable_train'>";
             if (is_today) {
                 var train_operations = get_operations(line_id, departure_times[keys[cnt]][keys_2[cnt_2]], first_departure_times[keys[cnt]][keys_2[cnt_2]], train_direction);
                 var formation_data = convert_formation_data(line_id, train_operations, is_inbound);
@@ -3589,7 +3661,7 @@ function operation_data_change_date (date_additions) {
 
 function operation_data_draw (cnt = 0) {
     if ((operations === null || operation_groups === null || operation_data === null) && cnt < 100) {
-        setTimeout(operation_data_draw, cnt + 1);
+        setTimeout(operation_data_draw, 50, cnt + 1);
         
         return;
     } else if (cnt >= 100) {
@@ -3813,6 +3885,169 @@ function draw_formation_table (formations) {
     }
     
     document.getElementById("formation_table_area").innerHTML = buf;
+}
+
+
+var operation_table_name;
+var operation_table_selected_number = null;
+var operation_table_name_elm = document.getElementById("operation_table_name");
+
+function operation_table_mode(table_name, load_data = true) {
+    operation_table_name = table_name;
+    
+    if (load_data) {
+        load_operation_table(table_name, true, true, false);
+        update_timetable(table_name);
+    }
+    
+    operation_table_list_number();
+}
+
+var search_group_name_elm = document.getElementById("operation_search_group_name");
+var search_cars_count_elm = document.getElementById("operation_search_cars_count");
+var search_starting_location_elm = document.getElementById("operation_search_starting_location");
+var search_terminal_location_elm = document.getElementById("operation_search_terminal_location");
+var search_first_departure_time_elm = document.getElementById("operation_search_first_departure_time");
+var search_final_arrival_time_elm = document.getElementById("operation_search_final_arrival_time");
+
+function operation_table_list_number (cnt = 0) {
+    operation_table_name_elm.innerText = railroad_info["operations"][operation_table_name]["operation_name"];
+    
+    if ((operations === null || line_operations === null || timetable === null) && cnt < 100) {
+        setTimeout(operation_table_list_number, 50, cnt + 1);
+        
+        return;
+    } else if (cnt >= 100) {
+        alert("データの読み込みに失敗しました");
+        
+        return;
+    }
+    
+    var search_group_name = search_group_name_elm.value;
+    var search_group_name_list = [];
+    
+    var search_cars_count = search_cars_count_elm.value;
+    var search_cars_count_list = [];
+    
+    var search_starting_location = search_starting_location_elm.value;
+    var search_starting_location_list = [];
+    
+    var search_terminal_location = search_terminal_location_elm.value;
+    var search_terminal_location_list = [];
+    
+    var search_first_departure_time = search_first_departure_time_elm.value;
+    
+    var search_final_arrival_time = search_final_arrival_time_elm.value;
+    
+    var operation_numbers = Object.keys(operations["operations"]);
+    
+    var buf = "";
+    for (var cnt = 0; cnt < operation_numbers.length; cnt++) {
+        if (search_group_name_list.indexOf(operations["operations"][operation_numbers[cnt]]["group_name"]) === -1) {
+            search_group_name_list.push(operations["operations"][operation_numbers[cnt]]["group_name"]);
+        }
+        if (search_cars_count_list.indexOf(operations["operations"][operation_numbers[cnt]]["cars_count"]) === -1) {
+            search_cars_count_list.push(operations["operations"][operation_numbers[cnt]]["cars_count"]);
+        }
+        if (search_starting_location_list.indexOf(operations["operations"][operation_numbers[cnt]]["starting_location"]) === -1) {
+            search_starting_location_list.push(operations["operations"][operation_numbers[cnt]]["starting_location"]);
+        }
+        if (search_terminal_location_list.indexOf(operations["operations"][operation_numbers[cnt]]["terminal_location"]) === -1) {
+            search_terminal_location_list.push(operations["operations"][operation_numbers[cnt]]["terminal_location"]);
+        }
+        
+        if ((search_group_name !== "" && operations["operations"][operation_numbers[cnt]]["group_name"] !== search_group_name) || (search_cars_count !== "" && operations["operations"][operation_numbers[cnt]]["cars_count"] !== search_cars_count) || (search_starting_location !== "" && operations["operations"][operation_numbers[cnt]]["starting_location"] !== search_starting_location) || (search_terminal_location !== "" && operations["operations"][operation_numbers[cnt]]["terminal_location"] !== search_terminal_location) || (search_first_departure_time !== "" && operations["operations"][operation_numbers[cnt]]["first_departure_time"] < search_first_departure_time) || (search_final_arrival_time !== "" && operations["operations"][operation_numbers[cnt]]["final_arrival_time"] > search_final_arrival_time)) {
+            continue;
+        }
+        
+        buf += "<a href='javascript:void(0);' class='operation_card' onclick='operation_table_select_number(\"" + operation_numbers[cnt] + "\");'>";
+        buf += "<b>" + operation_numbers[cnt] + " 運用</b><span>" + operations["operations"][operation_numbers[cnt]]["group_name"] + " " + operations["operations"][operation_numbers[cnt]]["cars_count"] + "両</span>";
+        buf += "<span>○" + operations["operations"][operation_numbers[cnt]]["starting_location"] + " " + operations["operations"][operation_numbers[cnt]]["first_departure_time"] + "</span><span>〜</span><span>△" + operations["operations"][operation_numbers[cnt]]["terminal_location"] + " " + operations["operations"][operation_numbers[cnt]]["final_arrival_time"] + "</span>";
+        buf += "</a>";
+    }
+    
+    var buf_2 = "<option value=''>運用グループ 指定なし</option>";
+    for (cnt = 0; cnt < search_group_name_list.length; cnt++) {
+        buf_2 += "<option value='" + search_group_name_list[cnt] + "'>" + search_group_name_list[cnt] + "</option>";
+    }
+    search_group_name_elm.innerHTML = buf_2;
+    search_group_name_elm.value = search_group_name;
+    
+    var buf_2 = "<option value=''>両数 指定なし</option>";
+    for (cnt = 0; cnt < search_cars_count_list.length; cnt++) {
+        buf_2 += "<option value='" + search_cars_count_list[cnt] + "'>" + search_cars_count_list[cnt] + "両</option>";
+    }
+    search_cars_count_elm.innerHTML = buf_2;
+    search_cars_count_elm.value = search_cars_count;
+    
+    var buf_2 = "<option value=''>出庫場所 指定なし</option>";
+    for (cnt = 0; cnt < search_starting_location_list.length; cnt++) {
+        buf_2 += "<option value='" + search_starting_location_list[cnt] + "'>" + search_starting_location_list[cnt] + " 出庫</option>";
+    }
+    search_starting_location_elm.innerHTML = buf_2;
+    search_starting_location_elm.value = search_starting_location;
+    
+    var buf_2 = "<option value=''>入庫場所 指定なし</option>";
+    for (cnt = 0; cnt < search_terminal_location_list.length; cnt++) {
+        buf_2 += "<option value='" + search_terminal_location_list[cnt] + "'>" + search_terminal_location_list[cnt] + " 入庫</option>";
+    }
+    search_terminal_location_elm.innerHTML = buf_2;
+    search_terminal_location_elm.value = search_terminal_location;
+    
+    if (buf === "") {
+        buf = "【!】絞り込み条件に一致する運用は見つかりませんでした";
+    }
+    
+    document.getElementById("operation_table_area").innerHTML = buf;
+}
+
+function reset_operation_narrow_down (search_again = true) {
+    search_group_name_elm.value="";
+    search_cars_count_elm.value="";
+    search_starting_location_elm.value="";
+    search_terminal_location_elm.value="";
+    search_first_departure_time_elm.value="";
+    search_final_arrival_time_elm.value="";
+    
+    if (search_again) {
+        operation_table_list_number();
+    }
+}
+
+function operation_table_previous () {
+    var keys = Object.keys(railroad_info["operations"]);
+    var key_index = keys.indexOf(operation_table_name) - 1;
+    
+    if (key_index < 0) {
+        key_index = keys.length - 1;
+    }
+    
+    load_operation_table(keys[key_index], true, true, false);
+    update_timetable(keys[key_index]);
+    if (operation_table_selected_number === null) {
+        operation_table_name = keys[key_index];
+        operation_table_list_number();
+    } else {
+        operation_table_select_number(operation_table_selected_number);
+    }
+}
+
+function operation_table_next () {
+    var keys = Object.keys(railroad_info["operations"]);
+    var key_index = keys.indexOf(operation_table_name) + 1;
+    
+    if (key_index >= keys.length) {
+        key_index = 0;
+    }
+    
+    load_operation_table(keys[key_index], true, true, false);
+    update_timetable(keys[key_index]);
+    if (operation_table_selected_number === null) {
+        operation_table_name = keys[key_index];
+        operation_table_list_number();
+    } else {
+        operation_table_select_number(operation_table_selected_number);
+    }
 }
 
 
@@ -4294,7 +4529,7 @@ function reset_config_value () {
 }
 
 
-history.pushState(null, null, location.href + "#");
+history.pushState(null, null, location.href);
 
 window.onpopstate = function () {
     if (square_popup_is_open) {
