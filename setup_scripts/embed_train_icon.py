@@ -40,7 +40,7 @@ for cnt in range(len(train_icons)):
 print("train_icons.jsonを作成しています...")
 try:
     json_f = open("train_icons.json", "w", encoding="utf-8")
-    json.dump(train_icons, json_f, ensure_ascii=False, indent=4)
+    json.dump(train_icons, json_f, ensure_ascii=False, separators=(',', ':'))
 except:
     print("【エラー】train_icons.jsonの保存に失敗しました")
     sys.exit()

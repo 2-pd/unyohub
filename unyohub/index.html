@@ -2792,8 +2792,8 @@ function update_timetable (operation_table) {
     open_request.onsuccess = function () {
         var transaction = open_request.result.transaction("timetables", "readonly");
         
-        var formations_store = transaction.objectStore("timetables");
-        var get_request = formations_store.get([railroad_id, operation_table]);
+        var timetables_store = transaction.objectStore("timetables");
+        var get_request = timetables_store.get([railroad_id, operation_table]);
         
         get_request.onsuccess = function (evt) {
             if (evt.target.result !== undefined) {
@@ -3942,7 +3942,7 @@ function formation_table_mode () {
             
             if (navigator.onLine) {
                 if (formations !== null){
-                    draw_formation_table(formations["formations"]);
+                    draw_formation_table(formations);
                 }
                 
                 var formations_request = new XMLHttpRequest();
@@ -3951,7 +3951,7 @@ function formation_table_mode () {
                         if (formations_request.responseText.substring(0,6) === "ERROR:") {
                             alert(formations_request.responseText);
                         } else if (formations_request.status === 200 && formations_request.responseText !== "NO_UPDATES_AVAILABLE") {
-                            formations = {formations : JSON.parse(formations_request.responseText)};
+                            formations = JSON.parse(formations_request.responseText);
                             
                             formations["railroad_id"] = railroad_id;
                             
@@ -3964,7 +3964,7 @@ function formation_table_mode () {
                             formations_store.put(formations);
                         }
                         
-                        draw_formation_table(formations["formations"]);
+                        draw_formation_table(formations);
                     }
                 };
                 
@@ -3973,7 +3973,7 @@ function formation_table_mode () {
                 formations_request.timeout = 5000;
                 formations_request.send("railroad_id=" + escape_form_data(railroad_id) + "&last_modified_timestamp=" + last_modified_timestamp);
             } else {
-                draw_formation_table(formations["formations"]);
+                draw_formation_table(formations);
             }
         }
     };
@@ -4012,18 +4012,18 @@ function draw_formation_table (formations) {
     }
     
     var buf = ""
-    var keys = Object.keys(formations);
-    for (var cnt = 0; cnt < keys.length; cnt++) {
-        buf += "<input type='checkbox' id='" + keys[cnt] + "'><label for='" + keys[cnt] + "'>" + escape_html(keys[cnt]) + "</label><div>";
+    for (var cnt = 0; cnt < formations["series"].length; cnt++) {
+        buf += "<input type='checkbox' id='series_" + formations["series"][cnt]["series_name"] + "'><label for='series_" + formations["series"][cnt]["series_name"] + "'>" + escape_html(formations["series"][cnt]["series_name"]) + "</label><div>";
         
-        var keys_2 = Object.keys(formations[keys[cnt]]);
-        for (var cnt_2 = 0; cnt_2 < keys_2.length; cnt_2++){
-            buf += "<div class='formation_box'><img src='" + get_icon(keys_2[cnt_2]) + "' alt='' class='train_icon'>";
+        for (var cnt_2 = 0; cnt_2 < formations["series"][cnt]["formation_names"].length; cnt_2++){
+            var formation_name = formations["series"][cnt]["formation_names"][cnt_2];
             
-            buf += "<b>" + escape_html(keys_2[cnt_2]) + "</b><br>";
+            buf += "<div class='formation_box'><img src='" + get_icon(formation_name) + "' alt='' class='train_icon'>";
             
-            for (var cnt_3 = 0; cnt_3 < formations[keys[cnt]][keys_2[cnt_2]]["cars"].length; cnt_3++) {
-                buf += "<span>" + escape_html(formations[keys[cnt]][keys_2[cnt_2]]["cars"][cnt_3]) + "</span>";
+            buf += "<b>" + escape_html(formation_name) + "</b><br>";
+            
+            for (var cnt_3 = 0; cnt_3 < formations["formations"][formation_name]["cars"].length; cnt_3++) {
+                buf += "<span>" + escape_html(formations["formations"][formation_name]["cars"][cnt_3]["car_number"]) + "</span>";
             }
             
             buf += "</div>";
@@ -4177,9 +4177,30 @@ function reset_operation_narrow_down (search_again = true) {
     }
 }
 
-function operation_table_select_number (operation_number) {
+function operation_table_select_number (operation_number, cnt_0 = 0) {
     operation_table_selected_number = operation_number;
     operation_search_area_elm.style.display = "none";
+    operation_table_area_elm.innerHTML = "";
+    
+    if ((operations === null || line_operations === null || timetable === null) && cnt_0 < 100) {
+        setTimeout(operation_table_select_number, 50, operation_number, cnt_0 + 1);
+        
+        return;
+    } else if (cnt_0 >= 100) {
+        alert("データの読み込みに失敗しました");
+        
+        return;
+    }
+    
+    if (!(operation_number in operations["operations"])) {
+        alert("運用番号「" + operation_number + "」のこのダイヤでの運転情報は登録されていません");
+        
+        operation_table_list_number();
+        
+        return;
+    }
+    
+    operation_table_name_elm.innerText = railroad_info["operations"][operation_table_name]["operation_name"];
     
     var buf = "<h2><button type='button' class='previous_button' onclick='operation_table_list_number();'></button>" + operation_number + "運用</h2>";
     

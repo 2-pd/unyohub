@@ -51,7 +51,7 @@ _/_/_/_/ クライアント側IndexedDB "unyohub_caches" _/_/_/_/
 {
     ・railroad_id : 路線系統識別名,
     last_modified_timestamp : このデータの元になったJSONファイルが更新された日時のタイムスタンプ値(UTC、秒単位),
-    formations : formations.phpのレスポンスをパースしてそのまま格納
+    以降の項目はformations.phpのレスポンスをパースしてそのまま展開して使用
 }
 
 
