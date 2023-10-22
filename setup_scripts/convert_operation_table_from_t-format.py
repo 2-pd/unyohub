@@ -18,7 +18,7 @@ print("railroad_info.json を読み込んでいます...")
 with open("railroad_info.json", "r", encoding="utf-8") as json_f:
     railroad_info = json.load(json_f)
     
-lines = railroad_info["lines"].keys()
+lines = railroad_info["lines_order"]
 
 print("JSON化された時刻表データのファイル名を入力してください:")
 
@@ -33,8 +33,8 @@ station_list = {}
 station_list_r = {}
 timetable_data = {}
 for line in lines:
-    station_list[line] = list(railroad_info["lines"][line]["stations"].keys())
-    station_list_r[line] = list(reversed(station_list[line]))
+    station_list[line] = railroad_info["lines"][line]["stations"]
+    station_list_r[line] = reversed(station_list[line])
 
 print("変換対象のCSVファイル名を入力してください:")
 
@@ -92,21 +92,21 @@ while cnt < len(operations):
                         for train in timetable[line]["inbound_trains"][train_name]:
                             for cnt_3 in range(len(train["departure_times"])):
                                 if train["departure_times"][cnt_3] != None:
-                                    first_departure_times.append(railroad_info["lines"][line]["stations"][station_list_r[line][cnt_3]]["station_initial"] + train["departure_times"][cnt_3])
+                                    first_departure_times.append(station_list_r[line][cnt_3]["station_initial"] + train["departure_times"][cnt_3])
                                     break
                             for cnt_3 in range(len(train["departure_times"]) - 1, -1, -1):
                                 if train["departure_times"][cnt_3] != None:
-                                    last_departure_times.append(railroad_info["lines"][line]["stations"][station_list_r[line][cnt_3]]["station_initial"] + train["departure_times"][cnt_3])
+                                    last_departure_times.append(station_list_r[line][cnt_3]["station_initial"] + train["departure_times"][cnt_3])
                                     break
                     if (train_name in timetable[line]["outbound_trains"]):
                         for train in timetable[line]["outbound_trains"][train_name]:
                             for cnt_3 in range(len(train["departure_times"])):
                                 if train["departure_times"][cnt_3] != None:
-                                    first_departure_times.append(railroad_info["lines"][line]["stations"][station_list[line][cnt_3]]["station_initial"] + train["departure_times"][cnt_3])
+                                    first_departure_times.append(station_list[line][cnt_3]["station_initial"] + train["departure_times"][cnt_3])
                                     break
                             for cnt_3 in range(len(train["departure_times"]) - 1, -1, -1):
                                 if train["departure_times"][cnt_3] != None:
-                                    last_departure_times.append(railroad_info["lines"][line]["stations"][station_list[line][cnt_3]]["station_initial"] + train["departure_times"][cnt_3])
+                                    last_departure_times.append(station_list[line][cnt_3]["station_initial"] + train["departure_times"][cnt_3])
                                     break
                 
                 if len(first_departure_times) >= 1:

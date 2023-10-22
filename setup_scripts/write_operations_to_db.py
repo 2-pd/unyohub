@@ -21,21 +21,13 @@ cur.execute("DELETE FROM `unyohub_trains` WHERE `operation_table` = :operation_t
 
 print("データを処理しています...")
 
-operation_groups = operation_data.keys()
-
-for operation_group in operation_groups:
-    operations = operation_data[operation_group].keys()
-    for operation in operations:
-        cur.execute("INSERT INTO `unyohub_operations` (`operation_table`, `operation_number`, `starting_location`, `terminal_location`) VALUES (:operation_table, :operation_number, :starting_location, :terminal_location)", {"operation_table" : operation_table, "operation_number" : operation, "starting_location" : operation_data[operation_group][operation]["starting_location"], "terminal_location" : operation_data[operation_group][operation]["terminal_location"]})
+for operation_group in operation_data:
+    for operation in operation_group["operations"]:
+        cur.execute("INSERT INTO `unyohub_operations` (`operation_table`, `operation_number`, `starting_location`, `terminal_location`) VALUES (:operation_table, :operation_number, :starting_location, :terminal_location)", {"operation_table" : operation_table, "operation_number" : operation["operation_number"], "starting_location" : operation["starting_location"], "terminal_location" : operation["terminal_location"]})
         
-        trains = operation_data[operation_group][operation]["trains"].keys()
-        for train in trains:
-            if train[0:1] == "_" or "__" in train:
-                continue
-            
-            for train_data in operation_data[operation_group][operation]["trains"][train]:
-                if train_data["starting_station"] != train_data["terminal_station"]:
-                    cur.execute("INSERT INTO `unyohub_trains` (`operation_table`, `operation_number`, `train_number`, `first_departure_time`, `position_forward`, `position_rear`, `direction`) VALUES (:operation_table, :operation_number, :train_number, :first_departure_time, :position_forward, :position_rear, :direction)", {"operation_table" : operation_table, "operation_number" : operation, "train_number" : train, "first_departure_time" : train_data["first_departure_time"], "position_forward" : train_data["position_forward"], "position_rear" : train_data["position_rear"], "direction" : train_data["direction"]})
+        for train in operation["trains"]:
+            if train["train_number"][0:1] != "_" and "__" not in train["train_number"] and train["starting_station"] != train["terminal_station"]:
+                cur.execute("INSERT INTO `unyohub_trains` (`operation_table`, `operation_number`, `train_number`, `first_departure_time`, `position_forward`, `position_rear`, `direction`) VALUES (:operation_table, :operation_number, :train_number, :first_departure_time, :position_forward, :position_rear, :direction)", {"operation_table" : operation_table, "operation_number" : operation["operation_number"], "train_number" : train["train_number"], "first_departure_time" : train["first_departure_time"], "position_forward" : train["position_forward"], "position_rear" : train["position_rear"], "direction" : train["direction"]})
 
 print("データベースの書き込み処理を完了しています...")
 conn.commit()

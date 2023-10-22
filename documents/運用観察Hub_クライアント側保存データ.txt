@@ -97,7 +97,7 @@ _/_/_/_/ クライアント側IndexedDB "unyohub_caches" _/_/_/_/
     last_modified_timestamp : このデータの元になったJSONファイルが更新された日時のタイムスタンプ値(UTC、秒単位),
     operation_groups : [
         {
-            "operation_group" : 運用グループタイトル,
+            "operation_group_name" : 運用グループタイトル,
             "operation_numbers" : 運用番号を配列で
         }
     ]

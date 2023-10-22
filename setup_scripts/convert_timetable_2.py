@@ -12,11 +12,9 @@ print("変換対象のダイヤ識別名を入力してください:")
 
 operation_table = input()
 
-lines = railroad_info["lines"].keys()
-
 output_data = {}
 
-for line_id in lines:
+for line_id in railroad_info["lines_order"]:
     line_data = {}
     
     for direction in ["inbound", "outbound"]:

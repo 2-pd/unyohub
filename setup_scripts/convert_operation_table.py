@@ -6,18 +6,16 @@ import json
 import sqlite3
 
 
-def get_lines_and_stations(station_initial):
+def get_lines_and_station(station_initial):
     global railroad_info
     
     line_list = []
     
-    lines = railroad_info["lines"].keys()
-    for line in lines:
-        stations = railroad_info["lines"][line]["stations"].keys()
-        for station in stations:
-            if "station_initial" in railroad_info["lines"][line]["stations"][station] and railroad_info["lines"][line]["stations"][station]["station_initial"] == station_initial:
+    for line in railroad_info["lines_order"]:
+        for station in railroad_info["lines"][line]["stations"]:
+            if "station_initial" in station and station["station_initial"] == station_initial:
                 line_list.append(line)
-                station_name = station
+                station_name = station["station_name"]
     
     return line_list, station_name
 
@@ -25,8 +23,13 @@ def get_lines_and_stations(station_initial):
 print("railroad_info.json を読み込んでいます...")
 with open("railroad_info.json", "r", encoding="utf-8") as json_f:
     railroad_info = json.load(json_f)
+
+station_list = {}
+for line in railroad_info["lines_order"]:
+    station_list[line] = []
     
-lines = list(railroad_info["lines"].keys())
+    for station in railroad_info["lines"][line]["stations"]:
+        station_list[line].append(station["station_name"])
 
 print("変換対象のCSVファイル名を入力してください:")
 
@@ -41,25 +44,23 @@ print("データを変換しています...")
 
 error_occurred = False
 
-output_data = {}
+output_data = []
 cnt = 0
 id_cnt = 1
 while cnt < len(operations):
     if operations[cnt][0].startswith("# "):
-        operation_group = operations[cnt][0][2:]
-        output_data[operation_group] = {}
+        output_data.append({"operation_group_name" : operations[cnt][0][2:], "operations": []})
         
         cnt += 1
     else:
-        previous_train_final_arrival_time = None
-        
-        operation_number = operations[cnt][0]
-        output_data[operation_group][operation_number] = {"trains" : {}}
-        
-        output_data[operation_group][operation_number]["starting_location"] = operations[cnt + 1][0]
-        output_data[operation_group][operation_number]["terminal_location"] = operations[cnt + 2][0]
-        output_data[operation_group][operation_number]["cars_count"] = operations[cnt + 3][0]
-        output_data[operation_group][operation_number]["main_color"] = operations[cnt + 3][1]
+        output_data[-1]["operations"].append({
+            "operation_number" : operations[cnt][0],
+            "trains" : [],
+            "starting_location" : operations[cnt + 1][0],
+            "terminal_location" : operations[cnt + 2][0],
+            "cars_count" : operations[cnt + 3][0],
+            "main_color" : operations[cnt + 3][1]
+        })
         
         cnt_2 = 1
         while cnt_2 < len(operations[cnt]) and operations[cnt][cnt_2] != "":
@@ -67,19 +68,17 @@ while cnt < len(operations):
                 train_number = operations[cnt][cnt_2] + "__" + str(id_cnt)
                 id_cnt += 1
                 
-                output_data[operation_group][operation_number]["trains"][train_number] = [{
+                output_data[-1]["operations"][-1]["trains"].append({
+                    "train_number" : train_number,
                     "line_id" : None,
-                    "first_departure_time" : previous_train_final_arrival_time,
+                    "first_departure_time" : output_data[-1]["operations"][-1]["trains"][-1]["final_arrival_time"],
                     "final_arrival_time" : None,
                     "starting_station" : None,
                     "terminal_station" : None,
                     "position_forward" : None,
                     "position_rear" : None,
                     "direction" : None
-                }]
-                
-                previous_train_number = train_number
-                previous_train_final_arrival_time = None
+                })
             else:
                 train_number = operations[cnt][cnt_2]
                 
@@ -99,15 +98,8 @@ while cnt < len(operations):
                     train_number = train_number[1:] + "__" + str(id_cnt)
                     id_cnt += 1
                 
-                if train_number in output_data[operation_group][operation_number]["trains"]:
-                    train_index = len(output_data[operation_group][operation_number]["trains"][train_number])
-                    output_data[operation_group][operation_number]["trains"][train_number].append({})
-                else:
-                    train_index = 0
-                    output_data[operation_group][operation_number]["trains"][train_number] = [{}]
-                
-                starting_line_list, starting_station = get_lines_and_stations(operations[cnt + 1][cnt_2][0:1])
-                terminal_line_list, terminal_station = get_lines_and_stations(operations[cnt + 2][cnt_2][0:1])
+                starting_line_list, starting_station = get_lines_and_station(operations[cnt + 1][cnt_2][0:1])
+                terminal_line_list, terminal_station = get_lines_and_station(operations[cnt + 2][cnt_2][0:1])
                 
                 line_list = list(set(starting_line_list) & set(terminal_line_list))
                 
@@ -121,12 +113,37 @@ while cnt < len(operations):
                     line_list = starting_line_list
                     direction = "?"
                 else:
-                    if (list(railroad_info["lines"][line_list[0]]["stations"].keys()).index(starting_station) > list(railroad_info["lines"][line_list[0]]["stations"].keys()).index(terminal_station)):
+                    if (station_list[line_list[0]].index(starting_station) > station_list[line_list[0]].index(terminal_station)):
                         direction = "inbound"
                     else:
                         direction = "outbound"
                 
-                output_data[operation_group][operation_number]["trains"][train_number][train_index] = {
+                
+                if len(output_data[-1]["operations"][-1]["trains"]) >= 1:
+                    if output_data[-1]["operations"][-1]["trains"][-1]["final_arrival_time"] == None:
+                        if cnt_2 >= 2:
+                            output_data[-1]["operations"][-1]["trains"][-1]["final_arrival_time"] = first_departure_time
+                    elif output_data[-1]["operations"][-1]["trains"][-1]["final_arrival_time"] != first_departure_time:
+                        if output_data[-1]["operations"][-1]["trains"][-1]["train_number"] == train_number:
+                            stopped_train_number = train_number
+                        else:
+                            stopped_train_number = "_" + train_number
+                        
+                        output_data[-1]["operations"][-1]["trains"].append({
+                            "train_number" : stopped_train_number,
+                            "line_id" : line_list[0],
+                            "first_departure_time" : output_data[-1]["operations"][-1]["trains"][-1]["final_arrival_time"],
+                            "final_arrival_time" : first_departure_time,
+                            "starting_station" : starting_station,
+                            "terminal_station" : starting_station,
+                            "position_forward" : position_forward,
+                            "position_rear" : position_rear,
+                            "direction" : direction
+                        })
+                
+                
+                output_data[-1]["operations"][-1]["trains"].append({
+                    "train_number" : train_number,
                     "line_id" : line_list[0],
                     "first_departure_time" : first_departure_time,
                     "final_arrival_time" : final_arrival_time,
@@ -135,42 +152,7 @@ while cnt < len(operations):
                     "position_forward" : position_forward,
                     "position_rear" : position_rear,
                     "direction" : direction
-                }
-                
-                
-                if previous_train_final_arrival_time == None:
-                    if cnt_2 >= 2:
-                        output_data[operation_group][operation_number]["trains"][previous_train_number][0]["final_arrival_time"] = first_departure_time
-                elif previous_train_final_arrival_time != first_departure_time:
-                    if previous_train_number == train_number:
-                        stopped_train_number = train_number
-                        stopped_train_index = train_index
-                        
-                        output_data[operation_group][operation_number]["trains"][stopped_train_number].insert(train_index, {})
-                    else:
-                        stopped_train_number = "_" + train_number
-                        stopped_train_index = 0
-                        
-                        tmp_train_data = output_data[operation_group][operation_number]["trains"].pop(train_number)
-                        
-                        output_data[operation_group][operation_number]["trains"][stopped_train_number] = [{}]
-                        
-                        output_data[operation_group][operation_number]["trains"][train_number] = tmp_train_data
-                    
-                    output_data[operation_group][operation_number]["trains"][stopped_train_number][stopped_train_index] = {
-                        "line_id" : line_list[0],
-                        "first_departure_time" : previous_train_final_arrival_time,
-                        "final_arrival_time" : first_departure_time,
-                        "starting_station" : starting_station,
-                        "terminal_station" : starting_station,
-                        "position_forward" : position_forward,
-                        "position_rear" : position_rear,
-                        "direction" : direction
-                    }
-                
-                
-                previous_train_number = train_number
-                previous_train_final_arrival_time = final_arrival_time
+                })
             
             cnt_2 += 1
         
