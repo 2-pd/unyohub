@@ -4113,7 +4113,7 @@ function operation_table_list_number (cnt = 0) {
             search_terminal_location_list.push(operations["operations"][operation_numbers[cnt]]["terminal_location"]);
         }
         
-        if ((search_group_name !== "" && operations["operations"][operation_numbers[cnt]]["operation_group_name"] !== search_group_name) || (search_cars_count !== "" && operations["operations"][operation_numbers[cnt]]["cars_count"] !== search_cars_count) || (search_starting_location !== "" && operations["operations"][operation_numbers[cnt]]["starting_location"] !== search_starting_location) || (search_terminal_location !== "" && operations["operations"][operation_numbers[cnt]]["terminal_location"] !== search_terminal_location) || (search_first_departure_time !== "" && operations["operations"][operation_numbers[cnt]]["first_departure_time"] < search_first_departure_time) || (search_final_arrival_time !== "" && operations["operations"][operation_numbers[cnt]]["final_arrival_time"] > search_final_arrival_time)) {
+        if ((search_group_name !== "" && operations["operations"][operation_numbers[cnt]]["operation_group_name"] !== search_group_name) || (search_cars_count !== "" && operations["operations"][operation_numbers[cnt]]["cars_count"] !== Number(search_cars_count)) || (search_starting_location !== "" && operations["operations"][operation_numbers[cnt]]["starting_location"] !== search_starting_location) || (search_terminal_location !== "" && operations["operations"][operation_numbers[cnt]]["terminal_location"] !== search_terminal_location) || (search_first_departure_time !== "" && operations["operations"][operation_numbers[cnt]]["first_departure_time"] < search_first_departure_time) || (search_final_arrival_time !== "" && operations["operations"][operation_numbers[cnt]]["final_arrival_time"] > search_final_arrival_time)) {
             continue;
         }
         
@@ -4221,7 +4221,7 @@ function operation_table_select_number (operation_number) {
             
             buf += trains[cnt]["train_number"].split("__")[0] + "</a></b>";
             
-            buf += "<span>(" + trains[cnt]["position_forward"] + "〜" + trains[cnt]["position_rear"] + "両目)</span>";
+            buf += "<span>(" + trains[cnt]["position_forward"] + "-" + trains[cnt]["position_rear"] + "両目)</span>";
             
             buf += "<span>" + trains[cnt]["starting_station"] + " " + trains[cnt]["first_departure_time"] + "</span><span>→</span><span>" + trains[cnt]["final_arrival_time"] + " " + trains[cnt]["terminal_station"] + "</span>";
             

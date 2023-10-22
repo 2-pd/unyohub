@@ -17,6 +17,9 @@ def get_lines_and_station(station_initial):
                 line_list.append(line)
                 station_name = station["station_name"]
     
+    if len(line_list) == 0:
+        print("「" + station_initial + "」に一致する駅がありません")
+    
     return line_list, station_name
 
 
@@ -58,7 +61,7 @@ while cnt < len(operations):
             "trains" : [],
             "starting_location" : operations[cnt + 1][0],
             "terminal_location" : operations[cnt + 2][0],
-            "cars_count" : operations[cnt + 3][0],
+            "cars_count" : int(operations[cnt + 3][0]),
             "main_color" : operations[cnt + 3][1]
         })
         

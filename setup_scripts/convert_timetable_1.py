@@ -33,9 +33,9 @@ for line_id in line_list:
     
     for cnt in range(2, len(timetable_data_t[0])):
         if line_id in timetable_data_t[0][cnt]:
-            line_stations[line_id] += [cnt]
+            line_stations[line_id].append(cnt)
 
-for cnt in range(2, len(timetable_data_t)):
+for cnt in range(1, len(timetable_data_t)):
     for line_id in line_list:
         train = list(itemgetter(*line_stations[line_id])(timetable_data_t[cnt]))
         

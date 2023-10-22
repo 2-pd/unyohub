@@ -3,6 +3,7 @@
 
 import csv
 import json
+import re
 
 
 def convert_time_style(time_data):
@@ -31,10 +32,9 @@ with open(json_file_name, "r", encoding="utf-8") as json_f:
 
 station_list = {}
 station_list_r = {}
-timetable_data = {}
 for line in lines:
     station_list[line] = railroad_info["lines"][line]["stations"]
-    station_list_r[line] = reversed(station_list[line])
+    station_list_r[line] = list(reversed(station_list[line]))
 
 print("変換対象のCSVファイル名を入力してください:")
 
@@ -57,12 +57,17 @@ while cnt < len(operations):
     if operations[cnt][0].startswith("◆"):
         output_data.append(["# " + operations[cnt][0][1:]])
         
+        if re.match("^#[0-9A-Fa-f]{6}$", operations[cnt][1]) != None:
+            color = operations[cnt][1]
+        else:
+            color = "#ffffff"
+        
         cnt += 1
     else:
         output_row_1 = [operations[cnt][0]]
         output_row_2 = [operations[cnt][2]]
         output_row_3 = [operations[cnt][3]]
-        output_row_4 = [operations[cnt][1], "#ffffff"]
+        output_row_4 = [operations[cnt][1], color]
         
         cnt_2 = 4
         while cnt_2 < len(operations[cnt]):
@@ -88,7 +93,7 @@ while cnt < len(operations):
                 first_departure_times = []
                 last_departure_times = []
                 for line in lines:
-                    if (train_name in timetable[line]["inbound_trains"]):
+                    if train_name in timetable[line]["inbound_trains"]:
                         for train in timetable[line]["inbound_trains"][train_name]:
                             for cnt_3 in range(len(train["departure_times"])):
                                 if train["departure_times"][cnt_3] != None:
@@ -98,7 +103,7 @@ while cnt < len(operations):
                                 if train["departure_times"][cnt_3] != None:
                                     last_departure_times.append(station_list_r[line][cnt_3]["station_initial"] + train["departure_times"][cnt_3])
                                     break
-                    if (train_name in timetable[line]["outbound_trains"]):
+                    if train_name in timetable[line]["outbound_trains"]:
                         for train in timetable[line]["outbound_trains"][train_name]:
                             for cnt_3 in range(len(train["departure_times"])):
                                 if train["departure_times"][cnt_3] != None:
