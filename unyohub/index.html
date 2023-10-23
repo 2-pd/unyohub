@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width,initial-scale=1,interactive-widget=resizes-content">
 <script>
     const UNYOHUB_APP_NAME = "運用観察Hub";
-    const UNYOHUB_VERSION = "23.10-β3"
+    const UNYOHUB_VERSION = "23.10-β4"
     const UNYOHUB_INDEXEDDB_VERSION = 2310001;
     const UNYOHUB_LICENSE_TEXT = "このアプリケーションは無権利創作宣言に準拠して著作権放棄されています。";
     const UNYOHUB_LICENSE_URL = "https://www.2pd.jp/license/";
@@ -3212,7 +3212,7 @@ function convert_formation_data (line_id, operation_list, is_inbound) {
     var first_formation = null;
     var variants_count = null;
     
-    if (operations !== null) {
+    if (operation_list !== null) {
         var formation_text = "";
         
         for (var cnt_3 = 0; cnt_3 < operation_list.length; cnt_3++) {
