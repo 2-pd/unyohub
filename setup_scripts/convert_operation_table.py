@@ -6,7 +6,7 @@ import json
 import sqlite3
 
 
-def get_lines_and_station(station_initial):
+def get_lines_and_station(station_initial, cnt, cnt_2):
     global railroad_info
     
     line_list = []
@@ -18,7 +18,7 @@ def get_lines_and_station(station_initial):
                 station_name = station["station_name"]
     
     if len(line_list) == 0:
-        print("「" + station_initial + "」に一致する駅がありません")
+        print("「" + station_initial + "」に一致する駅がありません: " + str(cnt + 1) + "行目 " + str(cnt_2 + 1) + "列目")
     
     return line_list, station_name
 
@@ -101,8 +101,8 @@ while cnt < len(operations):
                     train_number = train_number[1:] + "__" + str(id_cnt)
                     id_cnt += 1
                 
-                starting_line_list, starting_station = get_lines_and_station(operations[cnt + 1][cnt_2][0:1])
-                terminal_line_list, terminal_station = get_lines_and_station(operations[cnt + 2][cnt_2][0:1])
+                starting_line_list, starting_station = get_lines_and_station(operations[cnt + 1][cnt_2][0:1], cnt, cnt_2)
+                terminal_line_list, terminal_station = get_lines_and_station(operations[cnt + 2][cnt_2][0:1], cnt, cnt_2)
                 
                 line_list = list(set(starting_line_list) & set(terminal_line_list))
                 
@@ -110,7 +110,7 @@ while cnt < len(operations):
                 final_arrival_time = operations[cnt + 2][cnt_2][1:]
                 
                 if len(line_list) == 0:
-                    print("エラー: " + train_number + " の走行範囲が複数の路線に跨っています")
+                    print("エラー: " + train_number + " の走行範囲が複数の路線に跨っています: " + str(cnt + 1) + "行目 " + str(cnt_2 + 1) + "列目")
                     error_occurred = True
                     
                     line_list = starting_line_list
