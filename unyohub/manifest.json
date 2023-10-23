@@ -9,7 +9,7 @@
     "icons": [
         {
             "src": "apple-touch-icon.webp",
-            "type": "image/wewbp",
+            "type": "image/webp",
             "sizes": "192x192",
             "purpose": "any"
         },

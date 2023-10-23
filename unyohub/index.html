@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width,initial-scale=1,interactive-widget=resizes-content">
 <script>
     const UNYOHUB_APP_NAME = "運用観察Hub";
-    const UNYOHUB_VERSION = "23.10-β1"
+    const UNYOHUB_VERSION = "23.10-β2"
     const UNYOHUB_INDEXEDDB_VERSION = 2310001;
     const UNYOHUB_LICENSE_TEXT = "このアプリケーションは無権利創作宣言に準拠して著作権放棄されています。";
     const UNYOHUB_LICENSE_URL = "https://www.2pd.jp/license/";
@@ -4051,6 +4051,8 @@ function operation_table_mode(load_data = true) {
         operation_table_name = timetable_operation_table;
     }
     
+    reset_operation_narrow_down();
+    
     operation_table_list_number();
 }
 
@@ -4171,6 +4173,8 @@ function reset_operation_narrow_down (search_again = true) {
     search_terminal_location_elm.value="";
     search_first_departure_time_elm.value="";
     search_final_arrival_time_elm.value="";
+    
+    document.getElementById("operation_search_menu").checked = false;
     
     if (search_again) {
         operation_table_list_number();
