@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width,initial-scale=1,interactive-widget=resizes-content">
 <script>
     const UNYOHUB_APP_NAME = "運用観察Hub";
-    const UNYOHUB_VERSION = "23.10-1"
+    const UNYOHUB_VERSION = "23.10-β1"
     const UNYOHUB_INDEXEDDB_VERSION = 2310001;
     const UNYOHUB_LICENSE_TEXT = "このアプリケーションは無権利創作宣言に準拠して著作権放棄されています。";
     const UNYOHUB_LICENSE_URL = "https://www.2pd.jp/license/";
@@ -2962,7 +2962,7 @@ function position_mode () {
 
 function position_change_lines (line_id, cnt_0 = 0) {
     if ((operations === null || line_operations === null || timetable === null || operation_data == null) && cnt_0 < 100) {
-        setTimeout(position_change_lines, 50, line_id, cnt + 1);
+        setTimeout(position_change_lines, 50, line_id, cnt_0 + 1);
         
         return;
     } else if (cnt_0 >= 100) {
@@ -3063,7 +3063,7 @@ function draw_train_position (hh_and_mm) {
     var position_inbound_elms = document.getElementsByClassName("position_inbound");
     var position_outbound_elms = document.getElementsByClassName("position_outbound");
     
-    for (cnt = 0; cnt < line_inbound.length; cnt++) {
+    for (var cnt = 0; cnt < line_inbound.length; cnt++) {
         if (line_inbound[cnt].length === 1) {
             var train = convert_train_position_data(line_inbound[cnt][0]);
             position_inbound_elms[line_inbound.length - cnt].innerHTML = "<span onclick='train_detail(\"" + line_id + "\", \"" + train["train_number"] + "\", \"" + train["first_departure_time"] + "\", \"inbound_trains\");' style='color : " + get_train_color(train["train_title"]) + ";'><img src='" + get_icon(train["first_formation"]) + "' alt='' class='train_icon'>" + train["train_title"] + "<br>" + train["formation_html"] + "</span>";
@@ -3579,7 +3579,7 @@ function timetable_change_lines(line_id, force_station_select_mode = false) {
         }
         
         buf = "";
-        for (cnt = 0; cnt < railroad_info["lines"][line_id]["stations"].length; cnt++) {
+        for (var cnt = 0; cnt < railroad_info["lines"][line_id]["stations"].length; cnt++) {
             buf += "<button class='wide_button' onclick='timetable_select_station(" + cnt + ")'>" + escape_html(railroad_info["lines"][line_id]["stations"][cnt]["station_name"]) + "</button>";
         }
         
@@ -4638,7 +4638,7 @@ function edit_user_data () {
     get_one_time_token();
 }
 
-function change_user_data () {
+function change_user_data (cnt = 0) {
     open_wait_screen();
     
     if (one_time_token === null && cnt < 100) {

@@ -29,7 +29,9 @@ if ($_POST["website_url"] !== "" && filter_var($_POST["website_url"], FILTER_VAL
     exit;
 }
 
-if ($user->get_primary_email_address() !== $_POST["email_address"]) {
+if (empty($_POST["email_address"])) {
+    $user->remove_all_email_addresses();
+} elseif ($user->get_primary_email_address() !== $_POST["email_address"]) {
     if (!empty($wakarana->search_users_with_email_address($_POST["email_address"]))) {
         print "ERROR: 他のアカウントに登録済みのメールアドレスは使用できません";
         exit;
@@ -41,7 +43,11 @@ if ($user->get_primary_email_address() !== $_POST["email_address"]) {
 
 $user->set_name($_POST["user_name"]);
 
-$user->set_value("website_url", $_POST["website_url"]);
+if (!empty($_POST["website_url"])) {
+    $user->set_value("website_url", $_POST["website_url"]);
+} else {
+    $user->remove_value("website_url");
+}
 
 
 $data = array();
