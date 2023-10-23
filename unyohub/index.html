@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width,initial-scale=1,interactive-widget=resizes-content">
 <script>
     const UNYOHUB_APP_NAME = "運用観察Hub";
-    const UNYOHUB_VERSION = "23.10-β4"
+    const UNYOHUB_VERSION = "23.10-β5"
     const UNYOHUB_INDEXEDDB_VERSION = 2310001;
     const UNYOHUB_LICENSE_TEXT = "このアプリケーションは無権利創作宣言に準拠して著作権放棄されています。";
     const UNYOHUB_LICENSE_URL = "https://www.2pd.jp/license/";
@@ -1683,7 +1683,7 @@ button, .operation_card {
                     <option value="14:00">14時以前</option>
                     <option value="18:00">18時以前</option>
                 </select>
-                <a href="javascript:void(0);" class="additional_setting_link" onclick="reset_operation_narrow_down();">絞り込み条件のリセット</a>
+                <a href="javascript:void(0);" class="additional_setting_link" onclick="reset_operation_narrow_down(false);">絞り込み条件のリセット</a>
             </div>
         </div>
         <div id="operation_table_area" class="wait_icon"></div>
@@ -2988,7 +2988,7 @@ function position_change_lines (line_id, cnt_0 = 0) {
         buf += "<div class='position_row'><div class='position_station'>";
         
         if (cnt !== 0){
-            buf += "<h4 onclick='position_click_station(" + (cnt - 1) + ");'>";
+            buf += "<h4 onclick='position_click_station(\"" + railroad_info["lines"][line_id]["stations"][cnt - 1]["station_name"] + "\");'>";
             if (railroad_info["lines"][line_id]["stations"][cnt - 1]["station_name"].length > 5) {
                 buf += escape_html(railroad_info["lines"][line_id]["stations"][cnt - 1]["station_name"].substring(0, 4) + "..");
             } else{
@@ -3491,7 +3491,7 @@ function train_detail (line_id, train_number, first_departure_time, train_direct
                         var station_index = cnt_2;
                     }
                     
-                    buf += "<div class='train_detail_departure_times' style='border-color: " + border_color + ";'><u onclick='show_station_timetable(\"" + train_data[cnt]["line_id"] + "\", " + station_index + ", " + train_data[cnt]["is_inbound"] + ");'>" + escape_html(stations[station_index]["station_name"]) + "</u><span style='float: right;'>" + train_data[cnt]["departure_times"][cnt_2] + "</span></div>";
+                    buf += "<div class='train_detail_departure_times' style='border-color: " + border_color + ";'><u onclick='show_station_timetable(\"" + train_data[cnt]["line_id"] + "\", \"" + stations[station_index]["station_name"] + "\", " + train_data[cnt]["is_inbound"] + ");'>" + escape_html(stations[station_index]["station_name"]) + "</u><span style='float: right;'>" + train_data[cnt]["departure_times"][cnt_2] + "</span></div>";
                 }
             }
         }
@@ -3502,6 +3502,8 @@ function train_detail (line_id, train_number, first_departure_time, train_direct
     }
     
     document.getElementById("train_detail_area").innerHTML = buf;
+    
+    document.getElementById("train_detail_popup").scrollTop = 0;
     
     if (is_today) {
         get_operation_data_detail(get_date_string(Date.now() / 1000), train_operations_str, "train_operation_detail_area");
@@ -3514,7 +3516,7 @@ function open_operation_number_detail (train_number) {
     operation_table_select_number(train_number);
 }
 
-function show_station_timetable (line_id, station_index, is_inbound = null) {
+function show_station_timetable (line_id, station_name, is_inbound = null) {
     close_square_popup();
     
     if (mode_val !== 1) {
@@ -3532,15 +3534,15 @@ function show_station_timetable (line_id, station_index, is_inbound = null) {
     }
     
     timetable_change_lines(line_id, true);
-    timetable_select_station(station_index);
+    timetable_select_station(station_name);
 }
 
-function position_click_station (station_index) {
+function position_click_station (station_name) {
     change_mode(1);
     
     timetable_change_lines(position_line_select_elm.value);
     
-    timetable_select_station(station_index);
+    timetable_select_station(station_name);
 }
 
 
@@ -3580,7 +3582,7 @@ function timetable_change_lines(line_id, force_station_select_mode = false) {
         
         buf = "";
         for (var cnt = 0; cnt < railroad_info["lines"][line_id]["stations"].length; cnt++) {
-            buf += "<button class='wide_button' onclick='timetable_select_station(" + cnt + ")'>" + escape_html(railroad_info["lines"][line_id]["stations"][cnt]["station_name"]) + "</button>";
+            buf += "<button class='wide_button' onclick='timetable_select_station(\"" + railroad_info["lines"][line_id]["stations"][cnt]["station_name"] + "\")'>" + escape_html(railroad_info["lines"][line_id]["stations"][cnt]["station_name"]) + "</button>";
         }
         
         timetable_area_elm.innerHTML = buf;
@@ -3594,13 +3596,13 @@ function timetable_change_lines(line_id, force_station_select_mode = false) {
 var radio_inbound_elm = document.getElementById("radio_inbound");
 var radio_outbound_elm = document.getElementById("radio_outbound");
 
-function timetable_select_station (station_index, cnt = 0) {
+function timetable_select_station (station_name, cnt = 0) {
     timetable_area_elm.innerHTML = "";
     
-    timetable_selected_station = station_index;
+    timetable_selected_station = station_name;
     
     if ((operations === null || line_operations === null || timetable === null || operation_data == null) && cnt < 100) {
-        setTimeout(timetable_select_station, 50, station_index, cnt + 1);
+        setTimeout(timetable_select_station, 50, station_name, cnt + 1);
         return;
     } else if (cnt >= 100) {
         alert("データの読み込みに失敗しました");
@@ -3611,6 +3613,12 @@ function timetable_select_station (station_index, cnt = 0) {
     direction_radio_area_elm.style.display = "block";
     
     var line_id = timetable_line_select_elm.value;
+    
+    for (station_index = 0; station_index < railroad_info["lines"][line_id]["stations"].length; station_index++) {
+        if (railroad_info["lines"][line_id]["stations"][station_index]["station_name"] === station_name) {
+            break;
+        }
+    }
     
     document.getElementById("timetable_station_name").innerText = railroad_info["lines"][line_id]["stations"][station_index]["station_name"];
     
@@ -3630,7 +3638,7 @@ function timetable_select_station (station_index, cnt = 0) {
     var first_departure_times = {};
     var train_types = {};
     
-    for (var cnt = 0; cnt < keys.length; cnt++) {
+    for (cnt = 0; cnt < keys.length; cnt++) {
         for (var cnt_2 = 0; cnt_2 < timetable["timetable"][line_id][train_direction][keys[cnt]].length; cnt_2++){
             var departure_time = timetable["timetable"][line_id][train_direction][keys[cnt]][cnt_2]["departure_times"][station_index];
             
@@ -4052,8 +4060,6 @@ function operation_table_mode(load_data = true) {
     }
     
     reset_operation_narrow_down();
-    
-    operation_table_list_number();
 }
 
 var operation_search_area_elm = document.getElementById("operation_search_area");
@@ -4166,7 +4172,7 @@ function operation_table_list_number (cnt = 0) {
     operation_table_area_elm.innerHTML = buf;
 }
 
-function reset_operation_narrow_down (search_again = true) {
+function reset_operation_narrow_down (close_menu = true) {
     search_group_name_elm.value="";
     search_cars_count_elm.value="";
     search_starting_location_elm.value="";
@@ -4174,11 +4180,11 @@ function reset_operation_narrow_down (search_again = true) {
     search_first_departure_time_elm.value="";
     search_final_arrival_time_elm.value="";
     
-    document.getElementById("operation_search_menu").checked = false;
-    
-    if (search_again) {
-        operation_table_list_number();
+    if (close_menu) {
+        document.getElementById("operation_search_menu").checked = false;
     }
+    
+    operation_table_list_number();
 }
 
 function operation_table_select_number (operation_number, cnt_0 = 0) {
