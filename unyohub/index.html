@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width,initial-scale=1,interactive-widget=resizes-content">
 <script>
     const UNYOHUB_APP_NAME = "運用観察Hub";
-    const UNYOHUB_VERSION = "23.10-β7"
+    const UNYOHUB_VERSION = "23.10-β8"
     const UNYOHUB_INDEXEDDB_VERSION = 2310001;
     const UNYOHUB_LICENSE_TEXT = "このアプリケーションは無権利創作宣言に準拠して著作権放棄されています。";
     const UNYOHUB_LICENSE_URL = "https://www.2pd.jp/license/";
@@ -820,7 +820,7 @@ article input[type="checkbox"]:checked + label + div, .preview_popup input[type=
 article h2 {
     position: relative;
     
-    margin: 5px 50px 10px 50px;
+    margin: 5px 50px 15px 50px;
     
     line-height: 40px;
     font-size: 22px;
@@ -861,11 +861,16 @@ h2 .previous_button {
 }
 
 .operation_table_train {
-    padding: 0 20px;
+    position: relative;
     
-    text-align: right;
+    margin: 0 7px 35px 7px;
+    padding: 9px 11px;
+    
+    border: 1px solid #dddddd;
+    border-radius: 4px;
     
     line-height: 24px;
+    text-align: right;
     font-size: 18px;
 }
 
@@ -907,9 +912,11 @@ h2 .previous_button {
     
     display: block;
     
-    width: 0;
+    position: absolute;
+    left: calc(50% - 16px);
+    bottom: -22px;
     
-    margin: 20px auto;
+    width: 0;
     
     border: 16px solid transparent;
     border-top: 8px solid #dddddd;
@@ -2884,12 +2891,12 @@ function update_operation_data (operation_date = null) {
                         if (operation_data_request.responseText.substring(0,6) === "ERROR:") {
                             alert(operation_data_request.responseText);
                         } else if (operation_data_request.status === 200) {
+                            if (operation_data === null) {
+                                operation_data = {railroad_id : railroad_id, operation_date : operation_date, operations : {}};
+                            }
+                            
                             if (operation_data_request.responseText !== "NO_UPDATES_AVAILABLE") {
-                                if (operation_data === null) {
-                                    operation_data = {railroad_id : railroad_id, operation_date : operation_date, operations : {}};
-                                } else {
-                                    operation_data = operation_data;
-                                }
+                                
                                 
                                 Object.assign(operation_data["operations"], JSON.parse(operation_data_request.responseText));
                                 
@@ -2903,10 +2910,6 @@ function update_operation_data (operation_date = null) {
                                 
                                 if (mode_val === 0) {
                                     position_change_time(0);
-                                }
-                            } else {
-                                if (operation_data === null) {
-                                    operation_data = {railroad_id : railroad_id, operation_date : operation_date, operations : {}};
                                 }
                             }
                         }
@@ -3248,7 +3251,7 @@ function convert_formation_data (line_id, operation_list, is_inbound) {
         var formation_text = "";
         
         for (var cnt = 0; cnt < operation_list.length; cnt++) {
-            if (operation_list[cnt] in operation_data["operations"]) {
+            if (operation_list[cnt] in operation_data["operations"] && operation_data["operations"][operation_list[cnt]] !== null) {
                 if (railroad_info["lines"][line_id]["inbound_forward_direction"] === is_inbound) {
                     if (cnt === 0) {
                         first_formation = operation_data["operations"][operation_list[cnt]]["formations"].split("+")[0];
@@ -3909,7 +3912,7 @@ function operation_data_draw (cnt = 0) {
             
             buf += "<tr onclick='operation_detail(\"" + operation_number + "\");'><th style='background-color: " + bgcolor + ";'>" + operation_number + "</th>";
             
-            if (operation_number in operation_data["operations"]) {
+            if (operation_number in operation_data["operations"] && operation_data["operations"][operation_number] !== null) {
                 var formation_list = operation_data["operations"][operation_number]["formations"].split("+");
                 
                 if (operation_data["operations"][operation_number]["variants_count"] >= 2) {
