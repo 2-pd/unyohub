@@ -1,4 +1,4 @@
-var unyo_version = "23.10-β6"; /*運用観察Hub本体のバージョン番号*/
+var unyo_version = "23.10-β7"; /*運用観察Hub本体のバージョン番号*/
 
 var cache_name = "unyohub_" + unyo_version;
 var files_to_cache = [
