@@ -7,8 +7,8 @@ import base64
 
 print("train_icons_org.jsonを読み込んでいます...")
 try:
-    json_f = open("train_icons_org.json", "r", encoding="utf-8")
-    train_icons = json.load(json_f)
+    with open("train_icons_org.json", "r", encoding="utf-8") as json_f:
+        train_icons = json.load(json_f)
 except:
     print("【エラー】train_icons_org.jsonの読み込みに失敗しました")
     sys.exit()
@@ -39,8 +39,8 @@ for cnt in range(len(train_icons)):
 
 print("train_icons.jsonを作成しています...")
 try:
-    json_f = open("train_icons.json", "w", encoding="utf-8")
-    json.dump(train_icons, json_f, ensure_ascii=False, separators=(',', ':'))
+    with open("train_icons.json", "w", encoding="utf-8") as json_f:
+        json.dump(train_icons, json_f, ensure_ascii=False, separators=(',', ':'))
 except:
     print("【エラー】train_icons.jsonの保存に失敗しました")
     sys.exit()

@@ -33,7 +33,7 @@ for formation in formation_data:
         for car_number in list(filter(lambda car: car != "", formation)):
             json_data["formations"][formation_name]["cars"].append({"car_number" : car_number})
         
-        cur.execute("INSERT INTO `unyohub_formations`(`formation_name`, `cars_count`) VALUES (:formation_name, :cars_count)", {"formation_name" : formation_name, "cars_count" : len(json_data["formations"][formation_name]["cars"])})
+        cur.execute("INSERT INTO `unyohub_formations`(`formation_name`, `series_name`, `cars_count`) VALUES (:formation_name, :series_name, :cars_count)", {"formation_name" : formation_name, "series_name" : series_name, "cars_count" : len(json_data["formations"][formation_name]["cars"])})
 
 print("データベースの書き込み処理を完了しています...")
 conn.commit()

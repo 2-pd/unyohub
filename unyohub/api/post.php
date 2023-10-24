@@ -108,8 +108,10 @@ $formations = mb_convert_kana($_POST["formations"], "a");
 $formations_list = explode("+", $formations);
 
 foreach ($formations_list as $formation) {
-    if (empty($db_obj->querySingle("SELECT COUNT(*) FROM `unyohub_formations` WHERE `formation_name` = '".$db_obj->escapeString($formation)."'"))) {
-        print "ERROR: 入力された編成名に誤りがあります";
+    $formation_escaped = $db_obj->escapeString($formation);
+    
+    if (empty($db_obj->querySingle("SELECT COUNT(*) FROM `unyohub_formations` WHERE `formation_name` = '".$formation_escaped."' OR `series_name` = '".$formation_escaped."'"))) {
+        print "ERROR: 入力された編成名・車両形式に誤りがあります";
         exit;
     }
 }

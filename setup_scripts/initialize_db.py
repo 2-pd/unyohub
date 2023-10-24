@@ -11,7 +11,8 @@ cur = conn.cursor()
 
 print("テーブルを作成しています...")
 
-cur.execute("CREATE TABLE IF NOT EXISTS `unyohub_formations`(`formation_name` TEXT NOT NULL PRIMARY KEY,`cars_count` INTEGER)")
+cur.execute("CREATE TABLE IF NOT EXISTS `unyohub_formations`(`formation_name` TEXT NOT NULL PRIMARY KEY, `series_name` TEXT NOT NULL, `cars_count` INTEGER NOT NULL)")
+cur.execute("CREATE INDEX IF NOT EXISTS `unyohub_idx_f1` ON `unyohub_formations`(`series_name`)")
 
 cur.execute("CREATE TABLE IF NOT EXISTS `unyohub_operations`(`operation_table` TEXT NOT NULL, `operation_number` TEXT NOT NULL, `starting_location` TEXT, `terminal_location` TEXT, PRIMARY KEY(`operation_table`,`operation_number`))")
 cur.execute("CREATE INDEX IF NOT EXISTS `unyohub_idx_o1` ON `unyohub_operations`(`operation_table`,`starting_location`)")

@@ -10,7 +10,10 @@ _/_/_/_/ データベース _/_/_/_/
 
 `unyohub_formations` 編成データ
   `formation_name` TEXT NOT NULL PRIMARY KEY 編成名
-  `cars_count` INTEGER 編成両数
+  `series_name` TEXT NOT NULL 車両形式
+  `cars_count` INTEGER NOT NULL 編成両数
+  
+  INDEX `unyohub_idx_f1`(`series_name`)
 
 
 `unyohub_operations` 運用表データ
