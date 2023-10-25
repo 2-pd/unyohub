@@ -374,7 +374,8 @@ article, #blank_article {
     
     padding: 10px 5px 50px 5px;
     
-    overflow: scroll;
+    overflow-x: hidden;
+    overflow-y: scroll;
 }
 
 #blank_article {
@@ -713,7 +714,9 @@ article input[type="checkbox"]:checked + label + div, .preview_popup input[type=
 }
 
 #operation_data_area table {
-    width: calc(100% - 6px);
+    width: calc(100% - 10px);
+    
+    margin: 0 auto;
     
     border-collapse: collapse;
 }
@@ -737,7 +740,7 @@ article input[type="checkbox"]:checked + label + div, .preview_popup input[type=
     width: 100px;
 }
 
-#operation_data_area .train_icon {
+#operation_data_area .train_icon, .formation_data_area .train_icon {
     max-width: 24px;
     max-height: 24px;
     
@@ -1339,6 +1342,12 @@ a {
     
     font-size: 16px;
     font-weight: normal;
+}
+
+.formation_data_area {
+    margin: 5px 0 10px 0;
+    
+    font-weight: bold;
 }
 
 #train_detail_popup h4, #operation_detail_popup h4 {
@@ -3466,12 +3475,40 @@ function train_detail (line_id, train_number, first_departure_time, train_direct
         }
     } else {
         buf += "不明な運用";
+        
+        is_today = false;
     }
     
     buf += "</h3>";
     
     if (is_today) {
-        buf += "<div id='train_operation_detail_area'></div>";
+        buf += "<div class='formation_data_area'>";
+        
+        for (cnt = 0; cnt < train_operations.length; cnt++) {
+            if (cnt >= 1) {
+                buf += " +"
+            }
+            
+            if (train_operations[cnt] in operation_data["operations"] && operation_data["operations"][train_operations[cnt]] !== null) {
+                var formations_data = operation_data["operations"][train_operations[cnt]]["formations"].split("+");
+                
+                if (railroad_info["lines"][line_id]["inbound_forward_direction"] !== (train_direction === "inbound_trains")) {
+                    formations_data.reverse();
+                }
+                
+                for (var cnt_2 = 0; cnt_2 < formations_data.length; cnt_2++) {
+                    if (cnt_2 >= 1) {
+                        buf += " +"
+                    }
+                    
+                    buf += "<img src = '" + get_icon(formations_data[cnt_2]) + "' alt='' class='train_icon'>" + escape_html(formations_data[cnt_2]);
+                }
+            } else {
+                buf += "<img src = '" + UNYOHUB_UNKNOWN_TRAIN_ICON + "' alt='' class='train_icon'>" + "?";
+            }
+        }
+        
+        buf += "</div><div id='train_operation_detail_area'></div>";
     }
     
     if (train_data[0] !== null) {
@@ -3960,7 +3997,23 @@ function operation_detail (operation_number) {
     
     var buf = "<h3>" + operation_number + "運用(" + operations["operations"][operation_number]["cars_count"] + "両)</h3>";
     
-    buf += "<div id='operation_data_detail_area'></div>";
+    buf += "<div class='formation_data_area'>";
+    
+    if (operation_number in operation_data["operations"] && operation_data["operations"][operation_number] !== null) {
+        var formations_data = operation_data["operations"][operation_number]["formations"].split("+");
+        
+        for (var cnt_2 = 0; cnt_2 < formations_data.length; cnt_2++) {
+            if (cnt_2 >= 1) {
+                buf += " +"
+            }
+            
+            buf += "<img src = '" + get_icon(formations_data[cnt_2]) + "' alt='' class='train_icon'>" + escape_html(formations_data[cnt_2]);
+        }
+    } else {
+        buf += "<img src = '" + UNYOHUB_UNKNOWN_TRAIN_ICON + "' alt='' class='train_icon'>" + "?";
+    }
+    
+    buf += "</div><div id='operation_data_detail_area'></div>";
     
     buf += "<h4>充当列車概要</h4>";
     
