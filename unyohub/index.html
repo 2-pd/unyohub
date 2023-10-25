@@ -40,6 +40,10 @@ html, body {
     color: #ffffff;
 }
 
+*[onclick], input, select, label {
+    cursor: pointer;
+}
+
 header {
     position: relative;
     
@@ -296,6 +300,7 @@ header {
     
     line-height: 50px;
     white-space: nowrap;
+    text-align: center;
     
     overflow: scroll;
     overflow-y: hidden;
@@ -382,6 +387,24 @@ article, #blank_article {
     display: block;
 }
 
+.wide_button, .operation_card {
+    display: block;
+    
+    width: calc(100% - 40px) !important;
+    
+    max-width: 460px;
+    
+    margin: 10px auto;
+    padding: 10px 10px;
+    
+    background-size: 30px;
+    background-repeat: no-repeat;
+    background-position: 10px 50%;
+    
+    line-height: 26px;
+    font-size: 18px;
+}
+
 .wide_select {
     display: block;
     
@@ -398,6 +421,10 @@ article, #blank_article {
 .position_row {
     width: 100%;
     height: 82px;
+    
+    max-width: 500px;
+    
+    margin: 0 auto;
 }
 
 .position_inbound, .position_outbound {
@@ -592,7 +619,9 @@ article, #blank_article {
 article h3 {
     position: relative;
     
-    margin: 0 0 5px 0;
+    max-width: 500px;
+    
+    margin: 0 auto 5px auto;
 }
 
 h3 .previous_button {
@@ -605,11 +634,14 @@ h3 .previous_button {
 }
 
 article input[type="checkbox"] + label, .preview_popup input[type="checkbox"] + label {
-    background-color: #eeeeee;
     height: 25px;
     
-    margin: 5px 0;
+    max-width: 500px;
+    
+    margin: 5px auto;
     padding: 10px;
+    
+    background-color: #eeeeee;
     
     line-height: 25px;
     font-weight: bold;
@@ -648,7 +680,9 @@ article input[type="checkbox"]:checked + label:after, .preview_popup input[type=
 article input[type="checkbox"] + label + div, .preview_popup input[type="checkbox"] + label + div {
     height: 0;
     
-    margin: -45px 0 45px 0;
+    max-width: 500px;
+    
+    margin: -45px auto 45px auto;
     
     opacity: 0;
     
@@ -660,7 +694,7 @@ article input[type="checkbox"] + label + div, .preview_popup input[type="checkbo
 article input[type="checkbox"]:checked + label + div, .preview_popup input[type="checkbox"]:checked + label + div {
     height: auto;
     
-    margin: 0;
+    margin: 0 auto;
     
     opacity: 1;
 }
@@ -710,11 +744,15 @@ article input[type="checkbox"]:checked + label + div, .preview_popup input[type=
 }
 
 #operation_data_area h3 {
-    margin: 12px 0 3px 0;
+    margin: 12px auto 3px auto;
+    
+    max-width: 500px;
 }
 
 #operation_data_area table {
     width: calc(100% - 10px);
+    
+    max-width: 500px;
     
     margin: 0 auto;
     
@@ -823,7 +861,11 @@ article input[type="checkbox"]:checked + label + div, .preview_popup input[type=
 article h2 {
     position: relative;
     
-    margin: 5px 50px 15px 50px;
+    width: calc(100% - 100px);
+    
+    max-width: 400px;
+    
+    margin: 5px auto 15px auto;
     
     line-height: 40px;
     font-size: 22px;
@@ -839,11 +881,15 @@ h2 .previous_button {
 }
 
 #operation_table_area h3 {
-    margin: 30px 0 20px 0;
+    margin: 30px auto 20px auto;
 }
 
 .key_and_value {
-    margin: 10px 30px;
+    width: calc(100% - 60px);
+    
+    max-width: 440px;
+    
+    margin: 10px auto;
     
     border-bottom: 2px solid #dddddd;
     
@@ -866,7 +912,9 @@ h2 .previous_button {
 .operation_table_train {
     position: relative;
     
-    margin: 0 6px 36px 6px;
+    max-width: 464px;
+    
+    margin: 0 auto 36px auto;
     padding: 9px 11px;
     
     border: 1px solid #dddddd;
@@ -1215,10 +1263,12 @@ a {
     width: calc(100% - 50px);
     height: calc(100% - 70px);
     
+    max-width: 450px;
+    
     padding: 40px 10px 0 10px;
     
     top: 15px;
-    left: 15px;
+    left: max(15px, calc(50% - 235px));
     
     overflow: scroll;
 }
@@ -1247,22 +1297,6 @@ a {
     line-height: 22px;
 }
 
-.wide_button, .operation_card {
-    display: block;
-    
-    width: calc(100% - 40px) !important;
-    
-    margin: 10px auto;
-    padding: 10px 10px;
-    
-    background-size: 30px;
-    background-repeat: no-repeat;
-    background-position: 10px 50%;
-    
-    line-height: 26px;
-    font-size: 18px;
-}
-
 .square_popup .popup_close_button {
     top: calc(50% - 150px);
     right: calc(50% - 150px);
@@ -1270,7 +1304,7 @@ a {
 
 .preview_popup .popup_close_button {
     top: 20px;
-    right: 20px;
+    right: max(20px, calc(50% - 230px));
 }
 
 .informational_text {
@@ -1399,6 +1433,8 @@ a {
     position: fixed;
     
     width: calc(100% - 50px) !important;
+    
+    max-width: 450px;
     
     bottom: 20px;
 }
