@@ -8,6 +8,13 @@ if (!isset($_POST["railroad_id"], $_POST["date"], $_POST["operation_numbers"])) 
 
 $wakarana = new wakarana("../config");
 
+$access_user = $wakarana->check();
+if (is_object($access_user) && $access_user->check_permission("moderate")) {
+    $access_user_is_moderator = TRUE;
+} else {
+    $access_user_is_moderator = FALSE;
+}
+
 $db_obj = new SQLite3("../data/".basename($_POST["railroad_id"])."/railroad.db");
 $db_obj->busyTimeout(5000);
 
@@ -38,6 +45,9 @@ for ($cnt = 0; $cnt < count($operation_numbers); $cnt++) {
                 $data[$cnt_2]["is_moderator"] = $user->check_permission("moderate");
                 $data[$cnt_2]["website_url"] = $user->get_value("website_url");
             }
+        } elseif ($access_user_is_moderator) {
+            $data[$cnt_2]["user_id"] = $operation["user_id"];
+            $data[$cnt_2]["user_name"] = $operation["user_id"];
         }
     }
     

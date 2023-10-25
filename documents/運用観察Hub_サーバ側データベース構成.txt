@@ -50,6 +50,7 @@ _/_/_/_/ データベース _/_/_/_/
 
   PRIMARY KEY(`operation_date`,`operation_number`,`user_id`)
   INDEX `unyohub_idx_d1`(`user_id`,`posted_datetime`)
+  INDEX `unyohub_idx_d2`(`operation_date`,`operation_number`,`posted_datetime`)
 
 
 `unyohub_data_caches` 運用データ概要キャッシュ

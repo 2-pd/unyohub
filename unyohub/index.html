@@ -4,8 +4,8 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width,initial-scale=1,interactive-widget=resizes-content">
 <script>
-    const UNYOHUB_APP_NAME = "運用観察Hub";
-    const UNYOHUB_VERSION = "23.10-β9"
+    const UNYOHUB_APP_NAME = "鉄道運用Hub";
+    const UNYOHUB_VERSION = "23.10-β10"
     const UNYOHUB_INDEXEDDB_VERSION = 2310001;
     const UNYOHUB_LICENSE_TEXT = "このアプリケーションは無権利創作宣言に準拠して著作権放棄されています。";
     const UNYOHUB_LICENSE_URL = "https://www.2pd.jp/license/";
@@ -1072,7 +1072,7 @@ footer div {
     
     box-sizing: border-box;
     
-    padding: 10px;
+    padding: 10px max(10px, calc(50% - 240px));
     padding-top: 50px;
     
     background-color: #ffffff;
@@ -1356,7 +1356,7 @@ a {
     
     color: #999999;
     
-    line-height: 24px;
+    line-height: 28px;
     text-align: left;
 }
 
@@ -1369,6 +1369,15 @@ a {
 
 .dark_mode .operation_data_detail b {
     color: #ffffff;
+}
+
+.operation_data_detail button {
+    height: 28px;
+    
+    margin-left: 5px;
+    
+    line-height: 16px;
+    vertical-align: top;
 }
 
 .operation_data_detail a, .operation_data_detail span {
@@ -1816,6 +1825,11 @@ button, .operation_card {
         <h2>運用情報の投稿</h2>
         <div id="write_operation_data_area"></div>
     </div>
+    <div class="popup" id="edit_operation_data_popup">
+        <button type="button" class="popup_close_button" onclick="popup_close();"></button>
+        <h2>運用情報の取り消し</h2>
+        <div id="edit_operation_data_area"></div>
+    </div>
     <div id="popup_screen">
         <div id="popup_screen_blank_area" onclick="close_square_popup();"></div>
         <div class="square_popup" id="login_popup">
@@ -1974,13 +1988,17 @@ function escape_form_data (data) {
     return encodeURIComponent(data).replace(/%20/g, "+");
 }
 
+function add_slashes (text) {
+    return text.replace(/\\/g, "\\\\").replace(/'/g, "\\'").replace(/"/g, "\\\"");
+}
+
 
 function get_default_config () {
     return function () {/*
 {
     "guest_id" : null,
     "dark_mode" : false,
-    "refresh_interval" : 30,
+    "refresh_interval" : 5,
     "operation_data_cache_period" : 7
 }
 */}.toString().split("\n").slice(1,-1).join("\n");
@@ -3446,7 +3464,7 @@ function get_operation_data_detail (operation_date, operation_numbers_str, area_
                 var detail_html = "";
                 var operation_numbers = Object.keys(data);
                 for (var cnt = 0; cnt < operation_numbers.length; cnt++) {
-                    detail_html += "<input type='checkbox' id='detail_" + operation_numbers[cnt] + "'><label for='detail_" + operation_numbers[cnt] + "'>" + escape_html(operation_numbers[cnt]) + "運用 目撃情報</label><div>";
+                    detail_html += "<input type='checkbox' id='" + area_id + "_detail_" + add_slashes(operation_numbers[cnt]) + "'><label for='" + area_id + "_detail_" + add_slashes(operation_numbers[cnt]) + "'>" + escape_html(operation_numbers[cnt]) + "運用 目撃情報</label><div>";
                     
                     for (var cnt_2 = 0; cnt_2 < data[operation_numbers[cnt]].length; cnt_2++) {
                         if (data[operation_numbers[cnt]][cnt_2]["user_id"] !== null) {
@@ -3457,12 +3475,16 @@ function get_operation_data_detail (operation_date, operation_numbers_str, area_
                             }
                             
                             if (data[operation_numbers[cnt]][cnt_2]["website_url"] !== null) {
-                                user_name_html = "<a href='" + data[operation_numbers[cnt]][cnt_2]["website_url"].replace(/\\/g, "\\\\").replace(/'/g, "\\'") + "' target='_blank' class='external_link'>" + escape_html(user_name_html) + "</a>";
+                                user_name_html = "<a href='" + add_slashes(data[operation_numbers[cnt]][cnt_2]["website_url"]) + "' target='_blank' class='external_link'>" + escape_html(user_name_html) + "</a>";
                             } else {
                                 user_name_html = "<span>" + user_name_html + "</span>";
                             }
                         } else {
                             var user_name_html = "<span>(ゲスト様)</span>";
+                        }
+                        
+                        if (user_data !== null && (data[operation_numbers[cnt]][cnt_2]["user_id"] === user_data["user_id"] || user_data["role"] === "MODERATOR" || user_data["role"] === "ADMIN")) {
+                            user_name_html = "<button type='button' onclick='edit_operation_data(\"" + operation_date + "\", \"" + add_slashes(operation_numbers[cnt]) + "\", \"" + add_slashes(data[operation_numbers[cnt]][cnt_2]["user_id"]) + "\");'>取り消し</button>" + user_name_html;
                         }
                         
                         detail_html += "<div class='operation_data_detail'><b>" + data[operation_numbers[cnt]][cnt_2]["formations"] + user_name_html + "</b>" + escape_html(data[operation_numbers[cnt]][cnt_2]["comment"]) + "</div>";
@@ -4545,8 +4567,6 @@ function write_operation_data (yyyy_mm_dd, operation_number) {
     }
     post_operation_number = operation_number;
     
-    var write_operation_data_area_elm = document.getElementById("write_operation_data_area");
-    
     var buf = "<h3>" + operation_number + "運用</h3>";
     buf += "<b>編成名または車両形式</b><input type='text' id='operation_data_formation_0'>";
     buf += "<div class='informational_text'>この運用に複数の編成が連結して充当されている場合は、各編成を「+」で区切って入力してください</div>";
@@ -4554,7 +4574,7 @@ function write_operation_data (yyyy_mm_dd, operation_number) {
     buf += "<div class='informational_text'>コメントは省略可能です</div><br><br>";
     buf += "<button type='button' class='wide_button' onclick='check_post_operation_data();'>投稿する</button>";
     
-    write_operation_data_area_elm.innerHTML = buf;
+    document.getElementById("write_operation_data_area").innerHTML = buf;
     
     if (user_data !== null) {
         get_one_time_token();
@@ -4642,6 +4662,94 @@ function post_operation_data (cnt = 0) {
     } else {
         post_operation_request.send(send_data + "&guest_id=" + escape_form_data(get_guest_id()) + "&zizai_captcha_id=" + escape_form_data(document.getElementById("zizai_captcha_id").value) + "&zizai_captcha_characters=" + escape_form_data(document.getElementById("zizai_captcha_characters").value));
     }
+}
+
+var edit_yyyy_mm_dd;
+var edit_operation_number;
+var edit_user_id;
+
+function edit_operation_data (yyyy_mm_dd, operation_number, user_id) {
+    open_popup("edit_operation_data_popup");
+    
+    edit_yyyy_mm_dd = yyyy_mm_dd;
+    edit_operation_number = operation_number;
+    edit_user_id = user_id;
+    
+    buf = "<h3>運用番号</h3>" + escape_html(operation_number);
+    
+    buf += "<h3>投稿者</h3>";
+    if (user_id === user_data["user_id"]) {
+        buf += escape_html(user_data["user_name"]) + " さん";
+    } else {
+        buf += escape_html(user_id);
+    }
+    
+    buf += "<br><br><button type='button' class='wide_button' onclick='revoke_operation_data();'>取り消す</button>";
+    
+    document.getElementById("edit_operation_data_area").innerHTML = buf;
+    
+    get_one_time_token();
+}
+
+function revoke_operation_data (cnt = 0) {
+    open_wait_screen();
+    
+    if (user_data !== null && one_time_token === null && cnt < 100) {
+        setTimeout(revoke_operation_data, 50, cnt + 1);
+        
+        return;
+    } else if (cnt >= 100) {
+        close_wait_screen();
+        
+        return;
+    }
+    
+    var revoke_operation_request = new XMLHttpRequest();
+    revoke_operation_request.onreadystatechange = function () {
+        if (revoke_operation_request.readyState === 4) {
+            close_wait_screen();
+            
+            if (revoke_operation_request.status === 200) {
+                if (revoke_operation_request.responseText.substring(0,6) === "ERROR:"){
+                    alert(revoke_operation_request.responseText);
+                    
+                    get_one_time_token();
+                } else {
+                    alert("運用情報を取り消しました");
+                    
+                    popup_close();
+                    
+                    Object.assign(operation_data["operations"], JSON.parse(revoke_operation_request.responseText));
+                    
+                    switch (mode_val) {
+                        case 0:
+                            position_change_time(0);
+                            break;
+                        case 1:
+                            timetable_select_station(timetable_selected_station);
+                            break;
+                        case 2:
+                            operation_data_draw();
+                            break;
+                    }
+                }
+            } else {
+                alert("【!】サーバへのアクセスに失敗しました");
+            }
+        }
+    };
+    
+    revoke_operation_request.ontimeout = function () {
+        close_wait_screen();
+        
+        alert("【!】ネットワークが不安定です");
+    }
+    
+    revoke_operation_request.open("POST", "api/revoke.php", true);
+    revoke_operation_request.setRequestHeader("Content-Type","application/x-www-form-urlencoded;charset=UTF-8");
+    revoke_operation_request.timeout = 5000;
+    
+    revoke_operation_request.send("railroad_id=" + escape_form_data(railroad_info["railroad_id"]) + "&date=" + escape_form_data(edit_yyyy_mm_dd) + "&operation_number=" + escape_form_data(edit_operation_number) + "&user_id=" + escape_form_data(edit_user_id) + "&one_time_token=" + escape_form_data(one_time_token));
 }
 
 

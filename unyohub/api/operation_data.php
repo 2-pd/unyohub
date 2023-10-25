@@ -14,7 +14,12 @@ while ($operation = $operations_r->fetchArray(SQLITE3_ASSOC)) {
     if (empty($operation_data)) {
         $updated_datetime = $operation["updated_datetime"];
     }
-    $operation_data[$operation["operation_number"]] = array("formations" => $operation["formations"], "variants_count" => $operation["variants_count"]);
+    
+    if (!empty($operation["formations"])) {
+        $operation_data[$operation["operation_number"]] = array("formations" => $operation["formations"], "variants_count" => $operation["variants_count"]);
+    } else {
+        $operation_data[$operation["operation_number"]] = NULL;
+    }
 }
 
 if (empty($operation_data)) {
