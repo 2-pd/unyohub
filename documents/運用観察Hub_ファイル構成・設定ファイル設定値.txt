@@ -147,10 +147,13 @@ _/_/_/_/ 設定ファイル設定値 _/_/_/_/
         "編成名": { 各編成の情報
             "cars" : [ 各車両の情報
                 {
-                    "car_number" : 車番
+                    "car_number" : 車番,
+                    "manufacturer" : メーカー名,
+                    "constructed" : 製造年月日
                 }...
             ],
-            "series_name" : 形式名
+            "series_name" : 形式名,
+            "description" : 補足説明文
         }...
     },
     "series" : [

@@ -21,19 +21,31 @@ print("データを変換しています...")
 
 json_data = {"formations" : {}, "series" : []}
 
-for formation in formation_data:
-    if formation[0].startswith("# "):
-        json_data["series"].append({"series_name" : formation[0][2:], "formation_names" : []})
-        series_name = formation[0][2:]
-    else:
-        formation_name = formation.pop(0)
-        json_data["series"][-1]["formation_names"].append(formation_name)
-        json_data["formations"][formation_name] = {"cars" : [], "series_name" : series_name}
+cnt = 0
+while cnt < len(formation_data):
+    if formation_data[cnt][0].startswith("# "):
+        json_data["series"].append({"series_name" : formation_data[cnt][0][2:], "formation_names" : []})
+        series_name = formation_data[cnt][0][2:]
         
-        for car_number in list(filter(lambda car: car != "", formation)):
-            json_data["formations"][formation_name]["cars"].append({"car_number" : car_number})
+        cnt += 1
+    else:
+        formation_name = formation_data[cnt][0]
+        
+        if cnt + 3 < len(formation_data):
+            description = formation_data[cnt + 3][0]
+        else:
+            description = ""
+        
+        json_data["series"][-1]["formation_names"].append(formation_name)
+        json_data["formations"][formation_name] = {"cars" : [], "series_name" : series_name, "description" : description}
+        
+        for cnt_2 in range(1, len(formation_data[cnt])):
+            if formation_data[cnt][cnt_2] != "":
+                json_data["formations"][formation_name]["cars"].append({"car_number" : formation_data[cnt][cnt_2], "manufacturer" : formation_data[cnt + 1][cnt_2], "constructed" : formation_data[cnt + 2][cnt_2]})
         
         cur.execute("INSERT INTO `unyohub_formations`(`formation_name`, `series_name`, `cars_count`) VALUES (:formation_name, :series_name, :cars_count)", {"formation_name" : formation_name, "series_name" : series_name, "cars_count" : len(json_data["formations"][formation_name]["cars"])})
+        
+        cnt += 4
 
 print("データベースの書き込み処理を完了しています...")
 conn.commit()
