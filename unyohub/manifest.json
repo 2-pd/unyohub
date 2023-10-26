@@ -1,6 +1,6 @@
 {
-    "name": "運用観察Hub",
-    "short_name": "運用観察Hub",
+    "name": "鉄道運用Hub",
+    "short_name": "鉄道運用Hub",
     "display": "standalone",
     "start_url": "./",
     "scope":"./",

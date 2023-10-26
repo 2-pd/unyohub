@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width,initial-scale=1,interactive-widget=resizes-content">
 <script>
     const UNYOHUB_APP_NAME = "鉄道運用Hub";
-    const UNYOHUB_VERSION = "23.10-β10"
+    const UNYOHUB_VERSION = "23.10-β11"
     const UNYOHUB_INDEXEDDB_VERSION = 2310001;
     const UNYOHUB_LICENSE_TEXT = "このアプリケーションは無権利創作宣言に準拠して著作権放棄されています。";
     const UNYOHUB_LICENSE_URL = "https://www.2pd.jp/license/";
@@ -3522,6 +3522,10 @@ function train_detail (line_id, train_number, first_departure_time, train_direct
     var train_operations_str = "";
     
     if (train_operations !== null) {
+        if (railroad_info["lines"][line_id]["inbound_forward_direction"] !== (train_direction === "inbound_trains")) {
+            train_operations.reverse();
+        }
+        
         for (var cnt = 0; cnt < train_operations.length; cnt++) {
             buf += "<a href='javascript:void(0);' onclick='open_operation_number_detail(\"" + train_operations[cnt] + "\");'>" + train_operations[cnt] + "運用(" + operations["operations"][train_operations[cnt]]["cars_count"] + "両)</a>";
             if (cnt >= 1) {
@@ -3549,10 +3553,6 @@ function train_detail (line_id, train_number, first_departure_time, train_direct
             
             if (train_operations[cnt] in operation_data["operations"] && operation_data["operations"][train_operations[cnt]] !== null) {
                 var formations_data = operation_data["operations"][train_operations[cnt]]["formations"].split("+");
-                
-                if (railroad_info["lines"][line_id]["inbound_forward_direction"] !== (train_direction === "inbound_trains")) {
-                    formations_data.reverse();
-                }
                 
                 for (var cnt_2 = 0; cnt_2 < formations_data.length; cnt_2++) {
                     if (cnt_2 >= 1) {
