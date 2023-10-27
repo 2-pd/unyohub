@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width,initial-scale=1,interactive-widget=resizes-content">
 <script>
     const UNYOHUB_APP_NAME = "鉄道運用Hub";
-    const UNYOHUB_VERSION = "23.10-3"
+    const UNYOHUB_VERSION = "23.10-4"
     const UNYOHUB_INDEXEDDB_VERSION = 2310001;
     const UNYOHUB_LICENSE_TEXT = "このアプリケーションは無権利創作宣言に準拠して著作権放棄されています。";
     const UNYOHUB_LICENSE_URL = "https://www.2pd.jp/license/";
@@ -840,6 +840,9 @@ article input[type="checkbox"]:checked + label + div, .preview_popup input[type=
 }
 
 .car_info {
+    max-width: 480px;
+    
+    margin: 0 auto;
     padding: 10px;
     
     border-bottom: 1px solid #dddddd;
@@ -866,6 +869,9 @@ article input[type="checkbox"]:checked + label + div, .preview_popup input[type=
 }
 
 .descriptive_text {
+    max-width: 460px;
+    
+    margin: 0 auto;
     padding: 10px 20px;
     
     color: #666666;
@@ -4262,7 +4268,7 @@ function formation_table_mode () {
     
     operation_data_date = Date.now() / 1000;
     load_operation_table(get_days_operation(operation_data_date), true, false, false);
-    update_operation_data();
+    update_operation_data(get_date_string(operation_data_date));
 }
 
 function draw_formation_table () {
