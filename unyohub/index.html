@@ -2780,7 +2780,7 @@ function update_operation_table(operation_table, last_modified_timestamp){
                             
                             var previous_train_number = null;
                             for_3: for (var cnt_3 = 0; cnt_3 < trains.length; cnt_3++) {
-                                if (trains[cnt_3]["train_number"].substring(0, 1) !== "_") {
+                                if (trains[cnt_3]["starting_station"] !== trains[cnt_3]["terminal_station"]) {
                                     operations_data["operations"][operation_number]["trains"].push(trains[cnt_3]);
                                 }
                                 

@@ -31,6 +31,9 @@ for line_id in railroad_info["lines_order"]:
         previous_train_number = ""
         for train in timetable_data_t:
             if train[0] != previous_train_number:
+                if train[0] in direction_data:
+                    print("【注意】直通情報のない同一名の列車が検出されました: " + line_id + " - " + train[0])
+                
                 direction_data[train[0]] = []
                 train_cnt = 0
             else:

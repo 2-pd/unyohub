@@ -118,12 +118,20 @@ while cnt < len(operations):
                     first_departure_times.sort(key=lambda data : data[1:])
                     last_departure_times.sort(key=lambda data : data[1:])
                     
+                    output_cnt = 0
                     for cnt_3 in range(len(first_departure_times)):
                         if first_departure_times[cnt_3][1:] >= first_departure_time and last_departure_times[cnt_3][1:] <= last_departure_time:
                             output_row_1.append(train_name + car_count)
                             output_row_2.append(first_departure_times[cnt_3])
                             output_row_3.append(last_departure_times[cnt_3])
+                            
+                            output_cnt += 1
+                    
+                    if output_cnt == 0:
+                        print("【注意】時刻表と一致しない列車が検出されました: " + train_name)
                 else:
+                    print("・時刻表にない列車が検出されました: " + train_name)
+                    
                     output_row_1.append(train_name + car_count)
                     output_row_2.append(operations[cnt + 1][cnt_2][0:1] + first_departure_time)
                     output_row_3.append(operations[cnt + 2][cnt_2][0:1] + last_departure_time)

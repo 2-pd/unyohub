@@ -40,7 +40,7 @@ for cnt in range(1, len(timetable_data_t)):
         train = list(itemgetter(*line_stations[line_id])(timetable_data_t[cnt]))
         
         if sum([i != "" for i in train]) > 1:
-            train = [timetable_data_t[cnt][0].zfill(digits_count), timetable_data_t[cnt][1], "", "", "", "", "", ""] + train + ["", "", "", "", "", ""]
+            train = [timetable_data_t[cnt][0].strip().zfill(digits_count), timetable_data_t[cnt][1], "", "", "", "", "", ""] + train + ["", "", "", "", "", ""]
             
             for cnt_2 in range(8, len(train) - 6):
                 if train[cnt_2] != "":
