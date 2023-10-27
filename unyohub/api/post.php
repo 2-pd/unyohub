@@ -91,7 +91,7 @@ if (array_key_exists($today_mm_dd, $railroad_info["operations_by_date"])) {
 } elseif (array_search($today, $holiday_list) !== FALSE) {
     $operation_table = $railroad_info["operations_by_day"][0];
 } else {
-    $operation_table = $railroad_info["operations_by_day"][intval(date("w"))];
+    $operation_table = $railroad_info["operations_by_day"][intval(date("w", $ts))];
 }
 
 
@@ -135,7 +135,7 @@ if (array_key_exists($day_next_mm_dd, $railroad_info["operations_by_date"])) {
 } elseif (array_search($day_next, $holiday_list) !== FALSE) {
     $operation_table_next = $railroad_info["operations_by_day"][0];
 } else {
-    $operation_table_next = $railroad_info["operations_by_day"][intval(date("w"))];
+    $operation_table_next = $railroad_info["operations_by_day"][intval(date("w", $ts + 86400))];
 }
 
 $operation_date_next = date("Y-m-d", $ts + 86400);
