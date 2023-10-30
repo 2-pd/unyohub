@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width,initial-scale=1,interactive-widget=resizes-content">
 <script>
     const UNYOHUB_APP_NAME = "鉄道運用Hub";
-    const UNYOHUB_VERSION = "23.10-5"
+    const UNYOHUB_VERSION = "23.10-6"
     const UNYOHUB_INDEXEDDB_VERSION = 2310001;
     const UNYOHUB_LICENSE_TEXT = "このアプリケーションは無権利創作宣言に準拠して著作権放棄されています。";
     const UNYOHUB_LICENSE_URL = "https://www.2pd.jp/license/";
@@ -1872,6 +1872,7 @@ button, .operation_card {
         <h3>運用情報のキャッシュ保管日数</h3>
         <input type="number" id="operation_data_cache_period" min="1" max="30" onchange="change_config();">日前以降のキャッシュを保管<br>
         <a href="javascript:void(0);" class="additional_setting_link" onclick="reset_config_value();">デフォルト値に戻す</a>
+        <a href="javascript:void(0);" class="additional_setting_link" onclick="reset_cache_db();">キャッシュデータベースの初期化</a>
         <div class="informational_text">変更内容は自動で保存されます</div>
     </div>
     <div class="popup" id="about_railroad_data_popup">
@@ -2126,6 +2127,8 @@ function get_guest_id () {
                 cursor.continue();
             }
         }
+        
+        open_request.result.close();
     }
 }());
 
@@ -2545,6 +2548,8 @@ function select_railroad (railroad_id) {
                             railroads_store.put(railroad_info_next);
                         }
                         
+                        open_request.result.close();
+                        
                         switch_railroad(railroad_info_next, !icon_loaded);
                     }
                 };
@@ -2555,6 +2560,8 @@ function select_railroad (railroad_id) {
                 railroad_info_request.send("railroad_id=" + escape_form_data(railroad_id) + "&last_modified_timestamp=" + last_modified_timestamp);
             } else {
                 switch_railroad(railroad_info_next);
+                
+                open_request.result.close();
             }
         }
     };
@@ -2619,6 +2626,8 @@ function switch_railroad (railroad_info_next, load_icon = true) {
                                 var icons_store = transaction.objectStore("train_icons");
                                 icons_store.put(train_icons);
                             }
+                            
+                            open_request.result.close();
                         }
                     };
                     
@@ -2626,6 +2635,8 @@ function switch_railroad (railroad_info_next, load_icon = true) {
                     icon_request.setRequestHeader("Content-Type","application/x-www-form-urlencoded;charset=UTF-8");
                     icon_request.timeout = 5000;
                     icon_request.send("railroad_id=" + escape_form_data(railroad_id) + "&last_modified_timestamp=" + last_modified_timestamp);
+                } else {
+                    open_request.result.close();
                 }
             }
         };
@@ -2777,6 +2788,8 @@ function load_operation_table (operation_table, update_operations, update_line_o
                 update_operation_table(operation_table, last_modified_timestamp);
             }
         }
+        
+        open_request.result.close();
     };
 }
 
@@ -2826,7 +2839,9 @@ function update_operation_table(operation_table, last_modified_timestamp){
                                 trains : [],
                                 operation_group_name : operation_response[cnt]["operation_group_name"],
                                 starting_location : operation_response[cnt]["operations"][cnt_2]["starting_location"],
+                                starting_track : operation_response[cnt]["operations"][cnt_2]["starting_track"],
                                 terminal_location : operation_response[cnt]["operations"][cnt_2]["terminal_location"],
+                                terminal_track : operation_response[cnt]["operations"][cnt_2]["terminal_track"],
                                 cars_count : operation_response[cnt]["operations"][cnt_2]["cars_count"],
                                 main_color : operation_response[cnt]["operations"][cnt_2]["main_color"]
                             }
@@ -2903,6 +2918,8 @@ function update_operation_table(operation_table, last_modified_timestamp){
                         
                         var line_operations_store = transaction.objectStore("line_operations");
                         line_operations_store.put(line_operations_data);
+                        
+                        open_request.result.close();
                     };
                 }
             }
@@ -2967,6 +2984,8 @@ function update_timetable (operation_table) {
                             var timetable_store = transaction.objectStore("timetables");
                             timetable_store.put(timetable);
                         }
+                        
+                        open_request.result.close();
                     }
                 };
                 
@@ -2974,8 +2993,12 @@ function update_timetable (operation_table) {
                 timetable_request.setRequestHeader("Content-Type","application/x-www-form-urlencoded;charset=UTF-8");
                 timetable_request.timeout = 5000;
                 timetable_request.send("railroad_id=" + escape_form_data(railroad_id) + "&operation_table=" + escape_form_data(operation_table) + "&last_modified_timestamp=" + last_modified_timestamp);
-            } else if (timetable === null) {
-                alert("オフラインのためダウンロードが完了していない時刻表データは利用できません");
+            } else {
+                open_request.result.close();
+                
+                if (timetable === null) {
+                    alert("オフラインのためダウンロードが完了していない時刻表データは利用できません");
+                }
             }
         }
     };
@@ -3029,8 +3052,6 @@ function update_operation_data (operation_date = null) {
                             }
                             
                             if (operation_data_request.responseText !== "NO_UPDATES_AVAILABLE") {
-                                
-                                
                                 Object.assign(operation_data["operations"], JSON.parse(operation_data_request.responseText));
                                 
                                 var last_modified_date = new Date(operation_data_request.getResponseHeader("last-modified"));
@@ -3046,6 +3067,8 @@ function update_operation_data (operation_date = null) {
                                 }
                             }
                         }
+                        
+                        open_request.result.close();
                     }
                 };
                 
@@ -3054,6 +3077,8 @@ function update_operation_data (operation_date = null) {
                 operation_data_request.timeout = 5000;
                 operation_data_request.send("railroad_id=" + escape_form_data(railroad_id) + "&date=" + escape_form_data(operation_date) + "&last_modified_timestamp=" + last_modified_timestamp);
             } else if (operation_data === null) {
+                open_request.result.close();
+                
                 alert("オフラインのため運用情報が取得できません");
             }
         }
@@ -3468,15 +3493,12 @@ function get_operations (line_id, train_number, first_departure_time, train_dire
         var trains = line_operations["lines"][line_id][train_direction][train_number];
         for (var cnt = 0; cnt < trains.length; cnt++) {
             if (trains[cnt]["first_departure_time"] === first_departure_time) {
-                var train_operations = trains[cnt]["operation_numbers"]; 
-                break;
+                return train_operations = trains[cnt]["operation_numbers"];
             }
         }
-    } else {
-        var train_operations = null;
     }
     
-    return train_operations;
+    return null;
 }
 
 var position_time;
@@ -4252,6 +4274,8 @@ function formation_table_mode () {
                             formations_store.put(formations);
                         }
                         
+                        open_request.result.close();
+                        
                         draw_formation_table();
                     }
                 };
@@ -4261,6 +4285,8 @@ function formation_table_mode () {
                 formations_request.timeout = 5000;
                 formations_request.send("railroad_id=" + escape_form_data(railroad_id) + "&last_modified_timestamp=" + last_modified_timestamp);
             } else {
+                open_request.result.close();
+                
                 draw_formation_table();
             }
         }
@@ -4472,9 +4498,21 @@ function operation_table_list_number (cnt = 0) {
             var color = convert_color_dark_mode(operations["operations"][operation_numbers[cnt]]["main_color"]);
         }
         
+        if ("starting_track" in operations["operations"][operation_numbers[cnt]] && operations["operations"][operation_numbers[cnt]]["starting_track"] !== null) { //アップデートに伴う仮、2024年5月以降のバージョンで条件式前半削除
+            var $starting_track_text = "(" + operations["operations"][operation_numbers[cnt]]["starting_track"] + ")";
+        } else {
+            var $starting_track_text = "";
+        }
+        
+        if ("terminal_track" in operations["operations"][operation_numbers[cnt]] && operations["operations"][operation_numbers[cnt]]["terminal_track"] !== null) { //アップデートに伴う仮、2024年5月以降のバージョンで条件式前半削除
+            var $terminal_track_text = "(" + operations["operations"][operation_numbers[cnt]]["terminal_track"] + ")";
+        } else {
+            var $terminal_track_text = "";
+        }
+        
         buf += "<a href='javascript:void(0);' class='operation_card' onclick='operation_table_select_number(\"" + operation_numbers[cnt] + "\");' style='background-color: " + color + "'>";
         buf += "<b>" + operation_numbers[cnt] + " 運用</b><span>" + operations["operations"][operation_numbers[cnt]]["operation_group_name"] + " " + operations["operations"][operation_numbers[cnt]]["cars_count"] + "両</span>";
-        buf += "<span>○" + operations["operations"][operation_numbers[cnt]]["starting_location"] + " " + operations["operations"][operation_numbers[cnt]]["first_departure_time"] + "</span><span>〜</span><span>△" + operations["operations"][operation_numbers[cnt]]["terminal_location"] + " " + operations["operations"][operation_numbers[cnt]]["final_arrival_time"] + "</span>";
+        buf += "<span>○" + operations["operations"][operation_numbers[cnt]]["starting_location"] + $starting_track_text + " " + operations["operations"][operation_numbers[cnt]]["first_departure_time"] + "</span><span>〜</span><span>△" + operations["operations"][operation_numbers[cnt]]["terminal_location"] + $terminal_track_text + " " + operations["operations"][operation_numbers[cnt]]["final_arrival_time"] + "</span>";
         buf += "</a>";
     }
     
@@ -4561,8 +4599,20 @@ function operation_table_select_number (operation_number, cnt_0 = 0) {
     var buf = "<h2 style='background-color: " + bg_color + ";'><button type='button' class='previous_button' onclick='operation_table_list_number();'></button>" + operation_number + "運用</h2>";
     
     buf += "<div class='key_and_value'><b>所定両数 :</b>" + operations["operations"][operation_number]["cars_count"] + "両</div>";
-    buf += "<div class='key_and_value'><b>出庫 :</b>" + operations["operations"][operation_number]["starting_location"] + "　" + operations["operations"][operation_number]["first_departure_time"] + "</div>";
-    buf += "<div class='key_and_value'><b>入庫 :</b>" + operations["operations"][operation_number]["terminal_location"] + "　" + operations["operations"][operation_number]["final_arrival_time"] + "</div>";
+    
+    if ("starting_track" in operations["operations"][operation_number] && operations["operations"][operation_number]["starting_track"] !== null) { //アップデートに伴う仮、2024年5月以降のバージョンで条件式前半削除
+        var $starting_track_text = "(" + operations["operations"][operation_number]["starting_track"] + ")";
+    } else {
+        var $starting_track_text = "";
+    }
+    buf += "<div class='key_and_value'><b>出庫 :</b>" + operations["operations"][operation_number]["starting_location"] + $starting_track_text + "　" + operations["operations"][operation_number]["first_departure_time"] + "</div>";
+    
+    if ("terminal_track" in operations["operations"][operation_number] && operations["operations"][operation_number]["terminal_track"] !== null) { //アップデートに伴う仮、2024年5月以降のバージョンで条件式前半削除
+        var $terminal_track_text = "(" + operations["operations"][operation_number]["terminal_track"] + ")";
+    } else {
+        var $terminal_track_text = "";
+    }
+    buf += "<div class='key_and_value'><b>入庫 :</b>" + operations["operations"][operation_number]["terminal_location"] + $terminal_track_text + "　" + operations["operations"][operation_number]["final_arrival_time"] + "</div>";
     
     buf += "<h3>充当列車一覧</h3>";
     
@@ -5228,6 +5278,16 @@ function reset_config_value () {
         operation_data_cache_period_elm.value = dafault_config["operation_data_cache_period"];
         
         change_config();
+    }
+}
+
+function reset_cache_db () {
+    if (confirm("キャッシュデータの削除により運用表や時刻表のデータが再ダウンロードされるため、多くの通信容量を消費する場合があります。\n\nよろしいですか？")) {
+        var delete_request = indexedDB.deleteDatabase("unyohub_caches");
+        
+        delete_request.onsuccess = function () {
+            location.reload();
+        }
     }
 }
 

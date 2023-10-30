@@ -22,6 +22,16 @@ def get_lines_and_station(station_initial, cnt, cnt_2):
     
     return line_list, station_name
 
+def split_station_name_and_track(station_name):
+    if ":" in station_name:
+        station_name_and_track = station_name.split(":")
+        station_name = station_name_and_track[0]
+        station_track = station_name_and_track[1]
+    else:
+        station_track = None
+    
+    return station_name, station_track
+
 
 print("railroad_info.json を読み込んでいます...")
 with open("railroad_info.json", "r", encoding="utf-8") as json_f:
@@ -56,11 +66,16 @@ while cnt < len(operations):
         
         cnt += 1
     else:
+        starting_location, starting_track = split_station_name_and_track(operations[cnt + 1][0])
+        terminal_location, terminal_track = split_station_name_and_track(operations[cnt + 2][0])
+        
         output_data[-1]["operations"].append({
             "operation_number" : operations[cnt][0],
             "trains" : [],
-            "starting_location" : operations[cnt + 1][0],
-            "terminal_location" : operations[cnt + 2][0],
+            "starting_location" : starting_location,
+            "starting_track" : starting_track,
+            "terminal_location" : terminal_location,
+            "terminal_track" : terminal_track,
             "cars_count" : int(operations[cnt + 3][0]),
             "main_color" : operations[cnt + 3][1]
         })

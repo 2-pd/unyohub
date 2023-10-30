@@ -23,7 +23,7 @@ print("データを処理しています...")
 
 for operation_group in operation_data:
     for operation in operation_group["operations"]:
-        cur.execute("INSERT INTO `unyohub_operations` (`operation_table`, `operation_number`, `starting_location`, `terminal_location`) VALUES (:operation_table, :operation_number, :starting_location, :terminal_location)", {"operation_table" : operation_table, "operation_number" : operation["operation_number"], "starting_location" : operation["starting_location"], "terminal_location" : operation["terminal_location"]})
+        cur.execute("INSERT INTO `unyohub_operations` (`operation_table`, `operation_number`, `starting_location`, `starting_track`, `terminal_location`, `terminal_track`) VALUES (:operation_table, :operation_number, :starting_location, :starting_track, :terminal_location, :terminal_track)", {"operation_table" : operation_table, "operation_number" : operation["operation_number"], "starting_location" : operation["starting_location"], "starting_track" : operation["starting_track"], "terminal_location" : operation["terminal_location"], "terminal_track" : operation["terminal_track"]})
         
         for train in operation["trains"]:
             if train["train_number"][0:1] != "_" and "__" not in train["train_number"] and train["starting_station"] != train["terminal_station"]:

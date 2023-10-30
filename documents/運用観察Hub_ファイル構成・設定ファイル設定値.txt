@@ -208,8 +208,10 @@ _/_/_/_/ 設定ファイル設定値 _/_/_/_/
                         "direction" : 上り列車か下り列車か(上り列車か上り方面発車待ちなら「inbound」、下り列車か下り方面発車待ちなら「outbound」)
                     }...
                 ],
-                "starting_location" : 出庫場所(車庫または駅番線),
-                "terminal_location" : 入庫場所(車庫または駅番線),
+                "starting_location" : 出庫場所(車庫または駅),
+                "starting_track" : 出庫番線,
+                "terminal_location" : 入庫場所(車庫または駅),
+                "terminal_track" : 入庫番線,
                 "car_count" : 編成両数,
                 "main_color" : テーマカラー,
                 "comment" : コメント

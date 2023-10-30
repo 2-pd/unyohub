@@ -20,11 +20,13 @@ _/_/_/_/ データベース _/_/_/_/
   `operation_table` TEXT NOT NULL 運用表識別名
   `operation_number` TEXT NOT NULL 運用番号(アルファベットなどを含む場合があるため文字列型)
   `starting_location` TEXT 出庫場所(車庫または駅番線)
+  `starting_track` TEXT 出庫番線(不確定の場合はNULL)
   `terminal_location` TEXT 入庫場所(車庫または駅番線)
+  `terminal_track` TEXT 入庫番線(不確定の場合はNULL)
 
   PRIMARY KEY(`operation_table`,`operation_number`)
-  INDEX `unyohub_idx_o1`(`operation_table`,`starting_location`)
-  INDEX `unyohub_idx_o2`(`operation_table`,`terminal_location`)
+  UNIQUE INDEX `unyohub_idx_o1`(`operation_table`,`starting_location`,`starting_track`)
+  UNIQUE INDEX `unyohub_idx_o2`(`operation_table`,`terminal_location`,`terminal_track`)
 
 
 `unyohub_trains` 列車データ(区間組成単位)
