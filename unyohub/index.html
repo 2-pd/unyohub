@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width,initial-scale=1,interactive-widget=resizes-content">
 <script>
     const UNYOHUB_APP_NAME = "鉄道運用Hub";
-    const UNYOHUB_VERSION = "23.10-7"
+    const UNYOHUB_VERSION = "23.11-1"
     const UNYOHUB_INDEXEDDB_VERSION = 2310001;
     const UNYOHUB_LICENSE_TEXT = "このアプリケーションは無権利創作宣言に準拠して著作権放棄されています。";
     const UNYOHUB_LICENSE_URL = "https://www.2pd.jp/license/";
@@ -2853,7 +2853,7 @@ function update_operation_table(operation_table, last_modified_timestamp){
                             
                             var previous_train_number = null;
                             for_3: for (var cnt_3 = 0; cnt_3 < trains.length; cnt_3++) {
-                                if (trains[cnt_3]["starting_station"] !== trains[cnt_3]["terminal_station"]) {
+                                if (trains[cnt_3]["starting_station"] !== trains[cnt_3]["terminal_station"] || trains[cnt_3]["train_number"].substring(0, 1) === ".") {
                                     operations_data["operations"][operation_number]["trains"].push(trains[cnt_3]);
                                 }
                                 
@@ -3699,7 +3699,12 @@ function train_detail (line_id, train_number, first_departure_time, train_direct
                 buf += "下り";
             }
             
-            buf += escape_html(train_data[cnt]["train_type"] + "　" + train_data[cnt]["train_number"]) + "</h4>";
+            var color = get_train_color(train_data[cnt]["train_number"]);
+            if (config["dark_mode"]) {
+                color = convert_color_dark_mode(color);
+            }
+            
+            buf += "<span style='color: " + color + ";'>" + escape_html(train_data[cnt]["train_type"] + "　" + train_data[cnt]["train_number"]) + "</span></h4>";
             
             for (var cnt_2 = 0; cnt_2 < train_data[cnt]["departure_times"].length; cnt_2++) {
                 if (train_data[cnt]["departure_times"][cnt_2] !== null) {
