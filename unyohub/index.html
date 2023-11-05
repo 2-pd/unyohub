@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width,initial-scale=1,interactive-widget=resizes-content">
 <script>
     const UNYOHUB_APP_NAME = "鉄道運用Hub";
-    const UNYOHUB_VERSION = "23.11-1"
+    const UNYOHUB_VERSION = "23.11-2"
     const UNYOHUB_INDEXEDDB_VERSION = 2310001;
     const UNYOHUB_LICENSE_TEXT = "このアプリケーションは無権利創作宣言に準拠して著作権放棄されています。";
     const UNYOHUB_LICENSE_URL = "https://www.2pd.jp/license/";
@@ -881,6 +881,14 @@ article input[type="checkbox"]:checked + label + div, .preview_popup input[type=
     color: #cccccc;
 }
 
+.search_highlight {
+    background-color: #ffff33;
+}
+
+.dark_mode .search_highlight {
+    background-color: #999900;
+}
+
 #operation_search_area {
     padding-bottom: 5px;
 }
@@ -1604,6 +1612,33 @@ input[type="text"], input[type="number"], input[type="password"], input[type="se
     color: #ffffff
 }
 
+.search_icon {
+    display: block;
+    
+    width: 28px;
+    height: 28px;
+    
+    margin: 15px 0 15px max(5%, calc(50% - 225px));
+    padding-right: 2px;
+    
+    background-image: url(data:image/webp;base64,UklGRmgCAABXRUJQVlA4TFwCAAAvN8ANEDVArm3baeP+S3ETOb9zkTRgpGIcuMD9H6chjoAjAGAhaXW2bdu2bdtmZfvuA7btyrbtq2xzFAduIymSu+cYambpD/ufqs4UyOEoX4XhhtHA3dmLEJnMAwG8uKrmsh/Ju5Emw2CA5eKW5JG2i4FNTWCA9eKyXDoY9LkGZKXaR6pWcuIXkBbLsLYpT1DADFsqIEAWr9pyqlhaeQXMio17uqZ3+fdsQJQdBOdRIJMT+7Nm5I3Q8GtceTItHMSW01wSieLP45CZU5Pnom197aXJrQFGLt5fwAwNSSJJ8W6JGE0x7O+eKaJIZe3bCY1wp7Z7oINYOBdqDK0ZMi0SZekaHHn4nvB1ookwbw6C8baiylKVdeKKEsh2s3wbl7VRaQI5C0R+w3mAnwnDibI3BDTswxxPOEiUnymzBkza2SNRwaZ0GtTQhIeEPIycG9TahIsERqZiG3A9YSkxcPuemDsI+jGTT4S3kTymRENchFZLJKfUG16r5lUmO6UZjq5IoXK1UBxmkUZy7iwTUZkTDaemksK5kGr4H/Sj16rDIvF2YAzd0/lpjVtJBUOlAENyvK3K1WPxXtar79LleQRLJd85qs6DgVBz5Fl8tVw4BcyKB8nHHqm0MEvGN1Vldabw3YyE6V879CMzmwvZ+OWIKQ1qdf0ixQNycT/TMwpIqs/DS6KygSLAPXov2RpfxyvJyHHbpfdXbVr5XsRhJT3Tf14pOvU+0mKjUoY54pInLlimgTg7hNa7U23eyPGw1Ihs9bB6IbvA9e6l0b3nY4P2sUlvNPb9/2P8fWoH);
+    background-repeat: no-repeat;
+    background-size: 28px;
+    
+    float: left;
+}
+
+input[type="search"] {
+    width: min(calc(90% - 40px), 410px);
+    
+    padding: 2px 2px 1px 2px;
+    
+    margin: 15px 0;
+    
+    line-height: 24px;
+    font-size: 18px;
+}
+
 input[type="checkbox"], input[type="radio"] {
     display: none;
 }
@@ -1784,7 +1819,12 @@ button, .operation_card {
         <div id="timetable_area" class="wait_icon"></div>
     </article>
     <article id="operation_data_area" class="wait_icon"></article>
-    <article id="formation_table_area" class="wait_icon"></article>
+    <article>
+        <div id="formation_search_area">
+            <label for="car_number_search" class="search_icon"></label><input type="search" id="car_number_search" onkeyup="draw_formation_table();" placeholder="車両番号で検索">
+        </div>
+        <div id="formation_table_area" class="wait_icon"></div>
+    </article>
     <article>
         <div id="operation_search_area">
             <input type="checkbox" id="operation_search_menu"><label for="operation_search_menu">絞り込み条件</label>
@@ -4231,12 +4271,15 @@ function operation_detail (operation_number) {
 
 
 var formations = null;
+var formation_search_area_elm = document.getElementById("formation_search_area");
+var car_number_search_elm = document.getElementById("car_number_search");
 var formation_table_area_elm = document.getElementById("formation_table_area");
 
 var selected_formation_name = null;
 
 function formation_table_mode () {
     formations = null;
+    car_number_search_elm.value = "";
     formation_table_area_elm.innerHTML = "";
     
     var railroad_id = railroad_info["railroad_id"];
@@ -4312,32 +4355,55 @@ function draw_formation_table () {
     }
     
     selected_formation_name = null;
+    formation_search_area_elm.style.display = "block";
     
     var buf = ""
     for (var cnt = 0; cnt < formations["series"].length; cnt++) {
-        buf += "<input type='checkbox' id='series_" + formations["series"][cnt]["series_name"] + "'><label for='series_" + formations["series"][cnt]["series_name"] + "'>" + escape_html(formations["series"][cnt]["series_name"]) + "</label><div>";
-        
+        var buf_2 = "";
         for (var cnt_2 = 0; cnt_2 < formations["series"][cnt]["formation_names"].length; cnt_2++){
             var formation_name = formations["series"][cnt]["formation_names"][cnt_2];
             
-            buf += "<div class='formation_box' onclick='formation_detail(\"" + add_slashes(formation_name) + "\");'><img src='" + get_icon(formation_name) + "' alt='' class='train_icon'>";
+            var buf_3 = "<div class='formation_box' onclick='formation_detail(\"" + add_slashes(formation_name) + "\");'><img src='" + get_icon(formation_name) + "' alt='' class='train_icon'>";
             
-            buf += "<b>" + escape_html(formation_name) + "</b><br>";
+            buf_3 += "<b>" + escape_html(formation_name) + "</b><br>";
             
+            var search_hit_count = 0;
             for (var cnt_3 = 0; cnt_3 < formations["formations"][formation_name]["cars"].length; cnt_3++) {
-                buf += "<span>" + escape_html(formations["formations"][formation_name]["cars"][cnt_3]["car_number"]) + "</span>";
+                if (car_number_search_elm.value.length >= 1) {
+                    if (formations["formations"][formation_name]["cars"][cnt_3]["car_number"].indexOf(car_number_search_elm.value) !== -1) {
+                        buf_3 += "<span class='search_highlight'>" + escape_html(formations["formations"][formation_name]["cars"][cnt_3]["car_number"]) + "</span>";
+                        
+                        search_hit_count++;
+                        continue;
+                    }
+                } else {
+                    search_hit_count = 1;
+                }
+                
+                buf_3 += "<span>" + escape_html(formations["formations"][formation_name]["cars"][cnt_3]["car_number"]) + "</span>";
             }
             
-            buf += "</div>";
+            buf_3 += "</div>";
+            
+            if (search_hit_count >= 1) {
+                buf_2 += buf_3;
+            }
         }
         
-        buf += "</div>";
+        if (buf_2.length !== 0) {
+            buf += "<input type='checkbox' id='series_" + formations["series"][cnt]["series_name"] + "'><label for='series_" + formations["series"][cnt]["series_name"] + "'>" + escape_html(formations["series"][cnt]["series_name"]) + "</label><div>" + buf_2 + "</div>";
+        }
     }
     
-    formation_table_area_elm.innerHTML = buf;
+    if (buf.length !== 0) {
+        formation_table_area_elm.innerHTML = buf;
+    } else {
+        formation_table_area_elm.innerHTML = "【!】検索キーワードを含む車両は見つかりませんでした";
+    }
 }
 
 function formation_detail (formation_name, cnt_0 = 0) {
+    formation_search_area_elm.style.display = "none";
     formation_table_area_elm.innerHTML = "";
     
     if ((formations === null || operations === null || operation_data === null) && cnt_0 < 100) {
