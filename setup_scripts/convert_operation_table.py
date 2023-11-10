@@ -119,6 +119,9 @@ while cnt < len(operations):
                 starting_line_list, starting_station = get_lines_and_station(operations[cnt + 1][cnt_2][0:1], cnt, cnt_2)
                 terminal_line_list, terminal_station = get_lines_and_station(operations[cnt + 2][cnt_2][0:1], cnt, cnt_2)
                 
+                if len(output_data[-1]["operations"][-1]["trains"]) >= 1 and output_data[-1]["operations"][-1]["trains"][-1]["train_number"][0:1] != "." and output_data[-1]["operations"][-1]["trains"][-1]["terminal_station"] != starting_station:
+                    print("・始発駅が前の列車の終着駅と一致しない列車が検出されました: " + train_number)
+                
                 line_list = list(set(starting_line_list) & set(terminal_line_list))
                 
                 first_departure_time = operations[cnt + 1][cnt_2][1:]
