@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width,initial-scale=1,interactive-widget=resizes-content">
 <script>
     const UNYOHUB_APP_NAME = "鉄道運用Hub";
-    const UNYOHUB_VERSION = "23.11-2"
+    const UNYOHUB_VERSION = "23.11-3"
     const UNYOHUB_INDEXEDDB_VERSION = 2310001;
     const UNYOHUB_LICENSE_TEXT = "このアプリケーションは無権利創作宣言に準拠して著作権放棄されています。";
     const UNYOHUB_LICENSE_URL = "https://www.2pd.jp/license/";
@@ -616,7 +616,7 @@ article, #blank_article {
     text-align: center;
 }
 
-article h3 {
+#direction_radio_area h3 {
     position: relative;
     
     max-width: 500px;
@@ -631,6 +631,27 @@ h3 .previous_button {
     height: 30px;
     
     background-size: 10px 20px;
+}
+
+#timetable_area {
+    margin-top: 20px;
+}
+
+#timetable_area a {
+    display: block;
+    
+    margin: 0 12px;
+    padding: 8px;
+    
+    color: #333333;
+}
+
+.dark_mode #timetable_area a {
+    color: #ffffff;
+}
+
+#timetable_area a b {
+    font-size: 18px;
 }
 
 article input[type="checkbox"] + label, .preview_popup input[type="checkbox"] + label {
@@ -700,16 +721,10 @@ article input[type="checkbox"]:checked + label + div, .preview_popup input[type=
 }
 
 .timetable_train {
-    display: block;
-    
-    margin: 0 12px;
-    padding: 8px;
-    
     border-bottom: 1px solid #eeeeee;
     
     line-height: 18px;
     text-decoration: none;
-    color: #000000;
     white-space: nowrap;
 }
 
@@ -947,6 +962,8 @@ h2 .previous_button {
 
 #formation_table_area h3, #operation_table_area h3 {
     margin: 30px auto 20px auto;
+    
+    max-width: 500px;
 }
 
 .key_and_value {
@@ -1431,7 +1448,7 @@ a {
     display: block;
     
     font-size: 18px;
-    color: #000000;
+    color: #333333;
 }
 
 .dark_mode .operation_data_detail b {
@@ -1741,7 +1758,7 @@ input[type="radio"]:checked + label {
     
     box-shadow: 0 1px 3px rgba(0,0,0,0.25) inset;
     
-    color: #000000;
+    color: #333333;
 }
 
 .dark_mode input[type="radio"]:checked + label {
@@ -3856,10 +3873,32 @@ function timetable_change_lines(line_id, force_station_select_mode = false) {
             timetable_line_select_elm.value = line_id;
         }
         
-        buf = "";
+        var station_indexes = {};
         for (var cnt = 0; cnt < railroad_info["lines"][line_id]["stations"].length; cnt++) {
-            buf += "<button class='wide_button' onclick='timetable_select_station(\"" + railroad_info["lines"][line_id]["stations"][cnt]["station_name"] + "\")'>" + escape_html(railroad_info["lines"][line_id]["stations"][cnt]["station_name"]) + "</button>";
+            station_indexes[railroad_info["lines"][line_id]["stations"][cnt]["station_name_kana"]] = cnt;
         }
+        
+        var station_names = Object.keys(station_indexes).sort(new Intl.Collator("ja").compare);
+        
+        var kana_rows_regexp = [/^[あ-お]/, /^[か-こが-ご]/, /^[さ-そざ-ぞ]/, /^[た-とだ-ど]/, /^[な-の]/, /^[は-ほば-ぼぱ-ぽ]/, /^[ま-も]/, /^[や-よ]/, /^[ら-ろ]/, /^[わ-を]/, /.*/];
+        var kana_rows = ["あ 行", "か 行", "さ 行", "た 行", "な 行", "は 行", "ま 行", "や 行", "ら 行", "わ 行", "その他"];
+        
+        var buf = "";
+        var kana_rows_cnt = -1;
+        for (cnt = 0; cnt < station_names.length; cnt++) {
+            for (var cnt_2 = Math.max(kana_rows_cnt, 0); kana_rows_regexp[cnt_2].exec(station_names[cnt]) === null; cnt_2++) {}
+            if (cnt_2 > kana_rows_cnt) {
+                if (kana_rows_cnt >= 0) {
+                    buf += "</div>";
+                }
+                
+                buf += "<input type='checkbox' id='timetable_kana_rows_" + cnt_2 + "'><label for='timetable_kana_rows_" + cnt_2 + "'>" + kana_rows[cnt_2] + "の駅</label><div>";
+                kana_rows_cnt = cnt_2;
+            }
+            
+            buf += "<a href='javascript:void(0);' onclick='timetable_select_station(\"" + railroad_info["lines"][line_id]["stations"][station_indexes[station_names[cnt]]]["station_name"] + "\")'><b>" + escape_html(railroad_info["lines"][line_id]["stations"][station_indexes[station_names[cnt]]]["station_name"]) + "</b> (" + station_names[cnt] + ")" + "</a>";
+        }
+        buf += "</div>";
         
         timetable_area_elm.innerHTML = buf;
         direction_radio_area_elm.style.display = "none";
@@ -5290,7 +5329,12 @@ function change_password () {
 function about_railroad_data () {
     open_popup("about_railroad_data_popup");
     
-    var buf = "<h3><img src='" + railroad_info["railroad_icon"] + "' alt=''>" + railroad_info["railroad_name"] + "</h3>";
+    var main_color = railroad_info["main_color"];
+    if (config["dark_mode"]) {
+        main_color = convert_color_dark_mode(main_color);
+    }
+    
+    var buf = "<h3 style='background-color: " + main_color + ";'><img src='" + railroad_info["railroad_icon"] + "' alt=''>" + railroad_info["railroad_name"] + "</h3>";
     
     buf += "<h4>製作者</h4>";
     for (var cnt = 0; cnt < railroad_info["editors"].length; cnt++) {
