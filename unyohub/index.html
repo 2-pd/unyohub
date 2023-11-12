@@ -634,7 +634,7 @@ h3 .previous_button {
 }
 
 #timetable_area {
-    margin-top: 20px;
+    margin-top: 10px;
 }
 
 #timetable_area a {
@@ -1770,7 +1770,7 @@ input[type="radio"]:checked + label {
 }
 
 button, .operation_card {
-    background-color: rgba(255,255,255,0.75);
+    background-color: rgba(255,255,255,0.9);
     
     border: 1px solid #dddddd;
     border-left-width: 3px;
@@ -1781,7 +1781,7 @@ button, .operation_card {
 }
 
 .dark_mode button, .dark_mode .operation_card {
-    background-color: rgba(16,16,16,0.75);
+    background-color: rgba(16,16,16,0.85);
     
     border-color: #333333;
     
@@ -3955,7 +3955,7 @@ function timetable_select_station (station_name, cnt = 0) {
     var train_types = {};
     
     for (cnt = 0; cnt < keys.length; cnt++) {
-        for (var cnt_2 = 0; cnt_2 < timetable["timetable"][line_id][train_direction][keys[cnt]].length; cnt_2++){
+        for (var cnt_2 = 0; cnt_2 < timetable["timetable"][line_id][train_direction][keys[cnt]].length; cnt_2++) {
             var departure_time = timetable["timetable"][line_id][train_direction][keys[cnt]][cnt_2]["departure_times"][station_index];
             
             if (departure_time !== null){
@@ -4019,6 +4019,7 @@ function timetable_select_station (station_name, cnt = 0) {
         
         for (cnt_2 = 0; cnt_2 < keys_2.length; cnt_2++) {
             buf += "<a href='javascript:void(0);' onclick='train_detail(\"" + line_id + "\", \"" + departure_times[keys[cnt]][keys_2[cnt_2]] + "\", \"" + first_departure_times[keys[cnt]][keys_2[cnt_2]] + "\", \"" + train_direction + "\", " + is_today + ");' class='timetable_train'>";
+            
             if (is_today) {
                 var train_operations = get_operations(line_id, departure_times[keys[cnt]][keys_2[cnt_2]], first_departure_times[keys[cnt]][keys_2[cnt_2]], train_direction);
                 var formation_data = convert_formation_data(line_id, train_operations, is_inbound);
@@ -4040,7 +4041,42 @@ function timetable_select_station (station_name, cnt = 0) {
                 buf += "(着)";
             }
                 
-            buf += "</b>" + escape_html(train_types[keys[cnt]][keys_2[cnt_2]]) + "</span><br>";
+            buf += "</b>" + escape_html(train_types[keys[cnt]][keys_2[cnt_2]]) + "</span>";
+            
+            var next_trains = [];
+            next_trains.push({line_id : line_id, train_number : departure_times[keys[cnt]][keys_2[cnt_2]], first_departure_time : first_departure_times[keys[cnt]][keys_2[cnt_2]]});
+            
+            var buf_2 = "";
+            
+            for (var cnt_3 = 0; cnt_3 < next_trains.length; cnt_3++) {
+                var train_data = get_train(next_trains[cnt_3]["line_id"], next_trains[cnt_3]["train_number"], next_trains[cnt_3]["first_departure_time"]);
+                
+                if (train_data["next_trains"].length >= 1) {
+                    next_trains.push(...train_data["next_trains"]);
+                } else {
+                    var last_stopped_index = 0;
+                    
+                    for (var cnt_4 = 0; cnt_4 < train_data["departure_times"].length; cnt_4++) {
+                        if (train_data["departure_times"][cnt_4] !== null) {
+                            last_stopped_index = cnt_4;
+                        }
+                    }
+                    
+                    if (buf_2.length >= 1) {
+                        buf_2 += " / ";
+                    }
+                    
+                    var station_list = [...railroad_info["lines"][next_trains[cnt_3]["line_id"]]["stations"]];
+                    
+                    if (train_data["is_inbound"]) {
+                        station_list.reverse();
+                    }
+                    
+                    buf_2 += escape_html(station_list[last_stopped_index]["station_name"]);
+                }
+            }
+            
+            buf += "　" + buf_2 + "<br>";
             
             if (is_today) {
                 if (formation_data["variants_count"] === 0) {
