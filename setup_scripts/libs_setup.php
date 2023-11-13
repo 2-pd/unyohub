@@ -10,6 +10,12 @@ $wakarana_base_dir = "config";
 $zizai_captcha_config_path = "../../config/zizai_captcha_config.json";
 
 
+print "ライブラリデータフォルダを作成しています...\n";
+
+if (!file_exists("libs_data")) {
+    mkdir("libs_data");
+}
+
 print "Wakaranaをセットアップしています...\n";
 
 $wakarana_config = new wakarana_config($wakarana_base_dir);

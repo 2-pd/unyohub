@@ -19,6 +19,8 @@
     font-family: "Noto Sans CJK JP", "Meiryo", "Hiragino Kaku Gothic ProN", sans-serif;
     
     outline: 0 !important;
+    
+    cursor: default;
 }
 
 *::-webkit-scrollbar {
@@ -40,8 +42,12 @@ html, body {
     color: #ffffff;
 }
 
-*[onclick], input, select, label {
+*[onclick], *[onclick] *, a, a *, select, label {
     cursor: pointer;
+}
+
+input, textarea {
+    cursor: text;
 }
 
 header {
@@ -1338,6 +1344,8 @@ a {
     height: 100%;
     
     z-index: 201;
+    
+    cursor: default;
 }
 
 .square_popup, .preview_popup {
@@ -1650,7 +1658,7 @@ input[type="text"], input[type="number"], input[type="password"], input[type="se
     
     border-color: #333333;
     
-    color: #ffffff
+    color: #ffffff;
 }
 
 .search_icon {
