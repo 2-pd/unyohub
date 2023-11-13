@@ -1497,6 +1497,10 @@ a {
     font-weight: bold;
 }
 
+.formation_data_area a {
+    color: inherit;
+}
+
 #train_detail_popup h4, #operation_detail_popup h4 {
     margin-top: 0;
     margin-bottom: -10px;
@@ -3185,13 +3189,18 @@ function position_mode () {
     
     var keys = railroad_info["lines_order"];
     
-    position_line_select_elm.innerHTML = "";
-    for (var cnt = 0; cnt < keys.length; cnt++) {
-        position_line_select_elm.innerHTML += "<option value='" + keys[cnt] + "'>" + escape_html(railroad_info["lines"][keys[cnt]]["line_name"]) + "</option>";
+    if (position_line_select_elm.innerHTML.length === 0) {
+        for (var cnt = 0; cnt < keys.length; cnt++) {
+            position_line_select_elm.innerHTML += "<option value='" + keys[cnt] + "'>" + escape_html(railroad_info["lines"][keys[cnt]]["line_name"]) + "</option>";
+        }
+        
+        var line_id = keys[0];
+    } else {
+        var line_id = position_line_select_elm.value;
     }
     
     position_change_time(null, false);
-    position_change_lines(keys[0]);
+    position_change_lines(line_id);
 }
 
 function position_change_lines (line_id, cnt_0 = 0) {
@@ -3720,7 +3729,7 @@ function train_detail (line_id, train_number, first_departure_time, train_direct
                         buf += " +"
                     }
                     
-                    buf += "<img src = '" + get_icon(formations_data[cnt_2]) + "' alt='' class='train_icon'>" + escape_html(formations_data[cnt_2]);
+                    buf += "<a href='javascript:void(0);' onclick='close_square_popup(); formation_table_mode(\"" + add_slashes(formations_data[cnt_2]) + "\");'><img src = '" + get_icon(formations_data[cnt_2]) + "' alt='' class='train_icon'>" + escape_html(formations_data[cnt_2]) + "</a>";
                 }
             } else {
                 buf += "<img src = '" + UNYOHUB_UNKNOWN_TRAIN_ICON + "' alt='' class='train_icon'>" + "?";
@@ -4321,7 +4330,7 @@ function operation_detail (operation_number) {
                 buf += " +"
             }
             
-            buf += "<img src = '" + get_icon(formations_data[cnt_2]) + "' alt='' class='train_icon'>" + escape_html(formations_data[cnt_2]);
+            buf += "<a href='javascript:void(0);' onclick='close_square_popup(); formation_table_mode(\"" + add_slashes(formations_data[cnt_2]) + "\");'><img src = '" + get_icon(formations_data[cnt_2]) + "' alt='' class='train_icon'>" + escape_html(formations_data[cnt_2]) + "</a>";
         }
     } else {
         buf += "<img src = '" + UNYOHUB_UNKNOWN_TRAIN_ICON + "' alt='' class='train_icon'>" + "?";
@@ -4394,7 +4403,7 @@ var formation_table_area_elm = document.getElementById("formation_table_area");
 
 var selected_formation_name = null;
 
-function formation_table_mode () {
+function formation_table_mode (formation_name = null) {
     change_mode(3);
     
     formations = null;
@@ -4422,7 +4431,7 @@ function formation_table_mode () {
             
             if (navigator.onLine) {
                 if (formations !== null){
-                    draw_formation_table();
+                    draw_formation_table(formation_name);
                 }
                 
                 var formations_request = new XMLHttpRequest();
@@ -4448,7 +4457,7 @@ function formation_table_mode () {
                             }
                         }
                         
-                        draw_formation_table();
+                        draw_formation_table(formation_name);
                     }
                 };
                 
@@ -4457,7 +4466,7 @@ function formation_table_mode () {
                 formations_request.timeout = 5000;
                 formations_request.send("railroad_id=" + escape_form_data(railroad_id) + "&last_modified_timestamp=" + last_modified_timestamp);
             } else {
-                draw_formation_table();
+                draw_formation_table(formation_name);
             }
         }
     };
@@ -4467,9 +4476,14 @@ function formation_table_mode () {
     update_operation_data(get_date_string(operation_data_date));
 }
 
-function draw_formation_table () {
+function draw_formation_table (formation_name = null) {
     if (formations === null){
         alert("編成表が取得できません");
+        return;
+    }
+    
+    if (formation_name !== null) {
+        formation_detail(formation_name);
         return;
     }
     
@@ -4526,7 +4540,7 @@ function formation_detail (formation_name, cnt_0 = 0) {
     formation_table_area_elm.innerHTML = "";
     
     if ((formations === null || operations === null || operation_data === null) && cnt_0 < 100) {
-        setTimeout(operation_table_select_number, 50, operation_number, cnt_0 + 1);
+        setTimeout(formation_detail, 50, formation_name, cnt_0 + 1);
         
         return;
     } else if (cnt_0 >= 100) {
