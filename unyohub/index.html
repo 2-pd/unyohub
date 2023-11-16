@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width,initial-scale=1,interactive-widget=resizes-content">
 <script>
     const UNYOHUB_APP_NAME = "鉄道運用Hub";
-    const UNYOHUB_VERSION = "23.11-6"
+    const UNYOHUB_VERSION = "23.11-7"
     const UNYOHUB_INDEXEDDB_VERSION = 2310001;
     const UNYOHUB_LICENSE_TEXT = "このアプリケーションは無権利創作宣言に準拠して著作権放棄されています。";
     const UNYOHUB_LICENSE_URL = "https://www.2pd.jp/license/";
@@ -462,11 +462,11 @@ article, #blank_article {
 
 .position_station h4 {
     position: absolute;
-    top: -14px;
+    top: -15px;
     left: -5px;
     
     width: 95px;
-    height: 26px;
+    height: 28px;
     
     margin: 0;
     padding-left: 5px;
@@ -475,6 +475,8 @@ article, #blank_article {
     
     border-radius: 0 13px 13px 0;
     
+    line-height: 28px;
+    font-size: 16px;
     text-decoration: underline;
 }
 
@@ -495,8 +497,46 @@ article, #blank_article {
 }
 
 .connecting_line_button {
+    display: block;
+    
     position: absolute;
-    top: 15px;
+    top: 16px;
+    left: -5px;
+    
+    width: 100%;
+    height: 40px;
+    
+    padding-left: 5px;
+    
+    background-color: #666666;
+    
+    line-height: 20px;
+    font-size: 14px;
+    color: #ffffff;
+    text-decoration: none;
+}
+
+.dark_mode .connecting_line_button {
+    background-color: #cccccc;
+    
+    color: #101010;
+}
+
+.connecting_line_button::after {
+    content: "";
+    
+    display: block;
+    
+    position: absolute;
+    top: 0;
+    right: -8px;
+    
+    border-top: 16px solid #666666;
+    border-right: 8px solid transparent;
+}
+
+.dark_mode .connecting_line_button::after {
+    border-top-color: #cccccc;
 }
 
 .position_inbound, .position_outbound {
@@ -2061,6 +2101,11 @@ button, .operation_card {
             <div id="captcha_area" class="wait_icon"></div>
             <button type="button" id="captcha_submit_button" class="wide_button">送信</button>
         </div>
+        <div class="square_popup" id="select_lines_popup">
+            <button type="button" class="popup_close_button" onclick="close_square_popup();"></button>
+            <h3>路線の選択</h3>
+            <div id="select_lines_area"></div>
+        </div>
         <div class="preview_popup" id="train_detail_popup">
             <button type="button" class="popup_close_button" onclick="close_square_popup();"></button>
             <div id="train_detail_area" class="load_icon"></div>
@@ -3293,8 +3338,10 @@ function position_change_lines (line_id, cnt_0 = 0) {
             }
             buf += "</h4>";
             
-            for (var cnt_2 = 0; cnt_2 < railroad_info["lines"][line_id]["stations"][cnt - 1]["connecting_lines"].length; cnt_2++) {
-                buf += "<button type='button' class='connecting_line_button' onclick='position_change_lines(\"" + railroad_info["lines"][line_id]["stations"][cnt - 1]["connecting_lines"][cnt_2] + "\")'>" + escape_html(railroad_info["lines"][railroad_info["lines"][line_id]["stations"][cnt - 1]["connecting_lines"][cnt_2]]["line_name"]) + "</button>";
+            if (railroad_info["lines"][line_id]["stations"][cnt - 1]["connecting_lines"].length === 1) {
+                buf += "<a href='javascript:void(0);' class='connecting_line_button' onclick='position_change_lines(\"" + railroad_info["lines"][line_id]["stations"][cnt - 1]["connecting_lines"][0] + "\")'>" + escape_html(railroad_info["lines"][railroad_info["lines"][line_id]["stations"][cnt - 1]["connecting_lines"][0]]["line_name"]) + "</a>";
+            } else if (railroad_info["lines"][line_id]["stations"][cnt - 1]["connecting_lines"].length >= 2) {
+                buf += "<a href='javascript:void(0);' class='connecting_line_button' onclick='position_select_lines(" + JSON.stringify(railroad_info["lines"][line_id]["stations"][cnt - 1]["connecting_lines"]) + ");'>複数の路線</a>";
             }
         }
            
@@ -3314,8 +3361,19 @@ function position_change_lines (line_id, cnt_0 = 0) {
     try {
         position_change_time(0);
     } catch (err) {
-        setTimeout(position_change_lines, 50, line_id, cnt + 1);
+        setTimeout(position_change_lines, 50, line_id, cnt_0 + 1);
     }
+}
+
+function position_select_lines (lines) {console.log(lines);
+    open_square_popup("select_lines_popup");
+    
+    var buf = "";
+    for (var cnt = 0; cnt < lines.length; cnt++) {
+        buf += "<button type='button' class='wide_button' onclick='close_square_popup(); position_change_lines(\"" + lines[cnt] + "\")'>" + escape_html(railroad_info["lines"][lines[cnt]]["line_name"]) + "</button>";
+    }
+    
+    document.getElementById("select_lines_area").innerHTML = buf;
 }
 
 function convert_train_position_data (train_data) {
@@ -4630,9 +4688,6 @@ function draw_formation_table (formation_name = null) {
         return;
     }
     
-    selected_formation_name = null;
-    formation_search_area_elm.style.display = "block";
-    
     var buf = ""
     for (var cnt = 0; cnt < formations["series"].length; cnt++) {
         var buf_2 = "";
@@ -4684,6 +4739,9 @@ function draw_formation_table (formation_name = null) {
     } else {
         formation_table_area_elm.innerHTML = "<div class='no_data'>検索キーワードを含む車両が見つかりません</div>";
     }
+    
+    formation_search_area_elm.style.display = "block";
+    selected_formation_name = null;
     
     formation_table_wrapper_elm.scrollTop = formation_table_wrapper_scroll_amount;
 }
