@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width,initial-scale=1,interactive-widget=resizes-content">
 <script>
     const UNYOHUB_APP_NAME = "鉄道運用Hub";
-    const UNYOHUB_VERSION = "23.11-5"
+    const UNYOHUB_VERSION = "23.11-6"
     const UNYOHUB_INDEXEDDB_VERSION = 2310001;
     const UNYOHUB_LICENSE_TEXT = "このアプリケーションは無権利創作宣言に準拠して著作権放棄されています。";
     const UNYOHUB_LICENSE_URL = "https://www.2pd.jp/license/";
@@ -749,6 +749,7 @@ article input[type="checkbox"] + label {
     border-bottom: 1px solid #eeeeee;
     
     line-height: 18px;
+    color: inherit;
     text-decoration: none;
     white-space: nowrap;
 }
@@ -781,6 +782,7 @@ article input[type="checkbox"] + label {
     
     line-height: 20px;
     font-size: 20px !important;
+    color: inherit !important;
 }
 
 .timetable_train small {
@@ -1917,7 +1919,7 @@ button, .operation_card {
         <div id="timetable_area" class="wait_icon"></div>
     </article>
     <article id="operation_data_area" class="wait_icon"></article>
-    <article>
+    <article id="formation_table_wrapper" onscroll="formation_table_wrapper_onscroll();">
         <div id="formation_search_area">
             <label for="car_number_search" class="search_icon"></label><input type="search" id="car_number_search" onkeyup="draw_formation_table();" placeholder="車両番号で検索">
         </div>
@@ -4162,7 +4164,7 @@ function timetable_select_station (station_name, cnt = 0) {
                 buf += "(着)";
             }
                 
-            buf += "</b>" + escape_html(train_types[keys[cnt]][keys_2[cnt_2]]) + "</span>";
+            buf += "</b>" + escape_html(train_types[keys[cnt]][keys_2[cnt_2]]) + "</span>　";
             
             var next_trains = [];
             next_trains.push({line_id : line_id, train_number : departure_times[keys[cnt]][keys_2[cnt_2]], first_departure_time : first_departure_times[keys[cnt]][keys_2[cnt_2]]});
@@ -4197,7 +4199,7 @@ function timetable_select_station (station_name, cnt = 0) {
                 }
             }
             
-            buf += "　" + buf_2 + "<small>";
+            buf += buf_2 + "　<small>";
             
             if (train_operations !== null) {
                 var car_count = 0;
@@ -4205,9 +4207,9 @@ function timetable_select_station (station_name, cnt = 0) {
                     car_count += operations["operations"][train_operations[cnt_3]]["cars_count"];
                 }
                 
-                buf += "　(所定" + car_count + "両)";
+                buf += "(所定" + car_count + "両)";
             } else {
-                buf += "　(不明な運用)";
+                buf += "(不明な運用)";
             }
             
             buf += "</small><br>";
@@ -4526,11 +4528,15 @@ function operation_detail (operation_number, operation_table_name = null, is_tod
 
 
 var formations = null;
+var formation_table_wrapper_elm = document.getElementById("formation_table_wrapper");
 var formation_search_area_elm = document.getElementById("formation_search_area");
 var car_number_search_elm = document.getElementById("car_number_search");
 var formation_table_area_elm = document.getElementById("formation_table_area");
 
 var selected_formation_name = null;
+
+var formation_table_drop_down_status;
+var formation_table_wrapper_scroll_amount;
 
 function formation_table_mode (formation_name = null) {
     change_mode(3);
@@ -4538,6 +4544,8 @@ function formation_table_mode (formation_name = null) {
     formations = null;
     car_number_search_elm.value = "";
     formation_table_area_elm.innerHTML = "";
+    formation_table_drop_down_status = {};
+    formation_table_wrapper_scroll_amount = 0;
     
     var railroad_id = railroad_info["railroad_id"];
     
@@ -4605,6 +4613,12 @@ function formation_table_mode (formation_name = null) {
     update_operation_data(get_date_string(operation_data_date));
 }
 
+function formation_table_wrapper_onscroll () {
+    if (selected_formation_name === null) {
+        formation_table_wrapper_scroll_amount = formation_table_wrapper_elm.scrollTop;
+    }
+}
+
 function draw_formation_table (formation_name = null) {
     if (formations === null){
         alert("編成表が取得できません");
@@ -4653,7 +4667,15 @@ function draw_formation_table (formation_name = null) {
         }
         
         if (buf_2.length !== 0) {
-            buf += "<input type='checkbox' id='series_" + formations["series"][cnt]["series_name"] + "'><label for='series_" + formations["series"][cnt]["series_name"] + "' class='drop_down'>" + escape_html(formations["series"][cnt]["series_name"]) + "</label><div>" + buf_2 + "</div>";
+            var checkbox_id = "series_" + formations["series"][cnt]["series_name"];
+            
+            buf += "<input type='checkbox' id='" + checkbox_id + "'";
+            
+            if (checkbox_id in formation_table_drop_down_status && formation_table_drop_down_status[checkbox_id]) {
+                buf += " checked='checked'";
+            }
+            
+            buf += " onclick='update_formation_table_drop_down_status(this);'><label for='" + checkbox_id + "' class='drop_down'>" + escape_html(formations["series"][cnt]["series_name"]) + "</label><div>" + buf_2 + "</div>";
         }
     }
     
@@ -4662,6 +4684,12 @@ function draw_formation_table (formation_name = null) {
     } else {
         formation_table_area_elm.innerHTML = "<div class='no_data'>検索キーワードを含む車両が見つかりません</div>";
     }
+    
+    formation_table_wrapper_elm.scrollTop = formation_table_wrapper_scroll_amount;
+}
+
+function update_formation_table_drop_down_status (elm) {
+    formation_table_drop_down_status[elm.id] = elm.checked;
 }
 
 function formation_detail (formation_name, cnt_0 = 0) {
@@ -4718,6 +4746,7 @@ function formation_detail (formation_name, cnt_0 = 0) {
     }
     
     formation_table_area_elm.innerHTML = buf;
+    formation_table_wrapper_elm.scrollTop = 0;
 }
 
 
