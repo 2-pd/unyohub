@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width,initial-scale=1,interactive-widget=resizes-content">
 <script>
     const UNYOHUB_APP_NAME = "鉄道運用Hub";
-    const UNYOHUB_VERSION = "23.11-7"
+    const UNYOHUB_VERSION = "23.11-8"
     const UNYOHUB_INDEXEDDB_VERSION = 2310001;
     const UNYOHUB_LICENSE_TEXT = "このアプリケーションは無権利創作宣言に準拠して著作権放棄されています。";
     const UNYOHUB_LICENSE_URL = "https://www.2pd.jp/license/";
@@ -393,7 +393,7 @@ article, #blank_article {
     display: block;
 }
 
-.wide_button, .operation_card {
+.wide_button {
     display: block;
     
     width: calc(100% - 40px) !important;
@@ -504,13 +504,13 @@ article, #blank_article {
     left: -5px;
     
     width: 100%;
-    height: 40px;
+    height: 36px;
     
-    padding-left: 5px;
+    padding: 2px 1px 2px 4px;
     
     background-color: #666666;
     
-    line-height: 20px;
+    line-height: 18px;
     font-size: 14px;
     color: #ffffff;
     text-decoration: none;
@@ -693,6 +693,8 @@ h3 .previous_button {
 #timetable_area a b {
     font-size: 18px;
     color: #333333;
+    text-decoration: underline;
+    text-decoration-thickness: 1px;
 }
 
 .dark_mode #timetable_area a b {
@@ -868,6 +870,8 @@ article input[type="checkbox"] + label {
 
 #operation_data_area th {
     width: 100px;
+    
+    text-decoration: underline;
 }
 
 #operation_data_area .train_icon, .formation_data_area .train_icon {
@@ -985,34 +989,76 @@ article input[type="checkbox"] + label {
     padding-bottom: 5px;
 }
 
-.operation_card b {
-    display: inline-block;
+.operation_table {
+    width: min(100%, 500px);
     
+    margin: 0 auto;
+    
+    border-collapse: collapse;
+    
+    text-align: center;
+}
+
+.operation_table th, .operation_table td {
+    padding: 5px 0;
+    
+    border: none;
+}
+
+.operation_table tr:not(:first-child) {
+    border-top: 1px solid #cccccc;
+}
+
+.dark_mode .operation_table tr:not(:first-child) {
+    border-top: 1px solid #333333;
+}
+
+.operation_table th {
     width: 40%;
     
-    font-size: 20px;
+    font-size: 16px;
+    color: #666666;
+    font-weight: normal;
 }
 
-.operation_card span {
-    display: inline-block;
+.dark_mode .operation_table th {
+    color: #cccccc;
+}
+
+.operation_table tr:first-child th {
+    font-size: 18px;
+    font-weight: bold;
+}
+
+.operation_table tr th:not(:first-child) {
+    width: 30%;
+}
+
+.operation_table th b {
+    display: block;
     
-    width: 45%;
+    font-size: 18px;
+    color: #333333;
+    text-decoration: underline;
+}
+
+.dark_mode .operation_table th b {
+    color: #ffffff;
+}
+
+.operation_table td {
+    width: 30%;
+}
+
+.operation_table td small {
+    display: block;
     
-    text-align: center;
+    font-size: 16px;
+    color: #666666;
 }
 
-.operation_card span:first-of-type {
-    width: 60%;
-    
-    color: #999999;
-}
-
-.operation_card span:nth-of-type(3) {
-    width: 10%;
-}
-
-#operation_table_area {
-    text-align: center;
+.dark_mode .operation_table td small {
+    color: #cccccc;
 }
 
 article h2 {
@@ -1029,12 +1075,19 @@ article h2 {
     text-align: center;
 }
 
-h2 .previous_button {
+h2 .previous_button, h2 .next_button {
     position: absolute;
     top: 5px;
-    left: -50px;
     
     height: 30px;
+}
+
+h2 .previous_button {
+    left: -50px;
+}
+
+h2 .next_button {
+    right: -50px;
 }
 
 #formation_table_area h3, #operation_table_area h3 {
@@ -1177,13 +1230,19 @@ footer {
 footer div {
     display: none;
     
+    position: relative;
+    
     width: 100%;
     height: 45px;
+    
+    max-width: 500px;
+    
+    margin: 0 auto;
     
     text-align: center;
 }
 
-.previous_button, .next_button, .reload_button {
+.previous_button, .next_button, .reload_button, .back_button {
     width: 40px;
     height: 45px;
     
@@ -1216,7 +1275,7 @@ footer div {
     width: 180px;
 }
 
-.reload_button {
+.reload_button, .back_button {
     position: absolute;
     
     bottom: 0;
@@ -1224,8 +1283,15 @@ footer div {
     
     width: 50px;
     
-    background-image: url(data:image/webp;base64,UklGRl4BAABXRUJQVlA4TFIBAAAvO8AOEGehqG0jyRr+TIbdvu4tDUVtG0nW8Gcy7PZ1bxW1bSRZw5/JsNvXvWVU27YS3KUAMwp4KZp6AYZSwJ0TEJKI3S3NOY333vf/V///UZIliQQLHTaAFwDMAODFDzABDBhxAbz4cIEkElT4KKsK5Aj//0GS4v/fv/eke+8zxrjgSJJkVWlcGnd3h/sfkIj3/2dqxS6i/2jbto3MLejeG5Q3/7ju8L6sl1V4jthw9wazJ2cyd64fMHvxIfMarXMh87it4FUex2GGveJXu6WNypt4pQwtA16DpJMJ26S5CY/04O+u4U+S+kY4HcIoo4wyyiijjDLKKIc6OHd/GeUvlFBCCSWUUEIJJZRQQvSSaohBUkPR23ybJR1FWKY/6hqh7mS3EqA8zPBS/HZON9g2n9FVpw5cAecOmVZonwWZSpsOmHSZkKm6H4FJn9ZpPurFJg==);
     background-size: 30px;
+}
+
+.reload_button {
+    background-image: url(data:image/webp;base64,UklGRl4BAABXRUJQVlA4TFIBAAAvO8AOEGehqG0jyRr+TIbdvu4tDUVtG0nW8Gcy7PZ1bxW1bSRZw5/JsNvXvWVU27YS3KUAMwp4KZp6AYZSwJ0TEJKI3S3NOY333vf/V///UZIliQQLHTaAFwDMAODFDzABDBhxAbz4cIEkElT4KKsK5Aj//0GS4v/fv/eke+8zxrjgSJJkVWlcGnd3h/sfkIj3/2dqxS6i/2jbto3MLejeG5Q3/7ju8L6sl1V4jthw9wazJ2cyd64fMHvxIfMarXMh87it4FUex2GGveJXu6WNypt4pQwtA16DpJMJ26S5CY/04O+u4U+S+kY4HcIoo4wyyiijjDLKKIc6OHd/GeUvlFBCCSWUUEIJJZRQQvSSaohBUkPR23ybJR1FWKY/6hqh7mS3EqA8zPBS/HZON9g2n9FVpw5cAecOmVZonwWZSpsOmHSZkKm6H4FJn9ZpPurFJg==);
+}
+
+.back_button {
+    background-image: url(data:image/webp;base64,UklGRmgBAABXRUJQVlA4TFsBAAAvO8AOEJVAkiTJkbJPnzcsqqMGfdxPIqvprUSfEq2xCLcNAKBJHXempjt9APnARz2A9ATcfa33B9wmrrDd3WYHBm4bKUo6u8cMf3Bf8vw7knOBjyFVIi/uzGmRnB0TNFCVsqE2E1dVsTxDxNyterlGuIdCJFBpYoQypcUkYbzCpIMheiRfHvZYtW0JJyzrblrIIzOj7nWcIAIsOnDDPDi4lnsaem/Zxrs+r9AZHjOhSGeQmgX5ZJf4f1WESD66HZsFWcFsEsR9bvlO4RLRsAWDzZNgaoUvCS4SttT5yZLgt+StylIrnQwpXS18CSYSGp+fZwUTkt8jogqg8pphVazNLsHyBKzntQ1yT0VQwXS+k3t4/dzO8Fsw5TuCYtf7C2+aSl94yOZB+H7r2fxDr1eZcBbCcEKEtAHKBaAD7tcyODe/rYJHMNsGq2BFZQ+3BfDkxuST6PvZa/fg0gA=);
 }
 
 .popup {
@@ -1891,7 +1957,7 @@ input[type="radio"]:checked + label {
     color: #ffffff;
 }
 
-button, .operation_card {
+button {
     background-color: rgba(255,255,255,0.9);
     
     border: 1px solid #dddddd;
@@ -1902,7 +1968,7 @@ button, .operation_card {
     color: #333333;
 }
 
-.dark_mode button, .dark_mode .operation_card {
+.dark_mode button {
     background-color: rgba(16,16,16,0.85);
     
     border-color: #333333;
@@ -1965,7 +2031,7 @@ button, .operation_card {
         </div>
         <div id="formation_table_area" class="wait_icon"></div>
     </article>
-    <article>
+    <article id="operation_table_wrapper" onscroll="operation_table_wrapper_onscroll();">
         <div id="operation_search_area">
             <input type="checkbox" id="operation_search_menu"><label for="operation_search_menu" class="drop_down">絞り込み条件</label>
             <div>
@@ -2002,8 +2068,11 @@ button, .operation_card {
             <button id="operation_reload_button" class="reload_button" onclick="operation_data_change_date(null);"></button>
             <button type="button" class="previous_button" onclick="operation_data_change_date(-1);"></button><span id="operation_data_date" class="footer_value_wide"></span><button type="button" class="next_button" onclick="operation_data_change_date(1);"></button>
         </div>
-        <div></div>
         <div>
+            <button id="formation_back_button" class="back_button" onclick="draw_formation_table();"></button>
+        </div>
+        <div>
+            <button id="operation_table_back_button" class="back_button" onclick="operation_table_list_number();"></button>
             <button type="button" class="previous_button" onclick="operation_table_previous();"></button><span id="operation_table_name" class="footer_value_wide"></span><button type="button" class="next_button" onclick="operation_table_next();"></button>
         </div>
     </footer>
@@ -2143,8 +2212,8 @@ const UNYOHUB_UNKNOWN_TRAIN_ICON = "data:image/webp;base64,UklGRqADAABXRUJQVlA4T
 const ZIZAI_CAPTCHA_GENERATE_ID_ENDPOINT = "api/zizai_captcha/generate_id.php";
 const ZIZAI_CAPTCHA_IMAGE_PATH = "api/zizai_captcha/image.php";
 
-const ZIZAI_CAPTCHA_RELOAD_IMAGE_DARK = "data:image/webp;base64,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";
-const ZIZAI_CAPTCHA_RELOAD_IMAGE_LIGHT = "data:image/webp;base64,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";
+const ZIZAI_CAPTCHA_RELOAD_IMAGE_DARK = "data:image/webp;base64,UklGRkQCAABXRUJQVlA4TDgCAAAvX8AXENXIkSTJkZx5zKkg01FzC479xP7/MbR3tkCkswJpDZxzjmMSeCkJuwg4AAAQTGZv2bZt87Jt27brsm3btm132babgNgrYE83KONCItmUUk++pRBdzEwUPHfOUOFstZzzvzJ/rJNmmlOEH+eRxZohflWTh1I0yPkwweHJqeqzYhYz8GqJzxZMIYfca7OsFZlV0qbvjW+QZENcMkfLPRpsjF0+a+l+Ke9JlqRNa3S3Skhpez3QxGKgPZ/Zlhpuqkg/TH5BNo3uLL7Z9HSx5q2i+IfnGuKHsA4YMcHZtEb3bEIWNS9izZvDChKFLye4pvG9jMovH3FcQdbetAUb/E4wr+st9SLiLL31eBdRrHn2LnZZWfIuduCUeBdxyI93UQz58i5MhTfvklXnkhn5lvvyLfflW+7Lt9yXcwMX+lV7CU9ufr94V/WfJ/dUk8VTBM7ZdIZvLcO3luFby/DtUYZzfKDlnfjG0jvxZ1Ed0Dnp53fvxKZxeydezMY7iZGX3unbV1CutNK4nsQJdkBrTSFb0HIGfltB4gjfrALFeeT4WkaEBZxUkP5S1ivNwOsMjI/Ai9G1jHmkv9SQxK3VfjaBV0vuF2u6in8HitHZdMbiXSIr5q/KPJ8cMPH+Xmm7zbVYNdEY/b2WsWIvcbvW0mNcbsX48clYuQOaxv4GOCfoR7h4Qj53Vfih/88U0QHc3IGjWpJZ4Xc1Tqkq9gN5ePu/CJlxiSTJ8u5RYpkkmGNRnFDHXgEB";
+const ZIZAI_CAPTCHA_RELOAD_IMAGE_LIGHT = "data:image/webp;base64,UklGRgACAABXRUJQVlA4TPQBAAAvX8AXEFVActtIkpT//zR7rY7O9iynQVRMhCTYtk27OrF3bNu22bJt27aTlm3btnHi5Jst2/aZgP4rIFFWolVo0mNMm2pFfOlgjUNQlBEvkMP+u6GWA/ocGATZ9G8qfdTJNAOQ4BlS74o/qmNA8gegluAD8l7XGR8BsLH9GLiJeOXEtDHjdt3zq2r814f7CYCR7VDJNsuX8EKP0VAVYtjbkhnPmD0AMLIdNsFE+0VULPT4UjH+ykWxUAMY2Q493q7EIsmjghkdqAGM7Hd28SnYk4IxByMf8EYMsnx77WmKbmKW03UL8iVdk3GRrtHpTtctwd90zcPvdM3a93TAtXDA0WQD52QD52QD52QD54SjyK2UfpLf7+FWSjHJP1LpHHs4GHQ2GHQ2GHQ2GHQ218BC4fzkmG78EZBu/FeIItyMYQzpxi1K6cZXwelmbJNJN77JxhgFNvHajKdC0VSh/gAYoNJUMOOxlP8S/Bj2g0F3S/enYMZXvSxRvUJCMNbeDgZ9z8jjipnxzohQ6miekBBkURrKhbaDQT/Gqcv/knu/PLRvwphZF96Ma3QW2t4YDPogfRdVT70Tjar3lwz6MAr2jt7ghUysC0VkpM37En+tCUC/UEx0bFS58u+YZwaF4VsoLRaavBSo1GpMtwblIlgQWuivgA==";
 
 var zizai_captcha_dir;
 (function(){
@@ -2313,13 +2382,58 @@ function get_guest_id () {
                 operation_data_store.delete([cursor.value["railroad_id"], cursor.value["operation_date"]]);
                 cursor.continue();
             }
-        }
-    }
+        };
+    };
 }());
 
 
 var railroad_info = null;
 var train_icons = {railroad_id : null};
+
+
+function ajax_post (end_point_url, query_str, callback_func) {
+    var ajax_request = new XMLHttpRequest();
+    ajax_request.onreadystatechange = function () {
+        if (ajax_request.readyState === 4) {
+            if (ajax_request.responseText.substring(0,6) === "ERROR:") {
+                alert(ajax_request.responseText);
+                callback_func(false, null);
+            } else if (ajax_request.status !== 200) {
+                alert("ERROR: データの取得に失敗しました(" + ajax_request.status + ")");
+                callback_func(false, null);
+            } else {
+                callback_func(ajax_request.responseText, ajax_request.getResponseHeader("last-modified"));
+            }
+        }
+    };
+    
+    ajax_request.ontimeout = function () {
+        alert("ERROR: ネットワークが不安定です");
+        callback_func(false, null);
+    };
+    
+    ajax_request.open("POST", end_point_url, true);
+    ajax_request.setRequestHeader("Content-Type","application/x-www-form-urlencoded;charset=UTF-8");
+    ajax_request.timeout = 10000;
+    ajax_request.send(query_str);
+}
+
+
+function idb_start_transaction (tables, writable, callback_func) {
+    var open_request = indexedDB.open("unyohub_caches", UNYOHUB_INDEXEDDB_VERSION);
+    
+    open_request.onsuccess = function () {
+        if (writable) {
+            var transaction = open_request.result.transaction(tables, "readwrite");
+        } else {
+            var transaction = open_request.result.transaction(tables, "readonly");
+        }
+        
+        open_request.result.close();
+        
+        callback_func(transaction);
+    };
+}
 
 
 function rgb2hsl (color_hex) {
@@ -2627,74 +2741,42 @@ window.onload = function () {
         };
     }
     
-    
     if (navigator.onLine) {
-        var check_logged_in_request = new XMLHttpRequest();
-        check_logged_in_request.onreadystatechange = function () {
-            if (check_logged_in_request.readyState === 4) {
-                if (check_logged_in_request.status === 200) {
-                    if (check_logged_in_request.responseText !== "NOT_LOGGED_IN"){
-                        update_user_data(JSON.parse(check_logged_in_request.responseText));
-                    } else {
-                        update_user_data();
-                    }
+        ajax_post("api/check_logged_in.php", "", function (response) {
+            if (response !== false) {
+                if (response !== "NOT_LOGGED_IN"){
+                    update_user_data(JSON.parse(response));
                 } else {
-                    splash_screen_login_status_elm.innerText = "【!】ログイン状態の確認に失敗しました";
+                    update_user_data();
                 }
+            } else {
+                splash_screen_login_status_elm.innerText = "【!】ログイン状態の確認に失敗しました";
             }
-        };
+        });
         
-        check_logged_in_request.ontimeout = function () {
-            splash_screen_login_status_elm.innerText = "【!】ネットワークが不安定です";
-        }
-        
-        check_logged_in_request.open("POST", "api/check_logged_in.php", true);
-        check_logged_in_request.timeout = 5000;
-        check_logged_in_request.send();
-        
-        
-        var railroads_request = new XMLHttpRequest();
-        railroads_request.onreadystatechange = function () {
-            if (railroads_request.readyState === 4) {
-                if (railroads_request.responseText.substring(0,6) === "ERROR:") {
-                    alert(railroads_request.responseText);
-                } else if (railroads_request.status === 200 && railroads_request.responseText !== "NO_UPDATES_AVAILABLE") {
-                    common_caches["railroads"] = JSON.parse(railroads_request.responseText);
-                    
-                    var last_modified_date = new Date(railroads_request.getResponseHeader("last-modified"));
-                    common_caches["last_modified_timestamp"] = Math.floor(last_modified_date.getTime() / 1000);
-                    
-                    localStorage.setItem("unyohub_common_caches", JSON.stringify(common_caches));
-                }
+        ajax_post("api/railroads.php", "last_modified_timestamp=" + common_caches["last_modified_timestamp"], function (response) {
+            if (response !== false && response !== "NO_UPDATES_AVAILABLE") {
+                common_caches["railroads"] = JSON.parse(railroads_request.responseText);
                 
-                update_railroad_list(common_caches["railroads"]);
+                var last_modified_date = new Date(railroads_request.getResponseHeader("last-modified"));
+                common_caches["last_modified_timestamp"] = Math.floor(last_modified_date.getTime() / 1000);
+                
+                localStorage.setItem("unyohub_common_caches", JSON.stringify(common_caches));
             }
-        };
-        
-        check_logged_in_request.ontimeout = function () {
+            
             update_railroad_list(common_caches["railroads"]);
-        }
-        
-        railroads_request.open("POST", "api/railroads.php", true);
-        railroads_request.setRequestHeader("Content-Type","application/x-www-form-urlencoded;charset=UTF-8");
-        railroads_request.timeout = 3000;
-        railroads_request.send("last_modified_timestamp=" + common_caches["last_modified_timestamp"]);
+        });
     } else {
         splash_screen_login_status_elm.innerHTML = "<b>端末がオフラインです</b><br>前回アクセス時のデータを表示します";
         update_railroad_list(common_caches["railroads"]);
     }
-}
+};
 
 
 function select_railroad (railroad_id) {
     splash_screen_elm.style.display = "none";
     
-    var open_request = indexedDB.open("unyohub_caches", UNYOHUB_INDEXEDDB_VERSION);
-    
-    open_request.onsuccess = function () {
-        var transaction = open_request.result.transaction("railroads", "readonly");
-        open_request.result.close();
-        
+    idb_start_transaction("railroads", false, function (transaction) {
         var railroads_store = transaction.objectStore("railroads");
         var get_request = railroads_store.get(railroad_id);
         
@@ -2715,42 +2797,28 @@ function select_railroad (railroad_id) {
                     var icon_loaded = false;
                 }
                 
-                var railroad_info_request = new XMLHttpRequest();
-                railroad_info_request.onreadystatechange = function () {
-                    if (railroad_info_request.readyState === 4) {
-                        if (railroad_info_request.responseText.substring(0,6) === "ERROR:") {
-                            alert(railroad_info_request.responseText);
-                        } else if (railroad_info_request.status === 200 && railroad_info_request.responseText !== "NO_UPDATES_AVAILABLE") {
-                            railroad_info_next = JSON.parse(railroad_info_request.responseText);
-                            
-                            railroad_info_next["railroad_id"] = railroad_id;
-                            
-                            var last_modified_date = new Date(railroad_info_request.getResponseHeader("last-modified"));
-                            railroad_info_next["last_modified_timestamp"] = Math.floor(last_modified_date.getTime() / 1000);
-                            
-                            var open_request_2 = indexedDB.open("unyohub_caches", UNYOHUB_INDEXEDDB_VERSION);
-                            open_request_2.onsuccess = function () {
-                                transaction = open_request_2.result.transaction("railroads", "readwrite");
-                                open_request_2.result.close();
-                                
-                                var railroads_store = transaction.objectStore("railroads");
-                                railroads_store.put(railroad_info_next);
-                            }
-                        }
+                ajax_post("api/railroad_info.php", "railroad_id=" + escape_form_data(railroad_id) + "&last_modified_timestamp=" + last_modified_timestamp, function (response, last_modified) {
+                    if (response !== false && response !== "NO_UPDATES_AVAILABLE") {
+                        railroad_info_next = JSON.parse(response);
                         
-                        switch_railroad(railroad_info_next, !icon_loaded);
+                        railroad_info_next["railroad_id"] = railroad_id;
+                        
+                        var last_modified_date = new Date(last_modified);
+                        railroad_info_next["last_modified_timestamp"] = Math.floor(last_modified_date.getTime() / 1000);
+                        
+                        idb_start_transaction("railroads", true, function (transaction) {
+                            var railroads_store = transaction.objectStore("railroads");
+                            railroads_store.put(railroad_info_next);
+                        });
                     }
-                };
-                
-                railroad_info_request.open("POST", "api/railroad_info.php", true);
-                railroad_info_request.setRequestHeader("Content-Type","application/x-www-form-urlencoded;charset=UTF-8");
-                railroad_info_request.timeout = 5000;
-                railroad_info_request.send("railroad_id=" + escape_form_data(railroad_id) + "&last_modified_timestamp=" + last_modified_timestamp);
+                    
+                    switch_railroad(railroad_info_next, !icon_loaded);
+                });
             } else {
                 switch_railroad(railroad_info_next);
             }
         }
-    };
+    });
 }
 
 function switch_railroad (railroad_info_next, load_icon = true) {
@@ -2776,12 +2844,7 @@ function switch_railroad (railroad_info_next, load_icon = true) {
     if (load_icon) {
         var railroad_id = railroad_info["railroad_id"];
         
-        var open_request = indexedDB.open("unyohub_caches", UNYOHUB_INDEXEDDB_VERSION);
-        
-        open_request.onsuccess = function () {
-            var transaction = open_request.result.transaction("train_icons", "readonly");
-            open_request.result.close();
-            
+        idb_start_transaction("train_icons", false, function (transaction) {
             var railroads_store = transaction.objectStore("train_icons");
             var get_request = railroads_store.get(railroad_id);
             
@@ -2795,38 +2858,24 @@ function switch_railroad (railroad_info_next, load_icon = true) {
                 }
                 
                 if (navigator.onLine) {
-                    var icon_request = new XMLHttpRequest();
-                    icon_request.onreadystatechange = function () {
-                        if (icon_request.readyState === 4) {
-                            if (icon_request.responseText.substring(0,6) === "ERROR:") {
-                                alert(icon_request.responseText);
-                            } else if (icon_request.status === 200 && icon_request.responseText !== "NO_UPDATES_AVAILABLE") {
-                                train_icons = {icons : JSON.parse(icon_request.responseText)};
-                                
-                                train_icons["railroad_id"] = railroad_id;
-                                
-                                var last_modified_date = new Date(icon_request.getResponseHeader("last-modified"));
-                                train_icons["last_modified_timestamp"] = Math.floor(last_modified_date.getTime() / 1000);
-                                
-                                var open_request_2 = indexedDB.open("unyohub_caches", UNYOHUB_INDEXEDDB_VERSION);
-                                open_request_2.onsuccess = function () {
-                                    transaction = open_request_2.result.transaction("train_icons", "readwrite");
-                                    open_request_2.result.close();
-                                    
-                                    var icons_store = transaction.objectStore("train_icons");
-                                    icons_store.put(train_icons);
-                                }
-                            }
+                    ajax_post("api/train_icons.php", "railroad_id=" + escape_form_data(railroad_id) + "&last_modified_timestamp=" + last_modified_timestamp, function (response, last_modified) {
+                        if (response !== false && response !== "NO_UPDATES_AVAILABLE") {
+                            train_icons = {icons : JSON.parse(response)};
+                            
+                            train_icons["railroad_id"] = railroad_id;
+                            
+                            var last_modified_date = new Date(last_modified);
+                            train_icons["last_modified_timestamp"] = Math.floor(last_modified_date.getTime() / 1000);
+                            
+                            idb_start_transaction("train_icons", true, function (transaction) {
+                                var icons_store = transaction.objectStore("train_icons");
+                                icons_store.put(train_icons);
+                            });
                         }
-                    };
-                    
-                    icon_request.open("POST", "api/train_icons.php", true);
-                    icon_request.setRequestHeader("Content-Type","application/x-www-form-urlencoded;charset=UTF-8");
-                    icon_request.timeout = 5000;
-                    icon_request.send("railroad_id=" + escape_form_data(railroad_id) + "&last_modified_timestamp=" + last_modified_timestamp);
+                    });
                 }
             }
-        };
+        });
         
         schedule_change_mode();
     }
@@ -2905,12 +2954,7 @@ function load_operation_table (operation_table, update_operations, update_line_o
     
     var railroad_id = railroad_info["railroad_id"];
     
-    var open_request = indexedDB.open("unyohub_caches", UNYOHUB_INDEXEDDB_VERSION);
-    
-    open_request.onsuccess = function () {
-        var transaction = open_request.result.transaction(tables, "readonly");
-        open_request.result.close();
-        
+    idb_start_transaction(tables, false, function (transaction) {
         if (update_operations) {
             var operations_store = transaction.objectStore("operations");
             var operations_get_request = operations_store.get([railroad_id, operation_table]);
@@ -2958,7 +3002,7 @@ function load_operation_table (operation_table, update_operations, update_line_o
                 update_operation_table(operation_table, last_modified_timestamp);
             }
         }
-    };
+    });
 }
 
 function update_operation_table(operation_table, last_modified_timestamp){
@@ -2971,131 +3015,116 @@ function update_operation_table(operation_table, last_modified_timestamp){
     var railroad_id = railroad_info["railroad_id"];
     
     if (navigator.onLine) {
-        var operation_request = new XMLHttpRequest();
-        
-        operation_request.onreadystatechange = function () {
-            if (operation_request.readyState === 4) {
-                if (operation_request.responseText.substring(0,6) === "ERROR:") {
-                    alert(operation_request.responseText);
-                } else if (operation_request.status === 200 && operation_request.responseText !== "NO_UPDATES_AVAILABLE") {
-                    var operation_response = JSON.parse(operation_request.responseText);
+        ajax_post("api/operation_table.php", "railroad_id=" + escape_form_data(railroad_id) + "&operation_table=" + escape_form_data(operation_table) + "&last_modified_timestamp=" + last_modified_timestamp, function (response, last_modified) {
+            if (response !== false && response !== "NO_UPDATES_AVAILABLE") {
+                var operation_response = JSON.parse(response);
+                
+                var last_modified_date = new Date(last_modified);
+                operation_last_modified_timestamp = Math.floor(last_modified_date.getTime() / 1000);
+                
+                var operations_data = {railroad_id : railroad_id, operation_table : operation_table, last_modified_timestamp : operation_last_modified_timestamp, operations : {}};
+                var operation_groups_data = {railroad_id : railroad_id, operation_table : operation_table, last_modified_timestamp : operation_last_modified_timestamp, operation_groups : []};
+                var line_operations_data = {railroad_id : railroad_id, operation_table : operation_table, last_modified_timestamp : operation_last_modified_timestamp, lines : {}};
+                
+                var lines = railroad_info["lines_order"];
+                for (var cnt = 0; cnt < lines.length; cnt++) {
+                    line_operations_data["lines"][lines[cnt]] = {
+                        inbound_trains : {},
+                        outbound_trains : {}
+                    };
+                }
+                
+                for (cnt = 0; cnt < operation_response.length; cnt++) {
+                    operation_groups_data["operation_groups"][cnt] = {"operation_group_name" : operation_response[cnt]["operation_group_name"], "operation_numbers" : []};
                     
-                    var last_modified_date = new Date(operation_request.getResponseHeader("last-modified"));
-                    operation_last_modified_timestamp = Math.floor(last_modified_date.getTime() / 1000);
-                    
-                    var operations_data = {railroad_id : railroad_id, operation_table : operation_table, last_modified_timestamp : operation_last_modified_timestamp, operations : {}};
-                    var operation_groups_data = {railroad_id : railroad_id, operation_table : operation_table, last_modified_timestamp : operation_last_modified_timestamp, operation_groups : []};
-                    var line_operations_data = {railroad_id : railroad_id, operation_table : operation_table, last_modified_timestamp : operation_last_modified_timestamp, lines : {}};
-                    
-                    var lines = railroad_info["lines_order"];
-                    for (var cnt = 0; cnt < lines.length; cnt++) {
-                        line_operations_data["lines"][lines[cnt]] = {
-                            inbound_trains : {},
-                            outbound_trains : {}
-                        };
-                    }
-                    
-                    for (cnt = 0; cnt < operation_response.length; cnt++) {
-                        operation_groups_data["operation_groups"][cnt] = {"operation_group_name" : operation_response[cnt]["operation_group_name"], "operation_numbers" : []};
+                    for (var cnt_2 = 0; cnt_2 < operation_response[cnt]["operations"].length; cnt_2++) {
+                        var operation_number = operation_response[cnt]["operations"][cnt_2]["operation_number"];
                         
-                        for (var cnt_2 = 0; cnt_2 < operation_response[cnt]["operations"].length; cnt_2++) {
-                            var operation_number = operation_response[cnt]["operations"][cnt_2]["operation_number"];
-                            
-                            operation_groups_data["operation_groups"][cnt]["operation_numbers"].push(operation_number);
-                            
-                            operations_data["operations"][operation_number] = {
-                                trains : [],
-                                operation_group_name : operation_response[cnt]["operation_group_name"],
-                                starting_location : operation_response[cnt]["operations"][cnt_2]["starting_location"],
-                                starting_track : operation_response[cnt]["operations"][cnt_2]["starting_track"],
-                                terminal_location : operation_response[cnt]["operations"][cnt_2]["terminal_location"],
-                                terminal_track : operation_response[cnt]["operations"][cnt_2]["terminal_track"],
-                                cars_count : operation_response[cnt]["operations"][cnt_2]["cars_count"],
-                                main_color : operation_response[cnt]["operations"][cnt_2]["main_color"]
+                        operation_groups_data["operation_groups"][cnt]["operation_numbers"].push(operation_number);
+                        
+                        operations_data["operations"][operation_number] = {
+                            trains : [],
+                            operation_group_name : operation_response[cnt]["operation_group_name"],
+                            starting_location : operation_response[cnt]["operations"][cnt_2]["starting_location"],
+                            starting_track : operation_response[cnt]["operations"][cnt_2]["starting_track"],
+                            terminal_location : operation_response[cnt]["operations"][cnt_2]["terminal_location"],
+                            terminal_track : operation_response[cnt]["operations"][cnt_2]["terminal_track"],
+                            cars_count : operation_response[cnt]["operations"][cnt_2]["cars_count"],
+                            main_color : operation_response[cnt]["operations"][cnt_2]["main_color"]
+                        }
+                        
+                        var trains = operation_response[cnt]["operations"][cnt_2]["trains"];
+                        
+                        operations_data["operations"][operation_number]["first_departure_time"] = trains[0]["first_departure_time"];
+                        operations_data["operations"][operation_number]["final_arrival_time"] = trains[trains.length - 1]["final_arrival_time"];
+                        
+                        var previous_train_number = null;
+                        for_3: for (var cnt_3 = 0; cnt_3 < trains.length; cnt_3++) {
+                            if (trains[cnt_3]["starting_station"] !== trains[cnt_3]["terminal_station"] || trains[cnt_3]["train_number"].substring(0, 1) === ".") {
+                                operations_data["operations"][operation_number]["trains"].push(trains[cnt_3]);
                             }
                             
-                            var trains = operation_response[cnt]["operations"][cnt_2]["trains"];
+                            if (trains[cnt_3]["direction"] === "inbound") {
+                                var train_direction = "inbound_trains";
+                            } else if (trains[cnt_3]["direction"] === "outbound") {
+                                var train_direction = "outbound_trains";
+                            } else {
+                                continue;
+                            }
                             
-                            operations_data["operations"][operation_number]["first_departure_time"] = trains[0]["first_departure_time"];
-                            operations_data["operations"][operation_number]["final_arrival_time"] = trains[trains.length - 1]["final_arrival_time"];
+                            if (!(trains[cnt_3]["train_number"] in line_operations_data["lines"][trains[cnt_3]["line_id"]][train_direction])) {
+                                line_operations_data["lines"][trains[cnt_3]["line_id"]][train_direction][trains[cnt_3]["train_number"]] = [];
+                            }
                             
-                            var previous_train_number = null;
-                            for_3: for (var cnt_3 = 0; cnt_3 < trains.length; cnt_3++) {
-                                if (trains[cnt_3]["starting_station"] !== trains[cnt_3]["terminal_station"] || trains[cnt_3]["train_number"].substring(0, 1) === ".") {
-                                    operations_data["operations"][operation_number]["trains"].push(trains[cnt_3]);
-                                }
-                                
-                                if (trains[cnt_3]["direction"] === "inbound") {
-                                    var train_direction = "inbound_trains";
-                                } else if (trains[cnt_3]["direction"] === "outbound") {
-                                    var train_direction = "outbound_trains";
-                                } else {
-                                    continue;
-                                }
-                                
-                                if (!(trains[cnt_3]["train_number"] in line_operations_data["lines"][trains[cnt_3]["line_id"]][train_direction])) {
-                                    line_operations_data["lines"][trains[cnt_3]["line_id"]][train_direction][trains[cnt_3]["train_number"]] = [];
-                                }
-                                
-                                for (var cnt_4 = 0; cnt_4 < line_operations_data["lines"][trains[cnt_3]["line_id"]][train_direction][trains[cnt_3]["train_number"]].length; cnt_4++) {
-                                    if (line_operations_data["lines"][trains[cnt_3]["line_id"]][train_direction][trains[cnt_3]["train_number"]][cnt_4]["first_departure_time"] === trains[cnt_3]["first_departure_time"]) {
-                                        var train_operations = line_operations_data["lines"][trains[cnt_3]["line_id"]][train_direction][trains[cnt_3]["train_number"]][cnt_4]["operation_numbers"];
-                                        
-                                        for_5: for (var cnt_5 = 0; cnt_5 < train_operations.length; cnt_5++){
-                                            for (var cnt_6 = 0; cnt_6 < operations_data["operations"][train_operations[cnt_5]]["trains"].length; cnt_6++){
-                                                if (operations_data["operations"][train_operations[cnt_5]]["trains"][cnt_6]["first_departure_time"] === trains[cnt_3]["first_departure_time"]) {
-                                                    if (operations_data["operations"][train_operations[cnt_5]]["trains"][cnt_6]["position_forward"] > trains[cnt_3]["position_forward"]) {
-                                                        break for_5;
-                                                    }
+                            for (var cnt_4 = 0; cnt_4 < line_operations_data["lines"][trains[cnt_3]["line_id"]][train_direction][trains[cnt_3]["train_number"]].length; cnt_4++) {
+                                if (line_operations_data["lines"][trains[cnt_3]["line_id"]][train_direction][trains[cnt_3]["train_number"]][cnt_4]["first_departure_time"] === trains[cnt_3]["first_departure_time"]) {
+                                    var train_operations = line_operations_data["lines"][trains[cnt_3]["line_id"]][train_direction][trains[cnt_3]["train_number"]][cnt_4]["operation_numbers"];
+                                    
+                                    for_5: for (var cnt_5 = 0; cnt_5 < train_operations.length; cnt_5++){
+                                        for (var cnt_6 = 0; cnt_6 < operations_data["operations"][train_operations[cnt_5]]["trains"].length; cnt_6++){
+                                            if (operations_data["operations"][train_operations[cnt_5]]["trains"][cnt_6]["first_departure_time"] === trains[cnt_3]["first_departure_time"]) {
+                                                if (operations_data["operations"][train_operations[cnt_5]]["trains"][cnt_6]["position_forward"] > trains[cnt_3]["position_forward"]) {
+                                                    break for_5;
                                                 }
                                             }
                                         }
-                                        
-                                        line_operations_data["lines"][trains[cnt_3]["line_id"]][train_direction][trains[cnt_3]["train_number"]][cnt_4]["operation_numbers"].splice(cnt_5, 0,operation_number);
-                                        
-                                        continue for_3;
-                                    } else if (line_operations_data["lines"][trains[cnt_3]["line_id"]][train_direction][trains[cnt_3]["train_number"]][cnt_4]["first_departure_time"] > trains[cnt_3]["first_departure_time"]) {
-                                        break;
                                     }
+                                    
+                                    line_operations_data["lines"][trains[cnt_3]["line_id"]][train_direction][trains[cnt_3]["train_number"]][cnt_4]["operation_numbers"].splice(cnt_5, 0,operation_number);
+                                    
+                                    continue for_3;
+                                } else if (line_operations_data["lines"][trains[cnt_3]["line_id"]][train_direction][trains[cnt_3]["train_number"]][cnt_4]["first_departure_time"] > trains[cnt_3]["first_departure_time"]) {
+                                    break;
                                 }
-                                
-                                line_operations_data["lines"][trains[cnt_3]["line_id"]][train_direction][trains[cnt_3]["train_number"]].splice(cnt_4, 0, {
-                                    first_departure_time : trains[cnt_3]["first_departure_time"],
-                                    final_arrival_time : trains[cnt_3]["final_arrival_time"],
-                                    starting_station : trains[cnt_3]["starting_station"],
-                                    terminal_station : trains[cnt_3]["terminal_station"],
-                                    operation_numbers : [operation_number]
-                                });
                             }
+                            
+                            line_operations_data["lines"][trains[cnt_3]["line_id"]][train_direction][trains[cnt_3]["train_number"]].splice(cnt_4, 0, {
+                                first_departure_time : trains[cnt_3]["first_departure_time"],
+                                final_arrival_time : trains[cnt_3]["final_arrival_time"],
+                                starting_station : trains[cnt_3]["starting_station"],
+                                terminal_station : trains[cnt_3]["terminal_station"],
+                                operation_numbers : [operation_number]
+                            });
                         }
                     }
-                    
-                    operations = operations_data;
-                    operation_groups = operation_groups_data;
-                    line_operations = line_operations_data;
-                    
-                    var open_request = indexedDB.open("unyohub_caches", UNYOHUB_INDEXEDDB_VERSION);
-                    open_request.onsuccess = function () {
-                        var transaction = open_request.result.transaction(["operations", "operation_groups", "line_operations"], "readwrite");
-                        open_request.result.close();
-                        
-                        var operations_store = transaction.objectStore("operations");
-                        operations_store.put(operations_data);
-                        
-                        var operation_groups_store = transaction.objectStore("operation_groups");
-                        operation_groups_store.put(operation_groups_data);
-                        
-                        var line_operations_store = transaction.objectStore("line_operations");
-                        line_operations_store.put(line_operations_data);
-                    };
                 }
+                
+                operations = operations_data;
+                operation_groups = operation_groups_data;
+                line_operations = line_operations_data;
+                
+                idb_start_transaction(["operations", "operation_groups", "line_operations"], true, function (transaction) {
+                    var operations_store = transaction.objectStore("operations");
+                    operations_store.put(operations_data);
+                    
+                    var operation_groups_store = transaction.objectStore("operation_groups");
+                    operation_groups_store.put(operation_groups_data);
+                    
+                    var line_operations_store = transaction.objectStore("line_operations");
+                    line_operations_store.put(line_operations_data);
+                });
             }
-        };
-        
-        operation_request.open("POST", "api/operation_table.php", true);
-        operation_request.setRequestHeader("Content-Type","application/x-www-form-urlencoded;charset=UTF-8");
-        operation_request.timeout = 5000;
-        operation_request.send("railroad_id=" + escape_form_data(railroad_id) + "&operation_table=" + escape_form_data(operation_table) + "&last_modified_timestamp=" + last_modified_timestamp);
+        });
     } else if (last_modified_timestamp == 0) {
         alert("オフラインのためダウンロードが完了していない運用データは利用できません");
     }
@@ -3115,12 +3144,7 @@ function update_timetable (operation_table) {
     timetable_operation_table = operation_table;
     timetable_operation_name_elm.innerText = railroad_info["operations"][operation_table]["operation_name"];
     
-    var open_request = indexedDB.open("unyohub_caches", UNYOHUB_INDEXEDDB_VERSION);
-    
-    open_request.onsuccess = function () {
-        var transaction = open_request.result.transaction("timetables", "readonly");
-        open_request.result.close();
-        
+    idb_start_transaction("timetables", false, function (transaction) {
         var timetables_store = transaction.objectStore("timetables");
         var get_request = timetables_store.get([railroad_id, operation_table]);
         
@@ -3133,44 +3157,29 @@ function update_timetable (operation_table) {
             }
             
             if (navigator.onLine) {
-                var timetable_request = new XMLHttpRequest();
-                timetable_request.onreadystatechange = function () {
-                    if (timetable_request.readyState === 4) {
-                        if (timetable_request.responseText.substring(0,6) === "ERROR:") {
-                            alert(timetable_request.responseText);
-                        } else if (timetable_request.status === 200 && timetable_request.responseText !== "NO_UPDATES_AVAILABLE") {
-                            timetable = {timetable : JSON.parse(timetable_request.responseText)};
-                            
-                            timetable["railroad_id"] = railroad_id;
-                            timetable["operation_table"] = operation_table;
-                            
-                            var last_modified_date = new Date(timetable_request.getResponseHeader("last-modified"));
-                            timetable["last_modified_timestamp"] = Math.floor(last_modified_date.getTime() / 1000);
-                            
-                            var open_request_2 = indexedDB.open("unyohub_caches", UNYOHUB_INDEXEDDB_VERSION);
-                            open_request_2.onsuccess = function () {
-                                transaction = open_request_2.result.transaction("timetables", "readwrite");
-                                open_request_2.result.close();
-                                
-                                var timetable_store = transaction.objectStore("timetables");
-                                timetable_store.put(timetable);
-                            }
-                        }
+                ajax_post("api/timetable.php", "railroad_id=" + escape_form_data(railroad_id) + "&operation_table=" + escape_form_data(operation_table) + "&last_modified_timestamp=" + last_modified_timestamp, function (response, last_modified) {
+                    if (response !== false && response !== "NO_UPDATES_AVAILABLE") {
+                        timetable = {timetable : JSON.parse(response)};
                         
+                        timetable["railroad_id"] = railroad_id;
+                        timetable["operation_table"] = operation_table;
+                        
+                        var last_modified_date = new Date(last_modified);
+                        timetable["last_modified_timestamp"] = Math.floor(last_modified_date.getTime() / 1000);
+                        
+                        idb_start_transaction("timetables", true, function (transaction) {
+                            var timetable_store = transaction.objectStore("timetables");
+                            timetable_store.put(timetable);
+                        });
                     }
-                };
-                
-                timetable_request.open("POST", "api/timetable.php", true);
-                timetable_request.setRequestHeader("Content-Type","application/x-www-form-urlencoded;charset=UTF-8");
-                timetable_request.timeout = 5000;
-                timetable_request.send("railroad_id=" + escape_form_data(railroad_id) + "&operation_table=" + escape_form_data(operation_table) + "&last_modified_timestamp=" + last_modified_timestamp);
+                });
             } else {
                 if (timetable === null) {
                     alert("オフラインのためダウンロードが完了していない時刻表データは利用できません");
                 }
             }
         }
-    };
+    });
 }
 
 
@@ -3193,12 +3202,7 @@ function update_operation_data (operation_date = null) {
     
     var railroad_id = railroad_info["railroad_id"];
     
-    var open_request = indexedDB.open("unyohub_caches", UNYOHUB_INDEXEDDB_VERSION);
-    
-    open_request.onsuccess = function () {
-        var transaction = open_request.result.transaction("operation_data", "readonly");
-        open_request.result.close();
-        
+    idb_start_transaction("operation_data", false, function (transaction) {
         var operation_data_store = transaction.objectStore("operation_data");
         var get_request = operation_data_store.get([railroad_id, operation_date]);
         
@@ -3211,48 +3215,34 @@ function update_operation_data (operation_date = null) {
             }
             
             if (navigator.onLine) {
-                var operation_data_request = new XMLHttpRequest();
-                operation_data_request.onreadystatechange = function () {
-                    if (operation_data_request.readyState === 4) {
-                        if (operation_data_request.responseText.substring(0,6) === "ERROR:") {
-                            alert(operation_data_request.responseText);
-                        } else if (operation_data_request.status === 200) {
-                            if (operation_data === null) {
-                                operation_data = {railroad_id : railroad_id, operation_date : operation_date, operations : {}};
-                            }
+                ajax_post("api/operation_data.php", "railroad_id=" + escape_form_data(railroad_id) + "&date=" + escape_form_data(operation_date) + "&last_modified_timestamp=" + last_modified_timestamp, function (response, last_modified) {
+                    if (response !== false) {
+                        if (operation_data === null) {
+                            operation_data = {railroad_id : railroad_id, operation_date : operation_date, operations : {}};
+                        }
+                        
+                        if (response !== "NO_UPDATES_AVAILABLE") {
+                            Object.assign(operation_data["operations"], JSON.parse(response));
                             
-                            if (operation_data_request.responseText !== "NO_UPDATES_AVAILABLE") {
-                                Object.assign(operation_data["operations"], JSON.parse(operation_data_request.responseText));
+                            var last_modified_date = new Date(last_modified);
+                            operation_data["last_modified_timestamp"] = Math.floor(last_modified_date.getTime() / 1000);
+                            
+                            idb_start_transaction("operation_data", true, function (transaction) {
+                                var operation_data_store = transaction.objectStore("operation_data");
+                                operation_data_store.put(operation_data);
                                 
-                                var last_modified_date = new Date(operation_data_request.getResponseHeader("last-modified"));
-                                operation_data["last_modified_timestamp"] = Math.floor(last_modified_date.getTime() / 1000);
-                                
-                                var open_request_2 = indexedDB.open("unyohub_caches", UNYOHUB_INDEXEDDB_VERSION);
-                                open_request_2.onsuccess = function () {
-                                    transaction = open_request_2.result.transaction("operation_data", "readwrite");
-                                    open_request_2.result.close();
-                                    
-                                    var operation_data_store = transaction.objectStore("operation_data");
-                                    operation_data_store.put(operation_data);
-                                    
-                                    if (mode_val === 0) {
-                                        position_change_time(0);
-                                    }
+                                if (mode_val === 0) {
+                                    position_change_time(0);
                                 }
-                            }
+                            });
                         }
                     }
-                };
-                
-                operation_data_request.open("POST", "api/operation_data.php", true);
-                operation_data_request.setRequestHeader("Content-Type","application/x-www-form-urlencoded;charset=UTF-8");
-                operation_data_request.timeout = 5000;
-                operation_data_request.send("railroad_id=" + escape_form_data(railroad_id) + "&date=" + escape_form_data(operation_date) + "&last_modified_timestamp=" + last_modified_timestamp);
+                });
             } else if (operation_data === null) {
                 alert("オフラインのため運用情報が取得できません");
             }
         }
-    };
+    });
     
     operation_data_last_updated = Date.now() / 1000;
 }
@@ -3365,7 +3355,7 @@ function position_change_lines (line_id, cnt_0 = 0) {
     }
 }
 
-function position_select_lines (lines) {console.log(lines);
+function position_select_lines (lines) {
     open_square_popup("select_lines_popup");
     
     var buf = "";
@@ -3427,7 +3417,7 @@ function draw_train_position (hh_and_mm) {
                 buf += " style='opacity: 0.5;'"
             }
             
-            buf += ">" + train["train_title"] + "<br>" + train["formation_html"] + "</span>";
+            buf += "><u>" + train["train_title"] + "</u><br>" + train["formation_html"] + "</span>";
             
             position_inbound_elms[line_inbound.length - cnt].innerHTML = buf;
         } else if (line_inbound[cnt].length >= 2) {
@@ -3459,7 +3449,7 @@ function draw_train_position (hh_and_mm) {
                 buf += " style='opacity: 0.5;'"
             }
             
-            buf += ">" + train["train_title"] + "<br>" + train["formation_html"] + "</span>";
+            buf += "><u>" + train["train_title"] + "</u><br>" + train["formation_html"] + "</span>";
             
             position_outbound_elms[cnt].innerHTML = buf;
         } else if (line_outbound[cnt].length >= 2) {
@@ -3749,59 +3739,51 @@ function get_hh_mm () {
 }
 
 function get_operation_data_detail (operation_date, operation_numbers_str, area_id) {
-    var data_detail_request = new XMLHttpRequest();
-    data_detail_request.onreadystatechange = function () {
-        if (data_detail_request.readyState === 4 && data_detail_request.status === 200) {
-            if (data_detail_request.responseText.substring(0,6) === "ERROR:"){
-                alert(data_detail_request.responseText);
-            } else {
-                var data = JSON.parse(data_detail_request.responseText);
+    ajax_post("api/operation_data_detail.php", "railroad_id=" + escape_form_data(railroad_info["railroad_id"]) + "&date=" + operation_date + "&operation_numbers=" + escape_form_data(operation_numbers_str), function (response) {
+        if (response !== false) {
+            var data = JSON.parse(response);
+            
+            var detail_html = "";
+            var operation_numbers = Object.keys(data);
+            for (var cnt = 0; cnt < operation_numbers.length; cnt++) {
+                detail_html += "<input type='checkbox' id='" + area_id + "_detail_" + add_slashes(operation_numbers[cnt]) + "'><label for='" + area_id + "_detail_" + add_slashes(operation_numbers[cnt]) + "' class='drop_down'>" + escape_html(operation_numbers[cnt]) + "運用 目撃情報</label><div>";
                 
-                var detail_html = "";
-                var operation_numbers = Object.keys(data);
-                for (var cnt = 0; cnt < operation_numbers.length; cnt++) {
-                    detail_html += "<input type='checkbox' id='" + area_id + "_detail_" + add_slashes(operation_numbers[cnt]) + "'><label for='" + area_id + "_detail_" + add_slashes(operation_numbers[cnt]) + "' class='drop_down'>" + escape_html(operation_numbers[cnt]) + "運用 目撃情報</label><div>";
-                    
-                    for (var cnt_2 = 0; cnt_2 < data[operation_numbers[cnt]].length; cnt_2++) {
-                        if (data[operation_numbers[cnt]][cnt_2]["user_name"] !== null) {
-                            var user_name_html = escape_html(data[operation_numbers[cnt]][cnt_2]["user_name"]);
-                            
-                            if (!data[operation_numbers[cnt]][cnt_2]["is_moderator"]) {
-                                user_name_html += " 様";
-                            }
-                            
-                            if (data[operation_numbers[cnt]][cnt_2]["website_url"] !== null) {
-                                user_name_html = "<a href='" + add_slashes(data[operation_numbers[cnt]][cnt_2]["website_url"]) + "' target='_blank' class='external_link'>" + escape_html(user_name_html) + "</a>";
-                            } else {
-                                user_name_html = "<span>" + user_name_html + "</span>";
-                            }
+                for (var cnt_2 = 0; cnt_2 < data[operation_numbers[cnt]].length; cnt_2++) {
+                    if (data[operation_numbers[cnt]][cnt_2]["user_name"] !== null) {
+                        var user_name_html = escape_html(data[operation_numbers[cnt]][cnt_2]["user_name"]);
+                        
+                        if (!data[operation_numbers[cnt]][cnt_2]["is_moderator"]) {
+                            user_name_html += " 様";
+                        }
+                        
+                        if (data[operation_numbers[cnt]][cnt_2]["website_url"] !== null) {
+                            user_name_html = "<a href='" + add_slashes(data[operation_numbers[cnt]][cnt_2]["website_url"]) + "' target='_blank' class='external_link'>" + escape_html(user_name_html) + "</a>";
                         } else {
-                            var user_name_html = "<span>(ゲスト様)</span>";
+                            user_name_html = "<span>" + user_name_html + "</span>";
                         }
-                        
-                        if (user_data !== null && (data[operation_numbers[cnt]][cnt_2]["user_id"] === user_data["user_id"] || user_data["role"] === "MODERATOR" || user_data["role"] === "ADMIN")) {
-                            user_name_html = "<button type='button' onclick='edit_operation_data(\"" + operation_date + "\", \"" + add_slashes(operation_numbers[cnt]) + "\", \"" + add_slashes(data[operation_numbers[cnt]][cnt_2]["user_id"]) + "\");'>取り消し</button>" + user_name_html;
-                        }
-                        
-                        detail_html += "<div class='operation_data_detail'><b>" + data[operation_numbers[cnt]][cnt_2]["formations"] + user_name_html + "</b>" + escape_html(data[operation_numbers[cnt]][cnt_2]["comment"]) + "</div>";
+                    } else {
+                        var user_name_html = "<span>(ゲスト様)</span>";
                     }
                     
-                    if (cnt_2 === 0) {
-                        detail_html += "当日の目撃情報はありません";
+                    if (user_data !== null && (data[operation_numbers[cnt]][cnt_2]["user_id"] === user_data["user_id"] || user_data["role"] === "MODERATOR" || user_data["role"] === "ADMIN")) {
+                        user_name_html = "<button type='button' onclick='edit_operation_data(\"" + operation_date + "\", \"" + add_slashes(operation_numbers[cnt]) + "\", \"" + add_slashes(data[operation_numbers[cnt]][cnt_2]["user_id"]) + "\");'>取り消し</button>" + user_name_html;
                     }
                     
-                    detail_html += "</div>";
+                    detail_html += "<div class='operation_data_detail'><b>" + data[operation_numbers[cnt]][cnt_2]["formations"] + user_name_html + "</b>" + escape_html(data[operation_numbers[cnt]][cnt_2]["comment"]) + "</div>";
                 }
                 
-                document.getElementById(area_id).innerHTML = detail_html;
+                if (cnt_2 === 0) {
+                    detail_html += "当日の目撃情報はありません";
+                }
+                
+                detail_html += "</div>";
             }
+        } else {
+            detail_html = "【!】運用情報の取得に失敗しました";
         }
-    };
-    
-    data_detail_request.open("POST", "api/operation_data_detail.php", true);
-    data_detail_request.setRequestHeader("Content-Type","application/x-www-form-urlencoded;charset=UTF-8");
-    data_detail_request.timeout = 5000;
-    data_detail_request.send("railroad_id=" + escape_form_data(railroad_info["railroad_id"]) + "&date=" + operation_date + "&operation_numbers=" + escape_form_data(operation_numbers_str));
+        
+        document.getElementById(area_id).innerHTML = detail_html;
+    });
 }
 
 function train_detail (line_id, train_number, first_departure_time, train_direction, show_operation_data = true, is_today = true) {
@@ -4300,7 +4282,7 @@ function timetable_select_station (station_name, cnt = 0) {
         buf += "</div>"
     }
     
-    if (buf.length >= 1) {
+    if (buf.length !== 0) {
         timetable_area_elm.innerHTML = buf;
     } else {
         timetable_area_elm.innerHTML = "<div class='no_data'>列車情報が登録されていません</div>";
@@ -4590,6 +4572,7 @@ var formation_table_wrapper_elm = document.getElementById("formation_table_wrapp
 var formation_search_area_elm = document.getElementById("formation_search_area");
 var car_number_search_elm = document.getElementById("car_number_search");
 var formation_table_area_elm = document.getElementById("formation_table_area");
+var formation_back_button_elm = document.getElementById("formation_back_button");
 
 var selected_formation_name = null;
 
@@ -4607,12 +4590,7 @@ function formation_table_mode (formation_name = null) {
     
     var railroad_id = railroad_info["railroad_id"];
     
-    var open_request = indexedDB.open("unyohub_caches", UNYOHUB_INDEXEDDB_VERSION);
-    
-    open_request.onsuccess = function () {
-        var transaction = open_request.result.transaction("formations", "readonly");
-        open_request.result.close();
-        
+    idb_start_transaction("formations", false, function (transaction) {
         var formations_store = transaction.objectStore("formations");
         var get_request = formations_store.get(railroad_id);
         
@@ -4629,42 +4607,28 @@ function formation_table_mode (formation_name = null) {
                     draw_formation_table(formation_name);
                 }
                 
-                var formations_request = new XMLHttpRequest();
-                formations_request.onreadystatechange = function () {
-                    if (formations_request.readyState === 4) {
-                        if (formations_request.responseText.substring(0,6) === "ERROR:") {
-                            alert(formations_request.responseText);
-                        } else if (formations_request.status === 200 && formations_request.responseText !== "NO_UPDATES_AVAILABLE") {
-                            formations = JSON.parse(formations_request.responseText);
-                            
-                            formations["railroad_id"] = railroad_id;
-                            
-                            var last_modified_date = new Date(formations_request.getResponseHeader("last-modified"));
-                            formations["last_modified_timestamp"] = Math.floor(last_modified_date.getTime() / 1000);
-                            
-                            var open_request_2 = indexedDB.open("unyohub_caches", UNYOHUB_INDEXEDDB_VERSION);
-                            open_request_2.onsuccess = function () {
-                                transaction = open_request_2.result.transaction("formations", "readwrite");
-                                open_request_2.result.close();
-                                
-                                var formations_store = transaction.objectStore("formations");
-                                formations_store.put(formations);
-                            }
-                        }
+                ajax_post("api/formations.php", "railroad_id=" + escape_form_data(railroad_id) + "&last_modified_timestamp=" + last_modified_timestamp, function (response, last_modified) {
+                    if (response !== false && response !== "NO_UPDATES_AVAILABLE") {
+                        formations = JSON.parse(response);
                         
-                        draw_formation_table(formation_name);
+                        formations["railroad_id"] = railroad_id;
+                        
+                        var last_modified_date = new Date(last_modified);
+                        formations["last_modified_timestamp"] = Math.floor(last_modified_date.getTime() / 1000);
+                        
+                        idb_start_transaction("formations", true, function (transaction) {
+                            var formations_store = transaction.objectStore("formations");
+                            formations_store.put(formations);
+                        });
                     }
-                };
-                
-                formations_request.open("POST", "api/formations.php", true);
-                formations_request.setRequestHeader("Content-Type","application/x-www-form-urlencoded;charset=UTF-8");
-                formations_request.timeout = 5000;
-                formations_request.send("railroad_id=" + escape_form_data(railroad_id) + "&last_modified_timestamp=" + last_modified_timestamp);
+                    
+                    draw_formation_table(formation_name);
+                });
             } else {
                 draw_formation_table(formation_name);
             }
         }
-    };
+    });
     
     operation_data_date = Date.now() / 1000;
     load_operation_table(get_days_operation(operation_data_date), true, false, false);
@@ -4687,6 +4651,8 @@ function draw_formation_table (formation_name = null) {
         formation_detail(formation_name);
         return;
     }
+    
+    formation_back_button_elm.style.display = "none";
     
     var buf = ""
     for (var cnt = 0; cnt < formations["series"].length; cnt++) {
@@ -4766,7 +4732,9 @@ function formation_detail (formation_name, cnt_0 = 0) {
     
     selected_formation_name = formation_name;
     
-    var buf = "<h2><button type='button' class='previous_button' onclick='draw_formation_table();'></button>" + escape_html(formation_name) + "</h2>";
+    formation_back_button_elm.style.display = "block";
+    
+    var buf = "<h2><button type='button' class='previous_button' onclick='previous_formation(\"" + add_slashes(formation_name) + "\");'></button>" + escape_html(formation_name) + "<button type='button' class='next_button' onclick='next_formation(\"" + add_slashes(formation_name) + "\");'></button></h2>";
     
     buf += "<img src='" + get_icon(formation_name) + "' alt='' class='train_icon_large'>";
     
@@ -4805,6 +4773,38 @@ function formation_detail (formation_name, cnt_0 = 0) {
     
     formation_table_area_elm.innerHTML = buf;
     formation_table_wrapper_elm.scrollTop = 0;
+}
+
+function get_formation_list (series_name) {
+    for (var cnt = 0; cnt < formations["series"].length; cnt++) {
+        if (formations["series"][cnt]["series_name"] === series_name) {
+            return formations["series"][cnt]["formation_names"];
+        }
+    }
+    
+    return [];
+}
+
+function previous_formation (formation_name) {
+    var formation_list = get_formation_list(formations["formations"][formation_name]["series_name"]);
+    
+    var formation_index = formation_list.indexOf(formation_name);
+    if (formation_index >= 1) {
+        formation_detail(formation_list[formation_index - 1]);
+    } else {
+        formation_detail(formation_list[formation_list.length - 1]);
+    }
+}
+
+function next_formation (formation_name) {
+    var formation_list = get_formation_list(formations["formations"][formation_name]["series_name"]);
+    
+    var formation_index = formation_list.indexOf(formation_name);
+    if (formation_index < formation_list.length - 1) {
+        formation_detail(formation_list[formation_index + 1]);
+    } else {
+        formation_detail(formation_list[0]);
+    }
 }
 
 
@@ -4853,9 +4853,12 @@ function operation_table_mode(load_data = true, table_name = null) {
         operation_table_name = timetable_operation_table;
     }
     
+    operation_table_wrapper_scroll_amount = 0;
+    
     reset_operation_narrow_down();
 }
 
+var operation_table_wrapper_elm = document.getElementById("operation_table_wrapper");
 var operation_search_area_elm = document.getElementById("operation_search_area");
 var operation_table_area_elm = document.getElementById("operation_table_area");
 
@@ -4866,8 +4869,14 @@ var search_terminal_location_elm = document.getElementById("operation_search_ter
 var search_first_departure_time_elm = document.getElementById("operation_search_first_departure_time");
 var search_final_arrival_time_elm = document.getElementById("operation_search_final_arrival_time");
 
+var operation_table_back_button_elm = document.getElementById("operation_table_back_button");
+
+var operation_table_wrapper_scroll_amount;
+var operation_table_check_wrapper_scroll;
+
 function operation_table_list_number (cnt = 0) {
     operation_table_name_elm.innerText = railroad_info["operations"][operation_table_name]["operation_name"];
+    operation_table_check_wrapper_scroll = false;
     operation_table_area_elm.innerHTML = "";
     
     if ((operations === null || line_operations === null || timetable === null) && cnt < 100) {
@@ -4882,6 +4891,7 @@ function operation_table_list_number (cnt = 0) {
     
     operation_table_selected_number = null;
     operation_search_area_elm.style.display = "block";
+    operation_table_back_button_elm.style.display = "none";
     
     var search_group_name = search_group_name_elm.value;
     var search_group_name_list = [];
@@ -4938,10 +4948,11 @@ function operation_table_list_number (cnt = 0) {
             var $terminal_track_text = "";
         }
         
-        buf += "<a href='javascript:void(0);' class='operation_card' onclick='operation_table_select_number(\"" + operation_numbers[cnt] + "\");' style='background-color: " + color + "'>";
-        buf += "<b>" + operation_numbers[cnt] + " 運用</b><span>" + operations["operations"][operation_numbers[cnt]]["operation_group_name"] + " " + operations["operations"][operation_numbers[cnt]]["cars_count"] + "両</span>";
-        buf += "<span>○" + operations["operations"][operation_numbers[cnt]]["starting_location"] + $starting_track_text + " " + operations["operations"][operation_numbers[cnt]]["first_departure_time"] + "</span><span>〜</span><span>△" + operations["operations"][operation_numbers[cnt]]["terminal_location"] + $terminal_track_text + " " + operations["operations"][operation_numbers[cnt]]["final_arrival_time"] + "</span>";
-        buf += "</a>";
+        buf += "<tr onclick='operation_table_select_number(\"" + operation_numbers[cnt] + "\");'>";
+        buf += "<th style='background-color: " + color + "'><b>" + operation_numbers[cnt] + "</b>" + operations["operations"][operation_numbers[cnt]]["operation_group_name"] + " (" + operations["operations"][operation_numbers[cnt]]["cars_count"] + "両)</th>";
+        buf += "<td>" + operations["operations"][operation_numbers[cnt]]["starting_location"] + $starting_track_text + "<small>" + operations["operations"][operation_numbers[cnt]]["first_departure_time"] + "</small></td>";
+        buf += "<td>" + operations["operations"][operation_numbers[cnt]]["terminal_location"] + $terminal_track_text + "<small>" + operations["operations"][operation_numbers[cnt]]["final_arrival_time"] + "</small></td>";
+        buf += "</tr>";
     }
     
     var buf_2 = "<option value=''>運用グループ 指定なし</option>";
@@ -4972,11 +4983,21 @@ function operation_table_list_number (cnt = 0) {
     search_terminal_location_elm.innerHTML = buf_2;
     search_terminal_location_elm.value = search_terminal_location;
     
-    if (buf === "") {
-        buf = "<div class='no_data'>絞り込み条件に一致する運用が見つかりません</div>";
+    if (buf.length !== 0) {
+        operation_table_area_elm.innerHTML = "<table class='operation_table'><tr><th>運用番号</th><th>○出庫</th><th>△入庫</th></tr>" + buf + "</table>";
+    } else {
+        operation_table_area_elm.innerHTML = "<div class='no_data'>絞り込み条件に一致する運用が見つかりません</div>";
     }
     
-    operation_table_area_elm.innerHTML = buf;
+    operation_table_wrapper_elm.scrollTop = operation_table_wrapper_scroll_amount;
+    
+    operation_table_check_wrapper_scroll = true;
+}
+
+function operation_table_wrapper_onscroll () {
+    if (operation_table_check_wrapper_scroll) {
+        operation_table_wrapper_scroll_amount = operation_table_wrapper_elm.scrollTop;
+    }
 }
 
 function reset_operation_narrow_down (close_menu = true) {
@@ -4997,7 +5018,11 @@ function reset_operation_narrow_down (close_menu = true) {
 function operation_table_select_number (operation_number, cnt_0 = 0) {
     operation_table_selected_number = operation_number;
     operation_search_area_elm.style.display = "none";
+    operation_table_back_button_elm.style.display = "block";
+    operation_table_check_wrapper_scroll = false;
     operation_table_area_elm.innerHTML = "";
+    
+    operation_table_wrapper_elm.scrollTop = 0;
     
     if ((operations === null || line_operations === null || timetable === null) && cnt_0 < 100) {
         setTimeout(operation_table_select_number, 50, operation_number, cnt_0 + 1);
@@ -5024,8 +5049,9 @@ function operation_table_select_number (operation_number, cnt_0 = 0) {
         bg_color = convert_color_dark_mode(bg_color);
     }
     
-    var buf = "<h2 style='background-color: " + bg_color + ";'><button type='button' class='previous_button' onclick='operation_table_list_number();'></button>" + operation_number + "運用</h2>";
+    var buf = "<h2 style='background-color: " + bg_color + ";'><button type='button' class='previous_button' onclick='previous_operation_number(\"" + operation_number + "\");'></button>" + operation_number + "運用<button type='button' class='next_button' onclick='next_operation_number(\"" + operation_number + "\");'></button></h2>";
     
+    buf += "<div class='key_and_value'><b>運用グループ :</b>" + operations["operations"][operation_number]["operation_group_name"] + "</div>";
     buf += "<div class='key_and_value'><b>所定両数 :</b>" + operations["operations"][operation_number]["cars_count"] + "両</div>";
     
     if ("starting_track" in operations["operations"][operation_number] && operations["operations"][operation_number]["starting_track"] !== null) { //アップデートに伴う仮、2024年5月以降のバージョンで条件式前半削除
@@ -5158,35 +5184,39 @@ function operation_table_next () {
     }
 }
 
+function previous_operation_number (operation_number) {
+    var operation_numbers = Object.keys(operations["operations"]).toSorted();
+    
+    var operation_number_index = operation_numbers.indexOf(operation_number);
+    if (operation_number_index >= 1) {
+        operation_table_select_number(operation_numbers[operation_number_index - 1]);
+    } else {
+        operation_table_select_number(operation_numbers[operation_numbers.length - 1]);
+    }
+}
+
+function next_operation_number (operation_number) {
+    var operation_numbers = Object.keys(operations["operations"]).toSorted();
+    
+    var operation_number_index = operation_numbers.indexOf(operation_number);
+    if (operation_number_index < operation_numbers.length - 1) {
+        operation_table_select_number(operation_numbers[operation_number_index + 1]);
+    } else {
+        operation_table_select_number(operation_numbers[0]);
+    }
+}
+
 
 var one_time_token = null;
 
 function get_one_time_token () {
-    var token_request = new XMLHttpRequest();
-    
-    token_request.onreadystatechange = function () {
-        if (token_request.readyState === 4) {
-            if (token_request.status === 200) {
-                if (token_request.responseText.substring(0,6) === "ERROR:"){
-                    alert(token_request.responseText);
-                } else {
-                    var data = JSON.parse(token_request.responseText);
-                    
-                    one_time_token = data["token"];
-                }
-            } else {
-                alert("【!】サーバへのアクセスに失敗しました");
-            }
+    ajax_post("api/one_time_token.php", "", function (response) {
+        if (response !== false) {
+            var data = JSON.parse(response);
+            
+            one_time_token = data["token"];
         }
-    };
-    
-    token_request.ontimeout = function () {
-        alert("【!】ワンタイムトークンの取得に失敗しました。ネットワークが不安定です");
-    }
-    
-    token_request.open("GET", "api/one_time_token.php", true);
-    token_request.timeout = 5000;
-    token_request.send();
+    });
 }
 
 var post_yyyy_mm_dd;
@@ -5239,64 +5269,45 @@ function post_operation_data (cnt = 0) {
         return;
     }
     
-    var post_operation_request = new XMLHttpRequest();
-    post_operation_request.onreadystatechange = function () {
-        if (post_operation_request.readyState === 4) {
-            close_wait_screen();
-            
-            if (post_operation_request.status === 200) {
-                if (post_operation_request.responseText.substring(0,6) === "ERROR:"){
-                    alert(post_operation_request.responseText);
-                    
-                    if (user_data !== null) {
-                        get_one_time_token();
-                    } else {
-                        zizai_captcha_reload_image("zizai_captcha_image", "zizai_captcha_id");
-                    }
-                } else {
-                    alert("情報提供ありがとうございました");
-                    
-                    if (user_data === null) {
-                        close_square_popup();
-                    }
-                    popup_close();
-                    
-                    Object.assign(operation_data["operations"], JSON.parse(post_operation_request.responseText));
-                    
-                    switch (mode_val) {
-                        case 0:
-                            position_change_time(0);
-                            break;
-                        case 1:
-                            timetable_select_station(timetable_selected_station);
-                            break;
-                        case 2:
-                            operation_data_draw();
-                            break;
-                    }
-                }
-            } else {
-                alert("【!】サーバへのアクセスに失敗しました");
-            }
-        }
-    };
-    
-    post_operation_request.ontimeout = function () {
-        close_wait_screen();
-        
-        alert("【!】ネットワークが不安定です");
-    }
-    
-    post_operation_request.open("POST", "api/post.php", true);
-    post_operation_request.setRequestHeader("Content-Type","application/x-www-form-urlencoded;charset=UTF-8");
-    post_operation_request.timeout = 5000;
-    
     var send_data = "railroad_id=" + escape_form_data(railroad_info["railroad_id"]) + "&date=" + escape_form_data(post_yyyy_mm_dd) + "&operation_number=" + escape_form_data(post_operation_number) + "&formations=" + escape_form_data(document.getElementById("operation_data_formation_0").value) + "&comment=" + escape_form_data(document.getElementById("operation_data_comment_0").value);
     if (user_data !== null) {
-        post_operation_request.send(send_data + "&one_time_token=" + escape_form_data(one_time_token));
+        send_data += "&one_time_token=" + escape_form_data(one_time_token);
     } else {
-        post_operation_request.send(send_data + "&guest_id=" + escape_form_data(get_guest_id()) + "&zizai_captcha_id=" + escape_form_data(document.getElementById("zizai_captcha_id").value) + "&zizai_captcha_characters=" + escape_form_data(document.getElementById("zizai_captcha_characters").value));
+        send_data += "&guest_id=" + escape_form_data(get_guest_id()) + "&zizai_captcha_id=" + escape_form_data(document.getElementById("zizai_captcha_id").value) + "&zizai_captcha_characters=" + escape_form_data(document.getElementById("zizai_captcha_characters").value);
     }
+    
+    ajax_post("api/post.php", send_data, function (response) {
+        close_wait_screen();
+        
+        if (response !== false) {
+            alert("情報提供ありがとうございました");
+            
+            if (user_data === null) {
+                close_square_popup();
+            }
+            popup_close();
+            
+            Object.assign(operation_data["operations"], JSON.parse(response));
+            
+            switch (mode_val) {
+                case 0:
+                    position_change_time(0);
+                    break;
+                case 1:
+                    timetable_select_station(timetable_selected_station);
+                    break;
+                case 2:
+                    operation_data_draw();
+                    break;
+            }
+        } else {
+            if (user_data !== null) {
+                get_one_time_token();
+            } else {
+                zizai_captcha_reload_image("zizai_captcha_image", "zizai_captcha_id");
+            }
+        }
+    });
 }
 
 var edit_yyyy_mm_dd;
@@ -5339,52 +5350,29 @@ function revoke_operation_data (cnt = 0) {
         return;
     }
     
-    var revoke_operation_request = new XMLHttpRequest();
-    revoke_operation_request.onreadystatechange = function () {
-        if (revoke_operation_request.readyState === 4) {
-            close_wait_screen();
-            
-            if (revoke_operation_request.status === 200) {
-                if (revoke_operation_request.responseText.substring(0,6) === "ERROR:"){
-                    alert(revoke_operation_request.responseText);
-                    
-                    get_one_time_token();
-                } else {
-                    alert("運用情報を取り消しました");
-                    
-                    popup_close();
-                    
-                    Object.assign(operation_data["operations"], JSON.parse(revoke_operation_request.responseText));
-                    
-                    switch (mode_val) {
-                        case 0:
-                            position_change_time(0);
-                            break;
-                        case 1:
-                            timetable_select_station(timetable_selected_station);
-                            break;
-                        case 2:
-                            operation_data_draw();
-                            break;
-                    }
-                }
-            } else {
-                alert("【!】サーバへのアクセスに失敗しました");
-            }
-        }
-    };
-    
-    revoke_operation_request.ontimeout = function () {
+    ajax_post("api/revoke.php", "railroad_id=" + escape_form_data(railroad_info["railroad_id"]) + "&date=" + escape_form_data(edit_yyyy_mm_dd) + "&operation_number=" + escape_form_data(edit_operation_number) + "&user_id=" + escape_form_data(edit_user_id) + "&one_time_token=" + escape_form_data(one_time_token), function (response) {
         close_wait_screen();
         
-        alert("【!】ネットワークが不安定です");
-    }
-    
-    revoke_operation_request.open("POST", "api/revoke.php", true);
-    revoke_operation_request.setRequestHeader("Content-Type","application/x-www-form-urlencoded;charset=UTF-8");
-    revoke_operation_request.timeout = 5000;
-    
-    revoke_operation_request.send("railroad_id=" + escape_form_data(railroad_info["railroad_id"]) + "&date=" + escape_form_data(edit_yyyy_mm_dd) + "&operation_number=" + escape_form_data(edit_operation_number) + "&user_id=" + escape_form_data(edit_user_id) + "&one_time_token=" + escape_form_data(one_time_token));
+        if (response !== false) {
+            alert("運用情報を取り消しました");
+            
+            popup_close();
+            
+            Object.assign(operation_data["operations"], JSON.parse(response));
+            
+            switch (mode_val) {
+                case 0:
+                    position_change_time(0);
+                    break;
+                case 1:
+                    timetable_select_station(timetable_selected_station);
+                    break;
+                case 2:
+                    operation_data_draw();
+                    break;
+            }
+        }
+    });
 }
 
 
@@ -5417,144 +5405,66 @@ function challenge_login () {
     var user_id = document.getElementById("login_user_id").value;
     var password = document.getElementById("login_password").value;
     
-    var login_request = new XMLHttpRequest();
-    login_request.onreadystatechange = function () {
-        if (login_request.readyState === 4) {
-            close_wait_screen();
-            
-            if (login_request.status === 200) {
-                if (login_request.responseText.substring(0,6) === "ERROR:"){
-                    alert(login_request.responseText);
-                } else {
-                    alert("ログインしました");
-                    
-                    update_user_data(JSON.parse(login_request.responseText));
-                    close_square_popup();
-                }
-            } else {
-                alert("【!】サーバへのアクセスに失敗しました");
-            }
-        }
-    };
-    
-    login_request.ontimeout = function () {
+    ajax_post("api/login.php", "user_id=" + escape_form_data(user_id) + "&password=" + escape_form_data(password), function (response) {
         close_wait_screen();
         
-        alert("【!】ネットワークが不安定です");
-    }
-    
-    login_request.open("POST", "api/login.php", true);
-    login_request.setRequestHeader("Content-Type","application/x-www-form-urlencoded;charset=UTF-8");
-    login_request.timeout = 5000;
-    login_request.send("user_id=" + escape_form_data(user_id) + "&password=" + escape_form_data(password));
+        if (response !== false) {
+            alert("ログインしました");
+            
+            update_user_data(JSON.parse(response));
+            close_square_popup();
+        }
+    });
 }
 
 function user_logout () {
     if (confirm("ログアウトしますか？")){
         open_wait_screen();
         
-        var logout_request = new XMLHttpRequest();
-        logout_request.onreadystatechange = function () {
-            if (logout_request.readyState === 4) {
-                close_wait_screen();
-                
-                if (logout_request.status === 200) {
-                    if (logout_request.responseText.substring(0,6) === "ERROR:"){
-                        alert(logout_request.responseText);
-                    } else {
-                        alert("ログアウトしました");
-                        
-                        update_user_data();
-                    }
-                } else {
-                    alert("【!】サーバへのアクセスに失敗しました");
-                }
-            }
-        };
-        
-        logout_request.ontimeout = function () {
+        ajax_post("api/logout.php", "", function (response) {
             close_wait_screen();
             
-            alert("【!】ネットワークが不安定です");
-        }
-        
-        logout_request.open("POST", "api/logout.php", true);
-        logout_request.timeout = 5000;
-        logout_request.send();
+            if (response !== false) {
+                alert("ログアウトしました");
+                
+                update_user_data();
+            }
+        });
     }
 }
 
 function check_sign_up () {
     open_wait_screen();
     
-    var check_sign_up_request = new XMLHttpRequest();
-    check_sign_up_request.onreadystatechange = function () {
-        if (check_sign_up_request.readyState === 4) {
-            close_wait_screen();
-            
-            if (check_sign_up_request.status === 200) {
-                if (check_sign_up_request.responseText === "OK"){
-                    show_captcha();
-                    
-                    captcha_submit_button_elm.onclick = challenge_sign_up;
-                } else {
-                    alert(check_sign_up_request.responseText);
-                }
-            } else {
-                alert("【!】サーバへのアクセスに失敗しました");
-            }
-        }
-    };
-    
-    check_sign_up_request.ontimeout = function () {
+    ajax_post("api/check_sign_up.php", "user_id=" + escape_form_data(document.getElementById("sign_up_user_id").value) + "&password=" + escape_form_data(document.getElementById("sign_up_password").value), function (response) {
         close_wait_screen();
         
-        alert("【!】ネットワークが不安定です");
-    }
-    
-    check_sign_up_request.open("POST", "api/check_sign_up.php", true);
-    check_sign_up_request.setRequestHeader("Content-Type","application/x-www-form-urlencoded;charset=UTF-8");
-    check_sign_up_request.timeout = 5000;
-    check_sign_up_request.send("user_id=" + escape_form_data(document.getElementById("sign_up_user_id").value) + "&password=" + escape_form_data(document.getElementById("sign_up_password").value));
+        if (response === "OK") {
+            show_captcha();
+            captcha_submit_button_elm.onclick = challenge_sign_up;
+        } else if (response !== false) {
+            alert(response);
+        }
+    });
 }
 
 function challenge_sign_up () {
     open_wait_screen();
     
-    var sign_up_request = new XMLHttpRequest();
-    sign_up_request.onreadystatechange = function () {
-        if (sign_up_request.readyState === 4) {
-            close_wait_screen();
-            
-            if (sign_up_request.status === 200) {
-                if (sign_up_request.responseText.substring(0,6) === "ERROR:"){
-                    alert(sign_up_request.responseText);
-                    
-                    zizai_captcha_reload_image("zizai_captcha_image", "zizai_captcha_id");
-                } else {
-                    update_user_data(JSON.parse(sign_up_request.responseText));
-                    
-                    close_square_popup();
-                    popup_close();
-                    
-                    alert("アカウントの作成に成功しました");
-                }
-            } else {
-                alert("【!】サーバへのアクセスに失敗しました");
-            }
-        }
-    };
-    
-    sign_up_request.ontimeout = function () {
+    ajax_post("api/sign_up.php", "user_id=" + escape_form_data(document.getElementById("sign_up_user_id").value) + "&password=" + escape_form_data(document.getElementById("sign_up_password").value) + "&user_name=" + escape_form_data(document.getElementById("sign_up_user_name").value) + "&zizai_captcha_id=" + escape_form_data(document.getElementById("zizai_captcha_id").value) + "&zizai_captcha_characters=" + escape_form_data(document.getElementById("zizai_captcha_characters").value), function (response) {
         close_wait_screen();
         
-        alert("【!】ネットワークが不安定です");
-    }
-    
-    sign_up_request.open("POST", "api/sign_up.php", true);
-    sign_up_request.setRequestHeader("Content-Type","application/x-www-form-urlencoded;charset=UTF-8");
-    sign_up_request.timeout = 5000;
-    sign_up_request.send("user_id=" + escape_form_data(document.getElementById("sign_up_user_id").value) + "&password=" + escape_form_data(document.getElementById("sign_up_password").value) + "&user_name=" + escape_form_data(document.getElementById("sign_up_user_name").value) + "&zizai_captcha_id=" + escape_form_data(document.getElementById("zizai_captcha_id").value) + "&zizai_captcha_characters=" + escape_form_data(document.getElementById("zizai_captcha_characters").value));
+        if (response !== false) {
+            update_user_data(JSON.parse(response));
+            
+            close_square_popup();
+            popup_close();
+            
+            alert("アカウントの作成に成功しました");
+        } else {
+            zizai_captcha_reload_image("zizai_captcha_image", "zizai_captcha_id");
+        }
+    });
 }
 
 var edit_user_data_user_id_elm = document.getElementById("edit_user_data_user_id");
@@ -5594,74 +5504,33 @@ function change_user_data (cnt = 0) {
         return;
     }
     
-    var change_user_data_request = new XMLHttpRequest();
-    change_user_data_request.onreadystatechange = function () {
-        if (change_user_data_request.readyState === 4) {
-            close_wait_screen();
-            
-            if (change_user_data_request.status === 200) {
-                if (change_user_data_request.responseText.substring(0,6) === "ERROR:"){
-                    alert(change_user_data_request.responseText);
-                } else {
-                    close_wait_screen();
-                    
-                    update_user_data(JSON.parse(change_user_data_request.responseText));
-                    
-                    alert("ユーザー情報を変更しました");
-                }
-                
-                get_one_time_token();
-            } else {
-                alert("【!】サーバへのアクセスに失敗しました");
-            }
-        }
-    };
-    
-    change_user_data_request.ontimeout = function () {
+    ajax_post("api/change_user_data.php", "user_name=" + escape_form_data(edit_user_data_user_name_elm.value) + "&email_address=" + escape_form_data(edit_user_data_email_address_elm.value) + "&website_url=" + escape_form_data(edit_user_data_website_url_elm.value) + "&one_time_token=" + escape_form_data(one_time_token), function (response) {
         close_wait_screen();
         
-        alert("【!】ネットワークが不安定です");
-    }
-    
-    change_user_data_request.open("POST", "api/change_user_data.php", true);
-    change_user_data_request.setRequestHeader("Content-Type","application/x-www-form-urlencoded;charset=UTF-8");
-    change_user_data_request.timeout = 5000;
-    change_user_data_request.send("user_name=" + escape_form_data(edit_user_data_user_name_elm.value) + "&email_address=" + escape_form_data(edit_user_data_email_address_elm.value) + "&website_url=" + escape_form_data(edit_user_data_website_url_elm.value) + "&one_time_token=" + escape_form_data(one_time_token));
+        if (response !== false) {
+            update_user_data(JSON.parse(response));
+            
+            alert("ユーザー情報を変更しました");
+        }
+        
+        get_one_time_token();
+    });
 }
 
 function change_password () {
     open_wait_screen();
     
-    var change_password_request = new XMLHttpRequest();
-    change_password_request.onreadystatechange = function () {
-        if (change_password_request.readyState === 4) {
-            close_wait_screen();
-            
-            if (change_password_request.status === 200) {
-                if (change_password_request.responseText === "SUCCEEDED"){
-                    close_wait_screen();
-                    close_square_popup();
-                    
-                    alert("パスワードを変更しました");
-                } else {
-                    alert(change_password_request.responseText);
-                }
-            } else {
-                alert("【!】サーバへのアクセスに失敗しました");
-            }
-        }
-    };
-    
-    change_password_request.ontimeout = function () {
+    ajax_post("api/change_user_password.php", "old_password=" + escape_form_data(document.getElementById("old_password").value) + "&new_password=" + escape_form_data(document.getElementById("new_password").value), function (response) {
         close_wait_screen();
         
-        alert("【!】ネットワークが不安定です");
-    }
-    
-    change_password_request.open("POST", "api/change_user_password.php", true);
-    change_password_request.setRequestHeader("Content-Type","application/x-www-form-urlencoded;charset=UTF-8");
-    change_password_request.timeout = 5000;
-    change_password_request.send("old_password=" + escape_form_data(document.getElementById("old_password").value) + "&new_password=" + escape_form_data(document.getElementById("new_password").value));
+        if (response == "SUCCEEDED") {
+            close_square_popup();
+            
+            alert("パスワードを変更しました");
+        } else if (response !== false) {
+            alert(response);
+        }
+    });
 }
 
 
@@ -5744,7 +5613,7 @@ function reset_cache_db () {
         
         delete_request.onsuccess = function () {
             location.reload();
-        }
+        };
     }
 }
 
