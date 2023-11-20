@@ -5,10 +5,11 @@
     <meta name="viewport" content="width=device-width,initial-scale=1,interactive-widget=resizes-content">
 <script>
     const UNYOHUB_APP_NAME = "鉄道運用Hub";
-    const UNYOHUB_VERSION = "23.11-9"
+    const UNYOHUB_VERSION = "23.11-10"
     const UNYOHUB_INDEXEDDB_VERSION = 2310001;
     const UNYOHUB_LICENSE_TEXT = "このアプリケーションは無権利創作宣言に準拠して著作権放棄されています。";
     const UNYOHUB_LICENSE_URL = "https://www.2pd.jp/license/";
+    const UNYOHUB_REPOSITORY_URL = "https://fossil.2pd.jp/unyohub/";
 </script>
     <title></title>
     <link rel="apple-touch-icon" href="apple-touch-icon.webp">
@@ -1003,7 +1004,7 @@ article input[type="checkbox"] + label {
 .operation_table th {
     width: 40%;
     
-    font-size: 16px;
+    font-size: 14px;
     color: #666666;
     font-weight: normal;
 }
@@ -1013,7 +1014,7 @@ article input[type="checkbox"] + label {
 }
 
 .operation_table tr:first-child th {
-    font-size: 18px;
+    font-size: 16px;
     font-weight: bold;
 }
 
@@ -1972,6 +1973,25 @@ button {
     
     filter: drop-shadow(1px 2px 1px rgba(0,0,0,0.25));
 }
+
+#app_version {
+    margin: 15px 0 10px 0;
+}
+
+#license_text {
+    display: block;
+    
+    width: calc(100% - 20px);
+    
+    padding: 0 10px 15px 10px;
+    
+    font-size: 14px;
+    color: #666666;
+}
+
+.dark_mode #license_text {
+    color: #cccccc;
+}
 </style>
 </head>
 <body>
@@ -1990,6 +2010,7 @@ button {
         <button type="button" onclick="edit_config();">各種設定</button>
         <hr>
         <button type="button" onclick="open_square_popup('about_popup');">このアプリについて</button>
+        <button type="button" onclick="window.open('README.html');">このアプリの使い方</button>
     </div>
     <div id="splash_screen">
         <div id="splash_screen_login_status">サーバに接続しています...</div>
@@ -2179,15 +2200,19 @@ button {
         <div class="square_popup" id="about_popup">
             <button type="button" class="popup_close_button" onclick="close_square_popup();"></button>
             <img src="apple-touch-icon.webp" alt="" id="unyo_icon">
-            <b style="font-size: 20px;"><script> document.write(UNYOHUB_APP_NAME + " " + UNYOHUB_VERSION); </script></b>
-            <div style="padding: 10px; color: #999999; font-size: small;"><script> document.write("<a href='" + UNYOHUB_LICENSE_URL + "' target='_blank'>" + UNYOHUB_LICENSE_TEXT + "</a>"); </script></div>
-            <button type="button" class="wide_button" onclick="window.open('README.html');">このアプリの使い方</button>
+            <h3 id="app_version"></h3>
+            <small id="license_text"></small>
+            <a id="license_link" target="_blank" class="external_link">ライセンス</a>　<a id="repository_link" target="_blank" class="external_link">ソースコード</a>
         </div>
     </div>
     <div id="wait_screen"></div>
 <script>
 document.getElementsByTagName("title")[0].innerText = UNYOHUB_APP_NAME;
 document.getElementById("app_name").innerText = UNYOHUB_APP_NAME;
+document.getElementById("app_version").innerText = UNYOHUB_APP_NAME + " " + UNYOHUB_VERSION;
+document.getElementById("license_text").innerText = UNYOHUB_LICENSE_TEXT;
+document.getElementById("license_link").href = UNYOHUB_LICENSE_URL;
+document.getElementById("repository_link").href = UNYOHUB_REPOSITORY_URL;
 
 
 const UNYOHUB_GENERIC_TRAIN_ICON = "data:image/webp;base64,UklGRngCAABXRUJQVlA4TGwCAAAvT8AdEJVIkm07bhst/QLu7Zlm2YK2CYgQP35pmv/Uls0uAgq2bcee31a2bc5bstkct2Tbjl60ze4t2bZtPRMQ53o2pNDRH8YI4BcYfVlNvSh4lsHnZOiTzqZEzTzPErPzCSdpnudFuv2aAcWwxMQBHRES3XFCAYqI2yb9LVYokNiCsUOMFV9U1gCRbyT58wfwklUxXrzIeBT/hJhAzpP4X8NCrHfNyC3QJFEQ1ayTuGA6LbObznnkdUvfgH63jYflyhLTdynrKjFLNFlYeaEZVAQYHCljCxiRIxqS7x6/Q8TtwgsBFkr86Ltq9OvtEXZBcQmY5OqAtoMjYDQ72KHCCuV22LTCthnkMvsis5JS7ZBihWk7TNn4w5E/O+kP50/6OAd0NqTIiQlOZPzB+ERENiwn2eMJoYs7dcstnSkYXAsUMrhR5/eU/kMehCPHgIMcZYcB+PEjF/nG58iLhA85yfuLqEY34OZvBcrFDz6/qAX2chTbIvl7ci9SqCfz/5EQ5EkKLPDxJHkXuHmSXIvs4slcoPck64pXnidwC2iefFGL4M2PKaps+sFGjUk/mKjR6AcNNbL8SJk1wvyYatnkB8baHs+PFxcItWDdC9biKB1eLMdSvBfEHYvg3gPuYjCLHrAwbPGA9mEUeUDhsBTtAVHDcPYgOw17ZXkAc9gOyVt/0w45LFjtj5VoZKA/+luo7o+qFmL7SzEtyb0/3FpeRP0hbAHDd2/8/MO2BLu9sRPNTPbGRBu1vVHTlhJ7I6ENbgodXsyjFvPwra21iFGLMH3+8CrxMs4mXW1RLVE5zio9bQW2lxj5colzHQ==";
@@ -2711,6 +2736,10 @@ function update_railroad_list (railroads) {
         buttons_html += "<button type='button' class='wide_button' onclick='select_railroad(\"" + keys[cnt] + "\");' style='background-image: url(" + railroads[keys[cnt]]["railroad_icon"] + ");'>" + escape_html(railroads[keys[cnt]]["railroad_name"]) + "</button>";
     }
     
+    if (cnt === 0) {
+        buttons_html = "<div class='no_data'>利用可能なデータがありません</div>";
+    }
+    
     document.getElementById("railroad_select").innerHTML = select_html;
     document.getElementById("splash_screen_buttons").innerHTML = buttons_html;
     
@@ -2742,11 +2771,11 @@ window.onload = function () {
             }
         });
         
-        ajax_post("api/railroads.php", "last_modified_timestamp=" + common_caches["last_modified_timestamp"], function (response) {
+        ajax_post("api/railroads.php", "last_modified_timestamp=" + common_caches["last_modified_timestamp"], function (response, last_modified) {
             if (response !== false && response !== "NO_UPDATES_AVAILABLE") {
-                common_caches["railroads"] = JSON.parse(railroads_request.responseText);
+                common_caches["railroads"] = JSON.parse(response);
                 
-                var last_modified_date = new Date(railroads_request.getResponseHeader("last-modified"));
+                var last_modified_date = new Date(last_modified);
                 common_caches["last_modified_timestamp"] = Math.floor(last_modified_date.getTime() / 1000);
                 
                 localStorage.setItem("unyohub_common_caches", JSON.stringify(common_caches));
@@ -5628,6 +5657,8 @@ function reset_config_value () {
 
 function reset_cache_db () {
     if (confirm("キャッシュデータの削除により運用表や時刻表のデータが再ダウンロードされるため、多くの通信容量を消費する場合があります。\n\nよろしいですか？")) {
+        localStorage.removeItem("unyohub_common_caches");
+        
         var delete_request = indexedDB.deleteDatabase("unyohub_caches");
         
         delete_request.onsuccess = function () {
