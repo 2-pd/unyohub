@@ -30,11 +30,11 @@
      showgrid="false"
      units="px"
      inkscape:zoom="8.2445"
-     inkscape:cx="34.75044"
+     inkscape:cx="34.811086"
      inkscape:cy="36.266602"
      inkscape:window-width="1920"
-     inkscape:window-height="1008"
-     inkscape:window-x="0"
+     inkscape:window-height="1052"
+     inkscape:window-x="1920"
      inkscape:window-y="0"
      inkscape:window-maximized="1"
      inkscape:current-layer="layer1"
@@ -47,10 +47,9 @@
      inkscape:groupmode="layer"
      id="layer1">
     <path
-       id="path2"
-       style="fill:#999999;stroke-width:0.79375;stroke-linecap:round;stroke-linejoin:round;stroke-opacity:0.74902;paint-order:stroke fill markers"
-       d="M 15.875,3.96875 C 15.875,1.7768698 14.09813,-1.1045696e-7 11.90625,0 h -7.9375 v 2.1166667 h 7.9375 c 1.022877,-1e-7 1.852083,0.8292059 1.852083,1.8520833 V 6.8791667 H 9.525 l 6.35,6.3500003 z m -3.96875,9.789583 h -7.9375 c -1.022877,0 -1.852083,-0.829206 -1.852083,-1.852083 V 8.9958333 H 6.35 L 0,2.6458333 V 11.90625 C 0,14.09813 1.77687,15.875 3.96875,15.875 h 7.9375 z"
-       sodipodi:nodetypes="ssccsscccscsscccsscc" />
+       id="path1"
+       style="fill:#999999;stroke-width:0.79375;stroke-linecap:round;stroke-linejoin:round;paint-order:stroke fill markers"
+       d="M 7.9375 0 C 3.5537486 0 0 3.5537486 0 7.9375 C 0 12.321252 3.5537486 15.875 7.9375 15.875 C 10.875146 15.875 13.437919 14.277794 14.810465 11.905733 L 12.978019 10.8474 C 11.971534 12.587101 10.091916 13.758333 7.9375 13.758333 C 4.722749 13.758333 2.1166668 11.152251 2.1166667 7.9375 C 2.1166666 4.7227489 4.7227489 2.1166666 7.9375 2.1166667 C 9.5448753 2.1166667 11.000166 2.7681106 12.053528 3.8214722 L 9.8087036 6.0662964 L 15.794902 6.0662964 L 15.794902 0.08009847 L 13.550077 2.3249227 C 12.113676 0.88852058 10.129376 0 7.9375 0 z " />
   </g>
   <metadata
      id="metadata824">

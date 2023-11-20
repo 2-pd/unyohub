@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width,initial-scale=1,interactive-widget=resizes-content">
 <script>
     const UNYOHUB_APP_NAME = "鉄道運用Hub";
-    const UNYOHUB_VERSION = "23.11-8"
+    const UNYOHUB_VERSION = "23.11-9"
     const UNYOHUB_INDEXEDDB_VERSION = 2310001;
     const UNYOHUB_LICENSE_TEXT = "このアプリケーションは無権利創作宣言に準拠して著作権放棄されています。";
     const UNYOHUB_LICENSE_URL = "https://www.2pd.jp/license/";
@@ -662,21 +662,8 @@ article, #blank_article {
     text-align: center;
 }
 
-#direction_radio_area h3 {
-    position: relative;
-    
-    max-width: 500px;
-    
+#direction_radio_area h2 {
     margin: 0 auto 5px auto;
-}
-
-h3 .previous_button {
-    position: absolute;
-    left: 0;
-    
-    height: 30px;
-    
-    background-size: 10px 20px;
 }
 
 #timetable_area {
@@ -1287,7 +1274,7 @@ footer div {
 }
 
 .reload_button {
-    background-image: url(data:image/webp;base64,UklGRl4BAABXRUJQVlA4TFIBAAAvO8AOEGehqG0jyRr+TIbdvu4tDUVtG0nW8Gcy7PZ1bxW1bSRZw5/JsNvXvWVU27YS3KUAMwp4KZp6AYZSwJ0TEJKI3S3NOY333vf/V///UZIliQQLHTaAFwDMAODFDzABDBhxAbz4cIEkElT4KKsK5Aj//0GS4v/fv/eke+8zxrjgSJJkVWlcGnd3h/sfkIj3/2dqxS6i/2jbto3MLejeG5Q3/7ju8L6sl1V4jthw9wazJ2cyd64fMHvxIfMarXMh87it4FUex2GGveJXu6WNypt4pQwtA16DpJMJ26S5CY/04O+u4U+S+kY4HcIoo4wyyiijjDLKKIc6OHd/GeUvlFBCCSWUUEIJJZRQQvSSaohBUkPR23ybJR1FWKY/6hqh7mS3EqA8zPBS/HZON9g2n9FVpw5cAecOmVZonwWZSpsOmHSZkKm6H4FJn9ZpPurFJg==);
+    background-image: url(data:image/webp;base64,UklGRtACAABXRUJQVlA4TMQCAAAvO8AOELVIsm3JkRr2P5DBVbzAM2STch1ZkVVH88CjL4/3RMABAIBg4mZbb7Zt23XZtm18rsu2bdu2++bMCajkfYiZkuR1rHIFg8/n+/M7aj3RTY6WeHJNOwWSRfkiX/yPfLZ5IjYICWTQn4CeD/GjVL5twHXGXGqcG7Kkjiyg13SpUZCoV2cbWKNFlxrlrrDVHZY5LrrUmB0gVZokZcuAqrrkf8wa1Mc1UaaX4XXJ/5gBz47a4fqQxbvlusg6CsH7N0TNigSG/7aJLYo0BgQ7auWPYZyWAdW8A3Tn35ctjcG5z6iVdqQqcUOazg5UqZFzM1jiSTYjLrLcWY2HJ5W+BaMpZ6DAjvjzxOpK8mWGtSm8tIDqbAMJbqj4qjqTrgRfjGitzhavBPQUcn7U6VEZPhSZQfV95D8DEt+Bd1TfR6V4jBZfItWHDOW8Bb+r66NyjvgKcOri4TByvdlNtBjOMqBLOknBc83R6wKLnwWrgVvOgpvAhWcBPdhEz4LP4EDouwM9eJvFbbAuMgtbCcxqFmfBzSxICn7Pwk0CuDvAOQB+XiR3nkOxEDAyC4sK+EN+DmtEvheJrjkUg4HMaBpuxuSPpkE34mILNoUdJI/ih4pVTEP5YqDHCXzitTZJgkEYgtGGfiSS+1meFnN8G9RjdElgrwvFNESQYAXiz1K6nJKvmOdNdFQ4RRKty/C8dRTtajSrarXyBnHpJlm3PKqR4mpeBthUg0SPy2a4kg+p1XsP+Nvqhe0W8Wej7voO1LYFMzcm1Oxrf2rsgGe7RRKvjF2ZzYbYJvpA6PcWeZA89exb3tRuK2Br/NF1W0/6/lTmMoCyaXjJUyXjBKsfz1hUPiSaennzKqa6Dro234NhVKq7adsA3zl8WPeG6hLPJAe8hzN3OuaXTZn3OqqmC9iMSKCaZa6g88kbTxwcUW+hpvYOVMk=);
 }
 
 .back_button {
@@ -2017,7 +2004,7 @@ button {
     <article>
         <select id="timetable_line_select" class="wide_select" onchange="timetable_change_lines(this.value);"></select>
         <div id="direction_radio_area">
-            <h3><button type="button" class="previous_button" onclick="timetable_change_lines(timetable_line_select_elm.value, true);"></button><span id="timetable_station_name"></span></h3>
+            <h2 id="timetable_station_name"></h2>
             <input type="radio" name="direction_radio" id="radio_inbound" value="inbound" checked="checked" onchange="timetable_select_station(timetable_selected_station);"><label for="radio_inbound" id="radio_inbound_label">上り方面</label>
             <input type="radio" name="direction_radio" id="radio_outbound" value="outbound" onchange="timetable_select_station(timetable_selected_station);"><label for="radio_outbound" id="radio_outbound_label">下り方面</label>
             <input type="checkbox" id="show_arriving_trains_check" onchange="change_show_arriving_trains(this.checked);"><label for="show_arriving_trains_check">当駅止まりを表示</label>
@@ -2062,6 +2049,7 @@ button {
             <button type="button" class="previous_button" onclick="position_change_time(-60);"></button><span id="position_hours" class="footer_value"></span><button type="button" class="next_button" onclick="position_change_time(60);"></button><button type="button" class="previous_button" onclick="position_change_time(-5);"></button><span id="position_minutes" class="footer_value"></span><button type="button" class="next_button" onclick="position_change_time(5);"></button>
         </div>
         <div>
+            <button id="timetable_back_button" class="back_button" onclick="timetable_change_lines(timetable_line_select_elm.value, true);"></button>
             <button type="button" class="previous_button" onclick="timetable_operation_previous();"></button><span id="timetable_operation_name" class="footer_value_wide"></span><button type="button" class="next_button" onclick="timetable_operation_next();"></button>
         </div>
         <div>
@@ -2395,7 +2383,7 @@ function ajax_post (end_point_url, query_str, callback_func) {
     var ajax_request = new XMLHttpRequest();
     ajax_request.onreadystatechange = function () {
         if (ajax_request.readyState === 4) {
-            if (ajax_request.responseText.substring(0,6) === "ERROR:") {
+            if (ajax_request.responseText.substring(0, 6) === "ERROR:") {
                 alert(ajax_request.responseText);
                 callback_func(false, null);
             } else if (ajax_request.status !== 200) {
@@ -2817,7 +2805,7 @@ function select_railroad (railroad_id) {
             } else {
                 switch_railroad(railroad_info_next);
             }
-        }
+        };
     });
 }
 
@@ -2874,7 +2862,7 @@ function switch_railroad (railroad_info_next, load_icon = true) {
                         }
                     });
                 }
-            }
+            };
         });
         
         schedule_change_mode();
@@ -2968,7 +2956,7 @@ function load_operation_table (operation_table, update_operations, update_line_o
                 }
                 
                 update_operation_table(operation_table, last_modified_timestamp);
-            }
+            };
         }
         
         if (update_line_operations) {
@@ -2984,7 +2972,7 @@ function load_operation_table (operation_table, update_operations, update_line_o
                 }
                 
                 update_operation_table(operation_table, last_modified_timestamp);
-            }
+            };
         }
         
         if (update_operation_groups) {
@@ -3000,7 +2988,7 @@ function load_operation_table (operation_table, update_operations, update_line_o
                 }
                 
                 update_operation_table(operation_table, last_modified_timestamp);
-            }
+            };
         }
     });
 }
@@ -3178,7 +3166,7 @@ function update_timetable (operation_table) {
                     alert("オフラインのためダウンロードが完了していない時刻表データは利用できません");
                 }
             }
-        }
+        };
     });
 }
 
@@ -3241,34 +3229,61 @@ function update_operation_data (operation_date = null) {
             } else if (operation_data === null) {
                 alert("オフラインのため運用情報が取得できません");
             }
-        }
+        };
     });
     
     operation_data_last_updated = Date.now() / 1000;
 }
 
 
+var background_updater_last_execution = null;
 var position_last_updated = null;
 
-setInterval(function () {
+function background_updater () {
     var date_now = new Date();
-    var hh_and_mm = ("0" + date_now.getHours()).slice(-2) + ":" + ("0" + date_now.getMinutes()).slice(-2);
+    var now_ts = date_now.getTime() / 1000;
     
-    if (mode_val === 0 && position_last_updated !== null && position_last_updated < hh_and_mm) {
-        position_change_time();
+    if (now_ts < background_updater_last_execution + 10) {
+        var hh_and_mm = ("0" + date_now.getHours()).slice(-2) + ":" + ("0" + date_now.getMinutes()).slice(-2);
+        
+        if (mode_val === 0 && position_last_updated !== null && position_last_updated < hh_and_mm) {
+            position_change_time();
+        }
+        
+        if (operation_data_last_updated !== null && operation_data_last_updated < now_ts - config["refresh_interval"] * 60) {
+            update_operation_data();
+        }
     }
     
-    if (operation_data_last_updated !== null && operation_data_last_updated < date_now / 1000 - config["refresh_interval"] * 60) {
-        update_operation_data();
+    background_updater_last_execution = now_ts;
+}
+
+var background_updater_interval_id = null;
+
+function background_updater_start_stop () {
+    if (background_updater_interval_id !== null) {
+        clearInterval(background_updater_interval_id);
+        background_updater_interval_id = null;
     }
-}, 5000);
+    
+    if (document.visibilityState === "visible") {
+        background_updater_last_execution = Date.now() / 1000;
+        background_updater_interval_id = setInterval(background_updater, 2000);
+    }
+}
+
+document.onvisibilitychange = background_updater_start_stop;
+background_updater_start_stop();
 
 
 var position_line_select_elm = document.getElementById("position_line_select");
 var position_area_elm = document.getElementById("position_area");
+var position_reload_button_elm = document.getElementById("position_reload_button");
 
 function position_mode () {
     change_mode(0);
+    
+    position_reload_button_elm.style.display = "none";
     
     var operation_table = get_days_operation(Date.now() / 1000);
     
@@ -3684,14 +3699,13 @@ function get_operations (line_id, train_number, first_departure_time, train_dire
 var position_time;
 
 function position_change_time (position_time_additions = null, draw_train_position_now = true) {
-    position_reload_button_elm = document.getElementById("position_reload_button");
-    
     if (position_time_additions === null) {
         position_time = Date.now() / 60000;
     } else if (position_time_additions != 0) {
         position_time += position_time_additions;
         
         position_last_updated = null;
+        position_reload_button_elm.style.display = "block";
     }
     
     var position_date_time = new Date(position_time * 60000);
@@ -3722,6 +3736,8 @@ function position_reload () {
     update_operation_data();
     
     position_change_time(null);
+    
+    position_reload_button_elm.style.display = "none";
 }
 
 function get_hh_mm () {
@@ -3991,6 +4007,7 @@ function position_click_station (station_name) {
 
 var timetable_line_select_elm = document.getElementById("timetable_line_select");
 var timetable_area_elm = document.getElementById("timetable_area");
+var timetable_back_button_elm = document.getElementById("timetable_back_button");
 
 function update_timetable_line_select (lines) {
     timetable_line_select_elm.innerHTML = "";
@@ -4053,6 +4070,7 @@ function timetable_change_lines(line_id, force_station_select_mode = false) {
         buf += "</div>";
         
         timetable_area_elm.innerHTML = buf;
+        timetable_back_button_elm.style.display = "none";
         direction_radio_area_elm.style.display = "none";
         timetable_selected_station = null;
     } else {
@@ -4077,6 +4095,7 @@ function timetable_select_station (station_name, cnt = 0) {
         return;
     }
     
+    timetable_back_button_elm.style.display = "block";
     direction_radio_area_elm.style.display = "block";
     
     var line_id = timetable_line_select_elm.value;
@@ -4627,7 +4646,7 @@ function formation_table_mode (formation_name = null) {
             } else {
                 draw_formation_table(formation_name);
             }
-        }
+        };
     });
     
     operation_data_date = Date.now() / 1000;
