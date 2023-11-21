@@ -3,5 +3,15 @@
         "maximum_length" : 500,
         "records_per_user" : 1,
         "allow_nonunique_value" : true
+    },
+    "last_posted_date" : {
+        "maximum_length" : 10,
+        "records_per_user" : 1,
+        "allow_nonunique_value" : true
+    },
+    "days_posted" : {
+        "maximum_length" : 6,
+        "records_per_user" : 1,
+        "allow_nonunique_value" : true
     }
 }

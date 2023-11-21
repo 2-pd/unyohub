@@ -1,6 +1,6 @@
 --------------------------------------------------------------------------------
 
-  ユーザー投稿型鉄道運用データベース「運用観察Hub」設計案    ページ(2)
+  ユーザー投稿型鉄道運用データベース「鉄道運用Hub」設計案    ページ(2)
 
 --------------------------------------------------------------------------------
 
@@ -65,3 +65,10 @@ _/_/_/_/ データベース _/_/_/_/
   PRIMARY KEY(`operation_date`,`operation_number`)
   INDEX `unyohub_idx_c1`(`formations`,`operation_date`)
   INDEX `unyohub_idx_c2`(`operation_date`,`updated_datetime`)
+
+
+_/_/_/_/ Wakarana カスタムフィールド _/_/_/_/
+
+website_url ・・・ユーザーのwebサイトのURL
+last_posted_date ・・・ユーザーが最後に運用情報を投稿した日付(YYYY-MM-DD形式)
+days_posted ・・・ユーザーの通算投稿日数

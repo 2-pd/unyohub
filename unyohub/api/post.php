@@ -117,7 +117,14 @@ foreach ($formations_list as $formation) {
 }
 
 
-$posted_datetime = date("Y-m-d H:i:s");
+$ts_now = time();
+$posted_date = date("Y-m-d", $ts_now);
+$posted_datetime = $posted_date." ".date("H:i:s", $ts_now);
+
+if (is_object($user) && $user->get_value("last_posted_date") !== $posted_date) {
+    $user->set_value("last_posted_date", $posted_date);
+    $user->set_value("days_posted", intval($user->get_value("days_posted")) + 1);
+}
 
 $operation_date = date("Y-m-d", $ts);
 
