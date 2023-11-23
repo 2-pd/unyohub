@@ -1,6 +1,6 @@
 --------------------------------------------------------------------------------
 
-  ユーザー投稿型鉄道運用データベース「運用観察Hub」設計案    ページ(3)
+  ユーザー投稿型鉄道運用データベース「鉄道運用Hub」設計案    ページ(3)
 
 --------------------------------------------------------------------------------
 
@@ -73,6 +73,7 @@
 ### 引数
 **$_POST["user_id"]** : ユーザーID  
 **$_POST["password"]** : パスワード
+**$_POST["totp_pin"]** : TOTPのワンタイムコード(2要素認証未設定ユーザーでは空文字列)
 
 ### 応答
 **ログインに成功した場合** :  
@@ -101,6 +102,33 @@
   
 **ログアウトに失敗した場合** :  
 文字列「ERROR: 」とそれに続くエラー内容文
+
+
+## announcements.php
+お知らせまたはその更新日時を取得する
+
+### 引数
+**$_POST["last_modified_timestamp"]** : タイムスタンプ(UTC)
+
+### 応答
+**タイムスタンプが省略されるか、タイムスタンプより新しい重要なお知らせがあった場合** :  
+[  
+    { 各お知らせの情報  
+        "title" : お知らせのタイトル,  
+        "is_important" : 重要なお知らせか否か(BOOL値),  
+        "content" : お知らせの本文,  
+        "user_id" : お知らせを最後に編集したモデレーターのユーザーID,  
+        "user_name" : お知らせを最後に編集したモデレーターのハンドルネーム,  
+        "last_modified_timestamp" : お知らせが更新されたタイムスタンプ(UTC、秒単位)  
+    }...  
+]  
+▲クライアント端末からAccept-Encodingヘッダーが送信されていた場合、このデータは自動的にgzip圧縮される  
+  
+**タイムスタンプが指定され、announcements.jsonの変更日時がタイムスタンプより新しく、かつ、タイムスタンプより新しい重要なお知らせがなかった場合** :  
+文字列「NEW_ANNOUNCEMENTS_EXIST」  
+  
+**タイムスタンプが指定され、announcements.jsonの変更日時がタイムスタンプ以前だった場合** :  
+文字列「NEW_ANNOUNCEMENTS_NOT_EXIST」
 
 
 ## railroads.php
@@ -183,6 +211,53 @@ formations.jsonの内容を返す
 文字列「ERROR: 」とそれに続くエラー内容文
 
 
+## formation_details.php
+指定した編成の詳細情報を取得する
+
+### 引数
+**$_POST["railroad_id"]** : 路線系統識別名  
+**$_POST["formation_name"]** : 編成名
+
+### 応答
+**正常時** :  
+{  
+    "cars" : [ 各車両の情報  
+        {  
+            "car_number" : 車番,  
+            "manufacturer" : 製造メーカー名,  
+            "constructed" : 製造年月日,  
+            "description" : 補足説明文  
+        }...  
+    ],  
+    "series_name" : 形式名,  
+    "description" : 補足説明文,  
+    "inspection_information" : 検査情報,  
+    "operation_today" : [ 当日の運用情報(なければNULL)  
+        {  
+            "operation_number" : 運用番号,  
+            "formations" : 組成情報  
+        }...  
+    ],  
+    "operation_tomorrow" : [ 翌日の運用情報(なければNULL)  
+        {  
+            "operation_number" : 運用番号,  
+            "formations" : 組成情報  
+        }...  
+    ],  
+    "last_seen_date" : 最終目撃日(YYYY-MM-DD形式、当日の運用情報がない場合のみ),  
+    "operation_last_day" : [ 最終目撃日の運用情報(当日の運用情報がない場合のみ),  
+        {  
+            "operation_number" : 運用番号,  
+            "formations" : 組成情報  
+        }...  
+    ]  
+}  
+▲クライアント端末からAccept-Encodingヘッダーが送信されていた場合、このデータは自動的にgzip圧縮される  
+  
+**エラーの場合** :  
+文字列「ERROR: 」とそれに続くエラー内容文
+
+
 ## operation_table.php
 指定した路線系統・ダイヤのJSON化された運用表を取得する
 
@@ -236,7 +311,9 @@ JSON化された時刻表の内容を返す
 {  
     "タイムスタンプの時刻より後に情報投稿のあった運用番号" : { 当該の運用番号に投稿された情報が全て取り消された場合、この連想配列ではなくnullが格納される  
         "formations" : 編成名(最も新しい投稿の情報を前位側・奇数向きから順に各編成を「+」で区切った文字列),  
-        "variants_count" : 投稿情報のバリエーション数  
+        "variants_count" : 投稿情報のバリエーション数,  
+        "comment_exists" : コメントの有無,  
+        "from_beginner" : ビギナーの投稿か否か  
     }...  
 }  
 ▲クライアント端末からAccept-Encodingヘッダーが送信されていた場合、このデータは自動的にgzip圧縮される  
@@ -339,7 +416,9 @@ JSON化された時刻表の内容を返す
 {  
   "取り消し操作対象の運用番号" : { 他のユーザーからの情報がない場合、この連想配列ではなくnullが格納される  
         "formations" : 他のユーザーの情報に基づく編成名(最も新しい投稿の情報を前位側・奇数向きから順に各編成を「+」で区切った文字列),  
-        "variants_count" : 投稿情報のバリエーション数  
+        "variants_count" : 投稿情報のバリエーション数,  
+        "comment_exists" : コメントの有無,  
+        "from_beginner" : ビギナーの投稿か否か  
     }  
 }  
 
@@ -362,7 +441,9 @@ JSON化された時刻表の内容を返す
 {  
   "投稿された運用番号" : {  
         "formations" : 編成名(最も新しい投稿の情報を前位側・奇数向きから順に配列で),  
-        "variants_count" : 投稿情報のバリエーション数  
+        "variants_count" : 投稿情報のバリエーション数,
+        "comment_exists" : コメントの有無,  
+        "from_beginner" : ビギナーの投稿か否か    
     }...  
 }  
   
@@ -413,19 +494,32 @@ JSON化された時刻表の内容を返す
 文字列「ERROR: 」とそれに続くエラー内容文
 
 
-## change_user_role.php
-ユーザーのロールを変更する(管理者専用)
+## create_totp_key.php
+暗号学的に安全なTOTP生成鍵を生成する
 
 ### 引数
-**$_COOKIE["unyohub_login_token"]** : Wakaranaのログイントークン(管理者ユーザーのもの)  
+**$_COOKIE["unyohub_login_token"]** : Wakaranaのログイントークン  
+
+### 応答
+**生成に成功した場合** :  
+TOTP生成鍵として使用可能な乱数値を返す  
   
-**$_POST["user_id"]** : ユーザーID  
-**$_POST["role"]** : 設定するロール(「ADMIN」、「MODERATOR」、「BASE」のいずれか)  
-**$_POST["one_time_token"]** : ワンタイムトークン(ログインしている場合)
+**エラーの場合** :  
+文字列「ERROR: 」とそれに続くエラー内容文
+
+
+## enable_2_factor_auth.php
+ユーザーの2要素認証を有効化する
+
+### 引数
+**$_COOKIE["unyohub_login_token"]** : Wakaranaのログイントークン  
+  
+**$_POST["key"]** : TOTP生成鍵  
+**$_POST["pin"]** : 生成鍵に対応する現在時刻のPIN
 
 ### 応答
 **変更に成功した場合** :  
-文字列「SUCCEEDED」
+文字列「SUCCEEDED」  
   
 **エラーの場合** :  
 文字列「ERROR: 」とそれに続くエラー内容文

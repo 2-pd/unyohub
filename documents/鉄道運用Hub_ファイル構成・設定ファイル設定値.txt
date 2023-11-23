@@ -1,12 +1,12 @@
 --------------------------------------------------------------------------------
 
-  ユーザー投稿型鉄道運用データベース「運用観察Hub」設計案    ページ(1)
+  ユーザー投稿型鉄道運用データベース「鉄道運用Hub」設計案    ページ(1)
 
 --------------------------------------------------------------------------------
 
 _/_/_/_/ 構成概要 _/_/_/_/
 
-・サーバサイドをPHP、クライアントサイドを単一HTMLファイルに記述したJavascriptとするシングルページアプリケーション
+・サーバサイドをPHP、クライアントサイドを単一HTMLファイルに記述したJavascriptとするシングルページアプリケーション(管理画面を除く)
 ・データベースエンジンにはSQLiteを採用し、路線系統ごとに独立したデータベースファイルを作成する
 ・Wakaranaによるユーザー登録機能を実装し、ユーザー投稿データはユーザーIDと紐付けて管理する
 ・未登録ユーザーによる投稿を認めることも可能とするが、未登録ユーザーの投稿時にはZizai CAPTCHAによる画像認証を実施する
@@ -25,6 +25,7 @@ _/_/_/_/ ファイル構成 _/_/_/_/
    └ zizai_captcha.db ・・・Zizai CAPTCHAデータベース
 └ config/
    └ unyohub.json ・・・運用観察Hub基本設定ファイル
+   └ announcements.json ・・・お知らせデータ
    └ wakarana_config.ini ・・・Wakarana設定ファイル
    └ wakarana_custom_fields.json ・・・Wakaranaカスタムフィールド設定ファイル
    └ zizai_captcha_config.json ・・・Zizai CAPTCHA設定ファイル
@@ -41,6 +42,15 @@ _/_/_/_/ ファイル構成 _/_/_/_/
 └ api/
    └ ****.php ・・・クライアント端末と情報をやり取りするエンドポイント(詳細は別記)
    └ zizai_captcha/ ・・・Zizai CAPTCHAのエンドポイント
+└ admin/ ・・・管理画面
+   └ admin_common.php ・・・管理画面共通関数等
+   └ index.php ・・・管理画面トップページ
+   └ user_list.php ・・・ユーザー一覧、ユーザー検索
+   └ user_data.php ・・・ユーザー情報の閲覧、編集
+   └ announcements.php ・・・お知らせの編集
+   └ formation_list.php ・・・編成表の編集
+   └ formation.php ・・・編成情報の編集
+   └ admin_styles.css ・・・管理画面用スタイルシート
 └ README.html ・・・ユーザーマニュアル
 └ .htaccess
 
@@ -57,6 +67,7 @@ _/_/_/_/ 設定ファイル設定値 _/_/_/_/
   UNYOHUB_INDEXEDDB_VERSION  IndexedDBのデータベースバージョン数値
   UNYOHUB_LICENSE_TEXT  ライセンス情報文
   UNYOHUB_LICENSE_URL  ライセンスのURL
+  UNYOHUB_REPOSITORY_URL  ソースコードリポジトリのURL
 
 
 ███ unyohub.json ███
@@ -66,6 +77,20 @@ _/_/_/_/ 設定ファイル設定値 _/_/_/_/
     "allow_sign_up" : 新規ユーザーの登録を認めるか(BOOL値),
     "allow_guest_user" : ログインしていないユーザーの投稿を認めるか(BOOL値)
 }
+
+
+███ announcements.json ███
+
+※このファイルの更新日時は最も新しいお知らせが更新されたタイムスタンプと同一の値をセットする
+[
+    { 各お知らせの情報
+        "title" : お知らせのタイトル,
+        "is_important" : 重要なお知らせか否か(BOOL値),
+        "content" : お知らせの本文,
+        "user_id" : お知らせを最後に編集したモデレーターのユーザーID,
+        "last_modified_timestamp" : お知らせが更新されたタイムスタンプ(UTC、秒単位)
+    }...
+]
 
 
 ███ railroad_info.json ███
@@ -87,12 +112,11 @@ _/_/_/_/ 設定ファイル設定値 _/_/_/_/
                     "connecting_lines" : 直通路線の路線識別名を配列で列挙
                 }...
             ]
-            }
         }...
     },
     "lines_order" : 路線識別名を表示させたい順に配列で,
-    "operations" : {運用パターンの一覧
-        "ダイヤ識別名" : {この識別名は運用表JSONデータのファイル名に使用
+    "operations" : { 運用パターンの一覧
+        "ダイヤ識別名" : { この識別名は運用表JSONデータのファイル名に使用
             "operation_name" : 運用名,
             "main_color" : 時刻表の背景色
         }
@@ -131,14 +155,10 @@ _/_/_/_/ 設定ファイル設定値 _/_/_/_/
 
 ███ train_icons.json ███
 
-※このファイルはスクリプトによりアイコン画像の埋め込み処理を実施してからサーバにアップロードする
-※埋め込み処理前のファイルは区別のためにファイル名を「train_icons_org.json」として取り扱う
-[
-    {
-        "pattern" : 編成名の正規表現パターン,
-        "icon" : アイコン画像のファイル名(スクリプトにより、ファイルバイナリのBASE64文字列に置き換えられる)
-    }...
-]
+※このファイルは変換スクリプトにより自動生成されるものである
+{
+    "アイコンID" : アイコン画像のバイナリのBASE64文字列...
+}
 
 
 ███ formations.json ███
@@ -150,20 +170,20 @@ _/_/_/_/ 設定ファイル設定値 _/_/_/_/
             "cars" : [ 各車両の情報
                 {
                     "car_number" : 車番,
-                    "manufacturer" : メーカー名,
-                    "constructed" : 製造年月日
+                    "abbreviated_car_number" : 車番の省略表記
                 }...
             ],
             "series_name" : 形式名,
-            "description" : 補足説明文
+            "icon_id" : アイコンのID
         }...
     },
-    "series" : [
-        {
-            "series_name" : 形式名,
-            "formation_names" : 編成名を配列で
+    "series" : {
+        "形式名" : {
+            "formation_names" : 編成名を配列で,
+            "icon_id" : アイコンのID
         }...
-    ]
+    },
+    "series_list" : 形式名を配列で
 }
 
 
