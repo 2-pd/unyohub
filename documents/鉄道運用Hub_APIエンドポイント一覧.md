@@ -341,6 +341,7 @@ JSON化された時刻表の内容を返す
             "user_id" : 情報提供者のユーザーID(アクセス者がモデレーターではない場合、この値はログインしていないユーザーならnull),  
             "user_name" : 情報提供者のハンドルネーム,  
             "is_moderator" : ユーザーがモデレーターか否か,  
+            "is_beginner" : ユーザーがビギナーか否か,  
             "website_url" : ユーザーのwebサイトのURL,  
             "formations" : 編成名(前位側・奇数向きから順に各編成を「+」で区切った文字列),  
             "posted_datetime" : YYYY-MM-DD HH:MM:SS形式の投稿日時,  
