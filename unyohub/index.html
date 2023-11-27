@@ -2717,6 +2717,7 @@ function update_user_data (user_data_next = null) {
         menu_not_logged_in_elm.style.display = "none";
         
         var menu_user_name_elm = document.getElementById("menu_user_name");
+        menu_user_name_elm.className = "";
         
         if (user_data["role"] === "ADMIN" || user_data["role"] === "MODERATOR") {
             menu_admin_elm.style.display = "block";

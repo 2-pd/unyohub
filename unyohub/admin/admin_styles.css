@@ -1,0 +1,48 @@
+@charset "utf-8";
+
+* {
+    font-family: "Noto Sans CJK JP", "Meiryo", "Hiragino Kaku Gothic ProN", sans-serif;
+    
+    outline: 0 !important;
+    
+    cursor: default;
+}
+
+*::-webkit-scrollbar {
+    display: none;
+}
+
+html, body {
+    height: 100%;
+    margin: 0;
+    
+    color: #333333;
+}
+
+*[onclick], *[onclick] *, a, a *, select, label {
+    cursor: pointer;
+}
+
+*[onclick]:hover, *[onclick]:hover *, a:hover, a:hover *, select:hover, label:hover {
+    text-decoration: none !important;
+}
+
+*[disabled] {
+    cursor: no-drop !important;
+}
+
+input, textarea {
+    cursor: text;
+}
+
+header {
+    height: 40px;
+    
+    background-color: #f7f7f7;
+    
+    line-height: 40px;
+    font-size: 18px;
+    text-indent: 10px;
+    
+    box-shadow: 0 0 3px 3px rgba(0,0,0,0.2);
+}
