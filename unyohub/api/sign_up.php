@@ -32,8 +32,9 @@ if (is_object($user)) {
     $data["user_name"] = $user->get_name();
     $data["created"] = $user->get_created();
     $data["role"] = "BASE";
-    $data["email_address"] = null;
-    $data["website_url"] = null;
+    $data["is_beginner"] = TRUE;
+    $data["email_address"] = NULL;
+    $data["website_url"] = NULL;
     
     print json_encode($data, JSON_UNESCAPED_UNICODE);
 } else {

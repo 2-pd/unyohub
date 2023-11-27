@@ -243,6 +243,24 @@ header {
     background-color: #333333;
 }
 
+.beginner:before {
+    content: "";
+    
+    display: inline-block;
+    
+    width: 12px;
+    height: 1lh;
+    
+    margin-right: 3px;
+    
+    background-image: url(data:image/webp;base64,UklGRtYAAABXRUJQVlA4TMkAAAAvF8AIEN9AkG3T+avd6RoE2TY90/3ZZiBtm2z+DdzsxzCSJCXvj5N/BMREEO7wMgGxH0gAEwAAGQAy8MuXko0ICBRYWGy1pqYQENBTcMORJLltgwUk55zD/z9qYhc4+hjRf4NJ26QJ7IBd8Zqni5X7Lte3BeCHiqsDa2AHf2vugTQbFhFJGZMVCUhKwaYkwl8NbA93VPCJJvZnscK+x/rp2Hfwr90D25L0ZMoiqU4rK6Q+pnYccnqPwH4QD6t2DL4bpjo7rTdnYwwA);
+    background-repeat: no-repeat;
+    background-size: 12px 18px;
+    background-position: center;
+    
+    vertical-align: top;
+}
+
 #splash_screen {
     position: fixed;
     top: 0;
@@ -1383,14 +1401,16 @@ a {
     display: inline-block;
     
     width: 18px;
-    height: 18px;
+    height: 1lh;
     
     margin-left: 2px;
     
     background-image: url(data:image/webp;base64,UklGRqYAAABXRUJQVlA4TJkAAAAvI8AIEDdAkG2z+hMc9h4Ekjazf4KHPRBI2sz+CR72QCRAAs1HVv+fMiq2HfsvilTCUSNJjlR77n0ptQbHQfAAhkEffxhjas4AiOj/BEiila70ZxQLrjOb+rHguiA7bDPFS7ziJV5pXlMJUBUzpTnqOpEAVVKMSnOSlIMLwFvtQAEcjStUGQqO1rXK0q5zZqb//+xvsb/E/RoA);
+    background-repeat: no-repeat;
     background-size: 18px;
+    background-position: center;
     
-    vertical-align: middle;
+    vertical-align: top;
 }
 
 .value_and_button b {
@@ -2030,6 +2050,9 @@ button {
             <b id="menu_user_name"></b>
             <button type="button" onclick="edit_user_data();">ユーザー情報の編集</button>
             <button type="button" onclick="user_logout();">ログアウト</button>
+        </div>
+        <div id="menu_admin">
+            <button type="button" onclick="window.open('admin/index.php');">管理画面</button>
         </div>
         <div id="menu_not_logged_in">
             <button type="button" onclick="open_square_popup('login_popup');">ログイン</button>
@@ -2683,16 +2706,35 @@ var user_data = null;
 function update_user_data (user_data_next = null) {
     user_data = user_data_next;
     
+    var menu_admin_elm = document.getElementById("menu_admin");
+    var menu_logged_in_elm = document.getElementById("menu_logged_in");
+    var menu_not_logged_in_elm = document.getElementById("menu_not_logged_in");
+    
+    menu_admin_elm.style.display = "none";
+    
     if (user_data !== null) {
-        document.getElementById("menu_logged_in").style.display = "block";
-        document.getElementById("menu_not_logged_in").style.display = "none";
+        menu_logged_in_elm.style.display = "block";
+        menu_not_logged_in_elm.style.display = "none";
         
-        document.getElementById("menu_user_name").innerText = user_data["user_name"] + " さん";
+        var menu_user_name_elm = document.getElementById("menu_user_name");
+        
+        if (user_data["role"] === "ADMIN" || user_data["role"] === "MODERATOR") {
+            menu_admin_elm.style.display = "block";
+            var honorific = "(管)";
+        } else {
+            var honorific = "さん";
+            
+            if (user_data["is_beginner"]) {
+                menu_user_name_elm.className = "beginner";
+            }
+        }
+        
+        menu_user_name_elm.innerText = user_data["user_name"] + " " + honorific;
         
         splash_screen_login_status_elm.innerHTML = "ようこそ <b>" + escape_html(user_data["user_name"]) + "</b> さん<br><a href='javascript:void(0);' onclick='user_logout();'>ログアウト</a>";
     } else {
-        document.getElementById("menu_logged_in").style.display = "none";
-        document.getElementById("menu_not_logged_in").style.display = "block";
+        menu_logged_in_elm.style.display = "none";
+        menu_not_logged_in_elm.style.display = "block";
         
         splash_screen_login_status_elm.innerHTML = "<b>ログインしていません</b><br><a href='javascript:void(0);' onclick='open_square_popup(\"login_popup\");'>ログイン</a>　<a href='javascript:void(0);' onclick='open_popup(\"sign_up_popup\");'>新規登録</a>";
     }
@@ -3881,18 +3923,31 @@ function get_operation_data_detail (operation_date, operation_numbers_str, area_
                 for (var cnt_2 = 0; cnt_2 < data[operation_numbers[cnt]].length; cnt_2++) {
                     if (data[operation_numbers[cnt]][cnt_2]["user_name"] !== null) {
                         var user_name_html = escape_html(data[operation_numbers[cnt]][cnt_2]["user_name"]);
+                        var class_html = "";
                         
                         if (!data[operation_numbers[cnt]][cnt_2]["is_moderator"]) {
                             user_name_html += " 様";
+                            
+                            if (data[operation_numbers[cnt]][cnt_2]["is_beginner"]) {
+                                class_html = "beginner";
+                            }
                         }
                         
                         if (data[operation_numbers[cnt]][cnt_2]["website_url"] !== null) {
-                            user_name_html = "<a href='" + add_slashes(data[operation_numbers[cnt]][cnt_2]["website_url"]) + "' target='_blank' class='external_link'>" + escape_html(user_name_html) + "</a>";
+                            if (class_html !== "") {
+                                class_html = " " + class_html;
+                            }
+                            
+                            user_name_html = "<a href='" + add_slashes(data[operation_numbers[cnt]][cnt_2]["website_url"]) + "' target='_blank' class='external_link" + class_html + "'>" + escape_html(user_name_html) + "</a>";
                         } else {
-                            user_name_html = "<span>" + user_name_html + "</span>";
+                            if (class_html !== "") {
+                                class_html = " class='" + class_html + "'";
+                            }
+                            
+                            user_name_html = "<span" + class_html + ">" + user_name_html + "</span>";
                         }
                     } else {
-                        var user_name_html = "<span>(ゲスト様)</span>";
+                        var user_name_html = "<span class='beginner'>(ゲスト様)</span>";
                     }
                     
                     if (user_data !== null && (data[operation_numbers[cnt]][cnt_2]["user_id"] === user_data["user_id"] || user_data["role"] === "MODERATOR" || user_data["role"] === "ADMIN")) {

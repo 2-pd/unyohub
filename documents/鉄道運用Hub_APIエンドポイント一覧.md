@@ -18,6 +18,7 @@
     "user_id" : ユーザーID,  
     "user_name" : ハンドルネーム,  
     "role" : ロール(「ADMIN」、「MODERATOR」、「BASE」のいずれか),  
+    "is_beginner" : ビギナーユーザーか否か,  
     "created" : YYYY-MM-DD HH:MM:SS形式のユーザー登録日時,  
     "email_address" : メールアドレス,  
     "website_url" : ユーザーのwebサイトのURL  
@@ -58,6 +59,7 @@
     "user_id" : ユーザーID,  
     "user_name" : ハンドルネーム,  
     "role" : ロール(「ADMIN」、「MODERATOR」、「BASE」のいずれか),  
+    "is_beginner" : ビギナーユーザーか否か,  
     "created" : YYYY-MM-DD HH:MM:SS形式のユーザー登録日時,  
     "email_address" : メールアドレス,  
     "website_url" : ユーザーのwebサイトのURL  
@@ -81,6 +83,7 @@
     "user_id" : ユーザーID,  
     "user_name" : ハンドルネーム,  
     "role" : ロール(「ADMIN」、「MODERATOR」、「BASE」のいずれか),  
+    "is_beginner" : ビギナーユーザーか否か,  
     "created" : YYYY-MM-DD HH:MM:SS形式のユーザー登録日時,  
     "email_address" : メールアドレス,  
     "website_url" : ユーザーのwebサイトのURL  
@@ -469,6 +472,7 @@ JSON化された時刻表の内容を返す
     "user_id" : ユーザーID,  
     "user_name" : ハンドルネーム,  
     "role" : ロール(「ADMIN」、「MODERATOR」、「BASE」のいずれか),  
+    "is_beginner" : ビギナーユーザーか否か,  
     "created" : YYYY-MM-DD HH:MM:SS形式のユーザー登録日時,  
     "email_address" : メールアドレス,  
     "website_url" : ユーザーのwebサイトのURL  

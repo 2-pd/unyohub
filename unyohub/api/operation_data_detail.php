@@ -30,6 +30,7 @@ for ($cnt = 0; $cnt < count($operation_numbers); $cnt++) {
             "user_id" => NULL,
             "user_name" => NULL,
             "is_moderator" => FALSE,
+            "is_beginner" => TRUE,
             "website_url" => NULL,
             "formations" => $operation["formations"],
             "posted_datetime" => $operation["posted_datetime"],
@@ -42,7 +43,14 @@ for ($cnt = 0; $cnt < count($operation_numbers); $cnt++) {
             if (is_object($user)) {
                 $data[$cnt_2]["user_id"] = $user->get_id();
                 $data[$cnt_2]["user_name"] = $user->get_name();
-                $data[$cnt_2]["is_moderator"] = $user->check_permission("moderate");
+                
+                if ($user->check_permission("moderate")) {
+                    $data[$cnt_2]["is_moderator"] = TRUE;
+                    $data[$cnt_2]["is_beginner"] = FALSE;
+                } else {
+                    $data[$cnt_2]["is_beginner"] = (intval($user->get_value("days_posted")) < 20);
+                }
+                
                 $data[$cnt_2]["website_url"] = $user->get_value("website_url");
             }
         } elseif ($access_user_is_moderator) {

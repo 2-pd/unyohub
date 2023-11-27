@@ -19,6 +19,7 @@ if (is_object($user)) {
     } else {
         $data["role"] = "BASE";
     }
+    $data["is_beginner"] = (intval($user->get_value("days_posted")) < 20);
     $data["email_address"] = $user->get_primary_email_address();
     $data["website_url"] = $user->get_value("website_url");
     
