@@ -1,8 +1,8 @@
 # 鉄道運用Hub
 鉄道運用Hubはオープンソースのユーザー投稿型鉄道運用情報データベースアプリケーションです。  
-  
-ここでは、鉄道運用Hubを新規にサーバへインストールする方法を説明します。  
-  
+
+## サーバへのインストール
+
 1. Apacheまたはnginxのwebサーバを用意します。このwebサーバでは、SQLite3モジュールが有効化されたPHP(7以降)が実行できる必要があります。また、nginxを使用する場合は、confファイルで拡張子が「db」のファイルへのアクセスを拒否してください。
 2. unyohubフォルダ内のファイルを全てサーバにアップロードします。
 3. setup_scriptsフォルダからlibs_setup.phpをサーバにアップロードし、サーバ上で実行します。このとき、管理者ユーザーのユーザーIDと初期パスワードが表示されるため、これらをメモしてください。
@@ -15,6 +15,14 @@
 10. write_operations_to_db.pyを実行して、JSON化された運用表を全てrailroad.dbにインポートします。
 11. configフォルダ内のunyohub.jsonを編集し、unyohub.jsonと「data」フォルダ全体をサーバにアップロードすれば、アプリが実行可能となります。
 12. エンドユーザーから投稿された運用情報は全てrailroad.dbに蓄積されます。railroad.dbは定期的にバックアップしてください。
-  
+
+## カスタマイズ
+
+鉄道運用Hubのアプリ名やアイコンは以下のファイルを編集することで変更可能です。
+- index.html の定数値 UNYOHUB_APP_NAME
+- manifest.json の変数値 name 及び short_name
+- favicon.ico (同名のアイコンファイルに差し替え)
+- apple-touch-icon.webp、maskable_icon.webp、splash_screen_image.webp (それぞれ同名のWebPファイルに差し替え)
+
 なお、2pd.jpドメインのFossilリポジトリ(<https://fossil.2pd.jp/unyohub/>)以外は全てミラーです。リポジトリのクローンを行う場合はFossilリポジトリのご利用を推奨します。  
 また、このソフトウェアについてのご質問や不具合の報告は[Midari Create](https://create.2pd.jp/)へご連絡ください。
