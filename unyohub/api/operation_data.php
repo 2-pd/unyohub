@@ -15,7 +15,7 @@ while ($operation = $operations_r->fetchArray(SQLITE3_ASSOC)) {
         $updated_datetime = $operation["updated_datetime"];
     }
     
-    if (!empty($operation["formations"])) {
+    if (!is_null($operation["formations"])) {
         $operation_data[$operation["operation_number"]] = array("formations" => $operation["formations"], "variants_count" => $operation["variants_count"]);
     } else {
         $operation_data[$operation["operation_number"]] = NULL;
