@@ -480,7 +480,7 @@ article, #blank_article {
     
     height: 80px;
     
-    border-bottom: 2px dashed #eeeeee;
+    border-bottom: 2px dotted #eeeeee;
     
     vertical-align: top;
 }
@@ -513,17 +513,13 @@ article, #blank_article {
     margin: 0;
     padding-left: 5px;
     
-    background-color: #eeeeee;
-    
     border-radius: 0 13px 13px 0;
     
     line-height: 28px;
     font-size: 16px;
     text-decoration: underline;
-}
-
-.dark_mode .position_station h4 {
-    background-color: #202020;
+    
+    filter: drop-shadow(0 1px 2px rgba(0,0,0,0.25));
 }
 
 .train_icon {
@@ -1278,8 +1274,8 @@ footer div {
     text-align: center;
 }
 
-.previous_button, .next_button, .reload_button, .back_button {
-    width: 40px;
+.previous_button, .next_button, .reload_button, .back_button, .date_button, .time_button {
+    width: 35px;
     height: 45px;
     
     padding: 0;
@@ -1311,15 +1307,40 @@ footer div {
     width: 180px;
 }
 
-.reload_button, .back_button {
+.reload_button, .back_button, .date_button, .time_button {
     position: absolute;
-    
     bottom: 0;
     left: 0;
     
-    width: 50px;
+    width: 45px;
     
     background-size: 30px;
+}
+
+.date_button, .time_button {
+    left: unset !important;
+    right: 0;
+    
+    text-indent: -100px;
+}
+
+.date_button {
+    background-image: url(data:image/webp;base64,UklGRkwAAABXRUJQVlA4TD8AAAAvO8AOEA8wmZM5mfMf8FASAGhDg0UmCtXmsOBQ+//4iP5PQGy7j0EtSzxh0KtqWWFMGPQmqGWFMeFdUC9pXwQA);
+}
+
+.time_button {
+    background-image: url(data:image/webp;base64,UklGRjoDAABXRUJQVlA4TC0DAAAvO8AOEA+koJGkZgTgXwQKO08TwaBtI0kGsPxBLML3LgzaNpJkAMsfxCJ87+KwjSRFes2pn5lS+Pzj+QCYjqF3etSmbcCQqecPjPKc47IW5vc5puv/PQpRc6wAbIAoQwYDAGQw7AEAAHDEBsAGAICogBAgBCF+hvQfYEDCDQGhh8Mh5CDeyNEgB0EQxICAEAgEAg59SxCq10OFgJAgRJSBH9CgwQ0EcYNAOATC0SOPMmxwBaOIc1QDoprfZ+jHe5bGuECiJMmmbfW1bdu2fe/sd65t27bvt5/d6+w17wci+j8B8Dj4rj1ra2V+YmJ+ZaspPS4Yeocu8sclwPGCzk8d/Tn/xNN/5c/2YnfEYn6MnaFGsXz4YSF5RqzP9nkV0iIqT388+coVpXkjHryui/l0aXvC4NvY2NvgbUfZtJlsvAY0si6mTunVL4xDkkodE9n4DiAkT0xrouAvFP6P1Say/2PWIoZrsXAPALhfM5BToyQxrAmFVwirN5Beg5cZ5rTBMDCgzWGzQ+xYqJMCO+hxiNSTWOFtsIUzJs9u26we9lDL9lz6ha6FafheJfLgl8NioQFx7BDAkI/UQAeOiO8VSBP6pOXRcZNUIJ+UQgsOSCGCJ0iSnmQyERwn7tO/en6n3OS+nZRCD0rIeRZJ15ROTrbIrQVjtwSyvUQGNQ2S5QUSrmmYLE6QIE0/ZPL/WiDhmobJ4hJ51xRJlnfJraYbstNEOjyw2E6a20mZplxyHkemQ/SMTpHY0Qk3SdJzKe4ToyggpXpKSBFwQZwBLX8O6QI+fW5SraVS3MdfAZQTudcRL7QCAJ7ZWpiGkRUW7YcCIsca6oUWwTWGSZu9DKHOgxuymdNjq1t4A+jQLBHnzE6G8LlPhj4mUh3qXVidGCbC9NRAVuO8il8Ww0wY/+wbiFT9efFUKabFQWb43jAR5yD51+z3ssQR080wBPq6YSIiUyXpN5HhQUHhkTftuVNivvmKwL9KzGzuf8PLn1YdmUHwuG/W3tw1vP9sdCwdRsDq856NwgdYfzj0eeOriIbK19TCyUAmi7peoXf0vqN5e2VhYmJhZbu5434UHgMA);
+}
+
+.date_button::-webkit-calendar-picker-indicator, .time_button::-webkit-calendar-picker-indicator {
+    position: absolute;
+    top: 0;
+    right: 0;
+    
+    width: 100%;
+    height: 100%;
+    
+    opacity: 0;
 }
 
 .reload_button {
@@ -2075,7 +2096,7 @@ button {
             <div id="splash_screen_app_version"></div>
         </div>
     </div>
-    <div id="tab_area"><button type="button" onclick="position_mode();" style="background-image: url(data:image/webp;base64,UklGRi4CAABXRUJQVlA4TCICAAAvT8ATEEfDGpIkS9n7twoHeNxHcAL7aA0GbdsIcjf+HP95/K/z77CNJEVaUu8xPeaf0QXxzHjYswGl9Yt7CJDvUeyIb/SoS9xC0Q5Vp3DxWA20QniFi2VbMKzaAIgVi0dcBDWAGABggRAwQzAIwsPAwQDwMAAMYjjVoUNfAK2IUhhoGEOFPnUHLwpfUBAvdAONsiVFHGu06BQNqi5EKEUGhHAZEueMdkTa9dg/8YEDp3Pg8zqR7/Fda5xr+792CtiSJKlW9rrfi18X3J3B3d3dHf7/F3SnF16JM3si+j8B6k99v05otY4xngppdj2m5Knv3Mqk/baQta7kDWmYG7tRQivq25aU3E7Mp424GxqpFz1SNzP8aICnjTLqQ8tDOJ5K1zppccO25YNkqM2D510qKrnKNtGPm+yVkuKSD09EjpZI85JVhjaT9m5DAnP65m/NOCDGSzN2ObaNeJjmcC3YVc1m3ygxW3fDCYK8V7cRbN/hO8BVO0G3PLO9jBP44hPXBcHnuHrwurkG8Aa4BvHsfyOm8CxXP94yVy9eC9cq3hpXI94WVxlvg+sU74LrAK+KK4UX5QrhWS4ZQ5tU7I1oDt91J5Zr+eQUq6AAD7GOEZJYEYRbrBCCLCCNeiBakdoU5A7SDkYJ6Qwjg7SPkUKKYTwj3WH4Z3FmHQwJJ74k6XI1OiLul2GFTrKuNK6TKGN/nw460bFHK+a83iutb9YcMwE=); border-color: #dd55ff;">走行位置</button><button type="button" onclick="timetable_mode();" style="background-image: url(data:image/webp;base64,UklGRpADAABXRUJQVlA4TIQDAAAvT8ATEO/juJEkKYpq8N9S3rBnlxvz7ziSJEfJvj3Jj8A2/I/AAv4n2m1tu23DDxzDVi6dQ+0pPZ8nccuKNMQvBFIDX+EtbMKHl1/3d24YfkLubjz1heLIg2KDkkBXOHDw1UchRSE6EqXQPU8UKwU5OPkXi0gUUUQEGb/FkBeLcaiRT4vwT3+xL4zbD6fzeg8aPHRMr0Kc0JFABAVQaF0URgEvig4LLHTo0JGAg0TQBQEgMBoIaAkIgB1ANIqwkYqMUjYEVhCBFQEHqWApjgcQGmloPGnphi/DC0dvt34g0ba2442ef4KpbTeoObVt2+3//rXHSCZXn78f3wuI6P8EQHdPftnit9vNo6uro83b58W60l5YHIwv37ok7W6MlwxY4bTOXJPgcl9fwi/9YjrPMS1VfkPCTwCcrwJEtNkQMCk4ekiS8wCwJEZ0WB00Jv6TpB8BOF9liPYiZrT9J5WJzMxZUrmaYUDTERl9UaQrsEzG/wto6X4gC7+GNWTekpW/vyhr3yfl3r9YZMpTRn+7FH3ZJ+VeAQDEPGW036mk+zepn4LvpDraDisIPJDGiF+JBloPyC2Qzla/PB20LNVCtlGxRNu5fac5Yq9kH70LNREHFBEI/uThZuCjeuKBxj4I/ODiMOVXTlxQpY9zw8eWkzZIfFBu2jQnkwAGzjm5GADixAkVAMu8zAO3vNyhx+XF68gnXihaxk3FIjeJZ27Wdk3qj0pHpjy5jT2ip+STIUpjnshT8ono5pjGASSswaTAOIAEnVxRH4BMeyICfQAy6dKMiI4SuWNaBpxZTZM6JgSWAWeWTvaIHpNfSbMXURfxBOgx+ZXoZpeMdCdKokrjEy5JbzybYfLaIjeJMm4q8rmJ9rq8eN245eUeGOdlHijhpRAYOOfkfADACidTANDKyXCas8nHLycNDXzUwDfwg4uDgB+quCjDh8E9HrZSH2GEhwKIrnLwBuGMU/uOvogh5trmNkN22bYkpAPrdj2F5PB5x6btMFRm/7TnIANqu/7a8jcLqvs27PjzBerD6zY89UPnpznXNHc5BM3xI7MuGqE/Z1XJcl9fQsnbFxgZu5F7AuB8ldsqhKkDY99l5gFgSeagNgWDA5VbYo8AnK9iv2pCMNzJnTwXoERm5iwJnk4NO7AxVZC88/xEvfulwhQs7hiqmH3Z2Ty7ujrb3FmbrYh2Qzc=); border-color: #ffdd55;">時刻表</button><button type="button" onclick="operation_data_change_date(null);" style="background-image: url(data:image/webp;base64,UklGRvQDAABXRUJQVlA4TOgDAAAvT8ATEGeloG0bxvxJtzsgHESS7Cq97/9Pjo7wrwIXGdaN20aSRFfPRPv//2268UZz2o1tq3FjTPwlj5mTLvtvs4BsKJWpSL6NRDZpsydp70ATFTdqSx3srlqPH/wO+KdXPS/okTdgFMJYKnXfJhgvcCfEkZD0OKIH0CsB0AMQZAg6CFoAgg4KQXcfkAG0AC2oKNhRQFT8EdhQsaE+Dj8lRHEE0NNAgKB0A2FwEnAQDopKAVOJAkbIKHoclQBEYXAKCgA9YBAACgDE4YRqQEJGwhO9FAAApQ0UjkAgtAETL1Yg+3uLL5yQ0L9FrLyhjKGkN2aF+9xJHkghjgBzNTy0B3k+3Ab6zuwX+iyaPyq7mp7e7v+zbHT/7goJAgCWkdS1bduevcHatm3btm3bvl+O0uTMIKL/jtw2ciQae4odqzH9BA48z8Z1ZSW9A0mxUZPTNFRIGKWTODbJvbekrM74gYMalcOGTd9lIc8sY+eGQxUo3raTF4TQQlnNOU/PNYFC6AmwewCnWrokRBJ8owroLFOILPFmYAqECOMJZh0lDCYdJQ8wZvHo5L6Dfu0mAg269ZkDzkP76jxsNLMcfN1fEmnM7VLC4QnHzFy2yWA23Izk6oaRbVFiyDw/GyGJQ9dGcnXD1G0DjJDMe9u+KmiGxqFea4uzm3dgFBZMhwkJpoIozLzdnFta9Uw1FDTvvcFnXkhAEUJEeU2W6hy0fGZNeVRICDD5zPg5N+ia8XWm28b8PwkJITwoL4IBaUW323tXx0fE7OmFIy8MHxG6v7ftWJQWKFdK+YKb30IWURKAKUXphgNL8ywqGPRFiNGgBAXmasTxyOON3wZcGwmdJ+Dvdb/IVvzqwgkRHOLYwuozmaZq9gD+kKD5TK4JH9atxekxa+BYTHrxtqGaXCO1HATg615SUKF42LQOD+rLS4dZn8voGCWYDbPS8vqDwzOFTTup8JrjuY824p3qzTlIOWdOeAPSvowc767Rv/vM43zGrKZnPBL+PhcvTySmjnR1MrvynVqCy1kn6xpJpRNToi+vTv6iN48SBZONUgyYgzV0QjEHFp1MVOKOOeBYj88jkFEHfB0i8/ynbZ8khnri044jmSaDia6X7eC9jUPBMgzL6Q76mrLPhfXRoOs+p/xFwXOSxfVtf152pBhgKCJpXv/troWCw/ClPJbPPprLbzVR1hrNCwN2ZWVTSyi+YuxCU1mrTCq95/jvyyC3xoNTDkLwQSMNhrfPN1YSB0v3rA/PVJRTOTu0riodTAzZQFU3BFmZONEnf4wSlohxtODLq7u/8s2hJPkxvcckqO4x+QXBPSaMQL7HBEEA); border-color: #55ffdd;">運用データ</button><button type="button" onclick="formation_table_mode();" style="background-image: url(data:image/webp;base64,UklGRhYCAABXRUJQVlA4TAkCAAAvT8ATEGfCqG0kSa4ersP/t/cWjfl30EaSI3kTf4pHI/0Xg8i2lfDeF9xdMtGTNgQgg7u+gGKw4beLXXJ//7i41f9z0jTGwrF+A8glSQdVARl6oOIVIAY9EINDQgNjAC6cINxhJxeyEtAK4UYcgPFDQAKApIBBAAHhhwtWCISfITCVOf4nOkw15ljjT7uscVSMPb3uht/DXUN+hn04vQKCALCJGmDu45j7hru7u/7/Q3BNaTO3JhfRfweSJClRN5xL4vAF1yeoJ1kmVD5vqc7VLh6fx19faWCBxLcfY2ZjmNkQCt9WfmVSVya6caTOt/aiEC0U3T7bVAJTrtU3ijJzYhNkSPtaCnz9PDM/TkUQdurM+b6k7wn2FSR8FjOHIIphZkvOF1bimxfA6fW0lzdzCV+emf0esU/yhkZx6OU4sHiIQBDIVbS+3Mh+7Vpm/cO23qva3nbVbb/o9hv492uHVlfc5DJJR67r+8yQyH0xriNq+crtZWQ9TWNLs4ItDv+5VgfdmMGWlA9besiuK0zHRbTneyF6LguuNS5hhr0KeL4Dl713dUHDMgw53j3MEPeYhTUgQwOPKCJOEGRo4BEVxcmBDA08opI4NZChjIf75lacB5ChgUe0A6whIEMDj4hCwjUYZKjjAZnF7InOQIY6HtTF+WQZOpuCDHU8iQ62LcMbIEMd7/NSAgA=); border-color: #ff55dd;">編成表</button><button type="button" onclick="operation_table_mode();" style="background-image: url(data:image/webp;base64,UklGRroAAABXRUJQVlA4TK0AAAAvT8ATEIcw/wratmE8/kDH4Stq20hyyQyO4U9nnrOHokiSmrsj/hCBD574d5NhAvLbUyqnqG2W+CB+54MoAjZARfYGAQwkSTLUa97M/f+5thXRf4Vt2zb0A93zA0BqX9CAAAA1Ml2ZCm8kABWqss5iWKKCDLQkFKWmZSHrlibx0jAtDd0fcPiyvHl0Pvyv7oO8NOXy3qnN4t7RZVzYO7+Aigv7hwCETbwMnK0AAAA=); border-color: #ddff55;">運用表</button><button type="button" class="sub_menu_tab" onclick="open_square_popup('sub_menu_popup');">サブメニュー</button></div>
+    <div id="tab_area"><button type="button" onclick="position_mode();" style="background-image: url(data:image/webp;base64,UklGRi4CAABXRUJQVlA4TCICAAAvT8ATEEfDGpIkS9n7twoHeNxHcAL7aA0GbdsIcjf+HP95/K/z77CNJEVaUu8xPeaf0QXxzHjYswGl9Yt7CJDvUeyIb/SoS9xC0Q5Vp3DxWA20QniFi2VbMKzaAIgVi0dcBDWAGABggRAwQzAIwsPAwQDwMAAMYjjVoUNfAK2IUhhoGEOFPnUHLwpfUBAvdAONsiVFHGu06BQNqi5EKEUGhHAZEueMdkTa9dg/8YEDp3Pg8zqR7/Fda5xr+792CtiSJKlW9rrfi18X3J3B3d3dHf7/F3SnF16JM3si+j8B6k99v05otY4xngppdj2m5Knv3Mqk/baQta7kDWmYG7tRQivq25aU3E7Mp424GxqpFz1SNzP8aICnjTLqQ8tDOJ5K1zppccO25YNkqM2D510qKrnKNtGPm+yVkuKSD09EjpZI85JVhjaT9m5DAnP65m/NOCDGSzN2ObaNeJjmcC3YVc1m3ygxW3fDCYK8V7cRbN/hO8BVO0G3PLO9jBP44hPXBcHnuHrwurkG8Aa4BvHsfyOm8CxXP94yVy9eC9cq3hpXI94WVxlvg+sU74LrAK+KK4UX5QrhWS4ZQ5tU7I1oDt91J5Zr+eQUq6AAD7GOEZJYEYRbrBCCLCCNeiBakdoU5A7SDkYJ6Qwjg7SPkUKKYTwj3WH4Z3FmHQwJJ74k6XI1OiLul2GFTrKuNK6TKGN/nw460bFHK+a83iutb9YcMwE=); border-color: #dd55ff;">走行位置</button><button type="button" onclick="timetable_mode();" style="background-image: url(data:image/webp;base64,UklGRpADAABXRUJQVlA4TIQDAAAvT8ATEO/juJEkKYpq8N9S3rBnlxvz7ziSJEfJvj3Jj8A2/I/AAv4n2m1tu23DDxzDVi6dQ+0pPZ8nccuKNMQvBFIDX+EtbMKHl1/3d24YfkLubjz1heLIg2KDkkBXOHDw1UchRSE6EqXQPU8UKwU5OPkXi0gUUUQEGb/FkBeLcaiRT4vwT3+xL4zbD6fzeg8aPHRMr0Kc0JFABAVQaF0URgEvig4LLHTo0JGAg0TQBQEgMBoIaAkIgB1ANIqwkYqMUjYEVhCBFQEHqWApjgcQGmloPGnphi/DC0dvt34g0ba2442ef4KpbTeoObVt2+3//rXHSCZXn78f3wuI6P8EQHdPftnit9vNo6uro83b58W60l5YHIwv37ok7W6MlwxY4bTOXJPgcl9fwi/9YjrPMS1VfkPCTwCcrwJEtNkQMCk4ekiS8wCwJEZ0WB00Jv6TpB8BOF9liPYiZrT9J5WJzMxZUrmaYUDTERl9UaQrsEzG/wto6X4gC7+GNWTekpW/vyhr3yfl3r9YZMpTRn+7FH3ZJ+VeAQDEPGW036mk+zepn4LvpDraDisIPJDGiF+JBloPyC2Qzla/PB20LNVCtlGxRNu5fac5Yq9kH70LNREHFBEI/uThZuCjeuKBxj4I/ODiMOVXTlxQpY9zw8eWkzZIfFBu2jQnkwAGzjm5GADixAkVAMu8zAO3vNyhx+XF68gnXihaxk3FIjeJZ27Wdk3qj0pHpjy5jT2ip+STIUpjnshT8ono5pjGASSswaTAOIAEnVxRH4BMeyICfQAy6dKMiI4SuWNaBpxZTZM6JgSWAWeWTvaIHpNfSbMXURfxBOgx+ZXoZpeMdCdKokrjEy5JbzybYfLaIjeJMm4q8rmJ9rq8eN245eUeGOdlHijhpRAYOOfkfADACidTANDKyXCas8nHLycNDXzUwDfwg4uDgB+quCjDh8E9HrZSH2GEhwKIrnLwBuGMU/uOvogh5trmNkN22bYkpAPrdj2F5PB5x6btMFRm/7TnIANqu/7a8jcLqvs27PjzBerD6zY89UPnpznXNHc5BM3xI7MuGqE/Z1XJcl9fQsnbFxgZu5F7AuB8ldsqhKkDY99l5gFgSeagNgWDA5VbYo8AnK9iv2pCMNzJnTwXoERm5iwJnk4NO7AxVZC88/xEvfulwhQs7hiqmH3Z2Ty7ujrb3FmbrYh2Qzc=); border-color: #ffdd55;">時刻表</button><button type="button" onclick="operation_data_mode();" style="background-image: url(data:image/webp;base64,UklGRvQDAABXRUJQVlA4TOgDAAAvT8ATEGeloG0bxvxJtzsgHESS7Cq97/9Pjo7wrwIXGdaN20aSRFfPRPv//2268UZz2o1tq3FjTPwlj5mTLvtvs4BsKJWpSL6NRDZpsydp70ATFTdqSx3srlqPH/wO+KdXPS/okTdgFMJYKnXfJhgvcCfEkZD0OKIH0CsB0AMQZAg6CFoAgg4KQXcfkAG0AC2oKNhRQFT8EdhQsaE+Dj8lRHEE0NNAgKB0A2FwEnAQDopKAVOJAkbIKHoclQBEYXAKCgA9YBAACgDE4YRqQEJGwhO9FAAApQ0UjkAgtAETL1Yg+3uLL5yQ0L9FrLyhjKGkN2aF+9xJHkghjgBzNTy0B3k+3Ab6zuwX+iyaPyq7mp7e7v+zbHT/7goJAgCWkdS1bduevcHatm3btm3bvl+O0uTMIKL/jtw2ciQae4odqzH9BA48z8Z1ZSW9A0mxUZPTNFRIGKWTODbJvbekrM74gYMalcOGTd9lIc8sY+eGQxUo3raTF4TQQlnNOU/PNYFC6AmwewCnWrokRBJ8owroLFOILPFmYAqECOMJZh0lDCYdJQ8wZvHo5L6Dfu0mAg269ZkDzkP76jxsNLMcfN1fEmnM7VLC4QnHzFy2yWA23Izk6oaRbVFiyDw/GyGJQ9dGcnXD1G0DjJDMe9u+KmiGxqFea4uzm3dgFBZMhwkJpoIozLzdnFta9Uw1FDTvvcFnXkhAEUJEeU2W6hy0fGZNeVRICDD5zPg5N+ia8XWm28b8PwkJITwoL4IBaUW323tXx0fE7OmFIy8MHxG6v7ftWJQWKFdK+YKb30IWURKAKUXphgNL8ywqGPRFiNGgBAXmasTxyOON3wZcGwmdJ+Dvdb/IVvzqwgkRHOLYwuozmaZq9gD+kKD5TK4JH9atxekxa+BYTHrxtqGaXCO1HATg615SUKF42LQOD+rLS4dZn8voGCWYDbPS8vqDwzOFTTup8JrjuY824p3qzTlIOWdOeAPSvowc767Rv/vM43zGrKZnPBL+PhcvTySmjnR1MrvynVqCy1kn6xpJpRNToi+vTv6iN48SBZONUgyYgzV0QjEHFp1MVOKOOeBYj88jkFEHfB0i8/ynbZ8khnri044jmSaDia6X7eC9jUPBMgzL6Q76mrLPhfXRoOs+p/xFwXOSxfVtf152pBhgKCJpXv/troWCw/ClPJbPPprLbzVR1hrNCwN2ZWVTSyi+YuxCU1mrTCq95/jvyyC3xoNTDkLwQSMNhrfPN1YSB0v3rA/PVJRTOTu0riodTAzZQFU3BFmZONEnf4wSlohxtODLq7u/8s2hJPkxvcckqO4x+QXBPSaMQL7HBEEA); border-color: #55ffdd;">運用データ</button><button type="button" onclick="formation_table_mode();" style="background-image: url(data:image/webp;base64,UklGRhYCAABXRUJQVlA4TAkCAAAvT8ATEGfCqG0kSa4ersP/t/cWjfl30EaSI3kTf4pHI/0Xg8i2lfDeF9xdMtGTNgQgg7u+gGKw4beLXXJ//7i41f9z0jTGwrF+A8glSQdVARl6oOIVIAY9EINDQgNjAC6cINxhJxeyEtAK4UYcgPFDQAKApIBBAAHhhwtWCISfITCVOf4nOkw15ljjT7uscVSMPb3uht/DXUN+hn04vQKCALCJGmDu45j7hru7u/7/Q3BNaTO3JhfRfweSJClRN5xL4vAF1yeoJ1kmVD5vqc7VLh6fx19faWCBxLcfY2ZjmNkQCt9WfmVSVya6caTOt/aiEC0U3T7bVAJTrtU3ijJzYhNkSPtaCnz9PDM/TkUQdurM+b6k7wn2FSR8FjOHIIphZkvOF1bimxfA6fW0lzdzCV+emf0esU/yhkZx6OU4sHiIQBDIVbS+3Mh+7Vpm/cO23qva3nbVbb/o9hv492uHVlfc5DJJR67r+8yQyH0xriNq+crtZWQ9TWNLs4ItDv+5VgfdmMGWlA9besiuK0zHRbTneyF6LguuNS5hhr0KeL4Dl713dUHDMgw53j3MEPeYhTUgQwOPKCJOEGRo4BEVxcmBDA08opI4NZChjIf75lacB5ChgUe0A6whIEMDj4hCwjUYZKjjAZnF7InOQIY6HtTF+WQZOpuCDHU8iQ62LcMbIEMd7/NSAgA=); border-color: #ff55dd;">編成表</button><button type="button" onclick="operation_table_mode();" style="background-image: url(data:image/webp;base64,UklGRroAAABXRUJQVlA4TK0AAAAvT8ATEIcw/wratmE8/kDH4Stq20hyyQyO4U9nnrOHokiSmrsj/hCBD574d5NhAvLbUyqnqG2W+CB+54MoAjZARfYGAQwkSTLUa97M/f+5thXRf4Vt2zb0A93zA0BqX9CAAAA1Ml2ZCm8kABWqss5iWKKCDLQkFKWmZSHrlibx0jAtDd0fcPiyvHl0Pvyv7oO8NOXy3qnN4t7RZVzYO7+Aigv7hwCETbwMnK0AAAA=); border-color: #ddff55;">運用表</button><button type="button" class="sub_menu_tab" onclick="open_square_popup('sub_menu_popup');">サブメニュー</button></div>
     <div id="blank_article" class="wait_icon"></div>
     <article>
         <select id="position_line_select" class="wide_select" onchange="position_change_lines(this.value);"></select>
@@ -2132,6 +2153,7 @@ button {
         <div>
             <button id="position_reload_button" class="reload_button" onclick="position_reload();"></button>
             <button type="button" class="previous_button" onclick="position_change_time(-60);"></button><span id="position_hours" class="footer_value"></span><button type="button" class="next_button" onclick="position_change_time(60);"></button><button type="button" class="previous_button" onclick="position_change_time(-5);"></button><span id="position_minutes" class="footer_value"></span><button type="button" class="next_button" onclick="position_change_time(5);"></button>
+            <input type="time" id="position_time_button" class="time_button" onchange="position_time_button_change();">
         </div>
         <div>
             <button id="timetable_back_button" class="back_button" onclick="timetable_change_lines(timetable_line_select_elm.value, true);"></button>
@@ -2140,6 +2162,7 @@ button {
         <div>
             <button id="operation_reload_button" class="reload_button" onclick="operation_data_change_date(null);"></button>
             <button type="button" class="previous_button" onclick="operation_data_change_date(-1);"></button><span id="operation_data_date" class="footer_value_wide"></span><button type="button" class="next_button" onclick="operation_data_change_date(1);"></button>
+            <input type="date" id="operation_date_button" class="date_button" onchange="operation_date_button_change();">
         </div>
         <div>
             <button id="formation_back_button" class="back_button" onclick="draw_formation_table();"></button>
@@ -3394,6 +3417,7 @@ background_updater_start_stop();
 var position_line_select_elm = document.getElementById("position_line_select");
 var position_area_elm = document.getElementById("position_area");
 var position_reload_button_elm = document.getElementById("position_reload_button");
+var position_time_button_elm = document.getElementById("position_time_button");
 
 function position_mode () {
     change_mode(0);
@@ -3448,8 +3472,14 @@ function position_change_lines (line_id, cnt_0 = 0) {
     
     if (!config["dark_mode"]) {
         var line_color = railroad_info["lines"][line_id]["line_color"];
+        
+        var line_color_hsl = rgb2hsl(line_color);
+        var station_color = "rgb(" + hsl2rgb(line_color_hsl[0], line_color_hsl[1], (line_color_hsl[2] + 1275) / 6).join(",") + ")";
     } else {
         var line_color = convert_color_dark_mode(railroad_info["lines"][line_id]["line_color"]);
+        
+        var line_color_hsl = rgb2hsl(railroad_info["lines"][line_id]["line_color"]);
+        var station_color = "rgb(" + hsl2rgb(line_color_hsl[0], line_color_hsl[1], (255 - line_color_hsl[2]) / 3).join(",") + ")";
     }
     
     var buf = "";
@@ -3457,12 +3487,14 @@ function position_change_lines (line_id, cnt_0 = 0) {
         buf += "<div class='position_row'><div class='position_station'>";
         
         if (cnt !== 0){
-            buf += "<h4 onclick='position_click_station(\"" + railroad_info["lines"][line_id]["stations"][cnt - 1]["station_name"] + "\");'>";
+            buf += "<h4 onclick='position_click_station(\"" + railroad_info["lines"][line_id]["stations"][cnt - 1]["station_name"] + "\");' style='background-color: " + station_color + ";'>";
+                
             if (railroad_info["lines"][line_id]["stations"][cnt - 1]["station_name"].length > 5) {
                 buf += escape_html(railroad_info["lines"][line_id]["stations"][cnt - 1]["station_name"].substring(0, 4) + "..");
             } else{
                 buf += escape_html(railroad_info["lines"][line_id]["stations"][cnt - 1]["station_name"]);
             }
+            
             buf += "</h4>";
             
             if (railroad_info["lines"][line_id]["stations"][cnt - 1]["connecting_lines"].length === 1) {
@@ -3871,13 +3903,14 @@ function position_change_time (position_time_additions = null, draw_train_positi
     
     var hours = position_date_time.getHours();
     var minutes = ("0" + position_date_time.getMinutes()).slice(-2);
+    var hh_and_mm_24 = ("0" + hours).slice(-2) + ":" + minutes;
     
     if (position_time_additions === null) {
-        position_last_updated = ("0" + hours).slice(-2) + ":" + minutes;
+        position_last_updated = hh_and_mm_24;
     }
     
     if (hours < 3) {
-        hours += 24
+        hours += 24;
     }
     hours = ("0" + hours).slice(-2);
     
@@ -3886,9 +3919,23 @@ function position_change_time (position_time_additions = null, draw_train_positi
     document.getElementById("position_hours").innerText = Number(hours) + "時";
     document.getElementById("position_minutes").innerText = Number(minutes) + "分";
     
+    position_time_button_elm.value = hh_and_mm_24;
+    
     if (draw_train_position_now) {
         draw_train_position(hh_and_mm);
     }
+}
+
+function position_time_button_change () {
+    var hours_minutes = position_time_button_elm.value.split(":");
+    
+    if (hours_minutes[0] < 3) {
+        hours_minutes[0] += 24;
+    }
+    
+    var hh_and_mm = hours_minutes.join(":");
+    
+    position_change_time(hh_mm_to_minutes(hh_and_mm) - hh_mm_to_minutes(get_hh_mm(position_time * 60)));
 }
 
 function position_reload () {
@@ -3907,14 +3954,18 @@ function change_show_train_types (bool_val) {
     position_change_time(0);
 }
 
-function get_hh_mm () {
-    var dt = new Date();
+function get_hh_mm (ts = null) {
+    if (ts === null) {
+        var dt = new Date();
+    } else {
+        var dt = new Date(ts * 1000);
+    }
     
     var hours = dt.getHours();
     var minutes = ("0" + dt.getMinutes()).slice(-2);
 
     if (hours < 3) {
-        hours += 24
+        hours += 24;
     }
     hours = ("0" + hours).slice(-2);
 
@@ -4540,8 +4591,15 @@ function timetable_operation_next () {
 
 
 var operation_data_area_elm = document.getElementById("operation_data_area");
+var operation_date_button_elm = document.getElementById("operation_date_button");
 
 var operation_data_date;
+
+function operation_data_mode () {
+    operation_date_button_elm.max = get_date_string(Date.now() / 1000 + 86400);
+    
+    operation_data_change_date(null);
+}
 
 function operation_data_change_date (date_additions) {
     if (date_additions === null) {
@@ -4561,6 +4619,7 @@ function operation_data_change_date (date_additions) {
     operation_data_area_elm.innerHTML = "";
     
     var date_string = get_date_string(operation_data_date);
+    operation_date_button_elm.value = date_string;
     
     load_operation_table(get_days_operation(operation_data_date), true, false, true);
     update_operation_data(date_string);
@@ -4568,6 +4627,12 @@ function operation_data_change_date (date_additions) {
     document.getElementById("operation_data_date").innerHTML = date_string.replace(/-/g, "/");
     
     operation_data_draw();
+}
+
+function operation_date_button_change () {
+    operation_data_date = operation_date_button_elm.valueAsDate.getTime() / 1000;
+    
+    operation_data_change_date(0);
 }
 
 function operation_data_draw (cnt = 0) {
@@ -5058,7 +5123,7 @@ var operation_table_name;
 var operation_table_selected_number = null;
 var operation_table_name_elm = document.getElementById("operation_table_name");
 
-function operation_table_mode(load_data = true, table_name = null) {
+function operation_table_mode (load_data = true, table_name = null) {
     change_mode(4);
     
     if (load_data) {
