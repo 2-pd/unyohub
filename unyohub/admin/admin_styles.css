@@ -63,7 +63,7 @@ article {
     position: relative;
     
     width: calc(100% - 10px);
-    height: calc(100% - 100px);
+    min-height: calc(100% - 100px);
     
     padding: 50px 5px;
 }
@@ -127,4 +127,178 @@ button {
     
     line-height: 26px;
     font-size: 18px;
+}
+
+textarea {
+    display: block;
+    
+    width: calc(100% - 12px);
+    height: 300px;
+    
+    max-width: 488px;
+    
+    margin: 10px auto;
+    padding: 5px;
+    
+    border: 1px solid #cccccc;
+    border-radius: 5px;
+
+    font-size: 18px;
+    text-align: left;
+    
+    resize: none;
+}
+
+input, select {
+    display: block;
+    
+    width: 90%;
+    
+    margin: 10px auto;
+    
+    background-color: transparent;
+    
+    font-size: 18px;
+}
+
+input[type="text"], input[type="number"], input[type="password"], input[type="search"], .wide_select {
+    background-color: #ffffff;
+    
+    border: none;
+    border-bottom: 2px solid #dddddd;
+    
+    color: #333333;
+}
+
+input[type="checkbox"] {
+    display: none;
+}
+
+input[type="checkbox"] + label {
+    display: block;
+    
+    position: relative;
+    
+    margin: 20px 0 0 max(20px, 50% - 230px);
+    
+    padding-left: 54px;
+    
+    line-height: 24px;
+    font-size: 18px;
+}
+
+input[type="checkbox"] + label:before {
+    content: "";
+    
+    display: inline-block;
+    
+    position: absolute;
+    
+    top: 0;
+    left: 0;
+    
+    width: 44px;
+    height: 24px;
+    
+    background-color: #dddddd;
+    
+    border-radius: 12px;
+    
+    box-shadow: 1px 1px 2px rgba(0,0,0,0.25) inset;
+    
+    transition-duration: 0.25s;
+    transition-property: all;
+}
+
+input[type="checkbox"]:checked + label:before {
+    background-color: #333333;
+}
+
+input[type="checkbox"] + label:after {
+    content: "";
+    
+    display: inline-block;
+    
+    position: absolute;
+    
+    top: 2px;
+    left: 2px;
+    
+    width: 20px;
+    height: 20px;
+    
+    background-color: #ffffff;
+    
+    border-radius: 10px;
+    
+    box-shadow: 1px 1px 2px rgba(0,0,0,0.25);
+    
+    transition-duration: 0.2s;
+    transition-property: all;
+}
+
+input[type="checkbox"]:checked + label:after {
+    left: 22px;
+}
+
+input[type="checkbox"] + label.drop_down {
+    height: 25px;
+    
+    max-width: 500px;
+    
+    margin: 5px auto;
+    padding: 10px;
+    
+    background-color: #eeeeee;
+    
+    line-height: 25px;
+    font-weight: bold;
+    
+    z-index: 1;
+}
+
+input[type="checkbox"] + label.drop_down:before {
+    display: none;
+}
+
+input[type="checkbox"] + label.drop_down:after {
+    top: 0;
+    left: calc(100% - 45px) !important;
+    
+    width: 45px;
+    height: 45px;
+    
+    background-image: url(data:image/webp;base64,UklGRtwCAABXRUJQVlA4TM8CAAAvMUAMEPfDppEkR3Xp80fx/D4za0GoaRtJ8rbHH8Xxu+6JmraRJG97/FEcv+ueOG4kSZF2e8XMhqz/OmPuzTRUmmq1aRsweHbKG0juvYvnHInqo1xUjj5KAAALcuRRAsBECXLkuAEDAhQKBaFQRLC8WYAvtFhL8AVhoCAIBUAQEZxRMwPPWQLiC8IAwJlJIciQ44YI4kSOBg1yNMiRo0H+/885AYMrgDc8IgDCgXAgblGCJ0wUcEQZPL/3BP69V661LjCAKMm2aWfHNue82PZDbNu2bTz+fG7uO/fkByL6PwGiMXF9rKe5trS0tvlkbDFPnE/aaSXKtukPZ9KGS9DoOsvQlzKkACqPbza+v4qLv7Kf57yVAOrgU9NDDaC8y0GxHbviUUDto46YK4D+HNH41gewHxOVvwdoeRXNL82A2x9FfCdw6Rft8YdA2G8r5hTUpDh6oyAStHMF6lbsA9iTBQX7NlaAOXFKroG1P1JqYECck0uozrcagha/CYEmGLHIVfAqJsgWqLdfR3AkZsg5XIhIkguVY0qmwpUosgNeMUVOYUakFZbNWYV2SYSqoDmhCvi5A6+YI264H4Mbk7Zhrwc2THqC00bIMikbmusgwQLHLQqgvgxiTApC+X+ogwSTCqC+Eb4tov0lOlOhuQc2THqC03GYM2kWJu7Aa9IJ3CdCZaw5RRWQLG2wYs4DdIhMg8ccN8yKfLhQb6a8K0oSRaQf+kzxwYCISKaCFzM2QaX9kgNojjehsBFGxfKzFi5MGITaOCtZBmacmwKW5O99UAtOzQNjYrPYA+zai/4G6I6xI/4wMBDQV9gPdPnFvt8NNG3p2mwAPH6JNmYfoDdTx7sPYKxYND7WAup0NWQv9OBWQN2y6P0cUQAV7u2n1ISYmITUp9mTCgA1Gifac4ZL0Og6SxdHE6/bo+mYyRPnf+733K11ZWV1racT98miEQA=);
+    background-repeat: no-repeat;
+    background-size: 25px;
+    background-position: center;
+    background-color: transparent !important;
+    
+    box-shadow: none;
+}
+
+input[type="checkbox"]:checked + label.drop_down:after {
+    transform: rotate(45deg);
+}
+
+input[type="checkbox"] + label.drop_down + div {
+    height: 0;
+    
+    max-width: 500px;
+    
+    margin: -45px auto 45px auto;
+    
+    opacity: 0;
+    
+    overflow: hidden;
+    
+    transition: margin 0.1s, opacity 0.3s;
+}
+
+input[type="checkbox"]:checked + label.drop_down + div {
+    height: auto;
+    
+    margin: 0 auto;
+    
+    opacity: 1;
 }
