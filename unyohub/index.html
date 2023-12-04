@@ -38,7 +38,7 @@ html, body {
 }
 
 .dark_mode {
-    background-color: #101010;
+    background-color: #444444;
     
     color: #ffffff;
 }
@@ -64,13 +64,11 @@ header {
     
     height: 40px;
     
-    background-size: 30px;
-    background-repeat: no-repeat;
-    background-position: 5px 5px;
-    background-color: #f7f7f7;
+    background-color: #333333;
     
     line-height: 40px;
     font-size: 18px;
+    color: #ffffff;
     
     box-shadow: 0 0 3px 3px rgba(0,0,0,0.2);
     
@@ -78,49 +76,83 @@ header {
 }
 
 .dark_mode header {
-    background-color: #181818;
+    background-color: #222222;
+}
+
+#railroad_icon {
+    display: none;
+    
+    position: absolute;
+    left: 0;
+    
+    width: 60px;
+    height: 40px;
+    
+    background-size: 30px, contain;
+    background-repeat: no-repeat, no-repeat;
+    background-position: 8px 5px, 0 0;
+}
+
+#railroad_icon:after {
+    content: "";
+    
+    display: block;
+    
+    position: absolute;
+    left: 45px;
+    
+    border-top: 20px solid #333333;
+    border-bottom: 20px solid #333333;
+    border-left: 15px solid transparent;
+}
+
+.dark_mode #railroad_icon:after {
+    border-top-color: #222222;
+    border-bottom-color: #222222;
 }
 
 #app_name {
-    margin-left: 10px;
+    display: inline-block;
+    
+    width: calc(100% - 100px);
+    
+    margin-left: 50px;
+    
+    text-align: center;
 }
 
 .railroad_select_mode #app_name {
     display: none;
 }
 
+#railroad_select, input[type="checkbox"] + label.drop_down:after  {
+    background-image: url(data:image/webp;base64,UklGRpoAAABXRUJQVlA4TI4AAAAvJ8AFEC8gECD4X9OkQ0BC8P+aTRKQEPy/ZpOEBATNY/cDoFrtVw0YrmLbdppNEYAJ/lsiIQLa9a8lcO45FiL6r8Zt26gXB21BX8E2AwAAIO378kvaVuWR9q0K3O1dF8Fal7oI1ogQBCGJEmwEO1aD1WG0GD1imuTzdvpPPND1WbunGWgmxIiYEePfMTMB);
+    background-repeat: no-repeat;
+    background-size: 20px 12px;
+}
+
 #railroad_select {
     display: none;
     
     position: absolute;
-    left: 0;
+    left: 70px;
     
-    width: calc(100vw - 50px);
+    width: calc(100vw - 120px);
     height: 40px;
     
     border: none;
     
-    background-image: url(data:image/webp;base64,UklGRpoAAABXRUJQVlA4TI0AAAAvJ8AFEC8gECCo9V9gQyBAUOu/gECAoNZ/ASEBQfPY/QCo/gP8U4er2LadZlMEYIL/lkiIgHb9awmce46FiP6rcds26sVBW9BXsM0AAABI+778krZVeaR9qwJ3e9dFsNalLoI1IgRBSKIEG8GO1WB1GC1Gj5gm+byd/hMPdH3W7mkGmgkxImbE+HfMTAAA);
-    background-repeat: no-repeat;
-    background-size: 20px 12px;
-    background-position: calc(100vw - 80px) 15px;
+    background-position: calc(100vw - 150px) 15px;
     background-color: transparent;
     
     line-height: 40px;
     font-size: 18px;
-    text-indent: 40px;
-    color: #333333;
+    color: #ffffff;
     
     appearance: none;
 }
 
-.dark_mode #railroad_select {
-    background-image: url(data:image/webp;base64,UklGRpoAAABXRUJQVlA4TI4AAAAvJ8AFEC8gECD4X9OkQ0BC8P+aTRKQEPy/ZpOEBATNY/cDoFrtVw0YrmLbdppNEYAJ/lsiIQLa9a8lcO45FiL6r8Zt26gXB21BX8E2AwAAIO378kvaVuWR9q0K3O1dF8Fal7oI1ogQBCGJEmwEO1aD1WG0GD1imuTzdvpPPND1WbunGWgmxIiYEePfMTMB);
-    
-    color: #ffffff;
-}
-
-.railroad_select_mode #railroad_select {
+.railroad_select_mode #railroad_select, .railroad_select_mode #railroad_icon {
     display: block;
 }
 
@@ -135,21 +167,17 @@ header {
     border-radius: 0;
     padding: 0;
     
-    background-image: url(data:image/webp;base64,UklGRjYAAABXRUJQVlA4TCoAAAAvY8ATEA8wZmM2ZvMf8DAUwMyaqa7ZFcC+Ef2fgHupQQleaVCCVxqU4Kc=);
+    background-image: url(data:image/webp;base64,UklGRjYAAABXRUJQVlA4TCoAAAAvY8ATEA8wzMM8zPMf8DAUwMyaqa7ZFcC+Ef2fgHupQQleaVCCVxqU4Kc=);
     background-size: 50px 40px;
     background-color: transparent;
 }
 
-.dark_mode #menu_button {
-    background-image: url(data:image/webp;base64,UklGRjYAAABXRUJQVlA4TCoAAAAvY8ATEA8wzMM8zPMf8DAUwMyaqa7ZFcC+Ef2fgHupQQleaVCCVxqU4Kc=);
-}
-
 .menu_button_active {
-    background-color: #dddddd !important;
+    background-color: #555555 !important;
 }
 
 .dark_mode .menu_button_active {
-    background-color: #333333 !important;
+    background-color: #444444 !important;
 }
 
 #menu {
@@ -175,9 +203,9 @@ header {
 }
 
 .dark_mode #menu {
-    background-color: #101010;
+    border-color: #444444;
     
-    border-color: #333333;
+    background-color: #666666;
 }
 
 .menu_open {
@@ -187,7 +215,7 @@ header {
     
     padding: 9px 0;
 
-    border: 1px solid #dddddd;
+    border: 1px solid #555555;
     
     box-shadow: 0 4px 4px 0 rgba(0,0,0,0.3);
 }
@@ -211,7 +239,7 @@ header {
 }
 
 .dark_mode #menu_user_name {
-    background-color: #202020;
+    background-color: #777777;
 }
 
 #menu button {
@@ -240,7 +268,7 @@ header {
 }
 
 .dark_mode #menu hr {
-    background-color: #333333;
+    background-color: #888888;
 }
 
 .beginner:before {
@@ -278,7 +306,7 @@ header {
 }
 
 .dark_mode #splash_screen {
-    background-color: #101010;
+    background-color: #666666;
 }
 
 .splash_screen_loaded {
@@ -357,7 +385,7 @@ header {
 }
 
 .dark_mode #tab_area {
-    background-color: #181818;
+    background-color: #333333;
 }
 
 #tab_area button {
@@ -366,39 +394,37 @@ header {
     box-sizing: content-box;
     
     width: 80px;
-    height: 27px;
+    height: 16px;
     
     padding: 0;
-    padding-top: 23px;
+    padding-top: 34px;
     
     background-repeat: no-repeat;
-    background-size: 40px;
-    background-position: 20px 6px;
-    background-color: #eeeeee;
+    background-size: 30px;
+    background-position: 25px 4px;
+    background-color: transparent;
     
     border: none;
     border-radius: 0;
     
     overflow: hidden;
+    line-height: 16px;
+    font-size: 12px;
     white-space: nowrap;
     text-overflow: ellipsis;
-    
-    box-shadow: 0 -5px 3px -2px rgba(0,0,0,0.1) inset;
 }
 
 .dark_mode #tab_area button {
-    background-color: #181818;
-    
     color: #ffffff;
 }
 
 #tab_area .active_tab {
-    padding-top: 20px;
+    padding-top: 32px;
     
-    background-position-y: 3px;
+    background-position-y: 2px;
     background-color: #ffffff !important;
     
-    border-top: 3px solid transparent;
+    border-top: 2px solid transparent;
     
     box-shadow: 0 0 8px 0 rgba(0,0,0,0.5);
     
@@ -406,17 +432,7 @@ header {
 }
 
 .dark_mode #tab_area .active_tab {
-    background-color: #101010 !important;
-}
-
-#tab_area .sub_menu_tab {
-    width: 40px;
-    
-    background-image: url(data:image/webp;base64,UklGRoQAAABXRUJQVlA4THcAAAAvJ8AJEFUwjiSpDflHwC7BEJw8Xr/lLkJRJEnNkhycsVttZLDB8TxrEyChJKLj0z+VR6IESBBeeoE4LhReepHmibtQKkcpbLRSbHcwQNIfoNfH4e5hF7nOardS+DhKYYsshYqCU4blHACxEswl5Uxlo31jqPIAAQA=);
-    background-size: 20px;
-    background-position: center;
-    
-    color: transparent !important;
+    background-color: #444444 !important;
 }
 
 article, #blank_article {
@@ -486,7 +502,7 @@ article, #blank_article {
 }
 
 .dark_mode .position_station, .dark_mode .position_inbound, .dark_mode .position_outbound {
-    border-color: #202020;
+    border-color: #555555;
 }
 
 .position_row:last-child .position_station, .position_row:last-child .position_inbound, .position_row:last-child .position_outbound {
@@ -555,9 +571,7 @@ article, #blank_article {
 }
 
 .dark_mode .connecting_line_button {
-    background-color: #cccccc;
-    
-    color: #101010;
+    background-color: #333333;
 }
 
 .connecting_line_button::after {
@@ -574,7 +588,7 @@ article, #blank_article {
 }
 
 .dark_mode .connecting_line_button::after {
-    border-top-color: #cccccc;
+    border-top-color: #333333;
 }
 
 .position_inbound, .position_outbound {
@@ -614,9 +628,9 @@ article, #blank_article {
 }
 
 .dark_mode .position_row:not(:first-child) .position_line:after {
-    background-color: #101010;
+    background-color: #444444;
     
-    border-color: #181818;
+    border-color: #555555;
 }
 
 .position_inbound span, .position_outbound span {
@@ -633,10 +647,6 @@ article, #blank_article {
 .position_inbound .train_icon, .position_outbound .train_icon {
     margin-top: 5px;
     margin-bottom: 20px;
-}
-
-.position_inbound b, .position_outbound b {
-    color: #101010;
 }
 
 .dark_mode .position_inbound b, .dark_mode .position_outbound b {
@@ -738,16 +748,17 @@ input[type="checkbox"] + label.drop_down {
     margin: 5px auto;
     padding: 10px;
     
-    background-color: #eeeeee;
+    background-color: #444444;
     
     line-height: 25px;
     font-weight: bold;
+    color: #ffffff;
     
     z-index: 1;
 }
 
 .dark_mode input[type="checkbox"] + label.drop_down {
-    background-color: #202020;
+    background-color: #888888;
 }
 
 input[type="checkbox"] + label.drop_down:before {
@@ -761,9 +772,6 @@ input[type="checkbox"] + label.drop_down:after {
     width: 45px;
     height: 45px;
     
-    background-image: url(data:image/webp;base64,UklGRtwCAABXRUJQVlA4TM8CAAAvMUAMEPfDppEkR3Xp80fx/D4za0GoaRtJ8rbHH8Xxu+6JmraRJG97/FEcv+ueOG4kSZF2e8XMhqz/OmPuzTRUmmq1aRsweHbKG0juvYvnHInqo1xUjj5KAAALcuRRAsBECXLkuAEDAhQKBaFQRLC8WYAvtFhL8AVhoCAIBUAQEZxRMwPPWQLiC8IAwJlJIciQ44YI4kSOBg1yNMiRo0H+/885AYMrgDc8IgDCgXAgblGCJ0wUcEQZPL/3BP69V661LjCAKMm2aWfHNue82PZDbNu2bTz+fG7uO/fkByL6PwGiMXF9rKe5trS0tvlkbDFPnE/aaSXKtukPZ9KGS9DoOsvQlzKkACqPbza+v4qLv7Kf57yVAOrgU9NDDaC8y0GxHbviUUDto46YK4D+HNH41gewHxOVvwdoeRXNL82A2x9FfCdw6Rft8YdA2G8r5hTUpDh6oyAStHMF6lbsA9iTBQX7NlaAOXFKroG1P1JqYECck0uozrcagha/CYEmGLHIVfAqJsgWqLdfR3AkZsg5XIhIkguVY0qmwpUosgNeMUVOYUakFZbNWYV2SYSqoDmhCvi5A6+YI264H4Mbk7Zhrwc2THqC00bIMikbmusgwQLHLQqgvgxiTApC+X+ogwSTCqC+Eb4tov0lOlOhuQc2THqC03GYM2kWJu7Aa9IJ3CdCZaw5RRWQLG2wYs4DdIhMg8ccN8yKfLhQb6a8K0oSRaQf+kzxwYCISKaCFzM2QaX9kgNojjehsBFGxfKzFi5MGITaOCtZBmacmwKW5O99UAtOzQNjYrPYA+zai/4G6I6xI/4wMBDQV9gPdPnFvt8NNG3p2mwAPH6JNmYfoDdTx7sPYKxYND7WAup0NWQv9OBWQN2y6P0cUQAV7u2n1ISYmITUp9mTCgA1Gifac4ZL0Og6SxdHE6/bo+mYyRPnf+733K11ZWV1racT98miEQA=);
-    background-repeat: no-repeat;
-    background-size: 25px;
     background-position: center;
     background-color: transparent !important;
     
@@ -771,7 +779,7 @@ input[type="checkbox"] + label.drop_down:after {
 }
 
 input[type="checkbox"]:checked + label.drop_down:after {
-    transform: rotate(45deg);
+    transform: scaleY(-1);
 }
 
 input[type="checkbox"] + label.drop_down + div {
@@ -832,7 +840,7 @@ article input[type="checkbox"] + label {
 .dark_mode .timetable_train {
     color: #ffffff;
     
-    border-color: #333333;
+    border-color: #555555;
 }
 
 .timetable_train:after {
@@ -894,7 +902,7 @@ article input[type="checkbox"] + label {
 }
 
 .dark_mode #operation_data_area th, .dark_mode #operation_data_area td {
-    border-color: #333333;
+    border-color: #555555;
 }
 
 #operation_data_area th {
@@ -938,7 +946,7 @@ article input[type="checkbox"] + label {
 }
 
 .dark_mode .formation_box span {
-    border-color: #333333;
+    border-color: #666666;
 }
 
 .formation_box span:first-of-type {
@@ -974,7 +982,7 @@ article input[type="checkbox"] + label {
 }
 
 .dark_mode .car_info {
-    border-color: #333333;
+    border-color: #666666;
 }
 
 .car_info:after {
@@ -1011,7 +1019,7 @@ article input[type="checkbox"] + label {
 }
 
 .dark_mode .search_highlight {
-    background-color: #999900;
+    background-color: #cccc33;
 }
 
 #operation_search_area {
@@ -1039,7 +1047,7 @@ article input[type="checkbox"] + label {
 }
 
 .dark_mode .operation_table tr:not(:first-child) {
-    border-top: 1px solid #333333;
+    border-top: 1px solid #666666;
 }
 
 .operation_table th {
@@ -1139,7 +1147,7 @@ h2 .next_button {
 }
 
 .dark_mode .key_and_value {
-    border-color: #333333;
+    border-color: #666666;
 }
 
 .key_and_value b, .key_and_value u {
@@ -1166,6 +1174,10 @@ h2 .next_button {
     line-height: 24px;
     text-align: right;
     font-size: 18px;
+}
+
+.dark_mode .operation_table_train {
+    border-color: #666666;
 }
 
 .operation_table_train a {
@@ -1227,7 +1239,7 @@ h2 .next_button {
 }
 
 .dark_mode .operation_table_train:after {
-    border-top-color: #333333;
+    border-top-color: #666666;
 }
 
 .operation_table_train:last-of-type:after {
@@ -1254,9 +1266,9 @@ footer {
 }
 
 .dark_mode footer {
-    background-color: #181818;
+    background-color: #555555;
     
-    color: #dddddd;
+    color: #eeeeee;
 }
 
 footer div {
@@ -1375,7 +1387,7 @@ footer div {
 }
 
 .dark_mode .popup {
-    background-color: #101010;
+    background-color: #444444;
 }
 
 .popup_close_button {
@@ -1403,11 +1415,13 @@ h2 {
 .popup h3 {
     padding: 5px 10px;
     
-    background-color: #eeeeee;
+    background-color: #444444;
+    
+    color: #ffffff;
 }
 
 .dark_mode .popup h3 {
-    background-color: #202020;
+    background-color: #888888;
 }
 
 h3 a {
@@ -1420,6 +1434,10 @@ h4 {
 
 a {
     color: #999999;
+}
+
+.dark_mode a {
+    color: #cccccc;
 }
 
 .external_link:after {
@@ -1486,9 +1504,9 @@ a {
 }
 
 .dark_mode .popup select {
-    background-color: #101010;
+    background-color: #444444;
     
-    border-color: #333333;
+    border-color: #666666;
     
     color: #ffffff;
 }
@@ -1552,7 +1570,7 @@ a {
 }
 
 .dark_mode .square_popup, .dark_mode .preview_popup {
-    background-color: #101010;
+    background-color: #666666;
 }
 
 .preview_popup {
@@ -1593,6 +1611,10 @@ a {
     line-height: 22px;
 }
 
+.dark_mode #splash_screen button, .dark_mode .square_popup button, .dark_mode .preview_popup button {
+    background-color: rgba(102,102,102,0.85);
+}
+
 .square_popup .popup_close_button {
     top: calc(50% - 150px);
     right: calc(50% - 150px);
@@ -1611,6 +1633,9 @@ a {
     
     color: #666666;
     text-align: left;
+}
+.dark_mode .informational_text {
+    color: #999999;
 }
 
 #about_railroad_data_popup {
@@ -1750,11 +1775,11 @@ a {
 }
 
 .dark_mode .train_detail_departure_times:before {
-    background-color: #101010;
+    background-color: #666666;
 }
 
 .dark_mode .train_detail_departure_times_highlight:before {
-    background-color: #999900;
+    background-color: #cccc33;
 }
 
 .train_detail_departure_times:last-of-type {
@@ -1797,7 +1822,7 @@ a {
 }
 
 .dark_mode .train_overview:after, .dark_mode .location_overview:after {
-    border-top-color: #333333;
+    border-top-color: #888888;
 }
 
 .train_overview:last-of-type:after, .location_overview:last-of-type:after {
@@ -1870,11 +1895,17 @@ input[type="text"], input[type="number"], input[type="password"], input[type="se
 }
 
 .dark_mode input[type="text"], .dark_mode input[type="number"], .dark_mode input[type="search"], .dark_mode input[type="password"], .dark_mode select {
-    background-color: #101010;
+    background-color: #444444;
     
-    border-color: #333333;
+    border-color: #666666;
     
     color: #ffffff;
+}
+
+.dark_mode .square_popup input[type="text"], .dark_mode .square_popup input[type="password"] {
+    background-color: #666666;
+    
+    border-color: #888888;
 }
 
 .search_icon {
@@ -1980,7 +2011,7 @@ input[type="checkbox"] + label:after {
 }
 
 .dark_mode input[type="checkbox"] + label:after {
-    background-color: #101010;
+    background-color: #444444;
 }
 
 input[type="checkbox"]:checked + label:after {
@@ -2000,9 +2031,9 @@ input[type="radio"] + label {
 }
 
 .dark_mode input[type="radio"] + label {
-    background-color: #202020;
+    background-color: #555555;
     
-    color: #666666;
+    color: #999999;
 }
 
 input[type="radio"]:checked + label {
@@ -2014,7 +2045,7 @@ input[type="radio"]:checked + label {
 }
 
 .dark_mode input[type="radio"]:checked + label {
-    background-color: #101010;
+    background-color: #333333;
     
     box-shadow: 0 1px 3px rgba(0,0,0,0.5) inset;
     
@@ -2033,9 +2064,9 @@ button {
 }
 
 .dark_mode button {
-    background-color: rgba(16,16,16,0.85);
+    background-color: rgba(68,68,68,0.85);
     
-    border-color: #333333;
+    border-color: #777777;
     
     color: #eeeeee;
 }
@@ -2071,7 +2102,7 @@ button {
 </style>
 </head>
 <body>
-    <header><span id="app_name"></span><select id="railroad_select" onchange="select_railroad(this.value);"></select><button type="button" id="menu_button" onclick="menu_click();"></button></header>
+    <header><a id="railroad_icon" href="javascript:void(0);" onclick="about_railroad_data();"></a><span id="app_name"></span><select id="railroad_select" onchange="select_railroad(this.value);"></select><button type="button" id="menu_button" onclick="menu_click();"></button></header>
     <div id="menu">
         <div id="menu_logged_in">
             <b id="menu_user_name"></b>
@@ -2098,7 +2129,7 @@ button {
             <div id="splash_screen_app_version"></div>
         </div>
     </div>
-    <div id="tab_area"><button type="button" onclick="position_mode();" style="background-image: url(data:image/webp;base64,UklGRi4CAABXRUJQVlA4TCICAAAvT8ATEEfDGpIkS9n7twoHeNxHcAL7aA0GbdsIcjf+HP95/K/z77CNJEVaUu8xPeaf0QXxzHjYswGl9Yt7CJDvUeyIb/SoS9xC0Q5Vp3DxWA20QniFi2VbMKzaAIgVi0dcBDWAGABggRAwQzAIwsPAwQDwMAAMYjjVoUNfAK2IUhhoGEOFPnUHLwpfUBAvdAONsiVFHGu06BQNqi5EKEUGhHAZEueMdkTa9dg/8YEDp3Pg8zqR7/Fda5xr+792CtiSJKlW9rrfi18X3J3B3d3dHf7/F3SnF16JM3si+j8B6k99v05otY4xngppdj2m5Knv3Mqk/baQta7kDWmYG7tRQivq25aU3E7Mp424GxqpFz1SNzP8aICnjTLqQ8tDOJ5K1zppccO25YNkqM2D510qKrnKNtGPm+yVkuKSD09EjpZI85JVhjaT9m5DAnP65m/NOCDGSzN2ObaNeJjmcC3YVc1m3ygxW3fDCYK8V7cRbN/hO8BVO0G3PLO9jBP44hPXBcHnuHrwurkG8Aa4BvHsfyOm8CxXP94yVy9eC9cq3hpXI94WVxlvg+sU74LrAK+KK4UX5QrhWS4ZQ5tU7I1oDt91J5Zr+eQUq6AAD7GOEZJYEYRbrBCCLCCNeiBakdoU5A7SDkYJ6Qwjg7SPkUKKYTwj3WH4Z3FmHQwJJ74k6XI1OiLul2GFTrKuNK6TKGN/nw460bFHK+a83iutb9YcMwE=); border-color: #dd55ff;">走行位置</button><button type="button" onclick="timetable_mode();" style="background-image: url(data:image/webp;base64,UklGRpADAABXRUJQVlA4TIQDAAAvT8ATEO/juJEkKYpq8N9S3rBnlxvz7ziSJEfJvj3Jj8A2/I/AAv4n2m1tu23DDxzDVi6dQ+0pPZ8nccuKNMQvBFIDX+EtbMKHl1/3d24YfkLubjz1heLIg2KDkkBXOHDw1UchRSE6EqXQPU8UKwU5OPkXi0gUUUQEGb/FkBeLcaiRT4vwT3+xL4zbD6fzeg8aPHRMr0Kc0JFABAVQaF0URgEvig4LLHTo0JGAg0TQBQEgMBoIaAkIgB1ANIqwkYqMUjYEVhCBFQEHqWApjgcQGmloPGnphi/DC0dvt34g0ba2442ef4KpbTeoObVt2+3//rXHSCZXn78f3wuI6P8EQHdPftnit9vNo6uro83b58W60l5YHIwv37ok7W6MlwxY4bTOXJPgcl9fwi/9YjrPMS1VfkPCTwCcrwJEtNkQMCk4ekiS8wCwJEZ0WB00Jv6TpB8BOF9liPYiZrT9J5WJzMxZUrmaYUDTERl9UaQrsEzG/wto6X4gC7+GNWTekpW/vyhr3yfl3r9YZMpTRn+7FH3ZJ+VeAQDEPGW036mk+zepn4LvpDraDisIPJDGiF+JBloPyC2Qzla/PB20LNVCtlGxRNu5fac5Yq9kH70LNREHFBEI/uThZuCjeuKBxj4I/ODiMOVXTlxQpY9zw8eWkzZIfFBu2jQnkwAGzjm5GADixAkVAMu8zAO3vNyhx+XF68gnXihaxk3FIjeJZ27Wdk3qj0pHpjy5jT2ip+STIUpjnshT8ono5pjGASSswaTAOIAEnVxRH4BMeyICfQAy6dKMiI4SuWNaBpxZTZM6JgSWAWeWTvaIHpNfSbMXURfxBOgx+ZXoZpeMdCdKokrjEy5JbzybYfLaIjeJMm4q8rmJ9rq8eN245eUeGOdlHijhpRAYOOfkfADACidTANDKyXCas8nHLycNDXzUwDfwg4uDgB+quCjDh8E9HrZSH2GEhwKIrnLwBuGMU/uOvogh5trmNkN22bYkpAPrdj2F5PB5x6btMFRm/7TnIANqu/7a8jcLqvs27PjzBerD6zY89UPnpznXNHc5BM3xI7MuGqE/Z1XJcl9fQsnbFxgZu5F7AuB8ldsqhKkDY99l5gFgSeagNgWDA5VbYo8AnK9iv2pCMNzJnTwXoERm5iwJnk4NO7AxVZC88/xEvfulwhQs7hiqmH3Z2Ty7ujrb3FmbrYh2Qzc=); border-color: #ffdd55;">時刻表</button><button type="button" onclick="operation_data_mode();" style="background-image: url(data:image/webp;base64,UklGRvQDAABXRUJQVlA4TOgDAAAvT8ATEGeloG0bxvxJtzsgHESS7Cq97/9Pjo7wrwIXGdaN20aSRFfPRPv//2268UZz2o1tq3FjTPwlj5mTLvtvs4BsKJWpSL6NRDZpsydp70ATFTdqSx3srlqPH/wO+KdXPS/okTdgFMJYKnXfJhgvcCfEkZD0OKIH0CsB0AMQZAg6CFoAgg4KQXcfkAG0AC2oKNhRQFT8EdhQsaE+Dj8lRHEE0NNAgKB0A2FwEnAQDopKAVOJAkbIKHoclQBEYXAKCgA9YBAACgDE4YRqQEJGwhO9FAAApQ0UjkAgtAETL1Yg+3uLL5yQ0L9FrLyhjKGkN2aF+9xJHkghjgBzNTy0B3k+3Ab6zuwX+iyaPyq7mp7e7v+zbHT/7goJAgCWkdS1bduevcHatm3btm3bvl+O0uTMIKL/jtw2ciQae4odqzH9BA48z8Z1ZSW9A0mxUZPTNFRIGKWTODbJvbekrM74gYMalcOGTd9lIc8sY+eGQxUo3raTF4TQQlnNOU/PNYFC6AmwewCnWrokRBJ8owroLFOILPFmYAqECOMJZh0lDCYdJQ8wZvHo5L6Dfu0mAg269ZkDzkP76jxsNLMcfN1fEmnM7VLC4QnHzFy2yWA23Izk6oaRbVFiyDw/GyGJQ9dGcnXD1G0DjJDMe9u+KmiGxqFea4uzm3dgFBZMhwkJpoIozLzdnFta9Uw1FDTvvcFnXkhAEUJEeU2W6hy0fGZNeVRICDD5zPg5N+ia8XWm28b8PwkJITwoL4IBaUW323tXx0fE7OmFIy8MHxG6v7ftWJQWKFdK+YKb30IWURKAKUXphgNL8ywqGPRFiNGgBAXmasTxyOON3wZcGwmdJ+Dvdb/IVvzqwgkRHOLYwuozmaZq9gD+kKD5TK4JH9atxekxa+BYTHrxtqGaXCO1HATg615SUKF42LQOD+rLS4dZn8voGCWYDbPS8vqDwzOFTTup8JrjuY824p3qzTlIOWdOeAPSvowc767Rv/vM43zGrKZnPBL+PhcvTySmjnR1MrvynVqCy1kn6xpJpRNToi+vTv6iN48SBZONUgyYgzV0QjEHFp1MVOKOOeBYj88jkFEHfB0i8/ynbZ8khnri044jmSaDia6X7eC9jUPBMgzL6Q76mrLPhfXRoOs+p/xFwXOSxfVtf152pBhgKCJpXv/troWCw/ClPJbPPprLbzVR1hrNCwN2ZWVTSyi+YuxCU1mrTCq95/jvyyC3xoNTDkLwQSMNhrfPN1YSB0v3rA/PVJRTOTu0riodTAzZQFU3BFmZONEnf4wSlohxtODLq7u/8s2hJPkxvcckqO4x+QXBPSaMQL7HBEEA); border-color: #55ffdd;">運用データ</button><button type="button" onclick="formation_table_mode();" style="background-image: url(data:image/webp;base64,UklGRhYCAABXRUJQVlA4TAkCAAAvT8ATEGfCqG0kSa4ersP/t/cWjfl30EaSI3kTf4pHI/0Xg8i2lfDeF9xdMtGTNgQgg7u+gGKw4beLXXJ//7i41f9z0jTGwrF+A8glSQdVARl6oOIVIAY9EINDQgNjAC6cINxhJxeyEtAK4UYcgPFDQAKApIBBAAHhhwtWCISfITCVOf4nOkw15ljjT7uscVSMPb3uht/DXUN+hn04vQKCALCJGmDu45j7hru7u/7/Q3BNaTO3JhfRfweSJClRN5xL4vAF1yeoJ1kmVD5vqc7VLh6fx19faWCBxLcfY2ZjmNkQCt9WfmVSVya6caTOt/aiEC0U3T7bVAJTrtU3ijJzYhNkSPtaCnz9PDM/TkUQdurM+b6k7wn2FSR8FjOHIIphZkvOF1bimxfA6fW0lzdzCV+emf0esU/yhkZx6OU4sHiIQBDIVbS+3Mh+7Vpm/cO23qva3nbVbb/o9hv492uHVlfc5DJJR67r+8yQyH0xriNq+crtZWQ9TWNLs4ItDv+5VgfdmMGWlA9besiuK0zHRbTneyF6LguuNS5hhr0KeL4Dl713dUHDMgw53j3MEPeYhTUgQwOPKCJOEGRo4BEVxcmBDA08opI4NZChjIf75lacB5ChgUe0A6whIEMDj4hCwjUYZKjjAZnF7InOQIY6HtTF+WQZOpuCDHU8iQ62LcMbIEMd7/NSAgA=); border-color: #ff55dd;">編成表</button><button type="button" onclick="operation_table_mode();" style="background-image: url(data:image/webp;base64,UklGRroAAABXRUJQVlA4TK0AAAAvT8ATEIcw/wratmE8/kDH4Stq20hyyQyO4U9nnrOHokiSmrsj/hCBD574d5NhAvLbUyqnqG2W+CB+54MoAjZARfYGAQwkSTLUa97M/f+5thXRf4Vt2zb0A93zA0BqX9CAAAA1Ml2ZCm8kABWqss5iWKKCDLQkFKWmZSHrlibx0jAtDd0fcPiyvHl0Pvyv7oO8NOXy3qnN4t7RZVzYO7+Aigv7hwCETbwMnK0AAAA=); border-color: #ddff55;">運用表</button><button type="button" class="sub_menu_tab" onclick="open_square_popup('sub_menu_popup');">サブメニュー</button></div>
+    <div id="tab_area"><button type="button" onclick="position_mode();" style="background-image: url(data:image/webp;base64,UklGRi4CAABXRUJQVlA4TCICAAAvT8ATEEfDGpIkS9n7twoHeNxHcAL7aA0GbdsIcjf+HP95/K/z77CNJEVaUu8xPeaf0QXxzHjYswGl9Yt7CJDvUeyIb/SoS9xC0Q5Vp3DxWA20QniFi2VbMKzaAIgVi0dcBDWAGABggRAwQzAIwsPAwQDwMAAMYjjVoUNfAK2IUhhoGEOFPnUHLwpfUBAvdAONsiVFHGu06BQNqi5EKEUGhHAZEueMdkTa9dg/8YEDp3Pg8zqR7/Fda5xr+792CtiSJKlW9rrfi18X3J3B3d3dHf7/F3SnF16JM3si+j8B6k99v05otY4xngppdj2m5Knv3Mqk/baQta7kDWmYG7tRQivq25aU3E7Mp424GxqpFz1SNzP8aICnjTLqQ8tDOJ5K1zppccO25YNkqM2D510qKrnKNtGPm+yVkuKSD09EjpZI85JVhjaT9m5DAnP65m/NOCDGSzN2ObaNeJjmcC3YVc1m3ygxW3fDCYK8V7cRbN/hO8BVO0G3PLO9jBP44hPXBcHnuHrwurkG8Aa4BvHsfyOm8CxXP94yVy9eC9cq3hpXI94WVxlvg+sU74LrAK+KK4UX5QrhWS4ZQ5tU7I1oDt91J5Zr+eQUq6AAD7GOEZJYEYRbrBCCLCCNeiBakdoU5A7SDkYJ6Qwjg7SPkUKKYTwj3WH4Z3FmHQwJJ74k6XI1OiLul2GFTrKuNK6TKGN/nw460bFHK+a83iutb9YcMwE=); border-color: #dd55ff;">走行位置</button><button type="button" onclick="timetable_mode();" style="background-image: url(data:image/webp;base64,UklGRpADAABXRUJQVlA4TIQDAAAvT8ATEO/juJEkKYpq8N9S3rBnlxvz7ziSJEfJvj3Jj8A2/I/AAv4n2m1tu23DDxzDVi6dQ+0pPZ8nccuKNMQvBFIDX+EtbMKHl1/3d24YfkLubjz1heLIg2KDkkBXOHDw1UchRSE6EqXQPU8UKwU5OPkXi0gUUUQEGb/FkBeLcaiRT4vwT3+xL4zbD6fzeg8aPHRMr0Kc0JFABAVQaF0URgEvig4LLHTo0JGAg0TQBQEgMBoIaAkIgB1ANIqwkYqMUjYEVhCBFQEHqWApjgcQGmloPGnphi/DC0dvt34g0ba2442ef4KpbTeoObVt2+3//rXHSCZXn78f3wuI6P8EQHdPftnit9vNo6uro83b58W60l5YHIwv37ok7W6MlwxY4bTOXJPgcl9fwi/9YjrPMS1VfkPCTwCcrwJEtNkQMCk4ekiS8wCwJEZ0WB00Jv6TpB8BOF9liPYiZrT9J5WJzMxZUrmaYUDTERl9UaQrsEzG/wto6X4gC7+GNWTekpW/vyhr3yfl3r9YZMpTRn+7FH3ZJ+VeAQDEPGW036mk+zepn4LvpDraDisIPJDGiF+JBloPyC2Qzla/PB20LNVCtlGxRNu5fac5Yq9kH70LNREHFBEI/uThZuCjeuKBxj4I/ODiMOVXTlxQpY9zw8eWkzZIfFBu2jQnkwAGzjm5GADixAkVAMu8zAO3vNyhx+XF68gnXihaxk3FIjeJZ27Wdk3qj0pHpjy5jT2ip+STIUpjnshT8ono5pjGASSswaTAOIAEnVxRH4BMeyICfQAy6dKMiI4SuWNaBpxZTZM6JgSWAWeWTvaIHpNfSbMXURfxBOgx+ZXoZpeMdCdKokrjEy5JbzybYfLaIjeJMm4q8rmJ9rq8eN245eUeGOdlHijhpRAYOOfkfADACidTANDKyXCas8nHLycNDXzUwDfwg4uDgB+quCjDh8E9HrZSH2GEhwKIrnLwBuGMU/uOvogh5trmNkN22bYkpAPrdj2F5PB5x6btMFRm/7TnIANqu/7a8jcLqvs27PjzBerD6zY89UPnpznXNHc5BM3xI7MuGqE/Z1XJcl9fQsnbFxgZu5F7AuB8ldsqhKkDY99l5gFgSeagNgWDA5VbYo8AnK9iv2pCMNzJnTwXoERm5iwJnk4NO7AxVZC88/xEvfulwhQs7hiqmH3Z2Ty7ujrb3FmbrYh2Qzc=); border-color: #ffdd55;">時刻表</button><button type="button" onclick="operation_data_mode();" style="background-image: url(data:image/webp;base64,UklGRvQDAABXRUJQVlA4TOgDAAAvT8ATEGeloG0bxvxJtzsgHESS7Cq97/9Pjo7wrwIXGdaN20aSRFfPRPv//2268UZz2o1tq3FjTPwlj5mTLvtvs4BsKJWpSL6NRDZpsydp70ATFTdqSx3srlqPH/wO+KdXPS/okTdgFMJYKnXfJhgvcCfEkZD0OKIH0CsB0AMQZAg6CFoAgg4KQXcfkAG0AC2oKNhRQFT8EdhQsaE+Dj8lRHEE0NNAgKB0A2FwEnAQDopKAVOJAkbIKHoclQBEYXAKCgA9YBAACgDE4YRqQEJGwhO9FAAApQ0UjkAgtAETL1Yg+3uLL5yQ0L9FrLyhjKGkN2aF+9xJHkghjgBzNTy0B3k+3Ab6zuwX+iyaPyq7mp7e7v+zbHT/7goJAgCWkdS1bduevcHatm3btm3bvl+O0uTMIKL/jtw2ciQae4odqzH9BA48z8Z1ZSW9A0mxUZPTNFRIGKWTODbJvbekrM74gYMalcOGTd9lIc8sY+eGQxUo3raTF4TQQlnNOU/PNYFC6AmwewCnWrokRBJ8owroLFOILPFmYAqECOMJZh0lDCYdJQ8wZvHo5L6Dfu0mAg269ZkDzkP76jxsNLMcfN1fEmnM7VLC4QnHzFy2yWA23Izk6oaRbVFiyDw/GyGJQ9dGcnXD1G0DjJDMe9u+KmiGxqFea4uzm3dgFBZMhwkJpoIozLzdnFta9Uw1FDTvvcFnXkhAEUJEeU2W6hy0fGZNeVRICDD5zPg5N+ia8XWm28b8PwkJITwoL4IBaUW323tXx0fE7OmFIy8MHxG6v7ftWJQWKFdK+YKb30IWURKAKUXphgNL8ywqGPRFiNGgBAXmasTxyOON3wZcGwmdJ+Dvdb/IVvzqwgkRHOLYwuozmaZq9gD+kKD5TK4JH9atxekxa+BYTHrxtqGaXCO1HATg615SUKF42LQOD+rLS4dZn8voGCWYDbPS8vqDwzOFTTup8JrjuY824p3qzTlIOWdOeAPSvowc767Rv/vM43zGrKZnPBL+PhcvTySmjnR1MrvynVqCy1kn6xpJpRNToi+vTv6iN48SBZONUgyYgzV0QjEHFp1MVOKOOeBYj88jkFEHfB0i8/ynbZ8khnri044jmSaDia6X7eC9jUPBMgzL6Q76mrLPhfXRoOs+p/xFwXOSxfVtf152pBhgKCJpXv/troWCw/ClPJbPPprLbzVR1hrNCwN2ZWVTSyi+YuxCU1mrTCq95/jvyyC3xoNTDkLwQSMNhrfPN1YSB0v3rA/PVJRTOTu0riodTAzZQFU3BFmZONEnf4wSlohxtODLq7u/8s2hJPkxvcckqO4x+QXBPSaMQL7HBEEA); border-color: #55ffdd;">運用データ</button><button type="button" onclick="formation_table_mode();" style="background-image: url(data:image/webp;base64,UklGRhYCAABXRUJQVlA4TAkCAAAvT8ATEGfCqG0kSa4ersP/t/cWjfl30EaSI3kTf4pHI/0Xg8i2lfDeF9xdMtGTNgQgg7u+gGKw4beLXXJ//7i41f9z0jTGwrF+A8glSQdVARl6oOIVIAY9EINDQgNjAC6cINxhJxeyEtAK4UYcgPFDQAKApIBBAAHhhwtWCISfITCVOf4nOkw15ljjT7uscVSMPb3uht/DXUN+hn04vQKCALCJGmDu45j7hru7u/7/Q3BNaTO3JhfRfweSJClRN5xL4vAF1yeoJ1kmVD5vqc7VLh6fx19faWCBxLcfY2ZjmNkQCt9WfmVSVya6caTOt/aiEC0U3T7bVAJTrtU3ijJzYhNkSPtaCnz9PDM/TkUQdurM+b6k7wn2FSR8FjOHIIphZkvOF1bimxfA6fW0lzdzCV+emf0esU/yhkZx6OU4sHiIQBDIVbS+3Mh+7Vpm/cO23qva3nbVbb/o9hv492uHVlfc5DJJR67r+8yQyH0xriNq+crtZWQ9TWNLs4ItDv+5VgfdmMGWlA9besiuK0zHRbTneyF6LguuNS5hhr0KeL4Dl713dUHDMgw53j3MEPeYhTUgQwOPKCJOEGRo4BEVxcmBDA08opI4NZChjIf75lacB5ChgUe0A6whIEMDj4hCwjUYZKjjAZnF7InOQIY6HtTF+WQZOpuCDHU8iQ62LcMbIEMd7/NSAgA=); border-color: #ff55dd;">編成表</button><button type="button" onclick="operation_table_mode();" style="background-image: url(data:image/webp;base64,UklGRroAAABXRUJQVlA4TK0AAAAvT8ATEIcw/wratmE8/kDH4Stq20hyyQyO4U9nnrOHokiSmrsj/hCBD574d5NhAvLbUyqnqG2W+CB+54MoAjZARfYGAQwkSTLUa97M/f+5thXRf4Vt2zb0A93zA0BqX9CAAAA1Ml2ZCm8kABWqss5iWKKCDLQkFKWmZSHrlibx0jAtDd0fcPiyvHl0Pvyv7oO8NOXy3qnN4t7RZVzYO7+Aigv7hwCETbwMnK0AAAA=); border-color: #ddff55;">運用表</button></div>
     <div id="blank_article" class="wait_icon"></div>
     <article>
         <select id="position_line_select" class="wide_select" onchange="position_change_lines(this.value);"></select>
@@ -2280,11 +2311,6 @@ button {
         <div class="preview_popup" id="operation_detail_popup">
             <button type="button" class="popup_close_button" onclick="close_square_popup();"></button>
             <div id="operation_detail_area" class="load_icon"></div>
-        </div>
-        <div class="square_popup" id="sub_menu_popup">
-            <button type="button" class="popup_close_button" onclick="close_square_popup();"></button>
-            <button type="button" class="wide_button" onclick="about_railroad_data();">この路線系統データについて</button>
-            <button type="button" class="wide_button" onclick="alert('この機能は今後の更新で実装予定です');">運用情報の一括投稿</button>
         </div>
         <div class="square_popup" id="about_popup">
             <button type="button" class="popup_close_button" onclick="close_square_popup();"></button>
@@ -2614,16 +2640,8 @@ function convert_color_dark_mode (color_hex) {
 function switch_dark_mode () {
     if (config["dark_mode"]) {
         document.getElementsByTagName("body")[0].className = "dark_mode";
-        
-        if (railroad_info !== null) {
-            header_elm.style.backgroundColor = convert_color_dark_mode(railroad_info["main_color"]);
-        }
     } else {
         document.getElementsByTagName("body")[0].className = "";
-        
-        if (railroad_info !== null) {
-            header_elm.style.backgroundColor = railroad_info["main_color"];
-        }
     }
     
     switch (mode_val) {
@@ -2652,6 +2670,7 @@ switch_dark_mode();
 
 
 var header_elm = document.getElementsByTagName("header")[0];
+var railroad_icon_elm = document.getElementById("railroad_icon");
 
 var menu_elm = document.getElementById("menu");
 var menu_button_elm = document.getElementById("menu_button");
@@ -2965,7 +2984,12 @@ function switch_railroad (railroad_info_next, load_icon = true) {
     switch_dark_mode();
     
     header_elm.className = "railroad_select_mode";
-    header_elm.style.backgroundImage = "url(" + railroad_info["railroad_icon"] + ")";
+    
+    var main_color_hsl = rgb2hsl(railroad_info["main_color"]);
+    main_color_hsl[2] = Math.min(main_color_hsl[2] * 1.2, 255);
+    var main_color_shade = hsl2rgb(main_color_hsl[0], main_color_hsl[1], main_color_hsl[2]);
+    
+    railroad_icon_elm.style.backgroundImage = "url(" + railroad_info["railroad_icon"] + "), linear-gradient(to right, " + railroad_info["main_color"] + ", rgb(" + main_color_shade[0] + ", " + main_color_shade[1] + ", " + main_color_shade[2] + "))";
     
     if (load_icon) {
         var railroad_id = railroad_info["railroad_id"];
@@ -3481,7 +3505,7 @@ function position_change_lines (line_id, cnt_0 = 0) {
         var line_color = convert_color_dark_mode(railroad_info["lines"][line_id]["line_color"]);
         
         var line_color_hsl = rgb2hsl(railroad_info["lines"][line_id]["line_color"]);
-        var station_color = "rgb(" + hsl2rgb(line_color_hsl[0], line_color_hsl[1], (255 - line_color_hsl[2]) / 3).join(",") + ")";
+        var station_color = "rgb(" + hsl2rgb(line_color_hsl[0], line_color_hsl[1] / 3, (255 - line_color_hsl[2]) * 0.75).join(",") + ")";
     }
     
     var buf = "";

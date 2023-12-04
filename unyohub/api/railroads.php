@@ -35,7 +35,7 @@ if (intval($_POST["last_modified_timestamp"]) >= $last_modified_max) {
             print "ERROR: 路線系統設定ファイルが破損しています";
             exit;
         }
-        $railroads[$railroad] = array("railroad_name" => $railroad_info["railroad_name"], "railroad_icon" => $railroad_info["railroad_icon"]);
+        $railroads[$railroad] = array("railroad_name" => $railroad_info["railroad_name"], "main_color" => $railroad_info["main_color"], "railroad_icon" => $railroad_info["railroad_icon"]);
     }
     
     header("Last-Modified: ".gmdate("D, d M Y H:i:s", $last_modified_max)." GMT");
