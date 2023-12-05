@@ -20,7 +20,7 @@ function print_header () {
         <link rel="shortcut icon" href="../favicon.ico">
     </head>
     <body>
-        <header onclick="location.href = 'index.php';">鉄道運用Hub 管理画面</header>
+        <header><a id="railroad_icon" href="javascript:void(0);" onclick="location.href = 'index.php';"></a>鉄道運用Hub 管理画面</header>
     EOM;
 }
 

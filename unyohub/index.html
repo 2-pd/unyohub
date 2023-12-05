@@ -125,13 +125,7 @@ header {
     display: none;
 }
 
-#railroad_select, input[type="checkbox"] + label.drop_down:after  {
-    background-image: url(data:image/webp;base64,UklGRpoAAABXRUJQVlA4TI4AAAAvJ8AFEC8gECD4X9OkQ0BC8P+aTRKQEPy/ZpOEBATNY/cDoFrtVw0YrmLbdppNEYAJ/lsiIQLa9a8lcO45FiL6r8Zt26gXB21BX8E2AwAAIO378kvaVuWR9q0K3O1dF8Fal7oI1ogQBCGJEmwEO1aD1WG0GD1imuTzdvpPPND1WbunGWgmxIiYEePfMTMB);
-    background-repeat: no-repeat;
-    background-size: 20px 12px;
-}
-
-#railroad_select {
+#railroad_name {
     display: none;
     
     position: absolute;
@@ -140,19 +134,24 @@ header {
     width: calc(100vw - 120px);
     height: 40px;
     
-    border: none;
-    
-    background-position: calc(100vw - 150px) 15px;
+    background-image: url(data:image/webp;base64,UklGRnACAABXRUJQVlA4TGMCAAAvd8AdELVAsG03bTT73xRj9DQ860HZcSwNMzMzR8C5bdvU89m2nfwAu7LN0pV6Jx1Lq7RtJ5WdyrbN7ciNJEVyam8DOUz7goO9jEIh36Al/FAS3AIRs3hqvOZJNW0yzjK/HE54TLM/OLJMBf6Or2l7eH/6eD6NZ1Kg0ZQzzzNI87LcRLzyFdLcMidlRMEPpJehKUwdgXzmOcuGuPkK+Vwxqcl/MTyQzRVojXiurNx8hdZwqZm/ATT27IGCnNw/4P2dr1AQdrFxhxuvwCm8NC7e+zFXwC1cfPnSPOAYcnyx5okVXz+eePEFXLN1if4pdbbImEYHDT40fJ5mexxJJJ+gqFwMTy1NGq1Bba4IdaCoXAxlm1zycw7LNubOZ3Gvg785Wh/3Onj1lF8SGTK+JTK97hP1DYrKrd77ul1qas4lrbl6rd5BtkAcHHCeQJlfB9k1kRRJM6FKcNZDcA99CQ2sRYMS0uvvMKF5HZXU9HeUrrha6E8Q4K9RpN9HOu7jhbthmAG7KRoy0oBVIsEBhvTaQynIDRlhQJcQEEGjqCwz5MYtEmc3nJSVo8L20phwRpgcGtwjKTci4tbgZJqdF2h+pHVpRoZtRm4wT7wa7EDtopfCpsH7hD4WbQKG+nbrJp62Gw2hNC78G9pT50x+oe6BLJB0Aazga9y6q+dv+6H7Nw5JBIYWde9Hqe2n8WEMcTk3uIJfoeCl/dvIVxRSDAxJqNFQk21DCqsJtLv8ymKyA8bwBwx1r3rA0R3ChIf90VirJS22pfoE8M9G5dNfo+XNYPvOH+nVb5gosD0ltYew10gOAAA=);
+    background-repeat: no-repeat;
+    background-size: 40px;
+    background-position: calc(100vw - 165px) 0;
     background-color: transparent;
     
     line-height: 40px;
-    font-size: 18px;
+    font-size: 22px;
     color: #ffffff;
-    
-    appearance: none;
+    text-indent: 10px;
+    text-decoration: none;
 }
 
-.railroad_select_mode #railroad_select, .railroad_select_mode #railroad_icon {
+#railroad_name small {
+    font-size: 16px;
+}
+
+.railroad_select_mode #railroad_name, .railroad_select_mode #railroad_icon {
     display: block;
 }
 
@@ -289,7 +288,7 @@ header {
     vertical-align: top;
 }
 
-#splash_screen {
+#splash_screen, #railroad_select_popup {
     position: fixed;
     top: 0;
     
@@ -305,7 +304,7 @@ header {
     z-index: 10;
 }
 
-.dark_mode #splash_screen {
+.dark_mode #splash_screen, .dark_mode #railroad_select_popup {
     background-color: #666666;
 }
 
@@ -313,7 +312,7 @@ header {
     z-index: 3 !important;
 }
 
-#splash_screen:after {
+#splash_screen:after, #railroad_select_popup:after {
     content: "";
     
     display: block;
@@ -333,19 +332,21 @@ header {
     transition-property: opacity;
 }
 
-.splash_screen_loaded:after {
+.splash_screen_loaded:after, #railroad_select_popup:after {
     opacity: 0.25;
 }
 
-#splash_screen_inner {
+#splash_screen_inner, #railroad_select_area {
     position: relative;
     
     width: 100%;
     min-height: calc(100% - 120px);
     
-    padding: 60px 0;
-    
     z-index: 4;
+}
+
+#splash_screen_inner {
+    padding: 60px 0;
 }
 
 #splash_screen_login_status {
@@ -501,11 +502,11 @@ article, #blank_article {
     vertical-align: top;
 }
 
-.dark_mode .position_station, .dark_mode .position_inbound, .dark_mode .position_outbound {
+.dark_mode .position_inbound, .dark_mode .position_outbound {
     border-color: #555555;
 }
 
-.position_row:last-child .position_station, .position_row:last-child .position_inbound, .position_row:last-child .position_outbound {
+.position_row:last-child .position_inbound, .position_row:last-child .position_outbound {
     border-bottom: none;
 }
 
@@ -772,6 +773,9 @@ input[type="checkbox"] + label.drop_down:after {
     width: 45px;
     height: 45px;
     
+    background-image: url(data:image/webp;base64,UklGRpoAAABXRUJQVlA4TI4AAAAvJ8AFEC8gECD4X9OkQ0BC8P+aTRKQEPy/ZpOEBATNY/cDoFrtVw0YrmLbdppNEYAJ/lsiIQLa9a8lcO45FiL6r8Zt26gXB21BX8E2AwAAIO378kvaVuWR9q0K3O1dF8Fal7oI1ogQBCGJEmwEO1aD1WG0GD1imuTzdvpPPND1WbunGWgmxIiYEePfMTMB);
+    background-repeat: no-repeat;
+    background-size: 20px 12px;
     background-position: center;
     background-color: transparent !important;
     
@@ -1392,7 +1396,7 @@ footer div {
 
 .popup_close_button {
     position: fixed;
-    top: 10px;
+    top: 0;
     right: 10px;
     
     width: 40px;
@@ -1611,7 +1615,7 @@ a {
     line-height: 22px;
 }
 
-.dark_mode #splash_screen button, .dark_mode .square_popup button, .dark_mode .preview_popup button {
+.dark_mode #splash_screen .wide_button, .dark_mode #railroad_select_popup .wide_button, .dark_mode #railroad_select_popup .popup_close_button, .dark_mode .square_popup button, .dark_mode .preview_popup button {
     background-color: rgba(102,102,102,0.85);
 }
 
@@ -2052,7 +2056,7 @@ input[type="radio"]:checked + label {
     color: #ffffff;
 }
 
-button {
+button, a.wide_button {
     background-color: rgba(255,255,255,0.9);
     
     border: 1px solid #dddddd;
@@ -2061,9 +2065,10 @@ button {
     border-radius: 5px;
     
     color: #333333;
+    text-decoration: none;
 }
 
-.dark_mode button {
+.dark_mode button, .dark_mode a.wide_button {
     background-color: rgba(68,68,68,0.85);
     
     border-color: #777777;
@@ -2102,7 +2107,7 @@ button {
 </style>
 </head>
 <body>
-    <header><a id="railroad_icon" href="javascript:void(0);" onclick="about_railroad_data();"></a><span id="app_name"></span><select id="railroad_select" onchange="select_railroad(this.value);"></select><button type="button" id="menu_button" onclick="menu_click();"></button></header>
+    <header><a id="railroad_icon" href="javascript:void(0);" onclick="about_railroad_data();"></a><span id="app_name"></span><a id="railroad_name" href="javascript:void(0);" onclick="open_popup('railroad_select_popup');"></a><button type="button" id="menu_button" onclick="menu_click();"></button></header>
     <div id="menu">
         <div id="menu_logged_in">
             <b id="menu_user_name"></b>
@@ -2205,6 +2210,10 @@ button {
             <button type="button" class="previous_button" onclick="operation_table_previous();"></button><span id="operation_table_name" class="footer_value_wide"></span><button type="button" class="next_button" onclick="operation_table_next();"></button>
         </div>
     </footer>
+    <div class="popup" id="railroad_select_popup">
+        <button type="button" class="popup_close_button" onclick="popup_close();"></button>
+        <div id="railroad_select_area"></div>
+    </div>
     <div class="popup" id="sign_up_popup">
         <button type="button" class="popup_close_button" onclick="close_square_popup();"></button>
         <h2>新規ユーザー登録</h2>
@@ -2855,20 +2864,18 @@ var splash_screen_elm = document.getElementById("splash_screen");
 var splash_screen_login_status_elm = document.getElementById("splash_screen_login_status");
 
 function update_railroad_list (railroads) {
-    var select_html = "";
     var buttons_html = "";
     
     var keys = Object.keys(railroads);
     for (var cnt = 0; cnt < keys.length; cnt++) {
-        select_html += "<option value='" + keys[cnt] + "'>" + escape_html(railroads[keys[cnt]]["railroad_name"]) + "</option>";
-        buttons_html += "<button type='button' class='wide_button' onclick='select_railroad(\"" + keys[cnt] + "\");' style='background-image: url(" + railroads[keys[cnt]]["railroad_icon"] + ");'>" + escape_html(railroads[keys[cnt]]["railroad_name"]) + "</button>";
+        buttons_html += "<a href='javascript:void(0);' class='wide_button' onclick='select_railroad(\"" + keys[cnt] + "\");' style='background-image: url(" + railroads[keys[cnt]]["railroad_icon"] + ");'>" + escape_html(railroads[keys[cnt]]["railroad_name"]) + "</a>";
     }
     
     if (cnt === 0) {
         buttons_html = "<div class='no_data'>利用可能なデータがありません</div>";
     }
     
-    document.getElementById("railroad_select").innerHTML = select_html;
+    document.getElementById("railroad_select_area").innerHTML = buttons_html;
     document.getElementById("splash_screen_buttons").innerHTML = buttons_html;
     
     splash_screen_elm.className = "splash_screen_loaded";
@@ -2920,6 +2927,9 @@ window.onload = function () {
 
 function select_railroad (railroad_id) {
     splash_screen_elm.style.display = "none";
+    if (popup_history.length >= 1) {
+        popup_close();
+    }
     
     idb_start_transaction("railroads", false, function (transaction) {
         var railroads_store = transaction.objectStore("railroads");
@@ -2976,10 +2986,12 @@ function switch_railroad (railroad_info_next, load_icon = true) {
     
     railroad_info["deadhead_train_number_regexp"] = new RegExp(railroad_info["deadhead_train_number"]);
     
-    var select_elm = document.getElementById("railroad_select");
-    if (select_elm.value !== railroad_info["railroad_id"]) {
-        select_elm.value = railroad_info["railroad_id"];
-    }
+    var name_elm = document.getElementById("railroad_name");
+    
+    var railroad_name_split = escape_html(railroad_info["railroad_name"]).split(" ");
+    railroad_name_split[0] += "<small>";
+    
+    name_elm.innerHTML = railroad_name_split.join(" ") + "</small>";
     
     switch_dark_mode();
     
@@ -3501,15 +3513,23 @@ function position_change_lines (line_id, cnt_0 = 0) {
         
         var line_color_hsl = rgb2hsl(line_color);
         var station_color = "rgb(" + hsl2rgb(line_color_hsl[0], line_color_hsl[1], (line_color_hsl[2] + 1275) / 6).join(",") + ")";
+        var major_station_row_color = "rgb(" + hsl2rgb(line_color_hsl[0], line_color_hsl[1], (line_color_hsl[2] + 2295) / 10).join(",") + ")";
     } else {
         var line_color = convert_color_dark_mode(railroad_info["lines"][line_id]["line_color"]);
         
         var line_color_hsl = rgb2hsl(railroad_info["lines"][line_id]["line_color"]);
         var station_color = "rgb(" + hsl2rgb(line_color_hsl[0], line_color_hsl[1] / 3, (255 - line_color_hsl[2]) * 0.75).join(",") + ")";
+        var major_station_row_color = "rgb(" + hsl2rgb(line_color_hsl[0], line_color_hsl[1] / 8, (255 - line_color_hsl[2]) * 0.75).join(",") + ")";
     }
     
     var buf = "";
     for (var cnt = 0; cnt <= railroad_info["lines"][line_id]["stations"].length; cnt++) {
+        if (cnt < railroad_info["lines"][line_id]["stations"].length && "is_major_station" in railroad_info["lines"][line_id]["stations"][cnt] && railroad_info["lines"][line_id]["stations"][cnt]["is_major_station"]) {
+            var border_style = " style='border-bottom: 2px solid " + major_station_row_color + ";'";
+        } else {
+            var border_style = "";
+        }
+        
         buf += "<div class='position_row'><div class='position_station'>";
         
         if (cnt !== 0){
@@ -3530,7 +3550,7 @@ function position_change_lines (line_id, cnt_0 = 0) {
             }
         }
            
-        buf += "</div><div class='position_inbound'></div>";
+        buf += "</div><div class='position_inbound'" + border_style + "></div>";
         
         if (cnt !== 0 && cnt != railroad_info["lines"][line_id]["stations"].length){
             buf += "<div class='position_line' style='background-color: " + line_color + ";'></div>";
@@ -3538,7 +3558,7 @@ function position_change_lines (line_id, cnt_0 = 0) {
             buf += "<div class='position_line' style='border-color: " + line_color + ";'></div>";
         }
         
-        buf += "<div class='position_outbound'></div></div>";
+        buf += "<div class='position_outbound'" + border_style + "></div></div>";
     }
     
     position_area_elm.innerHTML = buf;
