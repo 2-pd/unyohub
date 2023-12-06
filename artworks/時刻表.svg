@@ -2,9 +2,9 @@
 <!-- Created with Inkscape (http://www.inkscape.org/) -->
 
 <svg
-   width="80"
-   height="80"
-   viewBox="0 0 21.166666 21.166667"
+   width="54"
+   height="54"
+   viewBox="0 0 14.2875 14.2875"
    version="1.1"
    id="svg5"
    inkscape:version="1.3 (0e150ed6c4, 2023-07-21)"
@@ -29,9 +29,9 @@
      inkscape:document-units="px"
      showgrid="false"
      units="px"
-     inkscape:zoom="5.8297418"
-     inkscape:cx="35.336042"
-     inkscape:cy="50.087981"
+     inkscape:zoom="8.2444999"
+     inkscape:cx="18.921706"
+     inkscape:cy="31.900055"
      inkscape:window-width="1920"
      inkscape:window-height="1052"
      inkscape:window-x="1920"
@@ -46,11 +46,60 @@
      inkscape:label="レイヤー 1"
      inkscape:groupmode="layer"
      id="layer1">
-    <path
+    <circle
+       style="fill:#eebb33;stroke-width:0;stroke-linecap:square;fill-opacity:1"
        id="path1"
-       style="fill:#ffdd55;fill-opacity:0.75;stroke-width:2.64583;stroke-linecap:round;stroke-linejoin:round;paint-order:stroke fill markers"
-       d="M 10.583333,0 C 4.7383196,0 0,4.7383196 0,10.583333 c 0,5.845013 4.7383196,10.583333 10.583333,10.583333 5.845013,0 10.583333,-4.73832 10.583333,-10.583333 C 21.166666,4.7383196 16.428346,0 10.583333,0 Z m 0,0.52916666 c 0.365314,-3.8e-7 0.661459,0.29614472 0.661459,0.66145834 0,0.3653136 -0.296145,0.6614587 -0.661459,0.6614583 -0.365313,-1e-7 -0.6614581,-0.296145 -0.6614581,-0.6614583 0,-0.36531327 0.2961451,-0.66145822 0.6614581,-0.66145834 z m 5.17e-4,2.44686664 c 0.54797,1.1e-6 0.992187,0.4442179 0.992188,0.9921875 v 5.6234417 h 4.299491 c 0.547969,1.7e-6 0.992186,0.4442185 0.992187,0.9921875 -1e-6,0.547969 -0.444218,0.992186 -0.992187,0.992188 H 10.58385 C 10.035903,11.575982 9.5917184,11.131797 9.5916625,10.58385 V 3.9682208 C 9.5916639,3.4202514 10.035881,2.9760347 10.58385,2.9760333 Z M 1.190625,9.9218749 c 0.3653133,0 0.6614582,0.2961451 0.6614583,0.6614581 4e-7,0.365314 -0.2961447,0.661459 -0.6614583,0.661459 -0.36531362,0 -0.66145872,-0.296145 -0.66145834,-0.661459 1.2e-7,-0.365313 0.29614507,-0.6614581 0.66145834,-0.6614581 z m 18.785417,0 c 0.365313,2e-7 0.661458,0.2961451 0.661458,0.6614581 0,0.365313 -0.296145,0.661459 -0.661458,0.661459 -0.365314,0 -0.661459,-0.296145 -0.661459,-0.661459 0,-0.365314 0.296145,-0.6614585 0.661459,-0.6614581 z m -9.392709,9.3927081 c 0.365314,0 0.661459,0.296145 0.661459,0.661459 0,0.365313 -0.296146,0.661458 -0.661459,0.661458 -0.365313,0 -0.6614579,-0.296145 -0.6614581,-0.661458 -4e-7,-0.365314 0.2961441,-0.661459 0.6614581,-0.661459 z"
-       sodipodi:nodetypes="ssssssssssccccscccccsssssssssssssss" />
+       cx="7.1437497"
+       cy="7.1437497"
+       r="7.1437497" />
+    <circle
+       style="fill:#f7f7f7;fill-opacity:1;stroke-width:0;stroke-linecap:square"
+       id="path2"
+       cx="7.1437502"
+       cy="7.1437502"
+       r="5.5562501" />
+    <path
+       id="path2-6"
+       style="fill:#cccccc;fill-opacity:1;stroke-width:0;stroke-linecap:square"
+       d="M 7.14375 1.5875 A 5.5562501 5.5562501 0 0 0 1.5875 7.14375 A 5.5562501 5.5562501 0 0 0 3.4736898 11.311454 A 5.5562501 5.5562501 0 0 1 2.1166667 7.6729167 A 5.5562501 5.5562501 0 0 1 7.6729167 2.1166667 A 5.5562501 5.5562501 0 0 1 11.327474 3.4891927 A 5.5562501 5.5562501 0 0 0 7.14375 1.5875 z " />
+    <circle
+       style="fill:#999999;fill-opacity:1;stroke-width:0;stroke-linecap:square"
+       id="path3-3"
+       cx="7.1437502"
+       cy="2.2489583"
+       r="0.39687502" />
+    <circle
+       style="fill:#999999;fill-opacity:1;stroke-width:0;stroke-linecap:square"
+       id="path3"
+       cx="12.038542"
+       cy="7.1437502"
+       r="0.39687502" />
+    <circle
+       style="fill:#999999;fill-opacity:1;stroke-width:0;stroke-linecap:square"
+       id="path3-5"
+       cx="7.1437502"
+       cy="12.038542"
+       r="0.39687502" />
+    <circle
+       style="fill:#999999;fill-opacity:1;stroke-width:0;stroke-linecap:square"
+       id="path3-7"
+       cx="2.2489583"
+       cy="7.1437502"
+       r="0.39687502" />
+    <rect
+       style="fill:#333333;fill-opacity:1;stroke-width:0;stroke-linecap:square"
+       id="rect2"
+       width="1.0583334"
+       height="5.5562496"
+       x="6.6145835"
+       y="2.1166666" />
+    <rect
+       style="fill:#333333;fill-opacity:1;stroke-width:0;stroke-linecap:square"
+       id="rect3"
+       width="4.2333336"
+       height="1.0583333"
+       x="6.6145835"
+       y="6.6145835" />
   </g>
   <metadata
      id="metadata824">

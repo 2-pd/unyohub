@@ -76,7 +76,7 @@ header {
 }
 
 .dark_mode header {
-    background-color: #222222;
+    background-color: #111111;
 }
 
 #railroad_icon {
@@ -85,7 +85,7 @@ header {
     position: absolute;
     left: 0;
     
-    width: 60px;
+    width: 64px;
     height: 40px;
     
     background-size: 30px, contain;
@@ -93,22 +93,34 @@ header {
     background-position: 8px 5px, 0 0;
 }
 
-#railroad_icon:after {
+#railroad_icon:before, #railroad_icon:after {
     content: "";
     
     display: block;
     
     position: absolute;
-    left: 45px;
     
     border-top: 20px solid #333333;
     border-bottom: 20px solid #333333;
     border-left: 15px solid transparent;
 }
 
+#railroad_icon:before {
+    left: 45px;
+    
+    width: 4px;
+    
+    border-top-color: #f7f7f7;
+    border-bottom-color: #f7f7f7;
+}
+
+#railroad_icon:after {
+    left: 49px;
+}
+
 .dark_mode #railroad_icon:after {
-    border-top-color: #222222;
-    border-bottom-color: #222222;
+    border-top-color: #111111;
+    border-bottom-color: #111111;
 }
 
 #app_name {
@@ -249,6 +261,8 @@ header {
     border-radius: 0;
     
     background-color: transparent;
+    
+    font-size: 15px;
 }
 
 .dark_mode #menu button {
@@ -373,7 +387,7 @@ header {
     width: 100%;
     height: 50px;
     
-    background-color: #eeeeee;
+    background-color: #dddddd;
     
     line-height: 50px;
     white-space: nowrap;
@@ -386,7 +400,7 @@ header {
 }
 
 .dark_mode #tab_area {
-    background-color: #333333;
+    background-color: #222222;
 }
 
 #tab_area button {
@@ -395,34 +409,35 @@ header {
     box-sizing: content-box;
     
     width: 80px;
-    height: 16px;
+    height: 18px;
     
     padding: 0;
-    padding-top: 34px;
+    padding-top: 32px;
     
     background-repeat: no-repeat;
-    background-size: 30px;
-    background-position: 25px 4px;
+    background-size: 27px;
+    background-position: 26.5px 5px;
     background-color: transparent;
     
     border: none;
     border-radius: 0;
     
     overflow: hidden;
-    line-height: 16px;
-    font-size: 12px;
+    line-height: 18px;
+    font-size: 14px;
+    color: #444444;
     white-space: nowrap;
     text-overflow: ellipsis;
 }
 
 .dark_mode #tab_area button {
-    color: #ffffff;
+    color: #eeeeee;
 }
 
 #tab_area .active_tab {
-    padding-top: 32px;
+    padding-top: 30px;
     
-    background-position-y: 2px;
+    background-position-y: 3px;
     background-color: #ffffff !important;
     
     border-top: 2px solid transparent;
@@ -455,6 +470,8 @@ article, #blank_article {
 .wide_button {
     display: block;
     
+    position: relative;
+    
     width: calc(100% - 40px) !important;
     
     max-width: 460px;
@@ -462,12 +479,20 @@ article, #blank_article {
     margin: 10px auto;
     padding: 10px 10px;
     
-    background-size: 30px;
-    background-repeat: no-repeat;
-    background-position: 10px 50%;
-    
     line-height: 26px;
     font-size: 18px;
+    overflow: hidden;
+}
+
+.wide_button img {
+    position: absolute;
+    
+    top: 0;
+    left: 0;
+    
+    width: 30px;
+    
+    padding: 8px;
 }
 
 .wide_select {
@@ -759,7 +784,7 @@ input[type="checkbox"] + label.drop_down {
 }
 
 .dark_mode input[type="checkbox"] + label.drop_down {
-    background-color: #888888;
+    background-color: #808080;
 }
 
 input[type="checkbox"] + label.drop_down:before {
@@ -773,7 +798,7 @@ input[type="checkbox"] + label.drop_down:after {
     width: 45px;
     height: 45px;
     
-    background-image: url(data:image/webp;base64,UklGRpoAAABXRUJQVlA4TI4AAAAvJ8AFEC8gECD4X9OkQ0BC8P+aTRKQEPy/ZpOEBATNY/cDoFrtVw0YrmLbdppNEYAJ/lsiIQLa9a8lcO45FiL6r8Zt26gXB21BX8E2AwAAIO378kvaVuWR9q0K3O1dF8Fal7oI1ogQBCGJEmwEO1aD1WG0GD1imuTzdvpPPND1WbunGWgmxIiYEePfMTMB);
+    background-image: url(data:image/webp;base64,UklGRpoAAABXRUJQVlA4TI4AAAAvJ8AFEC9AkG3T+bse4RwE2Tadv+sRHoJsm87f9QgPmYDF9qkurQgCbDuKVfkvGARA24Y9AX0C5mAW5iDz76YlMAkR/VfkNmoEtD6wPASxQyf1xq2DelGKhnqjFMPqtTIxlvcpE2M5QRgBwgnGmDBmpAKpQigRaox851tegCGr29zXJA1JB2khPT8E4soB);
     background-repeat: no-repeat;
     background-size: 20px 12px;
     background-position: center;
@@ -1425,7 +1450,7 @@ h2 {
 }
 
 .dark_mode .popup h3 {
-    background-color: #888888;
+    background-color: #808080;
 }
 
 h3 a {
@@ -1826,7 +1851,7 @@ a {
 }
 
 .dark_mode .train_overview:after, .dark_mode .location_overview:after {
-    border-top-color: #888888;
+    border-top-color: #808080;
 }
 
 .train_overview:last-of-type:after, .location_overview:last-of-type:after {
@@ -1909,7 +1934,7 @@ input[type="text"], input[type="number"], input[type="password"], input[type="se
 .dark_mode .square_popup input[type="text"], .dark_mode .square_popup input[type="password"] {
     background-color: #666666;
     
-    border-color: #888888;
+    border-color: #808080;
 }
 
 .search_icon {
@@ -2134,7 +2159,7 @@ button, a.wide_button {
             <div id="splash_screen_app_version"></div>
         </div>
     </div>
-    <div id="tab_area"><button type="button" onclick="position_mode();" style="background-image: url(data:image/webp;base64,UklGRi4CAABXRUJQVlA4TCICAAAvT8ATEEfDGpIkS9n7twoHeNxHcAL7aA0GbdsIcjf+HP95/K/z77CNJEVaUu8xPeaf0QXxzHjYswGl9Yt7CJDvUeyIb/SoS9xC0Q5Vp3DxWA20QniFi2VbMKzaAIgVi0dcBDWAGABggRAwQzAIwsPAwQDwMAAMYjjVoUNfAK2IUhhoGEOFPnUHLwpfUBAvdAONsiVFHGu06BQNqi5EKEUGhHAZEueMdkTa9dg/8YEDp3Pg8zqR7/Fda5xr+792CtiSJKlW9rrfi18X3J3B3d3dHf7/F3SnF16JM3si+j8B6k99v05otY4xngppdj2m5Knv3Mqk/baQta7kDWmYG7tRQivq25aU3E7Mp424GxqpFz1SNzP8aICnjTLqQ8tDOJ5K1zppccO25YNkqM2D510qKrnKNtGPm+yVkuKSD09EjpZI85JVhjaT9m5DAnP65m/NOCDGSzN2ObaNeJjmcC3YVc1m3ygxW3fDCYK8V7cRbN/hO8BVO0G3PLO9jBP44hPXBcHnuHrwurkG8Aa4BvHsfyOm8CxXP94yVy9eC9cq3hpXI94WVxlvg+sU74LrAK+KK4UX5QrhWS4ZQ5tU7I1oDt91J5Zr+eQUq6AAD7GOEZJYEYRbrBCCLCCNeiBakdoU5A7SDkYJ6Qwjg7SPkUKKYTwj3WH4Z3FmHQwJJ74k6XI1OiLul2GFTrKuNK6TKGN/nw460bFHK+a83iutb9YcMwE=); border-color: #dd55ff;">走行位置</button><button type="button" onclick="timetable_mode();" style="background-image: url(data:image/webp;base64,UklGRpADAABXRUJQVlA4TIQDAAAvT8ATEO/juJEkKYpq8N9S3rBnlxvz7ziSJEfJvj3Jj8A2/I/AAv4n2m1tu23DDxzDVi6dQ+0pPZ8nccuKNMQvBFIDX+EtbMKHl1/3d24YfkLubjz1heLIg2KDkkBXOHDw1UchRSE6EqXQPU8UKwU5OPkXi0gUUUQEGb/FkBeLcaiRT4vwT3+xL4zbD6fzeg8aPHRMr0Kc0JFABAVQaF0URgEvig4LLHTo0JGAg0TQBQEgMBoIaAkIgB1ANIqwkYqMUjYEVhCBFQEHqWApjgcQGmloPGnphi/DC0dvt34g0ba2442ef4KpbTeoObVt2+3//rXHSCZXn78f3wuI6P8EQHdPftnit9vNo6uro83b58W60l5YHIwv37ok7W6MlwxY4bTOXJPgcl9fwi/9YjrPMS1VfkPCTwCcrwJEtNkQMCk4ekiS8wCwJEZ0WB00Jv6TpB8BOF9liPYiZrT9J5WJzMxZUrmaYUDTERl9UaQrsEzG/wto6X4gC7+GNWTekpW/vyhr3yfl3r9YZMpTRn+7FH3ZJ+VeAQDEPGW036mk+zepn4LvpDraDisIPJDGiF+JBloPyC2Qzla/PB20LNVCtlGxRNu5fac5Yq9kH70LNREHFBEI/uThZuCjeuKBxj4I/ODiMOVXTlxQpY9zw8eWkzZIfFBu2jQnkwAGzjm5GADixAkVAMu8zAO3vNyhx+XF68gnXihaxk3FIjeJZ27Wdk3qj0pHpjy5jT2ip+STIUpjnshT8ono5pjGASSswaTAOIAEnVxRH4BMeyICfQAy6dKMiI4SuWNaBpxZTZM6JgSWAWeWTvaIHpNfSbMXURfxBOgx+ZXoZpeMdCdKokrjEy5JbzybYfLaIjeJMm4q8rmJ9rq8eN245eUeGOdlHijhpRAYOOfkfADACidTANDKyXCas8nHLycNDXzUwDfwg4uDgB+quCjDh8E9HrZSH2GEhwKIrnLwBuGMU/uOvogh5trmNkN22bYkpAPrdj2F5PB5x6btMFRm/7TnIANqu/7a8jcLqvs27PjzBerD6zY89UPnpznXNHc5BM3xI7MuGqE/Z1XJcl9fQsnbFxgZu5F7AuB8ldsqhKkDY99l5gFgSeagNgWDA5VbYo8AnK9iv2pCMNzJnTwXoERm5iwJnk4NO7AxVZC88/xEvfulwhQs7hiqmH3Z2Ty7ujrb3FmbrYh2Qzc=); border-color: #ffdd55;">時刻表</button><button type="button" onclick="operation_data_mode();" style="background-image: url(data:image/webp;base64,UklGRvQDAABXRUJQVlA4TOgDAAAvT8ATEGeloG0bxvxJtzsgHESS7Cq97/9Pjo7wrwIXGdaN20aSRFfPRPv//2268UZz2o1tq3FjTPwlj5mTLvtvs4BsKJWpSL6NRDZpsydp70ATFTdqSx3srlqPH/wO+KdXPS/okTdgFMJYKnXfJhgvcCfEkZD0OKIH0CsB0AMQZAg6CFoAgg4KQXcfkAG0AC2oKNhRQFT8EdhQsaE+Dj8lRHEE0NNAgKB0A2FwEnAQDopKAVOJAkbIKHoclQBEYXAKCgA9YBAACgDE4YRqQEJGwhO9FAAApQ0UjkAgtAETL1Yg+3uLL5yQ0L9FrLyhjKGkN2aF+9xJHkghjgBzNTy0B3k+3Ab6zuwX+iyaPyq7mp7e7v+zbHT/7goJAgCWkdS1bduevcHatm3btm3bvl+O0uTMIKL/jtw2ciQae4odqzH9BA48z8Z1ZSW9A0mxUZPTNFRIGKWTODbJvbekrM74gYMalcOGTd9lIc8sY+eGQxUo3raTF4TQQlnNOU/PNYFC6AmwewCnWrokRBJ8owroLFOILPFmYAqECOMJZh0lDCYdJQ8wZvHo5L6Dfu0mAg269ZkDzkP76jxsNLMcfN1fEmnM7VLC4QnHzFy2yWA23Izk6oaRbVFiyDw/GyGJQ9dGcnXD1G0DjJDMe9u+KmiGxqFea4uzm3dgFBZMhwkJpoIozLzdnFta9Uw1FDTvvcFnXkhAEUJEeU2W6hy0fGZNeVRICDD5zPg5N+ia8XWm28b8PwkJITwoL4IBaUW323tXx0fE7OmFIy8MHxG6v7ftWJQWKFdK+YKb30IWURKAKUXphgNL8ywqGPRFiNGgBAXmasTxyOON3wZcGwmdJ+Dvdb/IVvzqwgkRHOLYwuozmaZq9gD+kKD5TK4JH9atxekxa+BYTHrxtqGaXCO1HATg615SUKF42LQOD+rLS4dZn8voGCWYDbPS8vqDwzOFTTup8JrjuY824p3qzTlIOWdOeAPSvowc767Rv/vM43zGrKZnPBL+PhcvTySmjnR1MrvynVqCy1kn6xpJpRNToi+vTv6iN48SBZONUgyYgzV0QjEHFp1MVOKOOeBYj88jkFEHfB0i8/ynbZ8khnri044jmSaDia6X7eC9jUPBMgzL6Q76mrLPhfXRoOs+p/xFwXOSxfVtf152pBhgKCJpXv/troWCw/ClPJbPPprLbzVR1hrNCwN2ZWVTSyi+YuxCU1mrTCq95/jvyyC3xoNTDkLwQSMNhrfPN1YSB0v3rA/PVJRTOTu0riodTAzZQFU3BFmZONEnf4wSlohxtODLq7u/8s2hJPkxvcckqO4x+QXBPSaMQL7HBEEA); border-color: #55ffdd;">運用データ</button><button type="button" onclick="formation_table_mode();" style="background-image: url(data:image/webp;base64,UklGRhYCAABXRUJQVlA4TAkCAAAvT8ATEGfCqG0kSa4ersP/t/cWjfl30EaSI3kTf4pHI/0Xg8i2lfDeF9xdMtGTNgQgg7u+gGKw4beLXXJ//7i41f9z0jTGwrF+A8glSQdVARl6oOIVIAY9EINDQgNjAC6cINxhJxeyEtAK4UYcgPFDQAKApIBBAAHhhwtWCISfITCVOf4nOkw15ljjT7uscVSMPb3uht/DXUN+hn04vQKCALCJGmDu45j7hru7u/7/Q3BNaTO3JhfRfweSJClRN5xL4vAF1yeoJ1kmVD5vqc7VLh6fx19faWCBxLcfY2ZjmNkQCt9WfmVSVya6caTOt/aiEC0U3T7bVAJTrtU3ijJzYhNkSPtaCnz9PDM/TkUQdurM+b6k7wn2FSR8FjOHIIphZkvOF1bimxfA6fW0lzdzCV+emf0esU/yhkZx6OU4sHiIQBDIVbS+3Mh+7Vpm/cO23qva3nbVbb/o9hv492uHVlfc5DJJR67r+8yQyH0xriNq+crtZWQ9TWNLs4ItDv+5VgfdmMGWlA9besiuK0zHRbTneyF6LguuNS5hhr0KeL4Dl713dUHDMgw53j3MEPeYhTUgQwOPKCJOEGRo4BEVxcmBDA08opI4NZChjIf75lacB5ChgUe0A6whIEMDj4hCwjUYZKjjAZnF7InOQIY6HtTF+WQZOpuCDHU8iQ62LcMbIEMd7/NSAgA=); border-color: #ff55dd;">編成表</button><button type="button" onclick="operation_table_mode();" style="background-image: url(data:image/webp;base64,UklGRroAAABXRUJQVlA4TK0AAAAvT8ATEIcw/wratmE8/kDH4Stq20hyyQyO4U9nnrOHokiSmrsj/hCBD574d5NhAvLbUyqnqG2W+CB+54MoAjZARfYGAQwkSTLUa97M/f+5thXRf4Vt2zb0A93zA0BqX9CAAAA1Ml2ZCm8kABWqss5iWKKCDLQkFKWmZSHrlibx0jAtDd0fcPiyvHl0Pvyv7oO8NOXy3qnN4t7RZVzYO7+Aigv7hwCETbwMnK0AAAA=); border-color: #ddff55;">運用表</button></div>
+    <div id="tab_area"><button type="button" onclick="position_mode();" style="background-image: url(data:image/webp;base64,UklGRuICAABXRUJQVlA4TNYCAAAvNUANEP/jIJJkV+n9gZxBAq6xyn9rA1Jk266q3o/MFHRQqMYJcxzgIP4c7jkOG0lylJo3eA8hkDWp8jeuattWlXUe7trASUAUK8SgBbXsn8/nLjuAZrCvb2dvr/l9nne0zHeKtVYZYgUNW2QKgqZAqCEIQo0GDYQCFQRBEBIIJSoUEAJhmoss4qCj/eGLpOrAMIHB0BIGgw9VHa0jhto5yUYxsTfXGRnm3ykdRdSpXcMaNplqSHS0ISxTfv68d9nF/gURtv9teHg7JBnhUx96aPt+vr+WWiZO2MYWtTv7///jz/5zmWczSbgf73Qqp68T6XD4OZDkOWq4v93vIbBiAhdoaChouEHDL1yhkLeg0C4QBEG4J9Go4aADM0AQALaQ1LNvbZxt27Zt2/bb77ZNk9wHphH9h+BGkiLJmbnMe/AHgctSX1Nhl9PqMo39S4Itc9UBG5CuqjkmQ2GbJtERDnGVdps2pj6ezJTYUCknt86GTBv1HjYs+yjtiaJoVjiVosZGSBXBUgCQeXpxay7OMgGdS3iTNlXG9Z2UqwybmgG8duD035RmqhrwClSnd0DOVB14AdUl5By4As+luoXcqtx4XpQblQ8vh3YmF69MdYa6SSneBPBAV5gHmsDrdQA/XVf6ny5HksCnGPpJPju/NRb4k1wkCMZshAxTJHbiBRIEJa14RpB0+7F8yf/z96pWEPV4cTxJgpp2nCZBNuXFMFOCnmaMFpb/SVG9UIrgyITeuGARn6+Tx/Wvc1Dz38wMCiYfJ7DjH669P6RD0u7ffpj2bK4g18b8lmnmcUE1//gcK8+eNneyZNm7209SyVNeW4WsXVif8kvhmTUdiQl2C6DUvW4cxbIcsyy9hLVXqdR7HMhZtFnmQI5yB5ZZ+7Mzewe64veyfghkxToEsipfiX808veDH7nYMRT1aMRsPen6pY6p+rFVN8aqe/sWbH8ppELj7Q8=); border-color: #ee3333;">走行位置</button><button type="button" onclick="timetable_mode();" style="background-image: url(data:image/webp;base64,UklGRmgEAABXRUJQVlA4TFsEAAAvNUANEA8GOZIkRZLn8n9t9RdiNcJ7MWOlGo4jSXKU7JO/swabsJvghwFabEOOJNlVVP2QDmAJRnHGZU6a1fv1FNzatlVV8+BEN6MWOqRJIo/0u9z3doCW+np1I2ohQlWQsdbKNGgWCJX+P42xlcTvd9Kq1f9/MaPMKK1WW6myO3oIlRKka1+9ojQL9Ds+lWpUBf3rKF7uTxQRGr0qlBJFiijWFMnany8yQ8sVsRIxQ21j7rBogUTTUZWffkEqFCFoFkg1JvAHgT8IBAIjBAJ/EBigQyDBDFrLf8NfsIfgJFqpHQ6DSiiYwhcMEDJV5glz8QdecCii9CJKh1dY0Bq+F0gllQizoMLS/EIr5srVxC0stVeeI0kyW4Q338z+lmkdNMkspSlbMgibsP4ndnN8H9/scnAYXZjtnb8jYqujSVfa8N+jSYBQx0p/ay2I+YNoVVK02u47SSSxmBpzJxPub53T9aLVz2f0/R7cnU/T4+k4QKK2bWcjff8/tjJaj7G2beNb27Zt27a928039rHlTfrn3xOI6P8EkMn2B0cPbFm7ceHCjeu2HDj6QJGN7Td3ruAoVx680R7WyxNr2ei6qy/DUJdWsfHVZ5Wx+9s51C0vDF1fxiEvvmBCHeGAc/q8+/474rp/f31/22+2H/MTFdXr3ew/8FNERKSptbVJRCTycbAf73odhTrIvoN+iIi49QUdHR0dsUnZuYX17pchPrxHBTvCeMYHV0Rq85K19miYnFf7fhbiJ4FOMx75U0Rqc7Q3iNbaaRiF+FyA+4vRgD8ikfxYbULHdhqBlrzwUVsZ9v8nUpOlfaPROnMC4O0KXWY48o9IXbI2p9OnAT4P3qwCM3+K1CXpMHTXeWDzS89xhh9EapJ1OLoS8Bkial8LBrkSydJhxU0B6xXRI4Y/RPJ1aLoY8EOinWCgSG2sBTGTwTNSK8EnkRxtga4Am9Rd9s6JSK22InWBh28fBb1F8uzQ48C1veCduMmW9AT7toFvUq8tKQU7NoDfUmBLEVi7HPxtanKMBNdaO66TDlYuBG5rW7MNLW3NiWDR/7Ic/GlyHRuciJMBVm4AvyVWW1oE1m4DnyXJljKw4wB4K9m29AL7j4K+4tgyFly7C2ZHCi1JXQDuqJUe/lhvSQV7Nyk6CIa7SVbETAF7iW4C/ppnRQnDW0Tt68DQWhviJ4H1ioiuAn7vWFDN8CQR0cvVYG5jbGjd5oE1rzx0EfDozmFlTGd4hfAOwMMyw0mZyHCb8nmxBPD4jDBSxzBceo/8TyGe1t1cj+mML1DQJ4jnV8b7OS0tjl981XzGTymweo6YJxXHILetzUUxJVPZ95AKRq93+TBPLk/1OC3Njie1Ygr7H3xN0aonfswLxvUsLUpLSEjrUtZz7AIO+FSRwcfL/EwvuUJmX2wNZ8c9Mq3ObTa35gqF+erMOjPrT76ikNXDZ5ui2XT4liIb1e1j+3asX75w4Yr1O/Zdu6PIJAA=); border-color: #eebb33;">時刻表</button><button type="button" onclick="operation_data_mode();" style="background-image: url(data:image/webp;base64,UklGRr4AAABXRUJQVlA4TLIAAAAvNUANEEdAJmCxGFJp7qSKKmYCkNFB/yI6OP0SeHdOTSMp0Kk5/0au5BVAcEDJ/AeA323Mu/i3jVikZhIYRZKkaC0cGTgJ6+RIABugsbC6eXqPfxH9Z+C2bSN27/buF0IHpZRgHfAgkkRLkiR4AK7SiiQJHRADEWmBA6Louk4LHBADMzyORYekX3zhLOD3/Id/IUlKEyRiBUhidlsll1UCVjZTAlY+XQJWgCTA5kGMEIEA); border-color: #33cc66;">運用データ</button><button type="button" onclick="formation_table_mode();" style="background-image: url(data:image/webp;base64,UklGRpQBAABXRUJQVlA4TIcBAAAvNUANEK/BoJEkRbUn4wWeitf6eQfMtDYYNJKkqPa0nJLX/xo+74CZlkEjSYpqz8D7F/NSyAEzLdta2158cuhypoqdWQxiOwNYwD+ANlNSpjdAVYPaDtR1rTgMw4sXPy5kmVkjL6UAKtLMNMDDhZ6ZXynle9+3zczzPM97WRZpnufnOI7q//8/M0fcAIAPPb6IAKTv+5rMpIhI5nmeMpP6vg/+/+ewYgPAIgJg//8DQ0SgbequqRUZXEmSpCoLPFfc3d25/+FWnj/gryei/4zctnEknabtassr2Be03SBkUGWbGsgWSLPKMbQWNHIEUquq+RqCnniOk1JVp67pHgPgGlrTEkilKlS8K5u0UCR+VVZkNchoSzYXyvrvqv4cvgFIVwJSihD4ANKVAKQT8YdRMCs/hvS1ZOdTBl4YrllwY7hnwYPhuRtRV1NJI9qriZX1YjisR9RX0ifaqImVdWTAmASn6gRJJMlaiSyVCRJIlDWYcWZbZYIEkmVtFxPMh+oEScTO+mICAA==); border-color: #0066dd;">編成表</button><button type="button" onclick="operation_table_mode();" style="background-image: url(data:image/webp;base64,UklGRmQAAABXRUJQVlA4TFcAAAAvNUANEB8gECDs6xFnRUhA+P9NtEUVEhD+D1VFdf4D8C9pwCiSrFYEDehJGliP1LOBLarmDD8eI/ovICj0wAx3mQVMIC8gPj23ZZhZk5S6JP/0fuifqzgA); border-color: #9933cc;">運用表</button></div>
     <div id="blank_article" class="wait_icon"></div>
     <article>
         <select id="position_line_select" class="wide_select" onchange="position_change_lines(this.value);"></select>
@@ -2636,12 +2661,12 @@ function hsl2rgb (h, s, l) {
 function convert_color_dark_mode (color_hex) {
     var hsl = rgb2hsl(color_hex);
     
-    hsl[2] = 271 - hsl[2];
+    hsl[2] = 287 - hsl[2];
     if (hsl[2] > 255) {
         hsl[2] = 255;
     }
     
-    var rgb = hsl2rgb(hsl[0], hsl[1], hsl[2]);
+    var rgb = hsl2rgb(hsl[0], hsl[1] * 0.8, hsl[2]);
     
     return "rgb(" + rgb[0] + "," + rgb[1] + "," + rgb[2] + ")";
 }
@@ -2868,7 +2893,7 @@ function update_railroad_list (railroads) {
     
     var keys = Object.keys(railroads);
     for (var cnt = 0; cnt < keys.length; cnt++) {
-        buttons_html += "<a href='javascript:void(0);' class='wide_button' onclick='select_railroad(\"" + keys[cnt] + "\");' style='background-image: url(" + railroads[keys[cnt]]["railroad_icon"] + ");'>" + escape_html(railroads[keys[cnt]]["railroad_name"]) + "</a>";
+        buttons_html += "<a href='javascript:void(0);' class='wide_button' onclick='select_railroad(\"" + keys[cnt] + "\");'><img src='" + railroads[keys[cnt]]["railroad_icon"] + "' alt='' style='background-color: " + railroads[keys[cnt]]["main_color"] + "'>" + escape_html(railroads[keys[cnt]]["railroad_name"]) + "</a>";
     }
     
     if (cnt === 0) {
@@ -4467,10 +4492,14 @@ function timetable_select_station (station_name, cnt = 0) {
     keys = Object.keys(departure_times);
     keys.sort();
     
-    var bgcolor = railroad_info["operations"][timetable_operation_table]["main_color"];
+    var bg_color = railroad_info["operations"][timetable_operation_table]["main_color"];
     
     if (config["dark_mode"]) {
-        bgcolor = convert_color_dark_mode(bgcolor);
+        bg_color = convert_color_dark_mode(bg_color);
+        
+        var color_style = "";
+    } else {
+        var color_style = " color: #444444;";
     }
     
     if (timetable_operation_table === get_days_operation(Date.now() / 1000)) {
@@ -4481,7 +4510,7 @@ function timetable_select_station (station_name, cnt = 0) {
     
     var buf = "";
     for (cnt = 0; cnt < keys.length; cnt++) {
-        buf += "<input type='checkbox' id='timetable_hour_" + keys[cnt] + "'><label for='timetable_hour_" + keys[cnt] + "' style='background-color: " + bgcolor + "' class='drop_down'>" + Number(keys[cnt]) + "時</label><div>";
+        buf += "<input type='checkbox' id='timetable_hour_" + keys[cnt] + "'><label for='timetable_hour_" + keys[cnt] + "' style='background-color: " + bg_color + ";" + color_style + "' class='drop_down'>" + Number(keys[cnt]) + "時</label><div>";
         
         var keys_2 = Object.keys(departure_times[keys[cnt]]);
         keys_2.sort();
@@ -4695,11 +4724,16 @@ function operation_data_draw (cnt = 0) {
     var operation_table_id = get_days_operation(operation_data_date);
     
     var bg_color = railroad_info["operations"][operation_table_id]["main_color"];
+    
     if (config["dark_mode"]) {
         bg_color = convert_color_dark_mode(bg_color);
+        
+        var color_style = "";
+    } else {
+        var color_style = " color: #444444;";
     }
     
-    var buf = "<h2 style='background-color: " + bg_color + ";'>" + railroad_info["operations"][operation_table_id]["operation_name"] + " ";
+    var buf = "<h2 style='background-color: " + bg_color + ";" + color_style + "'>" + railroad_info["operations"][operation_table_id]["operation_name"] + " ";
     
     var is_today_str = "false";
     
@@ -4727,12 +4761,12 @@ function operation_data_draw (cnt = 0) {
             var operation_number = operation_groups["operation_groups"][cnt]["operation_numbers"][cnt_2];
             
             if (!config["dark_mode"]) {
-                var bgcolor = operations["operations"][operation_number]["main_color"];
+                var bg_color = operations["operations"][operation_number]["main_color"];
             } else {
-                var bgcolor = convert_color_dark_mode(operations["operations"][operation_number]["main_color"]);
+                var bg_color = convert_color_dark_mode(operations["operations"][operation_number]["main_color"]);
             }
             
-            buf += "<tr onclick='operation_detail(\"" + operation_number + "\", \"" + operation_table_id + "\", " + is_today_str + ");'><th style='background-color: " + bgcolor + ";'>" + operation_number + "</th>";
+            buf += "<tr onclick='operation_detail(\"" + operation_number + "\", \"" + operation_table_id + "\", " + is_today_str + ");'><th style='background-color: " + bg_color + ";'>" + operation_number + "</th>";
             
             if (operation_number in operation_data["operations"] && operation_data["operations"][operation_number] !== null) {
                 if (operation_data["operations"][operation_number]["variants_count"] >= 2) {
@@ -5376,12 +5410,17 @@ function operation_table_select_number (operation_number, cnt_0 = 0) {
     
     operation_table_name_elm.innerText = railroad_info["operations"][operation_table_name]["operation_name"];
     
-    var bg_color = railroad_info["operations"][operation_table_name]["main_color"]
+    var bg_color = railroad_info["operations"][operation_table_name]["main_color"];
+    
     if (config["dark_mode"]) {
         bg_color = convert_color_dark_mode(bg_color);
+        
+        var color_style = "";
+    } else {
+        var color_style = " color: #444444;";
     }
     
-    var buf = "<h2 style='background-color: " + bg_color + ";'><button type='button' class='previous_button' onclick='previous_operation_number(\"" + operation_number + "\");'></button>" + operation_number + "運用<button type='button' class='next_button' onclick='next_operation_number(\"" + operation_number + "\");'></button></h2>";
+    var buf = "<h2 style='background-color: " + bg_color + ";" + color_style + "'><button type='button' class='previous_button' onclick='previous_operation_number(\"" + operation_number + "\");'></button>" + operation_number + "運用<button type='button' class='next_button' onclick='next_operation_number(\"" + operation_number + "\");'></button></h2>";
     
     buf += "<div class='key_and_value'><b>運用グループ :</b>" + operations["operations"][operation_number]["operation_group_name"] + "</div>";
     buf += "<div class='key_and_value'><b>所定両数 :</b>" + operations["operations"][operation_number]["cars_count"] + "両</div>";
