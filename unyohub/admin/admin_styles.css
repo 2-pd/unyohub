@@ -60,7 +60,7 @@ header {
     position: absolute;
     left: 0;
     
-    width: 60px;
+    width: 64px;
     height: 40px;
     
     background-image: url(data:image/webp;base64,UklGRo4CAABXRUJQVlA4TIICAAAvWUAWEJVI0La3bZve/6hR+SPjAJMCAYrdC/7lVSGPFQFn27bjTbglo5Pa7k+wbdu27W79Cd9e29bU4/hUt+/ROcbHeAKiXQrCVKqfuWErvvBUM7qcgssVbYgXRNpIXW3vQnJhohXBlCaTAtWiB0ySdiSWLfBfu3YgM/QhltrEl7PpVkrpxb1pn9u9phAQfqBKREuB5sIL5/Qjbluuc1cnZLEHSo4uqUwf3PSBG53UaXaXh0C4+zgfVAXShEvpZx+UXtVVc3WRrV5kQwVYky74UtyJLCaxAp8q6dN8uECvkDiL+wQFdKonCexzl7PLRYEDCxwpLqrA7twhXKFVEBNtMkVl0egkb07yfPChIQ4l/qa53Sd8UAtc9yyEtrY9C33KjspVNnRR1mtr+Ep3L2hrkNja1WkK7gTu+4CGqIV3ueoDp7EIZPVRUpcRctEDzmIh4gvSD9S9/1ICVXB7nVERiwmZ9sJ4LChkCm6P8xqLCpSDtgNVSmNhce8vF1a4n0I+cRYXz9z/wCyAouyZGwOIeOYive3jmRvmvUW0hePPZJKLO5BUB26RPQys0RDLgzjTdB/DZoObMYCwgXUMNB7DpMQobG2JkcsYIjDaltFlH3fytkkxjs+qtss4MNaG0VFMyoStLTF6GQONf9DALCgwMZOEVuBtPMDkNW8kBcl7ZDyZmSQz808fYgMAnPIHZki3LTNTYLGNCCCrMSLANYG/rq41AW7AMvFBckvBO1oFfreJzU3MwPAOGh4S2nsEpk5AkKTYAAS+CRAbScJqAWJOD0sPuH2nLdcWN5u1B2S3INMibY49BJZ1ZTFMDxbn6BNZuAFRO67IDOMdNyB0xxWZ0Qw=);
@@ -70,17 +70,29 @@ header {
     background-color: #333333;
 }
 
-#railroad_icon:after {
+#railroad_icon:before, #railroad_icon:after {
     content: "";
     
     display: block;
     
     position: absolute;
-    left: 45px;
     
     border-top: 20px solid #f7f7f7;
     border-bottom: 20px solid #f7f7f7;
     border-left: 15px solid transparent;
+}
+
+#railroad_icon:before {
+    left: 45px;
+    
+    width: 4px;
+    
+    border-top-color: #666666;
+    border-bottom-color: #666666;
+}
+
+#railroad_icon:after {
+    left: 49px;
 }
 
 article {
@@ -124,7 +136,7 @@ h2 {
     text-align: center;
 }
 
-button {
+button, a.wide_button {
     background-color: rgba(255,255,255,0.9);
     
     border: 1px solid #dddddd;
@@ -132,11 +144,15 @@ button {
     border-right-width: 3px;
     border-radius: 5px;
     
+    text-align: center;
+    text-decoration: none;
     color: #333333;
 }
 
 .wide_button {
     display: block;
+    
+    position: relative;
     
     width: calc(100% - 40px) !important;
     
@@ -145,19 +161,27 @@ button {
     margin: 10px auto;
     padding: 10px 10px;
     
-    background-size: 30px;
-    background-repeat: no-repeat;
-    background-position: 10px 50%;
-    
     line-height: 26px;
     font-size: 18px;
+    overflow: hidden;
+}
+
+.wide_button img {
+    position: absolute;
+    
+    top: 0;
+    left: 0;
+    
+    width: 30px;
+    
+    padding: 8px;
 }
 
 textarea {
     display: block;
     
     width: calc(100% - 12px);
-    height: 300px;
+    height: 200px;
     
     max-width: 488px;
     
@@ -266,9 +290,8 @@ input[type="checkbox"]:checked + label:after {
 }
 
 input[type="checkbox"] + label.drop_down {
-    height: 25px;
-    
-    max-width: 500px;
+    max-width: 480px;
+    min-height: 25px;
     
     margin: 5px auto;
     padding: 10px;
@@ -278,6 +301,7 @@ input[type="checkbox"] + label.drop_down {
     line-height: 25px;
     font-weight: bold;
     color: #ffffff;
+    text-align: center;
     
     z-index: 1;
 }
@@ -287,7 +311,7 @@ input[type="checkbox"] + label.drop_down:before {
 }
 
 input[type="checkbox"] + label.drop_down:after {
-    top: 0;
+    top: calc(50% - 22.5px);
     left: calc(100% - 45px) !important;
     
     width: 45px;
@@ -326,4 +350,34 @@ input[type="checkbox"]:checked + label.drop_down + div {
     margin: 0 auto;
     
     opacity: 1;
+}
+
+#announcements_area input[type="checkbox"] + label.drop_down {
+    padding: 10px 40px;
+}
+
+.important_announcement {
+    background-image: url(data:image/webp;base64,UklGRkoBAABXRUJQVlA4TD4BAAAvO8AOEIfBoG0kR77e2DyS509maDBu20YS59z+e93nLsSgbSRHvt7YPJLnT2aY2Lat5Gv6QKQy/8psXBuL5vY4AZXC935pvoT8eWuVqmLxGPADgBsAgBkCDEY6SERjwVFGsdBISiXGKD6yGgpgcNDQpSJoDD5iUgQga7W8qqy5pjee+p9fAYIbSYqkXK7qZWZm6pn/f2+nh3J576SI/k8AgkurTrMiqaw0O9sLQuenRlKt41yIQ1VSX9s7NiqEug44qFDqHsC1KqS1AjAT2iFKJjbrO21s5rqW2L2M04tNzhOmboOpWWWqClOS/1NY32kZ3qvWd1oGL+P0Eqgy1dtMrQlTd8u0vJjYrO+0sZWvGMWWwgGQr7HUiwB2hkOPuF0rg64QvK+lr36COzsvp0v7RYS+nnutajqqre7iimA=);
+    background-repeat: no-repeat;
+    background-size: 30px;
+    background-position: 8px 50%;
+}
+
+.announcement {
+    padding: 15px;
+    
+    background-color: #eeeeee;
+    
+    font-size: 18px;
+    text-align: left;
+}
+
+.announcement small {
+    display: block;
+    
+    margin-top: 10px;
+    
+    font-size: 16px;
+    color: #666666;
+    text-align: right;
 }

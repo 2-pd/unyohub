@@ -45,6 +45,8 @@ html, body {
 
 *[onclick], *[onclick] *, a, a *, select, label {
     cursor: pointer;
+    
+    -webkit-tap-highlight-color: rgba(153, 153, 153, 0.2);
 }
 
 *[onclick]:hover, *[onclick]:hover *, a:hover, a:hover *, select:hover, label:hover {
@@ -364,11 +366,50 @@ header {
 }
 
 #splash_screen_login_status {
-    height: 70px;
+    height: 60px;
 }
 
 #splash_screen_login_status b {
     font-size: 20px;
+}
+
+#announcements_overview, #announcements_heading {
+    background-image: url(data:image/webp;base64,UklGRpQBAABXRUJQVlA4TIcBAAAvR8AREHVAkiTJkfL1/cmioQItrzxN01hV5Yqj3oyAKgCgwWi2je4tLdlJcR3R1Yhb8pL+AN1ortvZtn2Pjdu2gejZh5ta9wurpTcf0OuMiHcENYCGOzpda0DBviV8QAnxZQkImdgK3tCR4AOgYH3tZNdWEBZWtgKUDG0BE1g46NoCzkiEOLT7AQ9LNHi1+91IrzOc2+52gg9r5NgB2M0eiaEmxogvgN0HLHzk6K+dkabJLv8A23XOqdduWmx4/e+f/DeVwEaUB9vud8ljakuAz4k1bJhbBDErsH1O5UFFeKyClgx2ZPAyd7Alg7aMa7cMaDyqWEVUxhSzs5XOq7lyfq5WUwzhg4jV6pyKizZrXlKk7jup+3fW9gDXHgVm6z5hNIS+dS9FZeja27rfwjd0XW7dk9eGIYat+xbmENe1eztZLN3/yWLpeyRbLMiVgPEfyWLpey1ZLH0/ZotFgUYH4FW2WPa+juqXimLNJyK7ShcLky1WyhYrpYuFSRcLpYuFFndxvmcFAA==);
+    background-repeat: no-repeat;
+}
+
+#announcements_overview {
+    display: block;
+    
+    width: 250px;
+    height: 30px;
+    
+    margin: 20px auto;
+    
+    padding: 4px 4px 4px 46px;
+    
+    border-radius: 20px;
+    
+    background-size: 24px;
+    background-position: 12px, 8px;
+    background-color: #eeeeee;
+    
+    line-height: 32px;
+    font-size: 16px;
+    color: inherit;
+    text-decoration: none;
+}
+
+.dark_mode #announcements_overview {
+    background-color: #777777;
+}
+
+#announcements_overview:empty {
+    display: none;
+}
+
+#announcements_overview b {
+    text-decoration: underline;
 }
 
 #splash_screen_app_version {
@@ -675,6 +716,10 @@ article, #blank_article {
     margin-bottom: 20px;
 }
 
+.position_inbound b, .position_outbound b {
+    color: #333333;
+}
+
 .dark_mode .position_inbound b, .dark_mode .position_outbound b {
     color: #ffffff;
 }
@@ -767,9 +812,8 @@ article, #blank_article {
 }
 
 input[type="checkbox"] + label.drop_down {
-    height: 25px;
-    
-    max-width: 500px;
+    max-width: 480px;
+    min-height: 25px;
     
     margin: 5px auto;
     padding: 10px;
@@ -792,7 +836,7 @@ input[type="checkbox"] + label.drop_down:before {
 }
 
 input[type="checkbox"] + label.drop_down:after {
-    top: 0;
+    top: calc(50% - 22.5px);
     left: calc(100% - 45px) !important;
     
     width: 45px;
@@ -1365,6 +1409,8 @@ footer div {
     text-indent: -100px;
     
     cursor: pointer;
+    
+    -webkit-tap-highlight-color: rgba(153, 153, 153, 0.2);
 }
 
 .date_button {
@@ -1663,8 +1709,70 @@ a {
     color: #666666;
     text-align: left;
 }
+
 .dark_mode .informational_text {
     color: #999999;
+}
+
+#announcements_heading {
+    margin-top: -20px;
+    
+    padding-top: 48px;
+    
+    background-size: 36px;
+    background-position: 50% 0;
+}
+
+#announcements_area input[type="checkbox"] + label.drop_down {
+    padding: 10px 40px;
+}
+
+.important_announcement {
+    background-image: url(data:image/webp;base64,UklGRkoBAABXRUJQVlA4TD4BAAAvO8AOEIfBoG0kR77e2DyS509maDBu20YS59z+e93nLsSgbSRHvt7YPJLnT2aY2Lat5Gv6QKQy/8psXBuL5vY4AZXC935pvoT8eWuVqmLxGPADgBsAgBkCDEY6SERjwVFGsdBISiXGKD6yGgpgcNDQpSJoDD5iUgQga7W8qqy5pjee+p9fAYIbSYqkXK7qZWZm6pn/f2+nh3J576SI/k8AgkurTrMiqaw0O9sLQuenRlKt41yIQ1VSX9s7NiqEug44qFDqHsC1KqS1AjAT2iFKJjbrO21s5rqW2L2M04tNzhOmboOpWWWqClOS/1NY32kZ3qvWd1oGL+P0Eqgy1dtMrQlTd8u0vJjYrO+0sZWvGMWWwgGQr7HUiwB2hkOPuF0rg64QvK+lr36COzsvp0v7RYS+nnutajqqre7iimA=);
+    background-repeat: no-repeat;
+    background-size: 30px;
+    background-position: 8px 50%;
+}
+
+.new_icon {
+    display: inline-block;
+    
+    margin: calc(0.5lh - 5px) 2px calc(0.5lh - 5px) 0;
+    
+    padding: 5px;
+    
+    border-radius: 5px;
+    
+    background-color: #33cc99;
+    
+    vertical-align: top;
+}
+
+.announcement {
+    padding: 15px;
+    
+    background-color: #eeeeee;
+    
+    font-size: 18px;
+    text-align: left;
+}
+
+.dark_mode .announcement {
+    background-color: #777777;
+}
+
+.announcement small {
+    display: block;
+    
+    margin-top: 10px;
+    
+    font-size: 16px;
+    color: #666666;
+    text-align: right;
+}
+
+.dark_mode .announcement small {
+    color: #cccccc;
 }
 
 #about_railroad_data_popup {
@@ -2147,6 +2255,8 @@ button, a.wide_button {
             <button type="button" onclick="open_popup('sign_up_popup');">新規登録</button>
         </div>
         <hr>
+        <button type="button" onclick="show_announcements();">お知らせ</button>
+        <hr>
         <button type="button" onclick="edit_config();">各種設定</button>
         <hr>
         <button type="button" onclick="open_square_popup('about_popup');">このアプリについて</button>
@@ -2155,6 +2265,7 @@ button, a.wide_button {
     <div id="splash_screen">
         <div id="splash_screen_inner">
             <div id="splash_screen_login_status">サーバに接続しています...</div>
+            <a id="announcements_overview" href="javascript:void(0);" onclick="show_announcements();"></a>
             <div id="splash_screen_buttons" class="wait_icon"></div>
             <div id="splash_screen_app_version"></div>
         </div>
@@ -2304,6 +2415,11 @@ button, a.wide_button {
     </div>
     <div id="popup_screen">
         <div id="popup_screen_blank_area" onclick="close_square_popup();"></div>
+        <div class="preview_popup" id="announcements_popup">
+            <button type="button" class="popup_close_button" onclick="close_square_popup();"></button>
+            <h3 id="announcements_heading">お知らせの一覧</h3>
+            <div id="announcements_area" class="wait_icon"></div>
+        </div>
         <div class="square_popup" id="login_popup">
             <button type="button" class="popup_close_button" onclick="close_square_popup();"></button>
             <h4>IDまたはメールアドレス</h4>
@@ -2661,12 +2777,12 @@ function hsl2rgb (h, s, l) {
 function convert_color_dark_mode (color_hex) {
     var hsl = rgb2hsl(color_hex);
     
-    hsl[2] = 287 - hsl[2];
+    hsl[2] = 303 - hsl[2];
     if (hsl[2] > 255) {
         hsl[2] = 255;
     }
     
-    var rgb = hsl2rgb(hsl[0], hsl[1] * 0.8, hsl[2]);
+    var rgb = hsl2rgb(hsl[0], hsl[1] * 0.9, hsl[2]);
     
     return "rgb(" + rgb[0] + "," + rgb[1] + "," + rgb[2] + ")";
 }
@@ -2814,7 +2930,7 @@ function update_user_data (user_data_next = null) {
         
         menu_user_name_elm.innerText = user_data["user_name"] + " " + honorific;
         
-        splash_screen_login_status_elm.innerHTML = "ようこそ <b>" + escape_html(user_data["user_name"]) + "</b> さん<br><a href='javascript:void(0);' onclick='user_logout();'>ログアウト</a>";
+        splash_screen_login_status_elm.innerHTML = "ようこそ <b>" + escape_html(user_data["user_name"]) + "</b> さん<br><a href='javascript:void(0);' onclick='user_logout();'>ログアウト</a>　<a href='javascript:void(0);' onclick='edit_user_data();'>登録情報編集</a>";
     } else {
         menu_logged_in_elm.style.display = "none";
         menu_not_logged_in_elm.style.display = "block";
@@ -2906,6 +3022,8 @@ function update_railroad_list (railroads) {
     splash_screen_elm.className = "splash_screen_loaded";
 }
 
+var announcements_overview_elm = document.getElementById("announcements_overview");
+
 window.onload = function () {
     var cache_json = localStorage.getItem("unyohub_common_caches");
     
@@ -2943,11 +3061,101 @@ window.onload = function () {
             
             update_railroad_list(common_caches["railroads"]);
         });
+        
+        var announcements_last_modified = localStorage.getItem("unyohub_latest_announcement_timestamp");
+        
+        if (announcements_last_modified === null) {
+            announcements_last_modified = "0";
+        }
+        
+        ajax_post("api/announcements.php", "last_modified_timestamp=" + announcements_last_modified, function (response) {
+            if (response !== false) {
+                if (response === "NEW_ANNOUNCEMENTS_EXIST"){
+                    announcements_overview_elm.innerHTML = "<b>新しいお知らせがあります</b>";
+                } else if (response === "NEW_ANNOUNCEMENTS_NOT_EXIST") {
+                    announcements_overview_elm.innerHTML = "新しいお知らせはありません";
+                } else {
+                    show_announcements(JSON.parse(response), true);
+                }
+            }
+        });
     } else {
         splash_screen_login_status_elm.innerHTML = "<b>端末がオフラインです</b><br>前回アクセス時のデータを表示します";
         update_railroad_list(common_caches["railroads"]);
     }
 };
+
+
+function show_announcements (announcements_data = null, important_announcements_exist = false) {
+    open_square_popup("announcements_popup");
+    
+    announcements_overview_elm.innerHTML = "新しいお知らせはありません";
+    
+    var heading_elm = document.getElementById("announcements_heading");
+    if (important_announcements_exist) {
+        if (!config["dark_mode"]) {
+            var color = "#cc0000";
+        } else {
+            var color = "#ff3333";
+        }
+        
+        heading_elm.innerHTML = "<span style='color: " + color + ";'>重要なお知らせがあります</span>";
+    } else {
+        heading_elm.innerHTML = "お知らせの一覧";
+    }
+    
+    if (announcements_data === null) {
+        ajax_post("api/announcements.php", "", function (response) {
+            if (response !== false) {
+                draw_announcements(JSON.parse(response));
+            }
+        });
+    } else {
+        draw_announcements(announcements_data);
+    }
+}
+
+function draw_announcements (announcements_data) {
+    var buf = "";
+    
+    var announcements_last_modified = localStorage.getItem("unyohub_latest_announcement_timestamp");
+    
+    if (announcements_last_modified === null) {
+        announcements_last_modified = "0";
+    }
+    
+    for (var cnt = 0; cnt < announcements_data.length; cnt++) {
+        if (cnt === 0) {
+            localStorage.setItem("unyohub_latest_announcement_timestamp", announcements_data[cnt]["last_modified_timestamp"]);
+        }
+        
+        buf += "<input type='checkbox' id='announcement_" + cnt + "'><label for='announcement_" + cnt + "' class='drop_down";
+        
+        if (announcements_data[cnt]["is_important"]) {
+            buf += " important_announcement";
+        }
+        
+        buf += "'>";
+        
+        if (announcements_data[cnt]["last_modified_timestamp"] > announcements_last_modified) {
+            buf += "<span class='new_icon'></span>";
+        }
+        
+        buf += escape_html(announcements_data[cnt]["title"]) + "</label>";
+        
+        buf += "<div><div class='announcement'>" + escape_html(announcements_data[cnt]["content"]).replace(/\n/g, "<br>") + "";
+        
+        var dt = new Date(announcements_data[cnt]["last_modified_timestamp"] * 1000);
+        
+        buf += "<small>" + escape_html(announcements_data[cnt]["user_name"]) + "　" + dt.getFullYear() + "/" + (dt.getMonth() + 1) + "/" + dt.getDate() + " " + dt.getHours() + ":" + dt.getMinutes() + "</small></div></div>";
+    }
+    
+    if (buf.length === 0) {
+        buf = "<div class='no_data'>お知らせはありません</div>";
+    }
+    
+    document.getElementById("announcements_area").innerHTML = buf;
+}
 
 
 function select_railroad (railroad_id) {

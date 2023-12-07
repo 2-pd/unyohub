@@ -31,9 +31,6 @@ function save_announcements ($json_path, $announcements) {
 
 print_header();
 
-print "<article>";
-print "<h2>お知らせの編集</h2>";
-
 $json_path = "../config/announcements.json";
 $announcements = json_decode(file_get_contents($json_path), TRUE);
 
@@ -41,7 +38,12 @@ $title_escaped = "";
 $content_html = "";
 
 if (isset($_POST["title"], $_POST["content"])) {
-    if (isset($_POST["one_time_token"]) && $user->check_one_time_token($_POST["one_time_token"])) {
+    if (empty($_POST["title"]) || empty($_POST["content"])) {
+        print "<script> alert('【!】入力内容に空欄があります'); </script>";
+        
+        $title_escaped = addslashes($_POST["title"]);
+        $content_html = htmlspecialchars($_POST["content"]);
+    } elseif (isset($_POST["one_time_token"]) && $user->check_one_time_token($_POST["one_time_token"])) {
         $last_modified_timestamp = time();
         
         array_unshift($announcements, array(
@@ -54,9 +56,9 @@ if (isset($_POST["title"], $_POST["content"])) {
         
         save_announcements($json_path, $announcements);
         
-        print "お知らせを追加しました";
+        print "<script> alert('お知らせを追加しました'); </script>";
     } else {
-        print "【!】ワンタイムトークンが無効です。再送信してください。";
+        print "<script> alert('【!】ワンタイムトークンが無効です。再送信してください。'); </script>";
         
         $title_escaped = addslashes($_POST["title"]);
         $content_html = htmlspecialchars($_POST["content"]);
@@ -67,11 +69,14 @@ if (isset($_POST["title"], $_POST["content"])) {
         
         save_announcements($json_path, $announcements);
         
-        print "お知らせを削除しました";
+        print "<script> alert('お知らせを削除しました'); </script>";
     } else {
-        print "【!】ワンタイムトークンが無効です。処理はキャンセルされました。";
+        print "<script> alert('【!】ワンタイムトークンが無効です。処理はキャンセルされました。'); </script>";
     }
 }
+
+print "<article>";
+print "<h2>お知らせの編集</h2>";
 
 $token_html = "<input type='hidden' name='one_time_token' value='".$user->create_one_time_token()."'>";
 
@@ -106,13 +111,27 @@ function delete_announcement (idx) {
 </script>
 EOM;
 
+print "<div id='announcements_area'>";
 for ($cnt = 0; isset($announcements[$cnt]); $cnt++) {
-    print "<input type='checkbox' id='announcement_".$cnt."'><label for='announcement_".$cnt."' class='drop_down'>".htmlspecialchars($announcements[$cnt]["title"])."</label>";
-    print "<div>";
+    $user = $wakarana->get_user($announcements[$cnt]["user_id"]);
+    if (is_object($user)) {
+        $user_name = $user->get_name();
+    } else {
+        $user_name = "不明な管理者";
+    }
+    
+    print "<input type='checkbox' id='announcement_".$cnt."'><label for='announcement_".$cnt."' class='drop_down";
+    if ($announcements[$cnt]["is_important"]) {
+        print " important_announcement";
+    }
+    print "'>".htmlspecialchars($announcements[$cnt]["title"])."</label>";
+    print "<div><div class='announcement'>";
     print nl2br(htmlspecialchars($announcements[$cnt]["content"]));
-    print "<button type='submit' class='wide_button' onclick='delete_announcement(\"".$cnt."\");'>このお知らせを削除</button>";
+    print "<small>".htmlspecialchars($user_name)."　".date("Y/n/j G:i", $announcements[$cnt]["last_modified_timestamp"])."</small>";
+    print "</div><button type='submit' class='wide_button' onclick='delete_announcement(\"".$cnt."\");'>このお知らせを削除</button>";
     print "</div>";
 }
+print "</div>";
 
 print "</article>";
 
