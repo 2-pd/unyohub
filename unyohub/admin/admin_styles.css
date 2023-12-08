@@ -87,8 +87,8 @@ header {
     
     width: 4px;
     
-    border-top-color: #666666;
-    border-bottom-color: #666666;
+    border-top-color: #808080;
+    border-bottom-color: #808080;
 }
 
 #railroad_icon:after {
@@ -138,15 +138,14 @@ h2 {
 
 button, a.wide_button {
     background-color: rgba(255,255,255,0.9);
+    background-image: linear-gradient(315deg, #666666 8px, transparent 8px);
     
-    border: 1px solid #dddddd;
-    border-left-width: 3px;
-    border-right-width: 3px;
-    border-radius: 5px;
+    border: 1px solid #666666;
+    border-radius: 4px;
     
+    color: #333333;
     text-align: center;
     text-decoration: none;
-    color: #333333;
 }
 
 .wide_button {
@@ -160,6 +159,8 @@ button, a.wide_button {
     
     margin: 10px auto;
     padding: 10px 10px;
+    
+    background-image: linear-gradient(315deg, #666666 14px, transparent 14px) !important;
     
     line-height: 26px;
     font-size: 18px;
@@ -188,7 +189,7 @@ textarea {
     margin: 10px auto;
     padding: 5px;
     
-    border: 1px solid #cccccc;
+    border: 1px solid #999999;
     border-radius: 5px;
 
     font-size: 18px;
@@ -213,7 +214,7 @@ input[type="text"], input[type="number"], input[type="password"], input[type="se
     background-color: #ffffff;
     
     border: none;
-    border-bottom: 2px solid #dddddd;
+    border-bottom: 2px solid #cccccc;
     
     color: #333333;
 }
@@ -349,6 +350,8 @@ input[type="checkbox"]:checked + label.drop_down + div {
 }
 
 #announcements_area input[type="checkbox"] + label.drop_down {
+    max-width: 420px;
+    
     padding: 10px 40px;
 }
 

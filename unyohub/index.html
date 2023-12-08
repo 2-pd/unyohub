@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width,initial-scale=1,interactive-widget=resizes-content">
 <script>
     const UNYOHUB_APP_NAME = "鉄道運用Hub";
-    const UNYOHUB_VERSION = "23.11-11"
+    const UNYOHUB_VERSION = "23.12-1"
     const UNYOHUB_INDEXEDDB_VERSION = 2310001;
     const UNYOHUB_LICENSE_TEXT = "このアプリケーションは無権利創作宣言に準拠して著作権放棄されています。";
     const UNYOHUB_LICENSE_URL = "https://www.2pd.jp/license/";
@@ -295,11 +295,11 @@ header {
     
     border: none;
     
-    background-color: #dddddd;
+    background-color: #cccccc;
 }
 
 .dark_mode #menu hr {
-    background-color: #888888;
+    background-color: #999999;
 }
 
 .beginner:before {
@@ -351,6 +351,7 @@ header {
     
     position: fixed;
     top: 0;
+    left: 0;
     
     width: 100%;
     height: 100%;
@@ -536,9 +537,15 @@ article, #blank_article {
     margin: 10px auto;
     padding: 10px 10px;
     
+    background-image: linear-gradient(315deg, #666666 14px, transparent 14px) !important;
+    
     line-height: 26px;
     font-size: 18px;
     overflow: hidden;
+}
+
+.dark_mode .wide_button {
+    background-image: linear-gradient(315deg, #cccccc 14px, transparent 14px) !important;
 }
 
 .wide_button img {
@@ -716,7 +723,7 @@ article, #blank_article {
     border-color: #555555;
 }
 
-.position_inbound span, .position_outbound span {
+.position_inbound span:not(.train_type), .position_outbound span:not(.train_type) {
     display: inline-block;
     
     position: absolute;
@@ -740,7 +747,7 @@ article, #blank_article {
     color: #ffffff;
 }
 
-.position_inbound span:before, .position_outbound span:after {
+.position_inbound span:not(.train_type):before, .position_outbound span:not(.train_type):after {
     position: absolute;
     
     line-height: 12px;
@@ -754,11 +761,15 @@ article, #blank_article {
     text-align: right;
 }
 
-.position_inbound span:before {
-    content: "▲";
+.position_inbound span:not(.train_type):before {
+    content: "";
     
-    top: -12px;
-    right: 20px;
+    top: -6px;
+    right: 12px;
+    
+    border-bottom: 6px solid currentColor;
+    border-left: 6px solid transparent;
+    border-right: 6px solid transparent;
 }
 
 .position_inbound .train_icon {
@@ -770,11 +781,35 @@ article, #blank_article {
     left: 0;
 }
 
-.position_outbound span:after {
-    content: "▼";
+.position_outbound span:not(.train_type):after {
+    content: "";
     
-    bottom: -12px;
-    left: 20px;
+    bottom: -6px;
+    left: 12px;
+    
+    border-top: 6px solid currentColor;
+    border-left: 6px solid transparent;
+    border-right: 6px solid transparent;
+}
+
+.train_type {
+    display: inline-block;
+    
+    height: 1em;
+    
+    padding: 1px 7px 1px 5px;
+    
+    border: 1px solid;
+    border-radius: 3px;
+    
+    background-image: linear-gradient(315deg, #ffffff 5px, transparent 5px);
+    
+    line-height: 1em;
+    color: #ffffff;
+}
+
+.dark_mode .train_type {
+    background-image: linear-gradient(315deg, #444444 5px, transparent 5px);
 }
 
 .multiple_trains .train_icon {
@@ -1379,7 +1414,7 @@ footer div {
     
     border: none;
     
-    background-image: url(data:image/webp;base64,UklGRoQAAABXRUJQVlA4THgAAAAvHcAOEG9gkG2k5vwN3vWnYSBtmzD/Du71NZC2TZh/B/f6KgoAwvETQf+PIDsMCbgRgLuj/78oNB4+pPrbEFz9aqoEm8i26ryeFifLxwcSsBIJMRApERFLeT1dRP+FBAkmr0wo8W9DTbxwR9Lh7ANXYsGXmFDO5AM=);
+    background-image: url(data:image/webp;base64,UklGRoQAAABXRUJQVlA4THgAAAAvHcAOEG9gkG2k5vwN3vWnYSBtmzD/Du71NZC2TZh/B/f6KgoAwvETQf+PIDsMCbgRgLuj/78oNB4+pPrbEFz9aqoEm8i26ryeFifLxwcSsBIJMRApERFLeT1dRP+FBAkmr0wo8W9DTbxwR9Lh7ANXYsGXmFDO5AM=) !important;
     background-repeat: no-repeat;
     background-size: 15px 30px;
     background-position: center;
@@ -1426,11 +1461,11 @@ footer div {
 }
 
 .date_button {
-    background-image: url(data:image/webp;base64,UklGRkwAAABXRUJQVlA4TD8AAAAvO8AOEA8wmZM5mfMf8FASAGhDg0UmCtXmsOBQ+//4iP5PQGy7j0EtSzxh0KtqWWFMGPQmqGWFMeFdUC9pXwQA);
+    background-image: url(data:image/webp;base64,UklGRkwAAABXRUJQVlA4TD8AAAAvO8AOEA8wmZM5mfMf8FASAGhDg0UmCtXmsOBQ+//4iP5PQGy7j0EtSzxh0KtqWWFMGPQmqGWFMeFdUC9pXwQA) !important;
 }
 
 .time_button {
-    background-image: url(data:image/webp;base64,UklGRjoDAABXRUJQVlA4TC0DAAAvO8AOEA+koJGkZgTgXwQKO08TwaBtI0kGsPxBLML3LgzaNpJkAMsfxCJ87+KwjSRFes2pn5lS+Pzj+QCYjqF3etSmbcCQqecPjPKc47IW5vc5puv/PQpRc6wAbIAoQwYDAGQw7AEAAHDEBsAGAICogBAgBCF+hvQfYEDCDQGhh8Mh5CDeyNEgB0EQxICAEAgEAg59SxCq10OFgJAgRJSBH9CgwQ0EcYNAOATC0SOPMmxwBaOIc1QDoprfZ+jHe5bGuECiJMmmbfW1bdu2fe/sd65t27bvt5/d6+w17wci+j8B8Dj4rj1ra2V+YmJ+ZaspPS4Yeocu8sclwPGCzk8d/Tn/xNN/5c/2YnfEYn6MnaFGsXz4YSF5RqzP9nkV0iIqT388+coVpXkjHryui/l0aXvC4NvY2NvgbUfZtJlsvAY0si6mTunVL4xDkkodE9n4DiAkT0xrouAvFP6P1Say/2PWIoZrsXAPALhfM5BToyQxrAmFVwirN5Beg5cZ5rTBMDCgzWGzQ+xYqJMCO+hxiNSTWOFtsIUzJs9u26we9lDL9lz6ha6FafheJfLgl8NioQFx7BDAkI/UQAeOiO8VSBP6pOXRcZNUIJ+UQgsOSCGCJ0iSnmQyERwn7tO/en6n3OS+nZRCD0rIeRZJ15ROTrbIrQVjtwSyvUQGNQ2S5QUSrmmYLE6QIE0/ZPL/WiDhmobJ4hJ51xRJlnfJraYbstNEOjyw2E6a20mZplxyHkemQ/SMTpHY0Qk3SdJzKe4ToyggpXpKSBFwQZwBLX8O6QI+fW5SraVS3MdfAZQTudcRL7QCAJ7ZWpiGkRUW7YcCIsca6oUWwTWGSZu9DKHOgxuymdNjq1t4A+jQLBHnzE6G8LlPhj4mUh3qXVidGCbC9NRAVuO8il8Ww0wY/+wbiFT9efFUKabFQWb43jAR5yD51+z3ssQR080wBPq6YSIiUyXpN5HhQUHhkTftuVNivvmKwL9KzGzuf8PLn1YdmUHwuG/W3tw1vP9sdCwdRsDq856NwgdYfzj0eeOriIbK19TCyUAmi7peoXf0vqN5e2VhYmJhZbu5434UHgMA);
+    background-image: url(data:image/webp;base64,UklGRjoDAABXRUJQVlA4TC0DAAAvO8AOEA+koJGkZgTgXwQKO08TwaBtI0kGsPxBLML3LgzaNpJkAMsfxCJ87+KwjSRFes2pn5lS+Pzj+QCYjqF3etSmbcCQqecPjPKc47IW5vc5puv/PQpRc6wAbIAoQwYDAGQw7AEAAHDEBsAGAICogBAgBCF+hvQfYEDCDQGhh8Mh5CDeyNEgB0EQxICAEAgEAg59SxCq10OFgJAgRJSBH9CgwQ0EcYNAOATC0SOPMmxwBaOIc1QDoprfZ+jHe5bGuECiJMmmbfW1bdu2fe/sd65t27bvt5/d6+w17wci+j8B8Dj4rj1ra2V+YmJ+ZaspPS4Yeocu8sclwPGCzk8d/Tn/xNN/5c/2YnfEYn6MnaFGsXz4YSF5RqzP9nkV0iIqT388+coVpXkjHryui/l0aXvC4NvY2NvgbUfZtJlsvAY0si6mTunVL4xDkkodE9n4DiAkT0xrouAvFP6P1Say/2PWIoZrsXAPALhfM5BToyQxrAmFVwirN5Beg5cZ5rTBMDCgzWGzQ+xYqJMCO+hxiNSTWOFtsIUzJs9u26we9lDL9lz6ha6FafheJfLgl8NioQFx7BDAkI/UQAeOiO8VSBP6pOXRcZNUIJ+UQgsOSCGCJ0iSnmQyERwn7tO/en6n3OS+nZRCD0rIeRZJ15ROTrbIrQVjtwSyvUQGNQ2S5QUSrmmYLE6QIE0/ZPL/WiDhmobJ4hJ51xRJlnfJraYbstNEOjyw2E6a20mZplxyHkemQ/SMTpHY0Qk3SdJzKe4ToyggpXpKSBFwQZwBLX8O6QI+fW5SraVS3MdfAZQTudcRL7QCAJ7ZWpiGkRUW7YcCIsca6oUWwTWGSZu9DKHOgxuymdNjq1t4A+jQLBHnzE6G8LlPhj4mUh3qXVidGCbC9NRAVuO8il8Ww0wY/+wbiFT9efFUKabFQWb43jAR5yD51+z3ssQR080wBPq6YSIiUyXpN5HhQUHhkTftuVNivvmKwL9KzGzuf8PLn1YdmUHwuG/W3tw1vP9sdCwdRsDq856NwgdYfzj0eeOriIbK19TCyUAmi7peoXf0vqN5e2VhYmJhZbu5434UHgMA) !important;
 }
 
 .date_button::-webkit-calendar-picker-indicator, .time_button::-webkit-calendar-picker-indicator {
@@ -1445,11 +1480,11 @@ footer div {
 }
 
 .reload_button {
-    background-image: url(data:image/webp;base64,UklGRtACAABXRUJQVlA4TMQCAAAvO8AOELVIsm3JkRr2P5DBVbzAM2STch1ZkVVH88CjL4/3RMABAIBg4mZbb7Zt23XZtm18rsu2bdu2++bMCajkfYiZkuR1rHIFg8/n+/M7aj3RTY6WeHJNOwWSRfkiX/yPfLZ5IjYICWTQn4CeD/GjVL5twHXGXGqcG7Kkjiyg13SpUZCoV2cbWKNFlxrlrrDVHZY5LrrUmB0gVZokZcuAqrrkf8wa1Mc1UaaX4XXJ/5gBz47a4fqQxbvlusg6CsH7N0TNigSG/7aJLYo0BgQ7auWPYZyWAdW8A3Tn35ctjcG5z6iVdqQqcUOazg5UqZFzM1jiSTYjLrLcWY2HJ5W+BaMpZ6DAjvjzxOpK8mWGtSm8tIDqbAMJbqj4qjqTrgRfjGitzhavBPQUcn7U6VEZPhSZQfV95D8DEt+Bd1TfR6V4jBZfItWHDOW8Bb+r66NyjvgKcOri4TByvdlNtBjOMqBLOknBc83R6wKLnwWrgVvOgpvAhWcBPdhEz4LP4EDouwM9eJvFbbAuMgtbCcxqFmfBzSxICn7Pwk0CuDvAOQB+XiR3nkOxEDAyC4sK+EN+DmtEvheJrjkUg4HMaBpuxuSPpkE34mILNoUdJI/ih4pVTEP5YqDHCXzitTZJgkEYgtGGfiSS+1meFnN8G9RjdElgrwvFNESQYAXiz1K6nJKvmOdNdFQ4RRKty/C8dRTtajSrarXyBnHpJlm3PKqR4mpeBthUg0SPy2a4kg+p1XsP+Nvqhe0W8Wej7voO1LYFMzcm1Oxrf2rsgGe7RRKvjF2ZzYbYJvpA6PcWeZA89exb3tRuK2Br/NF1W0/6/lTmMoCyaXjJUyXjBKsfz1hUPiSaennzKqa6Dro234NhVKq7adsA3zl8WPeG6hLPJAe8hzN3OuaXTZn3OqqmC9iMSKCaZa6g88kbTxwcUW+hpvYOVMk=);
+    background-image: url(data:image/webp;base64,UklGRtACAABXRUJQVlA4TMQCAAAvO8AOELVIsm3JkRr2P5DBVbzAM2STch1ZkVVH88CjL4/3RMABAIBg4mZbb7Zt23XZtm18rsu2bdu2++bMCajkfYiZkuR1rHIFg8/n+/M7aj3RTY6WeHJNOwWSRfkiX/yPfLZ5IjYICWTQn4CeD/GjVL5twHXGXGqcG7Kkjiyg13SpUZCoV2cbWKNFlxrlrrDVHZY5LrrUmB0gVZokZcuAqrrkf8wa1Mc1UaaX4XXJ/5gBz47a4fqQxbvlusg6CsH7N0TNigSG/7aJLYo0BgQ7auWPYZyWAdW8A3Tn35ctjcG5z6iVdqQqcUOazg5UqZFzM1jiSTYjLrLcWY2HJ5W+BaMpZ6DAjvjzxOpK8mWGtSm8tIDqbAMJbqj4qjqTrgRfjGitzhavBPQUcn7U6VEZPhSZQfV95D8DEt+Bd1TfR6V4jBZfItWHDOW8Bb+r66NyjvgKcOri4TByvdlNtBjOMqBLOknBc83R6wKLnwWrgVvOgpvAhWcBPdhEz4LP4EDouwM9eJvFbbAuMgtbCcxqFmfBzSxICn7Pwk0CuDvAOQB+XiR3nkOxEDAyC4sK+EN+DmtEvheJrjkUg4HMaBpuxuSPpkE34mILNoUdJI/ih4pVTEP5YqDHCXzitTZJgkEYgtGGfiSS+1meFnN8G9RjdElgrwvFNESQYAXiz1K6nJKvmOdNdFQ4RRKty/C8dRTtajSrarXyBnHpJlm3PKqR4mpeBthUg0SPy2a4kg+p1XsP+Nvqhe0W8Wej7voO1LYFMzcm1Oxrf2rsgGe7RRKvjF2ZzYbYJvpA6PcWeZA89exb3tRuK2Br/NF1W0/6/lTmMoCyaXjJUyXjBKsfz1hUPiSaennzKqa6Dro234NhVKq7adsA3zl8WPeG6hLPJAe8hzN3OuaXTZn3OqqmC9iMSKCaZa6g88kbTxwcUW+hpvYOVMk=) !important;
 }
 
 .back_button {
-    background-image: url(data:image/webp;base64,UklGRmgBAABXRUJQVlA4TFsBAAAvO8AOEJVAkiTJkbJPnzcsqqMGfdxPIqvprUSfEq2xCLcNAKBJHXempjt9APnARz2A9ATcfa33B9wmrrDd3WYHBm4bKUo6u8cMf3Bf8vw7knOBjyFVIi/uzGmRnB0TNFCVsqE2E1dVsTxDxNyterlGuIdCJFBpYoQypcUkYbzCpIMheiRfHvZYtW0JJyzrblrIIzOj7nWcIAIsOnDDPDi4lnsaem/Zxrs+r9AZHjOhSGeQmgX5ZJf4f1WESD66HZsFWcFsEsR9bvlO4RLRsAWDzZNgaoUvCS4SttT5yZLgt+StylIrnQwpXS18CSYSGp+fZwUTkt8jogqg8pphVazNLsHyBKzntQ1yT0VQwXS+k3t4/dzO8Fsw5TuCYtf7C2+aSl94yOZB+H7r2fxDr1eZcBbCcEKEtAHKBaAD7tcyODe/rYJHMNsGq2BFZQ+3BfDkxuST6PvZa/fg0gA=);
+    background-image: url(data:image/webp;base64,UklGRmgBAABXRUJQVlA4TFsBAAAvO8AOEJVAkiTJkbJPnzcsqqMGfdxPIqvprUSfEq2xCLcNAKBJHXempjt9APnARz2A9ATcfa33B9wmrrDd3WYHBm4bKUo6u8cMf3Bf8vw7knOBjyFVIi/uzGmRnB0TNFCVsqE2E1dVsTxDxNyterlGuIdCJFBpYoQypcUkYbzCpIMheiRfHvZYtW0JJyzrblrIIzOj7nWcIAIsOnDDPDi4lnsaem/Zxrs+r9AZHjOhSGeQmgX5ZJf4f1WESD66HZsFWcFsEsR9bvlO4RLRsAWDzZNgaoUvCS4SttT5yZLgt+StylIrnQwpXS18CSYSGp+fZwUTkt8jogqg8pphVazNLsHyBKzntQ1yT0VQwXS+k3t4/dzO8Fsw5TuCYtf7C2+aSl94yOZB+H7r2fxDr1eZcBbCcEKEtAHKBaAD7tcyODe/rYJHMNsGq2BFZQ+3BfDkxuST6PvZa/fg0gA=) !important;
 }
 
 .popup {
@@ -1477,6 +1512,24 @@ footer div {
     background-color: #444444;
 }
 
+.popup_active {
+    display: block !important;
+    
+    opacity: 1;
+    
+    animation: fade_in 0.5s;
+}
+
+@keyframes fade_in {
+    0% {
+        opacity: 0;
+    }
+    
+    100% {
+        opacity: 1;
+    }
+}
+
 .popup_close_button {
     position: fixed;
     top: 0;
@@ -1485,7 +1538,7 @@ footer div {
     width: 40px;
     height: 40px;
     
-    background-image: url(data:image/webp;base64,UklGRhwBAABXRUJQVlA4TA8BAAAvO8AOEJegEJIkp+v8SU7sCXLUUNC2kWMdfyRH7BHsqaBtI8c6/kiO2CPYU1HbSM52/lo8+1xO1+cClJlRa5W11kABAD4A/P8ZAoVEBGP9/xuzlJIOR24kKdLAMu/+/7VNlZm9pznxVET/HbmRJEXVDokTzNrwhmYoWz/yRZHzfXTMtLcPV+/Hjcl95YqYAqYUHmM8p+MnyLZ6Omf0ZMvV80P82ON3yKNSINKAUwHTgVIC0jJTM1I73IvpFZOyE7NSu+Tz1Dcvaz6vTd/NC+u4VahMnqVGzzeP2tiWK4vcE4v0GdSZtAGUQXSBVME0Ef7xHvrltphlcidv/PnuhMrCpRsbY+WfkRhr3WezgWzNAA==);
+    background-image: url(data:image/webp;base64,UklGRhwBAABXRUJQVlA4TA8BAAAvO8AOEJegEJIkp+v8SU7sCXLUUNC2kWMdfyRH7BHsqaBtI8c6/kiO2CPYU1HbSM52/lo8+1xO1+cClJlRa5W11kABAD4A/P8ZAoVEBGP9/xuzlJIOR24kKdLAMu/+/7VNlZm9pznxVET/HbmRJEXVDokTzNrwhmYoWz/yRZHzfXTMtLcPV+/Hjcl95YqYAqYUHmM8p+MnyLZ6Omf0ZMvV80P82ON3yKNSINKAUwHTgVIC0jJTM1I73IvpFZOyE7NSu+Tz1Dcvaz6vTd/NC+u4VahMnqVGzzeP2tiWK4vcE4v0GdSZtAGUQXSBVME0Ef7xHvrltphlcidv/PnuhMrCpRsbY+WfkRhr3WezgWzNAA==) !important;
     background-repeat: no-repeat;
     background-size: 30px;
     background-position: center;
@@ -1587,7 +1640,7 @@ a {
     background-color: #ffffff;
     
     border: none;
-    border-bottom: 1px solid #eeeeee;
+    border-bottom: 1px solid #cccccc;
 }
 
 .dark_mode .popup select {
@@ -1625,6 +1678,8 @@ a {
     
     background-color: rgba(0,0,0,0.75);
     
+    overflow: hidden;
+    
     z-index: 200;
 }
 
@@ -1654,10 +1709,28 @@ a {
     background-color: #ffffff;
     
     text-align: center;
+    
+    opacity: 0;
 }
 
 .dark_mode .square_popup, .dark_mode .preview_popup {
     background-color: #666666;
+}
+
+.square_popup.popup_active {
+    opacity: 1;
+    
+    animation: fade_in 0.5s, square_popup_up 0.1s ease-out;
+}
+
+@keyframes square_popup_up {
+    0% {
+        top: calc(50% - 10px);
+    }
+    
+    100% {
+        top: calc(50% - 160px);
+    }
 }
 
 .preview_popup {
@@ -1672,6 +1745,22 @@ a {
     left: max(15px, calc(50% - 235px));
     
     overflow: scroll;
+}
+
+.preview_popup.popup_active {
+    opacity: 1;
+    
+    animation: fade_in 0.5s, preview_popup_up 0.1s ease-out;
+}
+
+@keyframes preview_popup_up {
+    0% {
+        top: 165px;
+    }
+    
+    100% {
+        top: 15px;
+    }
 }
 
 .square_popup input, .preview_popup input {
@@ -1707,9 +1796,37 @@ a {
     right: calc(50% - 150px);
 }
 
+.square_popup.popup_active .popup_close_button {
+    animation: square_popup_close_button_up 0.1s ease-out;
+}
+
+@keyframes square_popup_close_button_up {
+    0% {
+        top: calc(50%);
+    }
+    
+    100% {
+        top: calc(50% - 150px);
+    }
+}
+
 .preview_popup .popup_close_button {
     top: 20px;
     right: max(20px, calc(50% - 230px));
+}
+
+.preview_popup.popup_active .popup_close_button {
+    animation: preview_popup_close_button_up 0.1s ease-out;
+}
+
+@keyframes preview_popup_close_button_up {
+    0% {
+        top: 170px;
+    }
+    
+    100% {
+        top: 20px;
+    }
 }
 
 .informational_text {
@@ -2044,7 +2161,7 @@ input[type="text"], input[type="number"], input[type="password"], input[type="se
     background-color: #ffffff;
     
     border: none;
-    border-bottom: 2px solid #dddddd;
+    border-bottom: 2px solid #cccccc;
     
     color: #333333;
 }
@@ -2173,58 +2290,65 @@ input[type="checkbox"]:checked + label:after {
     left: 22px;
 }
 
-input[type="radio"] + label {
-    display: inline-block;
-    
-    padding: 8px 12px;
-    
-    background-color: #cccccc;
-    
-    border-radius: 5px;
-    
-    color: #ffffff;
-}
-
-.dark_mode input[type="radio"] + label {
-    background-color: #555555;
-    
-    color: #999999;
-}
-
-input[type="radio"]:checked + label {
-    background-color: #ffffff;
-    
-    box-shadow: 0 1px 3px rgba(0,0,0,0.25) inset;
-    
-    color: #333333;
-}
-
-.dark_mode input[type="radio"]:checked + label {
-    background-color: #333333;
-    
-    box-shadow: 0 1px 3px rgba(0,0,0,0.5) inset;
-    
-    color: #ffffff;
-}
-
-button, a.wide_button {
+button, a.wide_button, input[type="radio"] + label {
     background-color: rgba(255,255,255,0.9);
+    background-image: linear-gradient(315deg, #666666 8px, transparent 8px);
     
-    border: 1px solid #dddddd;
-    border-left-width: 3px;
-    border-right-width: 3px;
-    border-radius: 5px;
+    border: 1px solid #666666;
+    border-radius: 4px;
     
     color: #333333;
     text-decoration: none;
 }
 
-.dark_mode button, .dark_mode a.wide_button {
+.dark_mode button, .dark_mode a.wide_button, .dark_mode input[type="radio"] + label {
     background-color: rgba(68,68,68,0.85);
+    background-image: linear-gradient(315deg, #cccccc 8px, transparent 8px);
     
-    border-color: #777777;
+    border-color: #cccccc;
     
     color: #eeeeee;
+}
+
+input[type="radio"] + label {
+    display: inline-block;
+    
+    padding: 8px 8px 8px 22px;
+    
+    background-image: none;
+    background-color: #666666;
+    
+    color: #ffffff;
+}
+
+.dark_mode input[type="radio"] + label {
+    background-color: #cccccc;
+    
+    color: #333333;
+}
+
+input[type="radio"]:checked + label {
+    padding-top: 5px;
+    
+    border-top-width: 4px;
+    
+    background-image: url(data:image/webp;base64,UklGRp4AAABXRUJQVlA4TJEAAAAvH8AHEC9AkG3Tyd6f4BwE2Tad7P0JHoJsm072/gQPmbRNLVTyXO9rgG1hqPp/wSCSrTYvTQBFAJGAg1gA/2p+eT9NQET/1bZtwzgDt7Qz8G3NKC0dQXIakSkgS0Zk6pFpu+PkmlFMOyoypcPrR9EuNSn2ZjLuNK6Ah77k8tkAC9FB5HSA4GQYKUZOINBW/KYAAA==);
+    background-repeat: no-repeat;
+    background-size: 16px;
+    background-position: 4px 50%;
+    background-color: transparent;
+    
+    color: #333333;
+}
+
+.dark_mode input[type="radio"]:checked + label {
+    background-image: url(data:image/webp;base64,UklGRqAAAABXRUJQVlA4TJMAAAAvH8AHEC9AkG3T+aud6RwE2Tadv9qZHoJsm85f7UwPmYDF9qkurQgCbDuKVfkvWEWS7GRJAl4SQPrHwnMA/t3c3dsjCYjov9q2bRhn4JZ2Br6t3csZeiclzJ7BoUhmz1A9w3jHnWtGMe0ozxD61nYU7ZKCYm8m4y7jBLTQlxxtRsBCbCByKkBoZBgpRo4jcE74TQEA);
+    
+    color: #ffffff;
+}
+
+input[type="radio"] + label small {
+    font-size: 14px;
 }
 
 #unyo_icon {
@@ -2303,8 +2427,8 @@ button, a.wide_button {
         <select id="timetable_line_select" class="wide_select" onchange="timetable_change_lines(this.value);"></select>
         <div id="direction_radio_area">
             <h2 id="timetable_station_name"></h2>
-            <input type="radio" name="direction_radio" id="radio_inbound" value="inbound" checked="checked" onchange="timetable_select_station(timetable_selected_station);"><label for="radio_inbound" id="radio_inbound_label">上り方面</label>
-            <input type="radio" name="direction_radio" id="radio_outbound" value="outbound" onchange="timetable_select_station(timetable_selected_station);"><label for="radio_outbound" id="radio_outbound_label">下り方面</label>
+            <input type="radio" name="direction_radio" id="radio_inbound" value="inbound" checked="checked" onchange="timetable_select_station(timetable_selected_station);"><label for="radio_inbound" id="radio_inbound_label">上り</label>
+            <input type="radio" name="direction_radio" id="radio_outbound" value="outbound" onchange="timetable_select_station(timetable_selected_station);"><label for="radio_outbound" id="radio_outbound_label">下り</label>
             <input type="checkbox" id="show_arriving_trains_check" onchange="change_show_arriving_trains(this.checked);"><label for="show_arriving_trains_check">当駅止まりを表示</label>
         </div>
         <div id="timetable_area" class="wait_icon"></div>
@@ -2871,8 +2995,8 @@ function open_popup (id) {
     
     var elm = document.getElementById(id);
     
-    if (elm.style.display !== "block") {
-        elm.style.display = "block";
+    if (!elm.classList.contains("popup_active")) {
+        elm.classList.add("popup_active");
         elm.style.zIndex = popup_history.length + 10;
         
         popup_history.push(id);
@@ -2884,7 +3008,7 @@ function open_popup (id) {
 function popup_close() {
     var id = popup_history.pop();
     
-    document.getElementById(id).style.display = "none";
+    document.getElementById(id).classList.remove("popup_active");
 }
 
 var screen_elm = document.getElementById("popup_screen");
@@ -2896,7 +3020,7 @@ function open_square_popup (id) {
     }
     
     screen_elm.style.display = "block";
-    document.getElementById(id).style.display = "block";
+    document.getElementById(id).classList.add("popup_active");
     
     popup_history.push(id);
     square_popup_is_open = true;
@@ -2906,8 +3030,7 @@ function close_square_popup () {
     var id = popup_history.pop();
     
     screen_elm.style.display = "none";
-    
-    document.getElementById(id).style.display = "none";
+    document.getElementById(id).classList.remove("popup_active");
     
     square_popup_is_open = false;
     
@@ -3904,14 +4027,15 @@ function draw_train_position (hh_and_mm) {
     for (var cnt = 0; cnt < line_inbound.length; cnt++) {
         if (line_inbound[cnt].length === 1) {
             var train = convert_train_position_data(line_inbound[cnt][0]);
-            buf = "<span onclick='train_detail(\"" + line_id + "\", \"" + train["train_number"] + "\", \"" + train["first_departure_time"] + "\", \"inbound_trains\");' style='color : " + get_train_color(train["train_title"]) + ";'><img src='" + get_icon(train["first_formation"]) + "' alt='' class='train_icon'";
+            buf = "<span onclick='train_detail(\"" + line_id + "\", \"" + train["train_number"] + "\", \"" + train["first_departure_time"] + "\", \"inbound_trains\");' style='color: " + get_train_color(train["train_title"]) + ";'><img src='" + get_icon(train["first_formation"]) + "' alt='' class='train_icon'";
             
             if (railroad_info["deadhead_train_number_regexp"].test(train["train_number"])) {
                 buf += " style='opacity: 0.5;'";
                 train["train_type"] = "回送";
             }
             
-            buf += "><u>";
+            var train_color = get_train_color(train["train_title"], "#333333");
+            buf += "><span class='train_type' style='background-color: " + train_color + "; border-color: " + train_color + ";'>";
             
             if (config["show_train_types_in_position_mode"]) {
                 buf += train["train_type"];
@@ -3919,7 +4043,7 @@ function draw_train_position (hh_and_mm) {
                 buf += train["train_title"];
             }
             
-            buf += "</u><br>" + train["formation_html"] + "</span>";
+            buf += "</span><br>" + train["formation_html"] + "</span>";
             
             position_inbound_elms[line_inbound.length - cnt].innerHTML = buf;
         } else if (line_inbound[cnt].length >= 2) {
@@ -3945,14 +4069,15 @@ function draw_train_position (hh_and_mm) {
     for (cnt = 0; cnt < line_outbound.length; cnt++) {
         if (line_outbound[cnt].length === 1) {
             var train = convert_train_position_data(line_outbound[cnt][0]);
-            buf = "<span onclick='train_detail(\"" + line_id + "\", \"" + train["train_number"] + "\", \"" + train["first_departure_time"] + "\", \"outbound_trains\");' style='color : " + get_train_color(train["train_title"]) + ";'><img src='" + get_icon(train["first_formation"]) + "' alt='' class='train_icon'";
+            buf = "<span onclick='train_detail(\"" + line_id + "\", \"" + train["train_number"] + "\", \"" + train["first_departure_time"] + "\", \"outbound_trains\");' style='color: " + get_train_color(train["train_title"]) + ";'><img src='" + get_icon(train["first_formation"]) + "' alt='' class='train_icon'";
             
             if (railroad_info["deadhead_train_number_regexp"].test(train["train_number"])) {
                 buf += " style='opacity: 0.5;'";
                 train["train_type"] = "回送";
             }
             
-            buf += "><u>";
+            var train_color = get_train_color(train["train_title"], "#333333");
+            buf += "><span class='train_type' style='background-color: " + train_color + "; border-color: " + train_color + ";'>";
             
             if (config["show_train_types_in_position_mode"]) {
                 buf += train["train_type"];
@@ -3960,7 +4085,7 @@ function draw_train_position (hh_and_mm) {
                 buf += train["train_title"];
             }
             
-            buf += "</u><br>" + train["formation_html"] + "</span>";
+            buf += "</span><br>" + train["formation_html"] + "</span>";
             
             position_outbound_elms[cnt].innerHTML = buf;
         } else if (line_outbound[cnt].length >= 2) {
@@ -4599,8 +4724,8 @@ var timetable_selected_station = null;
 var direction_radio_area_elm = document.getElementById("direction_radio_area");
 
 function timetable_change_lines(line_id, force_station_select_mode = false) {
-    document.getElementById("radio_inbound_label").innerText = "上り(" + railroad_info["lines"][line_id]["stations"][0]["station_name"] + "方面)";
-    document.getElementById("radio_outbound_label").innerText = "下り(" + railroad_info["lines"][line_id]["stations"][railroad_info["lines"][line_id]["stations"].length - 1]["station_name"] + "方面)";
+    document.getElementById("radio_inbound_label").innerHTML = "上り<small>(" + escape_html(railroad_info["lines"][line_id]["stations"][0]["station_name"]) + "方面)</small>";
+    document.getElementById("radio_outbound_label").innerHTML = "下り<small>(" + escape_html(railroad_info["lines"][line_id]["stations"][railroad_info["lines"][line_id]["stations"].length - 1]["station_name"]) + "方面)</small>";
     
     if (timetable_selected_station === null || force_station_select_mode) {
         update_timetable_line_select(railroad_info["lines_order"]);
@@ -5445,14 +5570,14 @@ function get_icon (formation_name) {
     return UNYOHUB_GENERIC_TRAIN_ICON;
 }
 
-function get_train_color (train_name) {
+function get_train_color (train_name, default_value = "inherit") {
     for (var cnt = 0; cnt < railroad_info["train_color_rules"].length; cnt++) {
         if (railroad_info["train_color_rules"][cnt]["regexp"].test(train_name)) {
             return railroad_info["train_color_rules"][cnt]["color"];
         }
     }
     
-    return "inherit";
+    return default_value;
 }
 
 
