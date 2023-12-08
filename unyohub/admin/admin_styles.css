@@ -167,7 +167,7 @@ button, a.wide_button {
     overflow: hidden;
 }
 
-.wide_button img {
+.wide_button_icon_area {
     position: absolute;
     
     top: 0;
@@ -176,6 +176,12 @@ button, a.wide_button {
     width: 30px;
     
     padding: 8px;
+    
+    background-color: #333333;
+}
+
+.wide_button_icon_area img {
+    width: 30px;
 }
 
 textarea {

@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width,initial-scale=1,interactive-widget=resizes-content">
 <script>
     const UNYOHUB_APP_NAME = "鉄道運用Hub";
-    const UNYOHUB_VERSION = "23.12-1"
+    const UNYOHUB_VERSION = "23.12-2"
     const UNYOHUB_INDEXEDDB_VERSION = 2310001;
     const UNYOHUB_LICENSE_TEXT = "このアプリケーションは無権利創作宣言に準拠して著作権放棄されています。";
     const UNYOHUB_LICENSE_URL = "https://www.2pd.jp/license/";
@@ -93,6 +93,8 @@ header {
     background-size: 30px, contain;
     background-repeat: no-repeat, no-repeat;
     background-position: 8px 5px, 0 0;
+    
+    overflow: hidden;
 }
 
 #railroad_icon:before, #railroad_icon:after {
@@ -101,9 +103,10 @@ header {
     display: block;
     
     position: absolute;
+    top: -0.5px;
     
-    border-top: 20px solid #333333;
-    border-bottom: 20px solid #333333;
+    border-top: 20.5px solid #333333;
+    border-bottom: 20.5px solid #333333;
     border-left: 15px solid transparent;
 }
 
@@ -118,6 +121,8 @@ header {
 
 #railroad_icon:after {
     left: 49px;
+    
+    width: 1px;
 }
 
 .dark_mode #railroad_icon:after {
@@ -548,7 +553,7 @@ article, #blank_article {
     background-image: linear-gradient(315deg, #cccccc 14px, transparent 14px) !important;
 }
 
-.wide_button img {
+.wide_button_icon_area {
     position: absolute;
     
     top: 0;
@@ -557,6 +562,10 @@ article, #blank_article {
     width: 30px;
     
     padding: 8px;
+}
+
+.wide_button_icon_area img {
+    width: 30px;
 }
 
 .wide_select {
@@ -664,7 +673,7 @@ article, #blank_article {
     background-color: #333333;
 }
 
-.connecting_line_button::after {
+.connecting_line_button:after {
     content: "";
     
     display: block;
@@ -677,7 +686,7 @@ article, #blank_article {
     border-right: 8px solid transparent;
 }
 
-.dark_mode .connecting_line_button::after {
+.dark_mode .connecting_line_button:after {
     border-top-color: #333333;
 }
 
@@ -1458,6 +1467,8 @@ footer div {
     cursor: pointer;
     
     -webkit-tap-highlight-color: rgba(153, 153, 153, 0.2);
+    appearance: none;
+    -webkit-appearance: none;
 }
 
 .date_button {
@@ -1487,6 +1498,41 @@ footer div {
     background-image: url(data:image/webp;base64,UklGRmgBAABXRUJQVlA4TFsBAAAvO8AOEJVAkiTJkbJPnzcsqqMGfdxPIqvprUSfEq2xCLcNAKBJHXempjt9APnARz2A9ATcfa33B9wmrrDd3WYHBm4bKUo6u8cMf3Bf8vw7knOBjyFVIi/uzGmRnB0TNFCVsqE2E1dVsTxDxNyterlGuIdCJFBpYoQypcUkYbzCpIMheiRfHvZYtW0JJyzrblrIIzOj7nWcIAIsOnDDPDi4lnsaem/Zxrs+r9AZHjOhSGeQmgX5ZJf4f1WESD66HZsFWcFsEsR9bvlO4RLRsAWDzZNgaoUvCS4SttT5yZLgt+StylIrnQwpXS18CSYSGp+fZwUTkt8jogqg8pphVazNLsHyBKzntQ1yT0VQwXS+k3t4/dzO8Fsw5TuCYtf7C2+aSl94yOZB+H7r2fxDr1eZcBbCcEKEtAHKBaAD7tcyODe/rYJHMNsGq2BFZQ+3BfDkxuST6PvZa/fg0gA=) !important;
 }
 
+#popup_background {
+    display: none;
+    
+    position: fixed;
+    top:0;
+    left: 0;
+    
+    width: 100%;
+    height: 100%;
+    
+    background-color: #ffffff;
+    
+    z-index: 9;
+}
+
+.dark_mode #popup_background {
+    background-color: #444444;
+}
+
+.popup_active {
+    display: block !important;
+    
+    opacity: 1;
+}
+
+@keyframes fade_in {
+    0% {
+        opacity: 0;
+    }
+    
+    100% {
+        opacity: 1;
+    }
+}
+
 .popup {
     position: fixed;
     top: 0;
@@ -1512,21 +1558,17 @@ footer div {
     background-color: #444444;
 }
 
-.popup_active {
-    display: block !important;
-    
-    opacity: 1;
-    
-    animation: fade_in 0.5s;
+.popup.popup_active {
+    animation: fade_in 0.5s, popup_up 0.05s ease-out;
 }
 
-@keyframes fade_in {
+@keyframes popup_up {
     0% {
-        opacity: 0;
+        top: 50px;
     }
     
     100% {
-        opacity: 1;
+        top: 0;
     }
 }
 
@@ -1709,8 +1751,6 @@ a {
     background-color: #ffffff;
     
     text-align: center;
-    
-    opacity: 0;
 }
 
 .dark_mode .square_popup, .dark_mode .preview_popup {
@@ -1718,14 +1758,12 @@ a {
 }
 
 .square_popup.popup_active {
-    opacity: 1;
-    
-    animation: fade_in 0.5s, square_popup_up 0.1s ease-out;
+    animation: fade_in 0.5s, square_popup_up 0.05s ease-out;
 }
 
 @keyframes square_popup_up {
     0% {
-        top: calc(50% - 10px);
+        top: calc(50% - 110px);
     }
     
     100% {
@@ -1748,14 +1786,12 @@ a {
 }
 
 .preview_popup.popup_active {
-    opacity: 1;
-    
-    animation: fade_in 0.5s, preview_popup_up 0.1s ease-out;
+    animation: fade_in 0.5s, preview_popup_up 0.05s ease-out;
 }
 
 @keyframes preview_popup_up {
     0% {
-        top: 165px;
+        top: 65px;
     }
     
     100% {
@@ -1797,12 +1833,12 @@ a {
 }
 
 .square_popup.popup_active .popup_close_button {
-    animation: square_popup_close_button_up 0.1s ease-out;
+    animation: square_popup_close_button_up 0.05s ease-out;
 }
 
 @keyframes square_popup_close_button_up {
     0% {
-        top: calc(50%);
+        top: calc(50% - 100px);
     }
     
     100% {
@@ -1816,12 +1852,12 @@ a {
 }
 
 .preview_popup.popup_active .popup_close_button {
-    animation: preview_popup_close_button_up 0.1s ease-out;
+    animation: preview_popup_close_button_up 0.05s ease-out;
 }
 
 @keyframes preview_popup_close_button_up {
     0% {
-        top: 170px;
+        top: 70px;
     }
     
     100% {
@@ -2488,6 +2524,7 @@ input[type="radio"] + label small {
             <button type="button" class="previous_button" onclick="operation_table_previous();"></button><span id="operation_table_name" class="footer_value_wide"></span><button type="button" class="next_button" onclick="operation_table_next();"></button>
         </div>
     </footer>
+    <div id="popup_background"></div>
     <div class="popup" id="railroad_select_popup">
         <button type="button" class="popup_close_button" onclick="popup_close();"></button>
         <div id="railroad_select_area"></div>
@@ -2985,6 +3022,7 @@ function menu_click (force_close = false) {
     }
 }
 
+var popup_background_elm = document.getElementById("popup_background");
 var popup_history = new Array();
 var square_popup_is_open = false;
 
@@ -2992,6 +3030,8 @@ function open_popup (id) {
     if (square_popup_is_open) {
         close_square_popup();
     }
+    
+    popup_background_elm.style.display = "block";
     
     var elm = document.getElementById(id);
     
@@ -3007,6 +3047,10 @@ function open_popup (id) {
 
 function popup_close() {
     var id = popup_history.pop();
+    
+    if (popup_history.length === 0) {
+        popup_background_elm.style.display = "none";
+    }
     
     document.getElementById(id).classList.remove("popup_active");
 }
@@ -3158,7 +3202,7 @@ function update_railroad_list (railroads) {
     
     var keys = Object.keys(railroads);
     for (var cnt = 0; cnt < keys.length; cnt++) {
-        buttons_html += "<a href='javascript:void(0);' class='wide_button' onclick='select_railroad(\"" + keys[cnt] + "\");'><img src='" + railroads[keys[cnt]]["railroad_icon"] + "' alt='' style='background-color: " + railroads[keys[cnt]]["main_color"] + "'>" + escape_html(railroads[keys[cnt]]["railroad_name"]) + "</a>";
+        buttons_html += "<a href='javascript:void(0);' class='wide_button' onclick='select_railroad(\"" + keys[cnt] + "\");'><div class='wide_button_icon_area' style='background-color: " + railroads[keys[cnt]]["main_color"] + ";'><img src='" + railroads[keys[cnt]]["railroad_icon"] + "' alt=''></div>" + escape_html(railroads[keys[cnt]]["railroad_name"]) + "</a>";
     }
     
     if (cnt === 0) {
