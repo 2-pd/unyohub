@@ -107,14 +107,33 @@
 文字列「ERROR: 」とそれに続くエラー内容文
 
 
-## announcements.php
-お知らせまたはその更新日時を取得する
+## check_announcements.php
+新しいお知らせの有無を確認する
 
 ### 引数
 **$_POST["last_modified_timestamp"]** : タイムスタンプ(UTC)
 
 ### 応答
-**タイムスタンプが省略されるか、タイムスタンプより新しい重要なお知らせがあった場合** :  
+**タイムスタンプより新しい重要なお知らせがあった場合** :  
+文字列「NEW_IMPORTANT_ANNOUNCEMENTS_EXIST」  
+  
+**announcements.jsonの変更日時がタイムスタンプより新しく、かつ、タイムスタンプより新しい重要なお知らせがなかった場合** :  
+文字列「NEW_ANNOUNCEMENTS_EXIST」  
+  
+**announcements.jsonの変更日時がタイムスタンプ以前だった場合** :  
+文字列「NEW_ANNOUNCEMENTS_NOT_EXIST」  
+  
+**エラーの場合** :  
+文字列「ERROR: 」とそれに続くエラー内容文
+
+
+## announcements.php
+お知らせを取得する
+
+### 引数
+(なし)
+
+### 応答
 [  
     { 各お知らせの情報  
         "title" : お知らせのタイトル,  
@@ -125,13 +144,7 @@
         "last_modified_timestamp" : お知らせが更新されたタイムスタンプ(UTC、秒単位)  
     }...  
 ]  
-▲クライアント端末からAccept-Encodingヘッダーが送信されていた場合、このデータは自動的にgzip圧縮される  
-  
-**タイムスタンプが指定され、announcements.jsonの変更日時がタイムスタンプより新しく、かつ、タイムスタンプより新しい重要なお知らせがなかった場合** :  
-文字列「NEW_ANNOUNCEMENTS_EXIST」  
-  
-**タイムスタンプが指定され、announcements.jsonの変更日時がタイムスタンプ以前だった場合** :  
-文字列「NEW_ANNOUNCEMENTS_NOT_EXIST」
+▲クライアント端末からAccept-Encodingヘッダーが送信されていた場合、このデータは自動的にgzip圧縮される
 
 
 ## railroads.php

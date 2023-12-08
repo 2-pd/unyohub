@@ -170,15 +170,14 @@ header {
 }
 
 #menu_button {
+    display: block;
+    
     position: absolute;
+    top: 0;
     right: 0;
     
     width: 50px;
     height: 40px;
-    
-    border: none;
-    border-radius: 0;
-    padding: 0;
     
     background-image: url(data:image/webp;base64,UklGRjYAAABXRUJQVlA4TCoAAAAvY8ATEA8wzMM8zPMf8DAUwMyaqa7ZFcC+Ef2fgHupQQleaVCCVxqU4Kc=);
     background-size: 50px 40px;
@@ -191,6 +190,22 @@ header {
 
 .dark_mode .menu_button_active {
     background-color: #444444 !important;
+}
+
+.menu_button_with_notification:before {
+    content: "";
+    
+    display: block;
+    
+    position: absolute;
+    top: 4px;
+    right: 10px;
+    
+    padding: 6px;
+    
+    border-radius: 6px;
+    
+    background-color: #ee3333;
 }
 
 #menu {
@@ -255,19 +270,20 @@ header {
     background-color: #777777;
 }
 
-#menu button {
+#menu a {
+    display: block;
+    
     width: 100%;
     height: 40px;
     
-    border: none;
-    border-radius: 0;
-    
-    background-color: transparent;
-    
+    line-height: 40px;
     font-size: 15px;
+    color: inherit;
+    text-align: center;
+    text-decoration: none;
 }
 
-.dark_mode #menu button {
+.dark_mode #menu a {
     color: #eeeeee;
 }
 
@@ -829,10 +845,6 @@ input[type="checkbox"] + label.drop_down {
 
 .dark_mode input[type="checkbox"] + label.drop_down {
     background-color: #808080;
-}
-
-input[type="checkbox"] + label.drop_down:before {
-    display: none;
 }
 
 input[type="checkbox"] + label.drop_down:after {
@@ -1734,7 +1746,9 @@ a {
     background-position: 8px 50%;
 }
 
-.new_icon {
+.new_icon:before, .new_icon_red:before {
+    content: "";
+    
     display: inline-block;
     
     margin: calc(0.5lh - 5px) 2px calc(0.5lh - 5px) 0;
@@ -1746,6 +1760,10 @@ a {
     background-color: #33cc99;
     
     vertical-align: top;
+}
+
+.new_icon_red:before {
+    background-color: #ee3333;
 }
 
 .announcement {
@@ -2089,7 +2107,7 @@ input[type="checkbox"] + label {
     font-size: 18px;
 }
 
-input[type="checkbox"] + label:before {
+input[type="checkbox"] + label:not(.drop_down):before {
     content: "";
     
     display: inline-block;
@@ -2112,15 +2130,15 @@ input[type="checkbox"] + label:before {
     transition-property: all;
 }
 
-input[type="checkbox"]:checked + label:before {
+input[type="checkbox"]:checked + label:not(.drop_down):before {
     background-color: #333333;
 }
 
-.dark_mode input[type="checkbox"] + label:before {
+.dark_mode input[type="checkbox"] + label:not(.drop_down):before {
     background-color: #333333;
 }
 
-.dark_mode input[type="checkbox"]:checked + label:before {
+.dark_mode input[type="checkbox"]:checked + label:not(.drop_down):before {
     background-color: #ffffff;
 }
 
@@ -2240,27 +2258,27 @@ button, a.wide_button {
 </style>
 </head>
 <body>
-    <header><a id="railroad_icon" href="javascript:void(0);" onclick="about_railroad_data();"></a><span id="app_name"></span><a id="railroad_name" href="javascript:void(0);" onclick="open_popup('railroad_select_popup');"></a><button type="button" id="menu_button" onclick="menu_click();"></button></header>
+    <header><a id="railroad_icon" href="javascript:void(0);" onclick="about_railroad_data();"></a><span id="app_name"></span><a id="railroad_name" href="javascript:void(0);" onclick="open_popup('railroad_select_popup');"></a><a id="menu_button" href="javascript:void(0);" onclick="menu_click();"></a></header>
     <div id="menu">
         <div id="menu_logged_in">
             <b id="menu_user_name"></b>
-            <button type="button" onclick="edit_user_data();">ユーザー情報の編集</button>
-            <button type="button" onclick="user_logout();">ログアウト</button>
+            <a href="javascript:void(0);" onclick="edit_user_data();">ユーザー情報の編集</a>
+            <a href="javascript:void(0);" onclick="user_logout();">ログアウト</a>
         </div>
         <div id="menu_admin">
-            <button type="button" onclick="window.open('admin/index.php');">管理画面を開く</button>
+            <a href="javascript:void(0);" onclick="window.open('admin/index.php');">管理画面を開く</a>
         </div>
         <div id="menu_not_logged_in">
-            <button type="button" onclick="open_square_popup('login_popup');">ログイン</button>
-            <button type="button" onclick="open_popup('sign_up_popup');">新規登録</button>
+            <a href="javascript:void(0);" onclick="open_square_popup('login_popup');">ログイン</a>
+            <a href="javascript:void(0);" onclick="open_popup('sign_up_popup');">新規登録</a>
         </div>
         <hr>
-        <button type="button" onclick="show_announcements();">お知らせ</button>
+        <a id="menu_announcements" href="javascript:void(0);" onclick="show_announcements();">お知らせ</a>
         <hr>
-        <button type="button" onclick="edit_config();">各種設定</button>
+        <a href="javascript:void(0);" onclick="edit_config();">各種設定</a>
         <hr>
-        <button type="button" onclick="open_square_popup('about_popup');">このアプリについて</button>
-        <button type="button" onclick="window.open('README.html');">このアプリの使い方</button>
+        <a href="javascript:void(0);" onclick="open_square_popup('about_popup');">このアプリについて</a>
+        <a href="javascript:void(0);" onclick="window.open('README.html');">このアプリの使い方</a>
     </div>
     <div id="splash_screen">
         <div id="splash_screen_inner">
@@ -2587,6 +2605,14 @@ function add_slashes (text) {
     return text.replace(/\\/g, "\\\\").replace(/'/g, "\\'").replace(/"/g, "\\\"");
 }
 
+function convert_to_html (text) {
+    return escape_html(text).replace(/\n/g, "<br>").replace(/https?:\/\/[^\s\\`\|\[\]\{\}\^]+/g, " <a href='$&' target='_blank' class='external_link'>$&</a> ");
+}
+
+function get_timestamp () {
+    return Math.floor(Date.now() / 1000);
+}
+
 
 function get_default_config () {
     return function () {/*
@@ -2655,7 +2681,7 @@ function get_guest_id () {
         var operation_data_store = transaction.objectStore("operation_data");
         var idx_od1 = operation_data_store.index("idx_od1");
         
-        cursor_request = idx_od1.openCursor(IDBKeyRange.upperBound(get_date_string(Date.now() / 1000 - 10800 - 86400 * (config["operation_data_cache_period"])), true), "next");
+        cursor_request = idx_od1.openCursor(IDBKeyRange.upperBound(get_date_string(get_timestamp() - 10800 - 86400 * (config["operation_data_cache_period"])), true), "next");
         
         cursor_request.onsuccess = function () {
             var cursor = cursor_request.result;
@@ -2828,10 +2854,10 @@ var menu_button_elm = document.getElementById("menu_button");
 function menu_click (force_close = false) {
     if (menu_elm.className === "menu_open" || force_close) {
         menu_elm.className = "";
-        menu_button_elm.className = "";
+        menu_button_elm.classList.remove("menu_button_active");
     } else {
         menu_elm.className = "menu_open";
-        menu_button_elm.className = "menu_button_active";
+        menu_button_elm.classList.add("menu_button_active");
     }
 }
 
@@ -3022,7 +3048,6 @@ function update_railroad_list (railroads) {
     splash_screen_elm.className = "splash_screen_loaded";
 }
 
-var announcements_overview_elm = document.getElementById("announcements_overview");
 
 window.onload = function () {
     var cache_json = localStorage.getItem("unyohub_common_caches");
@@ -3062,23 +3087,7 @@ window.onload = function () {
             update_railroad_list(common_caches["railroads"]);
         });
         
-        var announcements_last_modified = localStorage.getItem("unyohub_latest_announcement_timestamp");
-        
-        if (announcements_last_modified === null) {
-            announcements_last_modified = "0";
-        }
-        
-        ajax_post("api/announcements.php", "last_modified_timestamp=" + announcements_last_modified, function (response) {
-            if (response !== false) {
-                if (response === "NEW_ANNOUNCEMENTS_EXIST"){
-                    announcements_overview_elm.innerHTML = "<b>新しいお知らせがあります</b>";
-                } else if (response === "NEW_ANNOUNCEMENTS_NOT_EXIST") {
-                    announcements_overview_elm.innerHTML = "新しいお知らせはありません";
-                } else {
-                    show_announcements(JSON.parse(response), true);
-                }
-            }
-        });
+        check_announcements(true);
     } else {
         splash_screen_login_status_elm.innerHTML = "<b>端末がオフラインです</b><br>前回アクセス時のデータを表示します";
         update_railroad_list(common_caches["railroads"]);
@@ -3086,10 +3095,49 @@ window.onload = function () {
 };
 
 
-function show_announcements (announcements_data = null, important_announcements_exist = false) {
+var announcements_overview_elm = document.getElementById("announcements_overview");
+var menu_announcements_elm = document.getElementById("menu_announcements");
+
+function check_announcements (show_important_announcements = false) {
+    announcement_last_checked = get_timestamp();
+    
+    var announcements_last_modified = localStorage.getItem("unyohub_latest_announcement_timestamp");
+    
+    if (announcements_last_modified === null) {
+        announcements_last_modified = "0";
+    }
+    
+    ajax_post("api/check_announcements.php", "last_modified_timestamp=" + announcements_last_modified, function (response) {
+        if (response !== false) {
+            if (response === "NEW_ANNOUNCEMENTS_NOT_EXIST") {
+                announcements_overview_elm.innerHTML = "新しいお知らせはありません";
+                menu_announcements_elm.className = "";
+                menu_button_elm.classList.remove("menu_button_with_notification");
+            } else {
+                announcements_overview_elm.innerHTML = "<b>新しいお知らせがあります</b>";
+                
+                if (response === "NEW_IMPORTANT_ANNOUNCEMENTS_EXIST") {
+                    menu_button_elm.classList.add("menu_button_with_notification");
+                    menu_announcements_elm.className = "new_icon_red";
+                    
+                    if (show_important_announcements) {
+                        show_announcements(true);
+                    }
+                } else {
+                    menu_button_elm.classList.remove("menu_button_with_notification");
+                    menu_announcements_elm.className = "new_icon";
+                }
+            }
+        }
+    });
+}
+
+function show_announcements (important_announcements_exist = false) {
     open_square_popup("announcements_popup");
     
     announcements_overview_elm.innerHTML = "新しいお知らせはありません";
+    menu_button_elm.classList.remove("menu_button_with_notification");
+    menu_announcements_elm.className = "";
     
     var heading_elm = document.getElementById("announcements_heading");
     if (important_announcements_exist) {
@@ -3104,15 +3152,11 @@ function show_announcements (announcements_data = null, important_announcements_
         heading_elm.innerHTML = "お知らせの一覧";
     }
     
-    if (announcements_data === null) {
-        ajax_post("api/announcements.php", "", function (response) {
-            if (response !== false) {
-                draw_announcements(JSON.parse(response));
-            }
-        });
-    } else {
-        draw_announcements(announcements_data);
-    }
+    ajax_post("api/announcements.php", "", function (response) {
+        if (response !== false) {
+            draw_announcements(JSON.parse(response));
+        }
+    });
 }
 
 function draw_announcements (announcements_data) {
@@ -3135,19 +3179,15 @@ function draw_announcements (announcements_data) {
             buf += " important_announcement";
         }
         
-        buf += "'>";
-        
         if (announcements_data[cnt]["last_modified_timestamp"] > announcements_last_modified) {
-            buf += "<span class='new_icon'></span>";
+            buf += " new_icon";
         }
         
-        buf += escape_html(announcements_data[cnt]["title"]) + "</label>";
-        
-        buf += "<div><div class='announcement'>" + escape_html(announcements_data[cnt]["content"]).replace(/\n/g, "<br>") + "";
+        buf += "'>" + escape_html(announcements_data[cnt]["title"]) + "</label>";
         
         var dt = new Date(announcements_data[cnt]["last_modified_timestamp"] * 1000);
         
-        buf += "<small>" + escape_html(announcements_data[cnt]["user_name"]) + "　" + dt.getFullYear() + "/" + (dt.getMonth() + 1) + "/" + dt.getDate() + " " + dt.getHours() + ":" + dt.getMinutes() + "</small></div></div>";
+        buf += "<div><div class='announcement'>" + convert_to_html(announcements_data[cnt]["content"]) + "<small>" + escape_html(announcements_data[cnt]["user_name"]) + "　" + dt.getFullYear() + "/" + (dt.getMonth() + 1) + "/" + dt.getDate() + " " + dt.getHours() + ":" + dt.getMinutes() + "</small></div></div>";
     }
     
     if (buf.length === 0) {
@@ -3639,18 +3679,23 @@ function update_operation_data (operation_date = null) {
         };
     });
     
-    operation_data_last_updated = Date.now() / 1000;
+    operation_data_last_updated = get_timestamp();
 }
 
 
 var background_updater_last_execution = null;
+var announcement_last_checked = null;
 var position_last_updated = null;
 
 function background_updater () {
     var date_now = new Date();
-    var now_ts = date_now.getTime() / 1000;
+    var now_ts = Math.floor(date_now.getTime() / 1000);
     
     if (now_ts < background_updater_last_execution + 10) {
+        if (announcement_last_checked !== null && announcement_last_checked < now_ts - 1800) {
+            check_announcements();
+        }
+        
         var hh_and_mm = ("0" + date_now.getHours()).slice(-2) + ":" + ("0" + date_now.getMinutes()).slice(-2);
         
         if (mode_val === 0) {
@@ -3676,7 +3721,7 @@ function background_updater_start_stop () {
     }
     
     if (document.visibilityState === "visible") {
-        background_updater_last_execution = Date.now() / 1000;
+        background_updater_last_execution = get_timestamp();
         background_updater_interval_id = setInterval(background_updater, 2000);
     }
 }
@@ -3695,11 +3740,11 @@ function position_mode () {
     
     position_reload_button_elm.style.display = "none";
     
-    var operation_table = get_days_operation(Date.now() / 1000);
+    var operation_table = get_days_operation(get_timestamp());
     
     load_operation_table(operation_table, true, true, false);
     update_timetable(operation_table);
-    update_operation_data(get_date_string(Date.now() / 1000));
+    update_operation_data(get_date_string(get_timestamp()));
     
     var keys = railroad_info["lines_order"];
     
@@ -4484,7 +4529,7 @@ function train_detail (line_id, train_number, first_departure_time, train_direct
     document.getElementById("train_detail_popup").scrollTop = 0;
     
     if (show_operation_data) {
-        get_operation_data_detail(get_date_string(Date.now() / 1000), train_operations_str, "train_operation_detail_area");
+        get_operation_data_detail(get_date_string(get_timestamp()), train_operations_str, "train_operation_detail_area");
     }
 }
 
@@ -4539,10 +4584,12 @@ function update_timetable_line_select (lines) {
 function timetable_mode (load_data = true) {
     change_mode(1);
     
+    var ts = get_timestamp();
+    
     if (load_data) {
-        load_operation_table(get_days_operation(Date.now() / 1000), true, true, false);
-        update_timetable(get_days_operation(Date.now() / 1000));
-        update_operation_data(get_date_string(Date.now() / 1000));
+        load_operation_table(get_days_operation(ts), true, true, false);
+        update_timetable(get_days_operation(ts));
+        update_operation_data(get_date_string(ts));
     }
     
     timetable_change_lines(railroad_info["lines_order"][0], true);
@@ -4710,7 +4757,7 @@ function timetable_select_station (station_name, cnt = 0) {
         var color_style = " color: #444444;";
     }
     
-    if (timetable_operation_table === get_days_operation(Date.now() / 1000)) {
+    if (timetable_operation_table === get_days_operation(get_timestamp())) {
         var is_today = true;
     } else {
         var is_today = false;
@@ -4879,21 +4926,23 @@ var operation_date_button_elm = document.getElementById("operation_date_button")
 var operation_data_date;
 
 function operation_data_mode () {
-    operation_date_button_elm.max = get_date_string(Date.now() / 1000 + 86400);
+    operation_date_button_elm.max = get_date_string(get_timestamp() + 86400);
     
     operation_data_change_date(null);
 }
 
 function operation_data_change_date (date_additions) {
+    var ts = get_timestamp();
+    
     if (date_additions === null) {
         change_mode(2);
         
-        operation_data_date = Date.now() / 1000;
+        operation_data_date = ts;
     } else {
         operation_data_date += date_additions * 86400;
         
-        if (operation_data_date > Date.now() / 1000 + 86400) {
-            operation_data_date = Date.now() / 1000 + 86400;
+        if (operation_data_date > ts + 86400) {
+            operation_data_date = ts + 86400;
             
             alert("2日以上先の運用情報は表示できません");
         }
@@ -4913,7 +4962,7 @@ function operation_data_change_date (date_additions) {
 }
 
 function operation_date_button_change () {
-    operation_data_date = operation_date_button_elm.valueAsDate.getTime() / 1000;
+    operation_data_date = Math.floor(operation_date_button_elm.valueAsDate.getTime() / 1000);
     
     operation_data_change_date(0);
 }
@@ -4945,7 +4994,7 @@ function operation_data_draw (cnt = 0) {
     
     var is_today_str = "false";
     
-    var today_ts = Date.now() / 1000;
+    var today_ts = get_timestamp();
     if (operation_data_date > today_ts) {
         buf += "(明日)";
     } else if (operation_data_date > today_ts - 86400) {
@@ -5027,7 +5076,7 @@ function operation_detail (operation_number, operation_table_name = null, is_tod
     open_square_popup("operation_detail_popup");
     
     if (operation_table_name === null) {
-        operation_table_name = get_days_operation(Date.now() / 1000);
+        operation_table_name = get_days_operation(get_timestamp());
     }
     
     var buf = "<h3><a href='javascript:void(0);' onclick='open_operation_number_detail(\"" + operation_number + "\", \"" + operation_table_name + "\");'>" + escape_html(operation_number) + "運用(" + operations["operations"][operation_number]["cars_count"] + "両)</a></h3>";
@@ -5200,7 +5249,7 @@ function formation_table_mode (formation_name = null) {
         };
     });
     
-    operation_data_date = Date.now() / 1000;
+    operation_data_date = get_timestamp();
     load_operation_table(get_days_operation(operation_data_date), true, false, false);
     update_operation_data(get_date_string(operation_data_date));
 }
@@ -5416,7 +5465,7 @@ function operation_table_mode (load_data = true, table_name = null) {
     
     if (load_data) {
         if (table_name === null){
-            table_name = get_days_operation(Date.now() / 1000);
+            table_name = get_days_operation(get_timestamp());
         }
         
         operation_table_name = table_name;
@@ -5805,7 +5854,7 @@ function write_operation_data (yyyy_mm_dd, operation_number) {
     open_popup("write_operation_data_popup");
     
     if (yyyy_mm_dd === null) {
-        post_yyyy_mm_dd = get_date_string(Date.now() / 1000);
+        post_yyyy_mm_dd = get_date_string(get_timestamp());
     } else {
         post_yyyy_mm_dd = yyyy_mm_dd;
     }
@@ -6134,7 +6183,7 @@ function about_railroad_data () {
         buf += "<div class='informational_text'>" + escape_html(railroad_info["editors"][cnt]["introduction_text"]).replace(/\n/g, "<br>") + "</div>";
     }
     
-    buf += "<div id='license_area'>" + escape_html(railroad_info["license_text"]).replace(/\n/g, "<br>").replace(/https?:\/\/[^\s\\`\|\[\]\{\}\^]+/g, " <a href='$&' target='_blank' class='external_link'>$&</a> ") + "</div>";
+    buf += "<div id='license_area'>" + convert_to_html(railroad_info["license_text"]) + "</div>";
     
     document.getElementById("about_railroad_data_area").innerHTML = buf;
 }

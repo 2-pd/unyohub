@@ -235,7 +235,7 @@ input[type="checkbox"] + label {
     font-size: 18px;
 }
 
-input[type="checkbox"] + label:before {
+input[type="checkbox"] + label:not(.drop_down):before {
     content: "";
     
     display: inline-block;
@@ -258,7 +258,7 @@ input[type="checkbox"] + label:before {
     transition-property: all;
 }
 
-input[type="checkbox"]:checked + label:before {
+input[type="checkbox"]:checked + label:not(.drop_down):before {
     background-color: #333333;
 }
 
@@ -304,10 +304,6 @@ input[type="checkbox"] + label.drop_down {
     text-align: center;
     
     z-index: 1;
-}
-
-input[type="checkbox"] + label.drop_down:before {
-    display: none;
 }
 
 input[type="checkbox"] + label.drop_down:after {
