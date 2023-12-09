@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width,initial-scale=1,interactive-widget=resizes-content">
 <script>
     const UNYOHUB_APP_NAME = "鉄道運用Hub";
-    const UNYOHUB_VERSION = "23.12-2"
+    const UNYOHUB_VERSION = "23.12-3"
     const UNYOHUB_INDEXEDDB_VERSION = 2310001;
     const UNYOHUB_LICENSE_TEXT = "このアプリケーションは無権利創作宣言に準拠して著作権放棄されています。";
     const UNYOHUB_LICENSE_URL = "https://www.2pd.jp/license/";
@@ -35,6 +35,8 @@ html, body {
     margin: 0;
     
     color: #333333;
+    
+    overscroll-behavior-y: none;
 }
 
 .dark_mode {
@@ -242,7 +244,7 @@ header {
 }
 
 .menu_open {
-    max-height: calc(100vh - 72px) !important;
+    max-height: calc(100% - 60px) !important;
     
     opacity: 1.0 !important;
     
@@ -330,7 +332,7 @@ header {
     top: 0;
     
     width: 100%;
-    height: 100vh;
+    height: 100%;
     
     background-color: #ffffff;
     
@@ -518,7 +520,7 @@ article, #blank_article {
     display: none;
     
     width: calc(100vw - 10px);
-    height: calc(100vh - 195px);
+    height: calc(100% - 195px);
     
     padding: 10px 5px 50px 5px;
     
@@ -553,22 +555,20 @@ article, #blank_article {
     background-image: linear-gradient(315deg, #cccccc 14px, transparent 14px) !important;
 }
 
-.wide_button_icon_area {
+.wide_button img {
     position: absolute;
-    
-    top: 0;
-    left: 0;
+    top: -1px;
+    left: -1px;
     
     width: 30px;
     
-    padding: 8px;
+    padding: 9px;
+    padding-right: 8px;
+    
+    background-color: #333333;
 }
 
-.wide_button_icon_area img {
-    width: 30px;
-}
-
-.wide_select {
+.wide_select, .line_select {
     display: block;
     
     width: 300px;
@@ -579,6 +579,16 @@ article, #blank_article {
     line-height: 36px;
     font-size: 20px;
     text-align: center;
+}
+
+.line_select {
+    background-image: url(data:image/webp;base64,UklGRlIBAABXRUJQVlA4TEUBAAAvL8ALEGfBKJIkRdn+Ta2ffeEx2GAUSZKibP+m1s++8BgYRZKkKNu/qfWzLzwGxpFkpeLheiMgAiU8zg7fJYD+/4dSCqm1/iBrLfw8j4cDgwZL8n3fZ5H+/8/Yvu+zCEkAGAQbbtxJJBg8MBwwABoCGAyQ5MONHQszybnve3zfV7XWOlxJkqQqAw9/7q79HO5/QIfGfiP6z8ht20gSettn7E/InzPdsEHjmWSAOliTAfrDiQxQ7NgADz645ecdXrZ1jzcs4wYcu3C+GiN4lupJxAbVQbcaNj5I3AlAcYE6paPReCY7J+wc0nPO7tEn9zSx5GWNSagenRZMVloFEFnsS4DJNgOYGBNupX1eltWZOezAM7/6vEwjfQDV1mDji5zUkkiqCHVK6yu3G7mEjbo8Mp7IyRtyiDfkHG/o0Rt6StZK5L8pAA==);
+    background-repeat: no-repeat;
+    background-size: 24px;
+    background-position: calc(100% - 4px) 50%;
+    
+    appearance: none;
+    -webkit-appearance: none;
 }
 
 .position_row {
@@ -898,7 +908,7 @@ input[type="checkbox"] + label.drop_down:after {
     width: 45px;
     height: 45px;
     
-    background-image: url(data:image/webp;base64,UklGRpoAAABXRUJQVlA4TI4AAAAvJ8AFEC9AkG3T+bse4RwE2Tadv+sRHoJsm87f9QgPmYDF9qkurQgCbDuKVfkvGARA24Y9AX0C5mAW5iDz76YlMAkR/VfkNmoEtD6wPASxQyf1xq2DelGKhnqjFMPqtTIxlvcpE2M5QRgBwgnGmDBmpAKpQigRaox851tegCGr29zXJA1JB2khPT8E4soB);
+    background-image: url(data:image/webp;base64,UklGRpwAAABXRUJQVlA4TI8AAAAvJ8AFEC9AkG3TzF/gtNcgyLZp5i9w2hNk2zTzFzjtyaRtaqGS53pfA2wLQ/9fCQYB0LZhT0DSCugkzMEszL+blsAkRPRfkduoEdD6wPIQjAs6qZefDuqNCA31MsKwej0mxnjemBjjAGEECCcYY8FYkQqkCqFEqDHynXu5A4aqbnNfUzQUHaSF9PwQGHsNAAA=);
     background-repeat: no-repeat;
     background-size: 20px 12px;
     background-position: center;
@@ -1237,8 +1247,6 @@ article h2 {
     margin: 5px auto 15px auto;
     
     line-height: 40px;
-    font-size: 22px;
-    text-align: center;
 }
 
 h2 .previous_button, h2 .next_button {
@@ -1559,7 +1567,7 @@ footer div {
 }
 
 .popup.popup_active {
-    animation: fade_in 0.5s, popup_up 0.05s ease-out;
+    animation: fade_in 0.75s ease-out, popup_up 0.1s ease-out;
 }
 
 @keyframes popup_up {
@@ -1592,6 +1600,9 @@ footer div {
 
 h2 {
     margin: 10px 0;
+    
+    font-size: 22px;
+    text-align: center;
 }
 
 .popup h3 {
@@ -1654,7 +1665,7 @@ a {
     margin: 0 20px !important;
 }
 
-.popup input, .popup select {
+.popup input {
     display: block;
     
     width: 90%;
@@ -1674,23 +1685,6 @@ a {
     margin-left: 20px;
     
     font-size: 18px;
-}
-
-.popup select {
-    margin-bottom: 30px;
-    
-    background-color: #ffffff;
-    
-    border: none;
-    border-bottom: 1px solid #cccccc;
-}
-
-.dark_mode .popup select {
-    background-color: #444444;
-    
-    border-color: #666666;
-    
-    color: #ffffff;
 }
 
 .popup button {
@@ -1723,6 +1717,12 @@ a {
     overflow: hidden;
     
     z-index: 200;
+}
+
+.popup_screen_active {
+    display: block !important;
+    
+    animation: fade_in 0.75s ease-out;
 }
 
 #popup_screen_blank_area {
@@ -1758,7 +1758,7 @@ a {
 }
 
 .square_popup.popup_active {
-    animation: fade_in 0.5s, square_popup_up 0.05s ease-out;
+    animation: square_popup_up 0.1s ease-out;
 }
 
 @keyframes square_popup_up {
@@ -1786,7 +1786,7 @@ a {
 }
 
 .preview_popup.popup_active {
-    animation: fade_in 0.5s, preview_popup_up 0.05s ease-out;
+    animation: preview_popup_up 0.1s ease-out;
 }
 
 @keyframes preview_popup_up {
@@ -2193,7 +2193,7 @@ a {
     }
 }
 
-input[type="text"], input[type="number"], input[type="password"], input[type="search"], .wide_select {
+input[type="text"], input[type="number"], input[type="password"], input[type="search"], .wide_select, .line_select {
     background-color: #ffffff;
     
     border: none;
@@ -2225,7 +2225,7 @@ input[type="text"], input[type="number"], input[type="password"], input[type="se
     margin: 15px 0 15px max(5%, calc(50% - 225px));
     padding-right: 2px;
     
-    background-image: url(data:image/webp;base64,UklGRmgCAABXRUJQVlA4TFwCAAAvN8ANEDVArm3baeP+S3ETOb9zkTRgpGIcuMD9H6chjoAjAGAhaXW2bdu2bdtmZfvuA7btyrbtq2xzFAduIymSu+cYambpD/ufqs4UyOEoX4XhhtHA3dmLEJnMAwG8uKrmsh/Ju5Emw2CA5eKW5JG2i4FNTWCA9eKyXDoY9LkGZKXaR6pWcuIXkBbLsLYpT1DADFsqIEAWr9pyqlhaeQXMio17uqZ3+fdsQJQdBOdRIJMT+7Nm5I3Q8GtceTItHMSW01wSieLP45CZU5Pnom197aXJrQFGLt5fwAwNSSJJ8W6JGE0x7O+eKaJIZe3bCY1wp7Z7oINYOBdqDK0ZMi0SZekaHHn4nvB1ookwbw6C8baiylKVdeKKEsh2s3wbl7VRaQI5C0R+w3mAnwnDibI3BDTswxxPOEiUnymzBkza2SNRwaZ0GtTQhIeEPIycG9TahIsERqZiG3A9YSkxcPuemDsI+jGTT4S3kTymRENchFZLJKfUG16r5lUmO6UZjq5IoXK1UBxmkUZy7iwTUZkTDaemksK5kGr4H/Sj16rDIvF2YAzd0/lpjVtJBUOlAENyvK3K1WPxXtar79LleQRLJd85qs6DgVBz5Fl8tVw4BcyKB8nHHqm0MEvGN1Vldabw3YyE6V879CMzmwvZ+OWIKQ1qdf0ixQNycT/TMwpIqs/DS6KygSLAPXov2RpfxyvJyHHbpfdXbVr5XsRhJT3Tf14pOvU+0mKjUoY54pInLlimgTg7hNa7U23eyPGw1Ihs9bB6IbvA9e6l0b3nY4P2sUlvNPb9/2P8fWoH);
+    background-image: url(data:image/webp;base64,UklGRqACAABXRUJQVlA4TJQCAAAvN8ANEF+jJpKkqH3g3wd+iCmi445HBJpGkjI+8O8DP9SE6lk0jSRlfODfB36oCdWzriPJVpV7z3n7XHD5IyHSJB1CcT9WByTkrNT35nFOrPdm+3/DN2vIAh5ZCwxAFgG44QvJagEAQIsaexAYAMCowAAIQEYBBoFByFkJGQZHwOEwGH5wBPQDoAgIHG/c8IZAILjhDcEt64AWLVoAFRg9GBVWmNBmnfCG4ALJ6gFsss4xIzHTZP1ihua9P3hb64gBBKAGbNu2zUin7LZt3lTbtm3b//8FdyfZ96b1GNF/CG4kKZKc1ctQe9fwB/lXJXJVvnJXcPto2cbipKMwQzXbL9bcfPUo75xWPViRPupR/mldtWCrTXH52DR1kVdsJu7NVPQql6a3nbK1i6XPAeXKWMLo2S7szVmIiSvRi1FX1YcNPm0IO5u89u7mtfIM21nkHWFf85v+E+IUdF/R86UHVDMdrfdDR9OsL3w2QrWUxf9TMTmp4dq5Fi6H4JOzqLQFIcX7tM4HyiSICZt36CrL2HRgmgktCw4YV0rbN9gH8toXYxvsCJ9hbYRRCIoMNMDuwTgHawZmtUFqCYKcgXH6TilYMtAGk5jxiDORF8PthupoSOt4oe2CZUoNdHTBCjWCdeEnTvMraVVpJ0J5wV2hkvPQAnaFyx7o2qIeq1Va+xPpoRWPhXViHCj3tdEfT/VnfX/HHPbTkxE6H9hY92Hc89HVFuXK4BVtc9LVWd/7ZQSn2a7+Vgv1PObRW755qq4RDik7lahXfrFX4UUnqJLUtL/23cyglZLiz05PTbtPIleWSh6yBzPNQ4PNkx93MPv8y2rWT72qxFYxN5NB3TyOiu3yGtbLPQIoHIFUQEMkGZX/TwQ=);
     background-repeat: no-repeat;
     background-size: 28px;
     
@@ -2451,7 +2451,7 @@ input[type="radio"] + label small {
     <div id="tab_area"><button type="button" onclick="position_mode();" style="background-image: url(data:image/webp;base64,UklGRuICAABXRUJQVlA4TNYCAAAvNUANEP/jIJJkV+n9gZxBAq6xyn9rA1Jk266q3o/MFHRQqMYJcxzgIP4c7jkOG0lylJo3eA8hkDWp8jeuattWlXUe7trASUAUK8SgBbXsn8/nLjuAZrCvb2dvr/l9nne0zHeKtVYZYgUNW2QKgqZAqCEIQo0GDYQCFQRBEBIIJSoUEAJhmoss4qCj/eGLpOrAMIHB0BIGgw9VHa0jhto5yUYxsTfXGRnm3ykdRdSpXcMaNplqSHS0ISxTfv68d9nF/gURtv9teHg7JBnhUx96aPt+vr+WWiZO2MYWtTv7///jz/5zmWczSbgf73Qqp68T6XD4OZDkOWq4v93vIbBiAhdoaChouEHDL1yhkLeg0C4QBEG4J9Go4aADM0AQALaQ1LNvbZxt27Zt2/bb77ZNk9wHphH9h+BGkiLJmbnMe/AHgctSX1Nhl9PqMo39S4Itc9UBG5CuqjkmQ2GbJtERDnGVdps2pj6ezJTYUCknt86GTBv1HjYs+yjtiaJoVjiVosZGSBXBUgCQeXpxay7OMgGdS3iTNlXG9Z2UqwybmgG8duD035RmqhrwClSnd0DOVB14AdUl5By4As+luoXcqtx4XpQblQ8vh3YmF69MdYa6SSneBPBAV5gHmsDrdQA/XVf6ny5HksCnGPpJPju/NRb4k1wkCMZshAxTJHbiBRIEJa14RpB0+7F8yf/z96pWEPV4cTxJgpp2nCZBNuXFMFOCnmaMFpb/SVG9UIrgyITeuGARn6+Tx/Wvc1Dz38wMCiYfJ7DjH669P6RD0u7ffpj2bK4g18b8lmnmcUE1//gcK8+eNneyZNm7209SyVNeW4WsXVif8kvhmTUdiQl2C6DUvW4cxbIcsyy9hLVXqdR7HMhZtFnmQI5yB5ZZ+7Mzewe64veyfghkxToEsipfiX808veDH7nYMRT1aMRsPen6pY6p+rFVN8aqe/sWbH8ppELj7Q8=); border-color: #ee3333;">走行位置</button><button type="button" onclick="timetable_mode();" style="background-image: url(data:image/webp;base64,UklGRmgEAABXRUJQVlA4TFsEAAAvNUANEA8GOZIkRZLn8n9t9RdiNcJ7MWOlGo4jSXKU7JO/swabsJvghwFabEOOJNlVVP2QDmAJRnHGZU6a1fv1FNzatlVV8+BEN6MWOqRJIo/0u9z3doCW+np1I2ohQlWQsdbKNGgWCJX+P42xlcTvd9Kq1f9/MaPMKK1WW6myO3oIlRKka1+9ojQL9Ds+lWpUBf3rKF7uTxQRGr0qlBJFiijWFMnany8yQ8sVsRIxQ21j7rBogUTTUZWffkEqFCFoFkg1JvAHgT8IBAIjBAJ/EBigQyDBDFrLf8NfsIfgJFqpHQ6DSiiYwhcMEDJV5glz8QdecCii9CJKh1dY0Bq+F0gllQizoMLS/EIr5srVxC0stVeeI0kyW4Q338z+lmkdNMkspSlbMgibsP4ndnN8H9/scnAYXZjtnb8jYqujSVfa8N+jSYBQx0p/ay2I+YNoVVK02u47SSSxmBpzJxPub53T9aLVz2f0/R7cnU/T4+k4QKK2bWcjff8/tjJaj7G2beNb27Zt27a928039rHlTfrn3xOI6P8EkMn2B0cPbFm7ceHCjeu2HDj6QJGN7Td3ruAoVx680R7WyxNr2ei6qy/DUJdWsfHVZ5Wx+9s51C0vDF1fxiEvvmBCHeGAc/q8+/474rp/f31/22+2H/MTFdXr3ew/8FNERKSptbVJRCTycbAf73odhTrIvoN+iIi49QUdHR0dsUnZuYX17pchPrxHBTvCeMYHV0Rq85K19miYnFf7fhbiJ4FOMx75U0Rqc7Q3iNbaaRiF+FyA+4vRgD8ikfxYbULHdhqBlrzwUVsZ9v8nUpOlfaPROnMC4O0KXWY48o9IXbI2p9OnAT4P3qwCM3+K1CXpMHTXeWDzS89xhh9EapJ1OLoS8Bkial8LBrkSydJhxU0B6xXRI4Y/RPJ1aLoY8EOinWCgSG2sBTGTwTNSK8EnkRxtga4Am9Rd9s6JSK22InWBh28fBb1F8uzQ48C1veCduMmW9AT7toFvUq8tKQU7NoDfUmBLEVi7HPxtanKMBNdaO66TDlYuBG5rW7MNLW3NiWDR/7Ic/GlyHRuciJMBVm4AvyVWW1oE1m4DnyXJljKw4wB4K9m29AL7j4K+4tgyFly7C2ZHCi1JXQDuqJUe/lhvSQV7Nyk6CIa7SVbETAF7iW4C/ppnRQnDW0Tt68DQWhviJ4H1ioiuAn7vWFDN8CQR0cvVYG5jbGjd5oE1rzx0EfDozmFlTGd4hfAOwMMyw0mZyHCb8nmxBPD4jDBSxzBceo/8TyGe1t1cj+mML1DQJ4jnV8b7OS0tjl981XzGTymweo6YJxXHILetzUUxJVPZ95AKRq93+TBPLk/1OC3Njie1Ygr7H3xN0aonfswLxvUsLUpLSEjrUtZz7AIO+FSRwcfL/EwvuUJmX2wNZ8c9Mq3ObTa35gqF+erMOjPrT76ikNXDZ5ui2XT4liIb1e1j+3asX75w4Yr1O/Zdu6PIJAA=); border-color: #eebb33;">時刻表</button><button type="button" onclick="operation_data_mode();" style="background-image: url(data:image/webp;base64,UklGRr4AAABXRUJQVlA4TLIAAAAvNUANEEdAJmCxGFJp7qSKKmYCkNFB/yI6OP0SeHdOTSMp0Kk5/0au5BVAcEDJ/AeA323Mu/i3jVikZhIYRZKkaC0cGTgJ6+RIABugsbC6eXqPfxH9Z+C2bSN27/buF0IHpZRgHfAgkkRLkiR4AK7SiiQJHRADEWmBA6Louk4LHBADMzyORYekX3zhLOD3/Id/IUlKEyRiBUhidlsll1UCVjZTAlY+XQJWgCTA5kGMEIEA); border-color: #33cc66;">運用データ</button><button type="button" onclick="formation_table_mode();" style="background-image: url(data:image/webp;base64,UklGRpQBAABXRUJQVlA4TIcBAAAvNUANEK/BoJEkRbUn4wWeitf6eQfMtDYYNJKkqPa0nJLX/xo+74CZlkEjSYpqz8D7F/NSyAEzLdta2158cuhypoqdWQxiOwNYwD+ANlNSpjdAVYPaDtR1rTgMw4sXPy5kmVkjL6UAKtLMNMDDhZ6ZXynle9+3zczzPM97WRZpnufnOI7q//8/M0fcAIAPPb6IAKTv+5rMpIhI5nmeMpP6vg/+/+ewYgPAIgJg//8DQ0SgbequqRUZXEmSpCoLPFfc3d25/+FWnj/gryei/4zctnEknabtassr2Be03SBkUGWbGsgWSLPKMbQWNHIEUquq+RqCnniOk1JVp67pHgPgGlrTEkilKlS8K5u0UCR+VVZkNchoSzYXyvrvqv4cvgFIVwJSihD4ANKVAKQT8YdRMCs/hvS1ZOdTBl4YrllwY7hnwYPhuRtRV1NJI9qriZX1YjisR9RX0ifaqImVdWTAmASn6gRJJMlaiSyVCRJIlDWYcWZbZYIEkmVtFxPMh+oEScTO+mICAA==); border-color: #0066dd;">編成表</button><button type="button" onclick="operation_table_mode();" style="background-image: url(data:image/webp;base64,UklGRmQAAABXRUJQVlA4TFcAAAAvNUANEB8gECDs6xFnRUhA+P9NtEUVEhD+D1VFdf4D8C9pwCiSrFYEDehJGliP1LOBLarmDD8eI/ovICj0wAx3mQVMIC8gPj23ZZhZk5S6JP/0fuifqzgA); border-color: #9933cc;">運用表</button></div>
     <div id="blank_article" class="wait_icon"></div>
     <article>
-        <select id="position_line_select" class="wide_select" onchange="position_change_lines(this.value);"></select>
+        <select id="position_line_select" class="line_select" onchange="position_change_lines(this.value);"></select>
         <div id="position_area" class="wait_icon"></div>
         <div>
             <input type="checkbox" id="show_train_types_check" onchange="change_show_train_types(this.checked);"><label for="show_train_types_check">列車番号の代わりに種別を表示</label>
@@ -2460,7 +2460,7 @@ input[type="radio"] + label small {
         </div>
     </article>
     <article>
-        <select id="timetable_line_select" class="wide_select" onchange="timetable_change_lines(this.value);"></select>
+        <select id="timetable_line_select" class="line_select" onchange="timetable_change_lines(this.value);"></select>
         <div id="direction_radio_area">
             <h2 id="timetable_station_name"></h2>
             <input type="radio" name="direction_radio" id="radio_inbound" value="inbound" checked="checked" onchange="timetable_select_station(timetable_selected_station);"><label for="radio_inbound" id="radio_inbound_label">上り</label>
@@ -2472,7 +2472,7 @@ input[type="radio"] + label small {
     <article id="operation_data_area" class="wait_icon"></article>
     <article id="formation_table_wrapper" onscroll="formation_table_wrapper_onscroll();">
         <div id="formation_search_area">
-            <label for="car_number_search" class="search_icon"></label><input type="search" id="car_number_search" onkeyup="draw_formation_table();" placeholder="車両番号で検索">
+            <label for="car_number_search" class="search_icon"></label><input type="search" id="car_number_search" onkeyup="draw_formation_table();" autocomplete="off" placeholder="車両番号で検索">
         </div>
         <div id="formation_table_area" class="wait_icon"></div>
     </article>
@@ -2527,19 +2527,20 @@ input[type="radio"] + label small {
     <div id="popup_background"></div>
     <div class="popup" id="railroad_select_popup">
         <button type="button" class="popup_close_button" onclick="popup_close();"></button>
+        <h2>路線系統の切り替え</h2>
         <div id="railroad_select_area"></div>
     </div>
     <div class="popup" id="sign_up_popup">
-        <button type="button" class="popup_close_button" onclick="close_square_popup();"></button>
+        <button type="button" class="popup_close_button" onclick="popup_close();"></button>
         <h2>新規ユーザー登録</h2>
         <h3>ユーザーID</h3>
         <div class="informational_text">半角英数字とアンダーバーの組み合わせで5文字以上が利用可能です。</div>
-        <input type="text" id="sign_up_user_id">
+        <input type="text" id="sign_up_user_id" autocomplete="username">
         <h3>ハンドルネーム</h3>
-        <input type="text" id="sign_up_user_name">
+        <input type="text" id="sign_up_user_name" autocomplete="nickname">
         <h3>パスワード</h3>
         <div class="informational_text">大文字・小文字・数字を全て含む10文字以上を設定してください。</div>
-        <input type="password" id="sign_up_password">
+        <input type="password" id="sign_up_password" autocomplete="new-password">
         <br>
         <button type="button" class="wide_button" onclick="check_sign_up();">ユーザー登録</button>
     </div>
@@ -2555,12 +2556,12 @@ input[type="radio"] + label small {
             <button onclick="open_square_popup('change_password_popup');">変更</button>
         </div>
         <h3>ハンドルネーム</h3>
-        <input type="text" id="edit_user_data_user_name">
+        <input type="text" id="edit_user_data_user_name" autocomplete="nickname">
         <h3>メールアドレス(省略可能)</h3>
-        <input type="text" id="edit_user_data_email_address">
+        <input type="text" id="edit_user_data_email_address" autocomplete="email">
         <div class="informational_text">メールアドレスは他のユーザーには公開されません。</div>
         <h3>webサイトのURL(省略可能)</h3>
-        <input type="text" id="edit_user_data_website_url">
+        <input type="text" id="edit_user_data_website_url" autocomplete="url">
         <div class="informational_text">ブログやSNSのURLを登録することができます。</div>
         <br>
         <button type="button" class="wide_button" onclick="change_user_data();">保存</button>
@@ -2602,9 +2603,9 @@ input[type="radio"] + label small {
         <div class="square_popup" id="login_popup">
             <button type="button" class="popup_close_button" onclick="close_square_popup();"></button>
             <h4>IDまたはメールアドレス</h4>
-            <input type="text" id="login_user_id">
+            <input type="text" id="login_user_id" autocomplete="username">
             <h4>パスワード</h4>
-            <input type="password" id="login_password">
+            <input type="password" id="login_password" autocomplete="current-password">
             <br>
             <br>
             <button type="button" class="wide_button" onclick="challenge_login();">ログイン</button>
@@ -2612,9 +2613,9 @@ input[type="radio"] + label small {
         <div class="square_popup" id="change_password_popup">
             <button type="button" class="popup_close_button" onclick="close_square_popup();"></button>
             <h4>現在のパスワード</h4>
-            <input type="password" id="old_password">
+            <input type="password" id="old_password" autocomplete="current-password">
             <h4>新しいパスワード</h4>
-            <input type="password" id="new_password">
+            <input type="password" id="new_password" autocomplete="new-password">
             <br>
             <br>
             <button type="button" class="wide_button" onclick="change_password();">保存</button>
@@ -3063,7 +3064,7 @@ function open_square_popup (id) {
         close_square_popup();
     }
     
-    screen_elm.style.display = "block";
+    screen_elm.className = "popup_screen_active";
     document.getElementById(id).classList.add("popup_active");
     
     popup_history.push(id);
@@ -3073,7 +3074,7 @@ function open_square_popup (id) {
 function close_square_popup () {
     var id = popup_history.pop();
     
-    screen_elm.style.display = "none";
+    screen_elm.className = "";
     document.getElementById(id).classList.remove("popup_active");
     
     square_popup_is_open = false;
@@ -3202,7 +3203,7 @@ function update_railroad_list (railroads) {
     
     var keys = Object.keys(railroads);
     for (var cnt = 0; cnt < keys.length; cnt++) {
-        buttons_html += "<a href='javascript:void(0);' class='wide_button' onclick='select_railroad(\"" + keys[cnt] + "\");'><div class='wide_button_icon_area' style='background-color: " + railroads[keys[cnt]]["main_color"] + ";'><img src='" + railroads[keys[cnt]]["railroad_icon"] + "' alt=''></div>" + escape_html(railroads[keys[cnt]]["railroad_name"]) + "</a>";
+        buttons_html += "<a href='javascript:void(0);' class='wide_button' onclick='select_railroad(\"" + keys[cnt] + "\");'><img src='" + railroads[keys[cnt]]["railroad_icon"] + "' alt='' style='background-color: " + railroads[keys[cnt]]["main_color"] + ";'>" + escape_html(railroads[keys[cnt]]["railroad_name"]) + "</a>";
     }
     
     if (cnt === 0) {
@@ -4502,7 +4503,7 @@ function get_operation_data_detail (operation_date, operation_numbers_str, area_
                             user_name_html = "<span" + class_html + ">" + user_name_html + "</span>";
                         }
                     } else {
-                        var user_name_html = "<span class='beginner'>(ゲスト様)</span>";
+                        var user_name_html = "<span>(ゲスト様)</span>";
                     }
                     
                     if (user_data !== null && (data[operation_numbers[cnt]][cnt_2]["user_id"] === user_data["user_id"] || user_data["role"] === "MODERATOR" || user_data["role"] === "ADMIN")) {
