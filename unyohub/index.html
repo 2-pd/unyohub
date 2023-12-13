@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width,initial-scale=1,interactive-widget=resizes-content">
 <script>
     const UNYOHUB_APP_NAME = "鉄道運用Hub";
-    const UNYOHUB_VERSION = "23.12-4";
+    const UNYOHUB_VERSION = "23.12-5";
     const UNYOHUB_INDEXEDDB_VERSION = 2310001;
     const UNYOHUB_LICENSE_TEXT = "このアプリケーションは無権利創作宣言に準拠して著作権放棄されています。";
     const UNYOHUB_LICENSE_URL = "https://www.2pd.jp/license/";
@@ -605,7 +605,7 @@ article, #blank_article {
     
     height: 80px;
     
-    border-bottom: 2px dotted #eeeeee;
+    border-top: 2px dotted #eeeeee;
     
     vertical-align: top;
 }
@@ -614,8 +614,8 @@ article, #blank_article {
     border-color: #555555;
 }
 
-.position_row:last-child .position_inbound, .position_row:last-child .position_outbound {
-    border-bottom: none;
+.position_row:first-child .position_inbound, .position_row:first-child .position_outbound {
+    border-top-color: transparent;
 }
 
 .position_station {
@@ -629,7 +629,7 @@ article, #blank_article {
 
 .position_station h4 {
     position: absolute;
-    top: -15px;
+    top: -13px;
     left: -5px;
     
     width: 95px;
@@ -640,11 +640,19 @@ article, #blank_article {
     
     border-radius: 0 13px 13px 0;
     
+    background-color: #eeeeee;
+    
     line-height: 28px;
     font-size: 16px;
     text-decoration: underline;
     
     filter: drop-shadow(0 1px 2px rgba(0,0,0,0.25));
+    
+    z-index: 2;
+}
+
+.dark_mode .position_station h4 {
+    background-color: #555555;
 }
 
 .train_icon {
@@ -657,6 +665,14 @@ article, #blank_article {
     margin-right: 5px;
     
     filter: drop-shadow(0 1px 2px rgba(0,0,0,0.25));
+}
+
+.position_inbound b, .position_outbound b {
+    display: inline-block;
+    
+    max-width: calc(100% - 45px);
+    
+    line-height: 20px;
 }
 
 .connecting_line_button {
@@ -715,16 +731,16 @@ article, #blank_article {
     height: 82px;
 }
 
-.position_row:first-child .position_line {
+.position_row:last-child .position_line {
     height: 80px;
-    border-bottom: 2px solid;
+    border-top: 2px solid;
 }
 
 .position_row:not(:first-child) .position_line:after {
     content: "";
     
     position: absolute;
-    top: -10px;
+    top: -9px;
     left: 3px;
     
     width: 15px;
@@ -751,6 +767,8 @@ article, #blank_article {
     height: 50px;
     
     line-height: 25px;
+    
+    z-index: 1;
 }
 
 .position_inbound .train_icon, .position_outbound .train_icon {
@@ -1230,7 +1248,7 @@ article input[type="checkbox"] + label {
 .operation_table td {
     width: 35%;
     
-    padding-bottom: 0;
+    padding-bottom: 2px;
     
     line-height: 20px;
     font-size: 16px;
@@ -1239,20 +1257,30 @@ article input[type="checkbox"] + label {
 .operation_table .operation_overview {
     width: calc(70% - 5px);
     
-    padding: 0 0 5px 5px;
+    padding: 3px 0 5px 5px;
     
-    line-height: 18px;
+    background-color: #eeeeee;
+    
+    line-height: 20px;
     text-align: left;
 }
 
+.dark_mode .operation_table .operation_overview {
+    background-color: #555555;
+}
+
 .operation_table td small {
+    font-size: 14px;
+}
+
+.operation_table td time {
     display: block;
     
     font-size: 16px;
     color: #666666;
 }
 
-.dark_mode .operation_table td small {
+.dark_mode .operation_table td time {
     color: #cccccc;
 }
 
@@ -1261,15 +1289,16 @@ article input[type="checkbox"] + label {
     
     position: relative;
     
+    min-width: 12px;
+    
     margin-right: 5px;
     
-    padding: 1px;
+    padding: 1px 0 1px 1px;
     
-    border-radius: 2px;
-    
-    line-height: 14px;
-    font-size: 12px;
+    line-height: 16px;
+    font-size: 14px;
     color: #ffffff !important;
+    text-align: center;
 }
 
 .operation_table .operation_overview small:after {
@@ -1278,20 +1307,14 @@ article input[type="checkbox"] + label {
     display: block;
     
     position: absolute;
-    top: 5px;
+    top: 0;
     right: -4px;
     
-    border-top: 3px solid transparent;
-    border-bottom: 3px solid transparent;
-    border-left: 3px solid #cccccc;
-}
-
-.dark_mode .operation_table .operation_overview small:after {
-    border-left-color: #666666;
-}
-
-.operation_table .operation_overview small:last-child:after {
-    display: none;
+    border-top: 9px solid;
+    border-bottom: 9px solid;
+    border-left: 4px solid;
+    border-color: transparent;
+    border-left-color: inherit;
 }
 
 .operation_table .operation_overview span:not(.search_highlight) {
@@ -1687,6 +1710,10 @@ footer div {
     border: none;
     
     z-index: 2;
+}
+
+.popup .popup_close_button {
+    animation: popup_up 0.1s ease-out;
 }
 
 h2 {
@@ -3935,8 +3962,13 @@ function update_operation_data (operation_date = null) {
                                 var operation_data_store = transaction.objectStore("operation_data");
                                 operation_data_store.put(operation_data);
                                 
-                                if (mode_val === 0) {
-                                    position_change_time(0);
+                                switch (mode_val) {
+                                    case 0:
+                                        position_change_time(0);
+                                        break;
+                                    case 2:
+                                        operation_data_draw();
+                                        break;
                                 }
                             });
                         }
@@ -3967,14 +3999,12 @@ function background_updater () {
         
         var hh_and_mm = ("0" + date_now.getHours()).slice(-2) + ":" + ("0" + date_now.getMinutes()).slice(-2);
         
-        if (mode_val === 0) {
-            if (position_last_updated !== null && position_last_updated < hh_and_mm) {
-                position_change_time();
-            }
-            
-            if (operation_data_last_updated !== null && operation_data_last_updated < now_ts - config["refresh_interval"] * 60) {
-                update_operation_data();
-            }
+        if (mode_val === 0 && position_last_updated !== null && position_last_updated < hh_and_mm) {
+            position_change_time();
+        }
+        
+        if (operation_data_last_updated !== null && operation_data_last_updated < now_ts - config["refresh_interval"] * 60) {
+            update_operation_data();
         }
     }
     
@@ -4071,16 +4101,20 @@ function position_change_lines (line_id, cnt_0 = 0) {
     
     var buf = "";
     for (var cnt = 0; cnt <= railroad_info["lines"][line_id]["stations"].length; cnt++) {
-        if (cnt < railroad_info["lines"][line_id]["stations"].length && "is_major_station" in railroad_info["lines"][line_id]["stations"][cnt] && railroad_info["lines"][line_id]["stations"][cnt]["is_major_station"]) {
-            var border_style = " style='border-bottom: 2px solid " + major_station_row_color + ";'";
-        } else {
-            var border_style = "";
-        }
-        
         buf += "<div class='position_row'><div class='position_station'>";
         
+        var border_style = "";
+        
         if (cnt !== 0){
-            buf += "<h4 onclick='position_click_station(\"" + railroad_info["lines"][line_id]["stations"][cnt - 1]["station_name"] + "\");' style='background-color: " + station_color + ";'>";
+            buf += "<h4 onclick='position_click_station(\"" + railroad_info["lines"][line_id]["stations"][cnt - 1]["station_name"] + "\");'";
+            
+            if ("is_major_station" in railroad_info["lines"][line_id]["stations"][cnt - 1] && railroad_info["lines"][line_id]["stations"][cnt - 1]["is_major_station"]) {
+                buf += " style='background-color: " + station_color + ";'";
+                
+                var border_style = " style='border-top: 2px solid " + major_station_row_color + ";'";
+            }
+            
+            buf += ">";
                 
             if (railroad_info["lines"][line_id]["stations"][cnt - 1]["station_name"].length > 5) {
                 buf += escape_html(railroad_info["lines"][line_id]["stations"][cnt - 1]["station_name"].substring(0, 4) + "..");
@@ -4136,7 +4170,7 @@ function convert_train_position_data (train_data) {
     
     train_data["train_title"] = train_data["train_number"].split("__")[0];
     
-    train_data["formation_html"] = escape_html(train_data["formation_text"]).replace(/\+/g, "&#8203;+");
+    train_data["formation_html"] = escape_html(train_data["formation_text"]).replace(/\+/g, "<wbr>+");
     
     if (train_data["variants_count"] >= 2) {
         var color = "#cc0000";
@@ -5238,12 +5272,12 @@ function operation_date_button_change () {
     operation_data_change_date(0);
 }
 
-function operation_data_draw (cnt = 0) {
-    if ((operations === null || operation_groups === null || operation_data === null) && cnt < 100) {
-        setTimeout(operation_data_draw, 50, cnt + 1);
+function operation_data_draw (cnt_0 = 0) {
+    if ((operations === null || operation_groups === null || operation_data === null) && cnt_0 < 100) {
+        setTimeout(operation_data_draw, 50, cnt_0 + 1);
         
         return;
-    } else if (cnt >= 100) {
+    } else if (cnt_0 >= 100) {
         alert("データの読み込みに失敗しました");
         
         return;
@@ -5265,12 +5299,17 @@ function operation_data_draw (cnt = 0) {
     
     var is_today_str = "false";
     
+    var operation_reload_button_elm = document.getElementById("operation_reload_button");
+    operation_reload_button_elm.style.display = "block";
+    
     var today_ts = get_timestamp();
     if (operation_data_date > today_ts) {
         buf += "(明日)";
     } else if (operation_data_date > today_ts - 86400) {
         buf += "(本日)";
         is_today_str = "true";
+        
+        operation_reload_button_elm.style.display = "none";
     } else if (today_ts - operation_data_date < 172800) {
         buf += "(昨日)";
     } else if (today_ts - operation_data_date <= 259200) {
@@ -5865,13 +5904,13 @@ function operation_table_list_number (cnt_0 = 0) {
         }
         
         if ("starting_track" in operations["operations"][operation_numbers[cnt]] && operations["operations"][operation_numbers[cnt]]["starting_track"] !== null) { //アップデートに伴う仮、2024年5月以降のバージョンで条件式前半削除
-            var $starting_track_text = "(" + operations["operations"][operation_numbers[cnt]]["starting_track"] + ")";
+            var $starting_track_text = "<small>(" + operations["operations"][operation_numbers[cnt]]["starting_track"] + ")</small>";
         } else {
             var $starting_track_text = "";
         }
         
         if ("terminal_track" in operations["operations"][operation_numbers[cnt]] && operations["operations"][operation_numbers[cnt]]["terminal_track"] !== null) { //アップデートに伴う仮、2024年5月以降のバージョンで条件式前半削除
-            var $terminal_track_text = "(" + operations["operations"][operation_numbers[cnt]]["terminal_track"] + ")";
+            var $terminal_track_text = "<small>(" + operations["operations"][operation_numbers[cnt]]["terminal_track"] + ")</small>";
         } else {
             var $terminal_track_text = "";
         }
@@ -5898,7 +5937,9 @@ function operation_table_list_number (cnt_0 = 0) {
                     var train_type_initial = "*";
                 }
                 
-                buf_2 += "<small style='background-color: " + get_train_color(trains[cnt_2]["train_number"], "#333333") + ";'>" + train_type_initial + "</small>";
+                var train_color = get_train_color(trains[cnt_2]["train_number"], "#333333");
+                
+                buf_2 += "<small style='background-color: " + train_color + "; border-color: " + train_color + ";'>" + train_type_initial + "</small>";
             } else {
                 var train_number_search_index = trains[cnt_2]["train_number"].indexOf(search_keyword);
                 
@@ -5919,8 +5960,8 @@ function operation_table_list_number (cnt_0 = 0) {
         if (search_keyword === "" || search_hit_count >= 1) {
             buf += "<tr onclick='operation_table_select_number(\"" + operation_numbers[cnt] + "\");'>";
             buf += "<th rowspan='2' style='background-color: " + color + "'><b>" + operation_numbers[cnt] + "</b>" + operations["operations"][operation_numbers[cnt]]["operation_group_name"] + "<br>(" + operations["operations"][operation_numbers[cnt]]["cars_count"] + "両)</th>";
-            buf += "<td>" + operations["operations"][operation_numbers[cnt]]["starting_location"] + $starting_track_text + "<small>" + operations["operations"][operation_numbers[cnt]]["first_departure_time"] + "</small></td>";
-            buf += "<td>" + operations["operations"][operation_numbers[cnt]]["terminal_location"] + $terminal_track_text + "<small>" + operations["operations"][operation_numbers[cnt]]["final_arrival_time"] + "</small></td>";
+            buf += "<td>" + operations["operations"][operation_numbers[cnt]]["starting_location"] + $starting_track_text + "<time>" + operations["operations"][operation_numbers[cnt]]["first_departure_time"] + "</time></td>";
+            buf += "<td>" + operations["operations"][operation_numbers[cnt]]["terminal_location"] + $terminal_track_text + "<time>" + operations["operations"][operation_numbers[cnt]]["final_arrival_time"] + "</time></td>";
             buf += "</tr>";
             buf += "<tr onclick='operation_table_select_number(\"" + operation_numbers[cnt] + "\");'><td colspan='2' class='operation_overview'>";
             buf += buf_2;
@@ -6621,6 +6662,7 @@ function reset_config_value () {
 function reset_cache_db () {
     if (confirm("キャッシュデータの削除により運用表や時刻表のデータが再ダウンロードされるため、多くの通信容量を消費する場合があります。\n\nよろしいですか？")) {
         localStorage.removeItem("unyohub_common_caches");
+        localStorage.removeItem("unyohub_latest_announcement_timestamp");
         
         var delete_request = indexedDB.deleteDatabase("unyohub_caches");
         
