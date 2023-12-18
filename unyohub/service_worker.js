@@ -5,6 +5,7 @@ var files_to_cache = [
         "./",
         "apple-touch-icon.webp",
         "maskable_icon.webp",
+        "monochrome_icon.webp",
         "favicon.ico",
         "splash_screen_image.webp",
         "README.html"
