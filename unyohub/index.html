@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width,initial-scale=1,interactive-widget=resizes-content">
 <script>
     const UNYOHUB_APP_NAME = "鉄道運用Hub";
-    const UNYOHUB_VERSION = "23.12-5";
+    const UNYOHUB_VERSION = "23.12-6";
     const UNYOHUB_INDEXEDDB_VERSION = 2310001;
     const UNYOHUB_LICENSE_TEXT = "このアプリケーションは無権利創作宣言に準拠して著作権放棄されています。";
     const UNYOHUB_LICENSE_URL = "https://www.2pd.jp/license/";
@@ -740,22 +740,33 @@ article, #blank_article {
     content: "";
     
     position: absolute;
-    top: -9px;
-    left: 3px;
+    top: -6px;
+    left: 6px;
     
-    width: 15px;
-    height: 15px;
+    width: 11px;
+    height: 11px;
     
     background-color: #ffffff;
     
-    border: 2px solid #eeeeee;
-    border-radius: 9.5px;
+    border: 1px solid #eeeeee;
+    border-radius: 6.5px;
 }
 
 .dark_mode .position_row:not(:first-child) .position_line:after {
     background-color: #444444;
     
     border-color: #555555;
+}
+
+.position_row:not(:first-child) .position_line.position_major_station:after {
+    top: -9px;
+    left: 3px;
+    
+    width: 15px;
+    height: 15px;
+    
+    border-width: 2px;
+    border-radius: 9.5px;
 }
 
 .position_inbound span:not(.train_type), .position_outbound span:not(.train_type) {
@@ -1289,14 +1300,14 @@ article input[type="checkbox"] + label {
     
     position: relative;
     
-    min-width: 12px;
+    width: 15px;
+    height: 18px;
     
     margin-right: 5px;
     
-    padding: 1px 0 1px 1px;
+    padding-left: 1px;
     
-    line-height: 16px;
-    font-size: 14px;
+    line-height: 18px;
     color: #ffffff !important;
     text-align: center;
 }
@@ -1537,6 +1548,16 @@ footer div {
     text-align: center;
 }
 
+.footer_select {
+    display: inline-block;
+    
+    width: 75px;
+    
+    font-size: 23px;
+    color: #999999;
+    text-align: center;
+}
+
 .previous_button, .next_button, .reload_button, .back_button, .date_button, .time_button {
     width: 35px;
     height: 45px;
@@ -1556,6 +1577,18 @@ footer div {
 
 .previous_button {
     transform: scale(-1, 1);
+    
+    margin-right: -10px;
+}
+
+.next_button {
+    margin-left: -10px;
+}
+
+footer .previous_button, footer .next_button {
+    z-index: 3;
+    
+    background-position: 12px 50%;
 }
 
 .footer_value, .footer_value_wide {
@@ -1563,11 +1596,15 @@ footer div {
 }
 
 .footer_value {
-    width: 60px;
+    width: 55px;
 }
 
 .footer_value_wide {
     width: 180px;
+}
+
+.footer small {
+    font-size: 15px;
 }
 
 .reload_button, .back_button, .date_button, .time_button {
@@ -1694,6 +1731,16 @@ footer div {
     }
 }
 
+.popup_close_button, .message_close_button {
+    background-image: url(data:image/webp;base64,UklGRhwBAABXRUJQVlA4TA8BAAAvO8AOEJegEJIkp+v8SU7sCXLUUNC2kWMdfyRH7BHsqaBtI8c6/kiO2CPYU1HbSM52/lo8+1xO1+cClJlRa5W11kABAD4A/P8ZAoVEBGP9/xuzlJIOR24kKdLAMu/+/7VNlZm9pznxVET/HbmRJEXVDokTzNrwhmYoWz/yRZHzfXTMtLcPV+/Hjcl95YqYAqYUHmM8p+MnyLZ6Omf0ZMvV80P82ON3yKNSINKAUwHTgVIC0jJTM1I73IvpFZOyE7NSu+Tz1Dcvaz6vTd/NC+u4VahMnqVGzzeP2tiWK4vcE4v0GdSZtAGUQXSBVME0Ef7xHvrltphlcidv/PnuhMrCpRsbY+WfkRhr3WezgWzNAA==) !important;
+    background-repeat: no-repeat;
+    background-position: center;
+    
+    border: none;
+    
+    z-index: 2;
+}
+
 .popup_close_button {
     position: fixed;
     top: 0;
@@ -1702,14 +1749,7 @@ footer div {
     width: 40px;
     height: 40px;
     
-    background-image: url(data:image/webp;base64,UklGRhwBAABXRUJQVlA4TA8BAAAvO8AOEJegEJIkp+v8SU7sCXLUUNC2kWMdfyRH7BHsqaBtI8c6/kiO2CPYU1HbSM52/lo8+1xO1+cClJlRa5W11kABAD4A/P8ZAoVEBGP9/xuzlJIOR24kKdLAMu/+/7VNlZm9pznxVET/HbmRJEXVDokTzNrwhmYoWz/yRZHzfXTMtLcPV+/Hjcl95YqYAqYUHmM8p+MnyLZ6Omf0ZMvV80P82ON3yKNSINKAUwHTgVIC0jJTM1I73IvpFZOyE7NSu+Tz1Dcvaz6vTd/NC+u4VahMnqVGzzeP2tiWK4vcE4v0GdSZtAGUQXSBVME0Ef7xHvrltphlcidv/PnuhMrCpRsbY+WfkRhr3WezgWzNAA==) !important;
-    background-repeat: no-repeat;
     background-size: 30px;
-    background-position: center;
-    
-    border: none;
-    
-    z-index: 2;
 }
 
 .popup .popup_close_button {
@@ -2311,6 +2351,96 @@ a {
     }
 }
 
+#message_area {
+    position: fixed;
+    top: 100px;
+    left: calc(50% - 150px);
+    
+    width: 300px;
+    
+    z-index: 299;
+}
+
+#message_area:empty {
+    display: none;
+}
+
+#message_area div {
+    position: relative;
+    
+    width: 250px;
+    
+    margin-bottom: 5px;
+    
+    padding: 5px 20px 5px 30px;
+    
+    border-radius: 5px;
+    
+    background-image: url(data:image/webp;base64,UklGRhoBAABXRUJQVlA4TA0BAAAvJ8AJEP9AkG3T+Rtc9hoE2Ta97P0NhqBt27jjz/UMHgaNJCk6Jjmn9KSRF3zogLjk/n68uAAAgAro5agMBiazXx9AgqWD/yPZQ5kVpqq3SHz8Bw5r200bGcJJOUz7r5k6+pImiOi/I7eNHEmWJm04LfYRhLfWMdYLqedePtnktD38bT+njlMZryqkIqw4E93Xp4T2WvDpeqe4LomISu4SvwrhRK8yxPNa9Mx6J/w22ZexaWXSe8vG9AcseAvaRKtPwV8Et1dWzNGKIrOi7KxoFysOmmz4ELnRgoHorwhcqgTYXQEoTgyIF8KHRLBBe/B/IEn4ZVwyRUkVJBemEaSTTek75Un6bXNeNAdBCAA=);
+    background-repeat: no-repeat;
+    background-size: 20px;
+    background-position: 5px 50%;
+    background-color: #ffffff;
+    
+    line-height: 24px;
+    font-size: 16px;
+    
+    box-shadow: 2px 4px 6px rgba(0, 0, 0, 0.25);
+    
+    animation: fade_in_out 10s ease-out;
+}
+
+.dark_mode #message_area div {
+    background-color: #666666;
+}
+
+@keyframes fade_in_out {
+    0% {
+        opacity: 0;
+        margin-top: 10px;
+        margin-bottom: -5px;
+    }
+    
+    1% {
+        opacity: 1;
+        margin-top: 0;
+        margin-bottom: 5px;
+    }
+    
+    60% {
+        opacity: 1;
+        margin-top: 0;
+        margin-bottom: 5px;
+    }
+    
+    100% {
+        opacity: 0;
+        margin-top: 0;
+        margin-bottom: 5px;
+    }
+}
+
+#message_area .error_message {
+    background-image: url(data:image/webp;base64,UklGRh4BAABXRUJQVlA4TBEBAAAvJ8AJEP9gkG2k7pXeX+1fw0DaNql/sVdwZiBtm/SW7t/ar6CNJOXunvwbegnv4GUwTUCM7u3HxQYAABTzExLOIcdUHPQEHJIBJOR870x+r9AxV2Jfg8PadtNGUhwuM3f/NQP6X5ogov+O3LaRJFnqdWZu8wnB+21L2X4kPH3aYmeNdrHV9hrOM5hvKGQgLF2KerAl1W5aZctdNXDdiYh03iV+C/FE38Bw6sUIKPViDIx6MQpCvRgH4dMysLP8LAd7b7IYShZtnUXXZ7H7ZPGVcw5HEb1lcBeZvC4B/w+mxSUebm1K+GX5Tysw7xJ+xA+JgPkvwdeYyB/z4qRiJeKFRQTFdAv6WHKS+F5D045fgQgA);
+    background-color: #ffcccc;
+}
+
+.dark_mode #message_area .error_message {
+    background-color: #996666;
+}
+
+.message_close_button {
+    position: absolute;
+    top: -5px;
+    right: -5px;
+    
+    width: 40px;
+    height: 40px;
+    
+    background-size: 20px;
+    background-color: transparent !important;
+}
+
 input[type="text"], input[type="number"], input[type="password"], input[type="search"], .wide_select, .line_select {
     background-color: #ffffff;
     
@@ -2632,7 +2762,7 @@ input[type="radio"] + label small {
     <footer>
         <div>
             <button id="position_reload_button" class="reload_button" onclick="position_reload();"></button>
-            <button type="button" class="previous_button" onclick="position_change_time(-60);"></button><span id="position_hours" class="footer_value"></span><button type="button" class="next_button" onclick="position_change_time(60);"></button><button type="button" class="previous_button" onclick="position_change_time(-5);"></button><span id="position_minutes" class="footer_value"></span><button type="button" class="next_button" onclick="position_change_time(5);"></button>
+            <span class="footer_select">今日</span><button type="button" class="previous_button" onclick="position_change_time(-60);"></button><span id="position_hours" class="footer_value"></span><button type="button" class="next_button" onclick="position_change_time(60);"></button><button type="button" class="previous_button" onclick="position_change_time(-5);"></button><span id="position_minutes" class="footer_value"></span><button type="button" class="next_button" onclick="position_change_time(5);"></button>
             <input type="time" id="position_time_button" class="time_button" onchange="position_time_button_change();">
         </div>
         <div>
@@ -2779,6 +2909,7 @@ input[type="radio"] + label small {
         </div>
     </div>
     <div id="wait_screen"></div>
+    <div id="message_area"></div>
 <script>
 document.getElementsByTagName("title")[0].innerText = UNYOHUB_APP_NAME;
 document.getElementById("app_name").innerText = UNYOHUB_APP_NAME;
@@ -2943,11 +3074,53 @@ function get_guest_id () {
 }
 
 
+var message_area_elm = document.getElementById("message_area");
+var message_elm_list = [];
+
+function mes (message_text, is_error = false, display_time = 10) {
+    var box_elm = document.createElement("div");
+    
+    box_elm.innerText = message_text;
+    
+    var close_button_elm = document.createElement("button");
+    
+    box_elm.appendChild(close_button_elm);
+    close_button_elm.className = "message_close_button";
+    close_button_elm.onclick = function () {
+        delete_mes(box_elm);
+    }
+    
+    if (is_error) {
+        box_elm.className = "error_message";
+        
+        console.error(UNYOHUB_APP_NAME + ": " + message_text);
+    }
+    
+    if (message_elm_list.length >= 3) {
+        delete_mes(message_elm_list[0]);
+    }
+    
+    message_area_elm.prepend(box_elm);
+    message_elm_list.push(box_elm);
+    
+    setTimeout(delete_mes, display_time * 1000, box_elm);
+}
+
+function delete_mes (box_elm) {
+    var message_index = message_elm_list.indexOf(box_elm);
+    
+    if (message_index !== -1) {
+        message_area_elm.removeChild(box_elm);
+        message_elm_list.splice(message_index, 1);
+    }
+}
+
+
 (function () {
     var open_request = indexedDB.open("unyohub_caches", UNYOHUB_INDEXEDDB_VERSION);
     
     open_request.onerror = function () {
-        alert("ご利用のブラウザではIndexedDBが使用できないため" + UNYOHUB_APP_NAME + "は正常に動作できません");
+        mes("ご利用のブラウザではIndexedDBが使用できないため" + UNYOHUB_APP_NAME + "は正常に動作できません", true);
     };
     
     open_request.onupgradeneeded = function () {
@@ -2993,13 +3166,13 @@ function ajax_post (end_point_url, query_str, callback_func) {
     var ajax_request = new XMLHttpRequest();
     ajax_request.onloadend = function () {
         if (ajax_request.responseText.substring(0, 6) === "ERROR:") {
-            alert(ajax_request.responseText);
+            mes(ajax_request.responseText, true);
             callback_func(false, null);
         } else if (ajax_request.status === 0) {
-            alert("ERROR: ネットワークが不安定です");
+            mes("ERROR: ネットワークが不安定です", true);
             callback_func(false, null);
         } else if (ajax_request.status !== 200) {
-            alert("ERROR: データの取得に失敗しました(" + ajax_request.status + ")");
+            mes("ERROR: データの取得に失敗しました(" + ajax_request.status + ")", true);
             callback_func(false, null);
         } else {
             callback_func(ajax_request.responseText, ajax_request.getResponseHeader("last-modified"));
@@ -3547,7 +3720,7 @@ function select_railroad (railroad_id) {
 
 function switch_railroad (railroad_info_next, load_icon = true) {
     if (railroad_info_next === null){
-        alert("路線系統情報が取得できません");
+        mes("路線系統情報が取得できません", true);
         return;
     }
     
@@ -3857,7 +4030,7 @@ function update_operation_table(operation_table, last_modified_timestamp){
             }
         });
     } else if (last_modified_timestamp === 0) {
-        alert("オフラインのためダウンロードが完了していない運用データは利用できません");
+        mes("オフラインのためダウンロードが完了していない運用データは利用できません", true);
     }
 }
 
@@ -3906,7 +4079,7 @@ function update_timetable (operation_table) {
                 });
             } else {
                 if (timetable === null) {
-                    alert("オフラインのためダウンロードが完了していない時刻表データは利用できません");
+                    mes("オフラインのためダウンロードが完了していない時刻表データは利用できません", true);
                 }
             }
         };
@@ -3975,7 +4148,7 @@ function update_operation_data (operation_date = null) {
                     }
                 });
             } else if (operation_data === null) {
-                alert("オフラインのため運用情報が取得できません");
+                mes("オフラインのため運用情報が取得できません", true);
             }
         };
     });
@@ -4006,6 +4179,8 @@ function background_updater () {
         if (operation_data_last_updated !== null && operation_data_last_updated < now_ts - config["refresh_interval"] * 60) {
             update_operation_data();
         }
+    } else {
+        mes("情報を更新しています...", false, 3);
     }
     
     background_updater_last_execution = now_ts;
@@ -4074,7 +4249,7 @@ function position_change_lines (line_id, cnt_0 = 0) {
         
         return;
     } else if (cnt_0 >= 100) {
-        alert("データの読み込みに失敗しました");
+        mes("データの読み込みに失敗しました", true);
         
         return;
     }
@@ -4104,6 +4279,7 @@ function position_change_lines (line_id, cnt_0 = 0) {
         buf += "<div class='position_row'><div class='position_station'>";
         
         var border_style = "";
+        var major_station_class = "";
         
         if (cnt !== 0){
             buf += "<h4 onclick='position_click_station(\"" + railroad_info["lines"][line_id]["stations"][cnt - 1]["station_name"] + "\");'";
@@ -4111,7 +4287,8 @@ function position_change_lines (line_id, cnt_0 = 0) {
             if ("is_major_station" in railroad_info["lines"][line_id]["stations"][cnt - 1] && railroad_info["lines"][line_id]["stations"][cnt - 1]["is_major_station"]) {
                 buf += " style='background-color: " + station_color + ";'";
                 
-                var border_style = " style='border-top: 2px solid " + major_station_row_color + ";'";
+                border_style = " style='border-top: 2px solid " + major_station_row_color + ";'";
+                major_station_class = " position_major_station";
             }
             
             buf += ">";
@@ -4134,9 +4311,9 @@ function position_change_lines (line_id, cnt_0 = 0) {
         buf += "</div><div class='position_inbound'" + border_style + "></div>";
         
         if (cnt !== 0 && cnt !== railroad_info["lines"][line_id]["stations"].length){
-            buf += "<div class='position_line' style='background-color: " + line_color + ";'></div>";
+            buf += "<div class='position_line" + major_station_class + "' style='background-color: " + line_color + ";'></div>";
         } else {
-            buf += "<div class='position_line' style='border-color: " + line_color + ";'></div>";
+            buf += "<div class='position_line" + major_station_class + "' style='border-color: " + line_color + ";'></div>";
         }
         
         buf += "<div class='position_outbound'" + border_style + "></div></div>";
@@ -4545,8 +4722,8 @@ function position_change_time (position_time_additions = null, draw_train_positi
     
     var hh_and_mm = hours + ":" + minutes;
     
-    document.getElementById("position_hours").innerText = Number(hours) + "時";
-    document.getElementById("position_minutes").innerText = Number(minutes) + "分";
+    document.getElementById("position_hours").innerHTML = Number(hours) + "<small>時</small>";
+    document.getElementById("position_minutes").innerHTML = Number(minutes) + "<small>分</small>";
     
     position_time_button_elm.value = hh_and_mm_24;
     
@@ -4962,7 +5139,7 @@ function timetable_select_station (station_name, cnt = 0) {
         setTimeout(timetable_select_station, 50, station_name, cnt + 1);
         return;
     } else if (cnt >= 100) {
-        alert("データの読み込みに失敗しました");
+        mes("データの読み込みに失敗しました", true);
         
         return;
     }
@@ -5249,7 +5426,7 @@ function operation_data_change_date (date_additions) {
         if (operation_data_date > ts + 86400) {
             operation_data_date = ts + 86400;
             
-            alert("2日以上先の運用情報は表示できません");
+            mes("2日以上先の運用情報は表示できません");
         }
     }
     
@@ -5278,7 +5455,7 @@ function operation_data_draw (cnt_0 = 0) {
         
         return;
     } else if (cnt_0 >= 100) {
-        alert("データの読み込みに失敗しました");
+        mes("データの読み込みに失敗しました", true);
         
         return;
     }
@@ -5306,7 +5483,7 @@ function operation_data_draw (cnt_0 = 0) {
     if (operation_data_date > today_ts) {
         buf += "(明日)";
     } else if (operation_data_date > today_ts - 86400) {
-        buf += "(本日)";
+        buf += "(今日)";
         is_today_str = "true";
         
         operation_reload_button_elm.style.display = "none";
@@ -5572,7 +5749,7 @@ function formation_table_wrapper_onscroll () {
 
 function draw_formation_table (formation_name = null) {
     if (formations === null){
-        alert("編成表が取得できません");
+        mes("編成表が取得できません", true);
         return;
     }
     
@@ -5654,7 +5831,7 @@ function formation_detail (formation_name, cnt_0 = 0) {
         
         return;
     } else if (cnt_0 >= 100) {
-        alert("データの読み込みに失敗しました");
+        mes("データの読み込みに失敗しました", true);
         
         return;
     }
@@ -5671,7 +5848,7 @@ function formation_detail (formation_name, cnt_0 = 0) {
     
     buf += "<div class='descriptive_text'>" + escape_html(formations["formations"][formation_name]["description"]) + "</div>";
     
-    buf += "<h3>本日の運用情報</h3>";
+    buf += "<h3>今日の運用情報</h3>";
     
     var operation_numbers = Object.keys(operation_data["operations"]);
     var buf_2 ="";
@@ -5692,7 +5869,7 @@ function formation_detail (formation_name, cnt_0 = 0) {
     if (buf_2 !== "") {
         buf += buf_2;
     } else {
-        buf += "<div class='descriptive_text'>本日の運用情報はありません</div>";
+        buf += "<div class='descriptive_text'>今日の運用情報はありません</div>";
     }
     
     buf += "<h3>車両情報</h3>";
@@ -5821,7 +5998,7 @@ function operation_table_list_number (cnt_0 = 0) {
         
         return;
     } else if (cnt_0 >= 100) {
-        alert("データの読み込みに失敗しました");
+        mes("データの読み込みに失敗しました", true);
         
         return;
     }
@@ -6043,13 +6220,13 @@ function operation_table_select_number (operation_number, cnt_0 = 0) {
         
         return;
     } else if (cnt_0 >= 100) {
-        alert("データの読み込みに失敗しました");
+        mes("データの読み込みに失敗しました", true);
         
         return;
     }
     
     if (!(operation_number in operations["operations"])) {
-        alert("運用番号「" + operation_number + "」のこのダイヤでの運転情報は登録されていません");
+        mes("運用番号「" + operation_number + "」のこのダイヤでの運転情報は登録されていません");
         
         operation_table_list_number();
         
@@ -6091,7 +6268,7 @@ function operation_table_select_number (operation_number, cnt_0 = 0) {
         buf += "<h3>編成充当情報</h3>";
         
         if (operation_number in operation_data["operations"] && operation_data["operations"][operation_number] !== null) {
-            buf += "<div class='key_and_value'><b>本日</b>";
+            buf += "<div class='key_and_value'><b>今日</b>";
             
             var formations_data = operation_data["operations"][operation_number]["formations"].split("+");
             
@@ -6326,7 +6503,7 @@ function post_operation_data (cnt = 0) {
         close_wait_screen();
         
         if (response !== false) {
-            alert("情報提供ありがとうございました");
+            mes("情報提供ありがとうございました");
             
             if (user_data === null) {
                 close_square_popup();
@@ -6403,7 +6580,7 @@ function revoke_operation_data (cnt = 0) {
         close_wait_screen();
         
         if (response !== false) {
-            alert("運用情報を取り消しました");
+            mes("運用情報を取り消しました");
             
             popup_close();
             
@@ -6461,7 +6638,7 @@ function challenge_login () {
         close_wait_screen();
         
         if (response !== false) {
-            alert("ログインしました");
+            mes("ログインしました");
             
             update_user_data(JSON.parse(response));
             close_square_popup();
@@ -6477,7 +6654,7 @@ function user_logout () {
             close_wait_screen();
             
             if (response !== false) {
-                alert("ログアウトしました");
+                mes("ログアウトしました");
                 
                 update_user_data();
             }
@@ -6495,7 +6672,7 @@ function check_sign_up () {
             show_captcha();
             captcha_submit_button_elm.onclick = challenge_sign_up;
         } else if (response !== false) {
-            alert(response);
+            mes(response);
         }
     });
 }
@@ -6512,7 +6689,7 @@ function challenge_sign_up () {
             close_square_popup();
             popup_close();
             
-            alert("アカウントの作成に成功しました");
+            mes("アカウントの作成に成功しました");
         } else {
             zizai_captcha_reload_image("zizai_captcha_image", "zizai_captcha_id");
         }
@@ -6562,7 +6739,7 @@ function change_user_data (cnt = 0) {
         if (response !== false) {
             update_user_data(JSON.parse(response));
             
-            alert("ユーザー情報を変更しました");
+            mes("ユーザー情報を変更しました");
         }
         
         get_one_time_token();
@@ -6578,9 +6755,9 @@ function change_password () {
         if (response === "SUCCEEDED") {
             close_square_popup();
             
-            alert("パスワードを変更しました");
+            mes("パスワードを変更しました");
         } else if (response !== false) {
-            alert(response);
+            mes(response);
         }
     });
 }
