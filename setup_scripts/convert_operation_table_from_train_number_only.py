@@ -107,6 +107,8 @@ for operation in operations:
         output_row_4 = [operation[1], color]
         
         for train_cell in operation[4:]:
+            train_cell = train_cell.strip()
+            
             if train_cell[0:1] == ".":
                 output_row_1.append(train_cell)
                 output_row_2.append("")

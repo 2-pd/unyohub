@@ -25,6 +25,10 @@ for line_id in railroad_info["lines_order"]:
             csv_reader = csv.reader(csv_f)
             timetable_data = [data_row for data_row in csv_reader]
         
+        if len(timetable_data) != len(railroad_info["lines"][line_id]["stations"]) + 14:
+            for cnt in range(len(railroad_info["lines"][line_id]["stations"]) + 14 - len(timetable_data)):
+                timetable_data.append([""] * len(timetable_data[0]))
+        
         timetable_data_t = [list(x) for x in zip(*timetable_data)]
         
         direction_data = {}
@@ -43,7 +47,14 @@ for line_id in railroad_info["lines_order"]:
             
             direction_data[train[0]].append({})
             
-            departure_times = train[8:len(train) - 6]
+            departure_times = train[8: -6]
+            
+            for cnt in range(len(departure_times)):
+                if departure_times[cnt] != "":
+                    if departure_times[cnt].find(":") == -1:
+                        departure_times[cnt] = departure_times[cnt][:-2] + ":" + departure_times[cnt][-2:]
+                    
+                    departure_times[cnt] = departure_times[cnt].zfill(5)
             
             direction_data[train[0]][train_cnt]["first_departure_time"] = list(filter(lambda x: x != "", departure_times))[0]
             direction_data[train[0]][train_cnt]["train_type"] = train[1]

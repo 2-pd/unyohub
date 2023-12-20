@@ -76,7 +76,7 @@ while cnt < len(operations):
                 output_row_2.append("")
                 output_row_3.append("")
             elif (operations[cnt][cnt_2] != "" and operations[cnt][cnt_2] != "○" and operations[cnt][cnt_2] != "△"):
-                train_name_car_count = operations[cnt][cnt_2].split("(")
+                train_name_car_count = operations[cnt][cnt_2].strip().split("(")
                 if train_name_car_count[0][0:1] != "." and train_name_car_count[0][0:1] != "?":
                     train_name = train_name_car_count[0].zfill(digits_count)
                 else:
