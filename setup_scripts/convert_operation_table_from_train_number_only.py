@@ -50,23 +50,20 @@ for line in lines:
     
     station_name_list_r[line] = list(reversed(station_name_list[line]))
 
-print("JSON化された時刻表データのファイル名を入力してください:")
+print("operation_section.csv を読み込んでいます...")
+with open("operation_section.csv", "r", encoding="utf-8") as csv_f:
+    csv_reader = csv.reader(csv_f)
+    regexp_csv = [data_row for data_row in csv_reader]
 
-json_file_name = input()
+print("JSON化済み時刻表データのダイヤ識別名を入力してください:")
+
+operation_table = input()
+json_file_name = "timetable_" + operation_table + ".json"
 
 print(json_file_name + " を読み込んでいます...")
 
 with open(json_file_name, "r", encoding="utf-8") as json_f:
     timetable = json.load(json_f)
-
-print("列車番号と運転区間の関係を記載したCSVファイル名を入力してください:")
-
-regexp_file_name = input()
-
-print(regexp_file_name + " を読み込んでいます...")
-with open(regexp_file_name, "r", encoding="utf-8") as csv_f:
-    csv_reader = csv.reader(csv_f)
-    regexp_csv = [data_row for data_row in csv_reader]
 
 regexp_list = []
 for regexp_csv_row in regexp_csv:
@@ -80,14 +77,14 @@ print("変換対象のCSVファイル名を入力してください:")
 
 file_name = input()
 
-print("所定の桁数に満たない列車番号の前に「0」を付加する場合にはその桁数を、しない場合には0を入力してください:")
-
-digits_count = int(input())
-
 print(file_name + " を読み込んでいます...")
 with open(file_name, "r", encoding="utf-8") as csv_f:
     csv_reader = csv.reader(csv_f)
     operations = [data_row for data_row in csv_reader]
+
+print("所定の桁数に満たない列車番号の前に「0」を付加する場合にはその桁数を、しない場合には0を入力してください:")
+
+digits_count = int(input())
 
 print("データを変換しています...")
 
@@ -228,9 +225,11 @@ for operation in operations:
         output_data.append(output_row_3)
         output_data.append(output_row_4)
 
-print("データを新しいCSVファイルに書き込んでいます...")
+new_file_name = file_name[:-4] + "_unyohub-format.csv"
 
-with open(file_name[:-4] + "_unyohub-format.csv", "w", encoding="utf-8") as csv_f:
+print("データを " + new_file_name + " に書き込んでいます...")
+
+with open(new_file_name, "w", encoding="utf-8") as csv_f:
     csv_writer = csv.writer(csv_f)
     csv_writer.writerows(output_data)
 

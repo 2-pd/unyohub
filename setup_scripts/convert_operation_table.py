@@ -66,11 +66,11 @@ while cnt < len(operations):
         
         cnt += 1
     else:
-        starting_location, starting_track = split_station_name_and_track(operations[cnt + 1][0])
-        terminal_location, terminal_track = split_station_name_and_track(operations[cnt + 2][0])
+        starting_location, starting_track = split_station_name_and_track(operations[cnt + 1][0].strip())
+        terminal_location, terminal_track = split_station_name_and_track(operations[cnt + 2][0].strip())
         
         output_data[-1]["operations"].append({
-            "operation_number" : operations[cnt][0],
+            "operation_number" : operations[cnt][0].strip(),
             "trains" : [],
             "starting_location" : starting_location,
             "starting_track" : starting_track,
@@ -98,7 +98,7 @@ while cnt < len(operations):
                     "direction" : None
                 })
             else:
-                train_number = operations[cnt][cnt_2]
+                train_number = operations[cnt][cnt_2].strip()
                 
                 if "(" in train_number:
                     bracket_pos = train_number.find("(")
@@ -124,8 +124,8 @@ while cnt < len(operations):
                 
                 line_list = list(set(starting_line_list) & set(terminal_line_list))
                 
-                first_departure_time = operations[cnt + 1][cnt_2][1:]
-                final_arrival_time = operations[cnt + 2][cnt_2][1:]
+                first_departure_time = operations[cnt + 1][cnt_2][1:].strip()
+                final_arrival_time = operations[cnt + 2][cnt_2][1:].strip()
                 
                 if len(line_list) == 0:
                     print("エラー: " + train_number + " の走行範囲が複数の路線に跨っています: " + str(cnt + 1) + "行目 " + str(cnt_2 + 1) + "列目")

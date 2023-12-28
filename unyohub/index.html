@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width,initial-scale=1,interactive-widget=resizes-content">
 <script>
     const UNYOHUB_APP_NAME = "鉄道運用Hub";
-    const UNYOHUB_VERSION = "23.12-6";
+    const UNYOHUB_VERSION = "23.12-7";
     const UNYOHUB_INDEXEDDB_VERSION = 2310001;
     const UNYOHUB_LICENSE_TEXT = "このアプリケーションは無権利創作宣言に準拠して著作権放棄されています。";
     const UNYOHUB_LICENSE_URL = "https://www.2pd.jp/license/";
@@ -45,13 +45,13 @@ html, body {
     color: #ffffff;
 }
 
-*[onclick], *[onclick] *, a, a *, select, label {
+*[onclick], *[onclick] *, a, a *, button, select, label {
     cursor: pointer;
     
     -webkit-tap-highlight-color: rgba(153, 153, 153, 0.2);
 }
 
-*[onclick]:hover, *[onclick]:hover *, a:hover, a:hover *, select:hover, label:hover {
+*[onclick]:hover, *[onclick]:hover *, a:hover, a:hover *, button:hover, select:hover, label:hover {
     text-decoration: none !important;
 }
 
@@ -623,7 +623,7 @@ article, #blank_article {
     
     position: relative;
     
-    width: 75px;
+    width: 70px;
     height: 82px;
 }
 
@@ -632,7 +632,7 @@ article, #blank_article {
     top: -13px;
     left: -5px;
     
-    width: 95px;
+    width: 85px;
     height: 28px;
     
     margin: 0;
@@ -643,7 +643,7 @@ article, #blank_article {
     background-color: #eeeeee;
     
     line-height: 28px;
-    font-size: 16px;
+    font-size: 15px;
     text-decoration: underline;
     
     filter: drop-shadow(0 1px 2px rgba(0,0,0,0.25));
@@ -719,7 +719,7 @@ article, #blank_article {
 .position_inbound, .position_outbound {
     position: relative;
     
-    width: calc(50% - 50px);
+    width: calc(50% - 45px);
 }
 
 .position_line {
@@ -727,7 +727,7 @@ article, #blank_article {
     
     display: inline-block;
     
-    width: 25px;
+    width: 20px;
     height: 82px;
 }
 
@@ -740,16 +740,16 @@ article, #blank_article {
     content: "";
     
     position: absolute;
-    top: -6px;
-    left: 6px;
+    top: -4px;
+    left: 5px;
     
-    width: 11px;
-    height: 11px;
+    width: 8px;
+    height: 8px;
     
     background-color: #ffffff;
     
     border: 1px solid #eeeeee;
-    border-radius: 6.5px;
+    border-radius: 5px;
 }
 
 .dark_mode .position_row:not(:first-child) .position_line:after {
@@ -759,14 +759,14 @@ article, #blank_article {
 }
 
 .position_row:not(:first-child) .position_line.position_major_station:after {
-    top: -9px;
-    left: 3px;
+    top: -6px;
+    left: 2px;
     
-    width: 15px;
-    height: 15px;
+    width: 12px;
+    height: 12px;
     
     border-width: 2px;
-    border-radius: 9.5px;
+    border-radius: 8px;
 }
 
 .position_inbound span:not(.train_type), .position_outbound span:not(.train_type) {
@@ -1300,32 +1300,34 @@ article input[type="checkbox"] + label {
     
     position: relative;
     
-    width: 15px;
+    width: 16px;
     height: 18px;
     
     margin-right: 5px;
     
-    padding-left: 1px;
+    border-radius: 3px;
     
     line-height: 18px;
     color: #ffffff !important;
     text-align: center;
 }
 
-.operation_table .operation_overview small:after {
+.operation_table .operation_overview small:not(:last-child):after {
     content: "";
     
     display: block;
     
     position: absolute;
-    top: 0;
+    top: 5px;
     right: -4px;
     
-    border-top: 9px solid;
-    border-bottom: 9px solid;
-    border-left: 4px solid;
-    border-color: transparent;
-    border-left-color: inherit;
+    border-top: 4px solid transparent;
+    border-bottom: 4px solid transparent;
+    border-left: 3px solid #cccccc;
+}
+
+.dark_mode .operation_table .operation_overview small:not(:last-child):after {
+    border-left-color: #808080;
 }
 
 .operation_table .operation_overview span:not(.search_highlight) {
@@ -4165,22 +4167,24 @@ function background_updater () {
     var date_now = new Date();
     var now_ts = Math.floor(date_now.getTime() / 1000);
     
-    if (now_ts < background_updater_last_execution + 10) {
-        if (announcement_last_checked !== null && announcement_last_checked < now_ts - 1800) {
-            check_announcements();
+    if (background_updater_last_execution !== null) {
+        if (now_ts < background_updater_last_execution + 10) {
+            if (announcement_last_checked !== null && announcement_last_checked < now_ts - 1800) {
+                check_announcements();
+            }
+            
+            var hh_and_mm = ("0" + date_now.getHours()).slice(-2) + ":" + ("0" + date_now.getMinutes()).slice(-2);
+            
+            if (mode_val === 0 && position_last_updated !== null && position_last_updated < hh_and_mm) {
+                position_change_time();
+            }
+            
+            if (operation_data_last_updated !== null && operation_data_last_updated < now_ts - config["refresh_interval"] * 60) {
+                update_operation_data();
+            }
+        } else {
+            mes("情報を更新しています...", false, 2);
         }
-        
-        var hh_and_mm = ("0" + date_now.getHours()).slice(-2) + ":" + ("0" + date_now.getMinutes()).slice(-2);
-        
-        if (mode_val === 0 && position_last_updated !== null && position_last_updated < hh_and_mm) {
-            position_change_time();
-        }
-        
-        if (operation_data_last_updated !== null && operation_data_last_updated < now_ts - config["refresh_interval"] * 60) {
-            update_operation_data();
-        }
-    } else {
-        mes("情報を更新しています...", false, 3);
     }
     
     background_updater_last_execution = now_ts;
@@ -4191,12 +4195,13 @@ var background_updater_interval_id = null;
 function background_updater_start_stop () {
     if (background_updater_interval_id !== null) {
         clearInterval(background_updater_interval_id);
-        background_updater_interval_id = null;
     }
     
     if (document.visibilityState === "visible") {
-        background_updater_last_execution = get_timestamp();
+        background_updater();
         background_updater_interval_id = setInterval(background_updater, 2000);
+    } else {
+        background_updater_interval_id = null;
     }
 }
 
@@ -6114,9 +6119,7 @@ function operation_table_list_number (cnt_0 = 0) {
                     var train_type_initial = "*";
                 }
                 
-                var train_color = get_train_color(trains[cnt_2]["train_number"], "#333333");
-                
-                buf_2 += "<small style='background-color: " + train_color + "; border-color: " + train_color + ";'>" + train_type_initial + "</small>";
+                buf_2 += "<small style='background-color: " + get_train_color(trains[cnt_2]["train_number"], "#333333") + ";'>" + train_type_initial + "</small>";
             } else {
                 var train_number_search_index = trains[cnt_2]["train_number"].indexOf(search_keyword);
                 

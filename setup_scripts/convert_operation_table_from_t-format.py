@@ -21,9 +21,10 @@ with open("railroad_info.json", "r", encoding="utf-8") as json_f:
     
 lines = railroad_info["lines_order"]
 
-print("JSON化された時刻表データのファイル名を入力してください:")
+print("JSON化済み時刻表データのダイヤ識別名を入力してください:")
 
-json_file_name = input()
+operation_table = input()
+json_file_name = "timetable_" + operation_table + ".json"
 
 print(json_file_name + " を読み込んでいます...")
 
@@ -40,14 +41,14 @@ print("変換対象のCSVファイル名を入力してください:")
 
 file_name = input()
 
-print("所定の桁数に満たない列車番号の前に「0」を付加する場合にはその桁数を、しない場合には0を入力してください:")
-
-digits_count = int(input())
-
 print(file_name + " を読み込んでいます...")
 with open(file_name, "r", encoding="utf-8") as csv_f:
     csv_reader = csv.reader(csv_f)
     operations = [data_row for data_row in csv_reader]
+
+print("所定の桁数に満たない列車番号の前に「0」を付加する場合にはその桁数を、しない場合には0を入力してください:")
+
+digits_count = int(input())
 
 print("データを変換しています...")
 
@@ -87,8 +88,11 @@ while cnt < len(operations):
                 else:
                     car_count = ""
                 
-                first_departure_time = operations[cnt + 1][cnt_2][1:].zfill(5)
-                last_departure_time = operations[cnt + 2][cnt_2][1:].zfill(5)
+                first_station_data = operations[cnt + 1][cnt_2].strip()
+                last_station_data = operations[cnt + 2][cnt_2].strip()
+                
+                first_departure_time = first_station_data[1:].strip().zfill(5)
+                last_departure_time = last_station_data[1:].strip().zfill(5)
                 
                 first_departure_times = []
                 last_departure_times = []
@@ -133,8 +137,8 @@ while cnt < len(operations):
                     print("・時刻表にない列車が検出されました: " + train_name)
                     
                     output_row_1.append(train_name + car_count)
-                    output_row_2.append(operations[cnt + 1][cnt_2][0:1] + first_departure_time)
-                    output_row_3.append(operations[cnt + 2][cnt_2][0:1] + last_departure_time)
+                    output_row_2.append(first_station_data[0:1] + first_departure_time)
+                    output_row_3.append(last_station_data[0:1] + last_departure_time)
             
             cnt_2 += 1
         
@@ -145,9 +149,11 @@ while cnt < len(operations):
         
         cnt += 3
 
-print("データを新しいCSVファイルに書き込んでいます...")
+new_file_name = file_name[:-4] + "_unyohub-format.csv"
 
-with open(file_name[:-4] + "_unyohub-format.csv", "w", encoding="utf-8") as csv_f:
+print("データを " + new_file_name + " に書き込んでいます...")
+
+with open(new_file_name, "w", encoding="utf-8") as csv_f:
     csv_writer = csv.writer(csv_f)
     csv_writer.writerows(output_data)
 
