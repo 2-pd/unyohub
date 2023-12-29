@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width,initial-scale=1,interactive-widget=resizes-content">
 <script>
     const UNYOHUB_APP_NAME = "鉄道運用Hub";
-    const UNYOHUB_VERSION = "23.12-7";
+    const UNYOHUB_VERSION = "23.12-8";
     const UNYOHUB_INDEXEDDB_VERSION = 2310001;
     const UNYOHUB_LICENSE_TEXT = "このアプリケーションは無権利創作宣言に準拠して著作権放棄されています。";
     const UNYOHUB_LICENSE_URL = "https://www.2pd.jp/license/";
@@ -758,15 +758,23 @@ article, #blank_article {
     border-color: #555555;
 }
 
+.position_row:last-child .position_line:after {
+    top: -6px;
+}
+
 .position_row:not(:first-child) .position_line.position_major_station:after {
     top: -6px;
-    left: 2px;
+    left: 3px;
     
-    width: 12px;
-    height: 12px;
+    width: 10px;
+    height: 10px;
     
     border-width: 2px;
     border-radius: 8px;
+}
+
+.position_row:last-child .position_line.position_major_station:after {
+    top: -8px;
 }
 
 .position_inbound span:not(.train_type), .position_outbound span:not(.train_type) {
@@ -4657,10 +4665,12 @@ function convert_formation_data (line_id, operation_list, is_inbound) {
 
 
 function get_train (line_id, train_number, first_departure_time) {
+    var train_data = { next_trains : [], departure_times : [] };
+    
     if (train_number in timetable["timetable"][line_id]["inbound_trains"]) {
         for(var cnt = 0; cnt < timetable["timetable"][line_id]["inbound_trains"][train_number].length; cnt++) {
             if (timetable["timetable"][line_id]["inbound_trains"][train_number][cnt]["first_departure_time"] >= first_departure_time) {
-                var train_data = timetable["timetable"][line_id]["inbound_trains"][train_number][cnt];
+                train_data = timetable["timetable"][line_id]["inbound_trains"][train_number][cnt];
                 train_data["is_inbound"] = true;
                 
                 break;
@@ -4669,7 +4679,7 @@ function get_train (line_id, train_number, first_departure_time) {
     } else if (train_number in timetable["timetable"][line_id]["outbound_trains"]) {
         for(var cnt = 0; cnt < timetable["timetable"][line_id]["outbound_trains"][train_number].length; cnt++) {
             if (timetable["timetable"][line_id]["outbound_trains"][train_number][cnt]["first_departure_time"] >= first_departure_time) {
-                var train_data = timetable["timetable"][line_id]["outbound_trains"][train_number][cnt];
+                train_data = timetable["timetable"][line_id]["outbound_trains"][train_number][cnt];
                 train_data["is_inbound"] = false;
                 
                 break;
