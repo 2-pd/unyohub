@@ -2,40 +2,45 @@
 # coding: utf-8
 
 import sys
+import glob
 import json
 import base64
 
-print("train_icons_org.jsonを読み込んでいます...")
-try:
-    with open("train_icons_org.json", "r", encoding="utf-8") as json_f:
-        train_icons = json.load(json_f)
-except:
-    print("【エラー】train_icons_org.jsonの読み込みに失敗しました")
-    sys.exit()
+print("ファイルの一覧を取得しています...")
+extension_list = ["webp", "png", "gif", "jpeg", "jpg"]
+files = []
 
-for cnt in range(len(train_icons)):
-    print(train_icons[cnt]["icon"] + "を埋め込んでいます...")
+for extension in extension_list:
+    files += glob.glob("*." + extension)
+
+files.sort()
+
+print(str(len(files)) + "件の画像ファイルが検出されました")
+
+train_icons = {}
+
+for file_name in files:
+    print("・" + file_name + " を埋め込んでいます...")
     
-    if train_icons[cnt]["icon"].endswith(".webp"):
+    if file_name.endswith(".webp"):
         mime_type = "image/webp"
-    elif train_icons[cnt]["icon"].endswith(".png"):
+    elif file_name.endswith(".png"):
         mime_type = "image/png"
-    elif train_icons[cnt]["icon"].endswith(".gif"):
+    elif file_name.endswith(".gif"):
         mime_type = "image/gif"
-    elif train_icons[cnt]["icon"].endswith(".jpeg") or train_icons[cnt]["icon"].endswith(".jpg"):
+    elif file_name.endswith(".jpeg") or file_name.endswith(".jpg"):
         mime_type = "image/jpeg"
-    else:
-        print("【エラー】不明な拡張子のファイルです")
-        sys.exit()
     
     try:
-        img_f = open(train_icons[cnt]["icon"], "rb")
+        img_f = open(file_name, "rb")
         img_data = img_f.read()
     except:
-        print("【エラー】" + train_icons[cnt]["icon"] + "の読み込みに失敗しました")
+        print("【エラー】" + file_name + " の読み込みに失敗しました")
         sys.exit()
     
-    train_icons[cnt]["icon"] = "data:" + mime_type + ";base64," + base64.b64encode(img_data).decode()
+    icon_id = file_name[0:file_name.rfind(".")]
+    
+    train_icons[icon_id] = "data:" + mime_type + ";base64," + base64.b64encode(img_data).decode()
 
 print("train_icons.jsonを作成しています...")
 try:
