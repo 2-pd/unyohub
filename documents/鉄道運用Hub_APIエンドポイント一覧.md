@@ -238,6 +238,7 @@ formations.jsonの内容を返す
 ### 応答
 **正常時** :  
 {  
+    "formation_name" : 編成名,  
     "cars" : [ 各車両の情報  
         {  
             "car_number" : 車番,  
@@ -249,23 +250,32 @@ formations.jsonの内容を返す
     "series_name" : 形式名,  
     "description" : 補足説明文,  
     "inspection_information" : 検査情報,  
-    "operation_today" : [ 当日の運用情報(なければNULL)  
+    "operations_today" : [ 当日の運用情報(なければNULL)  
         {  
             "operation_number" : 運用番号,  
-            "formations" : 組成情報  
+            "formations" : 組成情報,  
+            "variants_count" : 投稿情報のバリエーション数,  
+            "comment_exists" : コメントの有無,  
+            "from_beginner" : ビギナーの投稿か否か  
         }...  
     ],  
-    "operation_tomorrow" : [ 翌日の運用情報(なければNULL)  
+    "operations_tomorrow" : [ 翌日の運用情報(なければNULL)  
         {  
             "operation_number" : 運用番号,  
-            "formations" : 組成情報  
+            "formations" : 組成情報,  
+            "variants_count" : 投稿情報のバリエーション数,  
+            "comment_exists" : コメントの有無,  
+            "from_beginner" : ビギナーの投稿か否か  
         }...  
     ],  
     "last_seen_date" : 最終目撃日(YYYY-MM-DD形式、当日の運用情報がない場合のみ),  
-    "operation_last_day" : [ 最終目撃日の運用情報(当日の運用情報がない場合のみ),  
+    "operations_last_day" : [ 最終目撃日の運用情報(当日の運用情報がない場合のみ),  
         {  
             "operation_number" : 運用番号,  
-            "formations" : 組成情報  
+            "formations" : 組成情報,  
+            "variants_count" : 投稿情報のバリエーション数,  
+            "comment_exists" : コメントの有無,  
+            "from_beginner" : ビギナーの投稿か否か  
         }...  
     ]  
 }  
