@@ -3686,6 +3686,27 @@ function draw_announcements (announcements_data) {
 }
 
 
+function update_railroad_info () {
+    var railroad_name_split = escape_html(railroad_info["railroad_name"]).split(" ");
+    railroad_name_split[0] += "<small>";
+    
+    document.getElementById("railroad_name").innerHTML = railroad_name_split.join(" ") + "</small>";
+    
+    var main_color_hsl = rgb2hsl(railroad_info["main_color"]);
+    main_color_hsl[2] = Math.min(main_color_hsl[2] * 1.2, 255);
+    var main_color_shade = hsl2rgb(main_color_hsl[0], main_color_hsl[1], main_color_hsl[2]);
+    
+    railroad_icon_elm.style.backgroundImage = "url(" + railroad_info["railroad_icon"] + "), linear-gradient(to right, " + railroad_info["main_color"] + ", rgb(" + main_color_shade[0] + ", " + main_color_shade[1] + ", " + main_color_shade[2] + "))";
+    
+    railroad_info["deadhead_train_number_regexp"] = new RegExp(railroad_info["deadhead_train_number"]);
+    
+    for (var cnt_2 = 0; cnt_2 < railroad_info["train_color_rules"].length; cnt_2++) {
+        railroad_info["train_color_rules"][cnt_2]["regexp"] = new RegExp(railroad_info["train_color_rules"][cnt_2]["pattern"]);
+    }
+    
+    header_elm.className = "railroad_select_mode";
+}
+
 function select_railroad (railroad_id) {
     splash_screen_elm.style.display = "none";
     if (popup_history.length >= 1) {
@@ -3704,6 +3725,9 @@ function select_railroad (railroad_id) {
             get_request.onsuccess = function (evt) {
                 if (evt.target.result !== undefined) {
                     railroad_info = evt.target.result;
+                    
+                    update_railroad_info();
+                    
                     var last_modified_timestamp = railroad_info["last_modified_timestamp"];
                     
                     resolve();
@@ -3722,7 +3746,10 @@ function select_railroad (railroad_id) {
                             var last_modified_date = new Date(last_modified);
                             railroad_info["last_modified_timestamp"] = Math.floor(last_modified_date.getTime() / 1000);
                             
-                            var railroad_info_new = railroad_info;
+                            var railroad_info_new = {...railroad_info};
+                            
+                            update_railroad_info();
+                            
                             idb_start_transaction("railroads", true, function (transaction) {
                                 var railroads_store = transaction.objectStore("railroads");
                                 railroads_store.put(railroad_info_new);
@@ -3838,29 +3865,6 @@ function select_railroad (railroad_id) {
     });
     
     Promise.all([promise_1, promise_2, promise_3]).then(function () {
-        railroad_info["deadhead_train_number_regexp"] = new RegExp(railroad_info["deadhead_train_number"]);
-        
-        var name_elm = document.getElementById("railroad_name");
-    
-        var railroad_name_split = escape_html(railroad_info["railroad_name"]).split(" ");
-        railroad_name_split[0] += "<small>";
-        
-        name_elm.innerHTML = railroad_name_split.join(" ") + "</small>";
-        
-        switch_dark_mode();
-        
-        header_elm.className = "railroad_select_mode";
-        
-        var main_color_hsl = rgb2hsl(railroad_info["main_color"]);
-        main_color_hsl[2] = Math.min(main_color_hsl[2] * 1.2, 255);
-        var main_color_shade = hsl2rgb(main_color_hsl[0], main_color_hsl[1], main_color_hsl[2]);
-        
-        railroad_icon_elm.style.backgroundImage = "url(" + railroad_info["railroad_icon"] + "), linear-gradient(to right, " + railroad_info["main_color"] + ", rgb(" + main_color_shade[0] + ", " + main_color_shade[1] + ", " + main_color_shade[2] + "))";
-        
-        for (var cnt_2 = 0; cnt_2 < railroad_info["train_color_rules"].length; cnt_2++) {
-            railroad_info["train_color_rules"][cnt_2]["regexp"] = new RegExp(railroad_info["train_color_rules"][cnt_2]["pattern"]);
-        }
-        
         position_mode();
     }).catch(function () {
         mes("路線系統の切り替えに失敗しました", true);

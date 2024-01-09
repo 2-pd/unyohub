@@ -16,7 +16,7 @@ if (empty($formation_data)) {
     exit;
 }
 
-$cars_r = $db_obj->query("SELECT `car_number`, `manufacturer`, `constructed`, `description` FROM `unyohub_cars` WHERE `formation_name` = '".$db_obj->escapeString($_POST["formation_name"])."'");
+$cars_r = $db_obj->query("SELECT `car_number`, `manufacturer`, `constructed`, `description` FROM `unyohub_cars` WHERE `formation_name` = '".$db_obj->escapeString($_POST["formation_name"])."' ORDER BY `car_order` ASC");
 
 $formation_data["cars"] = array();
 while ($car_data = $cars_r->fetchArray(SQLITE3_ASSOC)) {

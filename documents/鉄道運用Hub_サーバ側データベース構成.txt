@@ -14,18 +14,20 @@ _/_/_/_/ データベース _/_/_/_/
   `cars_count` INTEGER NOT NULL 編成両数(unyohub_carsのデータから算出可能であるが、動作高速化の観点から正規化しない)
   `description` TEXT 補足説明文
   `inspection_information` TEXT 検査情報
-  
+
   INDEX `unyohub_idx_f1`(`series_name`)
 
 
 `unyohub_cars` 編成データ
   `formation_name` TEXT NOT NULL 編成名
   `car_number` TEXT NOT NULL 車番(乗り入れ他社の車両と被る可能性があるため一意制約を設けない)
+  `car_order` INTEGER NOT NULL 編成内での車両の組成位置(前位側の先頭車を1として順に付番)
   `manufacturer` TEXT 製造メーカー名
   `constructed` TEXT 製造年月日
   `description` TEXT 補足説明文
-  
-  PRIMARY KEY(`formation_name`,`car_number`)
+
+  PRIMARY KEY(`formation_name`, `car_number`)
+  INDEX `unyohub_idx_c1`(`formation_name`, `car_order`) ※データの入れ替え処理が煩雑となることから一意制約としない
 
 
 `unyohub_operations` 運用表データ
@@ -36,9 +38,9 @@ _/_/_/_/ データベース _/_/_/_/
   `terminal_location` TEXT 入庫場所(車庫または駅番線)
   `terminal_track` TEXT 入庫番線(不確定の場合はNULL)
 
-  PRIMARY KEY(`operation_table`,`operation_number`)
-  UNIQUE INDEX `unyohub_idx_o1`(`operation_table`,`starting_location`,`starting_track`)
-  UNIQUE INDEX `unyohub_idx_o2`(`operation_table`,`terminal_location`,`terminal_track`)
+  PRIMARY KEY(`operation_table`, `operation_number`)
+  UNIQUE INDEX `unyohub_idx_o1`(`operation_table`, `starting_location`, `starting_track`)
+  UNIQUE INDEX `unyohub_idx_o2`(`operation_table`, `terminal_location`, `terminal_track`)
 
 
 `unyohub_trains` 列車データ(区間組成単位)
@@ -50,8 +52,8 @@ _/_/_/_/ データベース _/_/_/_/
   `position_rear` INTEGER NOT NULL 担当位置終了両数(進行方向から数えて何両目までがその運用か)
   `direction` INTEGER NOT NULL 上り列車か下り列車か(上り列車なら「1」、下り列車なら「0」)
 
-  PRIMARY KEY(`operation_table`,`operation_number`,`train_number`,`first_departure_time`,`position_forward`)
-  INDEX `unyohub_idx_t1`(`operation_table`,`train_number`,`first_departure_time`,`position_forward`)
+  PRIMARY KEY(`operation_table`, `operation_number`, `train_number`, `first_departure_time`, `position_forward`)
+  INDEX `unyohub_idx_t1`(`operation_table`, `train_number`, `first_departure_time`, `position_forward`)
 
 
 `unyohub_data` ユーザー投稿データ
@@ -62,9 +64,9 @@ _/_/_/_/ データベース _/_/_/_/
   `posted_datetime` TEXT 「YYYY-MM-DD HH:MM:SS」形式の情報投稿日時
   `comment` TEXT コメント
 
-  PRIMARY KEY(`operation_date`,`operation_number`,`user_id`)
-  INDEX `unyohub_idx_d1`(`user_id`,`posted_datetime`)
-  INDEX `unyohub_idx_d2`(`operation_date`,`operation_number`,`posted_datetime`)
+  PRIMARY KEY(`operation_date`, `operation_number`, `user_id`)
+  INDEX `unyohub_idx_d1`(`user_id`, `posted_datetime`)
+  INDEX `unyohub_idx_d2`(`operation_date`, `operation_number`, `posted_datetime`)
 
 
 `unyohub_data_caches` 運用データ概要キャッシュ
@@ -76,9 +78,9 @@ _/_/_/_/ データベース _/_/_/_/
   `from_beginner` INTEGER ビギナーの投稿か否か
   `updated_datetime` TEXT NOT NULL 「YYYY-MM-DD HH:MM:SS」形式の情報投稿日時
 
-  PRIMARY KEY(`operation_date`,`operation_number`)
-  INDEX `unyohub_idx_dc1`(`formations`,`operation_date`)
-  INDEX `unyohub_idx_dc2`(`operation_date`,`updated_datetime`)
+  PRIMARY KEY(`operation_date`, `operation_number`)
+  INDEX `unyohub_idx_dc1`(`formations`, `operation_date`)
+  INDEX `unyohub_idx_dc2`(`operation_date`, `updated_datetime`)
 
 
 `unyohub_data_each_formation` 編成別運用データキャッシュ
@@ -86,8 +88,8 @@ _/_/_/_/ データベース _/_/_/_/
   `operation_number` TEXT NOT NULL 運用番号(アルファベットなどを含む場合があるため文字列型)
   `formation` TEXT NOT NULL 充当編成
 
-  PRIMARY KEY(`operation_date`,`operation_number`,`formation`)
-  INDEX `unyohub_idx_df1`(`formation`,`operation_date`)
+  PRIMARY KEY(`operation_date`, `operation_number`, `formation`)
+  INDEX `unyohub_idx_df1`(`formation`, `operation_date`)
 
 
 _/_/_/_/ Wakarana カスタムフィールド _/_/_/_/
