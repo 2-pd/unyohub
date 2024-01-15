@@ -645,6 +645,9 @@ article, #blank_article {
     line-height: 28px;
     font-size: 15px;
     text-decoration: underline;
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
     
     filter: drop-shadow(0 1px 2px rgba(0,0,0,0.25));
     
@@ -679,41 +682,48 @@ article, #blank_article {
     display: block;
     
     position: absolute;
-    top: 16px;
+    top: 20px;
     left: -5px;
     
     width: 100%;
     height: 36px;
     
-    padding: 2px 1px 2px 4px;
+    padding-left: 5px;
     
-    background-color: #666666;
+    border-color: #999999;
     
     line-height: 18px;
     font-size: 14px;
-    color: #ffffff;
-    text-decoration: none;
+    color: #666666;
+    
+    overflow-y: hidden;
 }
 
 .dark_mode .connecting_line_button {
-    background-color: #333333;
+    color: #eeeeee;
 }
 
-.connecting_line_button:after {
+.connecting_line_button:before, .connecting_line_button:after {
     content: "";
     
     display: block;
     
     position: absolute;
     top: 0;
-    right: -8px;
+    left: 0;
     
-    border-top: 16px solid #666666;
-    border-right: 8px solid transparent;
+    width: 4px;
+    height: 36px;
+    
+    border-left: 4px solid;
 }
 
-.dark_mode .connecting_line_button:after {
-    border-top-color: #333333;
+.connecting_line_button:before {
+    border-color: inherit;
+}
+
+.connecting_line_button:after {
+    border-image: linear-gradient(to bottom, transparent, rgba(255, 255, 255, 0.5)) 1;
 }
 
 .position_inbound, .position_outbound {
@@ -2041,7 +2051,7 @@ a {
     }
 }
 
-.informational_text {
+.informational_text, .warning_text {
     max-width: 480px;
     
     margin: 10px auto;
@@ -2053,6 +2063,10 @@ a {
 
 .dark_mode .informational_text {
     color: #999999;
+}
+
+.warning_text {
+    color: #ee3333;
 }
 
 #announcements_heading {
@@ -4431,18 +4445,16 @@ function position_change_lines (line_id, cnt_0 = 0) {
                 major_station_class = " position_major_station";
             }
             
-            buf += ">";
-                
-            if (railroad_info["lines"][line_id]["stations"][cnt - 1]["station_name"].length > 5) {
-                buf += escape_html(railroad_info["lines"][line_id]["stations"][cnt - 1]["station_name"].substring(0, 4) + "..");
-            } else{
-                buf += escape_html(railroad_info["lines"][line_id]["stations"][cnt - 1]["station_name"]);
-            }
-            
-            buf += "</h4>";
+            buf += ">" + escape_html(railroad_info["lines"][line_id]["stations"][cnt - 1]["station_name"]) + "</h4>";
             
             if (railroad_info["lines"][line_id]["stations"][cnt - 1]["connecting_lines"].length === 1) {
-                buf += "<a href='javascript:void(0);' class='connecting_line_button' onclick='position_change_lines(\"" + railroad_info["lines"][line_id]["stations"][cnt - 1]["connecting_lines"][0] + "\")'>" + escape_html(railroad_info["lines"][railroad_info["lines"][line_id]["stations"][cnt - 1]["connecting_lines"][0]]["line_name"]) + "</a>";
+                var connecting_line_color = railroad_info["lines"][railroad_info["lines"][line_id]["stations"][cnt - 1]["connecting_lines"][0]]["line_color"];
+                
+                if (config["dark_mode"]) {
+                    connecting_line_color = convert_color_dark_mode(connecting_line_color);
+                }
+                
+                buf += "<a href='javascript:void(0);' class='connecting_line_button' onclick='position_change_lines(\"" + railroad_info["lines"][line_id]["stations"][cnt - 1]["connecting_lines"][0] + "\")' style='border-color: " + connecting_line_color + ";'>" + escape_html(railroad_info["lines"][railroad_info["lines"][line_id]["stations"][cnt - 1]["connecting_lines"][0]]["line_name"]) + "</a>";
             } else if (railroad_info["lines"][line_id]["stations"][cnt - 1]["connecting_lines"].length >= 2) {
                 buf += "<a href='javascript:void(0);' class='connecting_line_button' onclick='position_select_lines(" + JSON.stringify(railroad_info["lines"][line_id]["stations"][cnt - 1]["connecting_lines"]) + ");'>複数の路線</a>";
             }
@@ -6641,19 +6653,41 @@ var post_operation_number;
 function write_operation_data (yyyy_mm_dd, operation_number) {
     open_popup("write_operation_data_popup");
     
+    var yyyy_mm_dd_today = get_date_string(get_timestamp());
+    
     if (yyyy_mm_dd === null) {
-        post_yyyy_mm_dd = get_date_string(get_timestamp());
+        post_yyyy_mm_dd = yyyy_mm_dd_today;
     } else {
         post_yyyy_mm_dd = yyyy_mm_dd;
     }
+    
     post_operation_number = operation_number;
     
+    var alias_of_forward_direction = escape_html(railroad_info["alias_of_forward_direction"]);
+    
     var buf = "<h3>" + escape_html(operation_number) + "運用</h3>";
-    buf += "<b>編成名または車両形式</b><input type='text' id='operation_data_formation_0'>";
-    buf += "<div class='informational_text'>この運用に複数の編成が連結して充当されている場合は、<b>" + escape_html(railroad_info["alias_of_forward_direction"]) + "から</b>順に各編成を「+」で区切って入力してください。<br><br>運休情報は「運休」または「ウヤ」を入力可能です。</div>";
+    
+    if (post_yyyy_mm_dd > yyyy_mm_dd_today || (post_yyyy_mm_dd === yyyy_mm_dd_today && operations["operations"][operation_number]["first_departure_time"] > get_hh_mm(get_timestamp() + 1800))) {
+        var speculative_post = true;
+        
+        buf += "<div class='warning_text'>【!】出庫前の運用に情報を投稿しようとしています</div>";
+    } else {
+        var speculative_post = false;
+    }
+    
+    buf += "<b>編成名または車両形式</b>";
+    buf += "<div class='informational_text'><b>◀ " + alias_of_forward_direction + "</b></div>";
+    buf += "<input type='text' id='operation_data_formation_0'>";
+    buf += "<div class='informational_text'>この運用に複数の編成が連結して充当されている場合は、" + alias_of_forward_direction + "から順に各編成を「+」で区切って入力してください。<br><br>運休情報は「運休」または「ウヤ」を入力可能です。</div>";
     buf += "<b>コメント</b><input type='text' id='operation_data_comment_0'>";
-    buf += "<div class='informational_text'>コメントは省略可能です。</div><br><br>";
-    buf += "<button type='button' class='wide_button' onclick='check_post_operation_data();'>投稿する</button>";
+    
+    if(speculative_post) {
+        buf += "<div class='warning_text'>お手数ですが、この運用に充当される編成を特定した方法をコメントにご記入ください。</div>";
+    } else {
+        buf += "<div class='informational_text'>コメントは省略可能です。</div>";
+    }
+    
+    buf += "<br><button type='button' class='wide_button' onclick='check_post_operation_data();'>投稿する</button>";
     
     document.getElementById("write_operation_data_area").innerHTML = buf;
     
