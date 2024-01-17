@@ -36,7 +36,6 @@ _/_/_/_/ ファイル構成 _/_/_/_/
       └ railroad_info.json ・・・路線系統の設定ファイル
       └ train_icons.json ・・・列車アイコン画像埋め込み処理後のアイコン設定ファイル
       └ formations.json ・・・JSONに変換された編成表
-      └ standardization.json ・・・ユーザー投稿データの標準化処理設定ファイル
       └ operations_****.json ・・・JSONに変換された各ダイヤの運用表データ
       └ timetable_****.json ・・・JSONに変換された各ダイヤの時刻表データ
 └ api/
@@ -185,25 +184,6 @@ _/_/_/_/ 設定ファイル設定値 _/_/_/_/
         }...
     },
     "series_names" : 形式名を配列で
-}
-
-
-███ standardization.json ███
-
-{
-    "delimiter" : 運用番号・列車番号と編成番号の間の区切り文字列を検出する正規表現,
-    "operation_prefixes" : 運用番号の接頭辞として用いられる文字列(配列で),
-    "standard_operation_prefix" : 運用番号の所定の接頭辞(使用しない場合は空文字列),
-    "operation_suffixes" : 運用番号の接尾辞として用いられる文字列(配列で),
-    "standard_operation_suffix" : 運用番号の所定の接頭辞(使用しない場合は空文字列),
-    "train_prefixes" : 列車番号の接頭辞として用いられる文字列(配列で),
-    "standard_train_prefix" : 列車番号の所定の接頭辞(使用しない場合は空文字列),
-    "train_suffixes" : 列車番号の接尾辞として用いられる文字列(配列で),
-    "standard_train_suffix" : 列車番号の所定の接頭辞(使用しない場合は空文字列),
-    "formation_prefixes" : 編成名の接頭辞として用いられる文字列(配列で),
-    "standard_formation_prefix" : 編成名の所定の接頭辞(使用しない場合は空文字列),
-    "formation_suffixes" : 編成名の接尾辞として用いられる文字列(配列で),
-    "standard_formation_suffix" : 編成名の所定の接頭辞(使用しない場合は空文字列)
 }
 
 

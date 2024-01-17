@@ -56,7 +56,7 @@ while cnt < len(formation_data):
                 
                 json_data["formations"][formation_name]["cars"].append({"car_number" : car_number, "abbreviated_car_number" : formation_data[cnt + 1][cnt_2]})
                 
-                cur.execute("INSERT INTO `unyohub_cars`(`formation_name`, `car_number`, `car_order`, `manufacturer`, `constructed`, `description`) VALUES (:formation_name, :car_number, :car_order, :manufacturer, :constructed, '') ON CONFLICT(`formation_name`, `car_number`) DO UPDATE SET `formation_name` = :formation_name_2, `car_number` = :car_number_2, `car_order` = :car_order_2, `manufacturer` = :manufacturer_2, `constructed` = :constructed_2", {"formation_name" : formation_name, "car_number" : car_number, "car_order" : cnt_2, "manufacturer" : formation_data[cnt + 2][cnt_2], "constructed" : formation_data[cnt + 3][cnt_2], "formation_name_2" : formation_name, "car_number_2" : car_number, "car_order_2" : cnt_2, "manufacturer_2" : formation_data[cnt + 2][cnt_2], "constructed_2" : formation_data[cnt + 3][cnt_2]})
+                cur.execute("INSERT INTO `unyohub_cars`(`formation_name`, `car_number`, `car_order`, `manufacturer`, `constructed`, `description`) VALUES (:formation_name, :car_number, :car_order, :manufacturer, :constructed, '') ON CONFLICT(`formation_name`, `car_number`) DO UPDATE SET `car_order` = :car_order_2, `manufacturer` = :manufacturer_2, `constructed` = :constructed_2", {"formation_name" : formation_name, "car_number" : car_number, "car_order" : cnt_2, "manufacturer" : formation_data[cnt + 2][cnt_2], "constructed" : formation_data[cnt + 3][cnt_2], "car_order_2" : cnt_2, "manufacturer_2" : formation_data[cnt + 2][cnt_2], "constructed_2" : formation_data[cnt + 3][cnt_2]})
                 
                 car_list.append(car_number)
         
@@ -67,7 +67,7 @@ while cnt < len(formation_data):
         
         cars_count = len(car_list)
         
-        cur.execute("INSERT INTO `unyohub_formations`(`formation_name`, `series_name`, `cars_count`, `description`, `inspection_information`) VALUES (:formation_name, :series_name, :cars_count, '', '') ON CONFLICT(`formation_name`) DO UPDATE SET `formation_name` = :formation_name_2, `series_name` = :series_name_2, `cars_count` = :cars_count_2", {"formation_name" : formation_name, "series_name" : series_name, "cars_count" : cars_count, "formation_name_2" : formation_name, "series_name_2" : series_name, "cars_count_2" : cars_count})
+        cur.execute("INSERT INTO `unyohub_formations`(`formation_name`, `series_name`, `cars_count`, `description`, `inspection_information`) VALUES (:formation_name, :series_name, :cars_count, '', '') ON CONFLICT(`formation_name`) DO UPDATE SET `series_name` = :series_name_2, `cars_count` = :cars_count_2", {"formation_name" : formation_name, "series_name" : series_name, "cars_count" : cars_count, "series_name_2" : series_name, "cars_count_2" : cars_count})
         
         formation_list.append(formation_name)
         
