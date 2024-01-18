@@ -166,8 +166,8 @@ function update_data_cache ($operation_date, $operation_number, $formations, $up
     $db_obj->query("DELETE FROM `unyohub_data_each_formation` WHERE `operation_date` = '".$operation_date."' AND `operation_number` = '".$operation_number."'");
     
     if ($formations !== NULL) {
-        foreach ($formation_list as $formation) {
-            $db_obj->query("INSERT INTO `unyohub_data_each_formation` (`operation_date`, `operation_number`, `formation`) VALUES ('".$operation_date."', '".$operation_number."', '".$db_obj->escapeString($formation)."')");
+        foreach ($formation_list as $formation_name) {
+            $db_obj->query("INSERT INTO `unyohub_data_each_formation` (`formation_name`, `operation_date`, `operation_number`) VALUES ('".$db_obj->escapeString($formation_name)."', '".$operation_date."', '".$operation_number."')");
         }
     }
 }

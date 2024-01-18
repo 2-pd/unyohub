@@ -270,8 +270,8 @@ formations.jsonの内容を返す
             "from_beginner" : ビギナーの投稿か否か  
         }...  
     ],  
-    "last_seen_date" : 最終目撃日(YYYY-MM-DD形式、当日の運用情報がない場合のみ),  
-    "operations_last_day" : [ 最終目撃日の運用情報(当日の運用情報がない場合のみ),  
+    "last_seen_date" : 最終目撃日(YYYY-MM-DD形式、当日の運用情報がない場合のみ。データが全く存在しなければNULL),  
+    "operations_last_day" : [ 最終目撃日の運用情報(当日の運用情報がない場合のみ。データが全く存在しなければNULL)  
         {  
             "operation_number" : 運用番号,  
             "formations" : 組成情報,  

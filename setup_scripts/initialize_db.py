@@ -29,8 +29,8 @@ cur.execute("CREATE TABLE IF NOT EXISTS `unyohub_data_caches`(`operation_date` T
 cur.execute("CREATE INDEX IF NOT EXISTS `unyohub_idx_dc1` ON `unyohub_data_caches`(`formations`, `operation_date`)")
 cur.execute("CREATE INDEX IF NOT EXISTS `unyohub_idx_dc2` ON `unyohub_data_caches`(`operation_date`, `updated_datetime`)")
 
-cur.execute("CREATE TABLE IF NOT EXISTS `unyohub_data_each_formation`(`operation_date` TEXT NOT NULL, `operation_number` TEXT NOT NULL, `formation` TEXT NOT NULL, PRIMARY KEY(`operation_date`, `operation_number`, `formation`))")
-cur.execute("CREATE INDEX IF NOT EXISTS `unyohub_idx_df1` ON `unyohub_data_each_formation`(`formation`, `operation_date`)")
+cur.execute("CREATE TABLE IF NOT EXISTS `unyohub_data_each_formation`(`formation_name` TEXT NOT NULL, `operation_date` TEXT NOT NULL, `operation_number` TEXT NOT NULL, PRIMARY KEY(`formation_name`, `operation_date`, `operation_number`))")
+cur.execute("CREATE INDEX IF NOT EXISTS `unyohub_idx_df1` ON `unyohub_data_each_formation`(`operation_date`, `operation_number`)")
 
 conn.commit()
 conn.close()

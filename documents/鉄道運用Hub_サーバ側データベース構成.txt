@@ -74,12 +74,12 @@ _/_/_/_/ データベース _/_/_/_/
 
 
 `unyohub_data_each_formation` 編成別運用データキャッシュ
+  `formation_name` TEXT NOT NULL 充当編成
   `operation_date` TEXT NOT NULL 「YYYY-MM-DD」形式の日付
   `operation_number` TEXT NOT NULL 運用番号(アルファベットなどを含む場合があるため文字列型)
-  `formation` TEXT NOT NULL 充当編成
 
-  PRIMARY KEY(`operation_date`, `operation_number`, `formation`)
-  INDEX `unyohub_idx_df1`(`formation`, `operation_date`)
+  PRIMARY KEY(`formation_name`, `operation_date`, `operation_number`)
+  INDEX `unyohub_idx_df1`(`operation_date`, `operation_number`)
 
 
 _/_/_/_/ Wakarana カスタムフィールド _/_/_/_/
