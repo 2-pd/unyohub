@@ -254,7 +254,8 @@ formations.jsonの内容を返す
         {  
             "operation_number" : 運用番号,  
             "formations" : 組成情報,  
-            "variants_count" : 投稿情報のバリエーション数,  
+            "posts_count" : 情報の投稿数,  
+            "variant_exists" : 投稿情報のバリエーションの有無,  
             "comment_exists" : コメントの有無,  
             "from_beginner" : ビギナーの投稿か否か  
         }...  
@@ -263,7 +264,8 @@ formations.jsonの内容を返す
         {  
             "operation_number" : 運用番号,  
             "formations" : 組成情報,  
-            "variants_count" : 投稿情報のバリエーション数,  
+            "posts_count" : 情報の投稿数,  
+            "variant_exists" : 投稿情報のバリエーションの有無,  
             "comment_exists" : コメントの有無,  
             "from_beginner" : ビギナーの投稿か否か  
         }...  
@@ -273,7 +275,8 @@ formations.jsonの内容を返す
         {  
             "operation_number" : 運用番号,  
             "formations" : 組成情報,  
-            "variants_count" : 投稿情報のバリエーション数,  
+            "posts_count" : 情報の投稿数,  
+            "variant_exists" : 投稿情報のバリエーションの有無,  
             "comment_exists" : コメントの有無,  
             "from_beginner" : ビギナーの投稿か否か  
         }...  
@@ -338,7 +341,8 @@ JSON化された時刻表の内容を返す
 {  
     "タイムスタンプの時刻より後に情報投稿のあった運用番号" : { 当該の運用番号に投稿された情報が全て取り消された場合、この連想配列ではなくnullが格納される  
         "formations" : 編成名(最も新しい投稿の情報を前位側・奇数向きから順に各編成を「+」で区切った文字列。運休の場合は空文字列),  
-        "variants_count" : 投稿情報のバリエーション数,  
+        "posts_count" : 情報の投稿数,  
+        "variant_exists" : 投稿情報のバリエーションの有無,  
         "comment_exists" : コメントの有無,  
         "from_beginner" : ビギナーの投稿か否か  
     }...  
@@ -419,7 +423,8 @@ JSON化された時刻表の内容を返す
 {  
   "投稿された運用番号" : {  
         "formations" : 編成名(最も新しい投稿の情報を前位側・奇数向きから順に各編成を「+」で区切った文字列。運休の場合は空文字列),  
-        "variants_count" : 投稿情報のバリエーション数,  
+        "posts_count" : 情報の投稿数,  
+        "variant_exists" : 投稿情報のバリエーションの有無,  
         "comment_exists" : コメントの有無,  
         "from_beginner" : ビギナーの投稿か否か  
     }  
@@ -446,35 +451,11 @@ JSON化された時刻表の内容を返す
 {  
   "取り消し操作対象の運用番号" : { 他のユーザーからの情報がない場合、この連想配列ではなくnullが格納される  
         "formations" : 他のユーザーの情報に基づく編成名(最も新しい投稿の情報を前位側・奇数向きから順に各編成を「+」で区切った文字列),  
-        "variants_count" : 投稿情報のバリエーション数,  
+        "posts_count" : 情報の投稿数,  
+        "variant_exists" : 投稿情報のバリエーションの有無,  
         "comment_exists" : コメントの有無,  
         "from_beginner" : ビギナーの投稿か否か  
     }  
-}  
-
-
-## post_text.php
-運用観察ノートからコピーした運用情報を一括投稿する
-
-### 引数
-**$_COOKIE["unyohub_login_token"]** : Wakaranaのログイントークン(ある場合)  
-  
-**$_POST["railroad_id"]** : 路線系統識別名  
-**$_POST["content"]** : 1行に1運用ずつ運用情報が記載されたテキストデータ  
-**$_POST["one_time_token"]** : ワンタイムトークン(ログインしている場合)  
-**$_POST["guest_id"]** : 　「*」から始まる仮ユーザーID(ログインしていない場合) 
-**$_POST["zizai_captcha_id"]** : Zizai CAPTCHAのセッションID(ログインしていない場合)  
-**$_POST["zizai_captcha_characters"]** : Zizai CAPTCHAのユーザー入力文字列(ログインしていない場合)
-
-### 応答
-**投稿に成功した場合** :  
-{  
-  "投稿された運用番号" : {  
-        "formations" : 編成名(最も新しい投稿の情報を前位側・奇数向きから順に配列で),  
-        "variants_count" : 投稿情報のバリエーション数,
-        "comment_exists" : コメントの有無,  
-        "from_beginner" : ビギナーの投稿か否か    
-    }...  
 }  
   
 **エラーの場合** :  
