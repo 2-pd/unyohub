@@ -43,8 +43,10 @@ for cnt in range(1, len(timetable_data_t)):
             train = [timetable_data_t[cnt][0].strip().zfill(digits_count), timetable_data_t[cnt][1], "", "", "", "", "", ""] + train + ["", "", "", "", "", ""]
             
             for cnt_2 in range(8, len(train) - 6):
+                train[cnt_2] = train[cnt_2].strip()
+                
                 if train[cnt_2] != "":
-                    if train[cnt_2].find(":") == -1:
+                    if ":" not in train[cnt_2]:
                         train[cnt_2] = train[cnt_2][:-2] + ":" + train[cnt_2][-2:]
                     
                     train[cnt_2] = train[cnt_2].zfill(5)

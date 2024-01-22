@@ -102,7 +102,7 @@ while cnt < len(operations):
                 
                 if "(" in train_number:
                     bracket_pos = train_number.find("(")
-                    hyphen_pos = train_number.rfind("(")
+                    hyphen_pos = train_number.rfind("-")
                     
                     position_forward = int(train_number[bracket_pos + 1:hyphen_pos])
                     position_rear = int(train_number[hyphen_pos + 1:-1])

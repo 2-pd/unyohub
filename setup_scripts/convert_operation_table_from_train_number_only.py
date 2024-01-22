@@ -89,6 +89,7 @@ digits_count = int(input())
 print("データを変換しています...")
 
 output_data = []
+train_list = []
 for operation in operations:
     if operation[0].startswith("◆"):
         output_data.append(["# " + operation[0][1:]])
@@ -173,13 +174,22 @@ for operation in operations:
                                     
                                 for cnt in range(len(train["departure_times"])):
                                     if train["departure_times"][cnt] != None:
-                                        first_departure_times.append(station_list_r[line][cnt]["station_initial"] + train["departure_times"][cnt])
+                                        if "station_initial" in station_list_r[line][cnt]:
+                                            first_departure_times.append(station_list_r[line][cnt]["station_initial"] + train["departure_times"][cnt])
+                                        else:
+                                            print("省略表記の登録されていない始発駅が時刻表で指定されました: " + train_name)
+                                            first_departure_times.append("？" + train["departure_times"][cnt])
                                         break
                                 
                                 for cnt in range(len(train["departure_times"]) - 1, -1, -1):
                                     if train["departure_times"][cnt] != None:
-                                        final_arrival_times.append(station_list_r[line][cnt]["station_initial"] + train["departure_times"][cnt])
+                                        if "station_initial" in station_list_r[line][cnt]:
+                                            final_arrival_times.append(station_list_r[line][cnt]["station_initial"] + train["departure_times"][cnt])
+                                        else:
+                                            print("省略表記の登録されていない終着駅が時刻表で指定されました: " + train_name)
+                                            final_arrival_times.append("？" + train["departure_times"][cnt])
                                         break
+                            
                         elif train_name in timetable[line]["outbound_trains"]:
                             if line in starting_lines:
                                 starting_station_index = station_name_list[line].index(starting_station)
@@ -195,16 +205,27 @@ for operation in operations:
                                 
                                 for cnt in range(len(train["departure_times"])):
                                     if train["departure_times"][cnt] != None:
-                                        first_departure_times.append(station_list[line][cnt]["station_initial"] + train["departure_times"][cnt])
+                                        if "station_initial" in station_list[line][cnt]:
+                                            first_departure_times.append(station_list[line][cnt]["station_initial"] + train["departure_times"][cnt])
+                                        else:
+                                            print("省略表記の登録されていない始発駅が時刻表で指定されました: " + train_name)
+                                            first_departure_times.append("？" + train["departure_times"][cnt])
                                         break
                                 
                                 for cnt in range(len(train["departure_times"]) - 1, -1, -1):
                                     if train["departure_times"][cnt] != None:
-                                        final_arrival_times.append(station_list[line][cnt]["station_initial"] + train["departure_times"][cnt])
+                                        if "station_initial" in station_list[line][cnt]:
+                                            final_arrival_times.append(station_list[line][cnt]["station_initial"] + train["departure_times"][cnt])
+                                        else:
+                                            print("省略表記の登録されていない終着駅が時刻表で指定されました: " + train_name)
+                                            final_arrival_times.append("？" + train["departure_times"][cnt])
                                         break
                     
                     if first_departure_time == "00:00" or final_arrival_time == "99:99":
-                        print("列車番号が時刻表にありません: " + train_name)
+                        if len(first_departure_times) >= 1:
+                            print("走行区間が時刻表と一致しない列車が検出されました: " + train_name)
+                        else:
+                            print("列車番号が時刻表にありません: " + train_name)
                     
                     if len(first_departure_times) >= 1:
                         first_departure_times.sort(key=lambda data : data[1:])
@@ -219,6 +240,11 @@ for operation in operations:
                         output_row_1.append(train_name + car_count)
                         output_row_2.append(starting_station_initial + first_departure_time)
                         output_row_3.append(terminal_station_initial + final_arrival_time)
+                    
+                    if train_name + car_count in train_list:
+                        print("同一列車の同一組成位置が複数の運用に割り当てられています: " + train_name + car_count)
+                    else:
+                        train_list.append(train_name + car_count)
         
         output_data.append(output_row_1)
         output_data.append(output_row_2)
