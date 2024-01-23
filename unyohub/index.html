@@ -1472,12 +1472,14 @@ h2 .next_button {
 
 .operation_table_train a {
     color: inherit;
+    text-decoration: none;
 }
 
 .operation_table_train b {
     display: block;
     
     text-align: left;
+    text-decoration: underline;
 }
 
 .operation_table_train small {
@@ -1486,7 +1488,6 @@ h2 .next_button {
     font-size: 16px;
     color: #999999;
     font-weight: normal;
-    text-decoration: none;
 }
 
 .operation_table_train span {
@@ -1495,7 +1496,6 @@ h2 .next_button {
     width: 45%;
     
     text-align: center;
-    text-decoration: none;
 }
 
 .operation_table_train span:nth-of-type(2) {
@@ -1506,6 +1506,10 @@ h2 .next_button {
     margin-top: 10px;
     
     text-align: left;
+}
+
+.operation_table_train div a {
+    text-decoration: underline;
 }
 
 .operation_table_train:after {
@@ -2310,7 +2314,7 @@ a {
 }
 
 .train_overview, .location_overview {
-    padding: 0 20px;
+    padding: 0 15px;
     
     font-size: 18px;
 }
@@ -2342,21 +2346,29 @@ a {
 .train_overview b {
     display: inline-block;
     
-    width: 25%;
+    width: 38%;
+    
+    text-align: left;
 }
 
 .location_overview b {
     margin-right: 40px;
 }
 
+.train_overview b small {
+    font-size: 16px;
+    color: #999999;
+    font-weight: normal;
+}
+
 .train_overview span {
     display: inline-block;
     
-    width: 30%;
+    width: 27%;
 }
 
 .train_overview span:nth-of-type(2) {
-    width: 15%;
+    width: 8%;
 }
 
 #wait_screen {
@@ -4700,6 +4712,8 @@ function get_train_positions (trains, line_id, hh_and_mm, is_inbound) {
                             var departure_time = timetable["timetable"][line_id][train_direction][train_numbers[cnt]][cnt_3]["departure_times"][cnt_4];
                             
                             if (departure_time !== null) {
+                                departure_time = departure_time.slice(-5);
+                                
                                 if (departure_time >= hh_and_mm) {
                                     if (last_stopped !== null) {
                                         var train_positon = calculate_train_position(minutes_now, last_stopped, cnt_4, hh_mm_to_minutes(last_stopped_time), hh_mm_to_minutes(departure_time));
@@ -5182,7 +5196,7 @@ function train_detail (line_id, train_number, first_departure_time, train_direct
             buf += "<span style='color: " + color + ";'>" + escape_html(train_data[cnt]["train_type"] + "　" + train_data[cnt]["train_number"]) + "</span></h4>";
             
             for (var cnt_2 = 0; cnt_2 < train_data[cnt]["departure_times"].length; cnt_2++) {
-                if (train_data[cnt]["departure_times"][cnt_2] !== null) {
+                if (train_data[cnt]["departure_times"][cnt_2] !== null && train_data[cnt]["departure_times"][cnt_2].substring(0, 1) !== "|") {
                     var border_color = railroad_info["lines"][train_data[cnt]["line_id"]]["line_color"];
                     
                     if (config["dark_mode"]) {
@@ -5434,7 +5448,7 @@ function draw_station_timetable (station_name) {
         for (var cnt_2 = 0; cnt_2 < timetable["timetable"][line_id][train_direction][keys[cnt]].length; cnt_2++) {
             var departure_time = timetable["timetable"][line_id][train_direction][keys[cnt]][cnt_2]["departure_times"][station_index];
             
-            if (departure_time !== null){
+            if (departure_time !== null && departure_time.substring(0, 1) !== "|"){
                 var is_terminal_station = true;
                 
                 for (var cnt_3 = station_index + 1; cnt_3 < timetable["timetable"][line_id][train_direction][keys[cnt]][cnt_2]["departure_times"].length; cnt_3++) {
@@ -5944,7 +5958,7 @@ function operation_detail (operation_number, operation_table_name = null, is_tod
             var highlight_str = "";
         }
         
-        buf += trains[cnt]["train_number"].split("__")[0] + "</b>";
+        buf += trains[cnt]["train_number"].split("__")[0] + "<small>(" + trains[cnt]["position_forward"] + "-" + trains[cnt]["position_rear"] + ")</small></b>";
         buf += "<span" + highlight_str + ">" + station_list_1[starting_station_index]["station_initial"] + " " + first_departure_time + "</span>";
         buf += "<span" + highlight_str + ">→</span>";
         buf += "<span" + highlight_str + ">" + trains[cnt]["final_arrival_time"] + " " + station_list_2[terminal_station_index]["station_initial"] + "</span>";

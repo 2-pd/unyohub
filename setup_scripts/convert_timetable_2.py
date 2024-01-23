@@ -3,6 +3,7 @@
 
 import csv
 import json
+import re
 
 print("railroad_info.json を読み込んでいます...")
 with open("railroad_info.json", "r", encoding="utf-8") as json_f:
@@ -11,6 +12,8 @@ with open("railroad_info.json", "r", encoding="utf-8") as json_f:
 print("変換対象のダイヤ識別名を入力してください:")
 
 operation_table = input()
+
+time_regexp = re.compile("^[0-2][0-9]:[0-5][0-9]$")
 
 output_data = {}
 
@@ -49,14 +52,29 @@ for line_id in railroad_info["lines_order"]:
             
             departure_times = train[8: -6]
             
+            last_departure_time = "00:00"
             for cnt in range(len(departure_times)):
                 if departure_times[cnt] != "":
-                    if departure_times[cnt].find(":") == -1:
-                        departure_times[cnt] = departure_times[cnt][:-2] + ":" + departure_times[cnt][-2:]
+                    if departure_times[cnt][0] == "|":
+                        departure_time = departure_times[cnt][1:].strip()
+                        before_departure_time = "|"
+                    else:
+                        departure_time = departure_times[cnt]
+                        before_departure_time = ""
                     
-                    departure_times[cnt] = departure_times[cnt].zfill(5)
+                    if ":" not in departure_time:
+                        departure_time = departure_time[:-2] + ":" + departure_time[-2:]
+                    
+                    departure_time = departure_time.zfill(5)
+                    
+                    if time_regexp.match(departure_time) == None or departure_time < last_departure_time:
+                        print("【注意】異常な時刻値が検出されました: " + line_id + " - " + train[0])
+                    
+                    last_departure_time = departure_time
+                    
+                    departure_times[cnt] = before_departure_time + departure_time
             
-            direction_data[train[0]][train_cnt]["first_departure_time"] = list(filter(lambda x: x != "", departure_times))[0]
+            direction_data[train[0]][train_cnt]["first_departure_time"] = list(filter(lambda x: x != "", departure_times))[0][-5:]
             direction_data[train[0]][train_cnt]["train_type"] = train[1]
             direction_data[train[0]][train_cnt]["previous_trains"] = []
             direction_data[train[0]][train_cnt]["next_trains"] = []

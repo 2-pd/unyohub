@@ -36,6 +36,9 @@ for line_id in line_list:
             line_stations[line_id].append(cnt)
 
 for cnt in range(1, len(timetable_data_t)):
+    if timetable_data_t[cnt][0] == "":
+        continue
+    
     for line_id in line_list:
         train = list(itemgetter(*line_stations[line_id])(timetable_data_t[cnt]))
         
@@ -46,20 +49,27 @@ for cnt in range(1, len(timetable_data_t)):
                 train[cnt_2] = train[cnt_2].strip()
                 
                 if train[cnt_2] != "":
-                    if ":" not in train[cnt_2]:
-                        train[cnt_2] = train[cnt_2][:-2] + ":" + train[cnt_2][-2:]
+                    if train[cnt_2][0] == "|":
+                        departure_time = train[cnt_2][1:].strip()
+                        before_departure_time = "|"
+                    else:
+                        departure_time = train[cnt_2]
+                        before_departure_time = ""
                     
-                    train[cnt_2] = train[cnt_2].zfill(5)
+                    if ":" not in departure_time:
+                        departure_time = departure_time[:-2] + ":" + departure_time[-2:]
+                    
+                    train[cnt_2] = before_departure_time + departure_time.zfill(5)
             
             for line_id_2 in line_list:
-                if line_id_2 != line_id and len(new_timetable_t[line_id_2]) >= 1 and new_timetable_t[line_id_2][-1][0] == train[0]:
+                if len(new_timetable_t[line_id_2]) >= 1 and new_timetable_t[line_id_2][-1][0] == train[0]:
                     train[2] = line_id_2
                     train[3] = train[0]
-                    train[4] = list(filter(lambda x: x != "", new_timetable_t[line_id_2][-1][8:-6]))[0]
+                    train[4] = list(filter(lambda x: x != "", new_timetable_t[line_id_2][-1][8:-6]))[0][-5:]
                     
                     new_timetable_t[line_id_2][-1][-6] = line_id
                     new_timetable_t[line_id_2][-1][-5] = train[0]
-                    new_timetable_t[line_id_2][-1][-4] = list(filter(lambda x: x != "", train[8:-6]))[0]
+                    new_timetable_t[line_id_2][-1][-4] = list(filter(lambda x: x != "", train[8:-6]))[0][-5:]
             
             new_timetable_t[line_id].append(train)
 

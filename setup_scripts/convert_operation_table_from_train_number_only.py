@@ -166,28 +166,28 @@ for operation in operations:
                                 terminal_station_index = station_name_list_r[line].index(terminal_station)
                             
                             for train in timetable[line]["inbound_trains"][train_name]:
-                                if line in starting_lines and train["departure_times"][starting_station_index] != None and train["departure_times"][starting_station_index] > first_departure_time:
-                                        first_departure_time = train["departure_times"][starting_station_index]
+                                if line in starting_lines and train["departure_times"][starting_station_index] != None and train["departure_times"][starting_station_index][-5:] > first_departure_time:
+                                        first_departure_time = train["departure_times"][starting_station_index][-5:]
                                 
-                                if line in terminal_lines and train["departure_times"][terminal_station_index] != None and train["departure_times"][terminal_station_index] < final_arrival_time:
-                                        final_arrival_time = train["departure_times"][terminal_station_index]
+                                if line in terminal_lines and train["departure_times"][terminal_station_index] != None and train["departure_times"][terminal_station_index][-5:] < final_arrival_time:
+                                        final_arrival_time = train["departure_times"][terminal_station_index][-5:]
                                     
                                 for cnt in range(len(train["departure_times"])):
                                     if train["departure_times"][cnt] != None:
                                         if "station_initial" in station_list_r[line][cnt]:
-                                            first_departure_times.append(station_list_r[line][cnt]["station_initial"] + train["departure_times"][cnt])
+                                            first_departure_times.append(station_list_r[line][cnt]["station_initial"] + train["departure_times"][cnt][-5:])
                                         else:
                                             print("省略表記の登録されていない始発駅が時刻表で指定されました: " + train_name)
-                                            first_departure_times.append("？" + train["departure_times"][cnt])
+                                            first_departure_times.append("？" + train["departure_times"][cnt][-5:])
                                         break
                                 
                                 for cnt in range(len(train["departure_times"]) - 1, -1, -1):
                                     if train["departure_times"][cnt] != None:
                                         if "station_initial" in station_list_r[line][cnt]:
-                                            final_arrival_times.append(station_list_r[line][cnt]["station_initial"] + train["departure_times"][cnt])
+                                            final_arrival_times.append(station_list_r[line][cnt]["station_initial"] + train["departure_times"][cnt][-5:])
                                         else:
                                             print("省略表記の登録されていない終着駅が時刻表で指定されました: " + train_name)
-                                            final_arrival_times.append("？" + train["departure_times"][cnt])
+                                            final_arrival_times.append("？" + train["departure_times"][cnt][-5:])
                                         break
                             
                         elif train_name in timetable[line]["outbound_trains"]:
@@ -206,19 +206,19 @@ for operation in operations:
                                 for cnt in range(len(train["departure_times"])):
                                     if train["departure_times"][cnt] != None:
                                         if "station_initial" in station_list[line][cnt]:
-                                            first_departure_times.append(station_list[line][cnt]["station_initial"] + train["departure_times"][cnt])
+                                            first_departure_times.append(station_list[line][cnt]["station_initial"] + train["departure_times"][cnt][-5:])
                                         else:
                                             print("省略表記の登録されていない始発駅が時刻表で指定されました: " + train_name)
-                                            first_departure_times.append("？" + train["departure_times"][cnt])
+                                            first_departure_times.append("？" + train["departure_times"][cnt][-5:])
                                         break
                                 
                                 for cnt in range(len(train["departure_times"]) - 1, -1, -1):
                                     if train["departure_times"][cnt] != None:
                                         if "station_initial" in station_list[line][cnt]:
-                                            final_arrival_times.append(station_list[line][cnt]["station_initial"] + train["departure_times"][cnt])
+                                            final_arrival_times.append(station_list[line][cnt]["station_initial"] + train["departure_times"][cnt][-5:])
                                         else:
                                             print("省略表記の登録されていない終着駅が時刻表で指定されました: " + train_name)
-                                            final_arrival_times.append("？" + train["departure_times"][cnt])
+                                            final_arrival_times.append("？" + train["departure_times"][cnt][-5:])
                                         break
                     
                     if first_departure_time == "00:00" or final_arrival_time == "99:99":
