@@ -60,6 +60,7 @@ error_occurred = False
 output_data = []
 cnt = 0
 id_cnt = 1
+stopped_train_list = {}
 while cnt < len(operations):
     if operations[cnt][0].startswith("# "):
         output_data.append({"operation_group_name" : operations[cnt][0][2:], "operations": []})
@@ -145,15 +146,30 @@ while cnt < len(operations):
                         if cnt_2 >= 2:
                             output_data[-1]["operations"][-1]["trains"][-1]["final_arrival_time"] = first_departure_time
                     elif output_data[-1]["operations"][-1]["trains"][-1]["final_arrival_time"] != first_departure_time:
+                        stopped_train_first_departure_time = output_data[-1]["operations"][-1]["trains"][-1]["final_arrival_time"]
+
                         if output_data[-1]["operations"][-1]["trains"][-1]["train_number"] == train_number:
                             stopped_train_number = train_number
                         else:
                             stopped_train_number = "_" + train_number
+                            time_id = stopped_train_first_departure_time + "-" + first_departure_time
+
+                            if stopped_train_number in stopped_train_list:
+                                if time_id in stopped_train_list[stopped_train_number]:
+                                    stopped_train_index = stopped_train_list[stopped_train_number].index(time_id) + 1
+                                else:
+                                    stopped_train_list[stopped_train_number].append(time_id)
+                                    stopped_train_index = len(stopped_train_list[stopped_train_number])
+                            else:
+                                stopped_train_list[stopped_train_number] = [time_id]
+                                stopped_train_index = 1
+                            
+                            stopped_train_number = stopped_train_number + "__" + str(stopped_train_index)
                         
                         output_data[-1]["operations"][-1]["trains"].append({
                             "train_number" : stopped_train_number,
                             "line_id" : line_list[0],
-                            "first_departure_time" : output_data[-1]["operations"][-1]["trains"][-1]["final_arrival_time"],
+                            "first_departure_time" : stopped_train_first_departure_time,
                             "final_arrival_time" : first_departure_time,
                             "starting_station" : starting_station,
                             "terminal_station" : starting_station,

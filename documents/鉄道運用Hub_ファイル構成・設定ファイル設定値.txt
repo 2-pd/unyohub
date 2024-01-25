@@ -109,7 +109,7 @@ _/_/_/_/ 設定ファイル設定値 _/_/_/_/
                     "station_name_kana" : 駅名のふりがな(ひらがな),
                     "station_initial" : 駅頭文字(始発・終着列車のない非分岐駅では省略可能。このJSONに記載の他の駅と被る場合は別の文字を使用する),
                     "is_major_station" : 主要駅か否か(主要駅でなければ省略可能。BOOL値),
-                    "connecting_lines" : 直通路線の路線識別名を配列で列挙
+                    "connecting_lines" : 直通路線の路線識別名を配列で列挙(分岐駅でなければ省略可能)
                 }...
             ]
         }...
@@ -198,9 +198,9 @@ _/_/_/_/ 設定ファイル設定値 _/_/_/_/
         "operations" : [ 各運用の情報
             {
                 "operation_number" : 運用番号
-                "trains" : [ 各区間組成の情報の情報(折返し等の発車待ちの情報も含む)
+                "trains" : [ 各区間組成の情報の情報(折り返し等の発車待ちの情報も含む)
                     {
-                        "train_number" : 列車番号,
+                        "train_number" : 列車番号(発車待ちや列車番号が不明な場合は仮ID),
                         "line_id" : 走行路線の識別名,
                         "first_departure_time" : 「HH:MM」形式の始発時刻,
                         "final_arrival_time" : 「HH:MM」形式の終着時刻,
