@@ -40,6 +40,11 @@ if (is_object($user)) {
 
 load_railroad_data($_POST["railroad_id"]);
 
+
+$ts_now = time();
+$posted_date = date("Y-m-d", $ts_now);
+
+
 $ts = strtotime($_POST["date"]);
 
 if ($ts === FALSE) {
@@ -47,7 +52,18 @@ if ($ts === FALSE) {
     exit;
 }
 
+$operation_date = date("Y-m-d", $ts);
+
+
 $operation_data = get_operation_info($ts, $_POST["operation_number"]);
+
+$comment = preg_replace("/^[\x00\s]++|[\x00\s]++$/u", "", mb_substr($_POST["comment"], 0, 500));
+
+if (strlen($comment) === 0 && (($operation_date === $posted_date && $operation_data["first_departure_time"] > date("H:i", $ts_now)) || $operation_date > $posted_date)) {
+    print "ERROR: 出庫前の運用に充当される編成を特定した方法をコメントにご入力ください";
+    exit;
+}
+
 
 $operation_number = $db_obj->escapeString($_POST["operation_number"]);
 
@@ -87,13 +103,11 @@ if (is_object($user)) {
 
 $posted_datetime = $posted_date." ".date("H:i:s", $ts_now);
 
-$operation_date = date("Y-m-d", $ts);
-
-$db_obj->query("INSERT OR REPLACE INTO `unyohub_data` (`operation_date`, `operation_number`, `user_id`, `formations`, `posted_datetime`, `comment`) VALUES ('".$operation_date."', '".$operation_number."', '".$db_obj->escapeString($user_id)."', '".$db_obj->escapeString($formations)."', '".$posted_datetime."', '".$db_obj->escapeString(mb_substr($_POST["comment"], 0, 500))."')");
+$db_obj->query("INSERT OR REPLACE INTO `unyohub_data` (`operation_date`, `operation_number`, `user_id`, `formations`, `posted_datetime`, `comment`) VALUES ('".$operation_date."', '".$operation_number."', '".$db_obj->escapeString($user_id)."', '".$db_obj->escapeString($formations)."', '".$posted_datetime."', '".$db_obj->escapeString($comment)."')");
 
 $data_cache_values = get_data_cache_values($operation_date, $operation_number, $formation_pattern);
 
-$comment_exists = boolval(strlen($_POST["comment"]));
+$comment_exists = boolval(strlen($comment));
 
 update_data_cache($operation_date, $operation_number, $formations, $posted_datetime, $formation_list, $data_cache_values["posts_count"], $data_cache_values["variant_exists"], $comment_exists, $from_beginner);
 

@@ -3,7 +3,7 @@
 
 import csv
 import json
-import sqlite3
+import re
 
 
 def get_lines_and_station(station_initial, cnt, cnt_2):
@@ -54,6 +54,8 @@ with open(file_name, "r", encoding="utf-8") as csv_f:
     operations = [data_row for data_row in csv_reader]
 
 print("データを変換しています...")
+
+time_regexp = re.compile("^[0-2][0-9]:[0-5][0-9]$")
 
 error_occurred = False
 
@@ -127,6 +129,10 @@ while cnt < len(operations):
                 
                 first_departure_time = operations[cnt + 1][cnt_2][1:].strip()
                 final_arrival_time = operations[cnt + 2][cnt_2][1:].strip()
+                
+                if time_regexp.match(first_departure_time) == None or time_regexp.match(final_arrival_time) == None:
+                    print("エラー: " + train_number + " の時刻値が異常です: " + str(cnt + 1) + "行目 " + str(cnt_2 + 1) + "列目")
+                    error_occurred = True
                 
                 if len(line_list) == 0:
                     print("エラー: " + train_number + " の走行範囲が複数の路線に跨っています: " + str(cnt + 1) + "行目 " + str(cnt_2 + 1) + "列目")
