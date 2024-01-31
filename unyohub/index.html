@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width,initial-scale=1,interactive-widget=resizes-content">
 <script>
     const UNYOHUB_APP_NAME = "鉄道運用Hub";
-    const UNYOHUB_VERSION = "24.01-5";
+    const UNYOHUB_VERSION = "24.01-6";
     const UNYOHUB_INDEXEDDB_VERSION = 2310001;
     const UNYOHUB_LICENSE_TEXT = "このアプリケーションは無権利創作宣言に準拠して著作権放棄されています。";
     const UNYOHUB_LICENSE_URL = "https://www.2pd.jp/license/";
@@ -5894,14 +5894,11 @@ function operation_data_draw () {
     
     var buf = "<h2 style='background-color: " + bg_color + ";" + color_style + "'>" + railroad_info["operations"][operation_table_id]["operation_name"] + " ";
     
-    var is_today_str = "false";
-    
     var today_ts = get_timestamp();
     if (operation_data_date > today_ts) {
         buf += "(明日)";
     } else if (operation_data_date > today_ts - 86400) {
         buf += "(今日)";
-        is_today_str = "true";
     } else if (today_ts - operation_data_date < 172800) {
         buf += "(昨日)";
     } else if (today_ts - operation_data_date <= 259200) {
@@ -5925,7 +5922,7 @@ function operation_data_draw () {
                 var bg_color = convert_color_dark_mode(operations["operations"][operation_number]["main_color"]);
             }
             
-            buf += "<tr onclick='operation_detail(\"" + operation_number + "\", \"" + operation_table_id + "\", " + is_today_str + ");'><th style='background-color: " + bg_color + ";'><u>" + operation_number + "</u><small>(" + operations["operations"][operation_number]["cars_count"] + ")</th>";
+            buf += "<tr onclick='operation_detail(\"" + operation_number + "\", " + operation_data_date + ");'><th style='background-color: " + bg_color + ";'><u>" + operation_number + "</u><small>(" + operations["operations"][operation_number]["cars_count"] + ")</th>";
             
             if (operation_number in operation_data["operations"] && operation_data["operations"][operation_number] !== null) {
                 if (operation_data["operations"][operation_number]["posts_count"] === 0) {
@@ -5980,32 +5977,41 @@ function operation_data_draw () {
 
 var operation_detail_area_elm = document.getElementById("operation_detail_area");
 
-function operation_detail (operation_number, operation_table_name = null, is_today = true, load_data = false) {
+function operation_detail (operation_number, operation_data_date_ts, load_data = false, formation_text = null) {
     open_square_popup("operation_detail_popup");
     
     operation_detail_area_elm.innerHTML = "";
     
-    if (operation_table_name === null) {
-        operation_table_name = get_days_operation(get_timestamp());
-    }
-    
     if (!load_data) {
-        draw_operation_detail (operation_number, operation_table_name, is_today, true);
+        draw_operation_detail(operation_number, operation_data_date_ts, formation_text, true);
     } else {
         load_operation_table(function () {
-            draw_operation_detail (operation_number, operation_table_name, is_today, false);
-        }, function () {}, operation_table_name, true, false, false);
+            draw_operation_detail(operation_number, operation_data_date_ts, formation_text, false);
+        }, function () {}, get_days_operation(operation_data_date_ts), true, false, false);
     }
 }
 
-function draw_operation_detail (operation_number, operation_table_name, is_today, show_write_operation_data_button) {
+function draw_operation_detail (operation_number, operation_data_date_ts, formation_text, show_write_operation_data_button) {
+    var operation_table_name = get_days_operation(operation_data_date_ts);
+    var operation_data_date_str = get_date_string(operation_data_date_ts);
+    
+    if (operation_data_date_str === get_date_string(get_timestamp())) {
+        var is_today = true;
+    } else {
+        var is_today = false;
+    }
+    
     var buf = "<h3><a href='javascript:void(0);' onclick='open_operation_number_detail(\"" + operation_number + "\", \"" + operation_table_name + "\");'>" + escape_html(operation_number) + "運用(" + operations["operations"][operation_number]["cars_count"] + "両)</a></h3>";
     
     buf += "<div class='formation_data_area'>";
     
-    if (operation_number in operation_data["operations"] && operation_data["operations"][operation_number] !== null) {
-        if (operation_data["operations"][operation_number]["formations"] !== "") {
-            var formations_data = operation_data["operations"][operation_number]["formations"].split("+");
+    if (formation_text === null && operation_number in operation_data["operations"] && operation_data["operations"][operation_number] !== null) {
+        formation_text = operation_data["operations"][operation_number]["formations"];
+    }
+    
+    if (formation_text !== null) {
+        if (formation_text !== "") {
+            var formations_data = formation_text.split("+");
             
             for (var cnt_2 = 0; cnt_2 < formations_data.length; cnt_2++) {
                 if (cnt_2 >= 1) {
@@ -6104,7 +6110,7 @@ function draw_operation_detail (operation_number, operation_table_name, is_today
     
     operation_detail_area_elm.innerHTML = buf;
     
-    get_operation_data_detail(get_date_string(operation_data_date), operation_number, "operation_data_detail_area");
+    get_operation_data_detail(operation_data_date_str, operation_number, "operation_data_detail_area");
 }
 
 
@@ -6255,13 +6261,13 @@ function formation_detail (formation_name) {
             if (data["operations_today"] !== null) {
                 var buf = "<h3>今日の運用情報</h3>";
                 for (cnt = 0; cnt < data["operations_today"].length; cnt++) {
-                    buf += "<div class='key_and_value' onclick='operation_detail(\"" + add_slashes(data["operations_today"][cnt]["operation_number"]) + "\", \"" + add_slashes(get_days_operation(get_timestamp())) + "\", true, true);'><u>" + escape_html(data["operations_today"][cnt]["operation_number"]) + "</u>" + data["operations_today"][cnt]["formations"] + "</div>";
+                    buf += "<div class='key_and_value' onclick='operation_detail(\"" + add_slashes(data["operations_today"][cnt]["operation_number"]) + "\", " + get_timestamp() + ", true, \"" + add_slashes(data["operations_today"][cnt]["formations"]) + "\");'><u>" + escape_html(data["operations_today"][cnt]["operation_number"]) + "</u>" + data["operations_today"][cnt]["formations"] + "</div>";
                 }
                 
                 buf += "<h3>明日の運用情報</h3>";
                     if (data["operations_tomorrow"] !== null) {
                     for (cnt = 0; cnt < data["operations_tomorrow"].length; cnt++) {
-                        buf += "<div class='key_and_value' onclick='operation_detail(\"" + add_slashes(data["operations_tomorrow"][cnt]["operation_number"]) + "\", \"" + add_slashes(get_days_operation(get_timestamp() + 86400)) + "\", false, true);'><u>" + escape_html(data["operations_tomorrow"][cnt]["operation_number"]) + "</u>" + data["operations_tomorrow"][cnt]["formations"] + "</div>";
+                        buf += "<div class='key_and_value' onclick='operation_detail(\"" + add_slashes(data["operations_tomorrow"][cnt]["operation_number"]) + "\", " + (get_timestamp() + 86400) + ", true, \"" + add_slashes(data["operations_tomorrow"][cnt]["formations"]) + "\");'><u>" + escape_html(data["operations_tomorrow"][cnt]["operation_number"]) + "</u>" + data["operations_tomorrow"][cnt]["formations"] + "</div>";
                     }
                 } else {
                     buf += "<div class='descriptive_text'>明日の運用情報は判明していません</div>";
@@ -6274,7 +6280,7 @@ function formation_detail (formation_name) {
                 var dt = new Date(data["last_seen_date"] + " 12:00:00");
                 
                 for (cnt = 0; cnt < data["operations_last_day"].length; cnt++) {
-                    buf += "<div class='key_and_value' onclick='operation_detail(\"" + add_slashes(data["operations_last_day"][cnt]["operation_number"]) + "\", \"" + add_slashes(get_days_operation(dt.getTime() / 1000)) + "\", false, true);'><u>" + escape_html(data["operations_last_day"][cnt]["operation_number"]) + "</u>" + data["operations_last_day"][cnt]["formations"] + "</div>";
+                    buf += "<div class='key_and_value' onclick='operation_detail(\"" + add_slashes(data["operations_last_day"][cnt]["operation_number"]) + "\", " + Math.floor(dt.getTime() / 1000) + ", true, \"" + add_slashes(data["operations_last_day"][cnt]["formations"]) + "\");'><u>" + escape_html(data["operations_last_day"][cnt]["operation_number"]) + "</u>" + data["operations_last_day"][cnt]["formations"] + "</div>";
                 }
             } else {
                 var buf = "<div class='descriptive_text'>この編成の運用情報が投稿されたことはありません</div>";
