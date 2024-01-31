@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width,initial-scale=1,interactive-widget=resizes-content">
 <script>
     const UNYOHUB_APP_NAME = "鉄道運用Hub";
-    const UNYOHUB_VERSION = "24.01-3";
+    const UNYOHUB_VERSION = "24.01-4";
     const UNYOHUB_INDEXEDDB_VERSION = 2310001;
     const UNYOHUB_LICENSE_TEXT = "このアプリケーションは無権利創作宣言に準拠して著作権放棄されています。";
     const UNYOHUB_LICENSE_URL = "https://www.2pd.jp/license/";
@@ -380,13 +380,13 @@ header {
     position: relative;
     
     width: 100%;
-    min-height: calc(100% - 120px);
+    min-height: calc(100% - 150px);
     
     z-index: 4;
 }
 
 #splash_screen_inner {
-    padding: 60px 0;
+    padding: 60px 0 90px 0;
 }
 
 #splash_screen_login_status {
@@ -436,13 +436,13 @@ header {
     text-decoration: underline;
 }
 
-#splash_screen_app_version {
+#splash_screen_bottom {
     position: absolute;
-    bottom: 0;
+    bottom: 10px;
     
     width: 100%;
     
-    line-height: 60px;
+    line-height: 40px;
     color: #999999;
 }
 
@@ -1789,7 +1789,7 @@ footer .previous_button, footer .next_button {
 }
 
 .popup .popup_close_button {
-    animation: popup_up 0.1s ease-out;
+    animation: popup_up 0.05s ease-out;
 }
 
 h2 {
@@ -1857,6 +1857,21 @@ a {
     float: right;
     
     margin: 0 20px !important;
+}
+
+.popup h4 {
+    margin-top: 15px;
+    
+    padding-left: 6px;
+    
+    border-left: 4px solid #666666;
+    
+    line-height: 32px;
+    font-size: 18px;
+}
+
+.dark_mode .popup h4 {
+    border-left-color: #cccccc;
 }
 
 .popup input {
@@ -2761,13 +2776,17 @@ input[type="radio"] + label small {
         <hr>
         <a href="javascript:void(0);" onclick="open_square_popup('about_popup');">このアプリについて</a>
         <a href="javascript:void(0);" onclick="window.open('README.html');">このアプリの使い方</a>
+        <a href="javascript:void(0);" onclick="show_rules();">ルールとポリシー</a>
     </div>
     <div id="splash_screen">
         <div id="splash_screen_inner">
             <div id="splash_screen_login_status">サーバに接続しています...</div>
             <a id="announcements_overview" href="javascript:void(0);" onclick="show_announcements();"></a>
             <div id="splash_screen_buttons" class="wait_icon"></div>
-            <div id="splash_screen_app_version"></div>
+            <div id="splash_screen_bottom">
+                <a href="javascript:void(0);" onclick="window.open('README.html');">使い方</a>　<a href="javascript:void(0);" onclick="show_rules();">ルールとポリシー</a>
+                <div id="splash_screen_app_version"></div>
+            </div> 
         </div>
     </div>
     <div id="tab_area"><button type="button" onclick="position_mode();" style="background-image: url(data:image/webp;base64,UklGRuICAABXRUJQVlA4TNYCAAAvNUANEP/jIJJkV+n9gZxBAq6xyn9rA1Jk266q3o/MFHRQqMYJcxzgIP4c7jkOG0lylJo3eA8hkDWp8jeuattWlXUe7trASUAUK8SgBbXsn8/nLjuAZrCvb2dvr/l9nne0zHeKtVYZYgUNW2QKgqZAqCEIQo0GDYQCFQRBEBIIJSoUEAJhmoss4qCj/eGLpOrAMIHB0BIGgw9VHa0jhto5yUYxsTfXGRnm3ykdRdSpXcMaNplqSHS0ISxTfv68d9nF/gURtv9teHg7JBnhUx96aPt+vr+WWiZO2MYWtTv7///jz/5zmWczSbgf73Qqp68T6XD4OZDkOWq4v93vIbBiAhdoaChouEHDL1yhkLeg0C4QBEG4J9Go4aADM0AQALaQ1LNvbZxt27Zt2/bb77ZNk9wHphH9h+BGkiLJmbnMe/AHgctSX1Nhl9PqMo39S4Itc9UBG5CuqjkmQ2GbJtERDnGVdps2pj6ezJTYUCknt86GTBv1HjYs+yjtiaJoVjiVosZGSBXBUgCQeXpxay7OMgGdS3iTNlXG9Z2UqwybmgG8duD035RmqhrwClSnd0DOVB14AdUl5By4As+luoXcqtx4XpQblQ8vh3YmF69MdYa6SSneBPBAV5gHmsDrdQA/XVf6ny5HksCnGPpJPju/NRb4k1wkCMZshAxTJHbiBRIEJa14RpB0+7F8yf/z96pWEPV4cTxJgpp2nCZBNuXFMFOCnmaMFpb/SVG9UIrgyITeuGARn6+Tx/Wvc1Dz38wMCiYfJ7DjH669P6RD0u7ffpj2bK4g18b8lmnmcUE1//gcK8+eNneyZNm7209SyVNeW4WsXVif8kvhmTUdiQl2C6DUvW4cxbIcsyy9hLVXqdR7HMhZtFnmQI5yB5ZZ+7Mzewe64veyfghkxToEsipfiX808veDH7nYMRT1aMRsPen6pY6p+rFVN8aqe/sWbH8ppELj7Q8=); border-color: #ee3333;">走行位置</button><button type="button" onclick="timetable_mode();" style="background-image: url(data:image/webp;base64,UklGRmgEAABXRUJQVlA4TFsEAAAvNUANEA8GOZIkRZLn8n9t9RdiNcJ7MWOlGo4jSXKU7JO/swabsJvghwFabEOOJNlVVP2QDmAJRnHGZU6a1fv1FNzatlVV8+BEN6MWOqRJIo/0u9z3doCW+np1I2ohQlWQsdbKNGgWCJX+P42xlcTvd9Kq1f9/MaPMKK1WW6myO3oIlRKka1+9ojQL9Ds+lWpUBf3rKF7uTxQRGr0qlBJFiijWFMnany8yQ8sVsRIxQ21j7rBogUTTUZWffkEqFCFoFkg1JvAHgT8IBAIjBAJ/EBigQyDBDFrLf8NfsIfgJFqpHQ6DSiiYwhcMEDJV5glz8QdecCii9CJKh1dY0Bq+F0gllQizoMLS/EIr5srVxC0stVeeI0kyW4Q338z+lmkdNMkspSlbMgibsP4ndnN8H9/scnAYXZjtnb8jYqujSVfa8N+jSYBQx0p/ay2I+YNoVVK02u47SSSxmBpzJxPub53T9aLVz2f0/R7cnU/T4+k4QKK2bWcjff8/tjJaj7G2beNb27Zt27a928039rHlTfrn3xOI6P8EkMn2B0cPbFm7ceHCjeu2HDj6QJGN7Td3ruAoVx680R7WyxNr2ei6qy/DUJdWsfHVZ5Wx+9s51C0vDF1fxiEvvmBCHeGAc/q8+/474rp/f31/22+2H/MTFdXr3ew/8FNERKSptbVJRCTycbAf73odhTrIvoN+iIi49QUdHR0dsUnZuYX17pchPrxHBTvCeMYHV0Rq85K19miYnFf7fhbiJ4FOMx75U0Rqc7Q3iNbaaRiF+FyA+4vRgD8ikfxYbULHdhqBlrzwUVsZ9v8nUpOlfaPROnMC4O0KXWY48o9IXbI2p9OnAT4P3qwCM3+K1CXpMHTXeWDzS89xhh9EapJ1OLoS8Bkial8LBrkSydJhxU0B6xXRI4Y/RPJ1aLoY8EOinWCgSG2sBTGTwTNSK8EnkRxtga4Am9Rd9s6JSK22InWBh28fBb1F8uzQ48C1veCduMmW9AT7toFvUq8tKQU7NoDfUmBLEVi7HPxtanKMBNdaO66TDlYuBG5rW7MNLW3NiWDR/7Ic/GlyHRuciJMBVm4AvyVWW1oE1m4DnyXJljKw4wB4K9m29AL7j4K+4tgyFly7C2ZHCi1JXQDuqJUe/lhvSQV7Nyk6CIa7SVbETAF7iW4C/ppnRQnDW0Tt68DQWhviJ4H1ioiuAn7vWFDN8CQR0cvVYG5jbGjd5oE1rzx0EfDozmFlTGd4hfAOwMMyw0mZyHCb8nmxBPD4jDBSxzBceo/8TyGe1t1cj+mML1DQJ4jnV8b7OS0tjl981XzGTymweo6YJxXHILetzUUxJVPZ95AKRq93+TBPLk/1OC3Njie1Ygr7H3xN0aonfswLxvUsLUpLSEjrUtZz7AIO+FSRwcfL/EwvuUJmX2wNZ8c9Mq3ObTa35gqF+erMOjPrT76ikNXDZ5ui2XT4liIb1e1j+3asX75w4Yr1O/Zdu6PIJAA=); border-color: #eebb33;">時刻表</button><button type="button" onclick="operation_data_mode();" style="background-image: url(data:image/webp;base64,UklGRr4AAABXRUJQVlA4TLIAAAAvNUANEEdAJmCxGFJp7qSKKmYCkNFB/yI6OP0SeHdOTSMp0Kk5/0au5BVAcEDJ/AeA323Mu/i3jVikZhIYRZKkaC0cGTgJ6+RIABugsbC6eXqPfxH9Z+C2bSN27/buF0IHpZRgHfAgkkRLkiR4AK7SiiQJHRADEWmBA6Louk4LHBADMzyORYekX3zhLOD3/Id/IUlKEyRiBUhidlsll1UCVjZTAlY+XQJWgCTA5kGMEIEA); border-color: #33cc66;">運用データ</button><button type="button" onclick="formation_table_mode();" style="background-image: url(data:image/webp;base64,UklGRpQBAABXRUJQVlA4TIcBAAAvNUANEK/BoJEkRbUn4wWeitf6eQfMtDYYNJKkqPa0nJLX/xo+74CZlkEjSYpqz8D7F/NSyAEzLdta2158cuhypoqdWQxiOwNYwD+ANlNSpjdAVYPaDtR1rTgMw4sXPy5kmVkjL6UAKtLMNMDDhZ6ZXynle9+3zczzPM97WRZpnufnOI7q//8/M0fcAIAPPb6IAKTv+5rMpIhI5nmeMpP6vg/+/+ewYgPAIgJg//8DQ0SgbequqRUZXEmSpCoLPFfc3d25/+FWnj/gryei/4zctnEknabtassr2Be03SBkUGWbGsgWSLPKMbQWNHIEUquq+RqCnniOk1JVp67pHgPgGlrTEkilKlS8K5u0UCR+VVZkNchoSzYXyvrvqv4cvgFIVwJSihD4ANKVAKQT8YdRMCs/hvS1ZOdTBl4YrllwY7hnwYPhuRtRV1NJI9qriZX1YjisR9RX0ifaqImVdWTAmASn6gRJJMlaiSyVCRJIlDWYcWZbZYIEkmVtFxPMh+oEScTO+mICAA==); border-color: #0066dd;">編成表</button><button type="button" onclick="operation_table_mode();" style="background-image: url(data:image/webp;base64,UklGRmQAAABXRUJQVlA4TFcAAAAvNUANEB8gECDs6xFnRUhA+P9NtEUVEhD+D1VFdf4D8C9pwCiSrFYEDehJGliP1LOBLarmDD8eI/ovICj0wAx3mQVMIC8gPj23ZZhZk5S6JP/0fuifqzgA); border-color: #9933cc;">運用表</button></div>
@@ -2835,7 +2854,7 @@ input[type="radio"] + label small {
             <button type="button" class="previous_button" onclick="timetable_operation_previous();"></button><span id="timetable_operation_name" class="footer_value_wide"></span><button type="button" class="next_button" onclick="timetable_operation_next();"></button>
         </div>
         <div>
-            <button id="operation_reload_button" class="reload_button" onclick="operation_data_change_date(null);"></button>
+            <button class="reload_button" onclick="operation_data_change_date(null);"></button>
             <button type="button" class="previous_button" onclick="operation_data_change_date(-1);"></button><span id="operation_data_date" class="footer_value_wide"></span><button type="button" class="next_button" onclick="operation_data_change_date(1);"></button>
             <input type="date" id="operation_date_button" class="date_button" onchange="operation_date_button_change();">
         </div>
@@ -2915,6 +2934,11 @@ input[type="radio"] + label small {
         <button type="button" class="popup_close_button" onclick="popup_close();"></button>
         <h2>運用情報の取り消し</h2>
         <div id="edit_operation_data_area"></div>
+    </div>
+    <div class="popup" id="rules_popup">
+        <button type="button" class="popup_close_button" onclick="popup_close();"></button>
+        <h2>ルールとポリシー</h2>
+        <div id="rules_area"></div>
     </div>
     <div id="popup_screen">
         <div id="popup_screen_blank_area" onclick="close_square_popup();"></div>
@@ -3097,7 +3121,17 @@ function add_slashes (text) {
 }
 
 function convert_to_html (text) {
-    return escape_html(text).replace(/\n/g, "<br>").replace(/https?:\/\/[^\s\\`\|\[\]\{\}\^]+/g, " <a href='$&' target='_blank' class='external_link'>$&</a> ");
+    var text_splitted = escape_html(text).replace(/https?:\/\/[^\s\\`\|\[\]\{\}\^]+/g, " <a href='$&' target='_blank' class='external_link'>$&</a> ").split("\n");
+    
+    for (var cnt = 0; cnt < text_splitted.length; cnt++) {
+        if (text_splitted[cnt].substring(0, 2) === "# ") {
+            text_splitted[cnt] = "<h4>" + text_splitted[cnt].substring(2) + "</h4>";
+        } else if (cnt + 1 < text_splitted.length && text_splitted[cnt + 1].substring(2) !== "# ") {
+            text_splitted[cnt] += "<br>";
+        }
+    }
+    
+    return text_splitted.join("");
 }
 
 function get_timestamp () {
@@ -3233,7 +3267,7 @@ var train_icons = null;
 var formations = null;
 
 
-function ajax_post (end_point_url, query_str, callback_func) {
+function ajax_fetch (end_point_url, query_str, callback_func) {
     var ajax_request = new XMLHttpRequest();
     ajax_request.onloadend = function () {
         if (ajax_request.responseText.substring(0, 6) === "ERROR:") {
@@ -3250,10 +3284,16 @@ function ajax_post (end_point_url, query_str, callback_func) {
         }
     };
     
-    ajax_request.open("POST", end_point_url, true);
-    ajax_request.setRequestHeader("Content-Type","application/x-www-form-urlencoded;charset=UTF-8");
-    ajax_request.timeout = 10000;
-    ajax_request.send(query_str);
+    if (query_str !== null) {
+        ajax_request.open("POST", end_point_url, true);
+        ajax_request.setRequestHeader("Content-Type","application/x-www-form-urlencoded;charset=UTF-8");
+        ajax_request.timeout = 10000;
+        ajax_request.send(query_str);
+    } else {
+        ajax_request.open("GET", end_point_url, true);
+        ajax_request.timeout = 10000;
+        ajax_request.send();
+    }
 }
 
 
@@ -3602,7 +3642,7 @@ window.onload = function () {
     }
     
     if (navigator.onLine) {
-        ajax_post("api/check_logged_in.php", "", function (response) {
+        ajax_fetch("api/check_logged_in.php", null, function (response) {
             if (response !== false) {
                 if (response !== "NOT_LOGGED_IN"){
                     update_user_data(JSON.parse(response));
@@ -3614,7 +3654,7 @@ window.onload = function () {
             }
         });
         
-        ajax_post("api/railroads.php", "last_modified_timestamp=" + common_caches["last_modified_timestamp"], function (response, last_modified) {
+        ajax_fetch("api/railroads.php", "last_modified_timestamp=" + common_caches["last_modified_timestamp"], function (response, last_modified) {
             if (response !== false && response !== "NO_UPDATES_AVAILABLE") {
                 common_caches["railroads"] = JSON.parse(response);
                 
@@ -3647,7 +3687,7 @@ function check_announcements (show_important_announcements = false) {
         announcements_last_modified = "0";
     }
     
-    ajax_post("api/check_announcements.php", "last_modified_timestamp=" + announcements_last_modified, function (response) {
+    ajax_fetch("api/check_announcements.php", "last_modified_timestamp=" + announcements_last_modified, function (response) {
         if (response !== false) {
             if (response === "NEW_ANNOUNCEMENTS_NOT_EXIST") {
                 announcements_overview_elm.innerHTML = "新しいお知らせはありません";
@@ -3692,7 +3732,7 @@ function show_announcements (important_announcements_exist = false) {
         heading_elm.innerHTML = "お知らせの一覧";
     }
     
-    ajax_post("api/announcements.php", "", function (response) {
+    ajax_fetch("api/announcements.php", null, function (response) {
         if (response !== false) {
             draw_announcements(JSON.parse(response));
         }
@@ -3739,10 +3779,10 @@ function draw_announcements (announcements_data) {
 
 
 function update_railroad_info () {
-    var railroad_name_split = escape_html(railroad_info["railroad_name"]).split(" ");
-    railroad_name_split[0] += "<small>";
+    var railroad_name_splitted = escape_html(railroad_info["railroad_name"]).split(" ");
+    railroad_name_splitted[0] += "<small>";
     
-    document.getElementById("railroad_name").innerHTML = railroad_name_split.join(" ") + "</small>";
+    document.getElementById("railroad_name").innerHTML = railroad_name_splitted.join(" ") + "</small>";
     
     var main_color_hsl = rgb2hsl(railroad_info["main_color"]);
     main_color_hsl[2] = Math.min(main_color_hsl[2] * 1.2, 255);
@@ -3789,7 +3829,7 @@ function select_railroad (railroad_id) {
                 }
                 
                 if (navigator.onLine) {
-                    ajax_post("api/railroad_info.php", "railroad_id=" + escape_form_data(railroad_id) + "&last_modified_timestamp=" + last_modified_timestamp, function (response, last_modified) {
+                    ajax_fetch("api/railroad_info.php", "railroad_id=" + escape_form_data(railroad_id) + "&last_modified_timestamp=" + last_modified_timestamp, function (response, last_modified) {
                         if (response !== false && response !== "NO_UPDATES_AVAILABLE") {
                             railroad_info = JSON.parse(response);
                             
@@ -3841,7 +3881,7 @@ function select_railroad (railroad_id) {
                 }
                 
                 if (navigator.onLine) {
-                    ajax_post("api/train_icons.php", "railroad_id=" + escape_form_data(railroad_id) + "&last_modified_timestamp=" + last_modified_timestamp, function (response, last_modified) {
+                    ajax_fetch("api/train_icons.php", "railroad_id=" + escape_form_data(railroad_id) + "&last_modified_timestamp=" + last_modified_timestamp, function (response, last_modified) {
                         if (response !== false && response !== "NO_UPDATES_AVAILABLE") {
                             train_icons = {icons : JSON.parse(response)};
                             
@@ -3888,7 +3928,7 @@ function select_railroad (railroad_id) {
                 }
                 
                 if (navigator.onLine) {
-                    ajax_post("api/formations.php", "railroad_id=" + escape_form_data(railroad_id) + "&last_modified_timestamp=" + last_modified_timestamp, function (response, last_modified) {
+                    ajax_fetch("api/formations.php", "railroad_id=" + escape_form_data(railroad_id) + "&last_modified_timestamp=" + last_modified_timestamp, function (response, last_modified) {
                         if (response !== false && response !== "NO_UPDATES_AVAILABLE") {
                             formations = JSON.parse(response);
                             
@@ -4049,7 +4089,7 @@ function update_operation_table(resolve_func, reject_func, operation_table, last
     var railroad_id = railroad_info["railroad_id"];
     
     if (navigator.onLine) {
-        ajax_post("api/operation_table.php", "railroad_id=" + escape_form_data(railroad_id) + "&operation_table=" + escape_form_data(operation_table) + "&last_modified_timestamp=" + last_modified_timestamp, function (response, last_modified) {
+        ajax_fetch("api/operation_table.php", "railroad_id=" + escape_form_data(railroad_id) + "&operation_table=" + escape_form_data(operation_table) + "&last_modified_timestamp=" + last_modified_timestamp, function (response, last_modified) {
             if (response !== false && response !== "NO_UPDATES_AVAILABLE") {
                 var operation_response = JSON.parse(response);
                 
@@ -4199,7 +4239,7 @@ function update_timetable (resolve_func, reject_func, operation_table) {
             }
             
             if (navigator.onLine) {
-                ajax_post("api/timetable.php", "railroad_id=" + escape_form_data(railroad_id) + "&operation_table=" + escape_form_data(operation_table) + "&last_modified_timestamp=" + last_modified_timestamp, function (response, last_modified) {
+                ajax_fetch("api/timetable.php", "railroad_id=" + escape_form_data(railroad_id) + "&operation_table=" + escape_form_data(operation_table) + "&last_modified_timestamp=" + last_modified_timestamp, function (response, last_modified) {
                     if (response !== false && response !== "NO_UPDATES_AVAILABLE") {
                         timetable = {timetable : JSON.parse(response)};
                         
@@ -4267,7 +4307,7 @@ function update_operation_data (resolve_func, reject_func, remote_data_only = fa
             }
             
             if (navigator.onLine) {
-                ajax_post("api/operation_data.php", "railroad_id=" + escape_form_data(railroad_id) + "&date=" + escape_form_data(operation_date) + "&last_modified_timestamp=" + last_modified_timestamp, function (response, last_modified) {
+                ajax_fetch("api/operation_data.php", "railroad_id=" + escape_form_data(railroad_id) + "&date=" + escape_form_data(operation_date) + "&last_modified_timestamp=" + last_modified_timestamp, function (response, last_modified) {
                     if (response !== false) {
                         if (operation_data === null) {
                             operation_data = {railroad_id : railroad_id, operation_date : operation_date, operations : {}};
@@ -5011,7 +5051,7 @@ function get_operation_data_detail (operation_date, operation_number_or_list, ar
     
     area_elm.innerHTML = buf;
     
-    ajax_post("api/operation_data_detail.php", "railroad_id=" + escape_form_data(railroad_info["railroad_id"]) + "&date=" + operation_date + "&operation_numbers=" + escape_form_data(operation_numbers_str), function (response) {
+    ajax_fetch("api/operation_data_detail.php", "railroad_id=" + escape_form_data(railroad_info["railroad_id"]) + "&date=" + operation_date + "&operation_numbers=" + escape_form_data(operation_numbers_str), function (response) {
         if (response !== false) {
             var data = JSON.parse(response);
             
@@ -5807,6 +5847,8 @@ function operation_data_change_date (date_additions) {
             if (!promise_2_resolved) {
                 promise_2_resolved = true;
                 resolve();
+            } else if (promise_1_resolved) {
+                operation_data_draw();
             }
         }, reject, false, date_string);
     });
@@ -5851,17 +5893,12 @@ function operation_data_draw () {
     
     var is_today_str = "false";
     
-    var operation_reload_button_elm = document.getElementById("operation_reload_button");
-    operation_reload_button_elm.style.display = "block";
-    
     var today_ts = get_timestamp();
     if (operation_data_date > today_ts) {
         buf += "(明日)";
     } else if (operation_data_date > today_ts - 86400) {
         buf += "(今日)";
         is_today_str = "true";
-        
-        operation_reload_button_elm.style.display = "none";
     } else if (today_ts - operation_data_date < 172800) {
         buf += "(昨日)";
     } else if (today_ts - operation_data_date <= 259200) {
@@ -6178,7 +6215,7 @@ function formation_detail (formation_name) {
     formation_table_area_elm.innerHTML = buf;
     formation_table_wrapper_elm.scrollTop = 0;
     
-    ajax_post("api/formation_details.php", "railroad_id=" + escape_form_data(railroad_info["railroad_id"]) + "&formation_name=" + escape_form_data(formation_name), function (response) {
+    ajax_fetch("api/formation_details.php", "railroad_id=" + escape_form_data(railroad_info["railroad_id"]) + "&formation_name=" + escape_form_data(formation_name), function (response) {
         if (response !== false) {
             var data = JSON.parse(response);
             
@@ -6211,9 +6248,9 @@ function formation_detail (formation_name) {
                     buf += "<div class='descriptive_text'>明日の運用情報は判明していません</div>";
                 }
             } else if (data["last_seen_date"] !== null) {
-                var last_seen_date_split = data["last_seen_date"].split("-");
+                var last_seen_date_splitted = data["last_seen_date"].split("-");
                 
-                var buf = "<h3>最終目撃情報(" + last_seen_date_split[0] + "/" + Number(last_seen_date_split[1]) + "/" + Number(last_seen_date_split[2]) + ")</h3>";
+                var buf = "<h3>最終目撃情報(" + last_seen_date_splitted[0] + "/" + Number(last_seen_date_splitted[1]) + "/" + Number(last_seen_date_splitted[2]) + ")</h3>";
                 
                 for (cnt = 0; cnt < data["operations_last_day"].length; cnt++) {
                     buf += "<div class='key_and_value'><u>" + escape_html(data["operations_last_day"][cnt]["operation_number"]) + "</u>" + data["operations_last_day"][cnt]["formations"] + "</div>";
@@ -6818,7 +6855,7 @@ function next_operation_number (operation_number) {
 var one_time_token = null;
 
 function get_one_time_token () {
-    ajax_post("api/one_time_token.php", "", function (response) {
+    ajax_fetch("api/one_time_token.php", null, function (response) {
         if (response !== false) {
             var data = JSON.parse(response);
             
@@ -6937,7 +6974,7 @@ function post_operation_data (cnt = 0) {
         send_data += "&guest_id=" + escape_form_data(get_guest_id()) + "&zizai_captcha_id=" + escape_form_data(document.getElementById("zizai_captcha_id").value) + "&zizai_captcha_characters=" + escape_form_data(document.getElementById("zizai_captcha_characters").value);
     }
     
-    ajax_post("api/post.php", send_data, function (response) {
+    ajax_fetch("api/post.php", send_data, function (response) {
         close_wait_screen();
         
         if (response !== false) {
@@ -7012,7 +7049,7 @@ function revoke_operation_data (cnt = 0) {
         return;
     }
     
-    ajax_post("api/revoke.php", "railroad_id=" + escape_form_data(railroad_info["railroad_id"]) + "&date=" + escape_form_data(edit_yyyy_mm_dd) + "&operation_number=" + escape_form_data(edit_operation_number) + "&user_id=" + escape_form_data(edit_user_id) + "&one_time_token=" + escape_form_data(one_time_token), function (response) {
+    ajax_fetch("api/revoke.php", "railroad_id=" + escape_form_data(railroad_info["railroad_id"]) + "&date=" + escape_form_data(edit_yyyy_mm_dd) + "&operation_number=" + escape_form_data(edit_operation_number) + "&user_id=" + escape_form_data(edit_user_id) + "&one_time_token=" + escape_form_data(one_time_token), function (response) {
         close_wait_screen();
         
         if (response !== false) {
@@ -7070,7 +7107,7 @@ function challenge_login () {
     var user_id = document.getElementById("login_user_id").value;
     var password = document.getElementById("login_password").value;
     
-    ajax_post("api/login.php", "user_id=" + escape_form_data(user_id) + "&password=" + escape_form_data(password), function (response) {
+    ajax_fetch("api/login.php", "user_id=" + escape_form_data(user_id) + "&password=" + escape_form_data(password), function (response) {
         close_wait_screen();
         
         if (response !== false) {
@@ -7086,7 +7123,7 @@ function user_logout () {
     if (confirm("ログアウトしますか？")){
         open_wait_screen();
         
-        ajax_post("api/logout.php", "", function (response) {
+        ajax_fetch("api/logout.php", null, function (response) {
             close_wait_screen();
             
             if (response !== false) {
@@ -7101,7 +7138,7 @@ function user_logout () {
 function check_sign_up () {
     open_wait_screen();
     
-    ajax_post("api/check_sign_up.php", "user_id=" + escape_form_data(document.getElementById("sign_up_user_id").value) + "&password=" + escape_form_data(document.getElementById("sign_up_password").value), function (response) {
+    ajax_fetch("api/check_sign_up.php", "user_id=" + escape_form_data(document.getElementById("sign_up_user_id").value) + "&password=" + escape_form_data(document.getElementById("sign_up_password").value), function (response) {
         close_wait_screen();
         
         if (response === "OK") {
@@ -7116,7 +7153,7 @@ function check_sign_up () {
 function challenge_sign_up () {
     open_wait_screen();
     
-    ajax_post("api/sign_up.php", "user_id=" + escape_form_data(document.getElementById("sign_up_user_id").value) + "&password=" + escape_form_data(document.getElementById("sign_up_password").value) + "&user_name=" + escape_form_data(document.getElementById("sign_up_user_name").value) + "&zizai_captcha_id=" + escape_form_data(document.getElementById("zizai_captcha_id").value) + "&zizai_captcha_characters=" + escape_form_data(document.getElementById("zizai_captcha_characters").value), function (response) {
+    ajax_fetch("api/sign_up.php", "user_id=" + escape_form_data(document.getElementById("sign_up_user_id").value) + "&password=" + escape_form_data(document.getElementById("sign_up_password").value) + "&user_name=" + escape_form_data(document.getElementById("sign_up_user_name").value) + "&zizai_captcha_id=" + escape_form_data(document.getElementById("zizai_captcha_id").value) + "&zizai_captcha_characters=" + escape_form_data(document.getElementById("zizai_captcha_characters").value), function (response) {
         close_wait_screen();
         
         if (response !== false) {
@@ -7167,7 +7204,7 @@ function change_user_data (cnt = 0) {
         return;
     }
     
-    ajax_post("api/change_user_data.php", "user_name=" + escape_form_data(edit_user_data_user_name_elm.value) + "&email_address=" + escape_form_data(edit_user_data_email_address_elm.value) + "&website_url=" + escape_form_data(edit_user_data_website_url_elm.value) + "&one_time_token=" + escape_form_data(one_time_token), function (response) {
+    ajax_fetch("api/change_user_data.php", "user_name=" + escape_form_data(edit_user_data_user_name_elm.value) + "&email_address=" + escape_form_data(edit_user_data_email_address_elm.value) + "&website_url=" + escape_form_data(edit_user_data_website_url_elm.value) + "&one_time_token=" + escape_form_data(one_time_token), function (response) {
         close_wait_screen();
         
         if (response !== false) {
@@ -7183,7 +7220,7 @@ function change_user_data (cnt = 0) {
 function change_password () {
     open_wait_screen();
     
-    ajax_post("api/change_user_password.php", "old_password=" + escape_form_data(document.getElementById("old_password").value) + "&new_password=" + escape_form_data(document.getElementById("new_password").value), function (response) {
+    ajax_fetch("api/change_user_password.php", "old_password=" + escape_form_data(document.getElementById("old_password").value) + "&new_password=" + escape_form_data(document.getElementById("new_password").value), function (response) {
         close_wait_screen();
         
         if (response === "SUCCEEDED") {
@@ -7281,6 +7318,18 @@ function reset_cache_db () {
             location.reload();
         };
     }
+}
+
+function show_rules () {
+    open_popup("rules_popup");
+    
+    ajax_fetch("rules.txt", null, function (response) {
+        if (response !== false) {
+            document.getElementById("rules_area").innerHTML = convert_to_html(response);
+        } else {
+            mes("ルール情報が表示できません", true);
+        }
+    });
 }
 
 
