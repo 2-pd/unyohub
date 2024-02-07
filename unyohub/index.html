@@ -1266,6 +1266,8 @@ article input[type="checkbox"] + label {
 }
 
 .operation_table tr:first-child th {
+    padding: 10px 0;
+    
     font-size: 16px;
     font-weight: bold;
 }
@@ -1370,6 +1372,29 @@ article input[type="checkbox"] + label {
 
 .operation_table .operation_overview span:not(:last-child):after {
     content: ",";
+}
+
+.sorting_criteria {
+    background-color: #eeeeee;
+    
+    color: #333333 !important;
+}
+
+.dark_mode .sorting_criteria {
+    background-color: #666666;
+    
+    color: #ffffff !important;
+}
+
+.sorting_criteria:after {
+    content: "▼";
+    
+    margin-left: 5px;
+    
+    opacity: 0.5;
+    
+    font-size: 10px;
+    vertical-align: middle;
 }
 
 article h2 {
@@ -2259,6 +2284,19 @@ a {
     color: inherit;
 }
 
+#train_detail_day {
+    position: absolute;
+    top: 12px;
+    left: 16px;
+    
+    padding: 4px 20px;
+    
+    border-radius: 6px;
+    
+    line-height: 24px;
+    font-size: 16px;
+}
+
 #train_detail_popup h4, #operation_detail_popup h4 {
     margin-top: 30px;
     margin-bottom: 10px;
@@ -2301,15 +2339,16 @@ a {
 }
 
 .train_detail_departure_times_highlight:before {
-    top: 10px;
-    left: -18px;
+    top: 11px;
+    left: -17px;
     
-    width: 16px;
-    height: 16px;
+    width: 12px;
+    height: 12px;
     
     background-color: #ffff33;
     
-    border-radius: 8px;
+    border: 1px solid #ffffff;
+    border-radius: 7px;
 }
 
 .dark_mode .train_detail_departure_times:before {
@@ -2318,6 +2357,8 @@ a {
 
 .dark_mode .train_detail_departure_times_highlight:before {
     background-color: #cccc33;
+    
+    border-color: #666666;
 }
 
 .train_detail_departure_times:last-of-type {
@@ -2829,18 +2870,6 @@ input[type="radio"] + label small {
                 <select class="wide_select" id="operation_search_cars_count" onchange="operation_table_list_number();"><option value="" selected="selected"></option></select>
                 <select class="wide_select" id="operation_search_starting_location" onchange="operation_table_list_number();"><option value="" selected="selected"></option></select>
                 <select class="wide_select" id="operation_search_terminal_location" onchange="operation_table_list_number();"><option value="" selected="selected"></option></select>
-                <select class="wide_select" id="operation_search_first_departure_time" onchange="operation_table_list_number();">
-                    <option value="" selected="selected">出庫時間 指定なし</option>
-                    <option value="10:00">10時以降</option>
-                    <option value="14:00">14時以降</option>
-                    <option value="18:00">18時以降</option>
-                </select>
-                <select class="wide_select" id="operation_search_final_arrival_time" onchange="operation_table_list_number();">
-                    <option value="" selected="selected">入庫時間 指定なし</option>
-                    <option value="10:00">10時以前</option>
-                    <option value="14:00">14時以前</option>
-                    <option value="18:00">18時以前</option>
-                </select>
                 <a href="javascript:void(0);" class="additional_setting_link" onclick="reset_operation_narrow_down(false);">絞り込み条件のリセット</a>
             </div>
         </div>
@@ -2941,7 +2970,7 @@ input[type="radio"] + label small {
     <div class="popup" id="rules_popup">
         <button type="button" class="popup_close_button" onclick="popup_close();"></button>
         <h2>ルールとポリシー</h2>
-        <div id="rules_area"></div>
+        <div id="rules_area" class="wait_icon"></div>
     </div>
     <div id="popup_screen">
         <div id="popup_screen_blank_area" onclick="close_square_popup();"></div>
@@ -2986,6 +3015,7 @@ input[type="radio"] + label small {
         </div>
         <div class="preview_popup" id="train_detail_popup">
             <button type="button" class="popup_close_button" onclick="close_square_popup();"></button>
+            <span id="train_detail_day"></span>
             <div id="train_detail_area" class="load_icon"></div>
         </div>
         <div class="preview_popup" id="operation_detail_popup">
@@ -5336,6 +5366,16 @@ function train_detail (line_id, train_number, first_departure_time, train_direct
     
     document.getElementById("train_detail_area").innerHTML = buf;
     
+    var train_detail_day_elm = document.getElementById("train_detail_day");
+    
+    train_detail_day_elm.innerText = railroad_info["operations"][timetable["operation_table"]]["operation_name"];
+    
+    if (!config["dark_mode"]) {
+        train_detail_day_elm.style.backgroundColor = railroad_info["operations"][timetable["operation_table"]]["main_color"];
+    } else {
+        train_detail_day_elm.style.backgroundColor = convert_color_dark_mode(railroad_info["operations"][timetable["operation_table"]]["main_color"]);
+    }
+    
     document.getElementById("train_detail_popup").scrollTop = 0;
     
     if (show_operation_data) {
@@ -6419,11 +6459,10 @@ var search_group_name_elm = document.getElementById("operation_search_group_name
 var search_cars_count_elm = document.getElementById("operation_search_cars_count");
 var search_starting_location_elm = document.getElementById("operation_search_starting_location");
 var search_terminal_location_elm = document.getElementById("operation_search_terminal_location");
-var search_first_departure_time_elm = document.getElementById("operation_search_first_departure_time");
-var search_final_arrival_time_elm = document.getElementById("operation_search_final_arrival_time");
 
 var operation_table_back_button_elm = document.getElementById("operation_table_back_button");
 
+var operation_table_sorting_criteria = "operation_number";
 var operation_table_wrapper_scroll_amount;
 var operation_table_check_wrapper_scroll;
 
@@ -6464,16 +6503,6 @@ function operation_table_list_number () {
         search_filter_count++
     }
     
-    var search_first_departure_time = search_first_departure_time_elm.value;
-    if (search_first_departure_time.length >= 1) {
-        search_filter_count++
-    }
-    
-    var search_final_arrival_time = search_final_arrival_time_elm.value;
-    if (search_final_arrival_time.length >= 1) {
-        search_filter_count++
-    }
-    
     var search_filter_count_elm = document.getElementById("operation_search_filter_count");
     
     if (search_filter_count >= 1) {
@@ -6483,6 +6512,27 @@ function operation_table_list_number () {
     }
     
     var operation_numbers = Object.keys(operations["operations"]).toSorted();
+    
+    if (operation_table_sorting_criteria  !== "operation_number") {
+        var tmp_operation_list = {};
+        
+        if (operation_table_sorting_criteria === "first_departure_time") {
+            for (var cnt = 0; cnt < operation_numbers.length; cnt++) {
+                tmp_operation_list[operations["operations"][operation_numbers[cnt]]["first_departure_time"] + "_" + cnt] = operation_numbers[cnt];
+            }
+        } else {
+            for (var cnt = 0; cnt < operation_numbers.length; cnt++) {
+                tmp_operation_list[operations["operations"][operation_numbers[cnt]]["final_arrival_time"] + "_" + cnt] = operation_numbers[cnt];
+            }
+        }
+        
+        var time_keys = Object.keys(tmp_operation_list).toSorted();
+        
+        operation_numbers = [];
+        for (cnt = 0; cnt < time_keys.length; cnt++) {
+            operation_numbers[cnt] = tmp_operation_list[time_keys[cnt]];
+        }
+    }
     
     var buf = "";
     for (var cnt = 0; cnt < operation_numbers.length; cnt++) {
@@ -6499,7 +6549,7 @@ function operation_table_list_number () {
             search_terminal_location_list.push(operations["operations"][operation_numbers[cnt]]["terminal_location"]);
         }
         
-        if ((search_group_name !== "" && operations["operations"][operation_numbers[cnt]]["operation_group_name"] !== search_group_name) || (search_cars_count !== "" && operations["operations"][operation_numbers[cnt]]["cars_count"] !== Number(search_cars_count)) || (search_starting_location !== "" && operations["operations"][operation_numbers[cnt]]["starting_location"] !== search_starting_location) || (search_terminal_location !== "" && operations["operations"][operation_numbers[cnt]]["terminal_location"] !== search_terminal_location) || (search_first_departure_time !== "" && operations["operations"][operation_numbers[cnt]]["first_departure_time"] < search_first_departure_time) || (search_final_arrival_time !== "" && operations["operations"][operation_numbers[cnt]]["final_arrival_time"] > search_final_arrival_time)) {
+        if ((search_group_name !== "" && operations["operations"][operation_numbers[cnt]]["operation_group_name"] !== search_group_name) || (search_cars_count !== "" && operations["operations"][operation_numbers[cnt]]["cars_count"] !== Number(search_cars_count)) || (search_starting_location !== "" && operations["operations"][operation_numbers[cnt]]["starting_location"] !== search_starting_location) || (search_terminal_location !== "" && operations["operations"][operation_numbers[cnt]]["terminal_location"] !== search_terminal_location)) {
             continue;
         }
         
@@ -6602,7 +6652,19 @@ function operation_table_list_number () {
     search_terminal_location_elm.value = search_terminal_location;
     
     if (buf.length !== 0) {
-        operation_table_area_elm.innerHTML = "<table class='operation_table'><tr><th>運用番号</th><th>○出庫</th><th>△入庫</th></tr>" + buf + "</table>";
+        switch (operation_table_sorting_criteria) {
+            case "operation_number":
+                var buf_3 = "<th class='sorting_criteria'>運用番号</th><th onclick='sort_operation_table(\"first_departure_time\")'>出庫時刻</th><th onclick='sort_operation_table(\"final_arrival_time\")'>入庫時刻</th>";
+                break;
+            case "first_departure_time":
+                var buf_3 = "<th onclick='sort_operation_table(\"operation_number\")'>運用番号</th><th class='sorting_criteria'>出庫時刻</th><th onclick='sort_operation_table(\"final_arrival_time\")'>入庫時刻</th>";
+                break;
+            case "final_arrival_time":
+                var buf_3 = "<th onclick='sort_operation_table(\"operation_number\")'>運用番号</th><th onclick='sort_operation_table(\"first_departure_time\")'>出庫時刻</th><th class='sorting_criteria'>入庫時刻</th>";
+                break;
+        }
+        
+        operation_table_area_elm.innerHTML = "<table class='operation_table'><tr>" + buf_3 + "</tr>" + buf + "</table>";
     } else {
         operation_table_area_elm.innerHTML = "<div class='no_data'>絞り込み条件に一致する運用が見つかりません</div>";
     }
@@ -6610,6 +6672,12 @@ function operation_table_list_number () {
     operation_table_wrapper_elm.scrollTop = operation_table_wrapper_scroll_amount;
     
     operation_table_check_wrapper_scroll = true;
+}
+
+function sort_operation_table (sorting_criteria) {
+    operation_table_sorting_criteria = sorting_criteria;
+    
+    operation_table_list_number();
 }
 
 function operation_table_wrapper_onscroll () {
@@ -6623,8 +6691,6 @@ function reset_operation_narrow_down (close_menu = true) {
     search_cars_count_elm.value="";
     search_starting_location_elm.value="";
     search_terminal_location_elm.value="";
-    search_first_departure_time_elm.value="";
-    search_final_arrival_time_elm.value="";
     
     if (close_menu) {
         document.getElementById("operation_search_menu").checked = false;
