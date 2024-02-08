@@ -134,6 +134,10 @@ while cnt < len(operations):
                     print("エラー: " + train_number + " の時刻値が異常です: " + str(cnt + 1) + "行目 " + str(cnt_2 + 1) + "列目")
                     error_occurred = True
                 
+                if first_departure_time > final_arrival_time:
+                    print("エラー: " + train_number + " の始発時刻と終着時刻が矛盾しています: " + str(cnt + 1) + "行目 " + str(cnt_2 + 1) + "列目")
+                    error_occurred = True
+                
                 if len(line_list) == 0:
                     print("エラー: " + train_number + " の走行範囲が複数の路線に跨っています: " + str(cnt + 1) + "行目 " + str(cnt_2 + 1) + "列目")
                     error_occurred = True
@@ -149,17 +153,25 @@ while cnt < len(operations):
                 
                 if len(output_data[-1]["operations"][-1]["trains"]) >= 1:
                     if output_data[-1]["operations"][-1]["trains"][-1]["final_arrival_time"] == None:
+                        if output_data[-1]["operations"][-1]["trains"][-1]["first_departure_time"] > first_departure_time:
+                            print("エラー: " + train_number + " の始発時刻が前の列車の終着時刻と矛盾しています: " + str(cnt + 1) + "行目 " + str(cnt_2 + 1) + "列目")
+                            error_occurred = True
+                        
                         if cnt_2 >= 2:
                             output_data[-1]["operations"][-1]["trains"][-1]["final_arrival_time"] = first_departure_time
                     elif output_data[-1]["operations"][-1]["trains"][-1]["final_arrival_time"] != first_departure_time:
                         stopped_train_first_departure_time = output_data[-1]["operations"][-1]["trains"][-1]["final_arrival_time"]
-
+                        
+                        if stopped_train_first_departure_time > first_departure_time:
+                            print("エラー: " + train_number + " の始発時刻が前の列車の終着時刻と矛盾しています: " + str(cnt + 1) + "行目 " + str(cnt_2 + 1) + "列目")
+                            error_occurred = True
+                        
                         if output_data[-1]["operations"][-1]["trains"][-1]["train_number"] == train_number:
                             stopped_train_number = train_number
                         else:
                             stopped_train_number = "_" + train_number
                             time_id = stopped_train_first_departure_time + "-" + first_departure_time
-
+                            
                             if stopped_train_number in stopped_train_list:
                                 if time_id in stopped_train_list[stopped_train_number]:
                                     stopped_train_index = stopped_train_list[stopped_train_number].index(time_id) + 1

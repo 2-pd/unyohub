@@ -25,15 +25,22 @@ new_timetable_t = {}
 
 line_list = timetable_data_t[0][0].split()
 line_stations = {}
+rename_list = {}
 
-for line_id in line_list:
-    new_timetable_t[line_id] = []
+for cnt in range(len(line_list)):
+    period_pos = line_list[cnt].rfind(".")
     
-    line_stations[line_id] = []
+    if period_pos != -1:
+        rename_list[line_list[cnt][:period_pos]] = line_list[cnt][period_pos + 1:]
+        line_list[cnt] = line_list[cnt][:period_pos]
     
-    for cnt in range(2, len(timetable_data_t[0])):
-        if line_id in timetable_data_t[0][cnt]:
-            line_stations[line_id].append(cnt)
+    new_timetable_t[line_list[cnt]] = []
+    
+    line_stations[line_list[cnt]] = []
+    
+    for cnt_2 in range(2, len(timetable_data_t[0])):
+        if line_list[cnt] in timetable_data_t[0][cnt_2]:
+            line_stations[line_list[cnt]].append(cnt_2)
 
 for cnt in range(1, len(timetable_data_t)):
     if timetable_data_t[cnt][0] == "":
@@ -80,9 +87,12 @@ if file_name[0:10] == "timetable_":
     file_name = file_name[10:]
 
 for line_id in line_list:
-    new_file_name = "timetable_" + line_id + "." + file_name
+    new_file_name = "timetable_" + line_id + "." + file_name[:-4]
     
-    with open(new_file_name, "w", encoding="utf-8") as csv_f:
+    if line_id in rename_list:
+        new_file_name = new_file_name[:new_file_name.rfind(".") + 1] + rename_list[line_id]
+    
+    with open(new_file_name + ".csv", "w", encoding="utf-8") as csv_f:
         csv_writer = csv.writer(csv_f)
         csv_writer.writerows([list(x) for x in zip(*new_timetable_t[line_id])])
 
