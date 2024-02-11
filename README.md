@@ -10,7 +10,7 @@
 5. setup_scriptsフォルダからlibs_setup.phpをサーバにアップロードし、サーバ上で実行します。このとき、管理者ユーザーのユーザーIDと初期パスワードが表示されるため、これらをメモしてください。
 6. ここからはサーバではなくPC上での作業となります。作業に使用するPCではコマンドラインからPython3を実行できる必要があります。まずは、unyohubフォルダ内に空のフォルダ「data」を作成し、そこに任意の名前で路線系統のデータフォルダを作成してください。
 7. このデータフォルダにsetup_scriptsからinitialize_db.pyをコピーしてPython3で実行すると、railroad.dbが生成されます。
-8. documentsフォルダ内のファイル構成資料を参考に、データフォルダ内にrailroad_info.jsonを作成します。
+8. documentsフォルダ内のファイル構成資料とサンプルファイルを参考に、データフォルダ内にrailroad_info.jsonを作成します。
 9. 任意の空フォルダに、その路線系統で使用する車両アイコン画像ファイル(拡張子はwebp、png、gifのいずれか)を作成します。それぞれの画像のファイル名(拡張子以外の部分)はアイコンIDとなるため、半角英数字とハイフンのみで構成することを推奨します。
 10. このフォルダにsetup_scriptsからembed_train_icon.pyをコピーして実行し、生成されたtrain_icons.jsonを路線系統のデータフォルダにコピーします。
 11. documentsフォルダ内のサンプルを参考にして、編成表、各ダイヤの運用表、各路線の時刻表をデータフォルダ内に作成し、それぞれ、convert_formation_table.py、convert_operation_table.py、convert_timetable_2.pyを実行してJSONファイルに変換します。

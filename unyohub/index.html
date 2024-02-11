@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width,initial-scale=1,interactive-widget=resizes-content">
 <script>
     const UNYOHUB_APP_NAME = "鉄道運用Hub";
-    const UNYOHUB_VERSION = "24.02-1";
+    const UNYOHUB_VERSION = "24.02-2";
     const UNYOHUB_INDEXEDDB_VERSION = 2310001;
     const UNYOHUB_LICENSE_TEXT = "このアプリケーションは無権利創作宣言に準拠して著作権放棄されています。";
     const UNYOHUB_LICENSE_URL = "https://www.2pd.jp/license/";
@@ -2050,10 +2050,10 @@ a {
 }
 
 .important_announcement {
-    background-image: url(data:image/webp;base64,UklGRkoBAABXRUJQVlA4TD4BAAAvO8AOEIfBoG0kR77e2DyS509maDBu20YS59z+e93nLsSgbSRHvt7YPJLnT2aY2Lat5Gv6QKQy/8psXBuL5vY4AZXC935pvoT8eWuVqmLxGPADgBsAgBkCDEY6SERjwVFGsdBISiXGKD6yGgpgcNDQpSJoDD5iUgQga7W8qqy5pjee+p9fAYIbSYqkXK7qZWZm6pn/f2+nh3J576SI/k8AgkurTrMiqaw0O9sLQuenRlKt41yIQ1VSX9s7NiqEug44qFDqHsC1KqS1AjAT2iFKJjbrO21s5rqW2L2M04tNzhOmboOpWWWqClOS/1NY32kZ3qvWd1oGL+P0Eqgy1dtMrQlTd8u0vJjYrO+0sZWvGMWWwgGQr7HUiwB2hkOPuF0rg64QvK+lr36COzsvp0v7RYS+nnutajqqre7iimA=);
+    background-image: url(data:image/webp;base64,UklGRnIBAABXRUJQVlA4TGYBAAAvNUANELfBKpJkJ/3IGQQggT/8K0trg1EbSY68EcDy53i6/wRWkSQ76UfOIAAJ/OFfWVpWsW0ruffh/kskshKCCJRwd7cToHRwubTBAJ8bAHAAAIACAAySwkgMDIaEA7dBi7BmIi4KIBflj6SA9mWETVFR8PtFRqavv7aN1q+6+i0KvDLKJimly1Tfun3iCZe3BMM/POMYqdXSMQ5ax0rnOuneN8G1bdtms5PL1LZtt///bw1OTo2HiP5PAAKnnU3KyFhNatOZIuIwJ5nW5mFEU0m2qiUC1gXJOj/2EXnJvOheNSX7OoClojkcfQ80qg/kJe3F8b3QyCom8hbktH0bvc1tVLK3kbS3YeVt0P9HOZ19T9xeQI9qt/fdUSUyVBfH90KVqt5GqXMb3dFtrJC7hSqw0DSHo++BRvUBtGjibQCAyHErulcY53nlxvAXdcVHN7YIOStzqQ4QcdSrpGw8Nl3qjRAI);
     background-repeat: no-repeat;
-    background-size: 30px;
-    background-position: 8px 50%;
+    background-size: 27px;
+    background-position: 9px 50%;
 }
 
 .new_icon:before, .new_icon_red:before {
@@ -6015,28 +6015,29 @@ function operation_detail (operation_number, operation_data_date_ts_or_operation
                         promise_2_resolved = true;
                         resolve();
                     } else if (promise_1_resolved) {
-                        draw_operation_detail(operation_number, operation_data_date_ts_or_operation_name, operation_detail_write_button_enabled, formation_text);
+                        draw_operation_detail(operation_number, operation_data_date_ts_or_operation_name, formation_text);
                     }
                 }, function () {}, operation_table_name);
             });
             
             Promise.all([promise_1, promise_2]).then(function () {
-                draw_operation_detail(operation_number, operation_data_date_ts_or_operation_name, operation_detail_write_button_enabled, formation_text);
+                draw_operation_detail(operation_number, operation_data_date_ts_or_operation_name, formation_text);
             });
             
             return;
         }
     }
     
-    draw_operation_detail(operation_number, operation_data_date_ts_or_operation_name, show_write_operation_data_button, formation_text);
+    draw_operation_detail(operation_number, operation_data_date_ts_or_operation_name, formation_text);
 }
 
-function draw_operation_detail (operation_number, operation_data_date_ts_or_operation_name, show_write_operation_data_button, formation_text) {
+function draw_operation_detail (operation_number, operation_data_date_ts_or_operation_name, formation_text) {
     if (typeof operation_data_date_ts_or_operation_name === "string") {
         var operation_table_name = operation_data_date_ts_or_operation_name;
         var operation_data_date_str = null;
         var is_today = false;
         var operation_table_name_or_ts = "\"" + operation_data_date_ts_or_operation_name + "\"";
+        operation_detail_write_button_enabled = false;
     } else {
         var operation_table_name = get_days_operation(operation_data_date_ts_or_operation_name);
         var operation_data_date_str = get_date_string(operation_data_date_ts_or_operation_name);
@@ -6062,7 +6063,7 @@ function draw_operation_detail (operation_number, operation_data_date_ts_or_oper
     
     var buf = "<h2 style='background-color: " + bg_color + ";" + color_style + "'><button type='button' class='previous_button' onclick='previous_operation_number(\"" + operation_number + "\", " + operation_table_name_or_ts + ");'></button>" + operation_number + "運用<small>" + operations["operations"][operation_number]["operation_group_name"] + " (" + operations["operations"][operation_number]["cars_count"] + "両)</small><button type='button' class='next_button' onclick='next_operation_number(\"" + operation_number + "\", " + operation_table_name_or_ts + ");'></button></h2>";
     
-    if (operation_data_date_str !== null) {
+    if (formation_text !== null || operation_detail_write_button_enabled) {
         buf += "<div class='formation_data_area'>";
         
         if (formation_text === null && operation_number in operation_data["operations"] && operation_data["operations"][operation_number] !== null) {
@@ -6204,7 +6205,7 @@ function draw_operation_detail (operation_number, operation_data_date_ts_or_oper
             if (operations_list.length >= 1) {
                 buf += "<div>併結:";
                 for (var cnt_2 = 0; cnt_2 < operations_list.length; cnt_2++) {
-                    buf += " <a href='javascript:void(0);' onclick='operation_detail(\"" + operations_list[cnt_2] + "\", " + operation_table_name_or_ts + ")'>" + operations_list[cnt_2] + "運用</a>";
+                    buf += " <a href='javascript:void(0);' onclick='operation_detail(\"" + operations_list[cnt_2] + "\", " + operation_table_name_or_ts + ");'>" + operations_list[cnt_2] + "運用</a>";
                 }
                 buf += "</div>";
             }
@@ -6227,13 +6228,13 @@ function draw_operation_detail (operation_number, operation_data_date_ts_or_oper
     }
     buf += " 入庫</b><time>" + operations["operations"][operation_number]["final_arrival_time"] + "</time></div>";
     
-    if (navigator.onLine && show_write_operation_data_button) {
-        buf += "<button type='button' class='wide_button' onclick='write_operation_data(get_date_string(operation_data_date), \"" + operation_number + "\");'>運用情報を投稿</button>";
+    if (navigator.onLine && operation_detail_write_button_enabled) {
+        buf += "<button type='button' class='wide_button' onclick='write_operation_data(\"" + operation_data_date_str + "\", \"" + operation_number + "\");'>運用情報を投稿</button>";
     }
     
     operation_detail_area_elm.innerHTML = buf;
     
-    if (operation_data_date_str !== null && navigator.onLine) {
+    if (navigator.onLine && formation_text !== null || operation_detail_write_button_enabled) {
         get_operation_data_detail(operation_data_date_str, operation_number, "operation_data_detail_area");
     }
 }
