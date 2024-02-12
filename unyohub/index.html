@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width,initial-scale=1,interactive-widget=resizes-content">
 <script>
     const UNYOHUB_APP_NAME = "鉄道運用Hub";
-    const UNYOHUB_VERSION = "24.02-3";
+    const UNYOHUB_VERSION = "24.02-4";
     const UNYOHUB_INDEXEDDB_VERSION = 2310001;
     const UNYOHUB_LICENSE_TEXT = "このアプリケーションは無権利創作宣言に準拠して著作権放棄されています。";
     const UNYOHUB_LICENSE_URL = "https://www.2pd.jp/license/";
@@ -1002,6 +1002,8 @@ input[type="checkbox"]:checked + label.drop_down + div {
 
 article input[type="checkbox"] + label {
     margin-top: 10px;
+    
+    text-align: left;
 }
 
 .no_data {
@@ -2395,7 +2397,7 @@ a {
     
     width: 100%;
     
-    margin-bottom: 8px;
+    padding-bottom: 8px;
     
     text-align: left;
 }
@@ -2656,6 +2658,9 @@ input[type="checkbox"] + label {
     
     line-height: 24px;
     font-size: 18px;
+}
+
+input[type="checkbox"] + label:not(.drop_down) {
     text-align: left;
 }
 
