@@ -25,6 +25,8 @@ _/_/_/_/ ファイル構成 _/_/_/_/
    └ zizai_captcha.db ・・・Zizai CAPTCHAデータベース
 └ config/
    └ unyohub.json ・・・運用観察Hub基本設定ファイル
+   └ railroads.txt ・・・路線系統識別名を1行に1つずつ列挙したファイル
+   └ railroads_cache.json ・・・railroads.txtから自動生成されるキャッシュファイル
    └ announcements.json ・・・お知らせデータ
    └ wakarana_config.ini ・・・Wakarana設定ファイル
    └ wakarana_custom_fields.json ・・・Wakaranaカスタムフィールド設定ファイル
@@ -73,9 +75,28 @@ _/_/_/_/ 設定ファイル設定値 _/_/_/_/
 ███ unyohub.json ███
 
 {
-    "railroads" : dataフォルダ内の各路線系統のフォルダ名を配列で列挙,
     "allow_sign_up" : 新規ユーザーの登録を認めるか(BOOL値),
     "allow_guest_user" : ログインしていないユーザーの投稿を認めるか(BOOL値)
+}
+
+
+███ railroads.txt ███
+
+路線系統識別名を1行に1つずつ列挙
+
+
+███ railroads_cache.json ███
+
+※このファイルは変換スクリプトにより自動生成されるものである
+{
+    "railroads" : {
+        "路線系統識別名" : {
+        "railroad_name" : 路線系統表示名,
+        "main_color": 路線系統のテーマカラー,
+        "railroad_icon" : BASE64エンコードされた路線系統のアイコンデータ
+        }...
+    },
+    "railroads_order" : 路線系統識別名をrailroads.txtに記載された順に列挙した配列
 }
 
 

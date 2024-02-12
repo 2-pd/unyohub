@@ -7,7 +7,7 @@
 # APIエンドポイント
 
 ## check_logged_in.php
-クライアントのログイン状態を確認し、ログインしていればユーザー情報を返す。
+クライアントのログイン状態を確認し、ログインしていればユーザー情報を返す
 
 ### 引数
 **$_COOKIE["unyohub_login_token"]** : Wakaranaのログイントークン(ある場合)
@@ -154,17 +154,16 @@
 **$_POST["last_modified_timestamp"]** : タイムスタンプ(UTC)
 
 ### 応答
-**unyohub.jsonまたは各路線データフォルダのrailroad_info.jsonの変更日時がタイムスタンプより新しかった場合** :  
-{  
-    "路線系統識別名" : {  
-      "railroad_name" : 路線系統表示名,  
-      "main_color": 路線系統のテーマカラー,  
-      "railroad_icon" : BASE64エンコードされた路線系統のアイコンデータ  
-    }...  
-}  
-▲クライアント端末からAccept-Encodingヘッダーが送信されていた場合、このデータは自動的にgzip圧縮される
+**railroads_cache.jsonが存在しなかった場合** :  
+railroads.txtに登録されている各路線系統のrailroad_info.jsonからrailroads_cache.jsonを生成して返す  
+railroads_cache.jsonの変更日時は、生成日時ではなく、railroads.txtと各railroad_info.jsonのうち最も新しいものの変更日時がセットされる  
+▲クライアント端末からAccept-Encodingヘッダーが送信されていた場合、このデータは自動的にgzip圧縮される  
   
-**unyohub.json及び各路線データフォルダのrailroad_info.jsonの変更日時がいずれもタイムスタンプ以前だった場合** :  
+**railroads_cache.jsonが存在し、その変更日時がタイムスタンプより新しかった場合** :  
+railroads_cache.jsonを返す  
+▲クライアント端末からAccept-Encodingヘッダーが送信されていた場合、このデータは自動的にgzip圧縮される  
+  
+**railroads_cache.jsonが存在し、その変更日時がタイムスタンプ以前だった場合** :  
 文字列「NO_UPDATES_AVAILABLE」  
   
 **エラーの場合** :  

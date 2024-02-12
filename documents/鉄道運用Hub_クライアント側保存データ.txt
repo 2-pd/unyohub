@@ -13,15 +13,17 @@ _/_/_/_/ クライアント側ローカルストレージ _/_/_/_/
     "dark_mode" : ダークモードの有効無効(BOOL値),
     "refresh_interval" : 運用データを自動で再取得する間隔(分単位の整数値),
     "operation_data_cache_period" : 運用データのキャッシュ保管日数(整数値),
-    "show_arriving_trains_on_timetable" : 時刻表閲覧時に当駅止まりを表示するか(BOOL値)
+    "show_arriving_trains_on_timetable" : 時刻表閲覧時に当駅止まりを表示するか(BOOL値),
+    "colorize_beginners_posts" : ビギナーユーザーから投稿された情報を色で区別して表示するか(BOOL値),
+    "simplify_operation_details" : 運用表の各運用詳細情報閲覧時に列車情報を簡略表示するか(BOOL値)
 }
 
 
-███ unyohub_common_caches ███
+███ unyohub_railroads_caches ███
 
 {
-    "railroads" : railroads.phpのレスポンスを保存,
-    "last_modified_timestamp" : このデータの元になったJSONファイルが更新された日時のタイムスタンプ値(UTC、秒単位)
+    "last_modified_timestamp" : このデータの元になったJSONファイルが更新された日時のタイムスタンプ値(UTC、秒単位),
+    以降の項目はrailroads.phpのレスポンスをそのまま展開して使用
 }
 
 
