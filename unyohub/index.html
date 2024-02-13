@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width,initial-scale=1,interactive-widget=resizes-content">
 <script>
     const UNYOHUB_APP_NAME = "鉄道運用Hub";
-    const UNYOHUB_VERSION = "24.02-4";
+    const UNYOHUB_VERSION = "24.02-5";
     const UNYOHUB_INDEXEDDB_VERSION = 2310001;
     const UNYOHUB_LICENSE_TEXT = "このアプリケーションは無権利創作宣言に準拠して著作権放棄されています。";
     const UNYOHUB_LICENSE_URL = "https://www.2pd.jp/license/";
@@ -1374,27 +1374,33 @@ article input[type="checkbox"] + label {
     content: ",";
 }
 
-.sorting_criteria {
+.sorting_criteria, .sorting_criteria_desc {
     background-color: #eeeeee;
     
     color: #333333 !important;
 }
 
-.dark_mode .sorting_criteria {
+.dark_mode .sorting_criteria, .dark_mode .sorting_criteria_desc {
     background-color: #666666;
     
     color: #ffffff !important;
 }
 
-.sorting_criteria:after {
-    content: "▼";
-    
+.sorting_criteria:after, .sorting_criteria_desc:after {
     margin-left: 5px;
     
     opacity: 0.5;
     
     font-size: 10px;
     vertical-align: middle;
+}
+
+.sorting_criteria:after {
+    content: "▲";
+}
+
+.sorting_criteria_desc:after {
+    content: "▼";
 }
 
 h2 {
@@ -2186,6 +2192,19 @@ a {
     font-weight: normal;
 }
 
+.operation_data_detail small {
+    font-size: 14px;
+    color: #666666;
+}
+
+.dark_mode .operation_data_detail small {
+    color: #cccccc;
+}
+
+.operation_data_detail a small {
+    color: inherit !important;
+}
+
 .operation_data_detail .descriptive_text {
     padding: 0 5px;
 }
@@ -2376,6 +2395,7 @@ a {
 
 .operation_table_train:after {
     bottom: -21px;
+    left: calc(50% - 16px);
     
     border-width: 16px;
     border-top-width: 8px;
@@ -5154,9 +5174,9 @@ function get_operation_data_detail (operation_date, operation_number_or_list, ar
                         }
                         
                         if (data[operation_numbers[cnt]][cnt_2]["website_url"] !== null) {
-                            user_name_html = "<span" + class_html + "><a href='" + add_slashes(data[operation_numbers[cnt]][cnt_2]["website_url"]) + "' target='_blank' class='external_link'>" + user_name_html + " (" + data[operation_numbers[cnt]][cnt_2]["user_id"] + ")</a>";
+                            user_name_html = "<span" + class_html + "><a href='" + add_slashes(data[operation_numbers[cnt]][cnt_2]["website_url"]) + "' target='_blank' class='external_link'>" + user_name_html + " <small>(" + data[operation_numbers[cnt]][cnt_2]["user_id"] + ")</small></a>";
                         } else {
-                            user_name_html = "<span" + class_html + ">" + user_name_html + " (" + data[operation_numbers[cnt]][cnt_2]["user_id"] + ")";
+                            user_name_html = "<span" + class_html + ">" + user_name_html + " <small>(" + data[operation_numbers[cnt]][cnt_2]["user_id"] + ")</small>";
                         }
                     } else {
                         var user_name_html = "<span>(ゲスト様)";
@@ -6726,6 +6746,7 @@ var search_starting_location_elm = document.getElementById("operation_search_sta
 var search_terminal_location_elm = document.getElementById("operation_search_terminal_location");
 
 var operation_table_sorting_criteria = "operation_number";
+var operation_table_ascending_order = true;
 
 function operation_table_list_number () {
     operation_table_name_elm.innerText = railroad_info["operations"][operation_table_name]["operation_name"];
@@ -6788,6 +6809,14 @@ function operation_table_list_number () {
         for (cnt = 0; cnt < time_keys.length; cnt++) {
             operation_numbers[cnt] = tmp_operation_list[time_keys[cnt]];
         }
+    }
+    
+    if (operation_table_ascending_order) {
+        var sorting_criteria_class_name = "sorting_criteria";
+    } else {
+        operation_numbers.reverse();
+        
+        var sorting_criteria_class_name = "sorting_criteria_desc";
     }
     
     var ts = get_timestamp();
@@ -6919,13 +6948,13 @@ function operation_table_list_number () {
     if (buf.length !== 0) {
         switch (operation_table_sorting_criteria) {
             case "operation_number":
-                var buf_3 = "<th class='sorting_criteria'>運用番号</th><th onclick='sort_operation_table(\"first_departure_time\")'>出庫時刻</th><th onclick='sort_operation_table(\"final_arrival_time\")'>入庫時刻</th>";
+                var buf_3 = "<th class='" + sorting_criteria_class_name + "' onclick='operation_table_reverse_order();'>運用番号</th><th onclick='sort_operation_table(\"first_departure_time\")'>出庫時刻</th><th onclick='sort_operation_table(\"final_arrival_time\")'>入庫時刻</th>";
                 break;
             case "first_departure_time":
-                var buf_3 = "<th onclick='sort_operation_table(\"operation_number\")'>運用番号</th><th class='sorting_criteria'>出庫時刻</th><th onclick='sort_operation_table(\"final_arrival_time\")'>入庫時刻</th>";
+                var buf_3 = "<th onclick='sort_operation_table(\"operation_number\")'>運用番号</th><th class='" + sorting_criteria_class_name + "' onclick='operation_table_reverse_order();'>出庫時刻</th><th onclick='sort_operation_table(\"final_arrival_time\")'>入庫時刻</th>";
                 break;
             case "final_arrival_time":
-                var buf_3 = "<th onclick='sort_operation_table(\"operation_number\")'>運用番号</th><th onclick='sort_operation_table(\"first_departure_time\")'>出庫時刻</th><th class='sorting_criteria'>入庫時刻</th>";
+                var buf_3 = "<th onclick='sort_operation_table(\"operation_number\")'>運用番号</th><th onclick='sort_operation_table(\"first_departure_time\")'>出庫時刻</th><th class='" + sorting_criteria_class_name + "' onclick='operation_table_reverse_order();'>入庫時刻</th>";
                 break;
         }
         
@@ -6937,6 +6966,13 @@ function operation_table_list_number () {
 
 function sort_operation_table (sorting_criteria) {
     operation_table_sorting_criteria = sorting_criteria;
+    operation_table_ascending_order = true;
+    
+    operation_table_list_number();
+}
+
+function operation_table_reverse_order () {
+    operation_table_ascending_order = !operation_table_ascending_order;
     
     operation_table_list_number();
 }
