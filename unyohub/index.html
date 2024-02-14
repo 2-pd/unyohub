@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width,initial-scale=1,interactive-widget=resizes-content">
 <script>
     const UNYOHUB_APP_NAME = "鉄道運用Hub";
-    const UNYOHUB_VERSION = "24.02-5";
+    const UNYOHUB_VERSION = "24.02-6";
     const UNYOHUB_INDEXEDDB_VERSION = 2310001;
     const UNYOHUB_LICENSE_TEXT = "このアプリケーションは無権利創作宣言に準拠して著作権放棄されています。";
     const UNYOHUB_LICENSE_URL = "https://www.2pd.jp/license/";
@@ -76,7 +76,7 @@ header {
     
     box-shadow: 0 0 3px 3px rgba(0,0,0,0.2);
     
-    z-index: 5;
+    z-index: 6;
 }
 
 .dark_mode header {
@@ -231,7 +231,7 @@ header {
     
     overflow-y: scroll;
     
-    z-index: 7;
+    z-index: 8;
     
     transition-duration: 0.25s;
     transition-property: all;
@@ -259,7 +259,7 @@ header {
     display: none;
 }
 
-#menu_user_name {
+#menu b {
     display: block;
     
     width: 90%;
@@ -273,7 +273,7 @@ header {
     text-align: center;
 }
 
-.dark_mode #menu_user_name {
+.dark_mode #menu b {
     background-color: #777777;
 }
 
@@ -327,6 +327,25 @@ header {
     vertical-align: top;
 }
 
+.off_line_message {
+    background-image: url(data:image/webp;base64,UklGRoQCAABXRUJQVlA4THgCAAAvL8ALELfDOLJtGU3+8VkpCcws/8cfg2AQSZKTJuMH/05wgIM4bCNJctJP/vFhUSSgwXy1jhtJUqTt7cnWio6ZbD3b7nlaX45xSG3aBgxenXIHilQEMp8b4a4Z9n2DVMDr/yeYpwKu8KnMUAMMYRigwRoA1BiCVCIMDgIwhEEBFCUUghLSeQ0oBAqFg3QnYAA1DgA16lQUAgeBg2EKAMAQAAxRYz2Oyz+VHgEJEQkeAQEJERkhlRNu3zde/z/9/08fn/ZZryNPxxqSFEniO3RNkpGv+T0v+94/0++jdk9DKlzSkGqoHCXQrm0z3GxYt0FtpLa5qW3btvv/TzM77ztbfpymb42J6L8Dt5EUqZKSFg7q4BXas4uw7uGkrMKahsZgUXbyYm+IYKLj35t0gBbfbAw6ttgpiSR3bQeT0NUyXYDqNycYz4suiFq3crOVIU1gepOTzn/dFGr7DRlqlmYxZyGij1loTPnElzvc6afPt7+vjwpoUwpp1AN8nYkdGoArUUkuXo1ohJPSQYeGwKF+OPlilqywaZzZ0ZC0ftWzmSciYg/3j/I22BGW9vfUnJrDk6Avbdll+LH/8w3HRvdv1DmzoG2pIDBp/0YdyVuKFyKZOTvp/NKFuuWSyJFQJw01KOsTtwPL9sahMv6V6MbylFV9WgBElTrmFFCO7QK5UpxhQNWBNDDpx4usjMNfUvu8ElTwEMFZ12sF599khtdE5I+tZI9xwmWIygwcY0WVyN5LZIanvrqv39EIEuRCKegP0pT4IlpYOSBYhN+CBRUvQpN6zXufS3NKxNWcCgsM+0XsEPQXs0PMX8wOMX/hHaJ/2iBixxMFAQ==);
+    background-repeat: no-repeat;
+    background-size: 24px;
+    background-color: #444444 !important;
+    
+    color: #ffffff;
+}
+
+.dark_mode .off_line_message {
+    background-color: #808080 !important;
+}
+
+#menu .off_line_message {
+    background-position: 50% 4px;
+    
+    padding-top: 28px;
+}
+
 #splash_screen, #railroad_select_popup {
     position: fixed;
     top: 0;
@@ -348,7 +367,7 @@ header {
 }
 
 .splash_screen_loaded {
-    z-index: 3 !important;
+    z-index: 4 !important;
 }
 
 #splash_screen:after, #railroad_select_popup:after {
@@ -382,7 +401,7 @@ header {
     width: 100%;
     min-height: calc(100% - 150px);
     
-    z-index: 4;
+    z-index: 5;
 }
 
 #splash_screen_inner {
@@ -394,7 +413,20 @@ header {
 }
 
 #splash_screen_login_status b {
+    display: inline-block;
+    
+    line-height: 30px;
     font-size: 20px;
+}
+
+#splash_screen_login_status .off_line_message {
+    padding: 0 10px 0 40px;
+    
+    background-position: 6px 50%;
+    
+    border-radius: 4px;
+    
+    font-size: 18px;
 }
 
 #announcements_overview, #announcements_heading {
@@ -452,6 +484,22 @@ header {
 
 .dark_mode #splash_screen_bottom a {
     color: #cccccc;
+}
+
+#blank_article {
+    position: fixed;
+    top: 40px;
+    
+    width: 100%;
+    height: calc(100% - 40px);
+    
+    background-color: #ffffff;
+    
+    z-index: 3;
+}
+
+.dark_mode #blank_article {
+    background-color: #444444;
 }
 
 #tab_area {
@@ -517,14 +565,14 @@ header {
     
     box-shadow: 0 0 8px 0 rgba(0,0,0,0.5);
     
-    z-index: 6;
+    z-index: 7;
 }
 
 .dark_mode #tab_area .active_tab {
     background-color: #444444 !important;
 }
 
-article, #blank_article {
+article {
     display: none;
     
     width: calc(100vw - 10px);
@@ -534,10 +582,6 @@ article, #blank_article {
     
     overflow-x: hidden;
     overflow-y: scroll;
-}
-
-#blank_article {
-    display: block;
 }
 
 .wide_button {
@@ -1674,7 +1718,7 @@ footer .previous_button, footer .next_button {
     
     background-color: #ffffff;
     
-    z-index: 9;
+    z-index: 19;
 }
 
 .dark_mode #popup_background {
@@ -1715,7 +1759,7 @@ footer .previous_button, footer .next_button {
     
     overflow: scroll;
     
-    z-index: 10;
+    z-index: 20;
 }
 
 .dark_mode .popup {
@@ -2860,6 +2904,9 @@ input[type="radio"] + label small {
             <a href="javascript:void(0);" onclick="open_square_popup('login_popup');">ログイン</a>
             <a href="javascript:void(0);" onclick="open_popup('sign_up_popup');">新規登録</a>
         </div>
+        <div id="menu_off_line">
+            <b class="off_line_message">端末がオフラインです</b>
+        </div>
         <hr>
         <a id="menu_announcements" href="javascript:void(0);" onclick="show_announcements();">お知らせ</a>
         <hr>
@@ -2880,12 +2927,12 @@ input[type="radio"] + label small {
             </div> 
         </div>
     </div>
-    <div id="tab_area"><button type="button" onclick="position_mode();" style="background-image: url(data:image/webp;base64,UklGRuICAABXRUJQVlA4TNYCAAAvNUANEP/jIJJkV+n9gZxBAq6xyn9rA1Jk266q3o/MFHRQqMYJcxzgIP4c7jkOG0lylJo3eA8hkDWp8jeuattWlXUe7trASUAUK8SgBbXsn8/nLjuAZrCvb2dvr/l9nne0zHeKtVYZYgUNW2QKgqZAqCEIQo0GDYQCFQRBEBIIJSoUEAJhmoss4qCj/eGLpOrAMIHB0BIGgw9VHa0jhto5yUYxsTfXGRnm3ykdRdSpXcMaNplqSHS0ISxTfv68d9nF/gURtv9teHg7JBnhUx96aPt+vr+WWiZO2MYWtTv7///jz/5zmWczSbgf73Qqp68T6XD4OZDkOWq4v93vIbBiAhdoaChouEHDL1yhkLeg0C4QBEG4J9Go4aADM0AQALaQ1LNvbZxt27Zt2/bb77ZNk9wHphH9h+BGkiLJmbnMe/AHgctSX1Nhl9PqMo39S4Itc9UBG5CuqjkmQ2GbJtERDnGVdps2pj6ezJTYUCknt86GTBv1HjYs+yjtiaJoVjiVosZGSBXBUgCQeXpxay7OMgGdS3iTNlXG9Z2UqwybmgG8duD035RmqhrwClSnd0DOVB14AdUl5By4As+luoXcqtx4XpQblQ8vh3YmF69MdYa6SSneBPBAV5gHmsDrdQA/XVf6ny5HksCnGPpJPju/NRb4k1wkCMZshAxTJHbiBRIEJa14RpB0+7F8yf/z96pWEPV4cTxJgpp2nCZBNuXFMFOCnmaMFpb/SVG9UIrgyITeuGARn6+Tx/Wvc1Dz38wMCiYfJ7DjH669P6RD0u7ffpj2bK4g18b8lmnmcUE1//gcK8+eNneyZNm7209SyVNeW4WsXVif8kvhmTUdiQl2C6DUvW4cxbIcsyy9hLVXqdR7HMhZtFnmQI5yB5ZZ+7Mzewe64veyfghkxToEsipfiX808veDH7nYMRT1aMRsPen6pY6p+rFVN8aqe/sWbH8ppELj7Q8=); border-color: #ee3333;">走行位置</button><button type="button" onclick="timetable_mode();" style="background-image: url(data:image/webp;base64,UklGRmgEAABXRUJQVlA4TFsEAAAvNUANEA8GOZIkRZLn8n9t9RdiNcJ7MWOlGo4jSXKU7JO/swabsJvghwFabEOOJNlVVP2QDmAJRnHGZU6a1fv1FNzatlVV8+BEN6MWOqRJIo/0u9z3doCW+np1I2ohQlWQsdbKNGgWCJX+P42xlcTvd9Kq1f9/MaPMKK1WW6myO3oIlRKka1+9ojQL9Ds+lWpUBf3rKF7uTxQRGr0qlBJFiijWFMnany8yQ8sVsRIxQ21j7rBogUTTUZWffkEqFCFoFkg1JvAHgT8IBAIjBAJ/EBigQyDBDFrLf8NfsIfgJFqpHQ6DSiiYwhcMEDJV5glz8QdecCii9CJKh1dY0Bq+F0gllQizoMLS/EIr5srVxC0stVeeI0kyW4Q338z+lmkdNMkspSlbMgibsP4ndnN8H9/scnAYXZjtnb8jYqujSVfa8N+jSYBQx0p/ay2I+YNoVVK02u47SSSxmBpzJxPub53T9aLVz2f0/R7cnU/T4+k4QKK2bWcjff8/tjJaj7G2beNb27Zt27a928039rHlTfrn3xOI6P8EkMn2B0cPbFm7ceHCjeu2HDj6QJGN7Td3ruAoVx680R7WyxNr2ei6qy/DUJdWsfHVZ5Wx+9s51C0vDF1fxiEvvmBCHeGAc/q8+/474rp/f31/22+2H/MTFdXr3ew/8FNERKSptbVJRCTycbAf73odhTrIvoN+iIi49QUdHR0dsUnZuYX17pchPrxHBTvCeMYHV0Rq85K19miYnFf7fhbiJ4FOMx75U0Rqc7Q3iNbaaRiF+FyA+4vRgD8ikfxYbULHdhqBlrzwUVsZ9v8nUpOlfaPROnMC4O0KXWY48o9IXbI2p9OnAT4P3qwCM3+K1CXpMHTXeWDzS89xhh9EapJ1OLoS8Bkial8LBrkSydJhxU0B6xXRI4Y/RPJ1aLoY8EOinWCgSG2sBTGTwTNSK8EnkRxtga4Am9Rd9s6JSK22InWBh28fBb1F8uzQ48C1veCduMmW9AT7toFvUq8tKQU7NoDfUmBLEVi7HPxtanKMBNdaO66TDlYuBG5rW7MNLW3NiWDR/7Ic/GlyHRuciJMBVm4AvyVWW1oE1m4DnyXJljKw4wB4K9m29AL7j4K+4tgyFly7C2ZHCi1JXQDuqJUe/lhvSQV7Nyk6CIa7SVbETAF7iW4C/ppnRQnDW0Tt68DQWhviJ4H1ioiuAn7vWFDN8CQR0cvVYG5jbGjd5oE1rzx0EfDozmFlTGd4hfAOwMMyw0mZyHCb8nmxBPD4jDBSxzBceo/8TyGe1t1cj+mML1DQJ4jnV8b7OS0tjl981XzGTymweo6YJxXHILetzUUxJVPZ95AKRq93+TBPLk/1OC3Njie1Ygr7H3xN0aonfswLxvUsLUpLSEjrUtZz7AIO+FSRwcfL/EwvuUJmX2wNZ8c9Mq3ObTa35gqF+erMOjPrT76ikNXDZ5ui2XT4liIb1e1j+3asX75w4Yr1O/Zdu6PIJAA=); border-color: #eebb33;">時刻表</button><button type="button" onclick="operation_data_mode();" style="background-image: url(data:image/webp;base64,UklGRr4AAABXRUJQVlA4TLIAAAAvNUANEEdAJmCxGFJp7qSKKmYCkNFB/yI6OP0SeHdOTSMp0Kk5/0au5BVAcEDJ/AeA323Mu/i3jVikZhIYRZKkaC0cGTgJ6+RIABugsbC6eXqPfxH9Z+C2bSN27/buF0IHpZRgHfAgkkRLkiR4AK7SiiQJHRADEWmBA6Louk4LHBADMzyORYekX3zhLOD3/Id/IUlKEyRiBUhidlsll1UCVjZTAlY+XQJWgCTA5kGMEIEA); border-color: #33cc66;">運用データ</button><button type="button" onclick="formation_table_mode();" style="background-image: url(data:image/webp;base64,UklGRpQBAABXRUJQVlA4TIcBAAAvNUANEK/BoJEkRbUn4wWeitf6eQfMtDYYNJKkqPa0nJLX/xo+74CZlkEjSYpqz8D7F/NSyAEzLdta2158cuhypoqdWQxiOwNYwD+ANlNSpjdAVYPaDtR1rTgMw4sXPy5kmVkjL6UAKtLMNMDDhZ6ZXynle9+3zczzPM97WRZpnufnOI7q//8/M0fcAIAPPb6IAKTv+5rMpIhI5nmeMpP6vg/+/+ewYgPAIgJg//8DQ0SgbequqRUZXEmSpCoLPFfc3d25/+FWnj/gryei/4zctnEknabtassr2Be03SBkUGWbGsgWSLPKMbQWNHIEUquq+RqCnniOk1JVp67pHgPgGlrTEkilKlS8K5u0UCR+VVZkNchoSzYXyvrvqv4cvgFIVwJSihD4ANKVAKQT8YdRMCs/hvS1ZOdTBl4YrllwY7hnwYPhuRtRV1NJI9qriZX1YjisR9RX0ifaqImVdWTAmASn6gRJJMlaiSyVCRJIlDWYcWZbZYIEkmVtFxPMh+oEScTO+mICAA==); border-color: #0066dd;">編成表</button><button type="button" onclick="operation_table_mode();" style="background-image: url(data:image/webp;base64,UklGRmQAAABXRUJQVlA4TFcAAAAvNUANEB8gECDs6xFnRUhA+P9NtEUVEhD+D1VFdf4D8C9pwCiSrFYEDehJGliP1LOBLarmDD8eI/ovICj0wAx3mQVMIC8gPj23ZZhZk5S6JP/0fuifqzgA); border-color: #9933cc;">運用表</button></div>
     <div id="blank_article" class="wait_icon"></div>
+    <div id="tab_area"><button type="button" onclick="position_mode();" style="background-image: url(data:image/webp;base64,UklGRuICAABXRUJQVlA4TNYCAAAvNUANEP/jIJJkV+n9gZxBAq6xyn9rA1Jk266q3o/MFHRQqMYJcxzgIP4c7jkOG0lylJo3eA8hkDWp8jeuattWlXUe7trASUAUK8SgBbXsn8/nLjuAZrCvb2dvr/l9nne0zHeKtVYZYgUNW2QKgqZAqCEIQo0GDYQCFQRBEBIIJSoUEAJhmoss4qCj/eGLpOrAMIHB0BIGgw9VHa0jhto5yUYxsTfXGRnm3ykdRdSpXcMaNplqSHS0ISxTfv68d9nF/gURtv9teHg7JBnhUx96aPt+vr+WWiZO2MYWtTv7///jz/5zmWczSbgf73Qqp68T6XD4OZDkOWq4v93vIbBiAhdoaChouEHDL1yhkLeg0C4QBEG4J9Go4aADM0AQALaQ1LNvbZxt27Zt2/bb77ZNk9wHphH9h+BGkiLJmbnMe/AHgctSX1Nhl9PqMo39S4Itc9UBG5CuqjkmQ2GbJtERDnGVdps2pj6ezJTYUCknt86GTBv1HjYs+yjtiaJoVjiVosZGSBXBUgCQeXpxay7OMgGdS3iTNlXG9Z2UqwybmgG8duD035RmqhrwClSnd0DOVB14AdUl5By4As+luoXcqtx4XpQblQ8vh3YmF69MdYa6SSneBPBAV5gHmsDrdQA/XVf6ny5HksCnGPpJPju/NRb4k1wkCMZshAxTJHbiBRIEJa14RpB0+7F8yf/z96pWEPV4cTxJgpp2nCZBNuXFMFOCnmaMFpb/SVG9UIrgyITeuGARn6+Tx/Wvc1Dz38wMCiYfJ7DjH669P6RD0u7ffpj2bK4g18b8lmnmcUE1//gcK8+eNneyZNm7209SyVNeW4WsXVif8kvhmTUdiQl2C6DUvW4cxbIcsyy9hLVXqdR7HMhZtFnmQI5yB5ZZ+7Mzewe64veyfghkxToEsipfiX808veDH7nYMRT1aMRsPen6pY6p+rFVN8aqe/sWbH8ppELj7Q8=); border-color: #ee3333;">走行位置</button><button type="button" onclick="timetable_mode();" style="background-image: url(data:image/webp;base64,UklGRmgEAABXRUJQVlA4TFsEAAAvNUANEA8GOZIkRZLn8n9t9RdiNcJ7MWOlGo4jSXKU7JO/swabsJvghwFabEOOJNlVVP2QDmAJRnHGZU6a1fv1FNzatlVV8+BEN6MWOqRJIo/0u9z3doCW+np1I2ohQlWQsdbKNGgWCJX+P42xlcTvd9Kq1f9/MaPMKK1WW6myO3oIlRKka1+9ojQL9Ds+lWpUBf3rKF7uTxQRGr0qlBJFiijWFMnany8yQ8sVsRIxQ21j7rBogUTTUZWffkEqFCFoFkg1JvAHgT8IBAIjBAJ/EBigQyDBDFrLf8NfsIfgJFqpHQ6DSiiYwhcMEDJV5glz8QdecCii9CJKh1dY0Bq+F0gllQizoMLS/EIr5srVxC0stVeeI0kyW4Q338z+lmkdNMkspSlbMgibsP4ndnN8H9/scnAYXZjtnb8jYqujSVfa8N+jSYBQx0p/ay2I+YNoVVK02u47SSSxmBpzJxPub53T9aLVz2f0/R7cnU/T4+k4QKK2bWcjff8/tjJaj7G2beNb27Zt27a928039rHlTfrn3xOI6P8EkMn2B0cPbFm7ceHCjeu2HDj6QJGN7Td3ruAoVx680R7WyxNr2ei6qy/DUJdWsfHVZ5Wx+9s51C0vDF1fxiEvvmBCHeGAc/q8+/474rp/f31/22+2H/MTFdXr3ew/8FNERKSptbVJRCTycbAf73odhTrIvoN+iIi49QUdHR0dsUnZuYX17pchPrxHBTvCeMYHV0Rq85K19miYnFf7fhbiJ4FOMx75U0Rqc7Q3iNbaaRiF+FyA+4vRgD8ikfxYbULHdhqBlrzwUVsZ9v8nUpOlfaPROnMC4O0KXWY48o9IXbI2p9OnAT4P3qwCM3+K1CXpMHTXeWDzS89xhh9EapJ1OLoS8Bkial8LBrkSydJhxU0B6xXRI4Y/RPJ1aLoY8EOinWCgSG2sBTGTwTNSK8EnkRxtga4Am9Rd9s6JSK22InWBh28fBb1F8uzQ48C1veCduMmW9AT7toFvUq8tKQU7NoDfUmBLEVi7HPxtanKMBNdaO66TDlYuBG5rW7MNLW3NiWDR/7Ic/GlyHRuciJMBVm4AvyVWW1oE1m4DnyXJljKw4wB4K9m29AL7j4K+4tgyFly7C2ZHCi1JXQDuqJUe/lhvSQV7Nyk6CIa7SVbETAF7iW4C/ppnRQnDW0Tt68DQWhviJ4H1ioiuAn7vWFDN8CQR0cvVYG5jbGjd5oE1rzx0EfDozmFlTGd4hfAOwMMyw0mZyHCb8nmxBPD4jDBSxzBceo/8TyGe1t1cj+mML1DQJ4jnV8b7OS0tjl981XzGTymweo6YJxXHILetzUUxJVPZ95AKRq93+TBPLk/1OC3Njie1Ygr7H3xN0aonfswLxvUsLUpLSEjrUtZz7AIO+FSRwcfL/EwvuUJmX2wNZ8c9Mq3ObTa35gqF+erMOjPrT76ikNXDZ5ui2XT4liIb1e1j+3asX75w4Yr1O/Zdu6PIJAA=); border-color: #eebb33;">時刻表</button><button type="button" onclick="operation_data_mode();" style="background-image: url(data:image/webp;base64,UklGRr4AAABXRUJQVlA4TLIAAAAvNUANEEdAJmCxGFJp7qSKKmYCkNFB/yI6OP0SeHdOTSMp0Kk5/0au5BVAcEDJ/AeA323Mu/i3jVikZhIYRZKkaC0cGTgJ6+RIABugsbC6eXqPfxH9Z+C2bSN27/buF0IHpZRgHfAgkkRLkiR4AK7SiiQJHRADEWmBA6Louk4LHBADMzyORYekX3zhLOD3/Id/IUlKEyRiBUhidlsll1UCVjZTAlY+XQJWgCTA5kGMEIEA); border-color: #33cc66;">運用データ</button><button type="button" onclick="formation_table_mode();" style="background-image: url(data:image/webp;base64,UklGRpQBAABXRUJQVlA4TIcBAAAvNUANEK/BoJEkRbUn4wWeitf6eQfMtDYYNJKkqPa0nJLX/xo+74CZlkEjSYpqz8D7F/NSyAEzLdta2158cuhypoqdWQxiOwNYwD+ANlNSpjdAVYPaDtR1rTgMw4sXPy5kmVkjL6UAKtLMNMDDhZ6ZXynle9+3zczzPM97WRZpnufnOI7q//8/M0fcAIAPPb6IAKTv+5rMpIhI5nmeMpP6vg/+/+ewYgPAIgJg//8DQ0SgbequqRUZXEmSpCoLPFfc3d25/+FWnj/gryei/4zctnEknabtassr2Be03SBkUGWbGsgWSLPKMbQWNHIEUquq+RqCnniOk1JVp67pHgPgGlrTEkilKlS8K5u0UCR+VVZkNchoSzYXyvrvqv4cvgFIVwJSihD4ANKVAKQT8YdRMCs/hvS1ZOdTBl4YrllwY7hnwYPhuRtRV1NJI9qriZX1YjisR9RX0ifaqImVdWTAmASn6gRJJMlaiSyVCRJIlDWYcWZbZYIEkmVtFxPMh+oEScTO+mICAA==); border-color: #0066dd;">編成表</button><button type="button" onclick="operation_table_mode();" style="background-image: url(data:image/webp;base64,UklGRmQAAABXRUJQVlA4TFcAAAAvNUANEB8gECDs6xFnRUhA+P9NtEUVEhD+D1VFdf4D8C9pwCiSrFYEDehJGliP1LOBLarmDD8eI/ovICj0wAx3mQVMIC8gPj23ZZhZk5S6JP/0fuifqzgA); border-color: #9933cc;">運用表</button></div>
     <article>
         <select id="position_line_select" class="line_select" onchange="position_change_lines(this.value);"></select>
         <div id="position_area" class="wait_icon"></div>
-        <div>
+        <div id="position_area_supplement">
             <input type="checkbox" id="show_train_types_check" onchange="change_show_train_types(this.checked);"><label for="show_train_types_check">列車番号の代わりに種別を表示</label>
             <br>
             <div class="informational_text">列車の走行位置は時刻表に基づく推定であり、遅延や不定期列車の情報は反映されません</div>
@@ -3534,7 +3581,7 @@ function open_popup (id) {
     
     if (!elm.classList.contains("popup_active")) {
         elm.classList.add("popup_active");
-        elm.style.zIndex = popup_history.length + 10;
+        elm.style.zIndex = popup_history.length + 20;
         
         popup_history.push(id);
         
@@ -3595,12 +3642,12 @@ function close_wait_screen () {
 
 var user_data = null;
 
+var menu_admin_elm = document.getElementById("menu_admin");
+var menu_logged_in_elm = document.getElementById("menu_logged_in");
+var menu_not_logged_in_elm = document.getElementById("menu_not_logged_in");
+
 function update_user_data (user_data_next = null) {
     user_data = user_data_next;
-    
-    var menu_admin_elm = document.getElementById("menu_admin");
-    var menu_logged_in_elm = document.getElementById("menu_logged_in");
-    var menu_not_logged_in_elm = document.getElementById("menu_not_logged_in");
     
     menu_admin_elm.style.display = "none";
     
@@ -3631,6 +3678,20 @@ function update_user_data (user_data_next = null) {
         
         splash_screen_login_status_elm.innerHTML = "<b>ログインしていません</b><br><a href='javascript:void(0);' onclick='open_square_popup(\"login_popup\");'>ログイン</a>　<a href='javascript:void(0);' onclick='open_popup(\"sign_up_popup\");'>新規登録</a>";
     }
+}
+
+function check_logged_in () {
+    ajax_fetch("api/check_logged_in.php", null, function (response) {
+        if (response !== false) {
+            if (response !== "NOT_LOGGED_IN"){
+                update_user_data(JSON.parse(response));
+            } else {
+                update_user_data();
+            }
+        } else {
+            splash_screen_login_status_elm.innerText = "【!】ログイン状態の確認に失敗しました";
+        }
+    });
 }
 
 
@@ -3716,6 +3777,32 @@ function update_railroad_list (railroads) {
 }
 
 
+var menu_off_line_elm = document.getElementById("menu_off_line");
+
+window.ononline = function () {
+    menu_off_line_elm.style.display = "none";
+    
+    menu_announcements_elm.style.display = "block";
+    
+    check_logged_in();
+}
+
+function on_off_line () {
+    splash_screen_login_status_elm.innerHTML = "<b class='off_line_message'>端末がオフラインです</b><br>前回アクセス時のデータを表示します";
+    
+    menu_off_line_elm.style.display = "block";
+    
+    menu_admin_elm.style.display = "none";
+    menu_logged_in_elm.style.display = "none";
+    menu_not_logged_in_elm.style.display = "none";
+    menu_announcements_elm.style.display = "none";
+    
+    announcements_overview_elm.innerHTML = "";
+}
+
+window.onoffline = on_off_line;
+
+
 window.onload = function () {
     var cache_json = localStorage.getItem("unyohub_railroads_caches");
     
@@ -3730,17 +3817,7 @@ window.onload = function () {
     }
     
     if (navigator.onLine) {
-        ajax_fetch("api/check_logged_in.php", null, function (response) {
-            if (response !== false) {
-                if (response !== "NOT_LOGGED_IN"){
-                    update_user_data(JSON.parse(response));
-                } else {
-                    update_user_data();
-                }
-            } else {
-                splash_screen_login_status_elm.innerText = "【!】ログイン状態の確認に失敗しました";
-            }
-        });
+        check_logged_in();
         
         ajax_fetch("api/railroads.php", "last_modified_timestamp=" + railroads_caches["last_modified_timestamp"], function (response, last_modified) {
             if (response !== false && response !== "NO_UPDATES_AVAILABLE") {
@@ -3757,8 +3834,8 @@ window.onload = function () {
         
         check_announcements(true);
     } else {
-        splash_screen_login_status_elm.innerHTML = "<b>端末がオフラインです</b><br>前回アクセス時のデータを表示します";
         update_railroad_list(railroads_caches);
+        on_off_line();
     }
 };
 
@@ -3887,6 +3964,9 @@ function update_railroad_info () {
     header_elm.className = "railroad_select_mode";
 }
 
+
+var blank_article_elm = document.getElementById("blank_article");
+
 function select_railroad (railroad_id) {
     splash_screen_elm.style.display = "none";
     if (popup_history.length >= 1) {
@@ -3894,6 +3974,8 @@ function select_railroad (railroad_id) {
     }
     
     change_mode(-1);
+    
+    header_elm.className = "";
     
     var promise_1 = new Promise(function (resolve, reject) {
         var resolved = false;
@@ -4047,7 +4129,10 @@ function select_railroad (railroad_id) {
     Promise.all([promise_1, promise_2, promise_3]).then(function () {
         position_mode();
     }).catch(function () {
-        mes("路線系統の切り替えに失敗しました", true);
+        mes("選択された路線系統はデータが利用できません", true);
+        
+        open_popup('railroad_select_popup');
+        blank_article_elm.innerHTML = "<div class='no_data'><a href='javascript:void(0);' onclick='open_popup(\"railroad_select_popup\");'>路線系統を選択</a>してください</div>";
     });
 }
 
@@ -4061,20 +4146,18 @@ tab_area_elm.onselectstart = function () { return false; };
 var mode_val = -1;
 
 function change_mode (num) {
-    if (num === mode_val) {
-        return;
+    if (num === -1) {
+        blank_article_elm.innerHTML = "";
+        blank_article_elm.style.display = "block";
+    } else {
+        if (num === mode_val) {
+            return;
+        }
+        
+        blank_article_elm.style.display = "none";
     }
     
     mode_val = num;
-    
-    var blank_article_elm = document.getElementById("blank_article");
-    
-    if (num === -1) {
-        blank_article_elm.style.display = "block";
-        return;
-    }
-    
-    blank_article_elm.style.display = "none";
     
     var tab_buttons = tab_area_elm.getElementsByTagName("button");
     var footer_boxes = footer_elm.getElementsByTagName("div");
@@ -4419,9 +4502,9 @@ function update_operation_data (resolve_func, reject_func, remote_data_only = fa
                     }
                 });
             } else if (operation_data === null || remote_data_only) {
-                mes("オフラインのため運用情報が取得できません", true);
+                operation_data = {railroad_id : railroad_id, operation_date : operation_date, operations : {}, last_modified_timestamp : 0};
                 
-                reject_func();
+                resolve_func();
             }
         };
     });
@@ -4490,13 +4573,19 @@ background_updater_start_stop();
 
 
 var position_line_select_elm = document.getElementById("position_line_select");
+var position_area_elm = document.getElementById("position_area");
 var position_reload_button_elm = document.getElementById("position_reload_button");
 var position_time_button_elm = document.getElementById("position_time_button");
 
 function position_mode () {
     change_mode(0);
     
+    position_area_elm.innerHTML = "";
+    position_line_select_elm.style.display = "block";
     position_reload_button_elm.style.display = "none";
+    
+    var position_area_supplement_elm = document.getElementById("position_area_supplement");
+    position_area_supplement_elm.style.display = "none";
     
     var operation_table = get_days_operation(get_timestamp());
     
@@ -4567,6 +4656,11 @@ function position_mode () {
         all_resolved = true;
         
         position_change_lines(line_id);
+        
+        position_area_supplement_elm.style.display = "block";
+    }).catch(function () {
+        position_area_elm.innerHTML = "<div class='no_data'>表示に必要なデータが利用できません</div>";
+        position_line_select_elm.style.display = "none";
     });
 }
 
@@ -4574,9 +4668,6 @@ function position_change_lines (line_id) {
     if (position_line_select_elm.value !== line_id) {
         position_line_select_elm.value = line_id;
     }
-    
-    var position_area_elm = document.getElementById("position_area");
-    position_area_elm.innerHTML = "";
     
     if (!config["dark_mode"]) {
         var line_color = railroad_info["lines"][line_id]["line_color"];
@@ -5604,7 +5695,7 @@ function timetable_select_station (station_name) {
         Promise.all(timetable_promise_list).then(function () {
             draw_station_timetable(station_name);
         }).catch(function () {
-            mes("データの読み込みに失敗しました", true);
+            timetable_area_elm.innerHTML = "<div class='no_data'>表示に必要なデータが利用できません</div>";
         });
     } else {
         draw_station_timetable(station_name);
@@ -5984,6 +6075,8 @@ function operation_data_change_date (date_additions) {
         operation_all_data_loaded = true;
         
         operation_data_draw();
+    }).catch(function () {
+        operation_data_area_elm.innerHTML = "<div class='no_data'>表示に必要なデータが利用できません</div>";
     });
 }
 
@@ -6232,9 +6325,9 @@ function draw_operation_detail (operation_number, operation_data_date_ts_or_oper
     
     operation_detail_area_elm.innerHTML = buf;
     
-    draw_operation_trains (operation_number, operation_table_name_or_ts, is_today);
+    draw_operation_trains(operation_number, operation_table_name_or_ts, is_today);
     
-    if (navigator.onLine && formation_text !== null || operation_detail_write_button_enabled) {
+    if (navigator.onLine && (formation_text !== null || operation_detail_write_button_enabled)) {
         get_operation_data_detail(operation_data_date_str, operation_number, "operation_data_detail_area");
     }
 }
@@ -6678,12 +6771,15 @@ function get_train_color (train_name, default_value = "inherit") {
 }
 
 
+var operation_search_area_elm = document.getElementById("operation_search_area");
+var operation_table_area_elm = document.getElementById("operation_table_area");
 var operation_table_name;
 var operation_table_name_elm = document.getElementById("operation_table_name");
 
 function operation_table_mode (load_data = true, table_name = null) {
     change_mode(4);
     
+    operation_search_area_elm.style.display = "none";
     operation_table_area_elm.innerHTML = "";
     
     var promise_list = [];
@@ -6734,10 +6830,10 @@ function operation_table_mode (load_data = true, table_name = null) {
     train_number_search_elm.value = "";
     Promise.all(promise_list).then(function () {
         reset_operation_narrow_down();
+    }).catch(function () {
+        operation_table_area_elm.innerHTML = "<div class='no_data'>表示に必要なデータが利用できません</div>";
     });
 }
-
-var operation_table_area_elm = document.getElementById("operation_table_area");
 
 var train_number_search_elm = document.getElementById("train_number_search");
 var search_group_name_elm = document.getElementById("operation_search_group_name");
@@ -6750,6 +6846,7 @@ var operation_table_ascending_order = true;
 
 function operation_table_list_number () {
     operation_table_name_elm.innerText = railroad_info["operations"][operation_table_name]["operation_name"];
+    operation_search_area_elm.style.display = "block";
     operation_table_area_elm.innerHTML = "";
     
     var search_keyword = train_number_search_elm.value;
@@ -6991,6 +7088,9 @@ function reset_operation_narrow_down (close_menu = true) {
 }
 
 function operation_table_change () {
+    operation_search_area_elm.style.display = "none";
+    operation_table_area_elm.innerHTML = "";
+    
     var promise_1_resolved = false;
     var promise_2_resolved = false;
     
@@ -7018,6 +7118,8 @@ function operation_table_change () {
     
     Promise.all([promise_1, promise_2]).then(function () {
         operation_table_list_number();
+    }).catch(function () {
+        operation_table_area_elm.innerHTML = "<div class='no_data'>表示に必要なデータが利用できません</div>";
     });
 }
 
@@ -7521,6 +7623,11 @@ function reset_cache_db () {
 }
 
 function show_rules () {
+    if (!navigator.onLine) {
+        mes("ルールの閲覧にはネットワーク接続が必要です", true);
+        return;
+    }
+    
     open_popup("rules_popup");
     
     ajax_fetch("rules.txt", null, function (response) {
