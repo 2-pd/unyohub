@@ -32,6 +32,18 @@ cur.execute("CREATE INDEX IF NOT EXISTS `unyohub_idx_dc2` ON `unyohub_data_cache
 cur.execute("CREATE TABLE IF NOT EXISTS `unyohub_data_each_formation`(`formation_name` TEXT NOT NULL, `operation_date` TEXT NOT NULL, `operation_number` TEXT NOT NULL, PRIMARY KEY(`formation_name`, `operation_date`, `operation_number`))")
 cur.execute("CREATE INDEX IF NOT EXISTS `unyohub_idx_df1` ON `unyohub_data_each_formation`(`operation_date`, `operation_number`)")
 
+cur.execute("CREATE TABLE IF NOT EXISTS `unyohub_transition_statistics_same_day`(`operation_table` TEXT NOT NULL, `operation_number` TEXT NOT NULL, `later_operation_number` TEXT NOT NULL, `percentage` REAL NOT NULL, PRIMARY KEY(`operation_table`, `operation_number`, `later_operation_number`))")
+cur.execute("CREATE INDEX IF NOT EXISTS `unyohub_idx_ts1` ON `unyohub_transition_statistics_same_day`(`operation_table`, `operation_number`, `percentage`)")
+cur.execute("CREATE INDEX IF NOT EXISTS `unyohub_idx_ts2` ON `unyohub_transition_statistics_same_day`(`operation_table`, `later_operation_number`, `percentage`)")
+
+cur.execute("CREATE TABLE IF NOT EXISTS `unyohub_transition_statistics_to_next_day`(`operation_table` TEXT NOT NULL, `next_day_operation_table` TEXT NOT NULL, `operation_number` TEXT NOT NULL, `next_day_operation_number` TEXT NOT NULL, `percentage` REAL NOT NULL, PRIMARY KEY(`operation_table`, `next_day_operation_table`, `operation_number`, `next_day_operation_number`))")
+cur.execute("CREATE INDEX IF NOT EXISTS `unyohub_idx_tn1` ON `unyohub_transition_statistics_to_next_day`(`operation_table`, `operation_number`, `percentage`)")
+cur.execute("CREATE INDEX IF NOT EXISTS `unyohub_idx_tn2` ON `unyohub_transition_statistics_to_next_day`(`next_day_operation_table`, `next_day_operation_number`, `percentage`)")
+
+cur.execute("CREATE TABLE IF NOT EXISTS `unyohub_transition_data_caches_same_day`(`operation_date` TEXT NOT NULL, `operation_number` TEXT NOT NULL, `later_operation_number` TEXT NOT NULL, PRIMARY KEY(`operation_date`, `operation_number`, `later_operation_number`))")
+
+cur.execute("CREATE TABLE IF NOT EXISTS `unyohub_transition_data_caches_from_previous_day`(`operation_date` TEXT NOT NULL, `previous_day_operation_number` TEXT NOT NULL, `operation_number` TEXT NOT NULL, PRIMARY KEY(`operation_date`, `operation_number`, `previous_day_operation_number`))")
+
 conn.commit()
 conn.close()
 
