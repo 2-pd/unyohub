@@ -65,7 +65,7 @@ id_cnt = 1
 stopped_train_list = {}
 while cnt < len(operations):
     if operations[cnt][0].startswith("# "):
-        output_data.append({"operation_group_name" : operations[cnt][0][2:], "operations": []})
+        output_data.append({"operation_group_name" : operations[cnt][0][2:].strip(), "operations": []})
         
         cnt += 1
     else:

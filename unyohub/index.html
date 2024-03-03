@@ -1070,7 +1070,7 @@ article input[type="checkbox"] + label {
     line-height: 18px;
     color: inherit;
     text-decoration: none;
-    white-space: nowrap;
+    word-break: break-all;
 }
 
 .timetable_train:last-child {
@@ -5890,22 +5890,20 @@ function draw_station_timetable (station_name) {
                 }
             }
             
-            buf += buf_2 + "　<small>";
-            
-            if (train_operations !== null) {
-                var car_count = 0;
-                for (cnt_3 = 0; cnt_3 < train_operations.length; cnt_3++) {
-                    car_count += operations["operations"][train_operations[cnt_3]]["cars_count"];
-                }
-                
-                buf += "(所定" + car_count + "両)";
-            } else {
-                buf += "(不明な運用)";
-            }
-            
-            buf += "</small><br>";
-            
             if (is_today) {
+                buf += buf_2 + "　<small>";
+                if (train_operations !== null) {
+                    var car_count = 0;
+                    for (cnt_3 = 0; cnt_3 < train_operations.length; cnt_3++) {
+                        car_count += operations["operations"][train_operations[cnt_3]]["cars_count"];
+                    }
+                    
+                    buf += "(所定" + car_count + "両)";
+                } else {
+                    buf += "(不明な運用)";
+                }
+                buf += "</small><br>";
+                
                 if (formation_data["comment_exists"]) {
                     formation_data["formation_text"] += "*";
                 }
@@ -5938,6 +5936,8 @@ function draw_station_timetable (station_name) {
                     buf += escape_html(formation_data["formation_text"]);
                 }
             } else if (train_operations !== null) {
+                buf += "<br>";
+                
                 if (railroad_info["lines"][line_id]["inbound_forward_direction"] !== (train_direction === "inbound_trains")) {
                     train_operations.reverse();
                 }
@@ -5947,8 +5947,10 @@ function draw_station_timetable (station_name) {
                         buf += "+";
                     }
                     
-                    buf += train_operations[cnt_3] + "運用";
+                    buf += train_operations[cnt_3] + "運用<small>(" + operations["operations"][train_operations[cnt_3]]["operation_group_name"] + " " + operations["operations"][train_operations[cnt_3]]["cars_count"] + "両)</small>";
                 }
+            } else {
+                buf += "<br>不明な運用";
             }
             
             buf += "</a>";
