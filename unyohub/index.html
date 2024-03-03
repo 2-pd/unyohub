@@ -6847,9 +6847,10 @@ function operation_table_mode (load_data = true, table_name = null) {
         }, reject, false, get_date_string(get_timestamp()));
     }));
     
+    operation_table_name_elm.innerText = railroad_info["operations"][operation_table_name]["operation_name"];
+    train_number_search_elm.value = "";
     operation_table_wrapper_scroll_amount = 0;
     
-    train_number_search_elm.value = "";
     Promise.all(promise_list).then(function () {
         reset_operation_narrow_down();
     }).catch(function () {
@@ -6867,7 +6868,6 @@ var operation_table_sorting_criteria = "operation_number";
 var operation_table_ascending_order = true;
 
 function operation_table_list_number () {
-    operation_table_name_elm.innerText = railroad_info["operations"][operation_table_name]["operation_name"];
     operation_search_area_elm.style.display = "block";
     operation_table_area_elm.innerHTML = "";
     
@@ -7114,6 +7114,9 @@ function reset_operation_narrow_down (close_menu = true) {
 function operation_table_change () {
     operation_search_area_elm.style.display = "none";
     operation_table_area_elm.innerHTML = "";
+    operation_table_info_elm.innerHTML = "";
+    
+    operation_table_name_elm.innerText = railroad_info["operations"][operation_table_name]["operation_name"];
     
     var promise_1_resolved = false;
     var promise_2_resolved = false;
