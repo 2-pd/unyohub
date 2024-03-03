@@ -52,6 +52,8 @@ _/_/_/_/ ファイル構成 _/_/_/_/
    └ formation_list.php ・・・編成表の編集
    └ formation.php ・・・編成情報の編集
    └ admin_styles.css ・・・管理画面用スタイルシート
+└ command_line_tools/
+   └ ****.py ・・・コマンドラインやcronから実行するPythonツール(詳細は別記)
 └ README.html ・・・ユーザーマニュアル
 └ rules.txt ・・・ルールとポリシーを記載するテキストファイル
 └ .htaccess
