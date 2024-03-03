@@ -5401,16 +5401,16 @@ function train_detail (line_id, train_number, first_departure_time, train_direct
                         }
                         
                         if (formations_data[cnt_2] in formations["formations"]) {
-                            buf += "<a href='javascript:void(0);' onclick='close_square_popup(); formation_table_mode(\"" + add_slashes(formations_data[cnt_2]) + "\");'><img src = '" + get_icon(formations_data[cnt_2]) + "' alt='' class='train_icon'>" + escape_html(formations_data[cnt_2]) + "</a>";
+                            buf += "<a href='javascript:void(0);' onclick='close_square_popup(); formation_table_mode(\"" + add_slashes(formations_data[cnt_2]) + "\");'><img src='" + get_icon(formations_data[cnt_2]) + "' alt='' class='train_icon'>" + escape_html(formations_data[cnt_2]) + "</a>";
                         } else {
-                            buf += "<img src = '" + get_icon(formations_data[cnt_2]) + "' alt='' class='train_icon'>" + escape_html(formations_data[cnt_2]);
+                            buf += "<img src='" + UNYOHUB_GENERIC_TRAIN_ICON + "' alt='' class='train_icon'>" + escape_html(formations_data[cnt_2]);
                         }
                     }
                 } else {
-                    buf += "<img src = '" + UNYOHUB_CANCELED_TRAIN_ICON + "' alt='' class='train_icon'>" + "運休";
+                    buf += "<img src='" + UNYOHUB_CANCELED_TRAIN_ICON + "' alt='' class='train_icon'>" + "運休";
                 }
             } else {
-                buf += "<img src = '" + UNYOHUB_UNKNOWN_TRAIN_ICON + "' alt='' class='train_icon'>" + "?";
+                buf += "<img src='" + UNYOHUB_UNKNOWN_TRAIN_ICON + "' alt='' class='train_icon'>" + "?";
             }
         }
         
@@ -6312,13 +6312,17 @@ function draw_operation_detail (operation_number, operation_data_date_ts_or_oper
                         buf += " +"
                     }
                     
-                    buf += "<a href='javascript:void(0);' onclick='popup_close(); formation_table_mode(\"" + add_slashes(formations_data[cnt_2]) + "\");'><img src = '" + get_icon(formations_data[cnt_2]) + "' alt='' class='train_icon'>" + escape_html(formations_data[cnt_2]) + "</a>";
+                    if (formations_data[cnt_2] in formations["formations"]) {
+                        buf += "<a href='javascript:void(0);' onclick='popup_close(); formation_table_mode(\"" + add_slashes(formations_data[cnt_2]) + "\");'><img src='" + get_icon(formations_data[cnt_2]) + "' alt='' class='train_icon'>" + escape_html(formations_data[cnt_2]) + "</a>";
+                    } else {
+                        buf += "<img src='" + UNYOHUB_GENERIC_TRAIN_ICON + "' alt='' class='train_icon'>" + escape_html(formations_data[cnt_2]);
+                    }
                 }
             } else {
-                buf += "<img src = '" + UNYOHUB_CANCELED_TRAIN_ICON + "' alt='' class='train_icon'>" + "運休";
+                buf += "<img src='" + UNYOHUB_CANCELED_TRAIN_ICON + "' alt='' class='train_icon'>" + "運休";
             }
         } else {
-            buf += "<img src = '" + UNYOHUB_UNKNOWN_TRAIN_ICON + "' alt='' class='train_icon'>" + "?";
+            buf += "<img src='" + UNYOHUB_UNKNOWN_TRAIN_ICON + "' alt='' class='train_icon'>" + "?";
         }
         
         buf += "</div><div id='operation_data_detail_area'></div>";
