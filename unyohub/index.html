@@ -2968,6 +2968,8 @@ input[type="radio"] + label small {
             </div>
         </div>
         <div id="operation_table_area" class="wait_icon"></div>
+        <br>
+        <div id="operation_table_info" class="informational_text"></div>
     </article>
     <footer>
         <div>
@@ -3261,8 +3263,62 @@ function convert_to_html (text) {
     return text_splitted.join("");
 }
 
+
 function get_timestamp () {
     return Math.floor(Date.now() / 1000);
+}
+
+function get_date_string (ts) {
+    var dt = new Date((ts - 10800) * 1000);
+    return dt.getFullYear() + "-" + ("0" + String(dt.getMonth() + 1)).slice(-2) + "-" + ("0" + dt.getDate()).slice(-2);
+}
+
+function get_hh_mm (ts = null) {
+    if (ts === null) {
+        var dt = new Date();
+    } else {
+        var dt = new Date(ts * 1000);
+    }
+    
+    var hours = dt.getHours();
+    var minutes = ("0" + dt.getMinutes()).slice(-2);
+
+    if (hours < 3) {
+        hours += 24;
+    }
+    hours = ("0" + hours).slice(-2);
+
+    return hours + ":" + minutes;
+}
+
+function get_date_and_time (ts_or_date_str) {
+    if (typeof ts_or_date_str === "string") {
+        var dt = new Date(ts_or_date_str);
+    } else if (ts_or_date_str === null) {
+        return "データなし";
+    } else {
+        var dt = new Date(ts_or_date_str * 1000);
+    }
+    
+    var date_str = dt.getFullYear() + "/" + (dt.getMonth() + 1) + "/" + dt.getDate();
+    
+    var now_ts = get_timestamp();
+    var dt_2 = new Date(now_ts * 1000);
+    if (date_str === dt_2.getFullYear() + "/" + (dt_2.getMonth() + 1) + "/" + dt_2.getDate()) {
+        date_str = "今日";
+    } else {
+        dt_2 = new Date((now_ts - 86400) * 1000);
+        if (date_str === dt_2.getFullYear() + "/" + (dt_2.getMonth() + 1) + "/" + dt_2.getDate()) {
+            date_str = "昨日";
+        } else {
+            dt_2 = new Date((now_ts - 172800) * 1000);
+            if (date_str === dt_2.getFullYear() + "/" + (dt_2.getMonth() + 1) + "/" + dt_2.getDate()) {
+                date_str = "一昨日";
+            }
+        }
+    }
+    
+    return date_str + " " + ("0" + dt.getHours()).slice(-2) + ":" + ("0" + dt.getMinutes()).slice(-2);
 }
 
 
@@ -4442,11 +4498,6 @@ function update_timetable (resolve_func, reject_func, operation_table) {
 }
 
 
-function get_date_string (ts) {
-    var dt = new Date((ts - 10800) * 1000);
-    return dt.getFullYear() + "-" + ("0" + String(dt.getMonth() + 1)).slice(-2) + "-" + ("0" + String(dt.getDate())).slice(-2);
-}
-
 var operation_data = null;
 var operation_date_last;
 var operation_data_last_updated = null;
@@ -4481,7 +4532,7 @@ function update_operation_data (resolve_func, reject_func, remote_data_only = fa
                 ajax_fetch("api/operation_data.php", "railroad_id=" + escape_form_data(railroad_id) + "&date=" + escape_form_data(operation_date) + "&last_modified_timestamp=" + last_modified_timestamp, function (response, last_modified) {
                     if (response !== false) {
                         if (operation_data === null) {
-                            operation_data = {railroad_id : railroad_id, operation_date : operation_date, operations : {}};
+                            operation_data = {railroad_id : railroad_id, operation_date : operation_date, operations : {}, last_modified_timestamp : null};
                         }
                         
                         if (response !== "NO_UPDATES_AVAILABLE") {
@@ -4502,7 +4553,7 @@ function update_operation_data (resolve_func, reject_func, remote_data_only = fa
                     }
                 });
             } else if (operation_data === null || remote_data_only) {
-                operation_data = {railroad_id : railroad_id, operation_date : operation_date, operations : {}, last_modified_timestamp : 0};
+                operation_data = {railroad_id : railroad_id, operation_date : operation_date, operations : {}, last_modified_timestamp : null};
                 
                 resolve_func();
             }
@@ -5202,24 +5253,6 @@ function change_show_train_types (bool_val) {
     position_change_time(0);
 }
 
-function get_hh_mm (ts = null) {
-    if (ts === null) {
-        var dt = new Date();
-    } else {
-        var dt = new Date(ts * 1000);
-    }
-    
-    var hours = dt.getHours();
-    var minutes = ("0" + dt.getMinutes()).slice(-2);
-
-    if (hours < 3) {
-        hours += 24;
-    }
-    hours = ("0" + hours).slice(-2);
-
-    return hours + ":" + minutes;
-}
-
 function get_operation_data_detail (operation_date, operation_number_or_list, area_id) {
     var area_elm = document.getElementById(area_id)
     
@@ -5285,26 +5318,7 @@ function get_operation_data_detail (operation_date, operation_number_or_list, ar
                         var formation_html = "運休";
                     }
                     
-                    var dt = new Date(data[operation_numbers[cnt]][cnt_2]["posted_datetime"]);
-                    var date_str = dt.getFullYear() + "/" + (dt.getMonth() + 1) + "/" + dt.getDate();
-                    
-                    var now_ts = get_timestamp();
-                    var dt_2 = new Date(now_ts * 1000);
-                    if (date_str === dt_2.getFullYear() + "/" + (dt_2.getMonth() + 1) + "/" + dt_2.getDate()) {
-                        date_str = "今日";
-                    } else {
-                        dt_2 = new Date((now_ts - 86400) * 1000);
-                        if (date_str === dt_2.getFullYear() + "/" + (dt_2.getMonth() + 1) + "/" + dt_2.getDate()) {
-                            date_str = "昨日";
-                        } else {
-                            dt_2 = new Date((now_ts - 172800) * 1000);
-                            if (date_str === dt_2.getFullYear() + "/" + (dt_2.getMonth() + 1) + "/" + dt_2.getDate()) {
-                                date_str = "一昨日";
-                            }
-                        }
-                    }
-                    
-                    detail_html += "<div class='operation_data_detail'><b>" + formation_html + "<span>" + date_str + " " + ("0" + dt.getHours()).slice(-2) + ":" + ("0" + dt.getMinutes()).slice(-2) + "</span></b><div class='descriptive_text'>" + escape_html(data[operation_numbers[cnt]][cnt_2]["comment"]) + "</div>" + user_name_html + "</div>";
+                    detail_html += "<div class='operation_data_detail'><b>" + formation_html + "<span>" + get_date_and_time(data[operation_numbers[cnt]][cnt_2]["posted_datetime"]) + "</span></b><div class='descriptive_text'>" + escape_html(data[operation_numbers[cnt]][cnt_2]["comment"]) + "</div>" + user_name_html + "</div>";
                 }
                 
                 if (cnt_2 === 0) {
@@ -6195,6 +6209,8 @@ function operation_data_draw () {
         buf += "</table>";
     }
     
+    buf += "<br><div class='informational_text'>最新の投稿: " + get_date_and_time(operation_data["last_modified_timestamp"]) + "</div>";
+    
     operation_data_area_elm.innerHTML = buf;
 }
 
@@ -6773,6 +6789,7 @@ function get_train_color (train_name, default_value = "inherit") {
 
 var operation_search_area_elm = document.getElementById("operation_search_area");
 var operation_table_area_elm = document.getElementById("operation_table_area");
+var operation_table_info_elm = document.getElementById("operation_table_info");
 var operation_table_name;
 var operation_table_name_elm = document.getElementById("operation_table_name");
 
@@ -6781,6 +6798,7 @@ function operation_table_mode (load_data = true, table_name = null) {
     
     operation_search_area_elm.style.display = "none";
     operation_table_area_elm.innerHTML = "";
+    operation_table_info_elm.innerHTML = "";
     
     var promise_list = [];
     
@@ -7059,6 +7077,8 @@ function operation_table_list_number () {
     } else {
         operation_table_area_elm.innerHTML = "<div class='no_data'>絞り込み条件に一致する運用が見つかりません</div>";
     }
+    
+    operation_table_info_elm.innerHTML = "運用表更新日時: " + get_date_and_time(operations["last_modified_timestamp"]) + "<br>時刻表更新日時: " + get_date_and_time(timetable["last_modified_timestamp"]);
 }
 
 function sort_operation_table (sorting_criteria) {
@@ -7554,6 +7574,12 @@ function about_railroad_data () {
     }
     
     buf += "<h3>ライセンス</h3><div id='license_area'>" + convert_to_html(railroad_info["license_text"]) + "</div>";
+    
+    buf += "<h3>データ更新日時</h3><div class='informational_text'>";
+    buf += "路線系統情報: " + get_date_and_time(railroad_info["last_modified_timestamp"]) + "<br>";
+    buf += "編成表: " + get_date_and_time(formations["last_modified_timestamp"]) + "<br>";
+    buf += "車両アイコン: " + get_date_and_time(train_icons["last_modified_timestamp"]);
+    buf += "</div>";
     
     document.getElementById("about_railroad_data_area").innerHTML = buf;
 }
