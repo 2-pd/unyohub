@@ -2707,6 +2707,35 @@ input[type="search"]::-webkit-search-cancel-button {
    -webkit-appearance: none;
 }
 
+textarea {
+    display: block;
+    
+    box-sizing: content-box;
+    
+    width: calc(100% - 60px);
+    height: 60px;
+    
+    max-width: 440px;
+    
+    margin: 10px auto;
+    padding: 9px;
+    
+    background-color: transparent;
+    
+    border: 1px solid #cccccc;
+    border-radius: 5px;
+
+    font-size: 16px;
+    
+    resize: none;
+}
+
+.dark_mode textarea {
+    border-color: #808080;
+    
+    color: #ffffff;
+}
+
 input[type="checkbox"], input[type="radio"] {
     display: none;
 }
@@ -5318,7 +5347,7 @@ function get_operation_data_detail (operation_date, operation_number_or_list, ar
                         var formation_html = "運休";
                     }
                     
-                    detail_html += "<div class='operation_data_detail'><b>" + formation_html + "<span>" + get_date_and_time(data[operation_numbers[cnt]][cnt_2]["posted_datetime"]) + "</span></b><div class='descriptive_text'>" + escape_html(data[operation_numbers[cnt]][cnt_2]["comment"]) + "</div>" + user_name_html + "</div>";
+                    detail_html += "<div class='operation_data_detail'><b>" + formation_html + "<span>" + get_date_and_time(data[operation_numbers[cnt]][cnt_2]["posted_datetime"]) + "</span></b><div class='descriptive_text'>" + escape_html(data[operation_numbers[cnt]][cnt_2]["comment"]).replace(/\n/g, "<br>") + "</div>" + user_name_html + "</div>";
                 }
                 
                 if (cnt_2 === 0) {
@@ -6125,6 +6154,8 @@ function operation_data_draw () {
     
     var buf = "<h2 style='background-color: " + bg_color + ";" + color_style + "'>" + railroad_info["operations"][operation_table_id]["operation_name"] + " ";
     
+    var show_write_operation_data_button = "true";
+    
     var today_ts = get_timestamp();
     if (operation_data_date > today_ts) {
         buf += "(明日)";
@@ -6136,6 +6167,7 @@ function operation_data_draw () {
         buf += "(一昨日)";
     } else {
         buf += "(" + Math.floor((today_ts - operation_data_date) / 86400) + "日前)";
+        show_write_operation_data_button = "false";
     }
     
     buf += "</h2>";
@@ -6153,7 +6185,7 @@ function operation_data_draw () {
                 var bg_color = convert_color_dark_mode(operations["operations"][operation_number]["main_color"]);
             }
             
-            buf += "<tr onclick='operation_detail(\"" + operation_number + "\", " + operation_data_date + ", true);'><th style='background-color: " + bg_color + ";'><u>" + operation_number + "</u><small>(" + operations["operations"][operation_number]["cars_count"] + ")</th>";
+            buf += "<tr onclick='operation_detail(\"" + operation_number + "\", " + operation_data_date + ", " + show_write_operation_data_button + ");'><th style='background-color: " + bg_color + ";'><u>" + operation_number + "</u><small>(" + operations["operations"][operation_number]["cars_count"] + ")</th>";
             
             if (operation_number in operation_data["operations"] && operation_data["operations"][operation_number] !== null) {
                 if (operation_data["operations"][operation_number]["posts_count"] === 0) {
@@ -6298,7 +6330,7 @@ function draw_operation_detail (operation_number, operation_data_date_ts_or_oper
     
     var buf = "<h2 style='background-color: " + bg_color + ";" + color_style + "'><button type='button' class='previous_button' onclick='previous_operation_number(\"" + operation_number + "\", " + operation_table_name_or_ts + ");'></button>" + operation_number + "運用<small>" + operations["operations"][operation_number]["operation_group_name"] + " (" + operations["operations"][operation_number]["cars_count"] + "両)</small><button type='button' class='next_button' onclick='next_operation_number(\"" + operation_number + "\", " + operation_table_name_or_ts + ");'></button></h2>";
     
-    if (formation_text !== null || operation_detail_write_button_enabled) {
+    if (formation_text !== null || typeof operation_data_date_ts_or_operation_name !== "string") {
         buf += "<div class='formation_data_area'>";
         
         if (formation_text === null && operation_number in operation_data["operations"] && operation_data["operations"][operation_number] !== null) {
@@ -6349,7 +6381,7 @@ function draw_operation_detail (operation_number, operation_data_date_ts_or_oper
     
     draw_operation_trains(operation_number, operation_table_name_or_ts, is_today);
     
-    if (navigator.onLine && (formation_text !== null || operation_detail_write_button_enabled)) {
+    if (navigator.onLine && (formation_text !== null || typeof operation_data_date_ts_or_operation_name !== "string")) {
         get_operation_data_detail(operation_data_date_str, operation_number, "operation_data_detail_area");
     }
 }
@@ -7219,9 +7251,9 @@ function write_operation_data (yyyy_mm_dd, operation_number) {
     
     buf += "<b>編成名または車両形式</b>";
     buf += "<div class='informational_text'><b>◀ " + alias_of_forward_direction + "</b></div>";
-    buf += "<input type='text' id='operation_data_formation_0'>";
-    buf += "<div class='informational_text'>この運用に複数の編成が連結して充当されている場合は、" + alias_of_forward_direction + "から順に各編成を「+」で区切って入力してください。<br><br>運休情報は「運休」または「ウヤ」を入力可能です。</div>";
-    buf += "<b>コメント</b><input type='text' id='operation_data_comment_0'>";
+    buf += "<input type='text' id='operation_data_formation'>";
+    buf += "<div class='informational_text'>この運用に複数の編成が連結して充当されている場合は、" + alias_of_forward_direction + "の編成から順に「+」で区切って入力してください。<br><br>運休情報は「運休」または「ウヤ」を入力可能です。</div>";
+    buf += "<b>コメント</b><textarea id='operation_data_comment'></textarea>";
     
     if(speculative_post) {
         buf += "<div class='warning_text'>お手数ですが、この運用に充当される編成を特定した方法をコメントにご入力ください。</div>";
@@ -7292,7 +7324,7 @@ function post_operation_data (cnt = 0) {
         return;
     }
     
-    var send_data = "railroad_id=" + escape_form_data(railroad_info["railroad_id"]) + "&date=" + escape_form_data(post_yyyy_mm_dd) + "&operation_number=" + escape_form_data(post_operation_number) + "&formations=" + escape_form_data(document.getElementById("operation_data_formation_0").value) + "&comment=" + escape_form_data(document.getElementById("operation_data_comment_0").value);
+    var send_data = "railroad_id=" + escape_form_data(railroad_info["railroad_id"]) + "&date=" + escape_form_data(post_yyyy_mm_dd) + "&operation_number=" + escape_form_data(post_operation_number) + "&formations=" + escape_form_data(document.getElementById("operation_data_formation").value) + "&comment=" + escape_form_data(document.getElementById("operation_data_comment").value);
     if (user_data !== null) {
         send_data += "&one_time_token=" + escape_form_data(one_time_token);
     } else {

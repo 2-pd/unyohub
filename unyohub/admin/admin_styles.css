@@ -186,15 +186,17 @@ button, a.wide_button {
 textarea {
     display: block;
     
-    width: calc(100% - 12px);
-    height: 200px;
+    box-sizing: content-box;
     
-    max-width: 488px;
+    width: calc(100% - 60px);
+    height: 180px;
+    
+    max-width: 440px;
     
     margin: 10px auto;
-    padding: 5px;
+    padding: 9px;
     
-    border: 1px solid #999999;
+    border: 1px solid #cccccc;
     border-radius: 5px;
 
     font-size: 18px;

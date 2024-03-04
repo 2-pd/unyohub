@@ -52,12 +52,22 @@ if ($ts === FALSE) {
     exit;
 }
 
+if ($ts < $ts_now - 270000) {
+    print "ERROR: 3日以上前の運用情報を投稿することはできません";
+    exit;
+}
+
 $operation_date = date("Y-m-d", $ts);
 
 
 $operation_data = get_operation_info($ts, $_POST["operation_number"]);
 
-$comment = preg_replace("/^[\x00\s]++|[\x00\s]++$/u", "", mb_substr($_POST["comment"], 0, 500));
+if (mb_strlen($_POST["comment"]) > 140) {
+    print "ERROR: コメントの最大文字数は140文字です";
+    exit;
+}
+
+$comment = preg_replace("/[\r\n][\r\n]++/u", "\n", preg_replace("/\A[\x00\s]++|[\x00\s]++\Z/u", "", $_POST["comment"]));
 
 if (strlen($comment) === 0 && (($operation_date === $posted_date && $operation_data["first_departure_time"] > date("H:i", $ts_now)) || $operation_date > $posted_date)) {
     print "ERROR: 出庫前の運用に充当される編成を特定した方法をコメントにご入力ください";

@@ -44,6 +44,10 @@ for ($cnt = 0; $cnt < count($operation_numbers); $cnt++) {
                 $data[$cnt_2]["user_id"] = $user->get_id();
                 $data[$cnt_2]["user_name"] = $user->get_name();
                 
+                if (empty($data[$cnt_2]["user_name"])) {
+                    $data[$cnt_2]["user_name"] = "ハンドルネーム未設定";
+                }
+                
                 if ($user->check_permission("moderate")) {
                     $data[$cnt_2]["is_moderator"] = TRUE;
                     $data[$cnt_2]["is_beginner"] = FALSE;
