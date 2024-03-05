@@ -307,6 +307,11 @@
                     "connecting_lines" : ["honsen"]
                 },
                 {
+                    "station_name" : "梶取",
+                    "station_name_kana" : "かんどり",
+                    "is_signal_station" : true
+                },
+                {
                     "station_name" : "東松江",
                     "station_name_kana" : "ひがしまつえ"
                 },

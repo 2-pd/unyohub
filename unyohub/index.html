@@ -707,6 +707,29 @@ article {
     background-color: #555555;
 }
 
+h4.position_signal_station {
+    width: 84px;
+    height: 26px;
+    
+    padding-left: 4px;
+    
+    border: 1px solid #eeeeee;
+    
+    background-color: #ffffff;
+    
+    line-height: 26px;
+    color: #999999;
+    text-decoration: none;
+    
+    filter: none;
+}
+
+.dark_mode h4.position_signal_station {
+    border-color: #555555;
+    
+    background-color: #444444;
+}
+
 .train_icon {
     float: left;
     
@@ -821,7 +844,11 @@ article {
     top: -6px;
 }
 
-.position_row:not(:first-child) .position_line.position_major_station:after {
+.position_row .position_line.position_line_signal_station:after {
+    display: none;
+}
+
+.position_row:not(:first-child) .position_line.position_line_major_station:after {
     top: -6px;
     left: 3px;
     
@@ -832,7 +859,7 @@ article {
     border-radius: 8px;
 }
 
-.position_row:last-child .position_line.position_major_station:after {
+.position_row:last-child .position_line.position_line_major_station:after {
     top: -8px;
 }
 
@@ -4768,16 +4795,24 @@ function position_change_lines (line_id) {
         buf += "<div class='position_row'><div class='position_station'>";
         
         var border_style = "";
-        var major_station_class = "";
+        var position_station_class = "";
         
         if (cnt !== 0){
-            buf += "<h4 onclick='show_station_timetable(\"" + line_id + "\", \"" + railroad_info["lines"][line_id]["stations"][cnt - 1]["station_name"] + "\");'";
+            buf += "<h4";
             
-            if ("is_major_station" in railroad_info["lines"][line_id]["stations"][cnt - 1] && railroad_info["lines"][line_id]["stations"][cnt - 1]["is_major_station"]) {
-                buf += " style='background-color: " + station_color + ";'";
+            if ("is_signal_station" in railroad_info["lines"][line_id]["stations"][cnt - 1] && railroad_info["lines"][line_id]["stations"][cnt - 1]["is_signal_station"]) {
+                buf += " class='position_signal_station'";
                 
-                border_style = " style='border-top: 2px solid " + major_station_row_color + ";'";
-                major_station_class = " position_major_station";
+                position_station_class = " position_line_signal_station";
+            } else {
+                buf += " onclick='show_station_timetable(\"" + line_id + "\", \"" + railroad_info["lines"][line_id]["stations"][cnt - 1]["station_name"] + "\");'";
+                
+                if ("is_major_station" in railroad_info["lines"][line_id]["stations"][cnt - 1] && railroad_info["lines"][line_id]["stations"][cnt - 1]["is_major_station"]) {
+                    buf += " style='background-color: " + station_color + ";'";
+                    
+                    border_style = " style='border-top: 2px solid " + major_station_row_color + ";'";
+                    position_station_class = " position_line_major_station";
+                }
             }
             
             buf += ">";
@@ -4808,9 +4843,9 @@ function position_change_lines (line_id) {
         buf += "</div><div class='position_inbound'" + border_style + "></div>";
         
         if (cnt !== 0 && cnt !== railroad_info["lines"][line_id]["stations"].length){
-            buf += "<div class='position_line" + major_station_class + "' style='background-color: " + line_color + ";'></div>";
+            buf += "<div class='position_line" + position_station_class + "' style='background-color: " + line_color + ";'></div>";
         } else {
-            buf += "<div class='position_line" + major_station_class + "' style='border-color: " + line_color + ";'></div>";
+            buf += "<div class='position_line" + position_station_class + "' style='border-color: " + line_color + ";'></div>";
         }
         
         buf += "<div class='position_outbound'" + border_style + "></div></div>";
@@ -5703,6 +5738,10 @@ function timetable_change_lines(line_id, force_station_select_mode = false) {
         var buf = "";
         var kana_rows_cnt = -1;
         for (cnt = 0; cnt < station_names.length; cnt++) {
+            if ("is_signal_station" in railroad_info["lines"][line_id]["stations"][station_indexes[station_names[cnt]]] && railroad_info["lines"][line_id]["stations"][station_indexes[station_names[cnt]]]["is_signal_station"]) {
+                continue;
+            }
+            
             for (var cnt_2 = Math.max(kana_rows_cnt, 0); kana_rows_regexp[cnt_2].exec(station_names[cnt]) === null; cnt_2++) {}
             if (cnt_2 > kana_rows_cnt) {
                 if (kana_rows_cnt >= 0) {

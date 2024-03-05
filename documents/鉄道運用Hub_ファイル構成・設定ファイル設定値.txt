@@ -132,6 +132,7 @@ _/_/_/_/ 設定ファイル設定値 _/_/_/_/
                     "station_name" : 駅名,
                     "station_name_kana" : 駅名のふりがな(ひらがな),
                     "station_initial" : 駅頭文字(始発・終着列車のない非分岐駅では省略可能。このJSONに記載の他の駅と被る場合は別の文字を使用する),
+                    "is_signal_station" : 信号場か否か(信号場でなければ省略可能。BOOL値),
                     "is_major_station" : 主要駅か否か(主要駅でなければ省略可能。BOOL値),
                     "connecting_lines" : 直通路線の路線識別名を配列で列挙(分岐駅でなければ省略可能)
                 }...
