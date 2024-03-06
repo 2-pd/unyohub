@@ -87,17 +87,21 @@ function check_formation ($formations_str) {
     $formation_list = array();
     $formation_pattern_last = array(NULL);
     foreach ($formations as $formation) {
-        $formation_escaped = $db_obj->escapeString($formation);
-        
-        $series_name = $db_obj->querySingle("SELECT `series_name` FROM `unyohub_formations` WHERE `formation_name` = '".$formation_escaped."' OR `series_name` = '".$formation_escaped."' LIMIT 1");
-        
-        if (empty($series_name)) {
-            print "ERROR: 入力された編成名・車両形式に誤りがあります";
-            exit;
-        }
-        
-        if ($series_name !== $formation) {
-            $formation_list[] = $formation;
+        if ($formation !== "?") {
+            $formation_escaped = $db_obj->escapeString($formation);
+            
+            $series_name = $db_obj->querySingle("SELECT `series_name` FROM `unyohub_formations` WHERE `formation_name` = '".$formation_escaped."' OR `series_name` = '".$formation_escaped."' LIMIT 1");
+            
+            if (empty($series_name)) {
+                print "ERROR: 入力された編成名・車両形式に誤りがあります";
+                exit;
+            }
+            
+            if ($series_name !== $formation) {
+                $formation_list[] = $formation;
+            }
+        } else {
+            $series_name = "?";
         }
         
         $formation_pattern_2 = array();
@@ -117,9 +121,17 @@ function check_formation ($formations_str) {
                 $formation_pattern_last_2[] = $series_name;
             }
             
+            if ($formation !== "?") {
+                $formation_pattern_2[] = $forward_pattern."?";
+                $formation_pattern_last_2[] = "?";
+            }
+            
             if ($formation_pattern_last[$cnt] === $series_name) {
                 $formation_pattern_2[] = $formation_pattern[$cnt];
                 $formation_pattern_last_2[] = $series_name;
+            } elseif ($formation_pattern_last[$cnt] === "?") {
+                $formation_pattern_2[] = $formation_pattern[$cnt];
+                $formation_pattern_last_2[] = "?";
             }
         }
         

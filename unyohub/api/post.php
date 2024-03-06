@@ -77,9 +77,9 @@ if (strlen($comment) === 0 && (($operation_date === $posted_date && $operation_d
 
 $operation_number = $db_obj->escapeString($_POST["operation_number"]);
 
-$formations = mb_convert_kana($_POST["formations"], "KVa");
+$formations = preg_replace("/不明/u", "?", mb_convert_kana($_POST["formations"], "KVa"));
 
-if ($formations !== "運休" && $formations !== "ウヤ") {
+if ($formations !== "運休" && $formations !== "ウヤ" && $formations !== "トケ") {
     $formation_data = check_formation($formations);
     
     $formation_pattern = $formation_data["formation_pattern"];
