@@ -1,4 +1,4 @@
-var unyohub_version = "24.02-6"; /*鉄道運用Hub本体のバージョン番号*/
+var unyohub_version = "24.03-1"; /*鉄道運用Hub本体のバージョン番号*/
 
 var cache_name = "unyohub_" + unyohub_version;
 var files_to_cache = [
