@@ -39,9 +39,11 @@ html, body {
     overscroll-behavior-y: none;
 }
 
+body {
+    background-color: #222222;
+}
+
 .dark_mode {
-    background-color: #444444;
-    
     color: #ffffff;
 }
 
@@ -362,6 +364,15 @@ header {
     z-index: 10;
 }
 
+#splash_screen.splash_screen_loading {
+    background-image: none;
+    background-color: #222222;
+}
+
+#splash_screen.splash_screen_loading *, #splash_screen.splash_screen_loading:after {
+    display: none;
+}
+
 .dark_mode #splash_screen, .dark_mode #railroad_select_popup {
     background-color: #666666;
 }
@@ -498,10 +509,6 @@ header {
     z-index: 3;
 }
 
-.dark_mode #blank_article {
-    background-color: #444444;
-}
-
 #tab_area {
     display: block;
     
@@ -580,8 +587,14 @@ article {
     
     padding: 10px 5px 50px 5px;
     
+    background-color: #ffffff;
+    
     overflow-x: hidden;
     overflow-y: scroll;
+}
+
+.dark_mode article, .dark_mode #blank_article {
+    background-color: #444444;
 }
 
 .wide_button {
@@ -2557,7 +2570,7 @@ a {
     z-index: 300 !important;
 }
 
-#wait_screen:before, .wait_icon:empty:before {
+#wait_screen:before, .wait_icon:empty:before, .splash_screen_loading:before {
     content: "";
     
     display: block;
@@ -2972,7 +2985,7 @@ input[type="radio"] + label small {
         <a href="javascript:void(0);" onclick="window.open('README.html');">このアプリの使い方</a>
         <a href="javascript:void(0);" onclick="show_rules();">ルールとポリシー</a>
     </div>
-    <div id="splash_screen">
+    <div id="splash_screen" class="splash_screen_loading">
         <div id="splash_screen_inner">
             <div id="splash_screen_login_status">サーバに接続しています...</div>
             <a id="announcements_overview" href="javascript:void(0);" onclick="show_announcements();"></a>
@@ -3656,7 +3669,11 @@ function switch_dark_mode () {
     }
 }
 
+
+var splash_screen_elm = document.getElementById("splash_screen");
+
 switch_dark_mode();
+splash_screen_elm.classList.remove("splash_screen_loading");
 
 
 var header_elm = document.getElementsByTagName("header")[0];
@@ -3865,7 +3882,6 @@ function get_days_operation (ts) {
 }
 
 
-var splash_screen_elm = document.getElementById("splash_screen");
 var splash_screen_login_status_elm = document.getElementById("splash_screen_login_status");
 
 function update_railroad_list (railroads) {
