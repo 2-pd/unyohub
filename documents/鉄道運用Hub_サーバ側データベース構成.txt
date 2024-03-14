@@ -51,7 +51,7 @@ _/_/_/_/ データベース _/_/_/_/
   `user_id` TEXT NOT NULL 投稿者ID(未登録ユーザーの場合、クライアント端末が生成する12桁の乱数値の頭に「*」を付加した文字列を記録する)
   `formations` TEXT NOT NULL 充当組成(複数編成併結による運用の場合も「+」で区切って1レコードに格納)
   `posted_datetime` TEXT NOT NULL 「YYYY-MM-DD HH:MM:SS」形式の情報投稿日時
-  `comment` TEXT コメント
+  `comment` TEXT 運用補足情報(コメント)
 
   PRIMARY KEY(`operation_date`, `operation_number`, `user_id`)
   INDEX `unyohub_idx_d1`(`user_id`, `posted_datetime`)
@@ -64,7 +64,7 @@ _/_/_/_/ データベース _/_/_/_/
   `formations` TEXT 充当組成(最も新しい投稿の情報を格納、複数編成併結による運用の場合も「+」で区切って1レコードに格納、運休の場合は空文字列)
   `posts_count` INTEGER 投稿の個数(前日運用からの推測データの場合は「0」)
   `variant_exists` INTEGER 投稿情報に異なる情報が存在するかどうか
-  `comment_exists` INTEGER コメントの有無
+  `comment_exists` INTEGER 運用補足情報の有無
   `from_beginner` INTEGER ビギナーの投稿か否か
   `updated_datetime` TEXT NOT NULL 「YYYY-MM-DD HH:MM:SS」形式の情報投稿日時
 

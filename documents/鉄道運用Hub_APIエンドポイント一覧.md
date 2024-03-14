@@ -255,7 +255,7 @@ formations.jsonの内容を返す
             "formations" : 組成情報,  
             "posts_count" : 情報の投稿数,  
             "variant_exists" : 投稿情報のバリエーションの有無,  
-            "comment_exists" : コメントの有無,  
+            "comment_exists" : 運用補足情報の有無,  
             "from_beginner" : ビギナーの投稿か否か  
         }...  
     ],  
@@ -265,7 +265,7 @@ formations.jsonの内容を返す
             "formations" : 組成情報,  
             "posts_count" : 情報の投稿数,  
             "variant_exists" : 投稿情報のバリエーションの有無,  
-            "comment_exists" : コメントの有無,  
+            "comment_exists" : 運用補足情報の有無,  
             "from_beginner" : ビギナーの投稿か否か  
         }...  
     ],  
@@ -276,7 +276,7 @@ formations.jsonの内容を返す
             "formations" : 組成情報,  
             "posts_count" : 情報の投稿数,  
             "variant_exists" : 投稿情報のバリエーションの有無,  
-            "comment_exists" : コメントの有無,  
+            "comment_exists" : 運用補足情報の有無,  
             "from_beginner" : ビギナーの投稿か否か  
         }...  
     ]  
@@ -342,7 +342,7 @@ JSON化された時刻表の内容を返す
         "formations" : 編成名(最も新しい投稿の情報を前位側・奇数向きから順に各編成を「+」で区切った文字列。運休の場合は空文字列),  
         "posts_count" : 情報の投稿数,  
         "variant_exists" : 投稿情報のバリエーションの有無,  
-        "comment_exists" : コメントの有無,  
+        "comment_exists" : 運用補足情報の有無,  
         "from_beginner" : ビギナーの投稿か否か  
     }...  
 }  
@@ -375,7 +375,7 @@ JSON化された時刻表の内容を返す
             "website_url" : ユーザーのwebサイトのURL,  
             "formations" : 編成名(前位側・奇数向きから順に各編成を「+」で区切った文字列。運休の場合は空文字列),  
             "posted_datetime" : YYYY-MM-DD HH:MM:SS形式の投稿日時,  
-            "comment" : コメント  
+            "comment" : 運用補足情報(コメント)  
         }...  
     ]...
 }  
@@ -411,7 +411,7 @@ JSON化された時刻表の内容を返す
 **$_POST["date"]** : YYYY-MM-DD形式の日付  
 **$_POST["operation_number"]** : 運用番号  
 **$_POST["formations"]** : 編成を前位側(奇数側)から順に「+」で区切った文字列  
-**$_POST["comment"]** : コメント  
+**$_POST["comment"]** : 運用補足情報(コメント)  
 **$_POST["one_time_token"]** : ワンタイムトークン(ログインしている場合)  
 **$_POST["guest_id"]** : 　「*」から始まる仮ユーザーID(ログインしていない場合)  
 **$_POST["zizai_captcha_id"]** : Zizai CAPTCHAのセッションID(ログインしていない場合)  
@@ -424,7 +424,7 @@ JSON化された時刻表の内容を返す
         "formations" : 編成名(最も新しい投稿の情報を前位側・奇数向きから順に各編成を「+」で区切った文字列。運休の場合は空文字列),  
         "posts_count" : 情報の投稿数,  
         "variant_exists" : 投稿情報のバリエーションの有無,  
-        "comment_exists" : コメントの有無,  
+        "comment_exists" : 運用補足情報の有無,  
         "from_beginner" : ビギナーの投稿か否か  
     }  
 }  
@@ -452,7 +452,7 @@ JSON化された時刻表の内容を返す
         "formations" : 他のユーザーの情報に基づく編成名(最も新しい投稿の情報を前位側・奇数向きから順に各編成を「+」で区切った文字列),  
         "posts_count" : 情報の投稿数,  
         "variant_exists" : 投稿情報のバリエーションの有無,  
-        "comment_exists" : コメントの有無,  
+        "comment_exists" : 運用補足情報の有無,  
         "from_beginner" : ビギナーの投稿か否か  
     }  
 }  
