@@ -236,6 +236,7 @@
             "line_name" : "高野線(汐見橋線区間)",
             "line_color" : "#33cc66",
             "inbound_forward_direction" : true,
+            "show_final_destinations_in_position_mode" : true,
             "stations" : [
                 {
                     "station_name" : "汐見橋",
@@ -271,6 +272,7 @@
             "line_name" : "多奈川線",
             "line_color" : "#666666",
             "inbound_forward_direction" : true,
+            "show_final_destinations_in_position_mode" : true,
             "stations" : [
                 {
                     "station_name" : "みさき公園",
@@ -299,6 +301,7 @@
             "line_name" : "加太線",
             "line_color" : "#ff99cc",
             "inbound_forward_direction" : false,
+            "show_final_destinations_in_position_mode" : true,
             "stations" : [
                 {
                     "station_name" : "紀ノ川",
