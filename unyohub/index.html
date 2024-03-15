@@ -966,6 +966,8 @@ h4.position_signal_station {
 
 .dark_mode .train_type {
     background-image: linear-gradient(315deg, #444444 5px, transparent 5px);
+    
+    color: #333333;
 }
 
 .multiple_trains .train_icon {
@@ -1432,6 +1434,10 @@ article input[type="checkbox"] + label {
     text-align: center;
 }
 
+.dark_mode .operation_table .operation_overview small {
+    color: #333333 !important;
+}
+
 .operation_table .operation_overview small:not(:last-child):after {
     content: "";
     
@@ -1527,7 +1533,7 @@ h2 .previous_button, h2 .next_button {
     position: absolute;
     top: 0;
     
-    height: 60px;
+    height: 40px;
     
     margin: 0 !important;
 }
@@ -2450,6 +2456,10 @@ a {
 
 #operation_detail_area {
     text-align: center;
+}
+
+#operation_detail_area h2 .previous_button, #operation_detail_area h2 .next_button {
+    height: 60px;
 }
 
 #operation_trains_area {
@@ -3614,38 +3624,16 @@ function rgb2hsl (color_hex) {
     return [h, s, l];
 }
 
-function hsl2rgb (h, s, l) {
-    if (l <= 127) {
-        var rgb_max = Math.round(l + l * (s / 255));
-        var rgb_min = Math.round(l - l * (s / 255));
-    } else {
-        var rgb_max = Math.round(l + (255 - l) * (s / 255));
-        var rgb_min = Math.round(l - (255 - l) * (s / 255));
-    }
-    
-    if (h <= 60) {
-        return [rgb_max, Math.round((h / 60) * (rgb_max - rgb_min) + rgb_min), rgb_min];
-    } else if(h <= 120) {
-        return [Math.round(((120 - h) / 60) * (rgb_max - rgb_min) + rgb_min), rgb_max, rgb_min];
-    } else if(h <= 180) {
-        return [rgb_min, rgb_max, Math.round(((h - 120) / 60) * (rgb_max - rgb_min) + rgb_min)];
-    } else if(h <= 240) {
-        return [rgb_min, Math.round(((240 - h) / 60) * (rgb_max - rgb_min) + rgb_min), rgb_max];
-    } else if(h <= 300) {
-        return [Math.round(((h - 240) / 60) * (rgb_max - rgb_min) + rgb_min), rgb_min, rgb_max];
-    } else {
-        return [rgb_max, rgb_min, Math.round(((360 - h) / 60) * (rgb_max - rgb_min) + rgb_min)];
-    }
-}
-
 function convert_color_dark_mode (color_hex) {
     var hsl = rgb2hsl(color_hex);
     
-    hsl[2] = Math.min(255 - hsl[2] + 64, 255);
+    return "hsl(" + hsl[0] + "deg " + Math.round(Math.min(hsl[1] * 0.75, 127) / 2.55) + "% " + Math.round(Math.max(Math.min(319 - hsl[2], 255), 85) / 2.55) + "%)";
+}
+
+function convert_font_color_dark_mode (color_hex) {
+    var hsl = rgb2hsl(color_hex);
     
-    var rgb = hsl2rgb(hsl[0], hsl[1] * 0.6, hsl[2]);
-    
-    return "rgb(" + rgb[0] + "," + rgb[1] + "," + rgb[2] + ")";
+    return "hsl(" + hsl[0] + "deg " + Math.round(hsl[1] / 2.55) + "% " + Math.round(Math.min(Math.max(255 - hsl[2], 170), 255) / 2.55) + "%)";
 }
 
 function switch_dark_mode () {
@@ -4079,10 +4067,7 @@ function update_railroad_info () {
     document.getElementById("railroad_name").innerHTML = railroad_name_splitted.join(" ") + "</small>";
     
     var main_color_hsl = rgb2hsl(railroad_info["main_color"]);
-    main_color_hsl[2] = Math.min(main_color_hsl[2] * 1.2, 255);
-    var main_color_shade = hsl2rgb(main_color_hsl[0], main_color_hsl[1], main_color_hsl[2]);
-    
-    railroad_icon_elm.style.backgroundImage = "url(" + railroad_info["railroad_icon"] + "), linear-gradient(to right, " + railroad_info["main_color"] + ", rgb(" + main_color_shade[0] + ", " + main_color_shade[1] + ", " + main_color_shade[2] + "))";
+    railroad_icon_elm.style.backgroundImage = "url(" + railroad_info["railroad_icon"] + "), linear-gradient(to right, " + railroad_info["main_color"] + ", hsl(" + main_color_hsl[0] + "deg " + Math.round(main_color_hsl[1] / 2.55) + "% " + Math.round(Math.min(main_color_hsl[2] * 1.2, 255) / 2.55) + "%))";
     
     railroad_info["deadhead_train_number_regexp"] = new RegExp(railroad_info["deadhead_train_number"]);
     
@@ -4797,14 +4782,14 @@ function position_change_lines (line_id) {
         var line_color = railroad_info["lines"][line_id]["line_color"];
         
         var line_color_hsl = rgb2hsl(line_color);
-        var station_color = "rgb(" + hsl2rgb(line_color_hsl[0], line_color_hsl[1], (line_color_hsl[2] + 1275) / 6).join(",") + ")";
-        var major_station_row_color = "rgb(" + hsl2rgb(line_color_hsl[0], line_color_hsl[1], (line_color_hsl[2] + 2295) / 10).join(",") + ")";
+        var station_color = "hsl(" + line_color_hsl[0] + "deg " + Math.round(line_color_hsl[1] / 2.55) + "% " + Math.round((line_color_hsl[2] + 1275) / 6 / 2.55) + "%)";
+        var major_station_row_color = "hsl(" + line_color_hsl[0] + "deg " + Math.round(line_color_hsl[1] / 2.55) + "% " + Math.round((line_color_hsl[2] + 2295) / 10 / 2.55) + "%)";
     } else {
         var line_color = convert_color_dark_mode(railroad_info["lines"][line_id]["line_color"]);
         
         var line_color_hsl = rgb2hsl(railroad_info["lines"][line_id]["line_color"]);
-        var station_color = "rgb(" + hsl2rgb(line_color_hsl[0], line_color_hsl[1] / 4, Math.min(255 - line_color_hsl[2] + 32, 255)).join(",") + ")";
-        var major_station_row_color = "rgb(" + hsl2rgb(line_color_hsl[0], line_color_hsl[1] / 16, Math.min(255 - line_color_hsl[2] + 16, 255)).join(",") + ")";
+        var station_color = "hsl(" + line_color_hsl[0] + "deg " + Math.round(line_color_hsl[1] / 4 / 2.55) + "% " + Math.round(Math.min(255 - line_color_hsl[2] + 32, 255) / 2.55) + "%)";
+        var major_station_row_color = "hsl(" + line_color_hsl[0] + "deg " + Math.round(line_color_hsl[1] / 16 / 2.55) + "% " + Math.round(Math.min(Math.max(255 - line_color_hsl[2] + 16, 255), 85) / 2.55) + "%)";
     }
     
     var buf = "";
@@ -4899,27 +4884,23 @@ function convert_train_position_data (train_data) {
     }
     
     if (train_data["posts_count"] === 0) {
-        var color = "#0000cc";
-        
-        if (config["dark_mode"]) {
-            var color = convert_color_dark_mode(color);
+        if (!config["dark_mode"]) {
+            var color = "#0000cc";
+        } else {
+            var color = "#9999ff";
         }
         
         train_data["formation_html"] = "<b style='color: " + color + ";'>" + train_data["formation_html"] + "</b>";
     } else if (train_data["variant_exists"]) {
-        var color = "#cc0000";
-        
-        if (config["dark_mode"]) {
-            var color = convert_color_dark_mode(color);
+        if (!config["dark_mode"]) {
+            var color = "#cc0000";
+        } else {
+            var color = "#ff9999";
         }
         
         train_data["formation_html"] = "<b style='color: " + color + ";'>" + train_data["formation_html"] + "</b>";
     } else if (config["colorize_beginners_posts"] && train_data["from_beginner"]) {
         var color = "#33cc99";
-        
-        if (config["dark_mode"]) {
-            var color = convert_color_dark_mode(color);
-        }
         
         train_data["formation_html"] = "<b style='color: " + color + ";'>" + train_data["formation_html"] + "</b>";
     } else {
@@ -4949,6 +4930,9 @@ function draw_train_position (hh_and_mm) {
             }
             
             var train_color = get_train_color(train["train_title"], "#333333");
+            if (config["dark_mode"]) {
+                train_color = convert_font_color_dark_mode(train_color);
+            }
             buf += "><span class='train_type' style='background-color: " + train_color + "; border-color: " + train_color + ";'>";
             
             if (config["show_train_types_in_position_mode"]) {
@@ -4991,6 +4975,9 @@ function draw_train_position (hh_and_mm) {
             }
             
             var train_color = get_train_color(train["train_title"], "#333333");
+            if (config["dark_mode"]) {
+                train_color = convert_font_color_dark_mode(train_color);
+            }
             buf += "><span class='train_type' style='background-color: " + train_color + "; border-color: " + train_color + ";'>";
             
             if (config["show_train_types_in_position_mode"]) {
@@ -5548,7 +5535,7 @@ function train_detail (line_id, train_number, first_departure_time, train_direct
             
             var color = get_train_color(train_data[cnt]["train_number"]);
             if (config["dark_mode"]) {
-                color = convert_color_dark_mode(color);
+                color = convert_font_color_dark_mode(color);
             }
             
             buf += "<span style='color: " + color + ";'>" + escape_html(train_data[cnt]["train_type"] + "　" + train_data[cnt]["train_number"]) + "</span>";
@@ -5614,7 +5601,7 @@ function train_detail (line_id, train_number, first_departure_time, train_direct
     } else {
         var color = get_train_color(train_number);
         if (config["dark_mode"]) {
-            color = convert_color_dark_mode(color);
+            color = convert_font_color_dark_mode(color);
         }
         
         buf += "<h4>" + escape_html(railroad_info["lines"][line_id]["line_name"]) + "　<span style='color: " + color + ";'>"
@@ -5932,9 +5919,7 @@ function draw_station_timetable (station_name) {
             var color = get_train_color(departure_times[keys[cnt]][keys_2[cnt_2]]);
             
             if (config["dark_mode"]) {
-                var color_hsl = rgb2hsl(color);
-                
-                color = "rgb(" + hsl2rgb(color_hsl[0], color_hsl[1], Math.min(color_hsl[2] + 32, 255)).join(",") + ")";
+                color = convert_font_color_dark_mode(color);
             }
             
             buf += "<span style='color: " + color + ";'><b>" + Number(keys_2[cnt_2]);
@@ -5999,27 +5984,23 @@ function draw_station_timetable (station_name) {
                 }
                 
                 if (formation_data["posts_count"] === 0) {
-                    var color = "#0000cc";
-                    
-                    if (config["dark_mode"]) {
-                        var color = convert_color_dark_mode(color);
+                    if (!config["dark_mode"]) {
+                        var color = "#0000cc";
+                    } else {
+                        var color = "#9999ff";
                     }
                     
                     buf += "<span style='color: " + color + ";'>" + escape_html(formation_data["formation_text"]) + "</span>";
                 } else if (formation_data["variant_exists"]) {
-                    var color = "#cc0000";
-                    
-                    if (config["dark_mode"]) {
-                        var color = convert_color_dark_mode(color);
+                    if (!config["dark_mode"]) {
+                        var color = "#cc0000";
+                    } else {
+                        var color = "#ff9999";
                     }
                     
                     buf += "<span style='color: " + color + ";'>" + escape_html(formation_data["formation_text"]) + "</span>";
                 } else if (config["colorize_beginners_posts"] && formation_data["from_beginner"]) {
                     var color = "#33cc99";
-                    
-                    if (config["dark_mode"]) {
-                        var color = convert_color_dark_mode(color);
-                    }
                     
                     buf += "<span style='color: " + color + ";'>" + escape_html(formation_data["formation_text"]) + "</span>";
                 } else {
@@ -6250,27 +6231,23 @@ function operation_data_draw () {
             
             if (operation_number in operation_data["operations"] && operation_data["operations"][operation_number] !== null) {
                 if (operation_data["operations"][operation_number]["posts_count"] === 0) {
-                    var color = "#0000cc";
-                    
-                    if (config["dark_mode"]) {
-                        var color = convert_color_dark_mode(color);
+                    if (!config["dark_mode"]) {
+                        var color = "#0000cc";
+                    } else {
+                        var color = "#9999ff";
                     }
                     
                     buf += "<td style='color: " + color + ";'>";
                 } else if (operation_data["operations"][operation_number]["variant_exists"]) {
-                    var color = "#cc0000";
-                    
-                    if (config["dark_mode"]) {
-                        var color = convert_color_dark_mode(color);
+                    if (!config["dark_mode"]) {
+                        var color = "#cc0000";
+                    } else {
+                        var color = "#ff9999";
                     }
                     
                     buf += "<td style='color: " + color + ";'>";
                 } else if (config["colorize_beginners_posts"] && operation_data["operations"][operation_number]["from_beginner"]) {
                     var color = "#33cc99";
-                    
-                    if (config["dark_mode"]) {
-                        var color = convert_color_dark_mode(color);
-                    }
                     
                     buf += "<td style='color: " + color + ";'>";
                 } else {
@@ -6531,7 +6508,7 @@ function draw_operation_trains (operation_number, operation_table_name_or_ts, is
             if (!config["dark_mode"]) {
                 var color = get_train_color(trains[cnt]["train_number"]);
             } else {
-                var color = convert_color_dark_mode(get_train_color(trains[cnt]["train_number"]));
+                var color = convert_font_color_dark_mode(get_train_color(trains[cnt]["train_number"]));
             }
             
             buf += "<div class='" + train_div_class_name + "'>";
@@ -7103,7 +7080,11 @@ function operation_table_list_number () {
                     var train_type_initial = "*";
                 }
                 
-                buf_2 += "<small style='background-color: " + get_train_color(trains[cnt_2]["train_number"], "#333333") + ";'>" + train_type_initial + "</small>";
+                var train_color = get_train_color(trains[cnt_2]["train_number"], "#333333");
+                if (config["dark_mode"]) {
+                    train_color = convert_font_color_dark_mode(train_color);
+                }
+                buf_2 += "<small style='background-color: " + train_color + ";'>" + train_type_initial + "</small>";
             } else {
                 var train_number_search_index = trains[cnt_2]["train_number"].indexOf(search_keyword);
                 
