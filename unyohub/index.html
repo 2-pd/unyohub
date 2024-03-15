@@ -5474,7 +5474,7 @@ function train_detail (line_id, train_number, first_departure_time, train_direct
                         } else if (formations_data[cnt_2] === "?") {
                             buf += "<img src='" + UNYOHUB_UNKNOWN_TRAIN_ICON + "' alt='' class='train_icon'>" + "?";
                         } else {
-                            buf += "<img src='" + UNYOHUB_GENERIC_TRAIN_ICON + "' alt='' class='train_icon'>" + escape_html(formations_data[cnt_2]);
+                            buf += "<img src='" + get_icon(formations_data[cnt_2]) + "' alt='' class='train_icon'>" + escape_html(formations_data[cnt_2]);
                         }
                     }
                 } else {
@@ -6389,7 +6389,7 @@ function draw_operation_detail (operation_number, operation_data_date_ts_or_oper
                     } else if (formations_data[cnt_2] === "?") {
                         buf += "<img src='" + UNYOHUB_UNKNOWN_TRAIN_ICON + "' alt='' class='train_icon'>" + "?";
                     } else {
-                        buf += "<img src='" + UNYOHUB_GENERIC_TRAIN_ICON + "' alt='' class='train_icon'>" + escape_html(formations_data[cnt_2]);
+                        buf += "<img src='" + get_icon(formations_data[cnt_2]) + "' alt='' class='train_icon'>" + escape_html(formations_data[cnt_2]);
                     }
                 }
             } else {
