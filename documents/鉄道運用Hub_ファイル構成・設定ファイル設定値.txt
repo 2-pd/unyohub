@@ -127,6 +127,7 @@ _/_/_/_/ 設定ファイル設定値 _/_/_/_/
             "line_name" : 路線名,
             "line_color" : 路線のテーマカラー,
             "inbound_forward_direction" : 上り列車の進行方向と編成の前位側(奇数向き)方向が一致するかどうか(BOOL値),
+            "double_station_spacing" : 走行位置モードで駅間を2行で表示させるか(1行で表示させる場合は省略可能。BOOL値),
             "show_final_destinations_in_position_mode" : 走行位置モードで種別の代わりに行き先を表示させるか(種別を表示させる場合は省略可能。BOOL値),
             "stations" : [ 駅一覧
                 {
@@ -168,14 +169,23 @@ _/_/_/_/ 設定ファイル設定値 _/_/_/_/
     ],
     "deadhead_train_number" : 回送列車の列車番号にマッチする正規表現パターン,
     "alias_of_forward_direction" : 前位側(奇数側)の呼称(「北側」、「上り方」など),
-    "editors" : [ 路線系統データ製作者の情報
+    "description" : 路線系統データの説明文(URLは表示時に自動でリンクに変換される。省略可能),
+    "editors" : [ 路線系統データ製作者の情報(省略可能)
         {
             "editor_name" : 路線系統データ製作者のハンドルネーム,
-            "editor_url" : 路線系統データ製作者のwebサイトURL(省略する場合はnullまたは空文字列を指定),
-            "introduction_text" : 製作者の紹介文
+            "editor_url" : 路線系統データ製作者のwebサイトURL(省略可能),
+            "introduction_text" : 製作者の紹介文(省略可能)
         }...
     ],
-    "license_text" : ライセンス文や謝辞などをまとめた文字列(URLは表示時に自動でリンクに変換される)
+    "license_text" : ライセンス文(URLは表示時に自動でリンクに変換される。省略可能),
+    "acknowledgment" : 謝辞の文(URLは表示時に自動でリンクに変換される。省略可能),
+    "related_links" : [ 関連リンク(省略可能)
+        {
+            "link_url" : リンクURL,
+            "link_text" : リンクテキスト,
+            "link_description" : リンクの説明(省略可能)
+        }...
+    ]
 }
 
 

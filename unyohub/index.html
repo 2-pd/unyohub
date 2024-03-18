@@ -1868,7 +1868,7 @@ footer .previous_button, footer .next_button {
 }
 
 h3 a {
-    color: inherit;
+    color: inherit !important;
 }
 
 h4 {
@@ -2219,6 +2219,11 @@ a {
     text-align: center;
 }
 
+#about_railroad_data_popup h2 {
+    font-size: 20px;
+    color: #ffffff;
+}
+
 #about_railroad_data_popup img {
     display: block;
     
@@ -2227,9 +2232,10 @@ a {
     margin: 5px auto;
 }
 
-#license_area, #rules_area {
+.long_text {
     margin: 20px 0 40px 0;
     
+    line-height: 1.8em;
     text-align: left;
     word-break: break-all;
 }
@@ -3137,7 +3143,6 @@ input[type="radio"] + label small {
     </div>
     <div class="popup" id="about_railroad_data_popup">
         <button type="button" class="popup_close_button" onclick="popup_close();"></button>
-        <h2>この路線系統データについて</h2>
         <div id="about_railroad_data_area"></div>
     </div>
     <div class="popup" id="write_operation_data_popup">
@@ -3153,7 +3158,7 @@ input[type="radio"] + label small {
     <div class="popup" id="rules_popup">
         <button type="button" class="popup_close_button" onclick="popup_close();"></button>
         <h2>ルールとポリシー</h2>
-        <div id="rules_area" class="wait_icon"></div>
+        <div id="rules_area" class="wait_icon long_text"></div>
     </div>
     <div id="popup_screen">
         <div id="popup_screen_blank_area" onclick="close_square_popup();"></div>
@@ -7687,20 +7692,47 @@ function about_railroad_data () {
         main_color = convert_color_dark_mode(main_color);
     }
     
-    var buf = "<h3 style='background-color: " + main_color + ";'><img src='" + railroad_info["railroad_icon"] + "' alt=''>" + railroad_info["railroad_name"] + "</h3>";
+    var buf = "<h2 style='background-color: " + main_color + ";'><img src='" + railroad_info["railroad_icon"] + "' alt=''>" + railroad_info["railroad_name"] + "</h2>";
     
-    buf += "<h3>製作者</h3>";
-    for (var cnt = 0; cnt < railroad_info["editors"].length; cnt++) {
-        if (railroad_info["editors"][cnt]["editor_url"] === null || railroad_info["editors"][cnt]["editor_url"] === "") {
-            buf += "<b>" + escape_html(railroad_info["editors"][cnt]["editor_name"]) + "</b><br>";
-        } else {
-            buf += "<b><a href='" + railroad_info["editors"][cnt]["editor_url"] + "' target='_blank' class='external_link'>" + escape_html(railroad_info["editors"][cnt]["editor_name"]) + "</a></b><br>";
-        }
-        
-        buf += "<div class='informational_text'>" + escape_html(railroad_info["editors"][cnt]["introduction_text"]).replace(/\n/g, "<br>") + "</div>";
+    if ("description" in railroad_info && railroad_info["description"].length >= 1) {
+        buf += "<div class='long_text'>" + convert_to_html(railroad_info["description"]) + "</div>";
     }
     
-    buf += "<h3>ライセンス</h3><div id='license_area'>" + convert_to_html(railroad_info["license_text"]) + "</div>";
+    if ("editors" in railroad_info && railroad_info["editors"].length >= 1) {
+        buf += "<h3>製作者</h3>";
+        
+        for (var cnt = 0; cnt < railroad_info["editors"].length; cnt++) {
+            if ("editor_url" in railroad_info["editors"][cnt] && railroad_info["editors"][cnt]["editor_url"].length >= 1) {
+                buf += "<b><a href='" + railroad_info["editors"][cnt]["editor_url"] + "' target='_blank' class='external_link'>" + escape_html(railroad_info["editors"][cnt]["editor_name"]) + "</a></b><br>";
+            } else {
+                buf += "<b>" + escape_html(railroad_info["editors"][cnt]["editor_name"]) + "</b><br>";
+            }
+            
+            if ("introduction_text" in railroad_info["editors"][cnt] && railroad_info["editors"][cnt]["introduction_text"].length >= 1) {
+                buf += "<div class='informational_text'>" + escape_html(railroad_info["editors"][cnt]["introduction_text"]).replace(/\n/g, "<br>") + "</div>";
+            }
+        }
+    }
+    
+    if ("license_text" in railroad_info && railroad_info["license_text"].length >= 1) {
+        buf += "<h3>ライセンス</h3><div class='long_text'>" + convert_to_html(railroad_info["license_text"]) + "</div>";
+    }
+    
+    if ("acknowledgment" in railroad_info && railroad_info["acknowledgment"].length >= 1) {
+        buf += "<h3>謝辞</h3><div class='long_text'>" + convert_to_html(railroad_info["acknowledgment"]) + "</div>";
+    }
+    
+    if ("related_links" in railroad_info && railroad_info["related_links"].length >= 1) {
+        buf += "<h3>関連リンク</h3>";
+        
+        for (var cnt = 0; cnt < railroad_info["related_links"].length; cnt++) {
+            buf += "<b><a href='" + railroad_info["related_links"][cnt]["link_url"] + "' target='_blank' class='external_link'>" + escape_html(railroad_info["related_links"][cnt]["link_text"]) + "</a></b><br>";
+            
+            if ("link_description" in railroad_info["related_links"][cnt] && railroad_info["related_links"][cnt]["link_description"].length >= 1) {
+                buf += "<div class='informational_text'>" + escape_html(railroad_info["related_links"][cnt]["link_description"]).replace(/\n/g, "<br>") + "</div>";
+            }
+        }
+    }
     
     buf += "<h3>データ更新日時</h3><div class='informational_text'>";
     buf += "路線系統情報: " + get_date_and_time(railroad_info["last_modified_timestamp"]) + "<br>";

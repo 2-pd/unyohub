@@ -211,6 +211,7 @@
             "line_name" : "空港線",
             "line_color" : "#9966cc",
             "inbound_forward_direction" : true,
+            "double_station_spacing" : true,
             "stations" : [
                 {
                     "station_name" : "泉佐野",
@@ -409,6 +410,7 @@
     ],
     "deadhead_train_number" : "^(8|9|回)",
     "alias_of_forward_direction" : "難波方",
+    "description" : "南海本線と空港線、多奈川線、加太線、和歌山港線、及び、高野線のうち南海本線と同じく住ノ江検車区所属編成で運行される汐見橋-岸里玉出間の運用表・時刻表データです。",
     "editors" : [
         {
             "editor_name" : "ほげほげ",
@@ -417,9 +419,16 @@
         },
         {
             "editor_name" : "ふがふが",
-            "editor_url" : "https://www.example2.jp/fuga/",
             "introduction_text" : "運用表と時刻表の編集担当です"
         }
     ],
-    "license_text" : "このサンプルファイルは無権利創作宣言に従って著作権放棄されています。\n無権利創作宣言の全文は https://www.2pd.jp/license/ でご覧いただけます。"
+    "license_text" : "このサンプルファイルは無権利創作宣言に従って著作権放棄されています。\n無権利創作宣言の全文は https://www.2pd.jp/license/ でご覧いただけます。",
+    "acknowledgment" : "運用表作成のための調査において、○○氏と××氏に協力いただきました。",
+    "related_links" : [
+        {
+            "link_url" : "https://www.example.jp/nankai_honsen.pdf",
+            "link_text" : "運用表PDFファイル",
+            "link_description" : "印刷用の運用表データです"
+        }
+    ]
 }
