@@ -119,8 +119,8 @@
                 {
                     "station_name" : "貝塚",
                     "station_name_kana" : "かいづか",
-                    "is_major_station" : true,
-                    "station_initial" : "貝"
+                    "station_initial" : "貝",
+                    "is_major_station" : true
                 },
                 {
                     "station_name" : "二色浜",
@@ -137,8 +137,8 @@
                 {
                     "station_name" : "泉佐野",
                     "station_name_kana" : "いずみさの",
-                    "is_major_station" : true,
                     "station_initial" : "佐",
+                    "is_major_station" : true,
                     "connecting_lines" : ["kukosen"]
                 },
                 {
@@ -179,8 +179,8 @@
                 {
                     "station_name" : "みさき公園",
                     "station_name_kana" : "みさきこうえん",
-                    "is_major_station" : true,
                     "station_initial" : "み",
+                    "is_major_station" : true,
                     "connecting_lines" : ["tanagawasen"]
                 },
                 {
@@ -378,7 +378,7 @@
             "operation_name" : "休日ダイヤ",
             "main_color" : "#ffbbdd"
         },
-        "" : {
+        "new_year" : {
             "operation_name" : "正月ダイヤ",
             "main_color" : "#ffbbdd"
         }
