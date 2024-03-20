@@ -1933,9 +1933,12 @@ a {
 .popup input {
     display: block;
     
-    width: 90%;
+    width: calc(90% - 4px);
     
     margin: 10px auto;
+    
+    padding-block: 0;
+    padding-inline: 2px;
     
     background-color: transparent;
     
@@ -2582,6 +2585,73 @@ a {
 
 .dark_mode .operation_table_train div a {
     color: #ffffff;
+}
+
+.suggestion_area {
+    position: relative;
+    
+    width: 90%;
+    
+    margin: -10px auto 10px auto;
+}
+
+.suggestion_area div {
+    position: absolute;
+    top: 0;
+    left: 0;
+    
+    width: calc(100% - 2px);
+    max-height: 180px;
+    
+    background-color: #ffffff;
+    
+    font-size: 18px;
+    
+    overflow-y: scroll;
+}
+
+.suggestion_area div:not(:empty) {
+    border: 1px solid #cccccc;
+    
+    box-shadow: 1px 2px 2px rgba(0, 0, 0, 0.25);
+}
+
+.suggestion_area div:not(:empty):before {
+    content: "候補:";
+    
+    display: block;
+    
+    position: absolute;
+    top: 0;
+    left: 10px;
+    
+    line-height: 40px;
+    color: #999999;
+}
+
+.suggestion_area a {
+    display: block;
+    
+    position: relative;
+    
+    padding: 5px 0 5px 60px;
+    
+    line-height: 30px;
+    color: inherit;
+    text-decoration: none;
+    
+    z-index: 2;
+}
+
+.dark_mode .suggestion_area div {
+    background-color: #666666;
+    
+    border-color: #808080;
+}
+
+.suggestion_area .train_icon {
+    max-width: 30px;
+    max-height: 30px;
 }
 
 #wait_screen {
@@ -7342,7 +7412,7 @@ function write_operation_data (yyyy_mm_dd, operation_number) {
     
     buf += "<b>編成名または車両形式</b>";
     buf += "<div class='informational_text'><b>◀ " + alias_of_forward_direction + "</b></div>";
-    buf += "<input type='text' id='operation_data_formation'>";
+    buf += "<input type='text' id='operation_data_formation' autocomplete='off' oninput='suggest_formation(this.value);' onblur='clear_formation_suggestion();'><div class='suggestion_area'><div id='formation_suggestion'></div></div>";
     buf += "<div class='informational_text'>複数の編成が連結している場合は、" + alias_of_forward_direction + "の編成から順に「+」で区切って入力してください。<br>不明な編成には「不明」、運休情報は「運休」を入力可能です。</div>";
     buf += "<b>運用補足情報</b><textarea id='operation_data_comment'></textarea>";
     
@@ -7359,6 +7429,44 @@ function write_operation_data (yyyy_mm_dd, operation_number) {
     if (user_data !== null) {
         get_one_time_token();
     }
+}
+
+function suggest_formation (formations_text) {
+    var formations_splitted = formations_text.split("+");
+    var formation_text = formations_splitted[formations_splitted.length - 1].toUpperCase();
+    
+    var buf = "";
+    
+    if (formation_text.length >= 1) {
+        var formation_names = formations["series_names"].concat(Object.keys(formations["formations"]).sort());
+        
+        var suggestion_list = formation_names.filter(function (formation_name) {
+            return formation_name.toUpperCase().startsWith(formation_text);
+        });
+        
+        for (var cnt = 0; cnt < suggestion_list.length; cnt++) {
+            buf += "<a href='javascript:void(0);' onclick='complete_formation(\"" + add_slashes(suggestion_list[cnt]) + "\");'><img src='" + get_icon(suggestion_list[cnt]) + "' alt='' class='train_icon'>" + suggestion_list[cnt] + "</a>";
+        }
+    }
+    
+    document.getElementById("formation_suggestion").innerHTML = buf;
+}
+
+function complete_formation (formation_text) {
+    var operation_data_formation_elm = document.getElementById("operation_data_formation");
+    
+    var formations_splitted = operation_data_formation_elm.value.split("+");
+    formations_splitted[formations_splitted.length - 1] = formation_text;
+    
+    operation_data_formation_elm.value = formations_splitted.join("+");
+    
+    operation_data_formation_elm.focus();
+}
+
+function clear_formation_suggestion () {
+    setTimeout(function () {
+        document.getElementById("formation_suggestion").innerHTML = "";
+    }, 100);
 }
 
 function select_operation_to_write_data (line_id, train_number, first_departure_time, train_direction) {
