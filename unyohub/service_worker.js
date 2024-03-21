@@ -1,6 +1,6 @@
-var unyohub_version = "24.03-3"; /*鉄道運用Hub本体のバージョン番号*/
+const UNYOHUB_APP_ID = "unyohub";
+const UNYOHUB_VERSION = "24.03-4";
 
-var cache_name = "unyohub_" + unyohub_version;
 var files_to_cache = [
         "./",
         "apple-touch-icon.webp",
@@ -11,33 +11,35 @@ var files_to_cache = [
         "README.html"
     ];
 
-self.addEventListener("install", function(event) {
-    event.waitUntil(
-        caches.open(cache_name).then(function(cache) {
+var new_cache_name = UNYOHUB_APP_ID + "_v" + UNYOHUB_VERSION;
+
+self.addEventListener("install", function (evt) {
+    evt.waitUntil(
+        caches.open(new_cache_name).then(function (cache) {
             return cache.addAll(files_to_cache);
         })
     );
 });
 
-self.addEventListener("fetch", function(event) {
-    event.respondWith(
-        caches.match(event.request).then(function(response) {
+self.addEventListener("fetch", function (evt) {
+    evt.respondWith(
+        caches.match(evt.request).then(function (response) {
             if (response) {
                 return response;
             }
             
-            return fetch(event.request);
+            return fetch(evt.request);
         })
     );
 });
 
-self.addEventListener("activate", function(event) {
-    event.waitUntil(
-        caches.keys().then(function(cacheNames) {
-            return Promise.all(cacheNames.map(function(cacheName) {
-                    if (cacheName != cache_name){
-                        return caches.delete(cacheName);
-                    }
+self.addEventListener("activate", function (evt) {
+    evt.waitUntil(
+        caches.keys().then(function (cache_names) {
+            return Promise.all(cache_names.map(function (cache_name) {
+                if (cache_name !== new_cache_name) {
+                    return caches.delete(cache_name);
+                }
             }));
         })
     );

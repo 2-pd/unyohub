@@ -73,6 +73,12 @@ _/_/_/_/ 設定ファイル設定値 _/_/_/_/
   UNYOHUB_LICENSE_URL  ライセンスのURL
   UNYOHUB_REPOSITORY_URL  ソースコードリポジトリのURL
 
+███ service_worker.js ███
+
+※設定ファイルではないが、編集可能な定数が存在する
+  UNYOHUB_APP_ID  アプリケーション識別名
+  UNYOHUB_VERSION  バージョン文字列
+
 
 ███ unyohub.json ███
 
