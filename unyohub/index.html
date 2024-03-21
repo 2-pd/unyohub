@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width,initial-scale=1,interactive-widget=resizes-content">
 <script>
     const UNYOHUB_APP_NAME = "鉄道運用Hub";
-    const UNYOHUB_VERSION = "24.03-2";
+    const UNYOHUB_VERSION = "24.03-3";
     const UNYOHUB_INDEXEDDB_VERSION = 2310001;
     const UNYOHUB_LICENSE_TEXT = "このアプリケーションは無権利創作宣言に準拠して著作権放棄されています。";
     const UNYOHUB_LICENSE_URL = "https://www.2pd.jp/license/";
@@ -660,7 +660,7 @@ article {
     -webkit-appearance: none;
 }
 
-.position_row {
+.position_row, .position_row_no_station {
     width: 100%;
     height: 82px;
     
@@ -683,7 +683,7 @@ article {
     border-color: #555555;
 }
 
-.position_row:first-child .position_inbound, .position_row:first-child .position_outbound {
+.position_row:first-child .position_inbound, .position_row:first-child .position_outbound, .position_row_no_station .position_inbound, .position_row_no_station .position_outbound {
     border-top-color: transparent;
 }
 
@@ -830,9 +830,14 @@ h4.position_signal_station {
     height: 82px;
 }
 
+.position_row:not(:first-child):not(:last-child) .position_line, .position_row_no_station .position_line {
+    background-color: currentColor;
+}
+
 .position_row:last-child .position_line {
     height: 80px;
-    border-top: 2px solid;
+    
+    border-top: 2px solid currentColor;
 }
 
 .position_row:not(:first-child) .position_line:after {
@@ -4917,16 +4922,12 @@ function position_change_lines (line_id) {
                 }
             }
         }
-           
-        buf += "</div><div class='position_inbound'" + border_style + "></div>";
         
-        if (cnt !== 0 && cnt !== railroad_info["lines"][line_id]["stations"].length){
-            buf += "<div class='position_line" + position_station_class + "' style='background-color: " + line_color + ";'></div>";
-        } else {
-            buf += "<div class='position_line" + position_station_class + "' style='border-color: " + line_color + ";'></div>";
+        buf += "</div><div class='position_inbound'" + border_style + "></div><div class='position_line" + position_station_class + "' style='color: " + line_color + ";'></div><div class='position_outbound'" + border_style + "></div></div>";
+        
+        if ("double_station_spacing" in railroad_info["lines"][line_id] && railroad_info["lines"][line_id]["double_station_spacing"] && cnt !== 0 && cnt !== railroad_info["lines"][line_id]["stations"].length) {
+                buf += "<div class='position_row_no_station'><div class='position_station'></div><div class='position_inbound'></div><div class='position_line" + position_station_class + "' style='color: " + line_color + ";'></div><div class='position_outbound'></div></div>";
         }
-        
-        buf += "<div class='position_outbound'" + border_style + "></div></div>";
     }
     
     position_area_elm.innerHTML = buf;
@@ -5109,12 +5110,18 @@ function hh_mm_to_minutes (hh_and_mm) {
     return Number(h_and_m[0]) * 60 + Number(h_and_m[1]);
 }
 
-function calculate_train_position (minutes_now, previous_station_index, next_station_index, previous_station_time, next_station_time) {
-    if (next_station_time === previous_station_time) {
-        return next_station_index;
+function calculate_train_position (line_id, minutes_now, previous_station_index, next_station_index, previous_station_time, next_station_time) {
+    if ("double_station_spacing" in railroad_info["lines"][line_id] && railroad_info["lines"][line_id]["double_station_spacing"]) {
+        var station_spacing = 2;
+    } else {
+        var station_spacing = 1;
     }
     
-    return Math.ceil((next_station_index - previous_station_index) * ((minutes_now - previous_station_time) / (next_station_time - previous_station_time))) + previous_station_index;
+    if (next_station_time === previous_station_time) {
+        return next_station_index * station_spacing;
+    }
+    
+    return Math.ceil(((next_station_index - previous_station_index) * (minutes_now - previous_station_time) / (next_station_time - previous_station_time) + previous_station_index) * station_spacing);
 }
 
 function get_train_positions (trains, line_id, hh_and_mm, is_inbound) {
@@ -5126,8 +5133,14 @@ function get_train_positions (trains, line_id, hh_and_mm, is_inbound) {
     
     var minutes_now = hh_mm_to_minutes(hh_and_mm);
     
+    if ("double_station_spacing" in railroad_info["lines"][line_id] && railroad_info["lines"][line_id]["double_station_spacing"]) {
+        var line_rows_count = station_list.length * 2 - 1;
+    } else {
+        var line_rows_count = station_list.length;
+    }
+    
     var line_positions = [];
-    for (var cnt = 0; cnt < station_list.length; cnt++) {
+    for (var cnt = 0; cnt < line_rows_count; cnt++) {
         line_positions.push([]);
     }
     
@@ -5164,9 +5177,13 @@ function get_train_positions (trains, line_id, hh_and_mm, is_inbound) {
                                 
                                 if (departure_time >= hh_and_mm) {
                                     if (last_stopped !== null) {
-                                        var train_positon = calculate_train_position(minutes_now, last_stopped, cnt_4, hh_mm_to_minutes(last_stopped_time), hh_mm_to_minutes(departure_time));
+                                        var train_positon = calculate_train_position(line_id, minutes_now, last_stopped, cnt_4, hh_mm_to_minutes(last_stopped_time), hh_mm_to_minutes(departure_time));
                                     } else {
-                                        var train_positon = cnt_4;
+                                        if ("double_station_spacing" in railroad_info["lines"][line_id] && railroad_info["lines"][line_id]["double_station_spacing"]) {
+                                            var train_positon = cnt_4 * 2;
+                                        } else {
+                                            var train_positon = cnt_4;
+                                        }
                                     }
                                     
                                     train_type = timetable["timetable"][line_id][train_direction][train_numbers[cnt]][cnt_3]["train_type"];
@@ -5202,10 +5219,10 @@ function get_train_positions (trains, line_id, hh_and_mm, is_inbound) {
                     }
                 }
                 
-                var train_positon = calculate_train_position(minutes_now, starting_station_index, terminal_station_index, hh_mm_to_minutes(trains[train_numbers[cnt]][cnt_2]["first_departure_time"]), hh_mm_to_minutes(trains[train_numbers[cnt]][cnt_2]["final_arrival_time"]));
+                var train_positon = calculate_train_position(line_id, minutes_now, starting_station_index, terminal_station_index, hh_mm_to_minutes(trains[train_numbers[cnt]][cnt_2]["first_departure_time"]), hh_mm_to_minutes(trains[train_numbers[cnt]][cnt_2]["final_arrival_time"]));
             }
             
-            if (train_positon < 0 || train_positon > station_list.length) {
+            if (train_positon < 0 || train_positon > line_rows_count) {
                 break;
             }
             
