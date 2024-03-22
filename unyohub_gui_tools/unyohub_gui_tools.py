@@ -49,7 +49,7 @@ def open_main_window ():
         button_font = tk.font.Font(family="Yu Gothic", size=11)
     
     console_scroll_y = tk.Scrollbar(orient="vertical", bg="#666666")
-    console_area = tk.Text(main_win, font=button_font, fg="#ffffff", bg="#333333", padx=10, pady=10, relief="flat", yscrollcommand=console_scroll_y.set, state="disabled")
+    console_area = tk.Text(main_win, font=button_font, fg="#ffffff", bg="#333333", padx=10, pady=10, relief="flat", yscrollcommand=console_scroll_y.set, state=tk.DISABLED)
     console_scroll_y["command"] = console_area.yview
     console_area.place(x=320, y=0, width=625, height=720)
     console_scroll_y.place(x=945, y=0, width=15, height=720)
@@ -65,6 +65,9 @@ def open_main_window ():
     
     button_initialize_db = tk.Button(main_win, text="データベースのセットアップ", font=button_font, command=initialize_db, bg="#666666", fg="#ffffff", relief="flat", highlightbackground="#666666")
     button_initialize_db.place(x=10, y=140, width=300, height=40)
+    
+    button_initialize_db = tk.Button(main_win, text="アイコン画像をファイルに埋め込み", font=button_font, command=embed_train_icon, bg="#666666", fg="#ffffff", relief="flat", highlightbackground="#666666")
+    button_initialize_db.place(x=10, y=190, width=300, height=40)
     
     main_win.protocol("WM_DELETE_WINDOW", main_window_close)
     
@@ -86,12 +89,14 @@ def main_window_close ():
 def mes (log_text, is_heading=False):
     global console_area
     
-    console_area.configure(state="normal")
+    console_area.configure(state=tk.NORMAL)
     if is_heading:
         console_area.insert(tk.END, "\n_/_/_/_/ " + str(log_text) + "_/_/_/_/\n\n")
     else:
         console_area.insert(tk.END, str(log_text) + "\n")
-    console_area.configure(state="disabled")
+    console_area.configure(state=tk.DISABLED)
+    
+    console_area.see(tk.END)
 
 
 def error_mes (exc_text):
@@ -116,6 +121,19 @@ def initialize_db ():
         try:
             initialize_db = importlib.import_module("unyohub_scripts.initialize_db")
             initialize_db.initialize_db(mes, config["main_dir"])
+        except Exception as err:
+            error_mes(traceback.format_exc())
+
+
+def embed_train_icon ():
+    global config
+    
+    dir_path = filedialog.askdirectory(title="アイコン画像のあるフォルダを選択してください", initialdir=config["main_dir"])
+    
+    if len(dir_path) >= 1:
+        try:
+            embed_train_icon = importlib.import_module("unyohub_scripts.embed_train_icon")
+            embed_train_icon.embed_train_icon(mes, dir_path)
         except Exception as err:
             error_mes(traceback.format_exc())
 
