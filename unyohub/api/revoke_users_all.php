@@ -1,9 +1,8 @@
 <?php
 include "../libs/wakarana/main.php";
-include "../libs/zizai_captcha/main.php";
 include "__operation_data_functions.php";
 
-if (!isset($_POST["railroad_id"], $_POST["date"], $_POST["operation_number"], $_POST["user_id"], $_POST["one_time_token"])) {
+if (!isset($_POST["railroad_id"], $_POST["user_id"], $_POST["one_time_token"])) {
     print "ERROR: 送信値が不正です";
     exit;
 }
@@ -13,9 +12,7 @@ $wakarana = new wakarana("../config");
 $user = $wakarana->check();
 if (is_object($user)) {
     if ($user->check_one_time_token($_POST["one_time_token"])) {
-        $user_id = $user->get_id();
-        
-        if ($user_id !== $_POST["user_id"] && !$user->check_permission("moderate")) {
+        if (!$user->check_permission("moderate")) {
             print "ERROR: モデレーター権限が確認できませんでした。他のユーザーの投稿は削除できません";
             exit;
         }
@@ -30,13 +27,10 @@ if (is_object($user)) {
 
 load_railroad_data($_POST["railroad_id"]);
 
-$ts = strtotime($_POST["date"]);
+$post_data_r = $db_obj->query("SELECT `operation_date`, `operation_number`, `user_id` FROM `unyohub_data` WHERE `user_id` = '".$db_obj->escapeString($_POST["user_id"])."' AND `posted_datetime` > '".date("Y-m-d H:i:s", time() - 86400)."'");
 
-if ($ts === FALSE) {
-    print "ERROR: 日付が不正です";
-    exit;
+while ($post_data = $post_data_r->fetchArray(SQLITE3_ASSOC)) {
+    revoke_post($wakarana, strtotime($post_data["operation_date"]), $post_data["operation_number"], $_POST["user_id"]);
 }
 
-$data = array($_POST["operation_number"] => revoke_post($wakarana, $ts, $_POST["operation_number"], $_POST["user_id"]));
-
-print json_encode($data, JSON_UNESCAPED_UNICODE);
+print "SUCCESSFULLY_REVOKED";

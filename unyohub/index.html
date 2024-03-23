@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width,initial-scale=1,interactive-widget=resizes-content">
 <script>
     const UNYOHUB_APP_NAME = "鉄道運用Hub";
-    const UNYOHUB_VERSION = "24.03-4";
+    const UNYOHUB_VERSION = "24.03-5";
     const UNYOHUB_INDEXEDDB_VERSION = 2310001;
     const UNYOHUB_LICENSE_TEXT = "このアプリケーションは無権利創作宣言に準拠して著作権放棄されています。";
     const UNYOHUB_LICENSE_URL = "https://www.2pd.jp/license/";
@@ -5521,6 +5521,12 @@ function get_operation_data_detail (operation_date, operation_number_or_list, ar
                 detail_html += "<input type='checkbox' id='" + area_id + "_detail_" + add_slashes(operation_numbers[cnt]) + "'><label for='" + area_id + "_detail_" + add_slashes(operation_numbers[cnt]) + "' class='drop_down'>" + escape_html(operation_numbers[cnt]) + "運用 目撃情報</label><div>";
                 
                 for (var cnt_2 = 0; cnt_2 < data[operation_numbers[cnt]].length; cnt_2++) {
+                    if (data[operation_numbers[cnt]][cnt_2]["formations"] !== "") {
+                        var formation_text = data[operation_numbers[cnt]][cnt_2]["formations"];
+                    } else {
+                        var formation_text = "運休";
+                    }
+                    
                     if (data[operation_numbers[cnt]][cnt_2]["user_name"] !== null) {
                         var user_name_html = escape_html(data[operation_numbers[cnt]][cnt_2]["user_name"]);
                         var class_html = "";
@@ -5543,18 +5549,12 @@ function get_operation_data_detail (operation_date, operation_number_or_list, ar
                     }
                     
                     if (user_data !== null && (data[operation_numbers[cnt]][cnt_2]["user_id"] === user_data["user_id"] || user_data["role"] === "MODERATOR" || user_data["role"] === "ADMIN")) {
-                        user_name_html += "<button type='button' onclick='edit_operation_data(\"" + operation_date + "\", \"" + add_slashes(operation_numbers[cnt]) + "\", \"" + add_slashes(data[operation_numbers[cnt]][cnt_2]["user_id"]) + "\");'>取り消し</button>";
+                        user_name_html += "<button type='button' onclick='edit_operation_data(\"" + operation_date + "\", \"" + add_slashes(operation_numbers[cnt]) + "\", \"" + add_slashes(data[operation_numbers[cnt]][cnt_2]["user_id"]) + "\", \"" + add_slashes(formation_text) + "\");'>取り消し</button>";
                     }
                     
                     user_name_html += "</span>";
                     
-                    if (data[operation_numbers[cnt]][cnt_2]["formations"] !== "") {
-                        var formation_html = data[operation_numbers[cnt]][cnt_2]["formations"];
-                    } else {
-                        var formation_html = "運休";
-                    }
-                    
-                    detail_html += "<div class='operation_data_detail'><b>" + formation_html + "<span>" + get_date_and_time(data[operation_numbers[cnt]][cnt_2]["posted_datetime"]) + "</span></b><div class='descriptive_text'>" + escape_html(data[operation_numbers[cnt]][cnt_2]["comment"]).replace(/\n/g, "<br>") + "</div>" + user_name_html + "</div>";
+                    detail_html += "<div class='operation_data_detail'><b>" + formation_text + "<span>" + get_date_and_time(data[operation_numbers[cnt]][cnt_2]["posted_datetime"]) + "</span></b><div class='descriptive_text'>" + escape_html(data[operation_numbers[cnt]][cnt_2]["comment"]).replace(/\n/g, "<br>") + "</div>" + user_name_html + "</div>";
                 }
                 
                 if (cnt_2 === 0) {
@@ -7581,34 +7581,29 @@ function post_operation_data (cnt = 0) {
     });
 }
 
-var edit_yyyy_mm_dd;
-var edit_operation_number;
-var edit_user_id;
-
-function edit_operation_data (yyyy_mm_dd, operation_number, user_id) {
+function edit_operation_data (yyyy_mm_dd, operation_number, user_id, formation_text) {
     open_popup("edit_operation_data_popup");
-    
-    edit_yyyy_mm_dd = yyyy_mm_dd;
-    edit_operation_number = operation_number;
-    edit_user_id = user_id;
     
     buf = "<h3>運用番号</h3>" + escape_html(operation_number);
     
-    buf += "<h3>投稿者</h3>";
-    if (user_id === user_data["user_id"]) {
-        buf += escape_html(user_data["user_name"]) + " さん";
-    } else {
-        buf += escape_html(user_id);
+    if (user_id !== user_data["user_id"]) {
+        buf += "<h3>投稿者ID</h3>" + escape_html(user_id);
     }
     
-    buf += "<br><br><button type='button' class='wide_button' onclick='revoke_operation_data();'>取り消す</button>";
+    buf += "<h3>投稿内容</h3>" + escape_html(formation_text);
+    
+    buf += "<br><br><br><button type='button' class='wide_button' onclick='revoke_operation_data(\"" + yyyy_mm_dd + "\", \"" + add_slashes(operation_number) + "\", \"" + add_slashes(user_id) + "\");'>取り消す</button>";
+    
+    if (user_id !== user_data["user_id"] && (user_data["role"] === "MODERATOR" || user_data["role"] === "ADMIN")) {
+        buf += "<button type='button' class='wide_button' onclick='revoke_users_all_operation_data(\"" + add_slashes(user_id) + "\");'>ユーザーの投稿を全て取り消す</button>";
+    }
     
     document.getElementById("edit_operation_data_area").innerHTML = buf;
     
     get_one_time_token();
 }
 
-function revoke_operation_data (cnt = 0) {
+function revoke_operation_data (yyyy_mm_dd, operation_number, user_id) {
     open_wait_screen();
     
     if (one_time_token === null) {
@@ -7619,7 +7614,7 @@ function revoke_operation_data (cnt = 0) {
         return;
     }
     
-    ajax_fetch("api/revoke.php", "railroad_id=" + escape_form_data(railroad_info["railroad_id"]) + "&date=" + escape_form_data(edit_yyyy_mm_dd) + "&operation_number=" + escape_form_data(edit_operation_number) + "&user_id=" + escape_form_data(edit_user_id) + "&one_time_token=" + escape_form_data(one_time_token), function (response) {
+    ajax_fetch("api/revoke.php", "railroad_id=" + escape_form_data(railroad_info["railroad_id"]) + "&date=" + escape_form_data(yyyy_mm_dd) + "&operation_number=" + escape_form_data(operation_number) + "&user_id=" + escape_form_data(user_id) + "&one_time_token=" + escape_form_data(one_time_token), function (response) {
         close_wait_screen();
         
         if (response !== false) {
@@ -7650,6 +7645,52 @@ function revoke_operation_data (cnt = 0) {
             }
         }
     });
+}
+
+function revoke_users_all_operation_data (user_id) {
+    if (confirm("このユーザーの過去24時間の投稿を全て取り消しますか？")) {
+        open_wait_screen();
+        
+        if (one_time_token === null) {
+            close_wait_screen();
+            
+            mes("内部処理が完了していないため、数秒待ってから再送信してください", true);
+            
+            return;
+        }
+        
+        ajax_fetch("api/revoke_users_all.php", "railroad_id=" + escape_form_data(railroad_info["railroad_id"]) + "&user_id=" + escape_form_data(user_id) + "&one_time_token=" + escape_form_data(one_time_token), function (response) {
+            close_wait_screen();
+            
+            if (response === "SUCCESSFULLY_REVOKED") {
+                mes("運用情報を取り消しました");
+                
+                if (square_popup_is_open) {
+                    close_square_popup();
+                }
+                popup_close(true);
+                
+                update_operation_data(function () {
+                    switch (mode_val) {
+                        case 0:
+                            position_change_time(0);
+                            break;
+                        case 1:
+                            timetable_select_station(timetable_selected_station);
+                            break;
+                        case 2:
+                            operation_data_draw();
+                            break;
+                        case 3:
+                            if (selected_formation_name !== null) {
+                                formation_detail(selected_formation_name);
+                            }
+                            break;
+                    }
+                }, function () {}, true);
+            }
+        });
+    }
 }
 
 
