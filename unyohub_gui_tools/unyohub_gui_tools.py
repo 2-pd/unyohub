@@ -17,10 +17,10 @@ from unyohub_scripts import *
 UNYOHUB_GUI_TOOLS_VERSION = "24.03-1"
 
 
-if platform.system() == "Linux":
-    is_linux = True
+if platform.system() == "Windows":
+    is_windows = True
 else:
-    is_linux = False
+    is_windows = False
 
 try:
     with open("config.json", "r", encoding="utf-8") as json_fp:
@@ -33,7 +33,7 @@ except:
 
 def open_main_window ():
     global config
-    global is_linux
+    global is_windows
     global main_win
     global console_area
     global label_main_dir
@@ -45,12 +45,16 @@ def open_main_window ():
     main_win.resizable(0, 0)
     main_win.configure(bg="#444444")
     
-    if is_linux:
-        label_font = tk.font.Font(size=12)
-        button_font = tk.font.Font(size=10)
-    else:
+    if is_windows:
+        main_win.iconbitmap("files/tools_icon.ico")
+        
         label_font = tk.font.Font(family="Yu Gothic", size=12)
         button_font = tk.font.Font(family="Yu Gothic", size=11)
+    else:
+        main_win.iconphoto(True, tk.PhotoImage(file="files/tools_icon.png"))
+        
+        label_font = tk.font.Font(size=12)
+        button_font = tk.font.Font(size=10)
     
     console_scroll_y = tk.Scrollbar(orient="vertical", bg="#666666")
     console_area = tk.Text(main_win, font=button_font, fg="#ffffff", bg="#333333", padx=10, pady=10, relief="flat", yscrollcommand=console_scroll_y.set, state=tk.DISABLED)
