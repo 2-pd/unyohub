@@ -8,9 +8,13 @@ import platform
 import json
 import tkinter as tk
 from tkinter import font
-from tkinter import filedialog
 from tkinter import messagebox
+from tkinter import filedialog
+from tkinter import simpledialog
 from unyohub_scripts import *
+
+
+UNYOHUB_GUI_TOOLS_VERSION = "24.03-1"
 
 
 if platform.system() == "Linux":
@@ -66,12 +70,18 @@ def open_main_window ():
     button_initialize_db = tk.Button(main_win, text="データベースのセットアップ", font=button_font, command=initialize_db, bg="#666666", fg="#ffffff", relief="flat", highlightbackground="#666666")
     button_initialize_db.place(x=10, y=140, width=300, height=40)
     
-    button_initialize_db = tk.Button(main_win, text="アイコン画像をファイルに埋め込み", font=button_font, command=embed_train_icon, bg="#666666", fg="#ffffff", relief="flat", highlightbackground="#666666")
-    button_initialize_db.place(x=10, y=190, width=300, height=40)
+    button_embed_train_icon = tk.Button(main_win, text="アイコン画像をファイルに埋め込み", font=button_font, command=embed_train_icon, bg="#666666", fg="#ffffff", relief="flat", highlightbackground="#666666")
+    button_embed_train_icon.place(x=10, y=190, width=300, height=40)
+    
+    button_convert_timetable_1 = tk.Button(main_win, text="時刻表の変換(ステップ1)", font=button_font, command=convert_timetable_1, bg="#666666", fg="#ffffff", relief="flat", highlightbackground="#666666")
+    button_convert_timetable_1.place(x=10, y=240, width=300, height=40)
+    
+    button_convert_timetable_2 = tk.Button(main_win, text="時刻表の変換(ステップ2)", font=button_font, command=convert_timetable_2, bg="#666666", fg="#ffffff", relief="flat", highlightbackground="#666666")
+    button_convert_timetable_2.place(x=10, y=290, width=300, height=40)
     
     main_win.protocol("WM_DELETE_WINDOW", main_window_close)
     
-    mes("鉄道運用Hub データ変換用GUIツール へようこそ！")
+    mes("鉄道運用Hub 各種データ変換用GUIツール v" + UNYOHUB_GUI_TOOLS_VERSION)
     
     main_win.mainloop()
 
@@ -91,7 +101,7 @@ def mes (log_text, is_heading=False):
     
     console_area.configure(state=tk.NORMAL)
     if is_heading:
-        console_area.insert(tk.END, "\n_/_/_/_/ " + str(log_text) + "_/_/_/_/\n\n")
+        console_area.insert(tk.END, "\n_/_/_/_/ " + str(log_text) + " _/_/_/_/\n\n")
     else:
         console_area.insert(tk.END, str(log_text) + "\n")
     console_area.configure(state=tk.DISABLED)
@@ -121,7 +131,7 @@ def initialize_db ():
         try:
             initialize_db = importlib.import_module("unyohub_scripts.initialize_db")
             initialize_db.initialize_db(mes, config["main_dir"])
-        except Exception as err:
+        except:
             error_mes(traceback.format_exc())
 
 
@@ -134,7 +144,44 @@ def embed_train_icon ():
         try:
             embed_train_icon = importlib.import_module("unyohub_scripts.embed_train_icon")
             embed_train_icon.embed_train_icon(mes, dir_path)
-        except Exception as err:
+        except:
+            error_mes(traceback.format_exc())
+
+
+def convert_timetable_1 ():
+    global config
+    
+    file_name = filedialog.askopenfilename(title="変換対象の時刻表CSVファイルを選択してください", filetypes=[("CSV形式の表ファイル","*.csv")], initialdir=config["main_dir"])
+    
+    if len(file_name) >= 1:
+        digits_count_str = simpledialog.askstring("列車番号の桁数を指定", "所定の桁数に満たない列車番号の前に「0」を付加する場合にはその桁数を入力してください")
+        
+        if digits_count_str.isdecimal():
+            digits_count = int(digits_count)
+        else:
+            digits_count = 0
+        
+        try:
+            convert_timetable_1 = importlib.import_module("unyohub_scripts.convert_timetable_1")
+            convert_timetable_1.convert_timetable_1(mes, file_name, digits_count)
+        except:
+            error_mes(traceback.format_exc())
+
+
+def convert_timetable_2 ():
+    global config
+    
+    if not os.path.isfile(config["main_dir"] + "/railroad_info.json"):
+        messagebox.showwarning("路線別時刻表を変換できません", "現在の作業フォルダには路線別時刻表ファイルの変換に必要な railroad_info.json が存在しません")
+        return
+    
+    operation_table = simpledialog.askstring("ダイヤ識別名の入力", "変換対象の路線別時刻表ファイルに含まれるダイヤ識別名を入力してください")
+    
+    if len(operation_table) >= 1:
+        try:
+            convert_timetable_2 = importlib.import_module("unyohub_scripts.convert_timetable_2")
+            convert_timetable_2.convert_timetable_2(mes, config["main_dir"], operation_table)
+        except:
             error_mes(traceback.format_exc())
 
 
