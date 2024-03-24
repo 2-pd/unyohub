@@ -2,19 +2,23 @@
 # coding: utf-8
 
 import importlib
-import os
-import traceback
-import platform
-import json
 import tkinter as tk
 from tkinter import font
 from tkinter import messagebox
 from tkinter import filedialog
 from tkinter import simpledialog
-from unyohub_scripts import *
+import os
+import traceback
+import platform
+import json
+import webbrowser
 
 
-UNYOHUB_GUI_TOOLS_VERSION = "24.03-2"
+UNYOHUB_GUI_TOOLS_APP_NAME = "鉄道運用Hub用データ編集ツール"
+UNYOHUB_GUI_TOOLS_VERSION = "24.03-3"
+UNYOHUB_GUI_TOOLS_LICENSE_TEXT = "このアプリケーションは無権利創作宣言に準拠して著作権放棄されています"
+UNYOHUB_GUI_TOOLS_LICENSE_URL = "https://www.2pd.jp/license/"
+UNYOHUB_GUI_TOOLS_REPOSITORY_URL = "https://fossil.2pd.jp/unyohub/"
 
 
 if platform.system() == "Windows":
@@ -40,26 +44,52 @@ def open_main_window ():
     
     main_win = tk.Tk()
     
-    main_win.title("鉄道運用Hub GUIツール")
+    main_win.title(UNYOHUB_GUI_TOOLS_APP_NAME)
     main_win.geometry("960x720")
     main_win.resizable(0, 0)
     main_win.configure(bg="#444444")
     
+    main_win.protocol("WM_DELETE_WINDOW", close_main_window)
+    
+    main_menu = tk.Menu(main_win, fg="#ffffff", bg="#555555", activebackground="#777777", activeforeground="#ffffff", relief=tk.FLAT)
+    main_win.configure(menu=main_menu)
+    
     if is_windows:
         main_win.iconbitmap("files/tools_icon.ico")
+        
+        main_menu_file = tk.Menu(main_menu, tearoff=False)
+        main_menu_console = tk.Menu(main_menu, tearoff=False)
+        main_menu_help = tk.Menu(main_menu, tearoff=False)
         
         label_font = tk.font.Font(family="Yu Gothic", size=12)
         button_font = tk.font.Font(family="Yu Gothic", size=11)
     else:
         main_win.iconphoto(True, tk.PhotoImage(file="files/tools_icon.png"))
         
+        main_menu_file = tk.Menu(main_menu, tearoff=False, fg="#ffffff", bg="#777777", bd=10, relief=tk.FLAT)
+        main_menu_console = tk.Menu(main_menu, tearoff=False, fg="#ffffff", bg="#777777", bd=10, relief=tk.FLAT)
+        main_menu_help = tk.Menu(main_menu, tearoff=False, fg="#ffffff", bg="#777777", bd=10, relief=tk.FLAT)
+        
         label_font = tk.font.Font(size=12)
         button_font = tk.font.Font(size=10)
     
-    main_win.protocol("WM_DELETE_WINDOW", main_window_close)
+    main_menu.add_cascade(label="ファイル", menu=main_menu_file)
+    main_menu_file.add_command(label="作業フォルダ変更", command=change_main_dir, font=("",10))
+    main_menu_file.insert_separator(1)
+    main_menu_file.add_command(label="終了", command=close_main_window, font=("",10))
+    
+    main_menu.add_cascade(label="コンソール", menu=main_menu_console)
+    main_menu_console.add_command(label="コンソール出力のコピー", command=console_copy, font=("",10))
+    main_menu_console.insert_separator(1)
+    main_menu_console.add_command(label="コンソール出力のクリア", command=clear_mes, font=("",10))
+    
+    main_menu.add_cascade(label="ヘルプ", menu=main_menu_help)
+    main_menu_help.add_command(label="ヘルプを開く", font=("",10), command=open_help_file)
+    main_menu_help.insert_separator(1)
+    main_menu_help.add_command(label="バージョン情報", font=("",10), command=open_app_info)
     
     console_scroll_y = tk.Scrollbar(orient="vertical", bg="#666666")
-    console_area = tk.Text(main_win, font=button_font, fg="#ffffff", bg="#333333", padx=10, pady=10, relief="flat", yscrollcommand=console_scroll_y.set, state=tk.DISABLED)
+    console_area = tk.Text(main_win, font=button_font, fg="#ffffff", bg="#333333", padx=10, pady=10, relief=tk.FLAT, yscrollcommand=console_scroll_y.set, state=tk.DISABLED)
     console_scroll_y["command"] = console_area.yview
     console_area.place(x=320, y=0, width=625, height=720)
     console_scroll_y.place(x=945, y=0, width=15, height=720)
@@ -70,33 +100,33 @@ def open_main_window ():
     label_main_dir = tk.Label(main_win, text=os.path.basename(config["main_dir"]), font=label_font, fg="#ffffff", bg="#444444")
     label_main_dir.place(x=10, y=35)
     
-    button_main_dir = tk.Button(main_win, text="作業フォルダ変更", font=button_font, command=change_main_dir, bg="#666666", fg="#ffffff", relief="flat", highlightbackground="#666666")
+    button_main_dir = tk.Button(main_win, text="作業フォルダ変更", font=button_font, command=change_main_dir, bg="#666666", fg="#ffffff", relief=tk.FLAT, highlightbackground="#666666")
     button_main_dir.place(x=160, y=75, width=150, height=35)
     
-    button_initialize_db = tk.Button(main_win, text="データベースのセットアップ", font=button_font, command=initialize_db, bg="#666666", fg="#ffffff", relief="flat", highlightbackground="#666666")
+    button_initialize_db = tk.Button(main_win, text="データベースのセットアップ", font=button_font, command=initialize_db, bg="#666666", fg="#ffffff", relief=tk.FLAT, highlightbackground="#666666")
     button_initialize_db.place(x=10, y=140, width=300, height=40)
     
-    button_embed_train_icon = tk.Button(main_win, text="アイコン画像をファイルに埋め込み", font=button_font, command=embed_train_icon, bg="#666666", fg="#ffffff", relief="flat", highlightbackground="#666666")
+    button_embed_train_icon = tk.Button(main_win, text="アイコン画像をファイルに埋め込み", font=button_font, command=embed_train_icon, bg="#666666", fg="#ffffff", relief=tk.FLAT, highlightbackground="#666666")
     button_embed_train_icon.place(x=10, y=190, width=300, height=40)
     
-    button_convert_timetable_1 = tk.Button(main_win, text="時刻表の変換(ステップ1)", font=button_font, command=convert_timetable_1, bg="#666666", fg="#ffffff", relief="flat", highlightbackground="#666666")
+    button_convert_timetable_1 = tk.Button(main_win, text="時刻表の変換(ステップ1)", font=button_font, command=convert_timetable_1, bg="#666666", fg="#ffffff", relief=tk.FLAT, highlightbackground="#666666")
     button_convert_timetable_1.place(x=10, y=240, width=300, height=40)
     
-    button_convert_timetable_2 = tk.Button(main_win, text="時刻表の変換(ステップ2)", font=button_font, command=convert_timetable_2, bg="#666666", fg="#ffffff", relief="flat", highlightbackground="#666666")
+    button_convert_timetable_2 = tk.Button(main_win, text="時刻表の変換(ステップ2)", font=button_font, command=convert_timetable_2, bg="#666666", fg="#ffffff", relief=tk.FLAT, highlightbackground="#666666")
     button_convert_timetable_2.place(x=10, y=290, width=300, height=40)
     
-    button_convert_operation_table_1 = tk.Button(main_win, text="運用表の変換(ステップ1)", font=button_font, command=convert_operation_table_1, bg="#666666", fg="#ffffff", relief="flat", highlightbackground="#666666")
+    button_convert_operation_table_1 = tk.Button(main_win, text="運用表の変換(ステップ1)", font=button_font, command=convert_operation_table_1, bg="#666666", fg="#ffffff", relief=tk.FLAT, highlightbackground="#666666")
     button_convert_operation_table_1.place(x=10, y=340, width=300, height=40)
     
-    button_convert_operation_table_2 = tk.Button(main_win, text="運用表の変換(ステップ2)", font=button_font, command=convert_operation_table_2, bg="#666666", fg="#ffffff", relief="flat", highlightbackground="#666666")
+    button_convert_operation_table_2 = tk.Button(main_win, text="運用表の変換(ステップ2)", font=button_font, command=convert_operation_table_2, bg="#666666", fg="#ffffff", relief=tk.FLAT, highlightbackground="#666666")
     button_convert_operation_table_2.place(x=10, y=390, width=300, height=40)
     
-    mes("鉄道運用Hub 各種データ変換用GUIツール v" + UNYOHUB_GUI_TOOLS_VERSION)
+    mes(UNYOHUB_GUI_TOOLS_APP_NAME + " v" + UNYOHUB_GUI_TOOLS_VERSION + "\n\n" + UNYOHUB_GUI_TOOLS_LICENSE_TEXT)
     
     main_win.mainloop()
 
 
-def main_window_close ():
+def close_main_window ():
     global config
     global main_win
     
@@ -130,6 +160,13 @@ def clear_mes ():
     console_area.configure(state=tk.NORMAL)
     console_area.delete("0.0", tk.END)
     console_area.configure(state=tk.DISABLED)
+
+
+def console_copy ():
+    global main_win
+    global console_area
+    
+    main_win.clipboard_append(console_area.get("0.0", tk.END).strip())
 
 
 def change_main_dir ():
@@ -259,6 +296,71 @@ def convert_operation_table_2 ():
             convert_operation_table_2.convert_operation_table_2(mes, config["main_dir"], file_name)
         except:
             error_mes(traceback.format_exc())
+
+
+def open_help_file():
+    webbrowser.open("file://" + os.path.abspath("./README.html"))
+
+
+app_info_win = None
+
+def open_app_info ():
+    global app_info_win
+    global is_windows
+    global icon_image
+    
+    if app_info_win != None and app_info_win.winfo_exists():
+        return
+    
+    app_info_open = True
+    
+    app_info_win = tk.Toplevel()
+    
+    app_info_win.title("バージョン情報")
+    app_info_win.geometry("480x240")
+    app_info_win.resizable(0, 0)
+    app_info_win.configure(bg="#444444")
+    
+    app_info_win.protocol("WM_DELETE_WINDOW", close_app_info)
+    
+    if is_windows:
+        title_font = tk.font.Font(family="Yu Gothic", size=14)
+        label_font = tk.font.Font(family="Yu Gothic", size=10)
+        button_font = tk.font.Font(family="Yu Gothic", size=11)
+    else:
+        title_font = tk.font.Font(size=14)
+        label_font = tk.font.Font(size=10)
+        button_font = tk.font.Font(size=10)
+    
+    icon_image = tk.PhotoImage(file="files/tools_icon.png")
+    label_icon = tk.Label(app_info_win, image=icon_image, bg="#444444")
+    label_icon.place(x=208, y=28)
+    
+    label_title = tk.Label(app_info_win, text=UNYOHUB_GUI_TOOLS_APP_NAME + " v" + UNYOHUB_GUI_TOOLS_VERSION, font=title_font, fg="#ffffff", bg="#444444")
+    label_title.place(x=0, y=100, width=480, height=40)
+    
+    label_license = tk.Label(app_info_win, text=UNYOHUB_GUI_TOOLS_LICENSE_TEXT, font=label_font, fg="#cccccc", bg="#444444")
+    label_license.place(x=0, y=140, width=480, height=30)
+    
+    button_open_license = tk.Button(app_info_win, text="ライセンス", font=button_font, command=open_license_url, bg="#666666", fg="#ffffff", relief=tk.FLAT, highlightbackground="#666666")
+    button_open_license.place(x=90, y=180, width=140, height=30)
+    
+    button_open_repository = tk.Button(app_info_win, text="ソースコード", font=button_font, command=open_repository_url, bg="#666666", fg="#ffffff", relief=tk.FLAT, highlightbackground="#666666")
+    button_open_repository.place(x=250, y=180, width=140, height=30)
+
+
+def open_license_url ():
+    webbrowser.open(UNYOHUB_GUI_TOOLS_LICENSE_URL)
+
+
+def open_repository_url ():
+    webbrowser.open(UNYOHUB_GUI_TOOLS_REPOSITORY_URL)
+
+
+def close_app_info ():
+    global app_info_win
+    
+    app_info_win.destroy()
 
 
 open_main_window()
