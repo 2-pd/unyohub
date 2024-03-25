@@ -52,10 +52,12 @@ _/_/_/_/ データベース _/_/_/_/
   `formations` TEXT NOT NULL 充当組成(複数編成併結による運用の場合も「+」で区切って1レコードに格納)
   `posted_datetime` TEXT NOT NULL 「YYYY-MM-DD HH:MM:SS」形式の情報投稿日時
   `comment` TEXT 運用補足情報(コメント)
+  `ip_address` TEXT 投稿者のIPアドレス(IPアドレスを記録しない設定の場合はNULL)
 
   PRIMARY KEY(`operation_date`, `operation_number`, `user_id`)
   INDEX `unyohub_idx_d1`(`user_id`, `posted_datetime`)
   INDEX `unyohub_idx_d2`(`operation_date`, `operation_number`, `posted_datetime`)
+  INDEX `unyohub_idx_d3`(`ip_address`, `posted_datetime`)
 
 
 `unyohub_data_caches` 運用データ概要キャッシュ
@@ -119,6 +121,28 @@ _/_/_/_/ データベース _/_/_/_/
   `operation_number` TEXT NOT NULL 当日の運用番号(アルファベットなどを含む場合があるため文字列型)
 
   PRIMARY KEY(`operation_date`, `operation_number`, `previous_day_operation_number`)
+
+
+███ moderation.db ███
+
+`unyohub_moderation_deleted_data` モデレーターが削除したユーザー投稿データ
+  `moderator_id` TEXT NOT NULL モデレーターのユーザーID
+  `deleted_datetime` TEXT NOT NULL 「YYYY-MM-DD HH:MM:SS」形式の削除処理実施日時
+  `railroad_id` TEXT NOT NULL 路線系統識別名
+  `operation_date` TEXT NOT NULL 「YYYY-MM-DD」形式の日付
+  `operation_number` TEXT NOT NULL 運用番号(アルファベットなどを含む場合があるため文字列型)
+  `user_id` TEXT NOT NULL 投稿者ID(未登録ユーザーの場合、クライアント端末が生成する12桁の乱数値の頭に「*」を付加した文字列を記録する)
+  `formations` TEXT NOT NULL 充当組成(複数編成併結による運用の場合も「+」で区切って1レコードに格納)
+  `posted_datetime` TEXT NOT NULL 「YYYY-MM-DD HH:MM:SS」形式の情報投稿日時
+  `comment` TEXT 運用補足情報(コメント)
+  `ip_address` TEXT 投稿者のIPアドレス(IPアドレスを記録しない設定の場合はNULL)
+
+  PRIMARY KEY(`railroad_id`, `operation_date`, `operation_number`, `user_id`)
+  INDEX `unyohub_moderation_idx_d1`(`moderator_id`, `deleted_datetime`)
+  INDEX `unyohub_moderation_idx_d2`(`deleted_datetime`)
+  INDEX `unyohub_moderation_idx_d3`(`user_id`, `posted_datetime`)
+  INDEX `unyohub_moderation_idx_d4`(`railroad_id`, `operation_date`, `operation_number`, `posted_datetime`)
+  INDEX `unyohub_moderation_idx_d5`(`ip_address`, `posted_datetime`)
 
 
 _/_/_/_/ Wakarana カスタムフィールド _/_/_/_/

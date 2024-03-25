@@ -1,4 +1,5 @@
 {
     "allow_sign_up" : true,
-    "allow_guest_user" : true
+    "allow_guest_user" : true,
+    "log_ip_address" : true
 }

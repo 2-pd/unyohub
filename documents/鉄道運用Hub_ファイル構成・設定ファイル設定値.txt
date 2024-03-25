@@ -32,6 +32,7 @@ _/_/_/_/ ファイル構成 _/_/_/_/
    └ wakarana_custom_fields.json ・・・Wakaranaカスタムフィールド設定ファイル
    └ zizai_captcha_config.json ・・・Zizai CAPTCHA設定ファイル
    └ fonts/ ・・・Zizai CAPTCHAが使用するフォントファイル
+   └ moderation.db ・・・モデレーションログを格納するデータベース
 └ data/ ・・・路線系統ごとのデータフォルダ
    └ ****/
       └ railroad.db ・・・運用表・時刻表・ユーザー投稿データを格納するデータベース本体
@@ -84,7 +85,8 @@ _/_/_/_/ 設定ファイル設定値 _/_/_/_/
 
 {
     "allow_sign_up" : 新規ユーザーの登録を認めるか(BOOL値),
-    "allow_guest_user" : ログインしていないユーザーの投稿を認めるか(BOOL値)
+    "allow_guest_user" : ログインしていないユーザーの投稿を認めるか(BOOL値),
+    "log_ip_address" : 投稿者のIPアドレスを記録するか(BOOL値)
 }
 
 

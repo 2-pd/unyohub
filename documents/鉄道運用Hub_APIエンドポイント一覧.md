@@ -375,7 +375,8 @@ JSON化された時刻表の内容を返す
             "website_url" : ユーザーのwebサイトのURL,  
             "formations" : 編成名(前位側・奇数向きから順に各編成を「+」で区切った文字列。運休の場合は空文字列),  
             "posted_datetime" : YYYY-MM-DD HH:MM:SS形式の投稿日時,  
-            "comment" : 運用補足情報(コメント)  
+            "comment" : 運用補足情報(コメント),  
+            "ip_address" : 投稿者のIPアドレス(アクセス者がモデレーターではない場合、この値は常にnull)  
         }...  
     ]...
 }  
