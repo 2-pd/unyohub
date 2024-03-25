@@ -8,6 +8,8 @@ if (!isset($_POST["railroad_id"], $_POST["date"], $_POST["operation_number"], $_
     exit;
 }
 
+$config = json_decode(file_get_contents("../config/unyohub.json"), TRUE);
+
 $wakarana = new wakarana("../config");
 
 $user = $wakarana->check();
@@ -111,9 +113,16 @@ if (is_object($user)) {
 }
 
 
+if ($config["log_ip_address"]) {
+    $ip_address_q = "'".$db_obj->escapeString($_SERVER["REMOTE_ADDR"])."'";
+} else {
+    $ip_address_q = "NULL";
+}
+
+
 $posted_datetime = $posted_date." ".date("H:i:s", $ts_now);
 
-$db_obj->query("INSERT OR REPLACE INTO `unyohub_data` (`operation_date`, `operation_number`, `user_id`, `formations`, `posted_datetime`, `comment`) VALUES ('".$operation_date."', '".$operation_number."', '".$db_obj->escapeString($user_id)."', '".$db_obj->escapeString($formations)."', '".$posted_datetime."', '".$db_obj->escapeString($comment)."')");
+$db_obj->query("INSERT OR REPLACE INTO `unyohub_data` (`operation_date`, `operation_number`, `user_id`, `formations`, `posted_datetime`, `comment`, `ip_address`) VALUES ('".$operation_date."', '".$operation_number."', '".$db_obj->escapeString($user_id)."', '".$db_obj->escapeString($formations)."', '".$posted_datetime."', '".$db_obj->escapeString($comment)."', ".$ip_address_q.")");
 
 $data_cache_values = get_data_cache_values($operation_date, $operation_number, $formation_pattern);
 

@@ -60,6 +60,10 @@ for ($cnt = 0; $cnt < count($operation_numbers); $cnt++) {
         } elseif ($access_user_is_moderator) {
             $data[$cnt_2]["user_id"] = $operation["user_id"];
         }
+        
+        if ($access_user_is_moderator) {
+            $data[$cnt_2]["ip_address"] = $operation["ip_address"];
+        }
     }
     
     $operation_data[$operation_numbers[$cnt]] = $data;

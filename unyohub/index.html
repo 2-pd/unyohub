@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width,initial-scale=1,interactive-widget=resizes-content">
 <script>
     const UNYOHUB_APP_NAME = "鉄道運用Hub";
-    const UNYOHUB_VERSION = "24.03-5";
+    const UNYOHUB_VERSION = "24.03-6";
     const UNYOHUB_INDEXEDDB_VERSION = 2310001;
     const UNYOHUB_LICENSE_TEXT = "このアプリケーションは無権利創作宣言に準拠して著作権放棄されています。";
     const UNYOHUB_LICENSE_URL = "https://www.2pd.jp/license/";
@@ -5552,8 +5552,14 @@ function get_operation_data_detail (operation_date, operation_number_or_list, ar
                         var user_name_html = "<span>(ゲスト様)";
                     }
                     
+                    if ("ip_address" in data[operation_numbers[cnt]][cnt_2] && data[operation_numbers[cnt]][cnt_2]["ip_address"] !== null) {
+                        var ip_address_str = ", \"" + add_slashes(data[operation_numbers[cnt]][cnt_2]["ip_address"]) + "\"";
+                    } else {
+                        var ip_address_str = "";
+                    }
+                    
                     if (user_data !== null && (data[operation_numbers[cnt]][cnt_2]["user_id"] === user_data["user_id"] || user_data["role"] === "MODERATOR" || user_data["role"] === "ADMIN")) {
-                        user_name_html += "<button type='button' onclick='edit_operation_data(\"" + operation_date + "\", \"" + add_slashes(operation_numbers[cnt]) + "\", \"" + add_slashes(data[operation_numbers[cnt]][cnt_2]["user_id"]) + "\", \"" + add_slashes(formation_text) + "\");'>取り消し</button>";
+                        user_name_html += "<button type='button' onclick='edit_operation_data(\"" + operation_date + "\", \"" + add_slashes(operation_numbers[cnt]) + "\", \"" + add_slashes(data[operation_numbers[cnt]][cnt_2]["user_id"]) + "\", \"" + add_slashes(formation_text) + "\"" + ip_address_str + ");'>取り消し</button>";
                     }
                     
                     user_name_html += "</span>";
@@ -6113,9 +6119,9 @@ function draw_station_timetable (station_name) {
             if (is_starting_stations[keys[cnt]][keys_2[cnt_2]]) {
                 buf += "<small>(始)</small>";
             } else if (is_terminal_stations[keys[cnt]][keys_2[cnt_2]]) {
-                buf += "<small>(着)</small>";
+                buf += "(着)";
             }
-                
+            
             buf += "</b>" + escape_html(train_types[keys[cnt]][keys_2[cnt_2]]) + "</span>　";
             
             buf += get_final_destination(line_id, departure_times[keys[cnt]][keys_2[cnt_2]], first_departure_times[keys[cnt]][keys_2[cnt_2]]);
@@ -7602,18 +7608,22 @@ function post_operation_data (cnt = 0) {
     });
 }
 
-function edit_operation_data (yyyy_mm_dd, operation_number, user_id, formation_text) {
+function edit_operation_data (yyyy_mm_dd, operation_number, user_id, formation_text, ip_address = null) {
     open_popup("edit_operation_data_popup");
     
-    buf = "<h3>運用番号</h3>" + escape_html(operation_number);
+    buf = "<h3>投稿内容</h3>";
+    buf += "<div class='key_and_value'><b>運用番号</b>" + escape_html(operation_number) + "</div>";
+    buf += "<div class='key_and_value'><b>編成名</b>" + escape_html(formation_text) + "</div>";
     
     if (user_id !== user_data["user_id"]) {
-        buf += "<h3>投稿者ID</h3>" + escape_html(user_id);
+        buf += "<h3>投稿者情報</h3>";
+        buf += "<div class='key_and_value'><b>ユーザーID</b>" + escape_html(user_id) + "</div>";
+        if (ip_address !== null) {
+            buf += "<div class='key_and_value'><b>IPアドレス</b>" + escape_html(ip_address) + "</div>";
+        }
     }
     
-    buf += "<h3>投稿内容</h3>" + escape_html(formation_text);
-    
-    buf += "<br><br><br><button type='button' class='wide_button' onclick='revoke_operation_data(\"" + yyyy_mm_dd + "\", \"" + add_slashes(operation_number) + "\", \"" + add_slashes(user_id) + "\");'>取り消す</button>";
+    buf += "<br><br><button type='button' class='wide_button' onclick='revoke_operation_data(\"" + yyyy_mm_dd + "\", \"" + add_slashes(operation_number) + "\", \"" + add_slashes(user_id) + "\");'>取り消す</button>";
     
     if (user_id !== user_data["user_id"] && (user_data["role"] === "MODERATOR" || user_data["role"] === "ADMIN")) {
         buf += "<button type='button' class='wide_button' onclick='revoke_users_all_operation_data(\"" + add_slashes(user_id) + "\");'>ユーザーの投稿を全て取り消す</button>";
