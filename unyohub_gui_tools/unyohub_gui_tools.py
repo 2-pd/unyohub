@@ -15,7 +15,7 @@ import webbrowser
 
 
 UNYOHUB_GUI_TOOLS_APP_NAME = "鉄道運用Hub用データ編集ツール"
-UNYOHUB_GUI_TOOLS_VERSION = "24.03-3"
+UNYOHUB_GUI_TOOLS_VERSION = "24.03-4"
 UNYOHUB_GUI_TOOLS_LICENSE_TEXT = "このアプリケーションは無権利創作宣言に準拠して著作権放棄されています"
 UNYOHUB_GUI_TOOLS_LICENSE_URL = "https://www.2pd.jp/license/"
 UNYOHUB_GUI_TOOLS_REPOSITORY_URL = "https://fossil.2pd.jp/unyohub/"
@@ -166,6 +166,7 @@ def console_copy ():
     global main_win
     global console_area
     
+    main_win.clipboard_clear()
     main_win.clipboard_append(console_area.get("0.0", tk.END).strip())
 
 

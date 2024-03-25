@@ -137,6 +137,11 @@ def convert_operation_table_1 (mes, main_dir, file_name, json_file_name, digits_
                         car_count = ""
                     
                     if len(train_time) == 2:
+                        if "-" not in train_time[1]:
+                            mes("時刻の指定が異常です: " + train_name)
+                            error_occurred = True
+                            continue
+                        
                         train_rows = train_time[1].split("-")
                         
                         train_rows[1] = train_rows[1][:-1]
