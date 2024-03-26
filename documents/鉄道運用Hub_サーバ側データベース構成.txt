@@ -11,7 +11,7 @@ _/_/_/_/ データベース _/_/_/_/
 `unyohub_formations` 編成データ
   `formation_name` TEXT NOT NULL PRIMARY KEY 編成名
   `series_name` TEXT NOT NULL 車両形式
-  `cars_count` INTEGER NOT NULL 編成両数(unyohub_carsのデータから算出可能であるが、動作高速化の観点から正規化しない)
+  `car_count` INTEGER NOT NULL 編成両数(unyohub_carsのデータから算出可能であるが、動作高速化の観点から正規化しない)
   `description` TEXT 補足説明文
   `inspection_information` TEXT 検査情報
 

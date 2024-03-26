@@ -15,7 +15,7 @@ import webbrowser
 
 
 UNYOHUB_GUI_TOOLS_APP_NAME = "鉄道運用Hub用データ編集ツール"
-UNYOHUB_GUI_TOOLS_VERSION = "24.03-5"
+UNYOHUB_GUI_TOOLS_VERSION = "24.03-6"
 UNYOHUB_GUI_TOOLS_LICENSE_TEXT = "このアプリケーションは無権利創作宣言に準拠して著作権放棄されています"
 UNYOHUB_GUI_TOOLS_LICENSE_URL = "https://www.2pd.jp/license/"
 UNYOHUB_GUI_TOOLS_REPOSITORY_URL = "https://fossil.2pd.jp/unyohub/"
@@ -115,14 +115,17 @@ def open_main_window ():
     button_convert_timetable_2 = tk.Button(main_win, text="時刻表の変換(ステップ2)", font=button_font, command=convert_timetable_2, bg="#666666", fg="#ffffff", relief=tk.FLAT, highlightbackground="#666666")
     button_convert_timetable_2.place(x=10, y=290, width=300, height=40)
     
-    button_convert_operation_table_1 = tk.Button(main_win, text="運用表の変換(ステップ1)", font=button_font, command=convert_operation_table_1, bg="#666666", fg="#ffffff", relief=tk.FLAT, highlightbackground="#666666")
-    button_convert_operation_table_1.place(x=10, y=340, width=300, height=40)
+    button_convert_operation_table_for_printing = tk.Button(main_win, text="運用表を印刷用に変換", font=button_font, command=lambda: convert_operation_table_1(True), bg="#666666", fg="#ffffff", relief=tk.FLAT, highlightbackground="#666666")
+    button_convert_operation_table_for_printing.place(x=10, y=340, width=300, height=40)
+    
+    button_convert_operation_table_1 = tk.Button(main_win, text="運用表の変換(ステップ1)", font=button_font, command=lambda: convert_operation_table_1(False), bg="#666666", fg="#ffffff", relief=tk.FLAT, highlightbackground="#666666")
+    button_convert_operation_table_1.place(x=10, y=390, width=300, height=40)
     
     button_convert_operation_table_2 = tk.Button(main_win, text="運用表の変換(ステップ2)", font=button_font, command=convert_operation_table_2, bg="#666666", fg="#ffffff", relief=tk.FLAT, highlightbackground="#666666")
-    button_convert_operation_table_2.place(x=10, y=390, width=300, height=40)
+    button_convert_operation_table_2.place(x=10, y=440, width=300, height=40)
     
     button_initialize_moderation_db = tk.Button(main_win, text="モデレーションDBのセットアップ", font=button_font, command=initialize_moderation_db, bg="#666666", fg="#ffffff", relief=tk.FLAT, highlightbackground="#666666")
-    button_initialize_moderation_db.place(x=10, y=440, width=300, height=40)
+    button_initialize_moderation_db.place(x=10, y=490, width=300, height=40)
     
     mes(UNYOHUB_GUI_TOOLS_APP_NAME + " v" + UNYOHUB_GUI_TOOLS_VERSION + "\n\n" + UNYOHUB_GUI_TOOLS_LICENSE_TEXT)
     
@@ -252,7 +255,7 @@ def convert_timetable_2 ():
             error_mes(traceback.format_exc())
 
 
-def convert_operation_table_1 ():
+def convert_operation_table_1 (for_printing):
     global config
     
     if not os.path.isfile(config["main_dir"] + "/railroad_info.json"):
@@ -267,6 +270,11 @@ def convert_operation_table_1 ():
     if len(json_file_name) == 0:
         return
     
+    if for_printing:
+        file_name_for_printing = filedialog.asksaveasfilename(title="印刷用運用表のファイル名を指定してください", filetypes=[("CSV形式の表ファイル","*.csv")], initialdir=config["main_dir"], initialfile=os.path.splitext(os.path.basename(file_name))[0] + "_印刷用.csv", defaultextension="csv")
+    else:
+        file_name_for_printing = None
+    
     digits_count_str = simpledialog.askstring("列車番号の桁数を指定", "所定の桁数に満たない列車番号の前に「0」を付加する場合にはその桁数を入力してください")
     
     if digits_count_str.isdecimal():
@@ -278,7 +286,7 @@ def convert_operation_table_1 ():
         clear_mes()
         
         convert_operation_table_1 = importlib.import_module("unyohub_scripts.convert_operation_table_1")
-        convert_operation_table_1.convert_operation_table_1(mes, config["main_dir"], file_name, json_file_name, digits_count)
+        convert_operation_table_1.convert_operation_table_1(mes, config["main_dir"], file_name, json_file_name, digits_count, file_name_for_printing)
     except:
         error_mes(traceback.format_exc())
 

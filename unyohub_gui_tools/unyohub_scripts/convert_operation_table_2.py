@@ -70,6 +70,22 @@ def convert_operation_table_2 (mes, main_dir, file_name):
             starting_location, starting_track = split_station_name_and_track(operations[cnt + 1][0].strip())
             terminal_location, terminal_track = split_station_name_and_track(operations[cnt + 2][0].strip())
             
+            car_count = operations[cnt + 3][0]
+            
+            if "(" in car_count:
+                bracket_pos = car_count.find("(")
+                hyphen_pos = car_count.rfind("-")
+                
+                min_car_count = int(car_count[bracket_pos + 1:hyphen_pos])
+                max_car_count = int(car_count[hyphen_pos + 1:-1])
+                
+                car_count = int(car_count[0:bracket_pos])
+            else:
+                car_count = int(car_count)
+                
+                min_car_count = car_count
+                max_car_count = car_count
+            
             output_data[-1]["operations"].append({
                 "operation_number" : operations[cnt][0].strip(),
                 "trains" : [],
@@ -77,7 +93,9 @@ def convert_operation_table_2 (mes, main_dir, file_name):
                 "starting_track" : starting_track,
                 "terminal_location" : terminal_location,
                 "terminal_track" : terminal_track,
-                "cars_count" : int(operations[cnt + 3][0]),
+                "car_count" : car_count,
+                "min_car_count" : min_car_count,
+                "max_car_count" : max_car_count,
                 "main_color" : operations[cnt + 3][1]
             })
             
@@ -111,7 +129,7 @@ def convert_operation_table_2 (mes, main_dir, file_name):
                         train_number = train_number[0:bracket_pos]
                     else:
                         position_forward = 1
-                        position_rear = int(operations[cnt + 3][0])
+                        position_rear = car_count
                     
                     if train_number[0:1] == "?":
                         train_number = train_number[1:] + "__" + str(id_cnt)

@@ -15,8 +15,24 @@ def convert_time_style(time_data):
     return time_data[0:1] + time_str.zfill(5)
 
 
-def convert_operation_table_1 (mes, main_dir, file_name, json_file_name, digits_count):
+def split_station_name_and_track(station_name):
+    if ":" in station_name:
+        station_name_and_track = station_name.split(":")
+        station_name = station_name_and_track[0]
+        station_track = station_name_and_track[1]
+    else:
+        station_track = ""
+    
+    return station_name, station_track
+
+
+def convert_operation_table_1 (mes, main_dir, file_name, json_file_name, digits_count, file_name_for_printing=None):
     mes("運用表の変換(ステップ1)", True)
+    
+    if file_name_for_printing != None:
+        for_printing = True
+    else:
+        for_printing = False
     
     error_occurred = False
     
@@ -103,17 +119,30 @@ def convert_operation_table_1 (mes, main_dir, file_name, json_file_name, digits_
     train_list = []
     for operation in operations:
         if operation[0].startswith("# ") or operation[0].startswith("◆"):
-            output_data.append(["# " + operation[0][1:].strip()])
+            if for_printing:
+                output_data.append(["◆" + operation[0][1:].strip()])
+                output_data.append(["運用番号", "出庫", "入庫", "", "列車"])
+            else:
+                output_data.append(["# " + operation[0][1:].strip()])
             
             if re.match("^#[0-9A-Fa-f]{6}$", operation[1]) != None:
                 color = operation[1]
             else:
                 color = "#ffffff"
         else:
-            output_row_1 = [operation[0]]
-            output_row_2 = [operation[2]]
-            output_row_3 = [operation[3]]
-            output_row_4 = [operation[1], color]
+            if for_printing:
+                starting_location, starting_track = split_station_name_and_track(operation[2])
+                terminal_location, terminal_track = split_station_name_and_track(operation[3])
+                
+                output_row_1 = [operation[0], starting_location, terminal_location, ""]
+                output_row_2 = [operation[1] + "両", starting_track, terminal_track, ""]
+                output_row_3 = ["", "", "", ""]
+                output_row_4 = []
+            else:
+                output_row_1 = [operation[0]]
+                output_row_2 = [operation[2]]
+                output_row_3 = [operation[3]]
+                output_row_4 = [operation[1], color]
             
             for train_cell in operation[4:]:
                 train_cell = train_cell.strip()
@@ -158,10 +187,15 @@ def convert_operation_table_1 (mes, main_dir, file_name, json_file_name, digits_
                         first_departure_times = list(train_number_list[train_name].keys())
                         first_departure_times.sort()
                         
-                        for first_departure_time in first_departure_times:
+                        if not for_printing:
+                            for first_departure_time in first_departure_times:
+                                output_row_1.append(train_name + car_count)
+                                output_row_2.append(train_number_list[train_name][first_departure_time][0])
+                                output_row_3.append(train_number_list[train_name][first_departure_time][1])
+                        else:
                             output_row_1.append(train_name + car_count)
-                            output_row_2.append(train_number_list[train_name][first_departure_time][0])
-                            output_row_3.append(train_number_list[train_name][first_departure_time][1])
+                            output_row_2.append(train_number_list[train_name][first_departure_times[0]][0])
+                            output_row_3.append(train_number_list[train_name][first_departure_times[-1]][1])
                         
                         if train_name + car_count in train_list:
                             mes("同一列車の同一組成位置が複数の運用に割り当てられています: " + train_name + car_count)
@@ -178,7 +212,10 @@ def convert_operation_table_1 (mes, main_dir, file_name, json_file_name, digits_
         mes("エラー発生のため処理が中断されました")
         return
     
-    new_file_name = file_name[:-4] + "_unyohub-format.csv"
+    if for_printing:
+        new_file_name = file_name_for_printing
+    else:
+        new_file_name = file_name[:-4] + "_unyohub-format.csv"
     
     mes("データを " + os.path.basename(new_file_name) + " に書き込んでいます...")
     
