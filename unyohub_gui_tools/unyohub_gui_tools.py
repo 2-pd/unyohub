@@ -15,7 +15,7 @@ import webbrowser
 
 
 UNYOHUB_GUI_TOOLS_APP_NAME = "鉄道運用Hub用データ編集ツール"
-UNYOHUB_GUI_TOOLS_VERSION = "24.03-4"
+UNYOHUB_GUI_TOOLS_VERSION = "24.03-5"
 UNYOHUB_GUI_TOOLS_LICENSE_TEXT = "このアプリケーションは無権利創作宣言に準拠して著作権放棄されています"
 UNYOHUB_GUI_TOOLS_LICENSE_URL = "https://www.2pd.jp/license/"
 UNYOHUB_GUI_TOOLS_REPOSITORY_URL = "https://fossil.2pd.jp/unyohub/"
@@ -31,7 +31,7 @@ try:
         config = json.load(json_fp)
 except:
     config = {
-        "main_dir" : os.path.abspath("./")
+        "main_dir" : os.path.dirname(os.path.abspath("./"))
     }
 
 
@@ -120,6 +120,9 @@ def open_main_window ():
     
     button_convert_operation_table_2 = tk.Button(main_win, text="運用表の変換(ステップ2)", font=button_font, command=convert_operation_table_2, bg="#666666", fg="#ffffff", relief=tk.FLAT, highlightbackground="#666666")
     button_convert_operation_table_2.place(x=10, y=390, width=300, height=40)
+    
+    button_initialize_moderation_db = tk.Button(main_win, text="モデレーションDBのセットアップ", font=button_font, command=initialize_moderation_db, bg="#666666", fg="#ffffff", relief=tk.FLAT, highlightbackground="#666666")
+    button_initialize_moderation_db.place(x=10, y=440, width=300, height=40)
     
     mes(UNYOHUB_GUI_TOOLS_APP_NAME + " v" + UNYOHUB_GUI_TOOLS_VERSION + "\n\n" + UNYOHUB_GUI_TOOLS_LICENSE_TEXT)
     
@@ -295,6 +298,20 @@ def convert_operation_table_2 ():
             
             convert_operation_table_2 = importlib.import_module("unyohub_scripts.convert_operation_table_2")
             convert_operation_table_2.convert_operation_table_2(mes, config["main_dir"], file_name)
+        except:
+            error_mes(traceback.format_exc())
+
+
+def initialize_moderation_db ():
+    global config
+    
+    db_file_path = filedialog.asksaveasfilename(title="モデレーション用データベースの保存先を選択してください", filetypes=[("SQLite3 データベースファイル","*.db")], initialdir=config["main_dir"], initialfile="moderation.db", defaultextension="db")
+    if len(db_file_path) >= 1:
+        try:
+            clear_mes()
+            
+            initialize_moderation_db = importlib.import_module("unyohub_scripts.initialize_moderation_db")
+            initialize_moderation_db.initialize_moderation_db(mes, db_file_path)
         except:
             error_mes(traceback.format_exc())
 
