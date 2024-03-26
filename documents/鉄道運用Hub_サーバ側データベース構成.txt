@@ -139,7 +139,6 @@ _/_/_/_/ データベース _/_/_/_/
   `comment` TEXT 運用補足情報(コメント)
   `ip_address` TEXT 投稿者のIPアドレス(IPアドレスを記録しない設定の場合はNULL)
 
-  PRIMARY KEY(`railroad_id`, `operation_date`, `operation_number`, `user_id`)
   INDEX `unyohub_moderation_idx_d1`(`moderator_id`, `deleted_datetime`)
   INDEX `unyohub_moderation_idx_d2`(`deleted_datetime`)
   INDEX `unyohub_moderation_idx_d3`(`user_id`, `posted_datetime`)

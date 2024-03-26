@@ -13,7 +13,7 @@ def initialize_moderation_db (mes, db_file_path):
     
     mes("テーブルを作成しています...")
     
-    cur.execute("CREATE TABLE IF NOT EXISTS `unyohub_moderation_deleted_data`(`moderator_id` TEXT NOT NULL, `deleted_datetime` TEXT NOT NULL, `railroad_id` TEXT NOT NULL, `operation_date` TEXT NOT NULL, `operation_number` TEXT NOT NULL, `user_id` TEXT NOT NULL, `formations` TEXT NOT NULL, `posted_datetime` TEXT NOT NULL, `comment` TEXT, `ip_address` TEXT, PRIMARY KEY(`railroad_id`, `operation_date`, `operation_number`, `user_id`))")
+    cur.execute("CREATE TABLE IF NOT EXISTS `unyohub_moderation_deleted_data`(`moderator_id` TEXT NOT NULL, `deleted_datetime` TEXT NOT NULL, `railroad_id` TEXT NOT NULL, `operation_date` TEXT NOT NULL, `operation_number` TEXT NOT NULL, `user_id` TEXT NOT NULL, `formations` TEXT NOT NULL, `posted_datetime` TEXT NOT NULL, `comment` TEXT, `ip_address` TEXT)")
     cur.execute("CREATE INDEX IF NOT EXISTS `unyohub_idx_d1` ON `unyohub_moderation_deleted_data`(`moderator_id`, `deleted_datetime`)")
     cur.execute("CREATE INDEX IF NOT EXISTS `unyohub_idx_d2` ON `unyohub_moderation_deleted_data`(`deleted_datetime`)")
     cur.execute("CREATE INDEX IF NOT EXISTS `unyohub_idx_d3` ON `unyohub_moderation_deleted_data`(`user_id`, `posted_datetime`)")
