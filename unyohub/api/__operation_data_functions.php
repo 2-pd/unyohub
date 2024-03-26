@@ -1,14 +1,28 @@
 <?php
-function load_railroad_data ($railroad_id) {
+function load_railroad_data ($id) {
+    global $railroad_id;
     global $railroad_info;
     global $db_obj;
     
-    $base_path = "../data/".basename($railroad_id)."/";
+    $railroad_id = basename($id);
+    
+    $base_path = "../data/".$railroad_id."/";
     
     $railroad_info = json_decode(file_get_contents($base_path."railroad_info.json"), TRUE);
     
     $db_obj = new SQLite3($base_path."railroad.db");
     $db_obj->busyTimeout(5000);
+}
+
+$moderation_db_obj = NULL;
+
+function connect_moderation_db () {
+    global $moderation_db_obj;
+    
+    if (empty($moderation_db_obj)) {
+        $moderation_db_obj = new SQLite3("../config/moderation.db");
+        $moderation_db_obj->busyTimeout(5000);
+    }
 }
 
 function get_operation_table ($ts) {
@@ -202,8 +216,10 @@ function update_next_day_data ($today_ts, $starting_location, $starting_track, $
     }
 }
 
-function revoke_post ($wakarana, $operation_date_ts, $operation_number, $post_user_id) {
+function revoke_post ($wakarana, $operation_date_ts, $operation_number, $post_user_id, $moderator_id) {
+    global $railroad_id;
     global $db_obj;
+    global $moderation_db_obj;
     
     $operation_data = get_operation_info($operation_date_ts, $operation_number);
     
@@ -211,7 +227,13 @@ function revoke_post ($wakarana, $operation_date_ts, $operation_number, $post_us
     
     $operation_date = date("Y-m-d", $operation_date_ts);
     
-    $db_obj->query("DELETE FROM `unyohub_data` WHERE `operation_date` = '".$operation_date."' AND `operation_number` = '".$db_obj->escapeString($operation_number)."' AND `user_id` = '".$db_obj->escapeString($post_user_id)."'");
+    $deleted_data = $db_obj->querySingle("DELETE FROM `unyohub_data` WHERE `operation_date` = '".$operation_date."' AND `operation_number` = '".$db_obj->escapeString($operation_number)."' AND `user_id` = '".$db_obj->escapeString($post_user_id)."' RETURNING *", TRUE);
+    
+    if (!empty($moderator_id) && !empty($deleted_data)) {
+        connect_moderation_db();
+        
+        $moderation_db_obj->query("INSERT INTO `unyohub_moderation_deleted_data` (`moderator_id`, `deleted_datetime`, `railroad_id`, `operation_date`, `operation_number`, `user_id`, `formations`, `posted_datetime`, `comment`, `ip_address`) VALUES ('".$moderator_id."', '".$posted_datetime."', '".$moderation_db_obj->escapeString($railroad_id)."', '".$moderation_db_obj->escapeString($deleted_data["operation_date"])."', '".$moderation_db_obj->escapeString($deleted_data["operation_number"])."', '".$moderation_db_obj->escapeString($deleted_data["user_id"])."', '".$moderation_db_obj->escapeString($deleted_data["formations"])."', '".$moderation_db_obj->escapeString($deleted_data["posted_datetime"])."', '".$moderation_db_obj->escapeString($deleted_data["comment"])."', '".$moderation_db_obj->escapeString($deleted_data["ip_address"])."')");
+    }
     
     $latest_data = $db_obj->querySingle("SELECT `formations`, `user_id`, `comment` FROM `unyohub_data` WHERE `operation_date` = '".$operation_date."' AND `operation_number` = '".$operation_number."' ORDER BY `posted_datetime` DESC LIMIT 1", TRUE);
     

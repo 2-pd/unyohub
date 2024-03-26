@@ -10,14 +10,20 @@ if (!isset($_POST["railroad_id"], $_POST["date"], $_POST["operation_number"], $_
 
 $wakarana = new wakarana("../config");
 
+$moderator_id = NULL;
+
 $user = $wakarana->check();
 if (is_object($user)) {
     if ($user->check_one_time_token($_POST["one_time_token"])) {
         $user_id = $user->get_id();
         
-        if ($user_id !== $_POST["user_id"] && !$user->check_permission("moderate")) {
-            print "ERROR: モデレーター権限が確認できませんでした。他のユーザーの投稿は削除できません";
-            exit;
+        if ($user_id !== $_POST["user_id"]) {
+            if (!$user->check_permission("moderate")) {
+                print "ERROR: モデレーター権限が確認できませんでした。他のユーザーの投稿は削除できません";
+                exit;
+            }
+            
+            $moderator_id = $user_id;
         }
     } else {
         print "ERROR: ワンタイムトークンの認証に失敗しました。再度ご送信ください";
@@ -37,6 +43,6 @@ if ($ts === FALSE) {
     exit;
 }
 
-$data = array($_POST["operation_number"] => revoke_post($wakarana, $ts, $_POST["operation_number"], $_POST["user_id"]));
+$data = array($_POST["operation_number"] => revoke_post($wakarana, $ts, $_POST["operation_number"], $_POST["user_id"], $moderator_id));
 
 print json_encode($data, JSON_UNESCAPED_UNICODE);
