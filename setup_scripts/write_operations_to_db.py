@@ -22,7 +22,9 @@ print("データを処理しています...")
 
 for operation_group in operation_data:
     for operation in operation_group["operations"]:
-        cur.execute("INSERT INTO `unyohub_operations` (`operation_table`, `operation_number`, `starting_location`, `starting_track`, `first_departure_time`, `terminal_location`, `terminal_track`, `final_arrival_time`) VALUES (:operation_table, :operation_number, :starting_location, :starting_track, :first_departure_time, :terminal_location, :terminal_track, :final_arrival_time)", {"operation_table" : operation_table, "operation_number" : operation["operation_number"], "starting_location" : operation["starting_location"], "starting_track" : operation["starting_track"], "first_departure_time" : operation["trains"][0]["first_departure_time"], "terminal_location" : operation["terminal_location"], "terminal_track" : operation["terminal_track"], "final_arrival_time" : operation["trains"][-1]["final_arrival_time"]})
+        print(operation["operation_number"] + "運用 をデータベースに登録します...")
+        
+        cur.execute("INSERT INTO `unyohub_operations` (`operation_table`, `operation_number`, `starting_location`, `starting_track`, `starting_time`, `terminal_location`, `terminal_track`, `ending_time`, `min_car_count`, `max_car_count`) VALUES (:operation_table, :operation_number, :starting_location, :starting_track, :starting_time, :terminal_location, :terminal_track, :ending_time, :min_car_count, :max_car_count)", {"operation_table" : operation_table, "operation_number" : operation["operation_number"], "starting_location" : operation["starting_location"], "starting_track" : operation["starting_track"], "starting_time" : operation["starting_time"], "terminal_location" : operation["terminal_location"], "terminal_track" : operation["terminal_track"], "ending_time" : operation["ending_time"], "min_car_count" : operation["min_car_count"], "max_car_count" : operation["max_car_count"]})
 
 print("データベースの書き込み処理を完了しています...")
 conn.commit()

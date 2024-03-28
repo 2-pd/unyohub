@@ -91,10 +91,10 @@ def convert_operation_table_2 (mes, main_dir, file_name):
                 "trains" : [],
                 "starting_location" : starting_location,
                 "starting_track" : starting_track,
-                "first_departure_time" : operations[cnt + 1][1].strip(),
+                "starting_time" : operations[cnt + 1][1].strip(),
                 "terminal_location" : terminal_location,
                 "terminal_track" : terminal_track,
-                "final_arrival_time" : operations[cnt + 1][2].strip(),
+                "ending_time" : operations[cnt + 1][2].strip(),
                 "car_count" : car_count,
                 "min_car_count" : min_car_count,
                 "max_car_count" : max_car_count,
@@ -178,7 +178,7 @@ def convert_operation_table_2 (mes, main_dir, file_name):
                             output_data[-1]["operations"][-1]["trains"][-1]["final_arrival_time"] = first_departure_time
                     else:
                         if len(output_data[-1]["operations"][-1]["trains"]) == 0:
-                            previous_train_final_arrival_time = output_data[-1]["operations"][-1]["first_departure_time"]
+                            previous_train_final_arrival_time = output_data[-1]["operations"][-1]["starting_time"]
                         else:
                             previous_train_final_arrival_time = output_data[-1]["operations"][-1]["trains"][-1]["final_arrival_time"]
                         

@@ -19,7 +19,7 @@ def initialize_db (mes, main_dir):
     cur.execute("CREATE TABLE IF NOT EXISTS `unyohub_cars`(`formation_name` TEXT NOT NULL, `car_number` TEXT NOT NULL, `car_order` INTEGER NOT NULL, `manufacturer` TEXT, `constructed` TEXT, `description` TEXT, PRIMARY KEY(`formation_name`, `car_number`))")
     cur.execute("CREATE INDEX IF NOT EXISTS `unyohub_idx_c1` ON `unyohub_cars`(`formation_name`, `car_order`)")
 
-    cur.execute("CREATE TABLE IF NOT EXISTS `unyohub_operations`(`operation_table` TEXT NOT NULL, `operation_number` TEXT NOT NULL, `starting_location` TEXT, `starting_track` TEXT, `first_departure_time` TEXT NOT NULL, `terminal_location` TEXT, `terminal_track` TEXT, `final_arrival_time` TEXT NOT NULL, `min_car_count` INTEGER NOT NULL, `max_car_count` INTEGER NOT NULL, PRIMARY KEY(`operation_table`, `operation_number`))")
+    cur.execute("CREATE TABLE IF NOT EXISTS `unyohub_operations`(`operation_table` TEXT NOT NULL, `operation_number` TEXT NOT NULL, `starting_location` TEXT, `starting_track` TEXT, `starting_time` TEXT NOT NULL, `terminal_location` TEXT, `terminal_track` TEXT, `ending_time` TEXT NOT NULL, `min_car_count` INTEGER NOT NULL, `max_car_count` INTEGER NOT NULL, PRIMARY KEY(`operation_table`, `operation_number`))")
     cur.execute("CREATE UNIQUE INDEX IF NOT EXISTS `unyohub_idx_o1` ON `unyohub_operations`(`operation_table`, `starting_location`, `starting_track`)")
     cur.execute("CREATE UNIQUE INDEX IF NOT EXISTS `unyohub_idx_o2` ON `unyohub_operations`(`operation_table`, `terminal_location`, `terminal_track`)")
 
