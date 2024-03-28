@@ -6,32 +6,38 @@ import json
 import re
 
 
-def convert_time_style(time_data):
-    time_str = time_data[1:]
+def convert_time_style(time_data, with_station_initial = True):
+    if with_station_initial:
+        time_str = time_data[1:]
+    else:
+        time_str = time_data
     
-    if time_str.find(":") == -1:
+    if ":" not in time_str:
         time_str = time_str[:-2] + ":" + time_str[-2:]
     
-    return time_data[0:1] + time_str.zfill(5)
+    if with_station_initial:
+        return time_data[0:1] + time_str.zfill(5)
+    else:
+        return time_str.zfill(5)
 
 
-def split_station_name_and_track(station_name):
+def convert_station_name_and_track(station_name):
     if ":" in station_name:
         station_name_and_track = station_name.split(":")
-        station_name = station_name_and_track[0]
-        station_track = station_name_and_track[1]
+        
+        return station_name_and_track[0] + "(" + station_name_and_track[1] + ")"
     else:
-        station_track = ""
-    
-    return station_name, station_track
+        return station_name
 
 
 def convert_operation_table_1 (mes, main_dir, file_name, json_file_name, digits_count, file_name_for_printing=None):
-    mes("運用表の変換(ステップ1)", True)
-    
     if file_name_for_printing != None:
+        mes("運用表を印刷用に変換", True)
+        
         for_printing = True
     else:
+        mes("運用表の変換(ステップ1)", True)
+        
         for_printing = False
     
     error_occurred = False
@@ -130,21 +136,20 @@ def convert_operation_table_1 (mes, main_dir, file_name, json_file_name, digits_
             else:
                 color = "#ffffff"
         else:
-            if for_printing:
-                starting_location, starting_track = split_station_name_and_track(operation[2])
-                terminal_location, terminal_track = split_station_name_and_track(operation[3])
-                
-                output_row_1 = [operation[0], starting_location, terminal_location, ""]
-                output_row_2 = [operation[1] + "両", starting_track, terminal_track, ""]
-                output_row_3 = ["", "", "", ""]
-                output_row_4 = []
-            else:
-                output_row_1 = [operation[0]]
-                output_row_2 = [operation[2]]
-                output_row_3 = [operation[3]]
-                output_row_4 = [operation[1], color]
+            if len(operation[0].strip()) == 0:
+                mes("運用番号のない運用が見つかりました")
+                error_occurred = True
             
-            for train_cell in operation[4:]:
+            if for_printing:
+                output_row_1 = [operation[0], convert_station_name_and_track(operation[2]), convert_station_name_and_track(operation[4]), ""]
+                output_row_2 = ["所定" + operation[1].split("(")[0] + "両", operation[3].strip(), operation[5].strip(), ""]
+                output_row_3 = ["", "", "", ""]
+            else:
+                output_row_1 = [operation[0], operation[2], operation[4]]
+                output_row_2 = [operation[1], operation[3].strip(), operation[5].strip()]
+                output_row_3 = [color, "", ""]
+            
+            for train_cell in operation[6:]:
                 train_cell = train_cell.strip()
                 
                 if train_cell[0:1] == ".":
@@ -203,10 +208,23 @@ def convert_operation_table_1 (mes, main_dir, file_name, json_file_name, digits_
                         else:
                             train_list.append(train_name + car_count)
             
+            if len(output_row_2[1]) == 0:
+                if for_printing:
+                    output_row_2[1] = output_row_2[4][1:]
+                else:
+                    output_row_2[1] = output_row_2[3][1:]
+            else:
+                output_row_2[1] = convert_time_style(output_row_2[1], False)
+            
+            if len(output_row_2[2]) == 0:
+                output_row_2[2] = output_row_3[-1][1:]
+            else:
+                output_row_2[2] = convert_time_style(output_row_2[2], False)
+            
             output_data.append(output_row_1)
             output_data.append(output_row_2)
             output_data.append(output_row_3)
-            output_data.append(output_row_4)
+            output_data.append([])
     
     if error_occurred:
         mes("エラー発生のため処理が中断されました")

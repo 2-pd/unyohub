@@ -15,11 +15,14 @@ import webbrowser
 
 
 UNYOHUB_GUI_TOOLS_APP_NAME = "鉄道運用Hub用データ編集ツール"
-UNYOHUB_GUI_TOOLS_VERSION = "24.03-7"
+UNYOHUB_GUI_TOOLS_VERSION = "24.03-8"
 UNYOHUB_GUI_TOOLS_LICENSE_TEXT = "このアプリケーションは無権利創作宣言に準拠して著作権放棄されています"
 UNYOHUB_GUI_TOOLS_LICENSE_URL = "https://www.2pd.jp/license/"
 UNYOHUB_GUI_TOOLS_REPOSITORY_URL = "https://fossil.2pd.jp/unyohub/"
 
+
+app_dir = os.path.dirname(os.path.abspath(__file__))
+os.chdir(app_dir)
 
 if platform.system() == "Windows":
     is_windows = True
@@ -31,7 +34,7 @@ try:
         config = json.load(json_fp)
 except:
     config = {
-        "main_dir" : os.path.dirname(os.path.abspath("./"))
+        "main_dir" : os.path.dirname(app_dir)
     }
 
 
@@ -272,6 +275,9 @@ def convert_operation_table_1 (for_printing):
     
     if for_printing:
         file_name_for_printing = filedialog.asksaveasfilename(title="印刷用運用表のファイル名を指定してください", filetypes=[("CSV形式の表ファイル","*.csv")], initialdir=config["main_dir"], initialfile=os.path.splitext(os.path.basename(file_name))[0] + "_印刷用.csv", defaultextension="csv")
+        
+        if len(file_name_for_printing) == 0:
+            return
     else:
         file_name_for_printing = None
     

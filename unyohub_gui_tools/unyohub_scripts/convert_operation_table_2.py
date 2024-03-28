@@ -67,10 +67,10 @@ def convert_operation_table_2 (mes, main_dir, file_name):
             
             cnt += 1
         else:
-            starting_location, starting_track = split_station_name_and_track(operations[cnt + 1][0].strip())
-            terminal_location, terminal_track = split_station_name_and_track(operations[cnt + 2][0].strip())
+            starting_location, starting_track = split_station_name_and_track(operations[cnt][1].strip())
+            terminal_location, terminal_track = split_station_name_and_track(operations[cnt][2].strip())
             
-            car_count = operations[cnt + 3][0]
+            car_count = operations[cnt + 1][0]
             
             if "(" in car_count:
                 bracket_pos = car_count.find("(")
@@ -91,15 +91,17 @@ def convert_operation_table_2 (mes, main_dir, file_name):
                 "trains" : [],
                 "starting_location" : starting_location,
                 "starting_track" : starting_track,
+                "first_departure_time" : operations[cnt + 1][1].strip(),
                 "terminal_location" : terminal_location,
                 "terminal_track" : terminal_track,
+                "final_arrival_time" : operations[cnt + 1][2].strip(),
                 "car_count" : car_count,
                 "min_car_count" : min_car_count,
                 "max_car_count" : max_car_count,
-                "main_color" : operations[cnt + 3][1]
+                "main_color" : operations[cnt + 2][0]
             })
             
-            cnt_2 = 1
+            cnt_2 = 3
             while cnt_2 < len(operations[cnt]) and operations[cnt][cnt_2] != "":
                 if operations[cnt][cnt_2][0:1] == ".":
                     train_number = operations[cnt][cnt_2] + "__" + str(id_cnt)
@@ -167,26 +169,29 @@ def convert_operation_table_2 (mes, main_dir, file_name):
                             direction = "outbound"
                     
                     
-                    if len(output_data[-1]["operations"][-1]["trains"]) >= 1:
-                        if output_data[-1]["operations"][-1]["trains"][-1]["final_arrival_time"] == None:
-                            if output_data[-1]["operations"][-1]["trains"][-1]["first_departure_time"] > first_departure_time:
+                    if len(output_data[-1]["operations"][-1]["trains"]) >= 1 and output_data[-1]["operations"][-1]["trains"][-1]["final_arrival_time"] == None:
+                        if output_data[-1]["operations"][-1]["trains"][-1]["first_departure_time"] > first_departure_time:
+                            mes("エラー: " + train_number + " の始発時刻が前の列車の終着時刻と矛盾しています: " + str(cnt + 1) + "行目 " + str(cnt_2 + 1) + "列目")
+                            error_occurred = True
+                        
+                        if cnt_2 >= 2:
+                            output_data[-1]["operations"][-1]["trains"][-1]["final_arrival_time"] = first_departure_time
+                    else:
+                        if len(output_data[-1]["operations"][-1]["trains"]) == 0:
+                            previous_train_final_arrival_time = output_data[-1]["operations"][-1]["first_departure_time"]
+                        else:
+                            previous_train_final_arrival_time = output_data[-1]["operations"][-1]["trains"][-1]["final_arrival_time"]
+                        
+                        if previous_train_final_arrival_time != first_departure_time:
+                            if previous_train_final_arrival_time > first_departure_time:
                                 mes("エラー: " + train_number + " の始発時刻が前の列車の終着時刻と矛盾しています: " + str(cnt + 1) + "行目 " + str(cnt_2 + 1) + "列目")
                                 error_occurred = True
                             
-                            if cnt_2 >= 2:
-                                output_data[-1]["operations"][-1]["trains"][-1]["final_arrival_time"] = first_departure_time
-                        elif output_data[-1]["operations"][-1]["trains"][-1]["final_arrival_time"] != first_departure_time:
-                            stopped_train_first_departure_time = output_data[-1]["operations"][-1]["trains"][-1]["final_arrival_time"]
-                            
-                            if stopped_train_first_departure_time > first_departure_time:
-                                mes("エラー: " + train_number + " の始発時刻が前の列車の終着時刻と矛盾しています: " + str(cnt + 1) + "行目 " + str(cnt_2 + 1) + "列目")
-                                error_occurred = True
-                            
-                            if output_data[-1]["operations"][-1]["trains"][-1]["train_number"] == train_number:
+                            if len(output_data[-1]["operations"][-1]["trains"]) >= 1 and output_data[-1]["operations"][-1]["trains"][-1]["train_number"] == train_number:
                                 stopped_train_number = train_number
                             else:
                                 stopped_train_number = "_" + train_number
-                                time_id = stopped_train_first_departure_time + "-" + first_departure_time
+                                time_id = previous_train_final_arrival_time + "-" + first_departure_time
                                 
                                 if stopped_train_number in stopped_train_list:
                                     if time_id in stopped_train_list[stopped_train_number]:
@@ -203,7 +208,7 @@ def convert_operation_table_2 (mes, main_dir, file_name):
                             output_data[-1]["operations"][-1]["trains"].append({
                                 "train_number" : stopped_train_number,
                                 "line_id" : line_list[0],
-                                "first_departure_time" : stopped_train_first_departure_time,
+                                "first_departure_time" : previous_train_final_arrival_time,
                                 "final_arrival_time" : first_departure_time,
                                 "starting_station" : starting_station,
                                 "terminal_station" : starting_station,
