@@ -65,9 +65,9 @@ while cnt < len(formation_data):
         for deleted_car_number in deleted_cars:
             cur.execute("DELETE FROM `unyohub_cars` WHERE `formation_name` = :formation_name AND `car_number` = :car_number", {"formation_name" : formation_name, "car_number" : deleted_car_number})
         
-        cars_count = len(car_list)
+        car_count = len(car_list)
         
-        cur.execute("INSERT INTO `unyohub_formations`(`formation_name`, `series_name`, `cars_count`, `description`, `inspection_information`) VALUES (:formation_name, :series_name, :cars_count, '', '') ON CONFLICT(`formation_name`) DO UPDATE SET `series_name` = :series_name_2, `cars_count` = :cars_count_2", {"formation_name" : formation_name, "series_name" : series_name, "cars_count" : cars_count, "series_name_2" : series_name, "cars_count_2" : cars_count})
+        cur.execute("INSERT INTO `unyohub_formations`(`formation_name`, `series_name`, `car_count`, `description`, `inspection_information`) VALUES (:formation_name, :series_name, :car_count, '', '') ON CONFLICT(`formation_name`) DO UPDATE SET `series_name` = :series_name_2, `car_count` = :car_count_2", {"formation_name" : formation_name, "series_name" : series_name, "car_count" : car_count, "series_name_2" : series_name, "car_count_2" : car_count})
         
         formation_list.append(formation_name)
         

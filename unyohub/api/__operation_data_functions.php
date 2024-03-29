@@ -100,22 +100,35 @@ function check_formation ($formations_str) {
     $formation_pattern = array("");
     $formation_list = array();
     $formation_pattern_last = array(NULL);
+    $min_car_count_range = 0;
+    $max_car_count_range = 0;
     foreach ($formations as $formation) {
         if ($formation !== "?") {
             $formation_escaped = $db_obj->escapeString($formation);
             
-            $series_name = $db_obj->querySingle("SELECT `series_name` FROM `unyohub_formations` WHERE `formation_name` = '".$formation_escaped."' OR `series_name` = '".$formation_escaped."' LIMIT 1");
+            $formation_data = $db_obj->querySingle("SELECT `series_name`, `car_count` FROM `unyohub_formations` WHERE `formation_name` = '".$formation_escaped."' OR `series_name` = '".$formation_escaped."' LIMIT 1", TRUE);
             
-            if (empty($series_name)) {
+            if (empty($formation_data)) {
                 print "ERROR: 入力された編成名・車両形式に誤りがあります";
                 exit;
             }
             
+            $series_name = $formation_data["series_name"];
+            
             if ($series_name !== $formation) {
                 $formation_list[] = $formation;
+                
+                $min_car_count_range += $formation_data["car_count"];
+                $max_car_count_range += $formation_data["car_count"];
+            } else {
+                $min_car_count_range += 1;//形式と両数の関係をDBに追加するまでの仮
+                $max_car_count_range += 20;
             }
         } else {
             $series_name = "?";
+            
+            $min_car_count_range += 1;
+            $max_car_count_range += 20;
         }
         
         $formation_pattern_2 = array();
@@ -158,7 +171,7 @@ function check_formation ($formations_str) {
         exit;
     }
     
-    return array("formation_pattern" => array_merge(array_unique($formation_pattern)), "formation_list" => $formation_list);
+    return array("formation_pattern" => array_merge(array_unique($formation_pattern)), "formation_list" => $formation_list, "min_car_count_range" => $min_car_count_range, "max_car_count_range" => $max_car_count_range);
 }
 
 function get_data_cache_values ($operation_date, $operation_number, $formation_pattern) {

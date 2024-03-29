@@ -71,7 +71,7 @@ if (mb_strlen($_POST["comment"]) > 140) {
 
 $comment = preg_replace("/[\r\n][\r\n]++/u", "\n", preg_replace("/\A[\x00\s]++|[\x00\s]++\Z/u", "", $_POST["comment"]));
 
-if (strlen($comment) === 0 && (($operation_date === $posted_date && $operation_data["first_departure_time"] > date("H:i", $ts_now)) || $operation_date > $posted_date)) {
+if (strlen($comment) === 0 && (($operation_date === $posted_date && $operation_data["starting_time"] > date("H:i", $ts_now)) || $operation_date > $posted_date)) {
     print "ERROR: 出庫前の運用に充当される編成を特定した方法をコメントにご入力ください";
     exit;
 }
@@ -83,6 +83,11 @@ $formations = preg_replace("/不明/u", "?", mb_convert_kana($_POST["formations"
 
 if ($formations !== "運休" && $formations !== "ウヤ" && $formations !== "トケ") {
     $formation_data = check_formation($formations);
+    
+    if ($formation_data["min_car_count_range"] > $operation_data["max_car_count"] || $formation_data["max_car_count_range"] < $operation_data["min_car_count"]) {
+        print "ERROR: 編成の両数が異常です";
+        exit;
+    }
     
     $formation_pattern = $formation_data["formation_pattern"];
     $formation_list = $formation_data["formation_list"];
