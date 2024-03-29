@@ -260,7 +260,7 @@ _/_/_/_/ 設定ファイル設定値 _/_/_/_/
                 "starting_time" : 「HH:MM」形式の出庫時刻,
                 "terminal_location" : 入庫場所(車庫または駅),
                 "terminal_track" : 入庫番線,
-                "ending_time" : 「HH:MM」形式の終着時刻,
+                "ending_time" : 「HH:MM」形式の入庫時刻,
                 "car_count" : 所定の編成両数,
                 "min_car_count" : 充当可能な最小の編成両数,
                 "max_car_count" : 充当可能な最大の編成両数,
