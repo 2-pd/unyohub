@@ -8,6 +8,12 @@ _/_/_/_/ データベース _/_/_/_/
 
 ███ railroad.db ███
 
+`unyohub_series` 車両形式データ
+  `series_name` TEXT NOT NULL PRIMARY KEY 車両形式
+  `min_car_count` INTEGER NOT NULL その形式の最小の編成両数(unyohub_formationsのデータから算出可能であるが、動作高速化の観点から正規化しない)
+  `max_car_count` INTEGER NOT NULL その形式の最大の編成両数(unyohub_formationsのデータから算出可能であるが、動作高速化の観点から正規化しない)
+
+
 `unyohub_formations` 編成データ
   `formation_name` TEXT NOT NULL PRIMARY KEY 編成名
   `series_name` TEXT NOT NULL 車両形式
@@ -28,6 +34,13 @@ _/_/_/_/ データベース _/_/_/_/
 
   PRIMARY KEY(`formation_name`, `car_number`)
   INDEX `unyohub_idx_c1`(`formation_name`, `car_order`) ※データの入れ替え処理が煩雑となることから一意制約としない
+
+
+`unyohub_coupling_groups` 併結グループ情報
+  `series_or_formation` TEXT NOT NULL 車両形式または編成名
+  `coupling_group` TEXT NOT NULL 併結グループID
+
+  PRIMARY KEY(`series_or_formation`, `coupling_group`)
 
 
 `unyohub_operations` 運用表データ

@@ -15,7 +15,7 @@ import webbrowser
 
 
 UNYOHUB_GUI_TOOLS_APP_NAME = "鉄道運用Hub用データ編集ツール"
-UNYOHUB_GUI_TOOLS_VERSION = "24.03-9"
+UNYOHUB_GUI_TOOLS_VERSION = "24.03-10"
 UNYOHUB_GUI_TOOLS_LICENSE_TEXT = "このアプリケーションは無権利創作宣言に準拠して著作権放棄されています"
 UNYOHUB_GUI_TOOLS_LICENSE_URL = "https://www.2pd.jp/license/"
 UNYOHUB_GUI_TOOLS_REPOSITORY_URL = "https://fossil.2pd.jp/unyohub/"
@@ -29,13 +29,18 @@ if platform.system() == "Windows":
 else:
     is_windows = False
 
+default_dir = os.path.dirname(app_dir)
+
 try:
     with open("config.json", "r", encoding="utf-8") as json_fp:
         config = json.load(json_fp)
 except:
     config = {
-        "main_dir" : os.path.dirname(app_dir)
+        "main_dir" : default_dir
     }
+
+if not os.path.isdir(config["main_dir"]):
+    config["main_dir"] = default_dir
 
 
 def open_main_window ():

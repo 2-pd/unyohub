@@ -5,6 +5,16 @@ import csv
 import json
 import sqlite3
 
+
+def insert_series_data (cur, series_name, min_car_count, max_car_count, coupling_group_list):
+    print("　- " + series_name + " のデータをまとめています...")
+    
+    cur.execute("INSERT INTO `unyohub_series`(`series_name`, `min_car_count`, `max_car_count`) VALUES (:series_name, :min_car_count, :max_car_count)", {"series_name" : series_name, "min_car_count" :min_car_count, "max_car_count" : max_car_count})
+    
+    for coupling_group in coupling_group_list:
+        cur.execute("INSERT INTO `unyohub_coupling_groups`(`series_or_formation`, `coupling_group`) VALUES (:series_or_formation, :coupling_group)", {"series_or_formation" : series_name, "coupling_group" : coupling_group})
+
+
 print("formations.csvを読み込んでいます...")
 
 with open("formations.csv", "r", encoding="utf-8") as csv_f:
@@ -16,6 +26,11 @@ print("データベースに接続しています...")
 conn = sqlite3.connect("railroad.db")
 cur = conn.cursor()
 
+print("データベースから不要となるデータを削除しています...")
+
+cur.execute("DELETE FROM `unyohub_series`")
+cur.execute("DELETE FROM `unyohub_coupling_groups`")
+
 print("データを変換しています...")
 
 formation_list_old = []
@@ -26,14 +41,22 @@ json_data = {"formations" : {}, "series" : {}, "series_names" : []}
 formation_list = []
 
 cnt = 0
+series_name = None
 while cnt < len(formation_data):
     if formation_data[cnt][0].startswith("# "):
+        if series_name != None:
+            insert_series_data(cur, series_name, min_car_count, max_car_count, coupling_group_list)
+        
         series_name = formation_data[cnt][0][2:]
         
         print("・" + series_name + " のデータ処理を開始します...")
         
         json_data["series"][series_name] = {"formation_names" : [], "icon_id" : formation_data[cnt + 1][0]}
         json_data["series_names"].append(series_name)
+        
+        coupling_group_list = []
+        min_car_count = None
+        max_car_count = 0
         
         cnt += 2
     else:
@@ -71,7 +94,23 @@ while cnt < len(formation_data):
         
         formation_list.append(formation_name)
         
+        if car_count > max_car_count:
+            max_car_count = car_count
+        
+        if min_car_count == None or car_count < min_car_count:
+            min_car_count = car_count
+        
+        coupling_groups = formation_data[cnt + 2][0].split()
+        for coupling_group in coupling_groups:
+            if len(coupling_group) >= 1:
+                cur.execute("INSERT INTO `unyohub_coupling_groups`(`series_or_formation`, `coupling_group`) VALUES (:series_or_formation, :coupling_group)", {"series_or_formation" : formation_name, "coupling_group" : coupling_group})
+                
+                if coupling_group not in coupling_group_list:
+                    coupling_group_list.append(coupling_group)
+        
         cnt += 4
+
+insert_series_data(cur, series_name, min_car_count, max_car_count, coupling_group_list)
 
 print("データベースからformations.csvにない編成を削除しています...")
 
