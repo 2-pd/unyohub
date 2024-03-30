@@ -587,9 +587,9 @@ article {
     display: none;
     
     width: calc(100vw - 10px);
-    height: calc(100% - 195px);
+    height: calc(100% - 240px);
     
-    padding: 10px 5px 50px 5px;
+    padding: 55px 5px 50px 5px;
     
     background-color: #ffffff;
     
@@ -637,7 +637,27 @@ article {
     background-color: #333333;
 }
 
-.wide_select, .line_select {
+.line_select_wrapper, .search_wrapper {
+    position: fixed;
+    top: 92px;
+    left: calc(50% - 165px);
+    
+    width: 300px;
+    
+    padding: 8px 15px;
+    
+    border-radius: 8px;
+    
+    background-color: rgba(255,255,255,0.9);
+    
+    z-index: 19;
+}
+
+.dark_mode .line_select_wrapper, .dark_mode .search_wrapper {
+    background-color: rgba(68,68,68,0.9);
+}
+
+.wide_select, .line_select_wrapper select {
     display: block;
     
     width: 300px;
@@ -650,7 +670,7 @@ article {
     text-align: center;
 }
 
-.line_select {
+.line_select_wrapper select {
     background-image: url(data:image/webp;base64,UklGRlIBAABXRUJQVlA4TEUBAAAvL8ALEGfBKJIkRdn+Ta2ffeEx2GAUSZKibP+m1s++8BgYRZKkKNu/qfWzLzwGxpFkpeLheiMgAiU8zg7fJYD+/4dSCqm1/iBrLfw8j4cDgwZL8n3fZ5H+/8/Yvu+zCEkAGAQbbtxJJBg8MBwwABoCGAyQ5MONHQszybnve3zfV7XWOlxJkqQqAw9/7q79HO5/QIfGfiP6z8ht20gSettn7E/InzPdsEHjmWSAOliTAfrDiQxQ7NgADz645ecdXrZ1jzcs4wYcu3C+GiN4lupJxAbVQbcaNj5I3AlAcYE6paPReCY7J+wc0nPO7tEn9zSx5GWNSagenRZMVloFEFnsS4DJNgOYGBNupX1eltWZOezAM7/6vEwjfQDV1mDji5zUkkiqCHVK6yu3G7mEjbo8Mp7IyRtyiDfkHG/o0Rt6StZK5L8pAA==);
     background-repeat: no-repeat;
     background-size: 24px;
@@ -1168,6 +1188,10 @@ article input[type="checkbox"] + label {
 
 .dark_mode .timetable_train small, .dark_mode #operation_data_area small {
     color: #cccccc;
+}
+
+#operation_data_area h2 {
+    margin-top: -40px;
 }
 
 #operation_data_area h3 {
@@ -2787,7 +2811,7 @@ a {
     background-color: transparent !important;
 }
 
-input[type="text"], input[type="number"], input[type="password"], input[type="search"], .wide_select, .line_select {
+input[type="text"], input[type="number"], input[type="password"], input[type="search"], .wide_select, .line_select_wrapper select {
     background-color: #ffffff;
     
     border: none;
@@ -2810,13 +2834,19 @@ input[type="text"], input[type="number"], input[type="password"], input[type="se
     border-color: #808080;
 }
 
+.search_wrapper {
+    top: 100px;
+    left: max(calc(5% - 15px), calc(50% - 240px));
+    
+    width: min(90%, 450px);
+}
+
 .search_icon {
     display: block;
     
     width: 28px;
     height: 28px;
     
-    margin: 15px 0 15px max(5%, calc(50% - 225px));
     padding-right: 2px;
     
     background-image: url(data:image/webp;base64,UklGRqACAABXRUJQVlA4TJQCAAAvN8ANEF+jJpKkqH3g3wd+iCmi445HBJpGkjI+8O8DP9SE6lk0jSRlfODfB36oCdWzriPJVpV7z3n7XHD5IyHSJB1CcT9WByTkrNT35nFOrPdm+3/DN2vIAh5ZCwxAFgG44QvJagEAQIsaexAYAMCowAAIQEYBBoFByFkJGQZHwOEwGH5wBPQDoAgIHG/c8IZAILjhDcEt64AWLVoAFRg9GBVWmNBmnfCG4ALJ6gFsss4xIzHTZP1ihua9P3hb64gBBKAGbNu2zUin7LZt3lTbtm3b//8FdyfZ96b1GNF/CG4kKZKc1ctQe9fwB/lXJXJVvnJXcPto2cbipKMwQzXbL9bcfPUo75xWPViRPupR/mldtWCrTXH52DR1kVdsJu7NVPQql6a3nbK1i6XPAeXKWMLo2S7szVmIiSvRi1FX1YcNPm0IO5u89u7mtfIM21nkHWFf85v+E+IUdF/R86UHVDMdrfdDR9OsL3w2QrWUxf9TMTmp4dq5Fi6H4JOzqLQFIcX7tM4HyiSICZt36CrL2HRgmgktCw4YV0rbN9gH8toXYxvsCJ9hbYRRCIoMNMDuwTgHawZmtUFqCYKcgXH6TilYMtAGk5jxiDORF8PthupoSOt4oe2CZUoNdHTBCjWCdeEnTvMraVVpJ0J5wV2hkvPQAnaFyx7o2qIeq1Va+xPpoRWPhXViHCj3tdEfT/VnfX/HHPbTkxE6H9hY92Hc89HVFuXK4BVtc9LVWd/7ZQSn2a7+Vgv1PObRW755qq4RDik7lahXfrFX4UUnqJLUtL/23cyglZLiz05PTbtPIleWSh6yBzPNQ4PNkx93MPv8y2rWT72qxFYxN5NB3TyOiu3yGtbLPQIoHIFUQEMkGZX/TwQ=);
@@ -2832,11 +2862,9 @@ input[type="text"], input[type="number"], input[type="password"], input[type="se
 }
 
 input[type="search"] {
-    width: min(calc(90% - 40px), 410px);
+    width: calc(100% - 40px);
     
     padding: 2px 2px 1px 2px;
-    
-    margin: 15px 0;
     
     line-height: 24px;
     font-size: 18px;
@@ -3098,7 +3126,7 @@ input[type="radio"] + label small {
     <div id="blank_article" class="wait_icon"></div>
     <div id="tab_area"><button type="button" onclick="position_mode();" style="background-image: url(data:image/webp;base64,UklGRuICAABXRUJQVlA4TNYCAAAvNUANEP/jIJJkV+n9gZxBAq6xyn9rA1Jk266q3o/MFHRQqMYJcxzgIP4c7jkOG0lylJo3eA8hkDWp8jeuattWlXUe7trASUAUK8SgBbXsn8/nLjuAZrCvb2dvr/l9nne0zHeKtVYZYgUNW2QKgqZAqCEIQo0GDYQCFQRBEBIIJSoUEAJhmoss4qCj/eGLpOrAMIHB0BIGgw9VHa0jhto5yUYxsTfXGRnm3ykdRdSpXcMaNplqSHS0ISxTfv68d9nF/gURtv9teHg7JBnhUx96aPt+vr+WWiZO2MYWtTv7///jz/5zmWczSbgf73Qqp68T6XD4OZDkOWq4v93vIbBiAhdoaChouEHDL1yhkLeg0C4QBEG4J9Go4aADM0AQALaQ1LNvbZxt27Zt2/bb77ZNk9wHphH9h+BGkiLJmbnMe/AHgctSX1Nhl9PqMo39S4Itc9UBG5CuqjkmQ2GbJtERDnGVdps2pj6ezJTYUCknt86GTBv1HjYs+yjtiaJoVjiVosZGSBXBUgCQeXpxay7OMgGdS3iTNlXG9Z2UqwybmgG8duD035RmqhrwClSnd0DOVB14AdUl5By4As+luoXcqtx4XpQblQ8vh3YmF69MdYa6SSneBPBAV5gHmsDrdQA/XVf6ny5HksCnGPpJPju/NRb4k1wkCMZshAxTJHbiBRIEJa14RpB0+7F8yf/z96pWEPV4cTxJgpp2nCZBNuXFMFOCnmaMFpb/SVG9UIrgyITeuGARn6+Tx/Wvc1Dz38wMCiYfJ7DjH669P6RD0u7ffpj2bK4g18b8lmnmcUE1//gcK8+eNneyZNm7209SyVNeW4WsXVif8kvhmTUdiQl2C6DUvW4cxbIcsyy9hLVXqdR7HMhZtFnmQI5yB5ZZ+7Mzewe64veyfghkxToEsipfiX808veDH7nYMRT1aMRsPen6pY6p+rFVN8aqe/sWbH8ppELj7Q8=); border-color: #ee3333;">走行位置</button><button type="button" onclick="timetable_mode();" style="background-image: url(data:image/webp;base64,UklGRmgEAABXRUJQVlA4TFsEAAAvNUANEA8GOZIkRZLn8n9t9RdiNcJ7MWOlGo4jSXKU7JO/swabsJvghwFabEOOJNlVVP2QDmAJRnHGZU6a1fv1FNzatlVV8+BEN6MWOqRJIo/0u9z3doCW+np1I2ohQlWQsdbKNGgWCJX+P42xlcTvd9Kq1f9/MaPMKK1WW6myO3oIlRKka1+9ojQL9Ds+lWpUBf3rKF7uTxQRGr0qlBJFiijWFMnany8yQ8sVsRIxQ21j7rBogUTTUZWffkEqFCFoFkg1JvAHgT8IBAIjBAJ/EBigQyDBDFrLf8NfsIfgJFqpHQ6DSiiYwhcMEDJV5glz8QdecCii9CJKh1dY0Bq+F0gllQizoMLS/EIr5srVxC0stVeeI0kyW4Q338z+lmkdNMkspSlbMgibsP4ndnN8H9/scnAYXZjtnb8jYqujSVfa8N+jSYBQx0p/ay2I+YNoVVK02u47SSSxmBpzJxPub53T9aLVz2f0/R7cnU/T4+k4QKK2bWcjff8/tjJaj7G2beNb27Zt27a928039rHlTfrn3xOI6P8EkMn2B0cPbFm7ceHCjeu2HDj6QJGN7Td3ruAoVx680R7WyxNr2ei6qy/DUJdWsfHVZ5Wx+9s51C0vDF1fxiEvvmBCHeGAc/q8+/474rp/f31/22+2H/MTFdXr3ew/8FNERKSptbVJRCTycbAf73odhTrIvoN+iIi49QUdHR0dsUnZuYX17pchPrxHBTvCeMYHV0Rq85K19miYnFf7fhbiJ4FOMx75U0Rqc7Q3iNbaaRiF+FyA+4vRgD8ikfxYbULHdhqBlrzwUVsZ9v8nUpOlfaPROnMC4O0KXWY48o9IXbI2p9OnAT4P3qwCM3+K1CXpMHTXeWDzS89xhh9EapJ1OLoS8Bkial8LBrkSydJhxU0B6xXRI4Y/RPJ1aLoY8EOinWCgSG2sBTGTwTNSK8EnkRxtga4Am9Rd9s6JSK22InWBh28fBb1F8uzQ48C1veCduMmW9AT7toFvUq8tKQU7NoDfUmBLEVi7HPxtanKMBNdaO66TDlYuBG5rW7MNLW3NiWDR/7Ic/GlyHRuciJMBVm4AvyVWW1oE1m4DnyXJljKw4wB4K9m29AL7j4K+4tgyFly7C2ZHCi1JXQDuqJUe/lhvSQV7Nyk6CIa7SVbETAF7iW4C/ppnRQnDW0Tt68DQWhviJ4H1ioiuAn7vWFDN8CQR0cvVYG5jbGjd5oE1rzx0EfDozmFlTGd4hfAOwMMyw0mZyHCb8nmxBPD4jDBSxzBceo/8TyGe1t1cj+mML1DQJ4jnV8b7OS0tjl981XzGTymweo6YJxXHILetzUUxJVPZ95AKRq93+TBPLk/1OC3Njie1Ygr7H3xN0aonfswLxvUsLUpLSEjrUtZz7AIO+FSRwcfL/EwvuUJmX2wNZ8c9Mq3ObTa35gqF+erMOjPrT76ikNXDZ5ui2XT4liIb1e1j+3asX75w4Yr1O/Zdu6PIJAA=); border-color: #eebb33;">時刻表</button><button type="button" onclick="operation_data_mode();" style="background-image: url(data:image/webp;base64,UklGRr4AAABXRUJQVlA4TLIAAAAvNUANEEdAJmCxGFJp7qSKKmYCkNFB/yI6OP0SeHdOTSMp0Kk5/0au5BVAcEDJ/AeA323Mu/i3jVikZhIYRZKkaC0cGTgJ6+RIABugsbC6eXqPfxH9Z+C2bSN27/buF0IHpZRgHfAgkkRLkiR4AK7SiiQJHRADEWmBA6Louk4LHBADMzyORYekX3zhLOD3/Id/IUlKEyRiBUhidlsll1UCVjZTAlY+XQJWgCTA5kGMEIEA); border-color: #33cc66;">運用データ</button><button type="button" onclick="formation_table_mode();" style="background-image: url(data:image/webp;base64,UklGRpQBAABXRUJQVlA4TIcBAAAvNUANEK/BoJEkRbUn4wWeitf6eQfMtDYYNJKkqPa0nJLX/xo+74CZlkEjSYpqz8D7F/NSyAEzLdta2158cuhypoqdWQxiOwNYwD+ANlNSpjdAVYPaDtR1rTgMw4sXPy5kmVkjL6UAKtLMNMDDhZ6ZXynle9+3zczzPM97WRZpnufnOI7q//8/M0fcAIAPPb6IAKTv+5rMpIhI5nmeMpP6vg/+/+ewYgPAIgJg//8DQ0SgbequqRUZXEmSpCoLPFfc3d25/+FWnj/gryei/4zctnEknabtassr2Be03SBkUGWbGsgWSLPKMbQWNHIEUquq+RqCnniOk1JVp67pHgPgGlrTEkilKlS8K5u0UCR+VVZkNchoSzYXyvrvqv4cvgFIVwJSihD4ANKVAKQT8YdRMCs/hvS1ZOdTBl4YrllwY7hnwYPhuRtRV1NJI9qriZX1YjisR9RX0ifaqImVdWTAmASn6gRJJMlaiSyVCRJIlDWYcWZbZYIEkmVtFxPMh+oEScTO+mICAA==); border-color: #0066dd;">編成表</button><button type="button" onclick="operation_table_mode();" style="background-image: url(data:image/webp;base64,UklGRmQAAABXRUJQVlA4TFcAAAAvNUANEB8gECDs6xFnRUhA+P9NtEUVEhD+D1VFdf4D8C9pwCiSrFYEDehJGliP1LOBLarmDD8eI/ovICj0wAx3mQVMIC8gPj23ZZhZk5S6JP/0fuifqzgA); border-color: #9933cc;">運用表</button></div>
     <article>
-        <select id="position_line_select" class="line_select" onchange="position_change_lines(this.value);"></select>
+        <div class='line_select_wrapper'><select id="position_line_select" onchange="position_change_lines(this.value);"></select></div>
         <div id="position_area" class="wait_icon"></div>
         <div id="position_area_supplement">
             <input type="checkbox" id="show_train_types_check" onchange="change_show_train_types(this.checked);"><label for="show_train_types_check">列車番号の代わりに<span id="show_train_types_label_train_type">種別</span><span id="show_train_types_label_final_destination">行き先</span>を表示</label>
@@ -3107,7 +3135,7 @@ input[type="radio"] + label small {
         </div>
     </article>
     <article>
-        <select id="timetable_line_select" class="line_select" onchange="timetable_change_lines(this.value);"></select>
+        <div class='line_select_wrapper'><select id="timetable_line_select" onchange="timetable_change_lines(this.value);"></select></div>
         <div id="direction_radio_area">
             <h2 id="timetable_station_name"></h2>
             <input type="radio" name="direction_radio" id="radio_inbound" value="inbound" checked="checked" onchange="timetable_select_station(timetable_selected_station);"><label for="radio_inbound" id="radio_inbound_label">上り</label>
@@ -3119,13 +3147,13 @@ input[type="radio"] + label small {
     <article id="operation_data_area" class="wait_icon"></article>
     <article id="formation_table_wrapper" onscroll="formation_table_wrapper_onscroll();">
         <div id="formation_search_area">
-            <label for="car_number_search" class="search_icon">車両番号で検索</label><input type="search" id="car_number_search" onkeyup="draw_formation_table();" autocomplete="off" placeholder="車両番号で検索">
+            <div class='search_wrapper'><label for="car_number_search" class="search_icon">車両番号で検索</label><input type="search" id="car_number_search" onkeyup="draw_formation_table();" autocomplete="off" placeholder="車両番号で検索"></div>
         </div>
         <div id="formation_table_area" class="wait_icon"></div>
     </article>
     <article>
         <div id="operation_search_area">
-            <label for="train_number_search" class="search_icon">列車番号で検索</label><input type="search" id="train_number_search" onkeyup="operation_table_list_number();" autocomplete="off" placeholder="列車番号で検索">
+            <div class='search_wrapper'><label for="train_number_search" class="search_icon">列車番号で検索</label><input type="search" id="train_number_search" onkeyup="operation_table_list_number();" autocomplete="off" placeholder="列車番号で検索"></div>
             <input type="checkbox" id="operation_search_menu"><label for="operation_search_menu" class="drop_down">絞り込み条件 <span id="operation_search_filter_count"></span></label>
             <div>
                 <select class="wide_select" id="operation_search_group_name" onchange="operation_table_list_number();"><option value="" selected="selected"></option></select>
@@ -4934,6 +4962,8 @@ function position_change_lines (line_id) {
     }
     
     position_area_elm.innerHTML = buf;
+    
+    article_elms[0].scrollTop = 0;
     
     var label_train_type_elm = document.getElementById("show_train_types_label_train_type");
     var label_final_destination_elm = document.getElementById("show_train_types_label_final_destination");
@@ -6779,6 +6809,7 @@ function draw_formation_table (formation_name = null) {
     var buf = ""
     for (var cnt = 0; cnt < formations["series_names"].length; cnt++) {
         var buf_2 = "";
+        var search_hit_formation_count = 0;
         for (var cnt_2 = 0; cnt_2 < formations["series"][formations["series_names"][cnt]]["formation_names"].length; cnt_2++){
             var formation_name = formations["series"][formations["series_names"][cnt]]["formation_names"][cnt_2];
             
@@ -6806,10 +6837,11 @@ function draw_formation_table (formation_name = null) {
             
             if (search_hit_count >= 1) {
                 buf_2 += buf_3;
+                search_hit_formation_count++;
             }
         }
         
-        if (buf_2.length !== 0) {
+        if (search_hit_formation_count >= 1) {
             var checkbox_id = "series_" + formations["series_names"][cnt];
             
             buf += "<input type='checkbox' id='" + checkbox_id + "'";
@@ -6818,7 +6850,11 @@ function draw_formation_table (formation_name = null) {
                 buf += " checked='checked'";
             }
             
-            buf += " onclick='update_formation_table_drop_down_status(this);'><label for='" + checkbox_id + "' class='drop_down'>" + escape_html(formations["series_names"][cnt]) + "</label><div>" + buf_2 + "</div>";
+            buf += " onclick='update_formation_table_drop_down_status(this);'><label for='" + checkbox_id + "' class='drop_down'>" + escape_html(formations["series_names"][cnt]);
+            if (car_number_search_elm.value.length >= 1) {
+                buf += " (" + search_hit_formation_count + "編成該当)";
+            }
+            buf += "</label><div>" + buf_2 + "</div>";
         }
     }
     
