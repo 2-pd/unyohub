@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width,initial-scale=1,interactive-widget=resizes-content">
 <script>
     const UNYOHUB_APP_NAME = "鉄道運用Hub";
-    const UNYOHUB_VERSION = "24.03-7";
+    const UNYOHUB_VERSION = "24.03-8";
     const UNYOHUB_INDEXEDDB_VERSION = 2310001;
     const UNYOHUB_LICENSE_TEXT = "このアプリケーションは無権利創作宣言に準拠して著作権放棄されています。";
     const UNYOHUB_LICENSE_URL = "https://www.2pd.jp/license/";
@@ -5760,16 +5760,18 @@ function train_detail (line_id, train_number, first_departure_time, train_direct
             buf += "<div class='informational_text'>現在位置は端末の現在時刻に基づく推定です</div>";
         }
     } else {
-        var color = get_train_color(train_number);
+        var train_title = train_number.split("__")[0];
+        
+        var color = get_train_color(train_title);
         if (config["dark_mode"]) {
             color = convert_font_color_dark_mode(color);
         }
         
         buf += "<h4>" + escape_html(railroad_info["lines"][line_id]["line_name"]) + "　<span style='color: " + color + ";'>"
-        if (railroad_info["deadhead_train_number_regexp"].test(train_number)) {
+        if (railroad_info["deadhead_train_number_regexp"].test(train_title)) {
             buf += "回送　";
         }
-        buf += escape_html(train_number) + "</span></h4>";
+        buf += escape_html(train_title) + "</span></h4>";
         buf += "<div class='no_data'>詳細情報はありません</div>";
     }
     
@@ -7221,28 +7223,30 @@ function operation_table_list_number () {
                 continue;
             }
             
+            var train_number = trains[cnt_2]["train_number"].split("__")[0];
+            
             if (search_keyword === "") {
                 if (trains[cnt_2]["train_number"] in timetable["timetable"][trains[cnt_2]["line_id"]][trains[cnt_2]["direction"] + "_trains"]) {
                     var train_type_initial = timetable["timetable"][trains[cnt_2]["line_id"]][trains[cnt_2]["direction"] + "_trains"][trains[cnt_2]["train_number"]][0]["train_type"].substring(0, 1);
-                } else if (railroad_info["deadhead_train_number_regexp"].test(trains[cnt_2]["train_number"])) {
+                } else if (railroad_info["deadhead_train_number_regexp"].test(train_number)) {
                     var train_type_initial = "回";
                 } else {
-                    var train_type_initial = "*";
+                    var train_type_initial = "＊";
                 }
                 
-                var train_color = get_train_color(trains[cnt_2]["train_number"], "#333333");
+                var train_color = get_train_color(train_number, "#333333");
                 if (config["dark_mode"]) {
                     train_color = convert_font_color_dark_mode(train_color);
                 }
                 buf_2 += "<small style='background-color: " + train_color + ";'>" + train_type_initial + "</small>";
             } else {
-                var train_number_search_index = trains[cnt_2]["train_number"].indexOf(search_keyword);
+                var train_number_search_index = train_number.indexOf(search_keyword);
                 
                 if (train_number_search_index !== -1) {
                     if (search_hit_count < 4) {
                         var train_number_search_index_end = train_number_search_index + search_keyword.length;
                         
-                        buf_2 += "<span>" + trains[cnt_2]["train_number"].substring(0, train_number_search_index) + "<span class='search_highlight'>" + trains[cnt_2]["train_number"].substring(train_number_search_index, train_number_search_index_end) + "</span>" + trains[cnt_2]["train_number"].substring(train_number_search_index_end) + "</span>";
+                        buf_2 += "<span>" + train_number.substring(0, train_number_search_index) + "<span class='search_highlight'>" + train_number.substring(train_number_search_index, train_number_search_index_end) + "</span>" + train_number.substring(train_number_search_index_end) + "</span>";
                     } else if (search_hit_count === 4) {
                         buf_2 += "<span>他</span>";
                     }

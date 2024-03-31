@@ -97,6 +97,7 @@ function check_formation ($formations_str) {
         exit;
     }
     
+    $coupling_group_intersection = NULL;
     $formation_pattern = array("");
     $formation_list = array();
     $formation_pattern_last = array(NULL);
@@ -115,17 +116,50 @@ function check_formation ($formations_str) {
             
             $series_name = $formation_data["series_name"];
             
+            $coupling_groups_r = $db_obj->query("SELECT `coupling_group` FROM `unyohub_coupling_groups` WHERE `series_or_formation` = '".$formation_escaped."'");
+            
+            $coupling_groups = [];
+            while ($coupling_group_data = $coupling_groups_r->fetchArray(SQLITE3_NUM)) {
+                $coupling_groups[] = $coupling_group_data[0];
+            }
+            
+            if ($min_car_count_range === 0) {
+                $coupling_group_intersection = $coupling_groups;
+            } else {
+                if (is_null($coupling_group_intersection)) {
+                    $coupling_group_intersection = $coupling_groups;
+                } else {
+                    $coupling_group_intersection = array_intersect($coupling_group_intersection, $coupling_groups);
+                }
+                
+                if (empty($coupling_group_intersection)) {
+                    print "ERROR: 併結できない編成の組み合わせです";
+                    exit;
+                }
+            }
+            
             if ($series_name !== $formation) {
                 $formation_list[] = $formation;
                 
                 $min_car_count_range += $formation_data["car_count"];
                 $max_car_count_range += $formation_data["car_count"];
             } else {
-                $min_car_count_range += 1;//形式と両数の関係をDBに追加するまでの仮
-                $max_car_count_range += 20;
+                $series_data = $db_obj->querySingle("SELECT `min_car_count`, `max_car_count` FROM `unyohub_series` WHERE `series_name` = '".$formation_escaped."'", TRUE);
+                
+                $min_car_count_range += $series_data["min_car_count"];
+                if (empty($coupling_groups)){
+                    $max_car_count_range += $series_data["max_car_count"];
+                } else {
+                    $max_car_count_range += 20;
+                }
             }
         } else {
             $series_name = "?";
+            
+            if (is_array($coupling_group_intersection) && empty($coupling_group_intersection)) {
+                print "ERROR: 併結できない編成の組み合わせです";
+                exit;
+            }
             
             $min_car_count_range += 1;
             $max_car_count_range += 20;
@@ -180,8 +214,8 @@ function get_data_cache_values ($operation_date, $operation_number, $formation_p
     $post_data_r = $db_obj->query("SELECT `formations` FROM `unyohub_data` WHERE `operation_date` = '".$operation_date."' AND `operation_number` = '".$operation_number."' ORDER BY `posted_datetime` DESC");
     
     $variant_exists = FALSE;
-    for ($posts_count = 0; $post_data = $post_data_r->fetchArray(SQLITE3_ASSOC); $posts_count++) {
-        if ($posts_count !== 0 && !in_array($post_data["formations"], $formation_pattern)) {
+    for ($posts_count = 0; $post_data = $post_data_r->fetchArray(SQLITE3_NUM); $posts_count++) {
+        if ($posts_count !== 0 && !in_array($post_data[0], $formation_pattern)) {
             $variant_exists = TRUE;
         }
     }
