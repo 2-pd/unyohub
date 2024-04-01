@@ -3518,40 +3518,48 @@ function get_date_and_time (ts_or_date_str) {
 
 
 function get_default_config () {
-    return function () {/*
-{
-    "guest_id" : null,
-    "dark_mode" : false,
-    "refresh_interval" : 5,
-    "operation_data_cache_period" : 7,
-    "show_train_types_in_position_mode" : false,
-    "show_arriving_trains_on_timetable" : false,
-    "colorize_beginners_posts" : false,
-    "simplify_operation_details" : false
+    return {
+        "unyohub_version" : UNYOHUB_VERSION,
+        "guest_id" : null,
+        "dark_mode" : false,
+        "refresh_interval" : 5,
+        "operation_data_cache_period" : 7,
+        "show_train_types_in_position_mode" : false,
+        "show_arriving_trains_on_timetable" : false,
+        "colorize_beginners_posts" : false,
+        "simplify_operation_details" : false
+    };
 }
-*/}.toString().split("\n").slice(1,-1).join("\n");
+
+function save_config () {
+    localStorage.setItem("unyohub_config", JSON.stringify(config));
 }
 
 var config = new Object();
 (function () {
     var config_json = localStorage.getItem("unyohub_config");
     
-    if (config_json === null) {
-        config_json = get_default_config();
-        localStorage.setItem("unyohub_config", config_json);
+    if (config_json !== null) {
+        config = JSON.parse(config_json);
     }
-    config = JSON.parse(config_json);
     
-    if (!("colorize_beginners_posts" in config)) { //アップデートに伴う仮、2024年8月以降のバージョンでこのif文の中全削除
-        config["colorize_beginners_posts"] = false;
-        config["simplify_operation_details"] = false;
+    if (!("unyohub_version" in config) || config["unyohub_version"] !== UNYOHUB_VERSION) {
+        var default_config = get_default_config();
+        
+        config = Object.assign({}, default_config, config);
+        
+        Object.keys(config).forEach(function (key) {
+            if (!(key in default_config)) {
+                delete config[key];
+            }
+        });
+        
+        config["unyohub_version"] = UNYOHUB_VERSION;
+        
         save_config();
     }
 }());
 
-function save_config () {
-    localStorage.setItem("unyohub_config", JSON.stringify(config));
-}
 
 function get_guest_id () {
     if (config["guest_id"] === null) {
@@ -4863,11 +4871,6 @@ function position_mode () {
         var line_id = position_line_select_elm.value;
     }
     
-    if (!("show_train_types_in_position_mode" in config)) { //アップデートに伴う仮、2024年6月以降のバージョンでこのif文の中全削除
-        config["show_train_types_in_position_mode"] = false;
-        save_config();
-    }
-    
     document.getElementById("show_train_types_check").checked = config["show_train_types_in_position_mode"];
     
     position_change_time(null, false);
@@ -5981,11 +5984,6 @@ function draw_station_timetable (station_name) {
     } else {
         var train_direction = "outbound_trains";
         var is_inbound = false;
-    }
-    
-    if (!("show_arriving_trains_on_timetable" in config)) { //アップデートに伴う仮、2024年6月以降のバージョンでこのif文の中全削除
-        config["show_arriving_trains_on_timetable"] = false;
-        save_config();
     }
     
     document.getElementById("show_arriving_trains_check").checked = config["show_arriving_trains_on_timetable"];
@@ -7973,7 +7971,7 @@ function change_config () {
 
 function reset_config_value () {
     if (confirm("設定をリセットしますか？")) {
-        var dafault_config = JSON.parse(get_default_config());
+        var dafault_config = get_default_config();
         
         dark_mode_check_elm.checked = dafault_config["dark_mode"];
         colorize_beginners_posts_check_elm.checked = dafault_config["colorize_beginners_posts_check"];
