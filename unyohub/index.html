@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width,initial-scale=1,interactive-widget=resizes-content">
 <script>
     const UNYOHUB_APP_NAME = "鉄道運用Hub";
-    const UNYOHUB_VERSION = "24.03-8";
+    const UNYOHUB_VERSION = "24.04-1";
     const UNYOHUB_INDEXEDDB_VERSION = 2310001;
     const UNYOHUB_LICENSE_TEXT = "このアプリケーションは無権利創作宣言に準拠して著作権放棄されています。";
     const UNYOHUB_LICENSE_URL = "https://www.2pd.jp/license/";
@@ -3042,7 +3042,7 @@ input[type="radio"] + label, .chip + label {
 }
 
 .chip + label {
-    padding: 4px 14px;
+    padding: 4px 13px;
 }
 
 .dark_mode input[type="radio"] + label, .dark_mode .chip + label {
@@ -3177,7 +3177,7 @@ input[type="radio"] + label small, .chip + label small {
         <div id="direction_radio_area">
             <h2 id="timetable_station_name"></h2>
             <input type="radio" name="direction_radio" id="radio_inbound" value="inbound" checked="checked" onchange="timetable_select_station(timetable_selected_station);"><label for="radio_inbound" id="radio_inbound_label">上り</label><input type="radio" name="direction_radio" id="radio_outbound" value="outbound" onchange="timetable_select_station(timetable_selected_station);"><label for="radio_outbound" id="radio_outbound_label">下り</label><br>
-            <input type="checkbox" id="show_arriving_trains_check" class="chip" onchange="change_show_arriving_trains(this.checked);"><label for="show_arriving_trains_check">着列車を表示</label>
+            <input type="checkbox" id="show_arriving_trains_check" class="chip" onchange="change_show_arriving_trains(this.checked);"><label for="show_arriving_trains_check">着列車を表示</label><input type="checkbox" id="show_starting_trains_only_check" class="chip" onchange="change_show_starting_trains_only(this.checked);"><label for="show_starting_trains_only_check">当駅始発のみ</label>
         </div>
         <div id="timetable_area" class="wait_icon"></div>
     </article>
@@ -3563,6 +3563,7 @@ function get_default_config () {
         "operation_data_cache_period" : 7,
         "show_train_types_in_position_mode" : false,
         "show_arriving_trains_on_timetable" : false,
+        "show_starting_trains_only_on_timetable" : false,
         "colorize_beginners_posts" : false,
         "simplify_operation_details" : false
     };
@@ -6028,6 +6029,7 @@ function draw_station_timetable (station_name) {
     }
     
     document.getElementById("show_arriving_trains_check").checked = config["show_arriving_trains_on_timetable"];
+    document.getElementById("show_starting_trains_only_check").checked = config["show_starting_trains_only_on_timetable"];
     
     var keys = Object.keys(timetable["timetable"][line_id][train_direction]);
     var departure_times = {};
@@ -6074,6 +6076,10 @@ function draw_station_timetable (station_name) {
                     }
                 } else {
                     var is_starting_station = false;
+                }
+                
+                if (config["show_starting_trains_only_on_timetable"] && !is_starting_station) {
+                    continue;
                 }
                 
                 hh_and_mm = departure_time.split(":");
@@ -6219,7 +6225,7 @@ function draw_station_timetable (station_name) {
     if (buf.length !== 0) {
         timetable_area_elm.innerHTML = buf;
     } else {
-        timetable_area_elm.innerHTML = "<div class='no_data'>列車情報が登録されていません</div>";
+        timetable_area_elm.innerHTML = "<div class='no_data'>条件に合う列車は登録されていません</div>";
     }
     
     article_elms[1].scrollTop = 0;
@@ -6227,6 +6233,14 @@ function draw_station_timetable (station_name) {
 
 function change_show_arriving_trains (bool_val) {
     config["show_arriving_trains_on_timetable"] = bool_val;
+    
+    save_config();
+    
+    timetable_select_station(timetable_selected_station);
+}
+
+function change_show_starting_trains_only (bool_val) {
+    config["show_starting_trains_only_on_timetable"] = bool_val;
     
     save_config();
     
