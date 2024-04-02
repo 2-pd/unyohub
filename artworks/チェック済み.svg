@@ -7,7 +7,7 @@
    viewBox="0 0 8.4666664 8.4666672"
    version="1.1"
    id="svg5"
-   inkscape:version="1.3 (0e150ed6c4, 2023-07-21)"
+   inkscape:version="1.3.2 (091e20ef0f, 2023-11-25)"
    sodipodi:docname="チェック済み.svg"
    inkscape:export-filename="チェック済み.webp"
    inkscape:export-xdpi="96"
@@ -30,7 +30,7 @@
      showgrid="false"
      units="px"
      inkscape:zoom="11.659484"
-     inkscape:cx="20.755635"
+     inkscape:cx="20.712752"
      inkscape:cy="18.86876"
      inkscape:window-width="1920"
      inkscape:window-height="1008"
@@ -47,7 +47,7 @@
      inkscape:groupmode="layer"
      id="layer1">
     <path
-       style="fill:#666666;fill-opacity:1;stroke-width:0.529167;stroke-linejoin:bevel"
+       style="fill:#333333;fill-opacity:1;stroke-width:0.529167;stroke-linejoin:bevel"
        d="M 1.3229167,2.9104167 0,4.2333334 3.175,7.4083334 8.4666668,2.1166667 7.1437501,0.79375001 3.175,4.7625001 Z"
        id="path1"
        sodipodi:nodetypes="ccccccc" />

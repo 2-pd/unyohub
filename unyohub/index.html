@@ -82,7 +82,7 @@ header {
     
     box-shadow: 0 0 3px 3px rgba(0,0,0,0.2);
     
-    z-index: 6;
+    z-index: 33;
 }
 
 .dark_mode header {
@@ -237,7 +237,7 @@ header {
     
     overflow-y: scroll;
     
-    z-index: 8;
+    z-index: 35;
     
     transition-duration: 0.25s;
     transition-property: all;
@@ -365,7 +365,7 @@ header {
     
     overflow: scroll;
     
-    z-index: 10;
+    z-index: 40;
 }
 
 #splash_screen.splash_screen_loading {
@@ -382,7 +382,7 @@ header {
 }
 
 .splash_screen_loaded {
-    z-index: 4 !important;
+    z-index: 32 !important;
 }
 
 #splash_screen:after, #railroad_select_popup:after {
@@ -416,7 +416,7 @@ header {
     width: 100%;
     min-height: calc(100% - 150px);
     
-    z-index: 5;
+    z-index: 1;
 }
 
 #splash_screen_inner {
@@ -576,7 +576,7 @@ header {
     
     box-shadow: 0 0 8px 0 rgba(0,0,0,0.5);
     
-    z-index: 7;
+    z-index: 34;
 }
 
 .dark_mode #tab_area .active_tab {
@@ -650,7 +650,7 @@ article {
     
     background-color: rgba(255,255,255,0.9);
     
-    z-index: 19;
+    z-index: 10;
 }
 
 .dark_mode .line_select_wrapper, .dark_mode .search_wrapper {
@@ -1007,24 +1007,22 @@ h4.position_signal_station {
     margin-right: -4px;
 }
 
-#position_area:empty + div {
+#position_area_supplement {
+    text-align: center;
+}
+
+#position_area:empty + #position_area_supplement {
     display: none;
 }
 
 #direction_radio_area {
     display: none;
     
-    padding-top: 10px;
-    
     text-align: center;
 }
 
 #direction_radio_area h2 {
-    margin: 0 auto 5px auto;
-}
-
-#timetable_area {
-    margin-top: 10px;
+    margin: 0 auto;
 }
 
 #timetable_area a {
@@ -1046,6 +1044,10 @@ h4.position_signal_station {
 }
 
 input[type="checkbox"] + label.drop_down {
+    display: block;
+    
+    position: relative;
+    
     max-width: 480px;
     min-height: 25px;
     
@@ -1055,6 +1057,7 @@ input[type="checkbox"] + label.drop_down {
     background-color: #444444;
     
     line-height: 25px;
+    font-size: 18px;
     font-weight: bold;
     color: #ffffff;
     
@@ -1066,6 +1069,11 @@ input[type="checkbox"] + label.drop_down {
 }
 
 input[type="checkbox"] + label.drop_down:after {
+    content: "";
+    
+    display: inline-block;
+    
+    position: absolute;
     top: calc(50% - 22.5px);
     left: calc(100% - 45px) !important;
     
@@ -1079,6 +1087,9 @@ input[type="checkbox"] + label.drop_down:after {
     background-color: transparent !important;
     
     box-shadow: none;
+    
+    transition-duration: 0.2s;
+    transition-property: all;
 }
 
 input[type="checkbox"]:checked + label.drop_down:after {
@@ -1113,12 +1124,6 @@ input[type="checkbox"]:checked + label.drop_down + div {
         
         opacity: 1;
     }
-}
-
-article input[type="checkbox"] + label {
-    margin-top: 10px;
-    
-    text-align: left;
 }
 
 .no_data {
@@ -1656,7 +1661,7 @@ footer {
     
     overflow: hidden;
     
-    z-index: 2;
+    z-index: 31;
 }
 
 .dark_mode footer {
@@ -1718,7 +1723,7 @@ footer div {
 }
 
 footer .previous_button, footer .next_button {
-    z-index: 3;
+    z-index: 1;
     
     background-position: 12px 50%;
 }
@@ -1801,7 +1806,7 @@ footer .previous_button, footer .next_button {
     
     background-color: #ffffff;
     
-    z-index: 19;
+    z-index: 50;
 }
 
 .dark_mode #popup_background {
@@ -1842,7 +1847,7 @@ footer .previous_button, footer .next_button {
     
     overflow: scroll;
     
-    z-index: 20;
+    z-index: 51;
 }
 
 .dark_mode .popup {
@@ -1870,7 +1875,7 @@ footer .previous_button, footer .next_button {
     
     border: none;
     
-    z-index: 2;
+    z-index: 10;
 }
 
 .popup_close_button {
@@ -2641,6 +2646,8 @@ a {
     font-size: 18px;
     
     overflow-y: scroll;
+    
+    z-index: 1;
 }
 
 .suggestion_area div:not(:empty) {
@@ -2690,7 +2697,7 @@ a {
 #wait_screen {
     background-color: rgba(0,0,0,0.9);
     
-    z-index: 300 !important;
+    z-index: 301 !important;
 }
 
 #wait_screen:before, .wait_icon:empty:before, .splash_screen_loading:before {
@@ -2728,7 +2735,7 @@ a {
     
     width: 300px;
     
-    z-index: 299;
+    z-index: 300;
 }
 
 #message_area:empty {
@@ -2907,7 +2914,7 @@ input[type="checkbox"], input[type="radio"] {
     display: none;
 }
 
-input[type="checkbox"] + label {
+.toggle + label {
     display: block;
     
     position: relative;
@@ -2918,13 +2925,10 @@ input[type="checkbox"] + label {
     
     line-height: 24px;
     font-size: 18px;
-}
-
-input[type="checkbox"] + label:not(.drop_down) {
     text-align: left;
 }
 
-input[type="checkbox"] + label:not(.drop_down):before {
+.toggle + label:before {
     content: "";
     
     display: inline-block;
@@ -2934,32 +2938,38 @@ input[type="checkbox"] + label:not(.drop_down):before {
     top: 0;
     left: 0;
     
-    width: 44px;
-    height: 24px;
+    width: 42px;
+    height: 22px;
+    
+    border: 1px solid #dddddd;
     
     background-color: #dddddd;
     
-    border-radius: 12px;
-    
-    box-shadow: 1px 1px 2px rgba(0,0,0,0.25) inset;
+    border-radius: 6px;
     
     transition-duration: 0.25s;
     transition-property: all;
 }
 
-input[type="checkbox"]:checked + label:not(.drop_down):before {
-    background-color: #333333;
+.toggle:checked + label:before {
+    border-color: #333333;
+    
+    background-color: #444444;
 }
 
-.dark_mode input[type="checkbox"] + label:not(.drop_down):before {
-    background-color: #333333;
+.dark_mode .toggle + label:before {
+    border-color: #808080;
+    
+    background-color: #808080;
 }
 
-.dark_mode input[type="checkbox"]:checked + label:not(.drop_down):before {
-    background-color: #ffffff;
+.dark_mode .toggle:checked + label:before {
+    border-color: #ffffff;
+    
+    background-color: transparent;
 }
 
-input[type="checkbox"] + label:after {
+.toggle + label:after {
     content: "";
     
     display: inline-block;
@@ -2972,9 +2982,9 @@ input[type="checkbox"] + label:after {
     width: 20px;
     height: 20px;
     
-    background-color: #ffffff;
+    background-color: #eeeeee;
     
-    border-radius: 10px;
+    border-radius: 4px;
     
     box-shadow: 1px 1px 2px rgba(0,0,0,0.25);
     
@@ -2982,15 +2992,17 @@ input[type="checkbox"] + label:after {
     transition-property: all;
 }
 
-.dark_mode input[type="checkbox"] + label:after {
-    background-color: #444444;
+.dark_mode .toggle + label:after {
+    background-color: #999999;
 }
 
-input[type="checkbox"]:checked + label:after {
+.toggle:checked + label:after {
     left: 22px;
+    
+    background-color: #ffffff;
 }
 
-button, a.wide_button, input[type="radio"] + label {
+button, a.wide_button, input[type="radio"] + label, .chip + label {
     background-color: rgba(255,255,255,0.9);
     background-image: linear-gradient(315deg, #666666 8px, transparent 8px);
     
@@ -3005,7 +3017,7 @@ button {
     font-size: 14px;
 }
 
-.dark_mode button, .dark_mode a.wide_button, .dark_mode input[type="radio"] + label {
+.dark_mode button, .dark_mode a.wide_button, .dark_mode input[type="radio"] + label, .dark_mode .chip + label {
     background-color: rgba(68,68,68,0.85);
     background-image: linear-gradient(315deg, #cccccc 8px, transparent 8px);
     
@@ -3014,19 +3026,38 @@ button {
     color: #eeeeee;
 }
 
-input[type="radio"] + label {
+input[type="radio"] + label, .chip + label {
     display: inline-block;
     
-    padding: 8px 8px 8px 22px;
+    margin: 6px 2px;
+    
+    padding: 8px 12px;
+    
+    border-color: #999999;
     
     background-image: none;
-    background-color: #666666;
+    background-color: #eeeeee;
     
-    color: #ffffff;
+    color: #666666;
 }
 
-.dark_mode input[type="radio"] + label {
-    background-color: #cccccc;
+.chip + label {
+    padding: 4px 14px;
+}
+
+.dark_mode input[type="radio"] + label, .dark_mode .chip + label {
+    border-color: #808080;
+    
+    background-image: none;
+    background-color: #555555;
+    
+    color: #cccccc;
+}
+
+input[type="radio"]:checked + label, .chip:checked + label {
+    border-color: #333333;
+    
+    background-color: transparent;
     
     color: #333333;
 }
@@ -3036,22 +3067,29 @@ input[type="radio"]:checked + label {
     
     border-top-width: 4px;
     
-    background-image: url(data:image/webp;base64,UklGRp4AAABXRUJQVlA4TJEAAAAvH8AHEC9AkG3Tyd6f4BwE2Tad7P0JHoJsm072/gQPmbRNLVTyXO9rgG1hqPp/wSCSrTYvTQBFAJGAg1gA/2p+eT9NQET/1bZtwzgDt7Qz8G3NKC0dQXIakSkgS0Zk6pFpu+PkmlFMOyoypcPrR9EuNSn2ZjLuNK6Ah77k8tkAC9FB5HSA4GQYKUZOINBW/KYAAA==);
+    font-weight: bold;
+}
+
+.chip:checked + label {
+    padding: 4px 4px 4px 22px;
+    
+    background-image: url(data:image/webp;base64,UklGRqAAAABXRUJQVlA4TJMAAAAvH8AHEC9AkG3TTOn+bNcgyLZppnR/thNk2zRTuj/byQQstk91aUUQYNtR7H8qwSqSZCdLEvCSANI/Fp4D8O/m7t4eSUBE/9W2bcM4A7e0M/Bt7V7O0DspYfYMDkUye4bqGcY77lwzimlHeYbQt7ajaJcUFHszGXcZJ6CFvuRoMwIWYgORUwFCI8NIMXIcgXPCbwoA);
     background-repeat: no-repeat;
     background-size: 16px;
     background-position: 4px 50%;
-    background-color: transparent;
-    
-    color: #333333;
 }
 
-.dark_mode input[type="radio"]:checked + label {
-    background-image: url(data:image/webp;base64,UklGRqAAAABXRUJQVlA4TJMAAAAvH8AHEC9AkG3T+aud6RwE2Tadv9qZHoJsm85f7UwPmYDF9qkurQgCbDuKVfkvWEWS7GRJAl4SQPrHwnMA/t3c3dsjCYjov9q2bRhn4JZ2Br6t3csZeiclzJ7BoUhmz1A9w3jHnWtGMe0ozxD61nYU7ZKCYm8m4y7jBLTQlxxtRsBCbCByKkBoZBgpRo4jcE74TQEA);
+.dark_mode input[type="radio"]:checked + label, .dark_mode .chip:checked + label {
+    border-color: #ffffff;
     
     color: #ffffff;
 }
 
-input[type="radio"] + label small {
+.dark_mode .chip:checked + label {
+    background-image: url(data:image/webp;base64,UklGRoYAAABXRUJQVlA4THoAAAAvH8AHEC8w//M//0ICguax+wE+ggiDVWRbbS5FQEzwn6qAQUDK8+/lAfelCYjov9q2bRhn4JZ2Br6tbGWUaOSUYikGp6ZYSrIUf8fMbUYx21GWIrG3H0W77FJpbybjtsYA9NCXDH080ELsIHISQOhkNFIaOYbAGPCbAg==);
+}
+
+input[type="radio"] + label small, .chip + label small {
     font-size: 14px;
 }
 
@@ -3129,7 +3167,7 @@ input[type="radio"] + label small {
         <div class='line_select_wrapper'><select id="position_line_select" onchange="position_change_lines(this.value);"></select></div>
         <div id="position_area" class="wait_icon"></div>
         <div id="position_area_supplement">
-            <input type="checkbox" id="show_train_types_check" onchange="change_show_train_types(this.checked);"><label for="show_train_types_check">列車番号の代わりに<span id="show_train_types_label_train_type">種別</span><span id="show_train_types_label_final_destination">行き先</span>を表示</label>
+            <input type="radio" name="show_train_numbers_or_train_types" id="show_train_numbers_radio" onchange="change_show_train_types(!this.checked);"><label for="show_train_numbers_radio">列車番号を表示</label><input type="radio" name="show_train_numbers_or_train_types" id="show_train_types_radio" onchange="change_show_train_types(this.checked);"><label for="show_train_types_radio"><span id="show_train_types_label_train_type">種別</span><span id="show_train_types_label_final_destination">行き先</span>を表示</label>
             <br>
             <div class="informational_text">列車の走行位置は時刻表に基づく推定であり、遅延や不定期列車の情報は反映されません</div>
         </div>
@@ -3138,9 +3176,8 @@ input[type="radio"] + label small {
         <div class='line_select_wrapper'><select id="timetable_line_select" onchange="timetable_change_lines(this.value);"></select></div>
         <div id="direction_radio_area">
             <h2 id="timetable_station_name"></h2>
-            <input type="radio" name="direction_radio" id="radio_inbound" value="inbound" checked="checked" onchange="timetable_select_station(timetable_selected_station);"><label for="radio_inbound" id="radio_inbound_label">上り</label>
-            <input type="radio" name="direction_radio" id="radio_outbound" value="outbound" onchange="timetable_select_station(timetable_selected_station);"><label for="radio_outbound" id="radio_outbound_label">下り</label>
-            <input type="checkbox" id="show_arriving_trains_check" onchange="change_show_arriving_trains(this.checked);"><label for="show_arriving_trains_check">当駅止まりを表示</label>
+            <input type="radio" name="direction_radio" id="radio_inbound" value="inbound" checked="checked" onchange="timetable_select_station(timetable_selected_station);"><label for="radio_inbound" id="radio_inbound_label">上り</label><input type="radio" name="direction_radio" id="radio_outbound" value="outbound" onchange="timetable_select_station(timetable_selected_station);"><label for="radio_outbound" id="radio_outbound_label">下り</label><br>
+            <input type="checkbox" id="show_arriving_trains_check" class="chip" onchange="change_show_arriving_trains(this.checked);"><label for="show_arriving_trains_check">着列車を表示</label>
         </div>
         <div id="timetable_area" class="wait_icon"></div>
     </article>
@@ -3238,8 +3275,8 @@ input[type="radio"] + label small {
     <div class="popup" id="config_popup">
         <button type="button" class="popup_close_button" onclick="popup_close();"></button>
         <h2>各種設定</h2>
-        <input type="checkbox" id="dark_mode_check" onchange="change_config();"><label for="dark_mode_check">ダークモード</label>
-        <input type="checkbox" id="colorize_beginners_posts_check" onchange="change_config();"><label for="colorize_beginners_posts_check">ビギナーの方の投稿を区別する</label>
+        <input type="checkbox" id="dark_mode_check" class="toggle" onchange="change_config();"><label for="dark_mode_check">ダークモード</label>
+        <input type="checkbox" id="colorize_beginners_posts_check" class="toggle" onchange="change_config();"><label for="colorize_beginners_posts_check">ビギナーの方の投稿を区別する</label>
         <h3>運用情報の自動更新間隔</h3>
         <input type="number" id="refresh_interval" min="1" max="60" onchange="change_config();">分ごと<br>
         <h3>運用情報のキャッシュ保管日数</h3>
@@ -3819,7 +3856,7 @@ function open_popup (id) {
     
     if (!elm.classList.contains("popup_active")) {
         elm.classList.add("popup_active");
-        elm.style.zIndex = popup_history.length + 20;
+        elm.style.zIndex = popup_history.length + 50;
         
         popup_history.push(id);
         
@@ -4871,7 +4908,11 @@ function position_mode () {
         var line_id = position_line_select_elm.value;
     }
     
-    document.getElementById("show_train_types_check").checked = config["show_train_types_in_position_mode"];
+    if (config["show_train_types_in_position_mode"]) {
+        document.getElementById("show_train_types_radio").checked = true;
+    } else {
+        document.getElementById("show_train_numbers_radio").checked = true;
+    }
     
     position_change_time(null, false);
     
@@ -6547,14 +6588,11 @@ function draw_operation_detail (operation_number, operation_data_date_ts_or_oper
         buf += "</div><div id='operation_data_detail_area'></div>";
     }
     
-    buf += "<h3>充当列車一覧</h3>";
-    
+    var checked_strs = [" checked='checked'", ""];
     if (config["simplify_operation_details"]) {
-        var checked_str = " checked='checked'";
-    } else {
-        var checked_str = "";
+        checked_strs.reverse()
     }
-    buf += "<input type='checkbox' id='simplify_operation_details_check' onchange='change_simplify_operation_details(this.checked, \"" + add_slashes(operation_number) + "\", " + operation_table_name_or_ts + ", " + is_today + ");'" + checked_str + "><label for='simplify_operation_details_check'>簡略表示</label>";
+    buf += "<input type='radio' name='switch_simplify_operation_details' id='simplify_operation_details' onchange='change_simplify_operation_details(!this.checked, \"" + add_slashes(operation_number) + "\", " + operation_table_name_or_ts + ", " + is_today + ");'" + checked_strs[0] + "><label for='simplify_operation_details'>詳細表示</label><input type='radio'  name='switch_simplify_operation_details' id='not_simplify_operation_details' onchange='change_simplify_operation_details(this.checked, \"" + add_slashes(operation_number) + "\", " + operation_table_name_or_ts + ", " + is_today + ");'" + checked_strs[1] + "><label for='not_simplify_operation_details'>簡略表示</label>";
     
     buf += "<div id='operation_trains_area'></div>";
     
