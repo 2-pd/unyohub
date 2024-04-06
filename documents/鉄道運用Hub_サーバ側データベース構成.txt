@@ -159,6 +159,24 @@ _/_/_/_/ データベース _/_/_/_/
   INDEX `unyohub_moderation_idx_d5`(`ip_address`, `posted_datetime`)
 
 
+`unyohub_moderation_suspicious_users` 要注意ユーザーのリスト
+  `user_id` TEXT NOT NULL PRIMARY KEY 要注意ユーザーのID(未登録ユーザーの場合、クライアント端末が生成する12桁の乱数値の頭に「*」を付加した文字列を記録する)
+  `moderator_id` TEXT NOT NULL モデレート作業を行ったモデレーターのユーザーID
+  `marked_datetime` TEXT NOT NULL 「YYYY-MM-DD HH:MM:SS」形式の要注意と指定された日時
+
+  INDEX `unyohub_moderation_idx_su1`(`moderator_id`, `marked_datetime`)
+  INDEX `unyohub_moderation_idx_su2`(`marked_datetime`)
+
+
+`unyohub_moderation_suspicious_ip_addresses` 要注意IPアドレスのリスト
+  `ip_address` TEXT NOT NULL PRIMARY KEY 要注意IPアドレス
+  `moderator_id` TEXT NOT NULL モデレート作業を行ったモデレーターのユーザーID
+  `marked_datetime` TEXT NOT NULL 「YYYY-MM-DD HH:MM:SS」形式の要注意と指定された日時
+
+  INDEX `unyohub_moderation_idx_si1`(`moderator_id`, `marked_datetime`)
+  INDEX `unyohub_moderation_idx_si2`(`marked_datetime`)
+
+
 _/_/_/_/ Wakarana カスタムフィールド _/_/_/_/
 
 website_url ・・・ユーザーのwebサイトのURL

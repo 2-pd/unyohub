@@ -20,7 +20,7 @@
 14. write_operations_to_db.pyを実行して、JSON化された運用表を全てrailroad.dbにインポートします。
 15. configフォルダ内のrailroads.txtを編集し、「data」フォルダ内の路線系統フォルダ名を1行に1つずつ記載します。この記載順は、アプリが路線系統を一覧表示する際の順序として使用されます。
 16. 「鉄道運用Hub用データ編集ツール」で「モデレーションDBのセットアップ」を実行し、生成されたmoderation.dbをconfigフォルダに設置します。
-17. configフォルダ内のunyohub.jsonを編集し、unyohub.jsonと「data」フォルダ全体をサーバにアップロードすれば、アプリが実行可能となります。
+17. configフォルダ内のmain.iniを使用環境に合わせて編集し、main.iniと「data」フォルダ全体をサーバにアップロードすれば、アプリが実行可能となります。
 
 ## メンテナンス
 

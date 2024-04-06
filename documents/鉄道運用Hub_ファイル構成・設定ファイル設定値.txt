@@ -24,7 +24,7 @@ _/_/_/_/ ファイル構成 _/_/_/_/
    └ wakarana.db ・・・Wakaranaデータベース
    └ zizai_captcha.db ・・・Zizai CAPTCHAデータベース
 └ config/
-   └ unyohub.json ・・・運用観察Hub基本設定ファイル
+   └ main.ini ・・・運用観察Hub基本設定ファイル
    └ railroads.txt ・・・路線系統識別名を1行に1つずつ列挙したファイル
    └ railroads_cache.json ・・・railroads.txtから自動生成されるキャッシュファイル
    └ announcements.json ・・・お知らせデータ
@@ -81,13 +81,12 @@ _/_/_/_/ 設定ファイル設定値 _/_/_/_/
   UNYOHUB_VERSION  バージョン文字列
 
 
-███ unyohub.json ███
+███ main.ini ███
 
-{
-    "allow_sign_up" : 新規ユーザーの登録を認めるか(BOOL値),
-    "allow_guest_user" : ログインしていないユーザーの投稿を認めるか(BOOL値),
-    "log_ip_address" : 投稿者のIPアドレスを記録するか(BOOL値)
-}
+allow_sign_up 新規ユーザーの登録を認めるか(BOOL値)
+allow_guest_user ログインしていないユーザーの投稿を認めるか(BOOL値)
+log_ip_address 投稿者のIPアドレスを記録するか(BOOL値)
+anti_troll_garbage_size 要注意ユーザーの投稿処理を遅延させるために使用するダミーデータのサイズ(MB単位、整数値)
 
 
 ███ railroads.txt ███
