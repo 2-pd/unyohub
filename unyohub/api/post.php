@@ -8,7 +8,7 @@ if (!isset($_POST["railroad_id"], $_POST["date"], $_POST["operation_number"], $_
     exit;
 }
 
-$config = json_decode(file_get_contents("../config/unyohub.json"), TRUE);
+$config = parse_ini_file("../config/main.ini");
 
 $wakarana = new wakarana("../config");
 
