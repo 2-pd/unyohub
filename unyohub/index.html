@@ -7756,7 +7756,7 @@ function show_moderation_info (user_id, ip_address) {
                 is_suspicious_ip_address_elm.innerText = "【!】要注意IPアドレス";
                 is_suspicious_ip_address_elm.className = "warning_text";
             } else {
-                is_suspicious_ip_address_elm.innerHTML = "<button type='button' onclick=''>要注意IPアドレスに指定</button>";
+                is_suspicious_ip_address_elm.innerHTML = "<button type='button' onclick='mark_ip_address_suspect(\"" + add_slashes(ip_address) + "\");'>要注意IPアドレスに指定</button>";
             }
         }
     });
@@ -7871,6 +7871,30 @@ function mark_user_suspect (user_id) {
                 mes("ユーザーを要注意に指定しました");
                 
                 show_moderation_info (user_id, null);
+            }
+        });
+    }
+}
+
+function mark_ip_address_suspect (ip_address) {
+    if (confirm("このIPアドレスを要注意IPアドレスに指定しますか？")) {
+        open_wait_screen();
+        
+        if (one_time_token === null) {
+            close_wait_screen();
+            
+            mes("内部処理が完了していないため、数秒待ってから再送信してください", true);
+            
+            return;
+        }
+        
+        ajax_fetch("api/mark_ip_address_suspect.php", "ip_address=" + escape_form_data(ip_address) + "&one_time_token=" + escape_form_data(one_time_token), function (response) {
+            close_wait_screen();
+            
+            if (response === "SUCCEEDED") {
+                mes("IPアドレスを要注意に指定しました");
+                
+                show_moderation_info (null, ip_address);
             }
         });
     }
