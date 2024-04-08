@@ -7744,7 +7744,7 @@ function show_moderation_info (user_id, ip_address) {
                 is_suspicious_user_elm.innerText = "【!】要注意ユーザー";
                 is_suspicious_user_elm.className = "warning_text";
             } else {
-                is_suspicious_user_elm.innerHTML = "<button type='button' onclick=''>要注意ユーザーに指定</button>";
+                is_suspicious_user_elm.innerHTML = "<button type='button' onclick='mark_user_suspect(\"" + add_slashes(user_id) + "\");'>要注意ユーザーに指定</button>";
             }
         }
         
@@ -7847,6 +7847,30 @@ function revoke_users_all_operation_data (user_id) {
                             break;
                     }
                 }, function () {}, true);
+            }
+        });
+    }
+}
+
+function mark_user_suspect (user_id) {
+    if (confirm("このユーザーを要注意ユーザーに指定しますか？")) {
+        open_wait_screen();
+        
+        if (one_time_token === null) {
+            close_wait_screen();
+            
+            mes("内部処理が完了していないため、数秒待ってから再送信してください", true);
+            
+            return;
+        }
+        
+        ajax_fetch("api/mark_user_suspect.php", "user_id=" + escape_form_data(user_id) + "&one_time_token=" + escape_form_data(one_time_token), function (response) {
+            close_wait_screen();
+            
+            if (response === "SUCCEEDED") {
+                mes("ユーザーを要注意に指定しました");
+                
+                show_moderation_info (user_id, null);
             }
         });
     }
