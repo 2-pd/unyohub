@@ -10,6 +10,13 @@ if (!isset($_POST["railroad_id"], $_POST["date"], $_POST["operation_number"], $_
 
 $config = parse_ini_file("../config/main.ini");
 
+connect_moderation_db();
+
+if ($moderation_db_obj->querySingle("SELECT COUNT(`ip_address`) FROM `unyohub_moderation_suspicious_ip_addresses` WHERE `ip_address` = '".$moderation_db_obj->escapeString($_SERVER["REMOTE_ADDR"])."' AND `marked_datetime` > '".date("Y-m-d H:i:s", time() - 1209600)."'")) {
+    print "ERROR: ご利用のIPアドレスは投稿制限に達しました";
+    exit;
+}
+
 $wakarana = new wakarana("../config");
 
 $user = $wakarana->check();
@@ -142,3 +149,13 @@ if (!empty($operation_data["terminal_track"])) {
 
 $data = array($_POST["operation_number"] => array("formations" => $formations, "posts_count" => $data_cache_values["posts_count"], "variant_exists" => $data_cache_values["variant_exists"], "comment_exists" => $comment_exists, "from_beginner" => $from_beginner));
 print json_encode($data, JSON_UNESCAPED_UNICODE);
+
+
+if ($config["anti_troll_garbage_size"] >= 1 && $moderation_db_obj->querySingle("SELECT COUNT(`user_id`) FROM `unyohub_moderation_suspicious_users` WHERE `user_id` = '".$moderation_db_obj->escapeString($user_id)."'")) {
+    $garbage = str_repeat(" ", 1024);
+    
+    $loop_max = $config["anti_troll_garbage_size"] * 1024;
+    for ($cnt = 0; $cnt < $loop_max; $cnt++) {
+        print $garbage;
+    }
+}
