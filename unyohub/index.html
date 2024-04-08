@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width,initial-scale=1,interactive-widget=resizes-content">
 <script>
     const UNYOHUB_APP_NAME = "鉄道運用Hub";
-    const UNYOHUB_VERSION = "24.04-1";
+    const UNYOHUB_VERSION = "24.04-2";
     const UNYOHUB_INDEXEDDB_VERSION = 2310001;
     const UNYOHUB_LICENSE_TEXT = "このアプリケーションは無権利創作宣言に準拠して著作権放棄されています。";
     const UNYOHUB_LICENSE_URL = "https://www.2pd.jp/license/";
@@ -1878,8 +1878,7 @@ footer .previous_button, footer .next_button {
     
     box-sizing: border-box;
     
-    padding: 10px max(10px, calc(50% - 240px));
-    padding-top: 50px;
+    padding: 50px max(10px, calc(50% - 240px));
     
     background-color: #ffffff;
     
@@ -3339,8 +3338,14 @@ input[type="radio"] + label small, .chip + label small {
     </div>
     <div class="popup" id="rules_popup">
         <button type="button" class="popup_close_button" onclick="popup_close();"></button>
+        <div id="rules_info" class="warning_text">
+            本アプリケーションでは新規のユーザー様にご利用ルールの確認をお願いしています。<br>
+            <br>
+            次の操作に移るボタンはルール本文の下部にあります。
+        </div>
         <h2>ルールとポリシー</h2>
         <div id="rules_area" class="wait_icon long_text"></div>
+        <button type="button" id="accept_rules_button" class="wide_button" onclick="rules_continue();">ルールに同意して続行</button>
     </div>
     <div id="popup_screen">
         <div id="popup_screen_blank_area" onclick="close_square_popup();"></div>
@@ -7629,7 +7634,11 @@ function select_operation_to_write_data (line_id, train_number, first_departure_
 
 function check_post_operation_data () {
     if (user_data === null) {
-        show_captcha();
+        if (config["guest_id"] === null) {
+            show_rules(show_captcha);
+        } else {
+            show_captcha();
+        }
         
         captcha_submit_button_elm.onclick = post_operation_data;
     } else {
@@ -7637,7 +7646,7 @@ function check_post_operation_data () {
     }
 }
 
-function post_operation_data (cnt = 0) {
+function post_operation_data () {
     open_wait_screen();
     
     if (user_data !== null && one_time_token === null) {
@@ -7965,8 +7974,10 @@ function check_sign_up () {
         close_wait_screen();
         
         if (response === "OK") {
-            show_captcha();
-            captcha_submit_button_elm.onclick = challenge_sign_up;
+            show_rules(function () {
+                show_captcha();
+                captcha_submit_button_elm.onclick = challenge_sign_up;
+            });
         } else if (response !== false) {
             mes(response);
         }
@@ -8016,7 +8027,7 @@ function edit_user_data () {
     get_one_time_token();
 }
 
-function change_user_data (cnt = 0) {
+function change_user_data () {
     open_wait_screen();
     
     if (one_time_token === null) {
@@ -8180,7 +8191,10 @@ function reset_cache_db () {
     }
 }
 
-function show_rules () {
+
+var rules_continue_func = null;
+
+function show_rules (continue_func = null) {
     if (!navigator.onLine) {
         mes("ルールの閲覧にはネットワーク接続が必要です", true);
         return;
@@ -8188,13 +8202,31 @@ function show_rules () {
     
     open_popup("rules_popup");
     
+    var rules_info_elm = document.getElementById("rules_info");
+    var accept_button_elm = document.getElementById("accept_rules_button");
+    
+    rules_info_elm.style.display = "none";
+    accept_button_elm.style.display = "none";
+    
     ajax_fetch("rules.txt", null, function (response) {
         if (response !== false) {
             document.getElementById("rules_area").innerHTML = convert_to_html(response);
+            
+            if (typeof continue_func === "function") {
+                rules_continue_func = continue_func;
+                accept_button_elm.style.display = "block";
+                rules_info_elm.style.display = "block";
+            }
         } else {
             mes("ルール情報が表示できません", true);
         }
     });
+}
+
+function rules_continue () {
+    popup_close();
+    
+    rules_continue_func();
 }
 
 
