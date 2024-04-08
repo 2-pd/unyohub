@@ -392,15 +392,15 @@ JSON化された時刻表の内容を返す
 ### 引数
 **$_COOKIE["unyohub_login_token"]** : モデレーターユーザーのWakaranaのログイントークン  
   
-**$_POST["user_id"]** :モデレーション対象のユーザーID  
-**$_POST["ip_address"]** : モデレーション対象のIPアドレス
+**$_POST["user_id"]** :モデレーション対象のユーザーIDまたは空文字列  
+**$_POST["ip_address"]** : モデレーション対象のIPアドレスまたは空文字列
 
 ### 応答
 **正常時** :  
 {  
-    "is_suspicious_user_id" : ユーザーIDが要注意ユーザーに指定済みか否か,  
-    "host_name" : IPアドレスに対応するホスト名,  
-    "is_suspicious_ip_address" : IPアドレスが要注意IPアドレスに指定済みか否か  
+    "is_suspicious_user" : ユーザーIDが要注意ユーザーに指定済みか否か(ユーザーIDが空の場合はNULL),  
+    "host_name" : IPアドレスに対応するホスト名(IPアドレスが空の場合はNULL),  
+    "is_suspicious_ip_address" : IPアドレスが要注意IPアドレスに指定済みか否か(IPアドレスが空の場合はNULL)  
 }  
   
 **エラーの場合** :  

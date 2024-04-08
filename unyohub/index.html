@@ -1607,6 +1607,14 @@ h2 .next_button {
     border-color: #666666;
 }
 
+.key_and_value:after {
+    content: "";
+    
+    display: block;
+    
+    clear: both;
+}
+
 .key_and_value b, .key_and_value u {
     display: block;
     
@@ -1619,6 +1627,36 @@ h2 .next_button {
 
 .key_and_value a {
     color: inherit;
+}
+
+.key_and_value div:not(:empty) {
+    margin: 8px 0 4px 0 !important;
+}
+
+.key_and_value div:not(:has(button)) {
+    display: inline-block;
+    
+    width: fit-content;
+    
+    margin-left: 10px !important;
+    
+    text-align: left;
+    word-break: break-all;
+}
+
+.key_and_value .warning_text {
+    padding: 0;
+}
+
+.key_and_value button {
+    display: inline-block !important;
+    
+    margin: 0 0 0 10px !important;
+    
+    padding: 4px 10px !important;
+    
+    line-height: 18px;
+    vertical-align: top;
 }
 
 .formation_operation_data, .formation_operation_data_last_seen {
@@ -3699,7 +3737,7 @@ var train_icons = null;
 var formations = null;
 
 
-function ajax_fetch (end_point_url, query_str, callback_func) {
+function ajax_fetch (end_point_url, query_str, callback_func, timeout = 30) {
     var ajax_request = new XMLHttpRequest();
     ajax_request.onloadend = function () {
         if (ajax_request.responseText.substring(0, 6) === "ERROR:") {
@@ -3719,11 +3757,11 @@ function ajax_fetch (end_point_url, query_str, callback_func) {
     if (query_str !== null) {
         ajax_request.open("POST", end_point_url, true);
         ajax_request.setRequestHeader("Content-Type","application/x-www-form-urlencoded;charset=UTF-8");
-        ajax_request.timeout = 10000;
+        ajax_request.timeout = timeout * 1000;
         ajax_request.send(query_str);
     } else {
         ajax_request.open("GET", end_point_url, true);
-        ajax_request.timeout = 10000;
+        ajax_request.timeout = timeout * 1000;
         ajax_request.send();
     }
 }
@@ -4105,7 +4143,7 @@ window.onload = function () {
             }
             
             update_railroad_list(railroads_caches);
-        });
+        }, 10);
         
         check_announcements(true);
     } else {
@@ -7660,13 +7698,16 @@ function edit_operation_data (yyyy_mm_dd, operation_number, user_id, formation_t
     
     if (user_id !== user_data["user_id"]) {
         buf += "<h3>投稿者情報</h3>";
-        buf += "<div class='key_and_value'><b>ユーザーID</b>" + escape_html(user_id) + "</div>";
+        buf += "<div class='key_and_value'><b>ユーザーID</b>" + escape_html(user_id) + "<div id='edit_operation_data_is_suspicious_user'></div></div>";
         if (ip_address !== null) {
-            buf += "<div class='key_and_value'><b>IPアドレス</b>" + escape_html(ip_address) + "</div>";
+            buf += "<div class='key_and_value'><b>IPアドレス</b>" + escape_html(ip_address) + "<div id='edit_operation_data_is_suspicious_ip_address'></div></div>";
+            buf += "<div class='key_and_value'><b>ホスト名</b><div id='edit_operation_data_host_name'></div></div>";
         }
+    } else {
+        buf += "<br>";
     }
     
-    buf += "<br><br><button type='button' class='wide_button' onclick='revoke_operation_data(\"" + yyyy_mm_dd + "\", \"" + add_slashes(operation_number) + "\", \"" + add_slashes(user_id) + "\");'>取り消す</button>";
+    buf += "<br><button type='button' class='wide_button' onclick='revoke_operation_data(\"" + yyyy_mm_dd + "\", \"" + add_slashes(operation_number) + "\", \"" + add_slashes(user_id) + "\");'>取り消す</button>";
     
     if (user_id !== user_data["user_id"] && (user_data["role"] === "MODERATOR" || user_data["role"] === "ADMIN")) {
         buf += "<button type='button' class='wide_button' onclick='revoke_users_all_operation_data(\"" + add_slashes(user_id) + "\");'>ユーザーの投稿を全て取り消す</button>";
@@ -7675,6 +7716,50 @@ function edit_operation_data (yyyy_mm_dd, operation_number, user_id, formation_t
     document.getElementById("edit_operation_data_area").innerHTML = buf;
     
     get_one_time_token();
+    
+    if (user_id !== user_data["user_id"] && (user_data["role"] === "MODERATOR" || user_data["role"] === "ADMIN")) {
+        show_moderation_info(user_id, ip_address);
+    }
+}
+
+function show_moderation_info (user_id, ip_address) {
+    if (user_id === null) {
+        user_id = "";
+    }
+    
+    if (ip_address === null) {
+        ip_address = "";
+    }
+    
+    ajax_fetch("api/moderation_info.php", "user_id=" + escape_form_data(user_id) + "&ip_address=" + escape_form_data(ip_address), function (response) {
+        if (response === false) {
+            return;
+        }
+        
+        var moderation_info = JSON.parse(response);
+        
+        if (moderation_info["is_suspicious_user"] !== null) {
+            var is_suspicious_user_elm = document.getElementById("edit_operation_data_is_suspicious_user");
+            if (moderation_info["is_suspicious_user"]) {
+                is_suspicious_user_elm.innerText = "【!】要注意ユーザー";
+                is_suspicious_user_elm.className = "warning_text";
+            } else {
+                is_suspicious_user_elm.innerHTML = "<button type='button' onclick=''>要注意ユーザーに指定</button>";
+            }
+        }
+        
+        if (moderation_info["host_name"] !== null && moderation_info["is_suspicious_ip_address"] !== null) {
+            document.getElementById("edit_operation_data_host_name").innerText = moderation_info["host_name"];
+            
+            var is_suspicious_ip_address_elm = document.getElementById("edit_operation_data_is_suspicious_ip_address");
+            if (moderation_info["is_suspicious_ip_address"]) {
+                is_suspicious_ip_address_elm.innerText = "【!】要注意IPアドレス";
+                is_suspicious_ip_address_elm.className = "warning_text";
+            } else {
+                is_suspicious_ip_address_elm.innerHTML = "<button type='button' onclick=''>要注意IPアドレスに指定</button>";
+            }
+        }
+    });
 }
 
 function revoke_operation_data (yyyy_mm_dd, operation_number, user_id) {
