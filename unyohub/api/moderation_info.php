@@ -28,7 +28,7 @@ if (!empty($_POST["user_id"])) {
 }
 
 if (!empty($_POST["ip_address"])) {
-    if ($moderation_db_obj->querySingle("SELECT COUNT(`ip_address`) FROM `unyohub_moderation_suspicious_ip_addresses` WHERE `ip_address` = '".$moderation_db_obj->escapeString($_POST["ip_address"])."' AND `marked_datetime` > '".date("Y-m-d H:i:s", time() - 1209600)."'")) {
+    if ($moderation_db_obj->querySingle("SELECT COUNT(`ip_address`) FROM `unyohub_moderation_suspicious_ip_addresses` WHERE `ip_address` = '".$moderation_db_obj->escapeString($_POST["ip_address"])."' AND `marked_datetime` > '".date("Y-m-d H:i:s", time() - 2592000)."'")) {
         $is_suspicious_ip_address = TRUE;
     } else {
         $is_suspicious_ip_address = FALSE;

@@ -12,7 +12,7 @@ $config = parse_ini_file("../config/main.ini");
 
 connect_moderation_db();
 
-if ($moderation_db_obj->querySingle("SELECT COUNT(`ip_address`) FROM `unyohub_moderation_suspicious_ip_addresses` WHERE `ip_address` = '".$moderation_db_obj->escapeString($_SERVER["REMOTE_ADDR"])."' AND `marked_datetime` > '".date("Y-m-d H:i:s", time() - 1209600)."'")) {
+if ($moderation_db_obj->querySingle("SELECT COUNT(`ip_address`) FROM `unyohub_moderation_suspicious_ip_addresses` WHERE `ip_address` = '".$moderation_db_obj->escapeString($_SERVER["REMOTE_ADDR"])."' AND `marked_datetime` > '".date("Y-m-d H:i:s", time() - 2592000)."'")) {
     print "ERROR: ご利用のIPアドレスは投稿制限に達しました";
     exit;
 }

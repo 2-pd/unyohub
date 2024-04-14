@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width,initial-scale=1,interactive-widget=resizes-content">
 <script>
     const UNYOHUB_APP_NAME = "鉄道運用Hub";
-    const UNYOHUB_VERSION = "24.04-2";
+    const UNYOHUB_VERSION = "24.04-3";
     const UNYOHUB_INDEXEDDB_VERSION = 2310001;
     const UNYOHUB_LICENSE_TEXT = "このアプリケーションは無権利創作宣言に準拠して著作権放棄されています。";
     const UNYOHUB_LICENSE_URL = "https://www.2pd.jp/license/";
@@ -3123,6 +3123,8 @@ input[type="radio"] + label {
 }
 
 div input[type="radio"]:first-of-type + label {
+    margin-left: 0;
+    
     border-radius: 4px 0 0 4px;
 }
 
@@ -5973,6 +5975,12 @@ function train_detail (line_id, train_number, first_departure_time, train_direct
     var train_detail_day_elm = document.getElementById("train_detail_day");
     
     train_detail_day_elm.innerText = railroad_info["operations"][timetable["operation_table"]]["operation_name"];
+    
+    if (timetable_operation_table === "__today__") {
+        train_detail_day_elm.innerText += "(今日)";
+    } else if (timetable_operation_table === "__tomorrow__") {
+        train_detail_day_elm.innerText += "(明日)";
+    }
     
     if (!config["dark_mode"]) {
         train_detail_day_elm.style.backgroundColor = railroad_info["operations"][timetable["operation_table"]]["main_color"];
