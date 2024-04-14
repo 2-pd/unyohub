@@ -1726,11 +1726,33 @@ footer div {
 .footer_select {
     display: inline-block;
     
-    width: 75px;
+    box-sizing: content-box;
     
-    font-size: 23px;
-    color: #999999;
+    width: 60px;
+    height: 45px;
+    
+    padding-right: 15px;
+    
+    border: none;
+    
+    background-image: url(data:image/webp;base64,UklGRq4AAABXRUJQVlA4TKIAAAAvD8AOEG9gkG2k5vwN3vWnYSBtmzD/Du71NZC2TZh/B/f6KgoAwvETQf+PIDsMCbgRgLuj/78oNB4+pPrbEFz9aqqEo0aSQquTd9wrQn4yh/WBBKwgAQNI+BIQgaOdIwIi+j8BwA5sby6X2VKULrWS0gK2JAX00iDLYstGdy3d4vk/2e9dPD9l53D3uCDLhFEunBJAShNgSLccKQo5seO6fwA=);
+    background-repeat: no-repeat;
+    background-size: 8px 30px;
+    background-position: calc(100% - 7px) 50%;
+    background-color: #f7f7f7;
+    
+    line-height: 45px;
+    font-size: 21px;
+    color: #333333;
     text-align: center;
+    vertical-align: top;
+    
+    appearance: none;
+    -webkit-appearance: none;
+}
+
+.dark_mode .footer_select {
+    background-color: #555555;
 }
 
 .previous_button, .next_button, .reload_button, .back_button, .date_button, .time_button {
@@ -1772,14 +1794,15 @@ footer .previous_button, footer .next_button {
 
 .footer_value {
     width: 55px;
+    height: 45px;
 }
 
 .footer_value_wide {
     width: 180px;
 }
 
-.footer small {
-    font-size: 15px;
+footer small {
+    font-size: 17px;
 }
 
 .reload_button, .back_button, .date_button, .time_button {
@@ -3260,8 +3283,8 @@ input[type="radio"] + label small, .chip + label small {
     </article>
     <footer>
         <div>
-            <button id="position_reload_button" class="reload_button" onclick="position_reload();"></button>
-            <span class="footer_select">今日</span><button type="button" class="previous_button" onclick="position_change_time(-60);"></button><span id="position_hours" class="footer_value"></span><button type="button" class="next_button" onclick="position_change_time(60);"></button><button type="button" class="previous_button" onclick="position_change_time(-5);"></button><span id="position_minutes" class="footer_value"></span><button type="button" class="next_button" onclick="position_change_time(5);"></button>
+            <button id="position_reload_button" class="reload_button" onclick="position_mode('today', null, false);"></button>
+            <select id="position_date_select" class="footer_select" onchange="position_mode(this.value, 0, false);"><option value="today" selected="selected">今日</option><option value="tomorrow">明日</option></select><button type="button" class="previous_button" onclick="position_change_time(-60);"></button><span id="position_hours" class="footer_value"></span><button type="button" class="next_button" onclick="position_change_time(60);"></button><button type="button" class="previous_button" onclick="position_change_time(-5);"></button><span id="position_minutes" class="footer_value"></span><button type="button" class="next_button" onclick="position_change_time(5);"></button>
             <input type="time" id="position_time_button" class="time_button" onchange="position_time_button_change();">
         </div>
         <div>
@@ -4898,22 +4921,45 @@ document.onvisibilitychange = background_updater_start_stop;
 background_updater_start_stop();
 
 
+var operation_data_date;
+
 var position_line_select_elm = document.getElementById("position_line_select");
 var position_area_elm = document.getElementById("position_area");
 var position_reload_button_elm = document.getElementById("position_reload_button");
 var position_time_button_elm = document.getElementById("position_time_button");
 
-function position_mode () {
+function position_mode (date_str = "today", position_time_additions = null, reset_scroll_amount = true) {
     change_mode(0);
+    
+    if (reset_scroll_amount) {
+        var position_scroll_amount = 0;
+    } else {
+        var position_scroll_amount = article_elms[0].scrollTop;
+    }
     
     position_area_elm.innerHTML = "";
     position_line_select_elm.style.display = "block";
-    position_reload_button_elm.style.display = "none";
     
     var position_area_supplement_elm = document.getElementById("position_area_supplement");
     position_area_supplement_elm.style.display = "none";
     
-    var operation_table = get_days_operation(get_timestamp());
+    if (date_str === "tomorrow") {
+        var timestamp_additions = 86400;
+        
+        position_last_updated = null;
+        position_reload_button_elm.style.display = "block";
+    } else {
+        var timestamp_additions = 0;
+        
+        if (position_time_additions === null) {
+            position_reload_button_elm.style.display = "none";
+        }
+    }
+    
+    document.getElementById("position_date_select").value = date_str;
+    
+    operation_data_date = get_timestamp() + timestamp_additions;
+    var operation_table = get_days_operation(operation_data_date);
     
     var all_resolved = false;
     
@@ -4950,7 +4996,7 @@ function position_mode () {
             } else if (all_resolved) {
                 position_change_time(0);
             }
-        }, reject, false, get_date_string(get_timestamp()));
+        }, reject, false, get_date_string(get_timestamp() + timestamp_additions));
     });
     
     var keys = railroad_info["lines_order"];
@@ -4975,12 +5021,12 @@ function position_mode () {
         document.getElementById("show_train_numbers_radio").checked = true;
     }
     
-    position_change_time(null, false);
+    position_change_time(position_time_additions, false);
     
     Promise.all([promise_1, promise_2, promise_3]).then(function () {
         all_resolved = true;
         
-        position_change_lines(line_id);
+        position_change_lines(line_id, position_scroll_amount);
         
         position_area_supplement_elm.style.display = "block";
     }).catch(function () {
@@ -4989,7 +5035,7 @@ function position_mode () {
     });
 }
 
-function position_change_lines (line_id) {
+function position_change_lines (line_id, position_scroll_amount = -1) {
     if (position_line_select_elm.value !== line_id) {
         position_line_select_elm.value = line_id;
     }
@@ -5068,7 +5114,9 @@ function position_change_lines (line_id) {
     
     position_area_elm.innerHTML = buf;
     
-    article_elms[0].scrollTop = 0;
+    if (position_scroll_amount >= 0) {
+        article_elms[0].scrollTop = position_scroll_amount;
+    }
     
     var label_train_type_elm = document.getElementById("show_train_types_label_train_type");
     var label_final_destination_elm = document.getElementById("show_train_types_label_final_destination");
@@ -5110,9 +5158,9 @@ function convert_train_position_data (train_data) {
     
     if (train_data["posts_count"] === 0) {
         if (!config["dark_mode"]) {
-            var color = "#0000cc";
+            var color = "#0099cc";
         } else {
-            var color = "#9999ff";
+            var color = "#33ccff";
         }
         
         train_data["formation_html"] = "<b style='color: " + color + ";'>" + train_data["formation_html"] + "</b>";
@@ -5138,6 +5186,12 @@ function convert_train_position_data (train_data) {
 function draw_train_position (hh_and_mm) {
     var line_id = position_line_select_elm.value;
     
+    if (get_date_string(operation_data_date) === get_date_string(get_timestamp())) {
+        var is_today_str = "true";
+    } else {
+        var is_today_str = "false";
+    }
+    
     var directions = ["inbound", "outbound"];
     var line_positions = [get_train_positions(line_operations["lines"][line_id]["inbound_trains"], line_id, hh_and_mm, true), get_train_positions(line_operations["lines"][line_id]["outbound_trains"], line_id, hh_and_mm, false)];
     var position_elms = [document.getElementsByClassName("position_inbound"), document.getElementsByClassName("position_outbound")];
@@ -5152,7 +5206,7 @@ function draw_train_position (hh_and_mm) {
                     train_color = convert_font_color_dark_mode(train_color);
                 }
                 
-                var buf = "<span onclick='train_detail(\"" + line_id + "\", \"" + train["train_number"] + "\", \"" + train["first_departure_time"] + "\", \"" + directions[direction_cnt] + "_trains\");' style='color: " + train_color + ";'><img src='" + get_icon(train["first_formation"]) + "' alt='' class='train_icon'";
+                var buf = "<span onclick='train_detail(\"" + line_id + "\", \"" + train["train_number"] + "\", \"" + train["first_departure_time"] + "\", \"" + directions[direction_cnt] + "_trains\", true, " + is_today_str + ");' style='color: " + train_color + ";'><img src='" + get_icon(train["first_formation"]) + "' alt='' class='train_icon'";
                 
                 if (railroad_info["deadhead_train_number_regexp"].test(train["train_title"])) {
                     buf += " style='opacity: 0.5;'";
@@ -5176,7 +5230,7 @@ function draw_train_position (hh_and_mm) {
                 var buf = "<span class='multiple_trains'>";
                 for (var cnt_2 = 0; cnt_2 < line_positions[direction_cnt][cnt].length; cnt_2++) {
                     var train = convert_train_position_data(line_positions[direction_cnt][cnt][cnt_2]);
-                    buf += "<img src='" + get_icon(train["first_formation"]) + "' alt='' class='train_icon' onclick='train_detail(\"" + line_id + "\", \"" + train["train_number"] + "\", \"" + train["first_departure_time"] + "\", \"" + directions[direction_cnt] + "_trains\");'";
+                    buf += "<img src='" + get_icon(train["first_formation"]) + "' alt='' class='train_icon' onclick='train_detail(\"" + line_id + "\", \"" + train["train_number"] + "\", \"" + train["first_departure_time"] + "\", \"" + directions[direction_cnt] + "_trains\", true, " + is_today_str + ");'";
                     
                     if (railroad_info["deadhead_train_number_regexp"].test(train["train_title"])) {
                         buf += " style='opacity: 0.5;'"
@@ -5568,12 +5622,6 @@ function position_time_button_change () {
     position_change_time(hh_mm_to_minutes(hh_and_mm) - hh_mm_to_minutes(get_hh_mm(position_time * 60)));
 }
 
-function position_reload () {
-    position_change_time(null);
-    
-    position_reload_button_elm.style.display = "none";
-}
-
 function change_show_train_types (bool_val) {
     config["show_train_types_in_position_mode"] = bool_val;
     
@@ -5907,7 +5955,7 @@ function train_detail (line_id, train_number, first_departure_time, train_direct
     document.getElementById("train_detail_popup").scrollTop = 0;
     
     if (show_operation_data && navigator.onLine) {
-        get_operation_data_detail(get_date_string(get_timestamp()), train_operations, "train_operation_detail_area");
+        get_operation_data_detail(get_date_string(operation_data_date), train_operations, "train_operation_detail_area");
     }
 }
 
@@ -6245,9 +6293,9 @@ function draw_station_timetable (station_name) {
                 
                 if (formation_data["posts_count"] === 0) {
                     if (!config["dark_mode"]) {
-                        var color = "#0000cc";
+                        var color = "#0099cc";
                     } else {
-                        var color = "#9999ff";
+                        var color = "#33ccff";
                     }
                     
                     buf += "<span style='color: " + color + ";'>" + escape_html(formation_data["formation_text"]) + "</span>";
@@ -6369,7 +6417,6 @@ function timetable_operation_next () {
 var operation_data_area_elm = document.getElementById("operation_data_area");
 var operation_date_button_elm = document.getElementById("operation_date_button");
 
-var operation_data_date;
 var operation_all_data_loaded = false;
 
 function operation_data_mode () {
@@ -6500,9 +6547,9 @@ function operation_data_draw () {
             if (operation_number in operation_data["operations"] && operation_data["operations"][operation_number] !== null) {
                 if (operation_data["operations"][operation_number]["posts_count"] === 0) {
                     if (!config["dark_mode"]) {
-                        var color = "#0000cc";
+                        var color = "#0099cc";
                     } else {
-                        var color = "#9999ff";
+                        var color = "#33ccff";
                     }
                     
                     buf += "<td style='color: " + color + ";'>";
