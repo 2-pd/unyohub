@@ -2502,6 +2502,8 @@ a {
     width: calc(100% - 50px) !important;
     
     max-width: 450px;
+    
+    z-index: 2;
 }
 
 .train_overview, .operation_table_train, .location_overview {
@@ -3066,9 +3068,11 @@ button {
 input[type="radio"] + label, .chip + label {
     display: inline-block;
     
+    position: relative;
+    
     margin: 6px 2px;
     
-    padding: 8px 12px;
+    padding: 4px 13px;
     
     border-color: #999999;
     
@@ -3078,10 +3082,6 @@ input[type="radio"] + label, .chip + label {
     color: #666666;
 }
 
-.chip + label {
-    padding: 4px 13px;
-}
-
 .dark_mode input[type="radio"] + label, .dark_mode .chip + label {
     border-color: #808080;
     
@@ -3089,6 +3089,22 @@ input[type="radio"] + label, .chip + label {
     background-color: #555555;
     
     color: #cccccc;
+}
+
+input[type="radio"] + label {
+    margin: 6px 0 6px -1px;
+    
+    padding: 8px 12px;
+    
+    border-radius: 0;
+}
+
+div input[type="radio"]:first-of-type + label {
+    border-radius: 4px 0 0 4px;
+}
+
+div input[type="radio"]:last-of-type + label {
+    border-radius: 0 4px 4px 0;
 }
 
 input[type="radio"]:checked + label, .chip:checked + label {
@@ -3105,6 +3121,8 @@ input[type="radio"]:checked + label {
     border-top-width: 4px;
     
     font-weight: bold;
+    
+    z-index: 1;
 }
 
 .chip:checked + label {
@@ -3204,8 +3222,7 @@ input[type="radio"] + label small, .chip + label small {
         <div class='line_select_wrapper'><select id="position_line_select" onchange="position_change_lines(this.value);"></select></div>
         <div id="position_area" class="wait_icon"></div>
         <div id="position_area_supplement">
-            <input type="radio" name="show_train_numbers_or_train_types" id="show_train_numbers_radio" onchange="change_show_train_types(!this.checked);"><label for="show_train_numbers_radio">列車番号を表示</label><input type="radio" name="show_train_numbers_or_train_types" id="show_train_types_radio" onchange="change_show_train_types(this.checked);"><label for="show_train_types_radio"><span id="show_train_types_label_train_type">種別</span><span id="show_train_types_label_final_destination">行き先</span>を表示</label>
-            <br>
+            <div><input type="radio" name="show_train_numbers_or_train_types" id="show_train_numbers_radio" onchange="change_show_train_types(!this.checked);"><label for="show_train_numbers_radio">列車番号を表示</label><input type="radio" name="show_train_numbers_or_train_types" id="show_train_types_radio" onchange="change_show_train_types(this.checked);"><label for="show_train_types_radio"><span id="show_train_types_label_train_type">種別</span><span id="show_train_types_label_final_destination">行き先</span>を表示</label></div>
             <div class="informational_text">列車の走行位置は時刻表に基づく推定であり、遅延や不定期列車の情報は反映されません</div>
         </div>
     </article>
@@ -3213,7 +3230,7 @@ input[type="radio"] + label small, .chip + label small {
         <div class='line_select_wrapper'><select id="timetable_line_select" onchange="timetable_change_lines(this.value);"></select></div>
         <div id="direction_radio_area">
             <h2 id="timetable_station_name"></h2>
-            <input type="radio" name="direction_radio" id="radio_inbound" value="inbound" checked="checked" onchange="timetable_select_station(timetable_selected_station);"><label for="radio_inbound" id="radio_inbound_label">上り</label><input type="radio" name="direction_radio" id="radio_outbound" value="outbound" onchange="timetable_select_station(timetable_selected_station);"><label for="radio_outbound" id="radio_outbound_label">下り</label><br>
+            <div><input type="radio" name="direction_radio" id="radio_inbound" value="inbound" checked="checked" onchange="timetable_select_station(timetable_selected_station);"><label for="radio_inbound" id="radio_inbound_label">上り</label><input type="radio" name="direction_radio" id="radio_outbound" value="outbound" onchange="timetable_select_station(timetable_selected_station);"><label for="radio_outbound" id="radio_outbound_label">下り</label></div>
             <input type="checkbox" id="show_arriving_trains_check" class="chip" onchange="change_show_arriving_trains(this.checked);"><label for="show_arriving_trains_check">着列車を表示</label><input type="checkbox" id="show_starting_trains_only_check" class="chip" onchange="change_show_starting_trains_only(this.checked);"><label for="show_starting_trains_only_check">当駅始発のみ</label>
         </div>
         <div id="timetable_area" class="wait_icon"></div>
@@ -5631,7 +5648,15 @@ function get_operation_data_detail (operation_date, operation_number_or_list, ar
                     }
                     
                     if (user_data !== null && (data[operation_numbers[cnt]][cnt_2]["user_id"] === user_data["user_id"] || user_data["role"] === "MODERATOR" || user_data["role"] === "ADMIN")) {
-                        user_name_html += "<button type='button' onclick='edit_operation_data(\"" + operation_date + "\", \"" + add_slashes(operation_numbers[cnt]) + "\", \"" + add_slashes(data[operation_numbers[cnt]][cnt_2]["user_id"]) + "\", \"" + add_slashes(formation_text) + "\"" + ip_address_str + ");'>取り消し</button>";
+                        user_name_html += "<button type='button' onclick='edit_operation_data(\"" + operation_date + "\", \"" + add_slashes(operation_numbers[cnt]) + "\", \"" + add_slashes(data[operation_numbers[cnt]][cnt_2]["user_id"]) + "\", \"" + add_slashes(formation_text) + "\"" + ip_address_str + ");'>";
+                        
+                        if (data[operation_numbers[cnt]][cnt_2]["user_id"] === user_data["user_id"]) {
+                            user_name_html += "取り消し";
+                        } else {
+                            user_name_html += "詳細";
+                        }
+                        
+                        user_name_html += "</button>";
                     }
                     
                     user_name_html += "</span>";
@@ -6649,7 +6674,7 @@ function draw_operation_detail (operation_number, operation_data_date_ts_or_oper
     if (config["simplify_operation_details"]) {
         checked_strs.reverse()
     }
-    buf += "<input type='radio' name='switch_simplify_operation_details' id='simplify_operation_details' onchange='change_simplify_operation_details(!this.checked, \"" + add_slashes(operation_number) + "\", " + operation_table_name_or_ts + ", " + is_today + ");'" + checked_strs[0] + "><label for='simplify_operation_details'>詳細表示</label><input type='radio'  name='switch_simplify_operation_details' id='not_simplify_operation_details' onchange='change_simplify_operation_details(this.checked, \"" + add_slashes(operation_number) + "\", " + operation_table_name_or_ts + ", " + is_today + ");'" + checked_strs[1] + "><label for='not_simplify_operation_details'>簡略表示</label>";
+    buf += "<div><input type='radio' name='switch_simplify_operation_details' id='simplify_operation_details' onchange='change_simplify_operation_details(!this.checked, \"" + add_slashes(operation_number) + "\", " + operation_table_name_or_ts + ", " + is_today + ");'" + checked_strs[0] + "><label for='simplify_operation_details'>詳細表示</label><input type='radio'  name='switch_simplify_operation_details' id='not_simplify_operation_details' onchange='change_simplify_operation_details(this.checked, \"" + add_slashes(operation_number) + "\", " + operation_table_name_or_ts + ", " + is_today + ");'" + checked_strs[1] + "><label for='not_simplify_operation_details'>簡略表示</label></div>";
     
     buf += "<div id='operation_trains_area'></div>";
     
