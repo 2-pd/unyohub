@@ -4739,15 +4739,37 @@ function update_operation_table(resolve_func, reject_func, operation_table, last
 var timetable = null;
 
 var timetable_operation_table;
-var timetable_operation_name_elm = document.getElementById("timetable_operation_name");
 
-function update_timetable (resolve_func, reject_func, operation_table) {
+function update_timetable (resolve_func, reject_func, operation_table_or_ts) {
     timetable = null;
     
     var railroad_id = railroad_info["railroad_id"];
     
-    timetable_operation_table = operation_table;
-    timetable_operation_name_elm.innerText = railroad_info["operations"][operation_table]["operation_name"];
+    var timetable_operation_name_elm = document.getElementById("timetable_operation_name");
+    
+    if (Number.isFinite(operation_table_or_ts)) {
+        var operation_table = get_days_operation(operation_table_or_ts);
+        
+        var now_ts = get_timestamp();
+        if (get_date_string(operation_table_or_ts) === get_date_string(now_ts)) {
+            timetable_operation_table = "__today__";
+            
+            timetable_operation_name_elm.innerHTML = "今日<small>(" + railroad_info["operations"][operation_table]["operation_name"] + ")</small>";
+        } else if (get_date_string(operation_table_or_ts) === get_date_string(now_ts + 86400)) {
+            timetable_operation_table = "__tomorrow__";
+            
+            timetable_operation_name_elm.innerHTML = "明日<small>(" + railroad_info["operations"][operation_table]["operation_name"] + ")</small>";
+        } else {
+            timetable_operation_table = operation_table;
+            
+            timetable_operation_name_elm.innerHTML = railroad_info["operations"][operation_table]["operation_name"];
+        }
+    } else {
+        var operation_table = operation_table_or_ts;
+        timetable_operation_table = operation_table;
+        
+        timetable_operation_name_elm.innerHTML = railroad_info["operations"][operation_table]["operation_name"];
+    }
     
     idb_start_transaction("timetables", false, function (transaction) {
         var timetables_store = transaction.objectStore("timetables");
@@ -4827,13 +4849,13 @@ function update_operation_data (resolve_func, reject_func, remote_data_only = fa
             }
             
             if (navigator.onLine) {
+                if (operation_data === null) {
+                    operation_data = {railroad_id : railroad_id, operation_date : operation_date, operations : {}, last_modified_timestamp : null};
+                }
+                
                 ajax_fetch("api/operation_data.php", "railroad_id=" + escape_form_data(railroad_id) + "&date=" + escape_form_data(operation_date) + "&last_modified_timestamp=" + last_modified_timestamp, function (response, last_modified) {
                     if (response !== false) {
-                        if (operation_data === null) {
-                            operation_data = {railroad_id : railroad_id, operation_date : operation_date, operations : {}, last_modified_timestamp : null};
-                        }
-                        
-                        if (response !== "NO_UPDATES_AVAILABLE") {
+                        if (response !== "NO_UPDATES_AVAILABLE" && operation_data["railroad_id"] === railroad_id && operation_data["operation_date"] === operation_date) {
                             Object.assign(operation_data["operations"], JSON.parse(response));
                             
                             var last_modified_date = new Date(last_modified);
@@ -4984,7 +5006,7 @@ function position_mode (date_str = "today", position_time_additions = null, rese
             } else if (all_resolved) {
                 position_change_time(0);
             }
-        }, reject, operation_table);
+        }, reject, operation_data_date);
     });
     
     var promise_3_resolved = false;
@@ -5713,7 +5735,13 @@ function get_operation_data_detail (operation_date, operation_number_or_list, ar
                 }
                 
                 if (cnt_2 === 0) {
-                    detail_html += "<div class='descriptive_text'>当日の目撃情報はありません</div>";
+                    detail_html += "<div class='descriptive_text'>";
+                    if (operation_date === get_date_string(get_timestamp())) {
+                        detail_html += "まだ目撃情報が投稿されていません";
+                    } else {
+                        detail_html += "当日の目撃情報はありません";
+                    }
+                    detail_html += "</div>";
                 }
                 
                 detail_html += "</div>";
@@ -6024,7 +6052,7 @@ function timetable_mode (load_data = true) {
                         promise_2_resolved = true;
                         resolve();
                     }
-                }, reject, get_days_operation(ts));
+                }, reject, ts);
             }),
             new Promise(function (resolve, reject) {
                 update_operation_data(function () {
@@ -6220,8 +6248,6 @@ function draw_station_timetable (station_name) {
     keys = Object.keys(departure_times);
     keys.sort();
     
-    var bg_color = railroad_info["operations"][timetable_operation_table]["main_color"];
-    
     if (config["dark_mode"]) {
         bg_color = convert_color_dark_mode(bg_color);
         
@@ -6230,11 +6256,21 @@ function draw_station_timetable (station_name) {
         var color_style = " color: #444444;";
     }
     
-    if (timetable_operation_table === get_days_operation(get_timestamp())) {
+    if (timetable_operation_table === "__today__") {
+        var show_operation_data = true;
         var is_today = true;
-    } else {
+        var operation_table = get_days_operation(get_timestamp());
+    } else if (timetable_operation_table === "__tomorrow__") {
+        var show_operation_data = true;
         var is_today = false;
+        var operation_table = get_days_operation(get_timestamp() + 86400);
+    } else {
+        var show_operation_data = false;
+        var is_today = false;
+        var operation_table = timetable_operation_table;
     }
+    
+    var bg_color = railroad_info["operations"][operation_table]["main_color"];
     
     var buf = "";
     for (cnt = 0; cnt < keys.length; cnt++) {
@@ -6244,10 +6280,10 @@ function draw_station_timetable (station_name) {
         keys_2.sort();
         
         for (cnt_2 = 0; cnt_2 < keys_2.length; cnt_2++) {
-            buf += "<a href='javascript:void(0);' onclick='train_detail(\"" + line_id + "\", \"" + departure_times[keys[cnt]][keys_2[cnt_2]] + "\", \"" + first_departure_times[keys[cnt]][keys_2[cnt_2]] + "\", \"" + train_direction + "\", " + is_today + ", " + is_today + ");' class='timetable_train'>";
+            buf += "<a href='javascript:void(0);' onclick='train_detail(\"" + line_id + "\", \"" + departure_times[keys[cnt]][keys_2[cnt_2]] + "\", \"" + first_departure_times[keys[cnt]][keys_2[cnt_2]] + "\", \"" + train_direction + "\", " + show_operation_data + ", " + is_today + ");' class='timetable_train'>";
             
             var train_operations = get_operations(line_id, departure_times[keys[cnt]][keys_2[cnt_2]], first_departure_times[keys[cnt]][keys_2[cnt_2]], train_direction);
-            if (is_today) {
+            if (show_operation_data) {
                 var formation_data = convert_formation_data(line_id, train_operations, is_inbound);
                 
                 buf += "<img src='" + get_icon(formation_data["first_formation"]) + "' alt='' class='train_icon'>";
@@ -6273,7 +6309,7 @@ function draw_station_timetable (station_name) {
             
             buf += get_final_destination(line_id, departure_times[keys[cnt]][keys_2[cnt_2]], first_departure_times[keys[cnt]][keys_2[cnt_2]]);
             
-            if (is_today) {
+            if (show_operation_data) {
                 buf += "　<small>";
                 if (train_operations !== null) {
                     var car_count = 0;
@@ -6364,8 +6400,19 @@ function change_show_starting_trains_only (bool_val) {
 }
 
 function timetable_change_operation (operation_table_name) {
+    if (operation_table_name === "__today__") {
+        var operation_table_or_ts = get_timestamp();
+        operation_table_name = get_days_operation(operation_table_or_ts);
+    } else if (operation_table_name === "__tomorrow__") {
+        var operation_table_or_ts = get_timestamp() + 86400;
+        operation_table_name = get_days_operation(operation_table_or_ts);
+    } else {
+        var operation_table_or_ts = operation_table_name;
+    }
+    
     var promise_1_resolved = false;
     var promise_2_resolved = false;
+    var promise_3_resolved = false;
     
     timetable_promise_list = [
         new Promise(function (resolve, reject) {
@@ -6382,9 +6429,20 @@ function timetable_change_operation (operation_table_name) {
                     promise_2_resolved = true;
                     resolve();
                 }
-            }, reject, operation_table_name);
+            }, reject, operation_table_or_ts);
         })
     ];
+    
+    if (Number.isFinite(operation_table_or_ts)) {
+        timetable_promise_list.push(new Promise(function (resolve, reject) {
+            update_operation_data(function () {
+                if (!promise_3_resolved) {
+                    promise_3_resolved = true;
+                    resolve();
+                }
+            }, reject, false, get_date_string(operation_table_or_ts));
+        }));
+    }
     
     if (timetable_selected_station !== null) {
         timetable_select_station(timetable_selected_station);
@@ -6392,7 +6450,7 @@ function timetable_change_operation (operation_table_name) {
 }
 
 function timetable_operation_previous () {
-    var keys = Object.keys(railroad_info["operations"]);
+    var keys = ["__today__", "__tomorrow__", ...Object.keys(railroad_info["operations"])];
     var key_index = keys.indexOf(timetable_operation_table) - 1;
     
     if (key_index < 0) {
@@ -6403,7 +6461,7 @@ function timetable_operation_previous () {
 }
 
 function timetable_operation_next () {
-    var keys = Object.keys(railroad_info["operations"]);
+    var keys = ["__today__", "__tomorrow__", ...Object.keys(railroad_info["operations"])];
     var key_index = keys.indexOf(timetable_operation_table) + 1;
     
     if (key_index >= keys.length) {
