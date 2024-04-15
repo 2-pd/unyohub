@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width,initial-scale=1,interactive-widget=resizes-content">
 <script>
     const UNYOHUB_APP_NAME = "鉄道運用Hub";
-    const UNYOHUB_VERSION = "24.04-3";
+    const UNYOHUB_VERSION = "24.04-4";
     const UNYOHUB_INDEXEDDB_VERSION = 2310001;
     const UNYOHUB_LICENSE_TEXT = "このアプリケーションは無権利創作宣言に準拠して著作権放棄されています。";
     const UNYOHUB_LICENSE_URL = "https://www.2pd.jp/license/";
@@ -1755,13 +1755,14 @@ footer div {
     background-color: #555555;
 }
 
-.previous_button, .next_button, .reload_button, .back_button, .date_button, .time_button {
+.previous_button, .next_button, .reload_button, .back_button, .list_button, .date_button, .time_button {
     width: 35px;
     height: 45px;
     
     padding: 0;
     
     border: none;
+    border-radius: 0;
     
     background-image: url(data:image/webp;base64,UklGRoQAAABXRUJQVlA4THgAAAAvHcAOEG9gkG2k5vwN3vWnYSBtmzD/Du71NZC2TZh/B/f6KgoAwvETQf+PIDsMCbgRgLuj/78oNB4+pPrbEFz9aqoEm8i26ryeFifLxwcSsBIJMRApERFLeT1dRP+FBAkmr0wo8W9DTbxwR9Lh7ANXYsGXmFDO5AM=) !important;
     background-repeat: no-repeat;
@@ -1805,7 +1806,7 @@ footer small {
     font-size: 17px;
 }
 
-.reload_button, .back_button, .date_button, .time_button {
+.reload_button, .back_button, .list_button, .date_button, .time_button {
     position: absolute;
     bottom: 0;
     left: 0;
@@ -1815,7 +1816,7 @@ footer small {
     background-size: 30px;
 }
 
-.date_button, .time_button {
+.list_button, .date_button, .time_button {
     left: unset !important;
     right: 0;
     
@@ -1826,6 +1827,10 @@ footer small {
     -webkit-tap-highlight-color: rgba(153, 153, 153, 0.2);
     appearance: none;
     -webkit-appearance: none;
+}
+
+.list_button {
+    background-image: url(data:image/webp;base64,UklGRjwAAABXRUJQVlA4TC8AAAAvO8AOEA8wmZM5mfMf8FATSZJyIOD8e6WQHsOI/gsICj0wA1LBGhEh+wTb+qZfAAA=) !important;
 }
 
 .date_button {
@@ -3291,7 +3296,7 @@ input[type="radio"] + label small, .chip + label small {
         </div>
         <div>
             <button id="timetable_back_button" class="back_button" onclick="timetable_change_lines(timetable_line_select_elm.value, true);"></button>
-            <button type="button" class="previous_button" onclick="timetable_operation_previous();"></button><span id="timetable_operation_name" class="footer_value_wide"></span><button type="button" class="next_button" onclick="timetable_operation_next();"></button>
+            <button type="button" class="previous_button" onclick="timetable_operation_previous();"></button><span id="timetable_operation_name" class="footer_value_wide"></span><button type="button" class="next_button" onclick="timetable_operation_next();"></button><button type="button" class="list_button" onclick="timetable_list_operation_tables();"></button>
         </div>
         <div>
             <button class="reload_button" onclick="operation_data_change_date(null);"></button>
@@ -3302,7 +3307,7 @@ input[type="radio"] + label small, .chip + label small {
             <button id="formation_back_button" class="back_button" onclick="draw_formation_table();"></button>
         </div>
         <div>
-            <button type="button" class="previous_button" onclick="operation_table_previous();"></button><span id="operation_table_name" class="footer_value_wide"></span><button type="button" class="next_button" onclick="operation_table_next();"></button>
+            <button type="button" class="previous_button" onclick="operation_table_previous();"></button><span id="operation_table_name" class="footer_value_wide"></span><button type="button" class="next_button" onclick="operation_table_next();"></button><button type="button" class="list_button" onclick="operation_table_list_tables();"></button>
         </div>
     </footer>
     <div id="popup_background"></div>
@@ -3439,6 +3444,11 @@ input[type="radio"] + label small, .chip + label small {
             <button type="button" class="popup_close_button" onclick="close_square_popup();"></button>
             <h3>情報を投稿する運用の選択</h3>
             <div id="select_operation_area"></div>
+        </div>
+        <div class="preview_popup" id="operation_table_list_popup">
+            <button type="button" class="popup_close_button" onclick="close_square_popup();"></button>
+            <h3>ダイヤの選択</h3>
+            <div id="operation_table_list_area"></div>
         </div>
         <div class="square_popup" id="about_popup">
             <button type="button" class="popup_close_button" onclick="close_square_popup();"></button>
@@ -6041,6 +6051,8 @@ function timetable_mode (load_data = true) {
     if (load_data) {
         var ts = get_timestamp();
         
+        operation_data_date = ts;
+        
         var promise_1_resolved = false;
         var promise_2_resolved = false;
         var promise_3_resolved = false;
@@ -6256,14 +6268,6 @@ function draw_station_timetable (station_name) {
     keys = Object.keys(departure_times);
     keys.sort();
     
-    if (config["dark_mode"]) {
-        bg_color = convert_color_dark_mode(bg_color);
-        
-        var color_style = "";
-    } else {
-        var color_style = " color: #444444;";
-    }
-    
     if (timetable_operation_table === "__today__") {
         var show_operation_data = true;
         var is_today = true;
@@ -6279,6 +6283,14 @@ function draw_station_timetable (station_name) {
     }
     
     var bg_color = railroad_info["operations"][operation_table]["main_color"];
+    
+    if (config["dark_mode"]) {
+        bg_color = convert_color_dark_mode(bg_color);
+        
+        var color_style = "";
+    } else {
+        var color_style = " color: #444444;";
+    }
     
     var buf = "";
     for (cnt = 0; cnt < keys.length; cnt++) {
@@ -6411,9 +6423,13 @@ function timetable_change_operation (operation_table_name) {
     if (operation_table_name === "__today__") {
         var operation_table_or_ts = get_timestamp();
         operation_table_name = get_days_operation(operation_table_or_ts);
+        
+        operation_data_date = operation_table_or_ts;
     } else if (operation_table_name === "__tomorrow__") {
         var operation_table_or_ts = get_timestamp() + 86400;
         operation_table_name = get_days_operation(operation_table_or_ts);
+        
+        operation_data_date = operation_table_or_ts;
     } else {
         var operation_table_or_ts = operation_table_name;
     }
@@ -6457,26 +6473,53 @@ function timetable_change_operation (operation_table_name) {
     }
 }
 
+function timetable_get_operation_table_list () {
+    return ["__today__", "__tomorrow__", ...railroad_info["operations_order"]];
+}
+
 function timetable_operation_previous () {
-    var keys = ["__today__", "__tomorrow__", ...Object.keys(railroad_info["operations"])];
-    var key_index = keys.indexOf(timetable_operation_table) - 1;
+    var operation_table_list = timetable_get_operation_table_list();
+    var list_index = operation_table_list.indexOf(timetable_operation_table) - 1;
     
-    if (key_index < 0) {
-        key_index = keys.length - 1;
+    if (list_index < 0) {
+        list_index = operation_table_list.length - 1;
     }
     
-    timetable_change_operation(keys[key_index]);
+    timetable_change_operation(operation_table_list[list_index]);
 }
 
 function timetable_operation_next () {
-    var keys = ["__today__", "__tomorrow__", ...Object.keys(railroad_info["operations"])];
-    var key_index = keys.indexOf(timetable_operation_table) + 1;
+    var operation_table_list = timetable_get_operation_table_list();
+    var list_index = operation_table_list.indexOf(timetable_operation_table) + 1;
     
-    if (key_index >= keys.length) {
-        key_index = 0;
+    if (list_index >= operation_table_list.length) {
+        list_index = 0;
     }
     
-    timetable_change_operation(keys[key_index]);
+    timetable_change_operation(operation_table_list[list_index]);
+}
+
+function timetable_list_operation_tables () {
+    open_square_popup("operation_table_list_popup");
+    
+    var operation_table_list = timetable_get_operation_table_list();
+    
+    var buf = "";
+    for (var cnt = 0; cnt < operation_table_list.length; cnt++) {
+        buf += "<button type='button' class='wide_button' onclick='close_square_popup(); timetable_change_operation(\"" + operation_table_list[cnt] + "\");'>";
+        
+        if (operation_table_list[cnt] === "__today__") {
+            buf += "今日(" + railroad_info["operations"][get_days_operation(get_timestamp())]["operation_name"] + ")";
+        } else if (operation_table_list[cnt] === "__tomorrow__") {
+            buf += "明日(" + railroad_info["operations"][get_days_operation(get_timestamp() + 86400)]["operation_name"] + ")";
+        } else {
+            buf += railroad_info["operations"][operation_table_list[cnt]]["operation_name"];
+        }
+        
+        buf += "</button>";
+    }
+    
+    document.getElementById("operation_table_list_area").innerHTML = buf;
 }
 
 
@@ -7574,7 +7617,9 @@ function reset_operation_narrow_down (close_menu = true) {
     operation_table_list_number();
 }
 
-function operation_table_change () {
+function operation_table_change (new_operation_table_name) {
+    operation_table_name = new_operation_table_name;
+    
     operation_search_area_elm.style.display = "none";
     operation_table_area_elm.innerHTML = "";
     operation_table_info_elm.innerHTML = "";
@@ -7614,27 +7659,34 @@ function operation_table_change () {
 }
 
 function operation_table_previous () {
-    var keys = Object.keys(railroad_info["operations"]);
-    var key_index = keys.indexOf(operation_table_name) - 1;
+    var list_index = railroad_info["operations_order"].indexOf(operation_table_name) - 1;
     
-    if (key_index < 0) {
-        key_index = keys.length - 1;
+    if (list_index < 0) {
+        list_index = railroad_info["operations_order"].length - 1;
     }
     
-    operation_table_name = keys[key_index];
-    operation_table_change();
+    operation_table_change(railroad_info["operations_order"][list_index]);
 }
 
 function operation_table_next () {
-    var keys = Object.keys(railroad_info["operations"]);
-    var key_index = keys.indexOf(operation_table_name) + 1;
+    var list_index = railroad_info["operations_order"].indexOf(operation_table_name) + 1;
     
-    if (key_index >= keys.length) {
-        key_index = 0;
+    if (list_index >= railroad_info["operations_order"].length) {
+        list_index = 0;
     }
     
-    operation_table_name = keys[key_index];
-    operation_table_change();
+    operation_table_change(railroad_info["operations_order"][list_index]);
+}
+
+function operation_table_list_tables () {
+    open_square_popup("operation_table_list_popup");
+    
+    var buf = "";
+    for (var cnt = 0; cnt < railroad_info["operations_order"].length; cnt++) {
+        buf += "<button type='button' class='wide_button' onclick='close_square_popup(); operation_table_change(\"" + railroad_info["operations_order"][cnt] + "\");'>"  + railroad_info["operations"][railroad_info["operations_order"][cnt]]["operation_name"] + "</button>";
+    }
+    
+    document.getElementById("operation_table_list_area").innerHTML = buf;
 }
 
 
