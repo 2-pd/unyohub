@@ -284,7 +284,7 @@ function revoke_post ($wakarana, $operation_date_ts, $operation_number, $post_us
     
     $latest_data = $db_obj->querySingle("SELECT `formations`, `user_id`, `comment` FROM `unyohub_data` WHERE `operation_date` = '".$operation_date."' AND `operation_number` = '".$operation_number."' ORDER BY `posted_datetime` DESC LIMIT 1", TRUE);
     
-    if (count($latest_data) >= 1) {
+    if (!empty($latest_data)) {
         $formations = $latest_data["formations"];
         
         if ($formations !== "") {
@@ -318,11 +318,21 @@ function revoke_post ($wakarana, $operation_date_ts, $operation_number, $post_us
         
         return array("formations" => $formations, "posts_count" => $data_cache_values["posts_count"], "variant_exists" => $data_cache_values["variant_exists"], "comment_exists" => $comment_exists, "from_beginner" => $from_beginner);
     } else {
-        update_data_cache($operation_date, $operation_number, NULL, $posted_datetime);
-        
         if (!empty($operation_data["terminal_track"])) {
             update_next_day_data($operation_date_ts, $operation_data["terminal_location"], $operation_data["terminal_track"], NULL, $posted_datetime);
         }
+        
+        if (!empty($operation_data["starting_track"])) {
+            $previous_day_data = $db_obj->querySingle("SELECT `unyohub_data_caches`.`formations`, `unyohub_data_caches`.`from_beginner` FROM `unyohub_operations`, `unyohub_data_caches` WHERE `unyohub_operations`.`operation_table` = '".$db_obj->escapeString(get_operation_table($operation_date_ts - 86400))."' AND `unyohub_operations`.`terminal_location` = '".$db_obj->escapeString($operation_data["starting_location"])."' AND `unyohub_operations`.`terminal_track` = '".$db_obj->escapeString($operation_data["starting_track"])."' AND `unyohub_data_caches`.`operation_date` = '".date("Y-m-d", $operation_date_ts - 86400)."' AND `unyohub_data_caches`.`operation_number` = `unyohub_operations`.`operation_number`", TRUE);
+            
+            if (!empty($previous_day_data)) {
+                update_data_cache($operation_date, $operation_number, $previous_day_data["formations"], $posted_datetime, explode("+", $previous_day_data["formations"]), 0, FALSE, FALSE, $previous_day_data["from_beginner"]);
+                
+                return array("formations" => $previous_day_data["formations"], "posts_count" => 0, "variant_exists" => FALSE, "comment_exists" => FALSE, "from_beginner" => $previous_day_data["from_beginner"]);
+            }
+        }
+        
+        update_data_cache($operation_date, $operation_number, NULL, $posted_datetime);
         
         return NULL;
     }
