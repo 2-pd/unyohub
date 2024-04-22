@@ -1933,7 +1933,7 @@ footer small {
     }
 }
 
-.popup_close_button, .message_close_button {
+.popup_close_button, .message_close_button, .screenshot_button {
     background-image: url(data:image/webp;base64,UklGRhwBAABXRUJQVlA4TA8BAAAvO8AOEJegEJIkp+v8SU7sCXLUUNC2kWMdfyRH7BHsqaBtI8c6/kiO2CPYU1HbSM52/lo8+1xO1+cClJlRa5W11kABAD4A/P8ZAoVEBGP9/xuzlJIOR24kKdLAMu/+/7VNlZm9pznxVET/HbmRJEXVDokTzNrwhmYoWz/yRZHzfXTMtLcPV+/Hjcl95YqYAqYUHmM8p+MnyLZ6Omf0ZMvV80P82ON3yKNSINKAUwHTgVIC0jJTM1I73IvpFZOyE7NSu+Tz1Dcvaz6vTd/NC+u4VahMnqVGzzeP2tiWK4vcE4v0GdSZtAGUQXSBVME0Ef7xHvrltphlcidv/PnuhMrCpRsbY+WfkRhr3WezgWzNAA==) !important;
     background-repeat: no-repeat;
     background-position: center;
@@ -1943,7 +1943,7 @@ footer small {
     z-index: 10;
 }
 
-.popup_close_button {
+.popup_close_button, .screenshot_button {
     position: fixed;
     top: 0;
     right: 10px;
@@ -1954,7 +1954,13 @@ footer small {
     background-size: 30px;
 }
 
-.popup .popup_close_button {
+.screenshot_button {
+    background-image: url(data:image/webp;base64,UklGRoABAABXRUJQVlA4THQBAAAvO8AOEJXAkSTJbcT/m3p7eRZNfvIUdogdnoBZADjUIsJxAABKQjcs0GXs07lBtyPR8NZ/vc4l/HW3TgAdu/7m9sLc9eDyj5MzWkfjcN4D5fSOoj6p6u5xDGN/r7R7KhzDfOwtNReyfJ2i4k3RMlXlqm1U1u5aQ35Yj7JTadyw/XhJTnpbQm6NmyVPlgZFmZpadKwRZX3Uw5z7+pbCxYsdNXQlfwIBU1JNLXQZb6lxB1DkSE+ZwErUKhoFLsBa19OPbOB+jaLAHZDrJxcBNcOoOpArflICyEtLmgPLlJ8FB+hsOQH93ugITAU/A3C13IGc9KMykBoW1YFc85McYEoKlJ5bYgJB9vzo9WYBK/HZ9LwAw9VPKALYEqqn+emkmepMIHiHcxyOQkN21Dhc6TuY3uE0erjQqRRxSInSMIZRhxqKLKGX3FxZpjZsr3Sqnq9hTU6NUTtLu9qspVaiERay3FeNV3IGiMZ2PHYHze2FubvpwgE=) !important;
+    
+    right: 55px;
+}
+
+.popup .popup_close_button, .popup .screenshot_button {
     animation: popup_up 0.05s ease-out;
 }
 
@@ -2071,6 +2077,34 @@ a {
     width: fit-content;
     
     margin: 20px auto 10px auto;
+}
+
+#screenshot_preview {
+    position: relative;
+    
+    height: 480px;
+    
+    margin-bottom: 20px;
+    
+    padding: 10px;
+    
+    background-color: rgba(0, 0, 0, 0.6);
+}
+
+#screenshot_preview:empty:before {
+    position: absolute !important;
+    
+    top: 190px !important;
+    left: calc(50% - 60px) !important;
+}
+
+#screenshot_preview img {
+    display: block;
+    
+    max-width: 100%;
+    max-height: 480px;
+    
+    margin: 0 auto;
 }
 
 #popup_screen, #wait_screen {
@@ -2203,7 +2237,7 @@ a {
     right: calc(50% - 150px);
 }
 
-.square_popup.popup_active .popup_close_button {
+.square_popup.popup_active .popup_close_button, .square_popup.popup_active .screenshot_button {
     animation: square_popup_close_button_up 0.05s ease-out;
 }
 
@@ -2222,7 +2256,12 @@ a {
     right: max(20px, calc(50% - 230px));
 }
 
-.preview_popup.popup_active .popup_close_button {
+.preview_popup .screenshot_button {
+    top: 20px;
+    right: max(75px, calc(50% - 175px));
+}
+
+.preview_popup.popup_active .popup_close_button, .preview_popup.popup_active .screenshot_button {
     animation: preview_popup_close_button_up 0.05s ease-out;
 }
 
@@ -2436,7 +2475,7 @@ a {
     color: inherit;
 }
 
-#train_detail_day {
+.train_detail_day {
     position: absolute;
     top: 12px;
     left: 16px;
@@ -2504,13 +2543,13 @@ a {
 }
 
 .dark_mode .train_detail_departure_times:before {
-    background-color: #666666;
+    background-color: #eeeeee;
 }
 
 .dark_mode .train_detail_departure_times_highlight:before {
     background-color: #cccc33;
     
-    border-color: #666666;
+    border-color: #eeeeee;
 }
 
 .train_detail_departure_times:last-of-type {
@@ -2767,7 +2806,7 @@ a {
     z-index: 301 !important;
 }
 
-#wait_screen:before, .wait_icon:empty:before, .splash_screen_loading:before {
+#wait_screen:before, .wait_icon:empty:before, .splash_screen_loading:before, #screenshot_preview:empty:before {
     content: "";
     
     display: block;
@@ -2883,6 +2922,60 @@ a {
     
     background-size: 20px;
     background-color: transparent !important;
+}
+
+.screenshot_area {
+    position: fixed;
+    top: 0;
+    left: 100vw;
+    
+    box-sizing: border-box;
+    
+    width: 400px;
+    
+    padding: 20px 10px;
+    
+    text-align: center;
+}
+
+.screenshot_area button, .screenshot_area label, .screenshot_area label+div, .screenshot_area .informational_text {
+    display: none !important;
+}
+
+.screenshot_area .search_highlight, .screenshot_area .train_detail_departure_times_highlight {
+    background-color: inherit !important;
+    
+    font-weight: inherit !important;
+}
+
+.screenshot_area .train_detail_departure_times_highlight:before {
+    top: 14px;
+    left: -14px;
+    
+    width: 8px;
+    height: 8px;
+    
+    background-color: #ffffff;
+    
+    border: none;
+    border-radius: 4px;
+}
+
+.dark_mode.screenshot_area .train_detail_departure_times_highlight:before {
+    background-color: #eeeeee;
+}
+
+.screenshot_area #operation_trains_area {
+    margin-bottom: 0;
+}
+
+.screenshot_area .train_detail_day {
+    top: 10px;
+    left: 10px;
+}
+
+.screenshot_area .train_detail_day+h3 {
+    margin-top: 30px;
 }
 
 input[type="text"], input[type="number"], input[type="password"], input[type="search"], .wide_select, .line_select_wrapper select {
@@ -3317,6 +3410,7 @@ input[type="radio"] + label small, .chip + label small {
         <div id="railroad_select_area"></div>
     </div>
     <div class="popup" id="operation_detail_popup">
+        <button type="button" class="screenshot_button" onclick="take_screenshot('operation_detail_area');"></button>
         <button type="button" class="popup_close_button" onclick="popup_close();"></button>
         <div id="operation_detail_area" class="wait_icon"></div>
     </div>
@@ -3383,6 +3477,12 @@ input[type="radio"] + label small, .chip + label small {
         <h2>運用情報の取り消し</h2>
         <div id="edit_operation_data_area"></div>
     </div>
+    <div class="popup" id="screenshot_popup">
+        <button type="button" class="popup_close_button" onclick="popup_close();"></button>
+        <h2>スクリーンショット</h2>
+        <div id="screenshot_preview"></div>
+        <button type="button" id="save_screenshot_button" class="wide_button" onclick="save_screenshot();">画像として保存</button>
+    </div>
     <div class="popup" id="rules_popup">
         <button type="button" class="popup_close_button" onclick="popup_close();"></button>
         <div id="rules_info" class="warning_text">
@@ -3436,8 +3536,8 @@ input[type="radio"] + label small, .chip + label small {
             <div id="select_lines_area"></div>
         </div>
         <div class="preview_popup" id="train_detail_popup">
+            <button type="button" class="screenshot_button" onclick="take_screenshot('train_detail_area');"></button>
             <button type="button" class="popup_close_button" onclick="close_square_popup();"></button>
-            <span id="train_detail_day"></span>
             <div id="train_detail_area" class="wait_icon"></div>
         </div>
         <div class="square_popup" id="select_operation_popup">
@@ -3562,6 +3662,194 @@ function zizai_captcha_get_html (callback_func, button_color = "#dddddd", id_nam
 }
 
 /* captcha.js ここまで */
+
+
+/* elm2img.js 24.04-1 */
+
+class elm2img {
+    constructor () {
+        this.func_queue = [];
+        this.constructor_executed = false;
+        
+        var css_code = "";
+        for (var cnt = 0; cnt < document.styleSheets.length; cnt++) {
+            var css_rules = document.styleSheets[cnt].cssRules;
+            for (var cnt_2 = 0; cnt_2 < css_rules.length; cnt_2++) {
+                css_code += css_rules[cnt_2].cssText + "\n";
+            }
+        }
+        
+        var promise_list = [];
+        var css_split_list = [];
+        
+        var url_regexp = /url\(["']?(http:|https:)?[^:"'\(\)]+["']?\)/g;
+        var url_before_after_regexp = /(^url\(["']?|["']?\)$)/g;
+        
+        var last_match = 0;
+        while (true) {
+            var url_data = url_regexp.exec(css_code);
+            
+            if (url_data === null) {
+                css_split_list.push(css_code.substring(last_match));
+                break;
+            }
+            
+            promise_list.push(elm2img.encode_external_data(url_data[0].replaceAll(url_before_after_regexp, "")));
+            
+            css_split_list.push(css_code.substring(last_match, url_data.index));
+            last_match = url_regexp.lastIndex;
+        }
+        
+        var e2i = this;
+        Promise.all(promise_list).then(function (base64_data_list) {
+            var css_code = css_split_list[0];
+            for (var cnt = 0; cnt < base64_data_list.length; cnt++) {
+                css_code += "url('" + base64_data_list[cnt] + "')" + css_split_list[cnt + 1];
+            }
+            
+            e2i.css_code = "<style>\n" + css_code + "</style>";
+            
+            e2i.constructor_executed = true;
+            
+            for (cnt = 0; cnt < e2i.func_queue.length; cnt++) {
+                e2i.func_queue[cnt]();
+            }
+        });
+        
+        this.set_background_color();
+    }
+    
+    func_queue_add (func) {
+        if (this.constructor_executed) {
+            func();
+        } else {
+            this.func_queue.push(func);
+        }
+    }
+    
+    static encode_external_data (url) {
+        return new Promise(function (resolve) {
+            fetch(url).then(function (response) {
+                response.blob().then(function (blob) {
+                    var reader = new FileReader();
+                    
+                    reader.onload = function () {
+                        resolve(reader.result);
+                    };
+                    
+                    reader.readAsDataURL(blob);
+                });
+            });
+        });
+    }
+    
+    static embed_image (elm) {
+        var img_elms = [...elm.getElementsByTagName("img")];
+        
+        var promise_list = [];
+        img_elms.forEach (function (img_elm) {
+            if (img_elm.src.substring(0, 5) !== "data:") {
+                promise_list.push(elm2img.encode_external_data(img_elm.src).then(function (base64_data) {
+                    img_elm.src = base64_data;
+                }));
+            }
+        });
+        
+        return promise_list;
+    }
+    
+    get_image_url (elm, width, height) {
+        var xml_serializer = new XMLSerializer();
+        var svg_code = "<svg xmlns='http://www.w3.org/2000/svg' width='" + width + "' height='" + height + "'>" + this.css_code + "<foreignObject width='100%' height='100%'>" + xml_serializer.serializeToString(elm) + "</foreignObject></svg>";
+        
+        return "data:image/svg+xml;charset=utf-8;base64," + btoa(encodeURIComponent(svg_code).replace(/%([0-9A-F][0-9A-F])/g, function (match, match_1) {
+            return String.fromCharCode('0x' + match_1);
+        }));
+    }
+    
+    get_image (callback_func, elm, mime_type, scale, quality = 100) {
+        var elm_2 = elm.cloneNode(true);
+        
+        var image_promise_list = elm2img.embed_image(elm_2);
+        
+        var img_elm = document.createElement("img");
+        
+        var canv = document.createElement("canvas");
+        var ctx = canv.getContext("2d");
+        
+        canv.width = Math.round(elm.offsetWidth * scale);
+        canv.height = Math.round(elm.offsetHeight * scale);
+        
+        if (this.background_color !== null) {
+            ctx.fillStyle = this.background_color;
+            ctx.fillRect(0, 0, canv.width, canv.height);
+        }
+        
+        elm_2.style.transform = "translate(" + ((canv.width - elm.offsetWidth) / 2) + "px, " + ((canv.height - elm.offsetHeight) / 2) + "px) scale(" + scale + ")";
+        elm_2.style.boxSizing = "border-box";
+        elm_2.style.width = elm.offsetWidth + "px";
+        elm_2.style.height = elm.offsetHeight + "px";
+        elm_2.style.maxWidth = elm.offsetWidth + "px";
+        elm_2.style.maxHeight = elm.offsetHeight + "px";
+        elm_2.style.setProperty("margin" ,"0", "important");
+        elm_2.style.position = "static";
+        
+        img_elm.onload = function () {
+            ctx.drawImage(img_elm, 0, 0, canv.width, canv.height);
+            callback_func(canv.toDataURL(mime_type, quality / 100));
+        };
+        
+        var e2i = this;
+        Promise.all(image_promise_list).then(function () {
+            e2i.func_queue_add (function () {
+                img_elm.src = e2i.get_image_url(elm_2, canv.width, canv.height);
+            });
+        });
+    }
+    
+    get_webp (callback_func, elm, scale = 1, quality = 100) {
+        this.get_image(callback_func, elm, "image/webp", scale, quality);
+    }
+    
+    get_png (callback_func, elm, scale = 1) {
+        this.get_image(callback_func, elm, "image/png", scale);
+    }
+    
+    get_jpeg (callback_func, elm, scale = 1, quality = 100) {
+        this.get_image(callback_func, elm, "image/jpeg", scale, quality);
+    }
+    
+    static save_image (image_data, file_name) {
+        var a_elm = document.createElement("a");
+        a_elm.href = image_data;
+        a_elm.download = file_name;
+        a_elm.click();
+    }
+    
+    save_webp (elm, file_name, scale = 1, quality = 100) {
+        this.get_webp(function (image_data) {
+            elm2img.save_image(image_data, file_name);
+        }, elm, scale, quality);
+    }
+    
+    save_png (elm, file_name, scale = 1) {
+        this.get_png(function (image_data) {
+            elm2img.save_image(image_data, file_name);
+        }, elm, scale);
+    }
+    
+    save_jpeg (elm, file_name, scale = 1, quality = 100) {
+        this.get_jpeg(function (image_data) {
+            elm2img.save_image(image_data, file_name);
+        }, elm, scale, quality);
+    }
+    
+    set_background_color (background_color = null) {
+        this.background_color = background_color;
+    }
+}
+
+/* elm2img.js ここまで */
 
 
 function escape_html (text) {
@@ -5786,7 +6074,26 @@ function train_detail (line_id, train_number, first_departure_time, train_direct
     
     var train_data = [get_train(line_id, train_number, first_departure_time)];
     
-    buf = "<h3>";
+    var buf = "<span class='train_detail_day' style='background-color: ";
+    
+    if (!config["dark_mode"]) {
+        buf += railroad_info["operations"][timetable["operation_table"]]["main_color"];
+    } else {
+        buf += convert_color_dark_mode(railroad_info["operations"][timetable["operation_table"]]["main_color"]);
+    }
+    
+    buf += ";'>";
+    
+    buf += railroad_info["operations"][timetable["operation_table"]]["operation_name"];
+    
+    if (timetable_operation_table === "__today__") {
+        buf += "(今日)";
+    } else if (timetable_operation_table === "__tomorrow__") {
+        buf += "(明日)";
+    }
+    
+    buf += "</span>";
+    buf += "<h3>";
     
     if (train_operations !== null) {
         if (railroad_info["lines"][line_id]["inbound_forward_direction"] !== (train_direction === "inbound_trains")) {
@@ -5981,22 +6288,6 @@ function train_detail (line_id, train_number, first_departure_time, train_direct
     }
     
     train_detail_area_elm.innerHTML = buf;
-    
-    var train_detail_day_elm = document.getElementById("train_detail_day");
-    
-    train_detail_day_elm.innerText = railroad_info["operations"][timetable["operation_table"]]["operation_name"];
-    
-    if (timetable_operation_table === "__today__") {
-        train_detail_day_elm.innerText += "(今日)";
-    } else if (timetable_operation_table === "__tomorrow__") {
-        train_detail_day_elm.innerText += "(明日)";
-    }
-    
-    if (!config["dark_mode"]) {
-        train_detail_day_elm.style.backgroundColor = railroad_info["operations"][timetable["operation_table"]]["main_color"];
-    } else {
-        train_detail_day_elm.style.backgroundColor = convert_color_dark_mode(railroad_info["operations"][timetable["operation_table"]]["main_color"]);
-    }
     
     document.getElementById("train_detail_popup").scrollTop = 0;
     
@@ -7687,6 +7978,48 @@ function operation_table_list_tables () {
     }
     
     document.getElementById("operation_table_list_area").innerHTML = buf;
+}
+
+
+var screenshot_preview_elm = document.getElementById("screenshot_preview");
+var save_screenshot_button_elm = document.getElementById("save_screenshot_button");
+
+function take_screenshot (elm_id) {
+    open_popup("screenshot_popup");
+    screenshot_preview_elm.innerHTML = "";
+    save_screenshot_button_elm.style.display = "none";
+    
+    var screenshot_area_elm = document.createElement("div");
+    screenshot_area_elm.classList.add("screenshot_area");
+    screenshot_area_elm.innerHTML = document.getElementById(elm_id).innerHTML;
+    
+    var input_elms = screenshot_area_elm.getElementsByTagName("input");
+    
+    for (var cnt = input_elms.length - 1; cnt >= 0; cnt--) {
+        input_elms[cnt].remove();
+    }
+    
+    document.getElementsByTagName("body")[0].appendChild(screenshot_area_elm);
+    
+    var e2i = new elm2img();
+    
+    if (!config["dark_mode"]) {
+        e2i.set_background_color("#ffffff");
+    } else {
+        e2i.set_background_color("#444444");
+        screenshot_area_elm.classList.add("dark_mode");
+    }
+    
+    e2i.get_png(function (image_data) {
+        screenshot_preview_elm.innerHTML = "<img src='" + image_data + "' alt=''>";
+        save_screenshot_button_elm.style.display = "block";
+    }, screenshot_area_elm, 2);
+    
+    screenshot_area_elm.remove();
+}
+
+function save_screenshot () {
+    elm2img.save_image(screenshot_preview_elm.getElementsByTagName("img")[0].src, UNYOHUB_APP_NAME + "_" + get_timestamp() + ".png");
 }
 
 
