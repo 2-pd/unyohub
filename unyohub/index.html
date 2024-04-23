@@ -3664,49 +3664,27 @@ function zizai_captcha_get_html (callback_func, button_color = "#dddddd", id_nam
 /* captcha.js ここまで */
 
 
-/* elm2img.js 24.04-1 */
+/* elm2img.js 24.04-2 */
 
-class elm2img {
+class Elm2Img {
     constructor () {
         this.func_queue = [];
         this.constructor_executed = false;
         
         var css_code = "";
         for (var cnt = 0; cnt < document.styleSheets.length; cnt++) {
-            var css_rules = document.styleSheets[cnt].cssRules;
-            for (var cnt_2 = 0; cnt_2 < css_rules.length; cnt_2++) {
-                css_code += css_rules[cnt_2].cssText + "\n";
+            try {
+                var css_rules = document.styleSheets[cnt].cssRules;
+                for (var cnt_2 = 0; cnt_2 < css_rules.length; cnt_2++) {
+                    css_code += css_rules[cnt_2].cssText + "\n";
+                }
+            } catch (err) {
+                console.error("elm2img ERROR: スタイルシート " + document.styleSheets[cnt].href + " が利用できません");
             }
-        }
-        
-        var promise_list = [];
-        var css_split_list = [];
-        
-        var url_regexp = /url\(["']?(http:|https:)?[^:"'\(\)]+["']?\)/g;
-        var url_before_after_regexp = /(^url\(["']?|["']?\)$)/g;
-        
-        var last_match = 0;
-        while (true) {
-            var url_data = url_regexp.exec(css_code);
-            
-            if (url_data === null) {
-                css_split_list.push(css_code.substring(last_match));
-                break;
-            }
-            
-            promise_list.push(elm2img.encode_external_data(url_data[0].replaceAll(url_before_after_regexp, "")));
-            
-            css_split_list.push(css_code.substring(last_match, url_data.index));
-            last_match = url_regexp.lastIndex;
         }
         
         var e2i = this;
-        Promise.all(promise_list).then(function (base64_data_list) {
-            var css_code = css_split_list[0];
-            for (var cnt = 0; cnt < base64_data_list.length; cnt++) {
-                css_code += "url('" + base64_data_list[cnt] + "')" + css_split_list[cnt + 1];
-            }
-            
+        Elm2Img.css_embed_external_files(function (css_code) {
             e2i.css_code = "<style>\n" + css_code + "</style>";
             
             e2i.constructor_executed = true;
@@ -3714,7 +3692,7 @@ class elm2img {
             for (cnt = 0; cnt < e2i.func_queue.length; cnt++) {
                 e2i.func_queue[cnt]();
             }
-        });
+        }, css_code);
         
         this.set_background_color();
     }
@@ -3730,6 +3708,11 @@ class elm2img {
     static encode_external_data (url) {
         return new Promise(function (resolve) {
             fetch(url).then(function (response) {
+                if (!response.ok) {
+                    console.error("elm2img ERROR: " + url + " の取得に失敗しました (" + response.status + ")");
+                    resolve("");
+                }
+                
                 response.blob().then(function (blob) {
                     var reader = new FileReader();
                     
@@ -3739,23 +3722,71 @@ class elm2img {
                     
                     reader.readAsDataURL(blob);
                 });
+            }).catch(function (err) {
+                console.error("elm2img ERROR: " + url + " が利用できません");
+                resolve("");
             });
         });
     }
     
-    static embed_image (elm) {
-        var img_elms = [...elm.getElementsByTagName("img")];
-        
+    static css_embed_external_files (callback_func, css_code) {
         var promise_list = [];
+        var css_split_list = [];
+        
+        var url_regexp = /url\(["']?(http:|https:)?[^:"'\(\)]+["']?\)/g;
+        var url_before_after_regexp = /(^url\(["']?|["']?\)$)/g;
+        
+        var last_match = 0;
+        while (true) {
+            var url_data = url_regexp.exec(css_code);
+            
+            if (url_data === null) {
+                css_split_list.push(css_code.substring(last_match));
+                break;
+            }
+            
+            promise_list.push(Elm2Img.encode_external_data(url_data[0].replaceAll(url_before_after_regexp, "")));
+            
+            css_split_list.push(css_code.substring(last_match, url_data.index));
+            last_match = url_regexp.lastIndex;
+        }
+        
+        Promise.all(promise_list).then(function (base64_data_list) {
+            var css_code = css_split_list[0];
+            for (var cnt = 0; cnt < base64_data_list.length; cnt++) {
+                css_code += "url('" + base64_data_list[cnt] + "')" + css_split_list[cnt + 1];
+            }
+            
+            callback_func(css_code);
+        });
+    }
+    
+    static embed_images (elm) {
+        var promise_list = [];
+        
+        var img_elms = [...elm.getElementsByTagName("img")];
         img_elms.forEach (function (img_elm) {
             if (img_elm.src.substring(0, 5) !== "data:") {
-                promise_list.push(elm2img.encode_external_data(img_elm.src).then(function (base64_data) {
-                    img_elm.src = base64_data;
+                promise_list.push(new Promise(function (resolve) {
+                    Elm2Img.encode_external_data(img_elm.src).then(function (base64_data) {
+                        img_elm.src = base64_data;
+                        resolve();
+                    });
                 }));
             }
         });
         
-        return promise_list;
+        var styled_elms = [elm, ...elm.querySelectorAll("*[style]")];
+        styled_elms.forEach (function (styled_elm) {
+            promise_list.push(new Promise(function (resolve) {
+                Elm2Img.css_embed_external_files(function (css_code) {
+                    styled_elm.style.cssText = css_code;
+                    resolve();
+                }, styled_elm.style.cssText);
+            }));
+        });
+        
+        return Promise.all(promise_list);
     }
     
     get_image_url (elm, width, height) {
@@ -3769,10 +3800,6 @@ class elm2img {
     
     get_image (callback_func, elm, mime_type, scale, quality = 100) {
         var elm_2 = elm.cloneNode(true);
-        
-        var image_promise_list = elm2img.embed_image(elm_2);
-        
-        var img_elm = document.createElement("img");
         
         var canv = document.createElement("canvas");
         var ctx = canv.getContext("2d");
@@ -3794,13 +3821,15 @@ class elm2img {
         elm_2.style.setProperty("margin" ,"0", "important");
         elm_2.style.position = "static";
         
+        var img_elm = document.createElement("img");
+        
         img_elm.onload = function () {
             ctx.drawImage(img_elm, 0, 0, canv.width, canv.height);
             callback_func(canv.toDataURL(mime_type, quality / 100));
         };
         
         var e2i = this;
-        Promise.all(image_promise_list).then(function () {
+        Elm2Img.embed_images(elm_2).then(function () {
             e2i.func_queue_add (function () {
                 img_elm.src = e2i.get_image_url(elm_2, canv.width, canv.height);
             });
@@ -3828,19 +3857,19 @@ class elm2img {
     
     save_webp (elm, file_name, scale = 1, quality = 100) {
         this.get_webp(function (image_data) {
-            elm2img.save_image(image_data, file_name);
+            Elm2Img.save_image(image_data, file_name);
         }, elm, scale, quality);
     }
     
     save_png (elm, file_name, scale = 1) {
         this.get_png(function (image_data) {
-            elm2img.save_image(image_data, file_name);
+            Elm2Img.save_image(image_data, file_name);
         }, elm, scale);
     }
     
     save_jpeg (elm, file_name, scale = 1, quality = 100) {
         this.get_jpeg(function (image_data) {
-            elm2img.save_image(image_data, file_name);
+            Elm2Img.save_image(image_data, file_name);
         }, elm, scale, quality);
     }
     
@@ -8001,7 +8030,7 @@ function take_screenshot (elm_id) {
     
     document.getElementsByTagName("body")[0].appendChild(screenshot_area_elm);
     
-    var e2i = new elm2img();
+    var e2i = new Elm2Img();
     
     if (!config["dark_mode"]) {
         e2i.set_background_color("#ffffff");
@@ -8019,7 +8048,7 @@ function take_screenshot (elm_id) {
 }
 
 function save_screenshot () {
-    elm2img.save_image(screenshot_preview_elm.getElementsByTagName("img")[0].src, UNYOHUB_APP_NAME + "_" + get_timestamp() + ".png");
+    Elm2Img.save_image(screenshot_preview_elm.getElementsByTagName("img")[0].src, UNYOHUB_APP_NAME + "_" + get_timestamp() + ".png");
 }
 
 
