@@ -1791,15 +1791,20 @@ footer .previous_button, footer .next_button {
 
 .footer_value, .footer_value_wide {
     display: inline-block;
+    
+    height: 45px;
 }
 
 .footer_value {
     width: 55px;
-    height: 45px;
 }
 
 .footer_value_wide {
-    width: 180px;
+    width: 200px;
+    
+    font-size: 23px;
+    
+    vertical-align: top;
 }
 
 footer small {
@@ -2691,6 +2696,10 @@ a {
     float: right;
 }
 
+.train_overview div, .operation_table_train div:not(.coupling_info) {
+    display: inline;
+}
+
 .train_overview span, .train_overview time {
     display: inline-block;
     
@@ -2711,23 +2720,23 @@ a {
     width: 45%;
 }
 
-.operation_table_train div {
+.operation_table_train .coupling_info {
     padding: 8px 8px 0 0;
     
     text-align: right;
     color: #666666;
 }
 
-.dark_mode .operation_table_train div {
+.dark_mode .operation_table_train .coupling_info {
     color: #cccccc;
 }
 
-.operation_table_train div a {
+.operation_table_train .coupling_info a {
     color: #333333;
     text-decoration: underline;
 }
 
-.dark_mode .operation_table_train div a {
+.dark_mode .operation_table_train .coupling_info a {
     color: #ffffff;
 }
 
@@ -2798,6 +2807,90 @@ a {
 .suggestion_area .train_icon {
     max-width: 30px;
     max-height: 30px;
+}
+
+.select_operation_inbound, .select_operation_outbound {
+    margin: 0 auto;
+    
+    padding-right: 30px;
+    
+    border-spacing: 0;
+    
+    line-height: 56px;
+    font-size: 20px;
+}
+
+.select_operation_inbound tr, .select_operation_outbound tr {
+    height: 56px;
+}
+
+.select_operation_inbound tr:first-child td:first-child, .select_operation_outbound tr:first-child td:first-child {
+    width: 35px;
+    
+    writing-mode: vertical-rl;
+    line-height: 35px;
+    font-size: 16px;
+    color: #999999;
+    letter-spacing: 0.2em;
+}
+
+.select_operation_inbound tr:first-child td:first-child span {
+    float: left;
+}
+
+.select_operation_inbound tr:first-child td:first-child span:before {
+    content: "▲";
+}
+
+.select_operation_outbound tr:first-child td:first-child span {
+    float: right;
+}
+
+.select_operation_outbound tr:first-child td:first-child span:after {
+    content: "▼";
+}
+
+.select_operation_inbound td[onclick], .select_operation_outbound td[onclick] {
+    text-decoration: underline;
+}
+
+.select_operation_inbound div, .select_operation_outbound div {
+    display: inline-block;
+    
+    width: 43px;
+    height: 52px;
+    
+    margin: 1px 10px 1px 0;
+    
+    padding: 4px 0;
+    
+    border: 1px solid #999999;
+    
+    line-height: 20px;
+    font-size: 14px;
+    color: #444444;
+    text-decoration: none;
+    vertical-align: top;
+}
+
+.dark_mode .select_operation_inbound div, .dark_mode .select_operation_outbound div {
+    color: #eeeeee;
+}
+
+.select_operation_inbound b, .select_operation_outbound b {
+    display: block;
+    
+    line-height: 24px;
+    font-size: 16px;
+    white-space: nowrap;
+}
+
+.select_operation_inbound tr:first-child div {
+    border-radius: 12px 12px 0 0;
+}
+
+.select_operation_outbound tr:last-child div {
+    border-radius: 0 0 12px 12px;
 }
 
 #wait_screen {
@@ -3101,7 +3194,7 @@ input[type="checkbox"], input[type="radio"] {
     width: 42px;
     height: 22px;
     
-    border: 1px solid #dddddd;
+    border: 1px solid #cccccc;
     
     background-color: #dddddd;
     
@@ -3118,9 +3211,9 @@ input[type="checkbox"], input[type="radio"] {
 }
 
 .dark_mode .toggle + label:before {
-    border-color: #808080;
+    border-color: #999999;
     
-    background-color: #808080;
+    background-color: #666666;
 }
 
 .dark_mode .toggle:checked + label:before {
@@ -3142,18 +3235,16 @@ input[type="checkbox"], input[type="radio"] {
     width: 20px;
     height: 20px;
     
-    background-color: #eeeeee;
+    background-color: #f7f7f7;
     
     border-radius: 4px;
-    
-    box-shadow: 1px 1px 2px rgba(0,0,0,0.25);
     
     transition-duration: 0.2s;
     transition-property: all;
 }
 
 .dark_mode .toggle + label:after {
-    background-color: #999999;
+    background-color: #cccccc;
 }
 
 .toggle:checked + label:after {
@@ -3271,7 +3362,7 @@ input[type="radio"] + label small, .chip + label small {
     font-size: 14px;
 }
 
-#unyo_icon {
+#unyohub_icon {
     display: block;
     
     width: 96px;
@@ -3552,7 +3643,7 @@ input[type="radio"] + label small, .chip + label small {
         </div>
         <div class="square_popup" id="about_popup">
             <button type="button" class="popup_close_button" onclick="close_square_popup();"></button>
-            <img src="apple-touch-icon.webp" alt="" id="unyo_icon">
+            <img src="apple-touch-icon.webp" alt="" id="unyohub_icon">
             <h3 id="app_version"></h3>
             <small id="license_text"></small>
             <a id="license_link" target="_blank" class="external_link">ライセンス</a>　<a id="repository_link" target="_blank" class="external_link">ソースコード</a>
@@ -6905,7 +6996,7 @@ function operation_data_change_date (date_additions) {
         }, reject, false, date_string);
     });
     
-    document.getElementById("operation_data_date").innerHTML = date_string.replace(/-/g, "/");
+    document.getElementById("operation_data_date").innerHTML = date_string.substring(0, 4) + "<small>年</small> " + Number(date_string.substring(5, 7)) + "<small>月</small> " + Number(date_string.substring(8)) + "<small>日</small>";
     
     Promise.all([promise_1, promise_2]).then(function () {
         operation_all_data_loaded = true;
@@ -7202,7 +7293,7 @@ function draw_operation_trains (operation_number, operation_table_name_or_ts, is
                 highlight_str = "";
             }
             
-            buf += "<span" + highlight_str + ">" + trains[cnt]["first_departure_time"] + "</span><span" + highlight_str + ">〜</span><span" + highlight_str + ">" + trains[cnt]["final_arrival_time"] + "</span>";
+            buf += "<div" + highlight_str + "><span>" + trains[cnt]["first_departure_time"] + "</span><span>〜</span><span>" + trains[cnt]["final_arrival_time"] + "</span></div>";
             buf += "</div>";
         } else {
             if (next_train_operation_list === null) {
@@ -7309,10 +7400,10 @@ function draw_operation_trains (operation_number, operation_table_name_or_ts, is
                 var terminal_station = trains[cnt]["terminal_station"];
             }
             
-            buf += "<span" + highlight_str + ">" + starting_station + " " + first_departure_time + "</span><span" + highlight_str + ">→</span><span" + highlight_str + ">" + trains[cnt]["final_arrival_time"] + " " + terminal_station + "</span></a>";
+            buf += "<div" + highlight_str + "><span>" + starting_station + " " + first_departure_time + "</span><span>→</span><span>" + trains[cnt]["final_arrival_time"] + " " + terminal_station + "</span></div></a>";
             
             if (!config["simplify_operation_details"] && operations_list.length >= 1) {
-                buf += "<div>併結:";
+                buf += "<div class='coupling_info'>併結:";
                 for (var cnt_2 = 0; cnt_2 < operations_list.length; cnt_2++) {
                     buf += " <a href='javascript:void(0);' onclick='operation_detail(\"" + operations_list[cnt_2] + "\", " + operation_table_name_or_ts + ");'>" + operations_list[cnt_2] + "運用</a>";
                 }
@@ -8184,10 +8275,26 @@ function select_operation_to_write_data (line_id, train_number, first_departure_
     var position_keys = Object.keys(position_operations);
     position_keys.sort();
     
-    var buf = "";
-    for (var cnt = 0; cnt < position_keys.length; cnt++) {
-        buf += "<button type='button' class='wide_button' onclick='write_operation_data(null, \"" + add_slashes(position_operations[position_keys[cnt]]) + "\");'>" + escape_html(position_operations[position_keys[cnt]]) + "運用 (" + position_keys[cnt] + "両目)</button>";
+    var buf = "<table class='select_operation_";
+    if (train_direction === "inbound_trains") {
+        buf += "inbound";
+    } else {
+        buf += "outbound";
+        position_keys.reverse();
     }
+    buf += "'>";
+    
+    for (var cnt = 0; cnt < position_keys.length; cnt++) {
+        buf += "<tr>";
+        
+        if (cnt === 0) {
+            buf += "<td rowspan='" + position_keys.length + "'><span>進行方向</span></td>";
+        }
+        
+        buf += "<td onclick='write_operation_data(null, \"" + add_slashes(position_operations[position_keys[cnt]]) + "\");'><div><b>" + position_keys[cnt] + "</b>両目</div>" + escape_html(position_operations[position_keys[cnt]]) + "運用</td></tr>";
+    }
+    
+    buf += "</table>";
     
     document.getElementById("select_operation_area").innerHTML = buf;
 }
@@ -8262,6 +8369,7 @@ function edit_operation_data (yyyy_mm_dd, operation_number, user_id, formation_t
     open_popup("edit_operation_data_popup");
     
     buf = "<h3>投稿内容</h3>";
+    buf += "<div class='key_and_value'><b>運行日</b>" + yyyy_mm_dd.substring(0, 4) + "年 " + Number(yyyy_mm_dd.substring(5, 7)) + "月 " + Number(yyyy_mm_dd.substring(8)) + "日</div>";
     buf += "<div class='key_and_value'><b>運用番号</b>" + escape_html(operation_number) + "</div>";
     buf += "<div class='key_and_value'><b>編成名</b>" + escape_html(formation_text) + "</div>";
     
