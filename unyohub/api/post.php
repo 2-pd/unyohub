@@ -61,8 +61,8 @@ if ($ts === FALSE) {
     exit;
 }
 
-if ($ts < $ts_now - 270000) {
-    print "ERROR: 3日以上前の運用情報を投稿することはできません";
+if ($ts < $ts_now - 183600) {
+    print "ERROR: 2日以上前の運用情報を投稿することはできません";
     exit;
 }
 
