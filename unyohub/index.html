@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width,initial-scale=1,interactive-widget=resizes-content">
 <script>
     const UNYOHUB_APP_NAME = "鉄道運用Hub";
-    const UNYOHUB_VERSION = "24.04-5";
+    const UNYOHUB_VERSION = "24.04-6";
     const UNYOHUB_INDEXEDDB_VERSION = 2310001;
     const UNYOHUB_LICENSE_TEXT = "このアプリケーションは無権利創作宣言に準拠して著作権放棄されています。";
     const UNYOHUB_LICENSE_URL = "https://www.2pd.jp/license/";
@@ -1030,6 +1030,8 @@ h4.position_signal_station {
     
     margin: 0 12px;
     padding: 8px;
+    
+    text-decoration: none;
 }
 
 #timetable_area a b {
@@ -1041,6 +1043,11 @@ h4.position_signal_station {
 
 .dark_mode #timetable_area a b {
     color: #ffffff;
+}
+
+#timetable_area a:not(.timetable_train) small {
+    font-size: 16px;
+    text-decoration: underline;
 }
 
 input[type="checkbox"] + label.drop_down {
@@ -1145,7 +1152,6 @@ input[type="checkbox"]:checked + label.drop_down + div {
     
     line-height: 18px;
     color: inherit;
-    text-decoration: none;
     word-break: break-all;
 }
 
@@ -2812,8 +2818,6 @@ a {
 .select_operation_inbound, .select_operation_outbound {
     margin: 0 auto;
     
-    padding-right: 30px;
-    
     border-spacing: 0;
     
     line-height: 56px;
@@ -2851,6 +2855,8 @@ a {
 }
 
 .select_operation_inbound td[onclick], .select_operation_outbound td[onclick] {
+    padding-right: 30px;
+    
     text-decoration: underline;
 }
 
@@ -3029,6 +3035,10 @@ a {
     padding: 20px 10px;
     
     text-align: center;
+}
+
+.screenshot_area * {
+    text-decoration: none !important;
 }
 
 .screenshot_area button, .screenshot_area label, .screenshot_area label+div, .screenshot_area .informational_text {
@@ -6547,7 +6557,7 @@ function timetable_change_lines(line_id, force_station_select_mode = false) {
                 kana_rows_cnt = cnt_2;
             }
             
-            buf += "<a href='javascript:void(0);' onclick='timetable_select_station(\"" + railroad_info["lines"][line_id]["stations"][station_indexes[station_names[cnt]]]["station_name"] + "\")'><b>" + escape_html(railroad_info["lines"][line_id]["stations"][station_indexes[station_names[cnt]]]["station_name"]) + "</b> (" + station_names[cnt] + ")" + "</a>";
+            buf += "<a href='javascript:void(0);' onclick='timetable_select_station(\"" + railroad_info["lines"][line_id]["stations"][station_indexes[station_names[cnt]]]["station_name"] + "\")'><b>" + escape_html(railroad_info["lines"][line_id]["stations"][station_indexes[station_names[cnt]]]["station_name"]) + "</b> <small>(" + station_names[cnt] + ")" + "</small></a>";
         }
         buf += "</div>";
         
