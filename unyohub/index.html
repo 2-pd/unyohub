@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width,initial-scale=1,interactive-widget=resizes-content">
 <script>
     const UNYOHUB_APP_NAME = "鉄道運用Hub";
-    const UNYOHUB_VERSION = "24.04-6";
+    const UNYOHUB_VERSION = "24.04-7";
     const UNYOHUB_INDEXEDDB_VERSION = 2310001;
     const UNYOHUB_LICENSE_TEXT = "このアプリケーションは無権利創作宣言に準拠して著作権放棄されています。";
     const UNYOHUB_LICENSE_URL = "https://www.2pd.jp/license/";
@@ -1249,45 +1249,115 @@ input[type="checkbox"]:checked + label.drop_down + div {
     float: none;
 }
 
-.formation_box {
-    min-height: 60px;
+.formation_table {
+    margin: 0 auto;
     
-    padding-left: 10px;
-    
-    line-height: 26px;
+    border-spacing: 0 5px;
 }
 
-.formation_box .train_icon {
-    margin-top: 10px;
+.formation_table td {
+    padding: 0;
 }
 
-.formation_box b {
+.formation_table tr td:last-child {
+    padding-right: 10px;
+}
+
+.formation_table b {
+    display: block;
+    
+    margin-bottom: 2px;
+    
+    font-size: 14px;
     text-decoration: underline;
 }
 
-.formation_box span {
+.formation_table div {
     display: inline-block;
     
-    margin: 0 1px;
-    padding: 1px 3px;
+    position: relative;
+    
+    margin: 0 1px 10px 0;
+    padding: 1px 5px;
     
     border: 1px solid #dddddd;
+    
+    line-height: 24px;
 }
 
-.dark_mode .formation_box span {
+.dark_mode .formation_table div, .dark_mode .formation_table span:before, .dark_mode .formation_table span:after {
     border-color: #666666;
 }
 
-.formation_box span:first-of-type {
-    border-radius: 14px 0 0 14px;
+.formation_table div:first-of-type {
+    border-radius: 12px 0 0 0;
     
-    padding-left: 12px;
+    padding-left: 7px;
 }
 
-.formation_box span:last-of-type {
-    border-radius: 0 14px 14px 0;
+.formation_table div:last-of-type {
+    border-radius: 0 12px 0 0;
     
-    padding-right: 12px;
+    padding-right: 7px;
+}
+
+.formation_table .car_highlight {
+    border: 2px solid #ffcc00 !important;
+    
+    padding: 0 4px;
+}
+
+.formation_table div.car_highlight:first-of-type {
+    padding-left: 6px;
+}
+
+.formation_table div.car_highlight:last-of-type {
+    padding-right: 6px;
+}
+
+.formation_table div span {
+    display: inline-block;
+    
+    position: absolute;
+    top: calc(100% + 1px);
+    
+    line-height: 8px;
+}
+
+.formation_table .car_highlight span {
+    top: calc(100% + 2px);
+}
+
+.formation_table div span:before, .formation_table div span:after {
+    content: "";
+    
+    display: inline-block;
+    
+    width: 6px;
+    height: 6px;
+    
+    margin: 0 1px;
+    
+    border: 1px solid #dddddd;
+    border-radius: 4px;
+    
+    vertical-align: top;
+}
+
+.formation_table div span:first-child {
+    left: 0;
+}
+
+.formation_table .car_highlight span:first-child {
+    left: -1px;
+}
+
+.formation_table div span:last-child {
+    right: 0;
+}
+
+.formation_table .car_highlight span:last-child {
+    right: -1px;
 }
 
 .train_icon_large {
@@ -2820,12 +2890,16 @@ a {
     
     border-spacing: 0;
     
-    line-height: 56px;
+    line-height: 60px;
     font-size: 20px;
 }
 
 .select_operation_inbound tr, .select_operation_outbound tr {
-    height: 56px;
+    height: 60px;
+}
+
+.select_operation_inbound td, .select_operation_outbound td {
+    padding: 0;
 }
 
 .select_operation_inbound tr:first-child td:first-child, .select_operation_outbound tr:first-child td:first-child {
@@ -2864,15 +2938,15 @@ a {
     display: inline-block;
     
     width: 43px;
-    height: 52px;
+    height: 46px;
     
-    margin: 1px 10px 1px 0;
+    margin: 2px 10px 2px 0;
     
     padding: 4px 0;
     
     border: 1px solid #999999;
     
-    line-height: 20px;
+    line-height: 22px;
     font-size: 14px;
     color: #444444;
     text-decoration: none;
@@ -7518,15 +7592,15 @@ function draw_formation_table (formation_name = null) {
         for (var cnt_2 = 0; cnt_2 < formations["series"][formations["series_names"][cnt]]["formation_names"].length; cnt_2++){
             var formation_name = formations["series"][formations["series_names"][cnt]]["formation_names"][cnt_2];
             
-            var buf_3 = "<div class='formation_box' onclick='formation_detail(\"" + add_slashes(formation_name) + "\");'><img src='" + get_icon(formation_name) + "' alt='' class='train_icon'>";
+            var buf_3 = "<tr onclick='formation_detail(\"" + add_slashes(formation_name) + "\");'><td><img src='" + get_icon(formation_name) + "' alt='' class='train_icon'></td>";
             
-            buf_3 += "<b>" + escape_html(formation_name) + "</b><br>";
+            buf_3 += "<td><b>" + escape_html(formation_name) + "</b>";
             
             var search_hit_count = 0;
             for (var cnt_3 = 0; cnt_3 < formations["formations"][formation_name]["cars"].length; cnt_3++) {
                 if (car_number_search_elm.value.length >= 1) {
                     if (formations["formations"][formation_name]["cars"][cnt_3]["car_number"].includes(car_number_search_elm.value) || formations["formations"][formation_name]["cars"][cnt_3]["abbreviated_car_number"].includes(car_number_search_elm.value)) {
-                        buf_3 += "<span class='search_highlight'>" + escape_html(formations["formations"][formation_name]["cars"][cnt_3]["abbreviated_car_number"]) + "</span>";
+                        buf_3 += "<div class='car_highlight'>" + escape_html(formations["formations"][formation_name]["cars"][cnt_3]["abbreviated_car_number"]) + "<span></span><span></span></div>";
                         
                         search_hit_count++;
                         continue;
@@ -7535,10 +7609,10 @@ function draw_formation_table (formation_name = null) {
                     search_hit_count = 1;
                 }
                 
-                buf_3 += "<span>" + escape_html(formations["formations"][formation_name]["cars"][cnt_3]["abbreviated_car_number"]) + "</span>";
+                buf_3 += "<div>" + escape_html(formations["formations"][formation_name]["cars"][cnt_3]["abbreviated_car_number"]) + "<span></span><span></span></div>";
             }
             
-            buf_3 += "</div>";
+            buf_3 += "</td></tr>";
             
             if (search_hit_count >= 1) {
                 buf_2 += buf_3;
@@ -7559,7 +7633,8 @@ function draw_formation_table (formation_name = null) {
             if (car_number_search_elm.value.length >= 1) {
                 buf += " (" + search_hit_formation_count + "編成該当)";
             }
-            buf += "</label><div>" + buf_2 + "</div>";
+            buf += "</label>";
+            buf += "<div><table class='formation_table'>" + buf_2 + "</table></div>";
         }
     }
     
