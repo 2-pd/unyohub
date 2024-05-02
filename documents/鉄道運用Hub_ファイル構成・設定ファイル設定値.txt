@@ -213,13 +213,14 @@ anti_troll_garbage_size 要注意ユーザーの投稿処理を遅延させる�
             "cars" : [ 各車両の情報
                 {
                     "car_number" : 車番,
-                    "abbreviated_car_number" : 車番の省略表記,
-                    "equipment" : 車両設備記号を配列で,
-                    "coloring_id" : 車体塗装ID
+                    "abbr_number" : 車番の省略表記,
+                    "equipment" : 車両設備記号を配列で(省略可能),
+                    "coloring_id" : 車体塗装ID(省略可能)
                 }...
             ],
             "series_name" : 形式名,
-            "icon_id" : アイコンのID
+            "icon_id" : アイコンのID,
+            "heading" : 編成情報の見出し(省略可能)
         }...
     },
     "series" : {
@@ -229,11 +230,11 @@ anti_troll_garbage_size 要注意ユーザーの投稿処理を遅延させる�
         }...
     },
     "series_names" : 形式名を配列で,
-    "body_colorings" : {
+    "body_colorings" : { 車体塗装情報(省略可能)
         "車体塗装ID" : {
             "base_color" : ベースカラーの色コード,
             "font_color" : 車番の文字の色コード,
-            "stripes" : [ ベースカラー以外の塗装情報を重なり順の上側から列挙(ベースカラーのみの場合は省略可能)
+            "stripes" : [ ベースカラー以外の塗装情報を重なり順の上側から列挙(塗装がベースカラーのみの場合は省略可能)
                 {
                     "color" : 色コード,
                     "start" : 開始点の数値(0〜100),
