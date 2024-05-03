@@ -1277,7 +1277,7 @@ input[type="checkbox"]:checked + label.drop_down + div {
     
     position: relative;
     
-    margin: 0 1px 10px 0;
+    margin: 8px 1px 10px 0;
     padding: 1px 5px;
     
     border: 1px solid #dddddd;
@@ -1289,30 +1289,66 @@ input[type="checkbox"]:checked + label.drop_down + div {
     border-color: #666666;
 }
 
-.formation_table div:first-of-type {
-    border-radius: 12px 0 0 0;
+.formation_table .car_C1, .formation_table .car_C {
+    border-radius: 8px 0 0 0;
     
-    padding-left: 7px;
-}
-
-.formation_table div:last-of-type {
-    border-radius: 0 12px 0 0;
-    
-    padding-right: 7px;
-}
-
-.formation_table .car_highlight {
-    border: 2px solid #ffcc00 !important;
-    
-    padding: 0 4px;
-}
-
-.formation_table div.car_highlight:first-of-type {
     padding-left: 6px;
 }
 
-.formation_table div.car_highlight:last-of-type {
+.formation_table .car_C2, .formation_table .car_C {
+    border-radius: 0 8px 0 0;
+    
     padding-right: 6px;
+}
+
+.formation_table .car_C {
+    border-radius: 8px 8px 0 0 !important;
+}
+
+.formation_table .car_highlight {
+    border: 1px solid #ffcc00 !important;
+    
+    outline: 2px solid #ffcc00 !important;
+    outline-offset: -2px;
+}
+
+.car_PL:before, .car_PL:after, .car_PL1:before, .car_PL2:after, .car_PG:before, .car_PG:after, .car_PG1:before, .car_PG2:after, .car_PD:before, .car_PD:after, .car_PD1:before, .car_PD2:after, .car_PX:before, .car_PX:after, .car_PX1:before, .car_PX2:after {
+    content: "";
+    
+    display: block;
+    
+    position: absolute;
+    top: -9px;
+    
+    width: 12px;
+    height: 8px;
+    
+    background-size: 12px 8px;
+    background-repeat: no-repeat;
+}
+
+.car_PL:before, .car_PL:after, .car_PL1:before, .car_PL2:after, .car_PG:before, .car_PG:after, .car_PG1:before, .car_PG2:after {
+    background-image: url(data:image/webp;base64,UklGRr4AAABXRUJQVlA4TLIAAAAvF8ADELW4jSRJUlw/Gz7oGn5EnDyJ2zahI9BGxIIIpwEAoMnccXfP2jT5ATuBNaS5W9MLHC7gBJJ3kjs/oLZtG0bynPpFvuXf3TlygGweAW2+DGa+RXqV/LjBTVA8L+5asS2PmR2E5cRkU8bzTVPl95/xeMrGso7lMENaX/IWD0JDDhcTTYeLlnUtoCoOa6AAd2WiRMUyBo5nBXdQxbPXq/GB1ZbdqzHj1blaj344MEkC);
+}
+
+.car_PL:before, .car_PL:after, .car_PL1:before, .car_PL2:after {
+    transform: scale(-1, 1);
+}
+
+.car_PX:before, .car_PX:after, .car_PX1:before, .car_PX2:after {
+    background-image: url(data:image/webp;base64,UklGRqwAAABXRUJQVlA4TKAAAAAvF8ADEI9gkG2kvj/Ek/5Pw0DaNrl/EVf610DaNrl/EVf6V40kSWn67nB3iCWmCMDu6rtbFWFXryo4CBWfmQsORMKA/P85Mx8K2khSnvkP/Mu9e1QQ0X9Fbts28imd8jfMJgAA5iYOegd3BuMEizCTPRBa9WAMUB68Qyz2Zuutxfqk4Xs5tnSl+3uuh/sje4ut2dF6aXLRUjV/4MsAhwgG);
+}
+
+.car_PD:before, .car_PD:after, .car_PD1:before, .car_PD2:after {
+    background-image: url(data:image/webp;base64,UklGRtgAAABXRUJQVlA4TMwAAAAvF8ADEDU4iGw3bgTdCJLe1ZONoCTvSobwHeHEtq1leb+7/0By98RQiDaAfwBUIpU/UoksGtkteXJLPodnNm0bZS64bygZKMkgWYrXmtLocMFb5OqXtx9s6WIxoA8aCKQXs+4r9AK3aDbSQNKT8DpPL6a8xN/LZcJ/3EyyrvLnmfJFtI+rn1X9fKPDZX+LGHiGF47BxHCWZyLLi9oMaiuyBiPGgVYjK0+CBteeNpCGyTi6m5A7cXR8efcmAenlJy8N/jdiHNN3wGIGkgQ=);
+}
+
+.car_PL:before, .car_PL1:before, .car_PG:before, .car_PG1:before, .car_PX:before, .car_PX1:before, .car_PD:before, .car_PD1:before {
+    left: 5px;
+}
+
+.car_PL:after, .car_PL2:after, .car_PG:after, .car_PG2:after, .car_PX:after, .car_PX2:after, .car_PD:after, .car_PD2:after {
+    right: 5px;
 }
 
 .formation_table div span {
@@ -1322,10 +1358,6 @@ input[type="checkbox"]:checked + label.drop_down + div {
     top: calc(100% + 1px);
     
     line-height: 8px;
-}
-
-.formation_table .car_highlight span {
-    top: calc(100% + 2px);
 }
 
 .formation_table div span:before, .formation_table div span:after {
@@ -1348,16 +1380,16 @@ input[type="checkbox"]:checked + label.drop_down + div {
     left: 0;
 }
 
-.formation_table .car_highlight span:first-child {
-    left: -1px;
-}
-
 .formation_table div span:last-child {
     right: 0;
 }
 
-.formation_table .car_highlight span:last-child {
-    right: -1px;
+.car_M span:before, .car_M span:after, .car_M1 span:first-of-type:before, .car_M1 span:first-of-type:after, .car_M2 span:last-of-type:before, .car_M2 span:last-of-type:after {
+    background-color: #333333;
+}
+
+.dark_mode .car_M span:before, .dark_mode .car_M span:after, .dark_mode .car_M1 span:first-of-type:before, .dark_mode .car_M1 span:first-of-type:after, .dark_mode .car_M2 span:last-of-type:before, .dark_mode .car_M2 span:last-of-type:after {
+    background-color: #ffffff;
 }
 
 .train_icon_large {
@@ -7598,18 +7630,29 @@ function draw_formation_table (formation_name = null) {
             
             var search_hit_count = 0;
             for (var cnt_3 = 0; cnt_3 < formations["formations"][formation_name]["cars"].length; cnt_3++) {
+                var car_class = "";
+                
                 if (car_number_search_elm.value.length >= 1) {
-                    if (formations["formations"][formation_name]["cars"][cnt_3]["car_number"].includes(car_number_search_elm.value) || formations["formations"][formation_name]["cars"][cnt_3]["abbreviated_car_number"].includes(car_number_search_elm.value)) {
-                        buf_3 += "<div class='car_highlight'>" + escape_html(formations["formations"][formation_name]["cars"][cnt_3]["abbreviated_car_number"]) + "<span></span><span></span></div>";
+                    if (formations["formations"][formation_name]["cars"][cnt_3]["car_number"].includes(car_number_search_elm.value) || formations["formations"][formation_name]["cars"][cnt_3]["abbr_number"].includes(car_number_search_elm.value)) {
+                        car_class =  "car_highlight";
                         
                         search_hit_count++;
-                        continue;
                     }
                 } else {
                     search_hit_count = 1;
                 }
                 
-                buf_3 += "<div>" + escape_html(formations["formations"][formation_name]["cars"][cnt_3]["abbreviated_car_number"]) + "<span></span><span></span></div>";
+                if ("equipment" in formations["formations"][formation_name]["cars"][cnt_3]) {
+                    for (var cnt_4 = 0; cnt_4 < formations["formations"][formation_name]["cars"][cnt_3]["equipment"].length; cnt_4++) {
+                        if (car_class.length >= 1) {
+                            car_class += " ";
+                        }
+                        
+                        car_class += "car_" + formations["formations"][formation_name]["cars"][cnt_3]["equipment"][cnt_4];
+                    }
+                }
+                
+                buf_3 += "<div class='" + car_class + "'>" + escape_html(formations["formations"][formation_name]["cars"][cnt_3]["abbr_number"]) + "<span></span><span></span></div>";
             }
             
             buf_3 += "</td></tr>";
