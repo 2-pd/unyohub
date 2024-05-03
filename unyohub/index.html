@@ -1263,13 +1263,30 @@ input[type="checkbox"]:checked + label.drop_down + div {
     padding-right: 10px;
 }
 
-.formation_table b {
+.formation_table h5 {
     display: block;
     
-    margin-bottom: 2px;
+    margin: 0 0 2px 0;
     
     font-size: 14px;
+    color: #666666;
+    font-weight: normal;
+}
+
+.dark_mode .formation_table h5 {
+    color: #cccccc;
+}
+
+.formation_table h5 b {
+    margin-right: 6px;
+    
+    font-size: 16px;
+    color: #333333;
     text-decoration: underline;
+}
+
+.dark_mode .formation_table h5 b {
+    color: #ffffff;
 }
 
 .formation_table div {
@@ -2579,7 +2596,7 @@ a {
 }
 
 .formation_data_area {
-    margin: 5px 0 10px 0;
+    margin-top: 5px;
     
     font-weight: bold;
 }
@@ -2599,6 +2616,10 @@ a {
     
     line-height: 24px;
     font-size: 16px;
+}
+
+#train_operation_detail_area, #operation_data_detail_area {
+    margin-top: 15px;
 }
 
 #train_detail_popup h4, #operation_detail_popup h4 {
@@ -6365,6 +6386,7 @@ function train_detail (line_id, train_number, first_departure_time, train_direct
     if (show_operation_data) {
         buf += "<div class='formation_data_area'>";
         
+        var heading_str = "";
         for (cnt = 0; cnt < train_operations.length; cnt++) {
             if (cnt >= 1) {
                 buf += " +"
@@ -6381,6 +6403,14 @@ function train_detail (line_id, train_number, first_departure_time, train_direct
                         
                         if (formations_data[cnt_2] in formations["formations"]) {
                             buf += "<a href='javascript:void(0);' onclick='close_square_popup(); formation_table_mode(\"" + add_slashes(formations_data[cnt_2]) + "\");'><img src='" + get_icon(formations_data[cnt_2]) + "' alt='' class='train_icon'>" + escape_html(formations_data[cnt_2]) + "</a>";
+                            
+                            if ("heading" in formations["formations"][formations_data[cnt_2]]) {
+                                if (heading_str.length >= 1) {
+                                    heading_str += "<br>";
+                                }
+                                
+                                heading_str += escape_html(formations_data[cnt_2] + " : " + formations["formations"][formations_data[cnt_2]]["heading"]);
+                            }
                         } else if (formations_data[cnt_2] === "?") {
                             buf += "<img src='" + UNYOHUB_UNKNOWN_TRAIN_ICON + "' alt='' class='train_icon'>" + "?";
                         } else {
@@ -6395,7 +6425,7 @@ function train_detail (line_id, train_number, first_departure_time, train_direct
             }
         }
         
-        buf += "</div><div id='train_operation_detail_area'></div>";
+        buf += "</div><div class='descriptive_text'>" + heading_str + "</div><div id='train_operation_detail_area'></div>";
     }
     
     if (train_data[0] !== null) {
@@ -7334,6 +7364,7 @@ function draw_operation_detail (operation_number, operation_data_date_ts_or_oper
             formation_text = operation_data["operations"][operation_number]["formations"];
         }
         
+        var heading_str = "";
         if (formation_text !== null) {
             if (formation_text !== "") {
                 var formations_data = formation_text.split("+");
@@ -7345,6 +7376,14 @@ function draw_operation_detail (operation_number, operation_data_date_ts_or_oper
                     
                     if (formations_data[cnt_2] in formations["formations"]) {
                         buf += "<a href='javascript:void(0);' onclick='popup_close(); formation_table_mode(\"" + add_slashes(formations_data[cnt_2]) + "\");'><img src='" + get_icon(formations_data[cnt_2]) + "' alt='' class='train_icon'>" + escape_html(formations_data[cnt_2]) + "</a>";
+                        
+                        if ("heading" in formations["formations"][formations_data[cnt_2]]) {
+                            if (heading_str.length >= 1) {
+                                heading_str += "<br>";
+                            }
+                            
+                            heading_str += escape_html(formations_data[cnt_2] + " : " + formations["formations"][formations_data[cnt_2]]["heading"]);
+                        }
                     } else if (formations_data[cnt_2] === "?") {
                         buf += "<img src='" + UNYOHUB_UNKNOWN_TRAIN_ICON + "' alt='' class='train_icon'>" + "?";
                     } else {
@@ -7358,7 +7397,7 @@ function draw_operation_detail (operation_number, operation_data_date_ts_or_oper
             buf += "<img src='" + UNYOHUB_UNKNOWN_TRAIN_ICON + "' alt='' class='train_icon'>" + "?";
         }
         
-        buf += "</div><div id='operation_data_detail_area'></div>";
+        buf += "</div><div class='descriptive_text'>" + heading_str + "</div><div id='operation_data_detail_area'></div>";
     }
     
     var checked_strs = [" checked='checked'", ""];
@@ -7626,7 +7665,11 @@ function draw_formation_table (formation_name = null) {
             
             var buf_3 = "<tr onclick='formation_detail(\"" + add_slashes(formation_name) + "\");'><td><img src='" + get_icon(formation_name) + "' alt='' class='train_icon'></td>";
             
-            buf_3 += "<td><b>" + escape_html(formation_name) + "</b>";
+            buf_3 += "<td><h5><b>" + escape_html(formation_name) + "</b>";
+            if ("heading" in formations["formations"][formation_name]) {
+                buf_3 += escape_html(formations["formations"][formation_name]["heading"]);
+            }
+            buf_3 += "</h5>";
             
             var search_hit_count = 0;
             for (var cnt_3 = 0; cnt_3 < formations["formations"][formation_name]["cars"].length; cnt_3++) {
