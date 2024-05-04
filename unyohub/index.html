@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width,initial-scale=1,interactive-widget=resizes-content">
 <script>
     const UNYOHUB_APP_NAME = "鉄道運用Hub";
-    const UNYOHUB_VERSION = "24.04-7";
+    const UNYOHUB_VERSION = "24.05-1";
     const UNYOHUB_INDEXEDDB_VERSION = 2310001;
     const UNYOHUB_LICENSE_TEXT = "このアプリケーションは無権利創作宣言に準拠して著作権放棄されています。";
     const UNYOHUB_LICENSE_URL = "https://www.2pd.jp/license/";
@@ -1438,24 +1438,100 @@ input[type="checkbox"]:checked + label.drop_down + div {
 }
 
 .car_info {
-    max-width: 480px;
+    width: min(100%, 500px);
     
     margin: 0 auto;
-    padding: 10px;
     
-    border-bottom: 1px solid #dddddd;
+    border-spacing: 0 2px;
 }
 
-.dark_mode .car_info {
-    border-color: #666666;
+.car_info tr {
+    height: 80px;
 }
 
-.car_info:after {
-    content: "";
+.car_info td {
+    padding: 0;
+}
+
+.car_info tr:first-child td:first-child {
+    width: 25px;
+    
+    padding-right: 5px;
+    
+    writing-mode: vertical-rl;
+    line-height: 25px;
+    font-size: 16px;
+    color: #999999;
+    letter-spacing: 0.1em;
+}
+
+.car_info tr td:nth-last-child(2) {
+    position: relative;
+    
+    width: 30px;
+    
+    padding: 4px;
+    
+    border: 1px solid #999999;
+}
+
+.dark_mode .car_info tr td:nth-last-child(2) {
+    border-color: #cccccc;
+}
+
+.car_info_car_C1 {
+    border-radius: 8px 8px 0 0;
+}
+
+.car_info_car_C2 {
+    border-radius: 0 0 8px 8px;
+}
+
+.car_info_car_C {
+    border-radius: 8px;
+}
+
+.car_info_car_M:before, .car_info_car_M1:before, .car_info_car_M:after, .car_info_car_M2:after {
+    content: "M";
     
     display: block;
     
-    clear: both;
+    position: absolute;
+    left: 4px;
+    
+    width: 28px;
+    height: 18px;
+    
+    border: 1px solid currentColor;
+    border-radius: 4px;
+    
+    line-height: 18px;
+    text-align: center;
+}
+
+.car_info_car_M:before, .car_info_car_M1:before {
+    top: 4px;
+}
+
+.car_info_car_M:after, .car_info_car_M2:after {
+    bottom: 4px;
+}
+
+.car_info_car_WC {
+    background-image: url(data:image/webp;base64,UklGRtQCAABXRUJQVlA4TMcCAAAvO8AJEIcEO5JsV83svXj/RyKkRP5VHiTdM3JBQGgkyZEU3Xr+1J7BY/D+Z9JxI0mKlDWzx/g7R85/wwY6GUWSJCXHAw5wiNTzhQMM8KIIJmmq7RjADPwg8IFAILCAAQNWMGDAeN1rilRKKZKpfZ99/BbT430x1ZHh9bl8/hUDyWC4vQyCifD4WOrINI4MpPEvwatxRKhk+PjeTB8/hfT4WAzjvxhur4OBYLo8DwbS5WUgjCPC138ZR6bxL8LHzybUUV3VlVeG86NMpZQibfZpNmddF9GnO+xXJiIiItb70KfruqZp03Td8eF3g0DgBYFA4AGB/9+fnv5bRMRiryIimiYTTdM0ERHLvYlY78Nszvp0EU0zn4vV3kXs9m02ZxGzPTNItK09lZOk7l6cCq7F3d2hHcWpu9s/xanhTN85uf/61395gC8R/Z8AA6BmbqTIqi4ama823orpAhvDwplyA1SM2ZiOlxtM2djOmpoCiWMPQgcv/Q0picKqOSu4KwF0tXPeEZDrFsDCsMSJBIDjnCwByEiMFku0J4CuNk43AbkeiRKIdtzHUctOLYck/vtPEszHjF9QcpdzJ2poKQzquMm5EbVB2NBxhXM5om6Z8LVexQXO+YjXBCCoOMM5HfHTCSqOcA77BpacXL+GfZy9vjx58xpaOS2ehi++zw0KtnG2el5QZFCwiRM861HrCrD/qe/ZIev25aLQqwA77zn3W6z3LzGDBpxyTlpv4yfOxyYNB50DvufEDhr2OLt9a7w1DW1Oq8/7nvDBat3hbGetEFbVbHE2s74Tfqip7Uygs5b1m/BHDR4l8NCy/xHyem4ncIuXJWRkSkRuJHCd95LwSqR0WORaAld5bwhvRUbnRS4lcJHXT+gXWawulDiXwFleMyFIFFaaGQmtcwblE3GZLDNA+WxhHMJcmfFWLYwW6yoeXaw0AAAA);
+    background-repeat: no-repeat;
+    background-size: 30px 20px;
+    background-position: center;
+}
+
+.car_info tr td:last-child {
+    padding: 0 10px;
+    
+    vertical-align: top;
+}
+
+.car_info b {
+    font-size: 18px;
 }
 
 .car_info span {
@@ -1468,6 +1544,8 @@ input[type="checkbox"]:checked + label.drop_down + div {
 
 .car_info .descriptive_text {
     padding: 0;
+    
+    clear: both;
 }
 
 .search_highlight {
@@ -7865,9 +7943,36 @@ function formation_detail (formation_name) {
     buf += "<div class='descriptive_text' id='inspection_information'>情報がありません</div>"
     
     buf += "<h3>車両情報</h3>";
+    buf += "<table class='car_info'>";
     for (var cnt = 0; cnt < formations["formations"][formation_name]["cars"].length; cnt++) {
-        buf += "<div class='car_info'><b>" + formations["formations"][formation_name]["cars"][cnt]["car_number"] + "</b><span id='car_info_" + cnt + "'></span><div class='descriptive_text' id='car_description_" + cnt + "'></div></div>";
+        var car_class = "";
+        if ("equipment" in formations["formations"][formation_name]["cars"][cnt]) {
+            for (var cnt_2 = 0; cnt_2 < formations["formations"][formation_name]["cars"][cnt]["equipment"].length; cnt_2++) {
+                if (car_class.length >= 1) {
+                    car_class += " ";
+                }
+                
+                car_class += "car_info_car_" + formations["formations"][formation_name]["cars"][cnt]["equipment"][cnt_2];
+            }
+        }
+        
+        if (formation_styles_available && "coloring_id" in formations["formations"][formation_name]["cars"][cnt] && formations["formations"][formation_name]["cars"][cnt]["coloring_id"] in formations["body_colorings"]) {
+            var coloring_data = formations["body_colorings"][formations["formations"][formation_name]["cars"][cnt]["coloring_id"]];
+            
+            var car_style = "style='background-color: " + coloring_data["base_color"] + "; color: " + coloring_data["font_color"] + ";'";
+        } else {
+            var car_style = "";
+        }
+        
+        buf += "<tr>";
+        
+        if (cnt === 0) {
+            buf += "<td rowspan='" + formations["formations"][formation_name]["cars"].length + "'>▲" + railroad_info["alias_of_forward_direction"] + "</td>";
+        }
+        
+        buf += "<td class='" + car_class + "' " + car_style + "></td><td><b>" + formations["formations"][formation_name]["cars"][cnt]["car_number"] + "</b><span id='car_info_" + cnt + "'></span><div class='descriptive_text' id='car_description_" + cnt + "'></div></td></tr>";
     }
+    buf += "</table>"
     
     formation_table_area_elm.innerHTML = buf;
     formation_table_wrapper_elm.scrollTop = 0;
