@@ -1007,7 +1007,7 @@ h4.position_signal_station {
     margin-right: -4px;
 }
 
-#position_area_supplement {
+#position_area_supplement, #colorize_formation_table_radio_area {
     text-align: center;
 }
 
@@ -1297,13 +1297,13 @@ input[type="checkbox"]:checked + label.drop_down + div {
     margin: 8px 1px 10px 0;
     padding: 1px 5px;
     
-    border: 1px solid #dddddd;
+    border: 1px solid #cccccc;
     
     line-height: 24px;
 }
 
 .dark_mode .formation_table div, .dark_mode .formation_table span:before, .dark_mode .formation_table span:after {
-    border-color: #666666;
+    border-color: #808080;
 }
 
 .formation_table .car_C1, .formation_table .car_C {
@@ -1387,7 +1387,7 @@ input[type="checkbox"]:checked + label.drop_down + div {
     
     margin: 0 1px;
     
-    border: 1px solid #dddddd;
+    border: 1px solid #cccccc;
     border-radius: 4px;
     
     vertical-align: top;
@@ -3528,6 +3528,7 @@ input[type="radio"] + label small, .chip + label small {
     color: #cccccc;
 }
 </style>
+<style id="formation_styles"></style>
 </head>
 <body>
     <header><a id="railroad_icon" href="javascript:void(0);" onclick="about_railroad_data();"></a><span id="app_name"></span><a id="railroad_name" href="javascript:void(0);" onclick="open_popup('railroad_select_popup');"></a><a id="menu_button" href="javascript:void(0);" onclick="menu_click();"></a></header>
@@ -3590,6 +3591,7 @@ input[type="radio"] + label small, .chip + label small {
     <article id="formation_table_wrapper" onscroll="formation_table_wrapper_onscroll();">
         <div id="formation_search_area">
             <div class='search_wrapper'><label for="car_number_search" class="search_icon">車両番号で検索</label><input type="search" id="car_number_search" onkeyup="draw_formation_table();" autocomplete="off" placeholder="車両番号で検索"></div>
+            <div id ="colorize_formation_table_radio_area"><input type="radio" name="colorize_formation_table_radio" id="colorize_formation_table" onchange="change_colorize_formation_table(this.checked);"><label for="colorize_formation_table">車体色を表示</label><input type="radio" name="colorize_formation_table_radio" id="not_colorize_formation_table" onchange="change_colorize_formation_table(!this.checked);"><label for="not_colorize_formation_table">白黒で表示</label></div>
         </div>
         <div id="formation_table_area" class="wait_icon"></div>
     </article>
@@ -4210,6 +4212,7 @@ function get_default_config () {
         "show_arriving_trains_on_timetable" : false,
         "show_starting_trains_only_on_timetable" : false,
         "colorize_beginners_posts" : false,
+        "colorize_formation_table" : true,
         "simplify_operation_details" : false
     };
 }
@@ -4882,6 +4885,62 @@ function update_railroad_info () {
 }
 
 
+var formation_styles_available = false;
+
+function update_formation_styles () {
+    var formation_css = document.getElementById("formation_styles").sheet;
+    for (var cnt = formation_css.cssRules.length - 1; cnt >= 0; cnt--) {
+        formation_css.deleteRule(cnt);
+    }
+    
+    formation_styles_available = false;
+    
+    if ("body_colorings" in formations) {
+        try {
+            var coloring_ids = Object.keys(formations["body_colorings"]);
+            
+            for (cnt = 0; cnt < coloring_ids.length; cnt++) {
+                var base_color = formations["body_colorings"][coloring_ids[cnt]]["base_color"]
+                
+                var css_code = ".car_coloring_" + coloring_ids[cnt] + " { background-color: " + base_color + "; color: " + formations["body_colorings"][coloring_ids[cnt]]["font_color"] + "; text-shadow: -1.4px -1.4px " + base_color + ", -0.5px -1.4px " + base_color + ", 0.5px -1.4px " + base_color + ", 1.4px -1.4px " + base_color + ", -1.4px -0.5px " + base_color + ", 1.4px -0.5px " + base_color + ", -1.4px 0.5px " + base_color + ", 1.4px 0.5px " + base_color + ", -1.4px 1.4px " + base_color + ", -0.5px 1.4px " + base_color + ", 0.5px 1.4px " + base_color + ", 1.4px 1.4px " + base_color + ";";
+                
+                if ("stripes" in formations["body_colorings"][coloring_ids[cnt]]) {
+                    css_code += " background-image:";
+                    
+                    for (var cnt_2 = 0; cnt_2 < formations["body_colorings"][coloring_ids[cnt]]["stripes"].length; cnt_2++) {
+                        var stripe_data = formations["body_colorings"][coloring_ids[cnt]]["stripes"][cnt_2];
+                        
+                        if (cnt_2 >= 1) {
+                            css_code += ",";
+                        }
+                        
+                        css_code += " linear-gradient(";
+                        
+                        if ("verticalize" in stripe_data && stripe_data["verticalize"]) {
+                            css_code += "to right, ";
+                        } else {
+                            css_code += "to bottom, ";
+                        }
+                        
+                        css_code += "transparent 0% " + stripe_data["start"] + "%, " + stripe_data["color"] + " " + stripe_data["start"] + "% " + stripe_data["end"] + "%, transparent " + stripe_data["end"] + "% 100%)";
+                    }
+                    
+                    css_code += ";";
+                }
+                
+                css_code += "}";
+                
+                formation_css.insertRule(css_code, cnt);
+            }
+            
+            formation_styles_available = true;
+        } catch (err) {
+            mes("編成表の車体塗装情報が破損しています", true);
+        }
+    }
+}
+
+
 var blank_article_elm = document.getElementById("blank_article");
 
 function select_railroad (railroad_id) {
@@ -5031,6 +5090,8 @@ function select_railroad (railroad_id) {
                             
                             if (!resolved) {
                                 resolve();
+                            } else {
+                                update_formation_styles();
                             }
                         } else if (!resolved) {
                             reject();
@@ -5044,6 +5105,8 @@ function select_railroad (railroad_id) {
     });
     
     Promise.all([promise_1, promise_2, promise_3]).then(function () {
+        update_formation_styles();
+        
         position_mode();
     }).catch(function () {
         mes("選択された路線系統はデータが利用できません", true);
@@ -7639,7 +7702,24 @@ function formation_table_mode (formation_name = null) {
     formation_table_drop_down_status = {};
     formation_table_wrapper_scroll_amount = 0;
     
-    draw_formation_table(formation_name);
+    var colorize_radio_area_elm = document.getElementById("colorize_formation_table_radio_area");
+    if (formation_styles_available) {
+        colorize_radio_area_elm.style.display = "block";
+        
+        if (config["colorize_formation_table"]) {
+            document.getElementById("colorize_formation_table").checked = true;
+        } else {
+            document.getElementById("not_colorize_formation_table").checked = true;
+        }
+    } else {
+        colorize_radio_area_elm.style.display = "none";
+    }
+    
+    if (formation_name === null) {
+        draw_formation_table();
+    } else {
+        formation_detail(formation_name);
+    }
 }
 
 function formation_table_wrapper_onscroll () {
@@ -7648,12 +7728,7 @@ function formation_table_wrapper_onscroll () {
     }
 }
 
-function draw_formation_table (formation_name = null) {
-    if (formation_name !== null) {
-        formation_detail(formation_name);
-        return;
-    }
-    
+function draw_formation_table () {
     formation_back_button_elm.style.display = "none";
     
     var buf = ""
@@ -7695,6 +7770,14 @@ function draw_formation_table (formation_name = null) {
                     }
                 }
                 
+                if (formation_styles_available && config["colorize_formation_table"] && "coloring_id" in formations["formations"][formation_name]["cars"][cnt_3]) {
+                    if (car_class.length >= 1) {
+                        car_class += " ";
+                    }
+                    
+                    car_class += "car_coloring_" + formations["formations"][formation_name]["cars"][cnt_3]["coloring_id"];
+                }
+                
                 buf_3 += "<div class='" + car_class + "'>" + escape_html(formations["formations"][formation_name]["cars"][cnt_3]["abbr_number"]) + "<span></span><span></span></div>";
             }
             
@@ -7734,6 +7817,14 @@ function draw_formation_table (formation_name = null) {
     selected_formation_name = null;
     
     formation_table_wrapper_elm.scrollTop = formation_table_wrapper_scroll_amount;
+}
+
+function change_colorize_formation_table (bool_val) {
+    config["colorize_formation_table"] = bool_val;
+    
+    save_config();
+    
+    draw_formation_table();
 }
 
 function update_formation_table_drop_down_status (elm) {
