@@ -5370,30 +5370,14 @@ function update_timetable (resolve_func, reject_func, operation_table_or_ts) {
     
     var railroad_id = railroad_info["railroad_id"];
     
-    var timetable_operation_name_elm = document.getElementById("timetable_operation_name");
-    
     if (Number.isFinite(operation_table_or_ts)) {
         var operation_table = get_days_operation(operation_table_or_ts);
         
-        var now_ts = get_timestamp();
-        if (get_date_string(operation_table_or_ts) === get_date_string(now_ts)) {
-            timetable_operation_table = "__today__";
-            
-            timetable_operation_name_elm.innerHTML = "今日<small>(" + railroad_info["operations"][operation_table]["operation_name"] + ")</small>";
-        } else if (get_date_string(operation_table_or_ts) === get_date_string(now_ts + 86400)) {
-            timetable_operation_table = "__tomorrow__";
-            
-            timetable_operation_name_elm.innerHTML = "明日<small>(" + railroad_info["operations"][operation_table]["operation_name"] + ")</small>";
-        } else {
-            timetable_operation_table = operation_table;
-            
-            timetable_operation_name_elm.innerHTML = railroad_info["operations"][operation_table]["operation_name"];
-        }
+        update_timetable_name(operation_table, operation_table_or_ts);
     } else {
         var operation_table = operation_table_or_ts;
-        timetable_operation_table = operation_table;
         
-        timetable_operation_name_elm.innerHTML = railroad_info["operations"][operation_table]["operation_name"];
+        update_timetable_name(operation_table);
     }
     
     idb_start_transaction("timetables", false, function (transaction) {
@@ -6663,6 +6647,33 @@ var timetable_area_elm = document.getElementById("timetable_area");
 var timetable_back_button_elm = document.getElementById("timetable_back_button");
 var timetable_promise_list = null;
 
+function update_timetable_name (operation_table_id, ts = null) {
+    var timetable_operation_name_elm = document.getElementById("timetable_operation_name");
+    
+    if (ts !== null) {
+        var now_ts = get_timestamp();
+        var timetable_date_string = get_date_string(ts);
+        
+        if (timetable_date_string === get_date_string(now_ts)) {
+            timetable_operation_table = "__today__";
+            
+            timetable_operation_name_elm.innerHTML = "今日<small>(" + railroad_info["operations"][operation_table_id]["operation_name"] + ")</small>";
+            
+            return;
+        } else if (timetable_date_string === get_date_string(now_ts + 86400)) {
+            timetable_operation_table = "__tomorrow__";
+            
+            timetable_operation_name_elm.innerHTML = "明日<small>(" + railroad_info["operations"][operation_table_id]["operation_name"] + ")</small>";
+            
+            return;
+        }
+    }
+    
+    timetable_operation_table = operation_table_id;
+    
+    timetable_operation_name_elm.innerHTML = railroad_info["operations"][operation_table_id]["operation_name"];
+}
+
 function update_timetable_line_select (lines) {
     timetable_line_select_elm.innerHTML = "";
     for (var cnt = 0; cnt < lines.length; cnt++) {
@@ -7246,6 +7257,8 @@ function operation_data_draw () {
     var buf = "<h2 style='background-color: " + bg_color + ";" + color_style + "'>" + railroad_info["operations"][operation_table_id]["operation_name"] + " ";
     
     var show_write_operation_data_button = "true";
+    
+    update_timetable_name(operation_table_id, operation_data_date);
     
     var today_ts = get_timestamp();
     if (operation_data_date > today_ts) {
