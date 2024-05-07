@@ -91,7 +91,7 @@ print "<input type='text' name='title' value='".$title_escaped."'>";
 print "<h3>本文</h3>";
 print "<textarea name='content'>".$content_html."</textarea>";
 
-print "<input type='checkbox' name='is_important' id='is_important' value='YES'><label for='is_important'>重要なお知らせ</label>";
+print "<input type='checkbox' name='is_important' id='is_important' class='toggle' value='YES'><label for='is_important'>重要なお知らせ</label><br>";
 
 print "<button type='submit' class='wide_button'>追加</button>";
 print "</form></div>";

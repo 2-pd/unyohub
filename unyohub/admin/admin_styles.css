@@ -17,17 +17,25 @@ html, body {
     margin: 0;
     
     color: #333333;
+    
+    overscroll-behavior-y: none;
 }
 
-*[onclick], *[onclick] *, a, a *, select, label {
+*[onclick], *[onclick] *, a, a *, button, select, label {
     cursor: pointer;
+    
+    -webkit-tap-highlight-color: rgba(153, 153, 153, 0.2);
 }
 
-*[onclick]:hover, *[onclick]:hover *, a:hover, a:hover *, select:hover, label:hover {
+*[onclick]:hover, *[onclick]:hover *, a:hover, a:hover *, button:hover, select:hover, label:hover {
     text-decoration: none !important;
 }
 
 *[disabled] {
+    background-image: repeating-linear-gradient(-45deg, transparent, transparent 8px, rgba(153, 153, 153, 0.1) 8px, rgba(153, 153, 153, 0.1) 12px);
+    
+    color: #999999 !important;
+    
     cursor: no-drop !important;
 }
 
@@ -230,7 +238,7 @@ input[type="checkbox"] {
     display: none;
 }
 
-input[type="checkbox"] + label {
+.toggle + label {
     display: block;
     
     position: relative;
@@ -241,9 +249,10 @@ input[type="checkbox"] + label {
     
     line-height: 24px;
     font-size: 18px;
+    text-align: left;
 }
 
-input[type="checkbox"] + label:not(.drop_down):before {
+.toggle + label:before {
     content: "";
     
     display: inline-block;
@@ -253,24 +262,26 @@ input[type="checkbox"] + label:not(.drop_down):before {
     top: 0;
     left: 0;
     
-    width: 44px;
-    height: 24px;
+    width: 42px;
+    height: 22px;
+    
+    border: 1px solid #cccccc;
     
     background-color: #dddddd;
     
-    border-radius: 12px;
-    
-    box-shadow: 1px 1px 2px rgba(0,0,0,0.25) inset;
+    border-radius: 6px;
     
     transition-duration: 0.25s;
     transition-property: all;
 }
 
-input[type="checkbox"]:checked + label:not(.drop_down):before {
-    background-color: #333333;
+.toggle:checked + label:before {
+    border-color: #333333;
+    
+    background-color: #444444;
 }
 
-input[type="checkbox"] + label:after {
+.toggle + label:after {
     content: "";
     
     display: inline-block;
@@ -283,21 +294,25 @@ input[type="checkbox"] + label:after {
     width: 20px;
     height: 20px;
     
-    background-color: #ffffff;
+    background-color: #f7f7f7;
     
-    border-radius: 10px;
-    
-    box-shadow: 1px 1px 2px rgba(0,0,0,0.25);
+    border-radius: 4px;
     
     transition-duration: 0.2s;
     transition-property: all;
 }
 
-input[type="checkbox"]:checked + label:after {
+.toggle:checked + label:after {
     left: 22px;
+    
+    background-color: #ffffff;
 }
 
 input[type="checkbox"] + label.drop_down {
+    display: block;
+    
+    position: relative;
+    
     max-width: 480px;
     min-height: 25px;
     
@@ -307,27 +322,35 @@ input[type="checkbox"] + label.drop_down {
     background-color: #444444;
     
     line-height: 25px;
+    font-size: 18px;
     font-weight: bold;
     color: #ffffff;
-    text-align: center;
     
     z-index: 1;
 }
 
 input[type="checkbox"] + label.drop_down:after {
+    content: "";
+    
+    display: inline-block;
+    
+    position: absolute;
     top: calc(50% - 22.5px);
     left: calc(100% - 45px) !important;
     
     width: 45px;
     height: 45px;
     
-    background-image: url(data:image/webp;base64,UklGRpoAAABXRUJQVlA4TI4AAAAvJ8AFEC8gECD4X9OkQ0BC8P+aTRKQEPy/ZpOEBATNY/cDoFrtVw0YrmLbdppNEYAJ/lsiIQLa9a8lcO45FiL6r8Zt26gXB21BX8E2AwAAIO378kvaVuWR9q0K3O1dF8Fal7oI1ogQBCGJEmwEO1aD1WG0GD1imuTzdvpPPND1WbunGWgmxIiYEePfMTMB);
+    background-image: url(data:image/webp;base64,UklGRnoAAABXRUJQVlA4TG4AAAAvJ8AFECcw//M//2LBFPcNs0AfAINBJElOtsAAEqKEN8DX+hcFG5AQ0X+Fbds2GWX3IdhX5JSzOVrMgZ3MyNkkC9/Zw5ci740vRS4QioDQhFI0ik40EE0EI8FM0f4xC24+VjNmwWyIFbHzQ2APAg==);
     background-repeat: no-repeat;
     background-size: 20px 12px;
     background-position: center;
     background-color: transparent !important;
     
     box-shadow: none;
+    
+    transition-duration: 0.2s;
+    transition-property: all;
 }
 
 input[type="checkbox"]:checked + label.drop_down:after {
@@ -335,25 +358,33 @@ input[type="checkbox"]:checked + label.drop_down:after {
 }
 
 input[type="checkbox"] + label.drop_down + div {
-    height: 0;
+    display: none;
     
     max-width: 500px;
     
-    margin: -45px auto 45px auto;
-    
-    opacity: 0;
+    margin: 0 auto 10px auto;
     
     overflow: hidden;
-    
-    transition: margin 0.1s, opacity 0.3s;
 }
 
 input[type="checkbox"]:checked + label.drop_down + div {
-    height: auto;
+    display: block;
     
-    margin: 0 auto;
+    animation: drop_down_open 0.1s ease-out;
+}
+
+@keyframes drop_down_open {
+    0% {
+        transform: translateY(-45px);
+        
+        opacity: 0;
+    }
     
-    opacity: 1;
+    100% {
+        transform: translateY(0);
+        
+        opacity: 1;
+    }
 }
 
 #announcements_area input[type="checkbox"] + label.drop_down {

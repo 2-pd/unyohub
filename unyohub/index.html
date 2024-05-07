@@ -1458,11 +1458,15 @@ input[type="checkbox"]:checked + label.drop_down + div {
     
     padding-right: 5px;
     
-    writing-mode: vertical-rl;
     line-height: 25px;
     font-size: 16px;
     color: #999999;
+    vertical-align: top;
     letter-spacing: 0.1em;
+}
+
+.car_info tr:first-child td:first-child span {
+    writing-mode: vertical-rl;
 }
 
 .car_info tr td:nth-last-child(2) {
@@ -3036,23 +3040,27 @@ a {
 .select_operation_inbound tr:first-child td:first-child, .select_operation_outbound tr:first-child td:first-child {
     width: 35px;
     
-    writing-mode: vertical-rl;
-    line-height: 35px;
+    line-height: 0;
     font-size: 16px;
     color: #999999;
     letter-spacing: 0.2em;
 }
 
-.select_operation_inbound tr:first-child td:first-child span {
-    float: left;
+.select_operation_inbound tr:first-child td:first-child {
+    vertical-align: top;
+}
+
+.select_operation_outbound tr:first-child td:first-child {
+    vertical-align: bottom;
+}
+
+.select_operation_inbound tr:first-child td:first-child span, .select_operation_outbound tr:first-child td:first-child span {
+    line-height: 35px;
+    writing-mode: vertical-rl;
 }
 
 .select_operation_inbound tr:first-child td:first-child span:before {
     content: "▲";
-}
-
-.select_operation_outbound tr:first-child td:first-child span {
-    float: right;
 }
 
 .select_operation_outbound tr:first-child td:first-child span:after {
@@ -3062,6 +3070,7 @@ a {
 .select_operation_inbound td[onclick], .select_operation_outbound td[onclick] {
     padding-right: 30px;
     
+    text-align: left;
     text-decoration: underline;
 }
 
@@ -3080,6 +3089,7 @@ a {
     line-height: 22px;
     font-size: 14px;
     color: #444444;
+    text-align: center;
     text-decoration: none;
     vertical-align: top;
 }
@@ -3347,6 +3357,17 @@ input[type="search"] {
 
 input[type="search"]::-webkit-search-cancel-button {
    -webkit-appearance: none;
+   
+   width: 25px;
+   height: 20px;
+   
+   margin-right: 0;
+   
+   background-image: url(data:image/webp;base64,UklGRlQBAABXRUJQVlA4TEcBAAAvMcAJEOdgkG2kvj/Do/5Pw0DaNrl/DZf610DaNrl/DZf6l2kAgEnm7nU4//9DouoBLgGwu7aq//+HQgKdGVz1yIBAQNWPDy8sBvzYqw0vPkwzc/7/X6FqvDsEiG0jOZLqvP3fWm/zj/Smu7ongYj+O3DbxpFke/f6TZ95A0wt7YdBfZ8bbD2YoofJzCRZD49XFq1Bzyz+Sq7MU8GpyadnIuJr91uoHNprd+Dml8Ol9wPcAuX4eU0JcNPLobw2oCiaE0wmPanai8WV1G3H4iSN46ks36SEP2Mm8FAKV4qaAmFH2Xr4pqzBShp3WOOh+pNLhY+gD70rvom9iWQaLMujUxj0pu0ZEIlpm73R41ibyU7RJr8c3mqheBLK4bA3vie/HOFVb5r8clRfWYuX8sE1kRq7UNWdDnMWS/6OPcLWufsPnwraBQAA);
+   background-repeat: no-repeat;
+   background-size: 25px 20px;
+   
+   cursor: pointer;
 }
 
 textarea {
@@ -3668,14 +3689,14 @@ input[type="radio"] + label small, .chip + label small {
     <article id="operation_data_area" class="wait_icon"></article>
     <article id="formation_table_wrapper" onscroll="formation_table_wrapper_onscroll();">
         <div id="formation_search_area">
-            <div class='search_wrapper'><label for="car_number_search" class="search_icon">車両番号で検索</label><input type="search" id="car_number_search" onkeyup="draw_formation_table();" autocomplete="off" placeholder="車両番号で検索"></div>
+            <div class='search_wrapper'><label for="car_number_search" class="search_icon">車両番号で検索</label><input type="search" id="car_number_search" onkeyup="draw_formation_table();" onsearch="draw_formation_table();" placeholder="車両番号で検索"></div>
             <div id ="colorize_formation_table_radio_area"><input type="radio" name="colorize_formation_table_radio" id="colorize_formation_table" onchange="change_colorize_formation_table(this.checked);"><label for="colorize_formation_table">車体色を表示</label><input type="radio" name="colorize_formation_table_radio" id="not_colorize_formation_table" onchange="change_colorize_formation_table(!this.checked);"><label for="not_colorize_formation_table">白黒で表示</label></div>
         </div>
         <div id="formation_table_area" class="wait_icon"></div>
     </article>
     <article>
         <div id="operation_search_area">
-            <div class='search_wrapper'><label for="train_number_search" class="search_icon">列車番号で検索</label><input type="search" id="train_number_search" onkeyup="operation_table_list_number();" autocomplete="off" placeholder="列車番号で検索"></div>
+            <div class='search_wrapper'><label for="train_number_search" class="search_icon">列車番号で検索</label><input type="search" id="train_number_search" onkeyup="operation_table_list_number();" onsearch="operation_table_list_number();" placeholder="列車番号で検索"></div>
             <input type="checkbox" id="operation_search_menu"><label for="operation_search_menu" class="drop_down">絞り込み条件 <span id="operation_search_filter_count"></span></label>
             <div>
                 <select class="wide_select" id="operation_search_group_name" onchange="operation_table_list_number();"><option value="" selected="selected"></option></select>
@@ -7967,7 +7988,7 @@ function formation_detail (formation_name) {
         buf += "<tr>";
         
         if (cnt === 0) {
-            buf += "<td rowspan='" + formations["formations"][formation_name]["cars"].length + "'>▲" + railroad_info["alias_of_forward_direction"] + "</td>";
+            buf += "<td rowspan='" + formations["formations"][formation_name]["cars"].length + "'><span>▲" + railroad_info["alias_of_forward_direction"] + "</span></td>";
         }
         
         buf += "<td class='" + car_class + "' " + car_style + "></td><td><b>" + formations["formations"][formation_name]["cars"][cnt]["car_number"] + "</b><span id='car_info_" + cnt + "'></span><div class='descriptive_text' id='car_description_" + cnt + "'></div></td></tr>";
