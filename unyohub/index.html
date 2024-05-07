@@ -1456,6 +1456,8 @@ input[type="checkbox"]:checked + label.drop_down + div {
 .car_info tr:first-child td:first-child {
     width: 25px;
     
+    max-width: 25px;
+    
     padding-right: 5px;
     
     line-height: 25px;
@@ -1538,7 +1540,7 @@ input[type="checkbox"]:checked + label.drop_down + div {
     font-size: 18px;
 }
 
-.car_info span {
+.car_info tr td:last-child span {
     display: block;
     
     width: fit-content;
@@ -2170,6 +2172,11 @@ footer small {
     background-image: url(data:image/webp;base64,UklGRoABAABXRUJQVlA4THQBAAAvO8AOEJXAkSTJbcT/m3p7eRZNfvIUdogdnoBZADjUIsJxAABKQjcs0GXs07lBtyPR8NZ/vc4l/HW3TgAdu/7m9sLc9eDyj5MzWkfjcN4D5fSOoj6p6u5xDGN/r7R7KhzDfOwtNReyfJ2i4k3RMlXlqm1U1u5aQ35Yj7JTadyw/XhJTnpbQm6NmyVPlgZFmZpadKwRZX3Uw5z7+pbCxYsdNXQlfwIBU1JNLXQZb6lxB1DkSE+ZwErUKhoFLsBa19OPbOB+jaLAHZDrJxcBNcOoOpArflICyEtLmgPLlJ8FB+hsOQH93ugITAU/A3C13IGc9KMykBoW1YFc85McYEoKlJ5bYgJB9vzo9WYBK/HZ9LwAw9VPKALYEqqn+emkmepMIHiHcxyOQkN21Dhc6TuY3uE0erjQqRRxSInSMIZRhxqKLKGX3FxZpjZsr3Sqnq9hTU6NUTtLu9qspVaiERay3FeNV3IGiMZ2PHYHze2FubvpwgE=) !important;
     
     right: 55px;
+}
+
+article .screenshot_button {
+    top: 100px;
+    right: 10px;
 }
 
 .popup .popup_close_button, .popup .screenshot_button {
@@ -3296,6 +3303,10 @@ a {
     margin-top: 30px;
 }
 
+.screenshot_area .car_info {
+    text-align: left;
+}
+
 input[type="text"], input[type="number"], input[type="password"], input[type="search"], .wide_select, .line_select_wrapper select {
     background-color: #ffffff;
     
@@ -3688,6 +3699,7 @@ input[type="radio"] + label small, .chip + label small {
     </article>
     <article id="operation_data_area" class="wait_icon"></article>
     <article id="formation_table_wrapper" onscroll="formation_table_wrapper_onscroll();">
+        <button type="button" id="formation_screenshot_button" class="screenshot_button" onclick="take_screenshot('formation_table_area');"></button>
         <div id="formation_search_area">
             <div class='search_wrapper'><label for="car_number_search" class="search_icon">車両番号で検索</label><input type="search" id="car_number_search" onkeyup="draw_formation_table();" onsearch="draw_formation_table();" placeholder="車両番号で検索"></div>
             <div id ="colorize_formation_table_radio_area"><input type="radio" name="colorize_formation_table_radio" id="colorize_formation_table" onchange="change_colorize_formation_table(this.checked);"><label for="colorize_formation_table">車体色を表示</label><input type="radio" name="colorize_formation_table_radio" id="not_colorize_formation_table" onchange="change_colorize_formation_table(!this.checked);"><label for="not_colorize_formation_table">白黒で表示</label></div>
@@ -3712,21 +3724,21 @@ input[type="radio"] + label small, .chip + label small {
     </article>
     <footer>
         <div>
-            <button id="position_reload_button" class="reload_button" onclick="position_mode('today', null, false);"></button>
-            <select id="position_date_select" class="footer_select" onchange="position_mode(this.value, 0, false);"><option value="today" selected="selected">今日</option><option value="tomorrow">明日</option></select><button type="button" class="previous_button" onclick="position_change_time(-60);"></button><span id="position_hours" class="footer_value"></span><button type="button" class="next_button" onclick="position_change_time(60);"></button><button type="button" class="previous_button" onclick="position_change_time(-5);"></button><span id="position_minutes" class="footer_value"></span><button type="button" class="next_button" onclick="position_change_time(5);"></button>
+            <button type="button" id="position_reload_button" class="reload_button" onclick="position_mode('today', null);"></button>
+            <select id="position_date_select" class="footer_select" onchange="position_mode(this.value, 0);"><option value="today" selected="selected">今日</option><option value="tomorrow">明日</option></select><button type="button" class="previous_button" onclick="position_change_time(-60);"></button><span id="position_hours" class="footer_value"></span><button type="button" class="next_button" onclick="position_change_time(60);"></button><button type="button" class="previous_button" onclick="position_change_time(-5);"></button><span id="position_minutes" class="footer_value"></span><button type="button" class="next_button" onclick="position_change_time(5);"></button>
             <input type="time" id="position_time_button" class="time_button" onchange="position_time_button_change();">
         </div>
         <div>
-            <button id="timetable_back_button" class="back_button" onclick="timetable_change_lines(timetable_line_select_elm.value, true);"></button>
+            <button type="button" id="timetable_back_button" class="back_button" onclick="timetable_change_lines(timetable_line_select_elm.value, true);"></button>
             <button type="button" class="previous_button" onclick="timetable_operation_previous();"></button><span id="timetable_operation_name" class="footer_value_wide"></span><button type="button" class="next_button" onclick="timetable_operation_next();"></button><button type="button" class="list_button" onclick="timetable_list_operation_tables();"></button>
         </div>
         <div>
-            <button class="reload_button" onclick="operation_data_change_date(null);"></button>
+            <button type="button" class="reload_button" onclick="operation_data_change_date(null);"></button>
             <button type="button" class="previous_button" onclick="operation_data_change_date(-1);"></button><span id="operation_data_date" class="footer_value_wide"></span><button type="button" class="next_button" onclick="operation_data_change_date(1);"></button>
             <input type="date" id="operation_date_button" class="date_button" onchange="operation_date_button_change();">
         </div>
         <div>
-            <button id="formation_back_button" class="back_button" onclick="draw_formation_table();"></button>
+            <button type="button" id="formation_back_button" class="back_button" onclick="draw_formation_table();"></button>
         </div>
         <div>
             <button type="button" class="previous_button" onclick="operation_table_previous();"></button><span id="operation_table_name" class="footer_value_wide"></span><button type="button" class="next_button" onclick="operation_table_next();"></button><button type="button" class="list_button" onclick="operation_table_list_tables();"></button>
@@ -3766,7 +3778,7 @@ input[type="radio"] + label small, .chip + label small {
         <h3>パスワード</h3>
         <div class="value_and_button">
             <b>＊＊＊＊＊＊</b>
-            <button onclick="open_square_popup('change_password_popup');">変更</button>
+            <button type="button" onclick="open_square_popup('change_password_popup');">変更</button>
         </div>
         <h3>ハンドルネーム</h3>
         <input type="text" id="edit_user_data_user_name" autocomplete="nickname">
@@ -5658,14 +5670,10 @@ var position_area_elm = document.getElementById("position_area");
 var position_reload_button_elm = document.getElementById("position_reload_button");
 var position_time_button_elm = document.getElementById("position_time_button");
 
-function position_mode (date_str = "today", position_time_additions = null, reset_scroll_amount = true) {
+function position_mode (date_str = "today", position_time_additions = null) {
     change_mode(0);
     
-    if (reset_scroll_amount) {
-        var position_scroll_amount = 0;
-    } else {
-        var position_scroll_amount = article_elms[0].scrollTop;
-    }
+    var position_scroll_amount = article_elms[0].scrollTop;
     
     position_area_elm.innerHTML = "";
     position_line_select_elm.style.display = "block";
@@ -7799,6 +7807,7 @@ var formation_table_wrapper_elm = document.getElementById("formation_table_wrapp
 var formation_search_area_elm = document.getElementById("formation_search_area");
 var car_number_search_elm = document.getElementById("car_number_search");
 var formation_table_area_elm = document.getElementById("formation_table_area");
+var formation_screenshot_button_elm = document.getElementById("formation_screenshot_button");
 var formation_back_button_elm = document.getElementById("formation_back_button");
 
 var selected_formation_name = null;
@@ -7841,6 +7850,7 @@ function formation_table_wrapper_onscroll () {
 }
 
 function draw_formation_table () {
+    formation_screenshot_button_elm.style.display = "none";
     formation_back_button_elm.style.display = "none";
     
     var buf = ""
@@ -7949,6 +7959,7 @@ function formation_detail (formation_name) {
     
     selected_formation_name = formation_name;
     
+    formation_screenshot_button_elm.style.display = "block";
     formation_back_button_elm.style.display = "block";
     
     var buf = "<h2><button type='button' class='previous_button' onclick='previous_formation(\"" + add_slashes(formation_name) + "\");'></button>" + escape_html(formation_name) + "<button type='button' class='next_button' onclick='next_formation(\"" + add_slashes(formation_name) + "\");'></button></h2>";
