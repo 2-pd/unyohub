@@ -6,6 +6,25 @@
 
 # APIエンドポイント
 
+## instance_info.php
+鉄道運用Hubのインスタンス情報を取得する
+
+### 引数
+**$_POST["last_modified_timestamp"]** : タイムスタンプ(UTC、省略可能)
+
+### 応答
+**タイムスタンプが省略されるか、main.iniの変更日時がタイムスタンプより新しかった場合** :  
+{  
+    "instance_name" : 鉄道運用Hubインスタンスの表示名,  
+    "allow_sign_up" : 新規ユーザーの登録を認めるか(BOOL値),  
+    "require_email_address" : ユーザー登録時にメールアドレス入力を必要とするか(BOOL値),  
+    "allow_guest_user" : ログインしていないユーザーの投稿を認めるか(BOOL値)  
+}  
+  
+**main.iniの変更日時がタイムスタンプ以前だった場合** :  
+文字列「NO_UPDATES_AVAILABLE」
+
+
 ## check_logged_in.php
 クライアントのログイン状態を確認し、ログインしていればユーザー情報を返す
 
@@ -28,12 +47,30 @@
 文字列「NOT_LOGGED_IN」
 
 
+## send_verification_email
+メールアドレス確認コードを発行し、メールで送信する
+
+### 引数
+**$_POST["email_address"]** : メールアドレス  
+**$_POST["user_id"]** : ユーザーID(新規ユーザー登録のための確認コード発行時は省略)  
+**$_POST["zizai_captcha_id"]** : Zizai CAPTCHAのセッションID  
+**$_POST["zizai_captcha_characters"]** : Zizai CAPTCHAのユーザー入力文字列
+
+### 応答
+**送信に成功した場合** :  
+文字列「SUCCEEDED」  
+  
+**送信に失敗した場合** :  
+文字列「ERROR: 」とそれに続くエラー内容文
+
+
 ## check_sign_up.php
-ユーザーIDとパスワードが登録可能であるかを確認する
+ユーザーIDとパスワードが登録可能であり、メールアドレス確認コードが正しいかを確認する
 
 ### 引数
 **$_POST["user_id"]** : ユーザーID  
-**$_POST["password"]** : パスワード
+**$_POST["password"]** : パスワード  
+**$_POST["email_address_verification_code"]** : メールアドレス確認コード(main.iniの設定がメールアドレス不要の場合は省略可能)
 
 ### 応答
 **登録可能である場合** :  
@@ -50,8 +87,9 @@
 **$_POST["user_id"]** : ユーザーID  
 **$_POST["password"]** : パスワード  
 **$_POST["user_name"]** : ハンドルネーム  
-**$_POST["zizai_captcha_id"]** : Zizai CAPTCHAのセッションID  
-**$_POST["zizai_captcha_characters"]** : Zizai CAPTCHAのユーザー入力文字列
+**$_POST["email_address_verification_code"]** : メールアドレス確認コード(main.iniの設定がメールアドレス不要の場合は省略可能)  
+**$_POST["zizai_captcha_id"]** : Zizai CAPTCHAのセッションID(メールアドレス確認コードが存在する場合は省略可能)  
+**$_POST["zizai_captcha_characters"]** : Zizai CAPTCHAのユーザー入力文字列(メールアドレス確認コードが存在する場合は省略可能)
 
 ### 応答
 **登録に成功した場合** :  
@@ -545,17 +583,19 @@ JSON化された時刻表の内容を返す
 文字列「ERROR: 」とそれに続くエラー内容文
 
 
-## create_totp_key.php
-暗号学的に安全なTOTP生成鍵を生成する
+## send_password_reset_email
+パスワードリセットURLを生成し、メールで送信する
 
 ### 引数
-**$_COOKIE["unyohub_login_token"]** : Wakaranaのログイントークン  
+**$_POST["email_address"]** : メールアドレス  
+**$_POST["zizai_captcha_id"]** : Zizai CAPTCHAのセッションID  
+**$_POST["zizai_captcha_characters"]** : Zizai CAPTCHAのユーザー入力文字列
 
 ### 応答
-**生成に成功した場合** :  
-TOTP生成鍵として使用可能な乱数値を返す  
+**送信に成功した場合** :  
+文字列「SUCCEEDED」  
   
-**エラーの場合** :  
+**送信に失敗した場合** :  
 文字列「ERROR: 」とそれに続くエラー内容文
 
 
@@ -591,6 +631,21 @@ IPアドレスを要注意として標識する
 文字列「ERROR: 」とそれに続くエラー内容文
 
 
+<!---
+## create_totp_key.php
+暗号学的に安全なTOTP生成鍵を生成する
+
+### 引数
+**$_COOKIE["unyohub_login_token"]** : Wakaranaのログイントークン  
+
+### 応答
+**生成に成功した場合** :  
+TOTP生成鍵として使用可能な乱数値を返す  
+  
+**エラーの場合** :  
+文字列「ERROR: 」とそれに続くエラー内容文
+
+
 ## enable_2_factor_auth.php
 ユーザーの2要素認証を有効化する
 
@@ -606,3 +661,4 @@ IPアドレスを要注意として標識する
   
 **エラーの場合** :  
 文字列「ERROR: 」とそれに続くエラー内容文
+--->

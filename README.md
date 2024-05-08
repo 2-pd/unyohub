@@ -32,7 +32,6 @@
 
 鉄道運用Hubのアプリ名やアイコンは以下のファイルを編集することで変更可能です。
 
-- index.html の定数値 UNYOHUB_APP_NAME
 - manifest.json の変数値 name 及び short_name
 - favicon.ico (同名のアイコンファイルに差し替え)
 - apple-touch-icon.webp、maskable_icon.webp、splash_screen_image.webp (それぞれ同名のWebPファイルに差し替え)

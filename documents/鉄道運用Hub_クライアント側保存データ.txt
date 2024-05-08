@@ -6,6 +6,14 @@
 
 _/_/_/_/ クライアント側ローカルストレージ _/_/_/_/
 
+███ unyohub_instance_info ███
+
+{
+    "last_modified_timestamp" : このデータの元となったINIファイルが更新された日時のタイムスタンプ値(UTC、秒単位),
+    以降の項目はinstance_info.phpのレスポンスをそのまま展開して使用
+}
+
+
 ███ unyohub_config ███
 
 {

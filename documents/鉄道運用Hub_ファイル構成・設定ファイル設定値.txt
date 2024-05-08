@@ -44,6 +44,8 @@ _/_/_/_/ ファイル構成 _/_/_/_/
 └ api/
    └ ****.php ・・・クライアント端末と情報をやり取りするエンドポイント(詳細は別記)
    └ zizai_captcha/ ・・・Zizai CAPTCHAのエンドポイント
+└ user/
+   └ reset_password.php ・・・ユーザーのパスワードをリセットしてランダムな値を設定するスクリプト
 └ admin/ ・・・管理画面
    └ admin_common.php ・・・管理画面共通関数等
    └ index.php ・・・管理画面トップページ
@@ -66,7 +68,7 @@ _/_/_/_/ 設定ファイル設定値 _/_/_/_/
 
 ███ index.html ███
 
-※設定ファイルではないが、編集可能な定数が存在する
+※鉄道運用Hubからフォークして新たなアプリケーションを開発する場合は必要に応じて以下の値を変更
   UNYOHUB_APP_NAME  アプリケーション名
   UNYOHUB_VERSION  バージョン文字列
   UNYOHUB_INDEXEDDB_VERSION  IndexedDBのデータベースバージョン数値
@@ -83,8 +85,12 @@ _/_/_/_/ 設定ファイル設定値 _/_/_/_/
 
 ███ main.ini ███
 
+instance_name 鉄道運用Hubインスタンスの表示名
+
 allow_sign_up 新規ユーザーの登録を認めるか(BOOL値)
+require_email_address ユーザー登録時にメールアドレス入力を必要とするか(BOOL値)
 allow_guest_user ログインしていないユーザーの投稿を認めるか(BOOL値)
+
 log_ip_address 投稿者のIPアドレスを記録するか(BOOL値)
 anti_troll_garbage_size 要注意ユーザーの投稿処理を遅延させるために使用するダミーデータのサイズ(MB単位、整数値)
 
