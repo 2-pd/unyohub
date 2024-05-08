@@ -91,6 +91,8 @@ allow_sign_up 新規ユーザーの登録を認めるか(BOOL値)
 require_email_address ユーザー登録時にメールアドレス入力を必要とするか(BOOL値)
 allow_guest_user ログインしていないユーザーの投稿を認めるか(BOOL値)
 
+sender_email_address メール送信用アドレス(サーバに紐付けられているドメイン名であれば存在しないメールアドレスでも設定可能)
+
 log_ip_address 投稿者のIPアドレスを記録するか(BOOL値)
 anti_troll_garbage_size 要注意ユーザーの投稿処理を遅延させるために使用するダミーデータのサイズ(MB単位、整数値)
 

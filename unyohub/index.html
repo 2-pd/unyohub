@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width,initial-scale=1,interactive-widget=resizes-content">
 <script>
     const UNYOHUB_APP_NAME = "鉄道運用Hub";
-    const UNYOHUB_VERSION = "24.05-1";
+    const UNYOHUB_VERSION = "24.05-2";
     const UNYOHUB_INDEXEDDB_VERSION = 2310001;
     const UNYOHUB_LICENSE_TEXT = "このアプリケーションは無権利創作宣言に準拠して著作権放棄されています。";
     const UNYOHUB_LICENSE_URL = "https://www.2pd.jp/license/";
@@ -138,7 +138,7 @@ header {
     border-bottom-color: #111111;
 }
 
-#app_name {
+#instance_name {
     display: inline-block;
     
     width: calc(100% - 100px);
@@ -148,7 +148,7 @@ header {
     text-align: center;
 }
 
-.railroad_select_mode #app_name {
+.railroad_select_mode #instance_name {
     display: none;
 }
 
@@ -1402,11 +1402,11 @@ input[type="checkbox"]:checked + label.drop_down + div {
 }
 
 .car_M span:before, .car_M span:after, .car_M1 span:first-of-type:before, .car_M1 span:first-of-type:after, .car_M2 span:last-of-type:before, .car_M2 span:last-of-type:after {
-    background-color: #333333;
+    background-color: #444444;
 }
 
 .dark_mode .car_M span:before, .dark_mode .car_M span:after, .dark_mode .car_M1 span:first-of-type:before, .dark_mode .car_M1 span:first-of-type:after, .dark_mode .car_M2 span:last-of-type:before, .dark_mode .car_M2 span:last-of-type:after {
-    background-color: #ffffff;
+    background-color: #eeeeee;
 }
 
 .train_icon_large {
@@ -3641,7 +3641,7 @@ input[type="radio"] + label small, .chip + label small {
 <style id="formation_styles"></style>
 </head>
 <body>
-    <header><a id="railroad_icon" href="javascript:void(0);" onclick="about_railroad_data();"></a><span id="app_name"></span><a id="railroad_name" href="javascript:void(0);" onclick="open_popup('railroad_select_popup');"></a><a id="menu_button" href="javascript:void(0);" onclick="menu_click();"></a></header>
+    <header><a id="railroad_icon" href="javascript:void(0);" onclick="about_railroad_data();"></a><span id="instance_name"></span><a id="railroad_name" href="javascript:void(0);" onclick="open_popup('railroad_select_popup');"></a><a id="menu_button" href="javascript:void(0);" onclick="menu_click();"></a></header>
     <div id="menu">
         <div id="menu_logged_in">
             <b id="menu_user_name"></b>
@@ -3902,8 +3902,6 @@ input[type="radio"] + label small, .chip + label small {
     <div id="wait_screen"></div>
     <div id="message_area"></div>
 <script>
-document.getElementsByTagName("title")[0].innerText = UNYOHUB_APP_NAME;
-document.getElementById("app_name").innerText = UNYOHUB_APP_NAME;
 document.getElementById("app_version").innerText = UNYOHUB_APP_NAME + " " + UNYOHUB_VERSION;
 document.getElementById("license_text").innerText = UNYOHUB_LICENSE_TEXT;
 document.getElementById("license_link").href = UNYOHUB_LICENSE_URL;
@@ -4369,6 +4367,36 @@ function get_guest_id () {
 }
 
 
+function ajax_fetch (end_point_url, query_str, callback_func, timeout = 30) {
+    var ajax_request = new XMLHttpRequest();
+    ajax_request.onloadend = function () {
+        if (ajax_request.responseText.substring(0, 6) === "ERROR:") {
+            mes(ajax_request.responseText, true);
+            callback_func(false, null);
+        } else if (ajax_request.status === 0) {
+            mes("ERROR: ネットワークが不安定です", true);
+            callback_func(false, null);
+        } else if (ajax_request.status !== 200) {
+            mes("ERROR: データの取得に失敗しました(" + ajax_request.status + ")", true);
+            callback_func(false, null);
+        } else {
+            callback_func(ajax_request.responseText, ajax_request.getResponseHeader("last-modified"));
+        }
+    };
+    
+    if (query_str !== null) {
+        ajax_request.open("POST", end_point_url, true);
+        ajax_request.setRequestHeader("Content-Type","application/x-www-form-urlencoded;charset=UTF-8");
+        ajax_request.timeout = timeout * 1000;
+        ajax_request.send(query_str);
+    } else {
+        ajax_request.open("GET", end_point_url, true);
+        ajax_request.timeout = timeout * 1000;
+        ajax_request.send();
+    }
+}
+
+
 var message_area_elm = document.getElementById("message_area");
 var message_elm_list = [];
 
@@ -4409,6 +4437,48 @@ function delete_mes (box_elm) {
         message_elm_list.splice(message_index, 1);
     }
 }
+
+
+var instance_info;
+
+function update_instance_info () {
+    document.getElementsByTagName("title")[0].innerText = instance_info["instance_name"];
+    document.getElementById("instance_name").innerText = instance_info["instance_name"];
+}
+
+(function () {
+    var instance_info_json = localStorage.getItem("unyohub_instance_info");
+    
+    if (instance_info_json !== null) {
+        instance_info = JSON.parse(instance_info_json);
+        
+        var last_modified_timestamp_q = "last_modified_timestamp=" + instance_info["last_modified_timestamp"];
+    } else {
+        instance_info = {
+            instance_name : UNYOHUB_APP_NAME,
+            allow_sign_up : false,
+            require_email_address : null,
+            allow_guest_user : false
+        };
+        
+        var last_modified_timestamp_q = null;
+    }
+    
+    update_instance_info();
+    
+    ajax_fetch("api/instance_info.php", last_modified_timestamp_q, function (response, last_modified) {
+        if (response !== false && response !== "NO_UPDATES_AVAILABLE") {
+            instance_info = JSON.parse(response);
+            
+            var last_modified_date = new Date(last_modified);
+            instance_info["last_modified_timestamp"] = Math.floor(last_modified_date.getTime() / 1000);
+            
+            localStorage.setItem("unyohub_instance_info", JSON.stringify(instance_info));
+            
+            update_instance_info();
+        }
+    });
+}());
 
 
 (function () {
@@ -4456,36 +4526,6 @@ function delete_mes (box_elm) {
 var railroad_info = null;
 var train_icons = null;
 var formations = null;
-
-
-function ajax_fetch (end_point_url, query_str, callback_func, timeout = 30) {
-    var ajax_request = new XMLHttpRequest();
-    ajax_request.onloadend = function () {
-        if (ajax_request.responseText.substring(0, 6) === "ERROR:") {
-            mes(ajax_request.responseText, true);
-            callback_func(false, null);
-        } else if (ajax_request.status === 0) {
-            mes("ERROR: ネットワークが不安定です", true);
-            callback_func(false, null);
-        } else if (ajax_request.status !== 200) {
-            mes("ERROR: データの取得に失敗しました(" + ajax_request.status + ")", true);
-            callback_func(false, null);
-        } else {
-            callback_func(ajax_request.responseText, ajax_request.getResponseHeader("last-modified"));
-        }
-    };
-    
-    if (query_str !== null) {
-        ajax_request.open("POST", end_point_url, true);
-        ajax_request.setRequestHeader("Content-Type","application/x-www-form-urlencoded;charset=UTF-8");
-        ajax_request.timeout = timeout * 1000;
-        ajax_request.send(query_str);
-    } else {
-        ajax_request.open("GET", end_point_url, true);
-        ajax_request.timeout = timeout * 1000;
-        ajax_request.send();
-    }
-}
 
 
 function idb_start_transaction (tables, writable, callback_func) {
@@ -9263,6 +9303,7 @@ function reset_config_value () {
 
 function reset_cache_db () {
     if (confirm("キャッシュデータの削除により運用表や時刻表のデータが再ダウンロードされるため、多くの通信容量を消費する場合があります。\n\nよろしいですか？")) {
+        localStorage.removeItem("unyohub_instance_info");
         localStorage.removeItem("unyohub_railroads_caches");
         localStorage.removeItem("unyohub_latest_announcement_timestamp");
         
