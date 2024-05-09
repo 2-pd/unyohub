@@ -4003,7 +4003,7 @@ function zizai_captcha_get_html (callback_func, button_color = "#dddddd", id_nam
 /* captcha.js ここまで */
 
 
-/* elem2img.js 24.04-1 */
+/* elem2img.js 24.05-1 */
 
 class Elem2Img {
     constructor () {
@@ -4142,21 +4142,37 @@ class Elem2Img {
         }));
     }
     
-    get_image (callback_func, elem, mime_type, scale, quality = 100) {
-        var elem_2 = elem.cloneNode(true);
-        
+    paste_svg (svg_data, canv_width, canv_height) {
         var canv = document.createElement("canvas");
         var ctx = canv.getContext("2d");
         
-        canv.width = Math.round(elem.offsetWidth * scale);
-        canv.height = Math.round(elem.offsetHeight * scale);
+        canv.width = canv_width;
+        canv.height = canv_height;
         
         if (this.background_color !== null) {
             ctx.fillStyle = this.background_color;
-            ctx.fillRect(0, 0, canv.width, canv.height);
+            ctx.fillRect(0, 0, canv_width, canv_height);
         }
         
-        elem_2.style.transform = "translate(" + ((canv.width - elem.offsetWidth) / 2) + "px, " + ((canv.height - elem.offsetHeight) / 2) + "px) scale(" + scale + ")";
+        return new Promise(function (resolve) {
+            var img_elem = document.createElement("img");
+            
+            img_elem.onload = function () {
+                ctx.drawImage(img_elem, 0, 0, canv_width, canv_height);
+                resolve(canv);
+            };
+            
+            img_elem.src = svg_data;
+        });
+    }
+    
+    get_image (callback_func, elem, mime_type, scale, quality = 100) {
+        var elem_2 = elem.cloneNode(true);
+        
+        var canv_width = Math.round(elem.offsetWidth * scale);
+        var canv_height = Math.round(elem.offsetHeight * scale);
+        
+        elem_2.style.transform = "translate(" + ((canv_width - elem.offsetWidth) / 2) + "px, " + ((canv_height - elem.offsetHeight) / 2) + "px) scale(" + scale + ")";
         elem_2.style.boxSizing = "border-box";
         elem_2.style.width = elem.offsetWidth + "px";
         elem_2.style.height = elem.offsetHeight + "px";
@@ -4165,17 +4181,25 @@ class Elem2Img {
         elem_2.style.setProperty("margin" ,"0", "important");
         elem_2.style.position = "static";
         
-        var img_elem = document.createElement("img");
-        
-        img_elem.onload = function () {
-            ctx.drawImage(img_elem, 0, 0, canv.width, canv.height);
-            callback_func(canv.toDataURL(mime_type, quality / 100));
-        };
-        
         var e2i = this;
         Elem2Img.embed_images(elem_2).then(function () {
             e2i.func_queue_add (function () {
-                img_elem.src = e2i.get_image_url(elem_2, canv.width, canv.height);
+                var svg_data = e2i.get_image_url(elem_2, canv_width, canv_height);
+                
+                (async function () {//SafariでSVG内の画像が読み込まれないバグの暫定回避
+                    if (!window.navigator.userAgent.includes("Chrome") && window.navigator.userAgent.includes("Safari")) {
+                        for (var cnt = 0; cnt < 3; cnt++) {
+                            await e2i.paste_svg(svg_data, canv_width, canv_height);
+                            await new Promise(function (resolve) {
+                                setTimeout(resolve, 100);
+                            });
+                        }
+                    }
+                    
+                    e2i.paste_svg(svg_data, canv_width, canv_height).then(function (canv) {
+                        callback_func(canv.toDataURL(mime_type, quality / 100));
+                    });
+                })();
             });
         });
     }
