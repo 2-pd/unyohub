@@ -1468,7 +1468,10 @@ input[type="checkbox"]:checked + label.drop_down + div {
 }
 
 .car_info tr:first-child td:first-child span {
+    display: inline-block;
+    
     writing-mode: vertical-rl;
+    white-space: nowrap;
 }
 
 .car_info tr td:nth-last-child(2) {
@@ -2034,7 +2037,7 @@ footer small {
     left: unset !important;
     right: 0;
     
-    text-indent: -100px;
+    text-indent: -200px;
     
     cursor: pointer;
     
@@ -3062,8 +3065,11 @@ a {
 }
 
 .select_operation_inbound tr:first-child td:first-child span, .select_operation_outbound tr:first-child td:first-child span {
+    display: inline-block;
+    
     line-height: 35px;
     writing-mode: vertical-rl;
+    white-space: nowrap;
 }
 
 .select_operation_inbound tr:first-child td:first-child span:before {
@@ -3252,9 +3258,13 @@ a {
     
     box-sizing: border-box;
     
-    width: 400px;
+    width: 500px;
     
     padding: 20px 10px;
+}
+
+.screenshot_area.popup_screenshot_area {
+    width: 400px;
     
     text-align: center;
 }
@@ -3303,17 +3313,17 @@ a {
     margin-top: 30px;
 }
 
-.screenshot_area .car_info {
-    text-align: left;
-}
-
 input[type="text"], input[type="number"], input[type="password"], input[type="search"], .wide_select, .line_select_wrapper select {
     background-color: #ffffff;
     
     border: none;
     border-bottom: 2px solid #cccccc;
+    border-radius: 0;
     
     color: #333333;
+    
+    appearance: none;
+    -webkit-appearance: none;
 }
 
 .dark_mode input[type="text"], .dark_mode input[type="number"], .dark_mode input[type="search"], .dark_mode input[type="password"], .dark_mode select {
@@ -3359,6 +3369,8 @@ input[type="text"], input[type="number"], input[type="password"], input[type="se
 
 input[type="search"] {
     width: calc(100% - 40px);
+    
+    margin: 0;
     
     padding: 2px 2px 1px 2px;
     
@@ -3701,14 +3713,14 @@ input[type="radio"] + label small, .chip + label small {
     <article id="formation_table_wrapper" onscroll="formation_table_wrapper_onscroll();">
         <button type="button" id="formation_screenshot_button" class="screenshot_button" onclick="take_screenshot('formation_table_area');"></button>
         <div id="formation_search_area">
-            <div class='search_wrapper'><label for="car_number_search" class="search_icon">車両番号で検索</label><input type="search" id="car_number_search" onkeyup="draw_formation_table();" onsearch="draw_formation_table();" placeholder="車両番号で検索"></div>
+            <div class='search_wrapper'><label for="car_number_search" class="search_icon">車両番号で検索</label><input type="search" id="car_number_search" onkeyup="draw_formation_table();" onsearch="draw_formation_table();" placeholder="車両番号で検索" autocomplete="off"></div>
             <div id ="colorize_formation_table_radio_area"><input type="radio" name="colorize_formation_table_radio" id="colorize_formation_table" onchange="change_colorize_formation_table(this.checked);"><label for="colorize_formation_table">車体色を表示</label><input type="radio" name="colorize_formation_table_radio" id="not_colorize_formation_table" onchange="change_colorize_formation_table(!this.checked);"><label for="not_colorize_formation_table">白黒で表示</label></div>
         </div>
         <div id="formation_table_area" class="wait_icon"></div>
     </article>
     <article>
         <div id="operation_search_area">
-            <div class='search_wrapper'><label for="train_number_search" class="search_icon">列車番号で検索</label><input type="search" id="train_number_search" onkeyup="operation_table_list_number();" onsearch="operation_table_list_number();" placeholder="列車番号で検索"></div>
+            <div class='search_wrapper'><label for="train_number_search" class="search_icon">列車番号で検索</label><input type="search" id="train_number_search" onkeyup="operation_table_list_number();" onsearch="operation_table_list_number();" placeholder="列車番号で検索" autocomplete="off"></div>
             <input type="checkbox" id="operation_search_menu"><label for="operation_search_menu" class="drop_down">絞り込み条件 <span id="operation_search_filter_count"></span></label>
             <div>
                 <select class="wide_select" id="operation_search_group_name" onchange="operation_table_list_number();"><option value="" selected="selected"></option></select>
@@ -3751,7 +3763,7 @@ input[type="radio"] + label small, .chip + label small {
         <div id="railroad_select_area"></div>
     </div>
     <div class="popup" id="operation_detail_popup">
-        <button type="button" class="screenshot_button" onclick="take_screenshot('operation_detail_area');"></button>
+        <button type="button" class="screenshot_button" onclick="take_screenshot('operation_detail_area', true);"></button>
         <button type="button" class="popup_close_button" onclick="popup_close();"></button>
         <div id="operation_detail_area" class="wait_icon"></div>
     </div>
@@ -3877,7 +3889,7 @@ input[type="radio"] + label small, .chip + label small {
             <div id="select_lines_area"></div>
         </div>
         <div class="preview_popup" id="train_detail_popup">
-            <button type="button" class="screenshot_button" onclick="take_screenshot('train_detail_area');"></button>
+            <button type="button" class="screenshot_button" onclick="take_screenshot('train_detail_area', true);"></button>
             <button type="button" class="popup_close_button" onclick="close_square_popup();"></button>
             <div id="train_detail_area" class="wait_icon"></div>
         </div>
@@ -8588,13 +8600,18 @@ function operation_table_list_tables () {
 var screenshot_preview_elm = document.getElementById("screenshot_preview");
 var save_screenshot_button_elm = document.getElementById("save_screenshot_button");
 
-function take_screenshot (elm_id) {
+function take_screenshot (elm_id, is_popup = false) {
     open_popup("screenshot_popup");
     screenshot_preview_elm.innerHTML = "";
     save_screenshot_button_elm.style.display = "none";
     
     var screenshot_area_elm = document.createElement("div");
     screenshot_area_elm.classList.add("screenshot_area");
+    
+    if (is_popup) {
+        screenshot_area_elm.classList.add("popup_screenshot_area");
+    }
+    
     screenshot_area_elm.innerHTML = document.getElementById(elm_id).innerHTML;
     
     var input_elms = screenshot_area_elm.getElementsByTagName("input");

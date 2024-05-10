@@ -12,7 +12,7 @@ if (isset($_POST["last_modified_timestamp"]) && $last_modified <= intval($_POST[
 } else {
     header("Last-Modified: ".gmdate("D, d M Y H:i:s", $last_modified)." GMT");
     
-    $main_config = parse_ini_file(MAIN_CONFIG_PATH);
+    $main_config = parse_ini_file(MAIN_CONFIG_PATH, FALSE, INI_SCANNER_TYPED);
     
     print json_encode(array(
         "instance_name" => $main_config["instance_name"],

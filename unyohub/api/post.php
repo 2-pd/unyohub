@@ -8,7 +8,7 @@ if (!isset($_POST["railroad_id"], $_POST["date"], $_POST["operation_number"], $_
     exit;
 }
 
-$config = parse_ini_file("../config/main.ini");
+$config = parse_ini_file("../config/main.ini", FALSE, INI_SCANNER_TYPED);
 
 connect_moderation_db();
 
