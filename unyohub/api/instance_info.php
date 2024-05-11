@@ -16,8 +16,6 @@ if (isset($_POST["last_modified_timestamp"]) && $last_modified <= intval($_POST[
     
     print json_encode(array(
         "instance_name" => $main_config["instance_name"],
-        "allow_sign_up" => $main_config["allow_sign_up"],
-        "require_email_address" => $main_config["require_email_address"],
         "allow_guest_user" => $main_config["allow_guest_user"]
     ), JSON_UNESCAPED_UNICODE);
 }

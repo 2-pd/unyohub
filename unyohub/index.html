@@ -3661,11 +3661,11 @@ input[type="radio"] + label small, .chip + label small {
             <a href="javascript:void(0);" onclick="user_logout();">ログアウト</a>
         </div>
         <div id="menu_admin">
-            <a href="javascript:void(0);" onclick="window.open('admin/index.php');">管理画面を開く</a>
+            <a href="admin/index.php" target="_blank" rel="opener">管理画面を開く</a>
         </div>
         <div id="menu_not_logged_in">
             <a href="javascript:void(0);" onclick="open_square_popup('login_popup');">ログイン</a>
-            <a href="javascript:void(0);" onclick="open_popup('sign_up_popup');">新規登録</a>
+            <a href="user/sign_up.php" target="_blank" rel="opener">新規登録</a>
         </div>
         <div id="menu_off_line">
             <b class="off_line_message">端末がオフラインです</b>
@@ -3676,7 +3676,7 @@ input[type="radio"] + label small, .chip + label small {
         <a href="javascript:void(0);" onclick="edit_config();">各種設定</a>
         <hr>
         <a href="javascript:void(0);" onclick="open_square_popup('about_popup');">このアプリについて</a>
-        <a href="javascript:void(0);" onclick="window.open('README.html');">このアプリの使い方</a>
+        <a href="README.html" target="_blank" rel="opener">このアプリの使い方</a>
         <a href="javascript:void(0);" onclick="show_rules();">ルールとポリシー</a>
     </div>
     <div id="splash_screen" class="splash_screen_loading">
@@ -3685,7 +3685,7 @@ input[type="radio"] + label small, .chip + label small {
             <a id="announcements_overview" href="javascript:void(0);" onclick="show_announcements();"></a>
             <div id="splash_screen_buttons" class="wait_icon"></div>
             <div id="splash_screen_bottom">
-                <a href="javascript:void(0);" onclick="window.open('README.html');">使い方</a>　<a href="javascript:void(0);" onclick="show_rules();">ルールとポリシー</a>
+                <a href="README.html" target="_blank" rel="opener">使い方</a>　<a href="javascript:void(0);" onclick="show_rules();">ルールとポリシー</a>
                 <div id="splash_screen_app_version"></div>
             </div> 
         </div>
@@ -3766,20 +3766,6 @@ input[type="radio"] + label small, .chip + label small {
         <button type="button" class="screenshot_button" onclick="take_screenshot('operation_detail_area', true);"></button>
         <button type="button" class="popup_close_button" onclick="popup_close();"></button>
         <div id="operation_detail_area" class="wait_icon"></div>
-    </div>
-    <div class="popup" id="sign_up_popup">
-        <button type="button" class="popup_close_button" onclick="popup_close();"></button>
-        <h2>新規ユーザー登録</h2>
-        <h3>ユーザーID</h3>
-        <div class="informational_text">半角英数字とアンダーバーの組み合わせで5文字以上が利用可能です。</div>
-        <input type="text" id="sign_up_user_id" autocomplete="username">
-        <h3>ハンドルネーム</h3>
-        <input type="text" id="sign_up_user_name" autocomplete="nickname">
-        <h3>パスワード</h3>
-        <div class="informational_text">大文字・小文字・数字を全て含む10文字以上を設定してください。</div>
-        <input type="password" id="sign_up_password" autocomplete="new-password">
-        <br>
-        <button type="button" class="wide_button" onclick="check_sign_up();">ユーザー登録</button>
     </div>
     <div class="popup" id="edit_user_data_popup">
         <button type="button" class="popup_close_button" onclick="popup_close();"></button>
@@ -4492,8 +4478,6 @@ function update_instance_info () {
     } else {
         instance_info = {
             instance_name : UNYOHUB_APP_NAME,
-            allow_sign_up : false,
-            require_email_address : null,
             allow_guest_user : false
         };
         
@@ -4787,7 +4771,7 @@ function update_user_data (user_data_next = null) {
         menu_logged_in_elm.style.display = "none";
         menu_not_logged_in_elm.style.display = "block";
         
-        splash_screen_login_status_elm.innerHTML = "<b>ログインしていません</b><br><a href='javascript:void(0);' onclick='open_square_popup(\"login_popup\");'>ログイン</a>　<a href='javascript:void(0);' onclick='open_popup(\"sign_up_popup\");'>新規登録</a>";
+        splash_screen_login_status_elm.innerHTML = "<b>ログインしていません</b><br><a href='javascript:void(0);' onclick='open_square_popup(\"login_popup\");'>ログイン</a>　<a href='user/sign_up.php' target='_blank' rel='opener'>新規登録</a>";
     }
 }
 
@@ -9129,42 +9113,6 @@ function user_logout () {
             }
         });
     }
-}
-
-function check_sign_up () {
-    open_wait_screen();
-    
-    ajax_fetch("api/check_sign_up.php", "user_id=" + escape_form_data(document.getElementById("sign_up_user_id").value) + "&password=" + escape_form_data(document.getElementById("sign_up_password").value), function (response) {
-        close_wait_screen();
-        
-        if (response === "OK") {
-            show_rules(function () {
-                show_captcha();
-                captcha_submit_button_elm.onclick = challenge_sign_up;
-            });
-        } else if (response !== false) {
-            mes(response);
-        }
-    });
-}
-
-function challenge_sign_up () {
-    open_wait_screen();
-    
-    ajax_fetch("api/sign_up.php", "user_id=" + escape_form_data(document.getElementById("sign_up_user_id").value) + "&password=" + escape_form_data(document.getElementById("sign_up_password").value) + "&user_name=" + escape_form_data(document.getElementById("sign_up_user_name").value) + "&zizai_captcha_id=" + escape_form_data(document.getElementById("zizai_captcha_id").value) + "&zizai_captcha_characters=" + escape_form_data(document.getElementById("zizai_captcha_characters").value), function (response) {
-        close_wait_screen();
-        
-        if (response !== false) {
-            update_user_data(JSON.parse(response));
-            
-            close_square_popup();
-            popup_close();
-            
-            mes("アカウントの作成に成功しました");
-        } else {
-            zizai_captcha_reload_image("zizai_captcha_image", "zizai_captcha_id");
-        }
-    });
 }
 
 var edit_user_data_user_id_elm = document.getElementById("edit_user_data_user_id");
