@@ -11,7 +11,7 @@
         
         body {
             margin: 0;
-            padding: 0 10px 100px 20px;
+            padding: 50px 10px 100px 20px;
             
             line-height: 180%;
             
@@ -21,7 +21,7 @@
         h1 {
             font-size: 22px;
             
-            margin-top: 20px;
+            margin-top: 0;
             margin-left: -15px;
             
             border-left: 6px solid #333333;
@@ -61,9 +61,30 @@
             
             font-weight: bold;
         }
+        
+        .close_button {
+            position: fixed;
+            top: 10px;
+            right: 10px;
+            
+            width: 40px;
+            height: 40px;
+            
+            background-image: url(data:image/webp;base64,UklGRhwBAABXRUJQVlA4TA8BAAAvO8AOEJegEJIkp+v8SU7sCXLUUNC2kWMdfyRH7BHsqaBtI8c6/kiO2CPYU1HbSM52/lo8+1xO1+cClJlRa5W11kABAD4A/P8ZAoVEBGP9/xuzlJIOR24kKdLAMu/+/7VNlZm9pznxVET/HbmRJEXVDokTzNrwhmYoWz/yRZHzfXTMtLcPV+/Hjcl95YqYAqYUHmM8p+MnyLZ6Omf0ZMvV80P82ON3yKNSINKAUwHTgVIC0jJTM1I73IvpFZOyE7NSu+Tz1Dcvaz6vTd/NC+u4VahMnqVGzzeP2tiWK4vcE4v0GdSZtAGUQXSBVME0Ef7xHvrltphlcidv/PnuhMrCpRsbY+WfkRhr3WezgWzNAA==) !important;
+            background-repeat: no-repeat;
+            background-position: center;
+            background-size: 30px;
+            background-color: rgba(255,255,255,0.9);
+            
+            border: none;
+            border-radius: 4px;
+            
+            z-index: 10;
+        }
     </style>
 </head>
 <body>
+    <button type="button" class="close_button" onclick="window.close();"></button>
     <h1>鉄道運用Hubのご利用方法</h1>
     
     <h2>目次</h2>

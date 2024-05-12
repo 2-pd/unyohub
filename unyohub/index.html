@@ -2599,6 +2599,10 @@ a {
     margin: 5px auto;
 }
 
+#require_login_area, #require_login_area * {
+    text-align: center;
+}
+
 .long_text {
     margin: 20px 0 40px 0;
     
@@ -3810,6 +3814,12 @@ input[type="radio"] + label small, .chip + label small {
         <button type="button" class="popup_close_button" onclick="popup_close();"></button>
         <h2>運用情報の投稿</h2>
         <div id="write_operation_data_area"></div>
+        <div id="require_login_area">
+            <div class="warning_text">
+                情報投稿にはログインが必要です。
+            </div>
+            <a href="javascript:void(0);" onclick="open_square_popup('login_popup');">ログイン</a>　<a href="user/sign_up.php" target="_blank" rel="opener">新規登録</a>
+        </div>
     </div>
     <div class="popup" id="edit_operation_data_popup">
         <button type="button" class="popup_close_button" onclick="popup_close();"></button>
@@ -4615,9 +4625,9 @@ function convert_font_color_dark_mode (color_hex) {
 
 function switch_dark_mode () {
     if (config["dark_mode"]) {
-        document.getElementsByTagName("body")[0].className = "dark_mode";
+        document.getElementsByTagName("body")[0].classList.add("dark_mode");
     } else {
-        document.getElementsByTagName("body")[0].className = "";
+        document.getElementsByTagName("body")[0].classList.remove("dark_mode");
     }
     
     switch (mode_val) {
@@ -4772,6 +4782,18 @@ function update_user_data (user_data_next = null) {
         menu_not_logged_in_elm.style.display = "block";
         
         splash_screen_login_status_elm.innerHTML = "<b>ログインしていません</b><br><a href='javascript:void(0);' onclick='open_square_popup(\"login_popup\");'>ログイン</a>　<a href='user/sign_up.php' target='_blank' rel='opener'>新規登録</a>";
+    }
+    
+    if (!instance_info["allow_guest_user"] && popup_history.includes("write_operation_data_popup")) {
+        if (user_data !== null) {
+            write_operation_data_area_elm.style.display = "block";
+            require_login_area_elm.style.display = "none";
+            
+            get_one_time_token();
+        } else {
+            write_operation_data_area_elm.style.display = "none";
+            require_login_area_elm.style.display = "block";
+        }
     }
 }
 
@@ -8646,6 +8668,9 @@ function get_one_time_token () {
 var post_yyyy_mm_dd;
 var post_operation_number;
 
+var write_operation_data_area_elm = document.getElementById("write_operation_data_area");
+var require_login_area_elm = document.getElementById("require_login_area");
+
 function write_operation_data (yyyy_mm_dd, operation_number) {
     open_popup("write_operation_data_popup");
     
@@ -8685,10 +8710,18 @@ function write_operation_data (yyyy_mm_dd, operation_number) {
     
     buf += "<button type='button' class='wide_button' onclick='check_post_operation_data();'>投稿する</button>";
     
-    document.getElementById("write_operation_data_area").innerHTML = buf;
+    write_operation_data_area_elm.innerHTML = buf;
     
-    if (user_data !== null) {
-        get_one_time_token();
+    if (instance_info["allow_guest_user"] || user_data !== null) {
+        write_operation_data_area_elm.style.display = "block";
+        require_login_area_elm.style.display = "none";
+        
+        if (user_data !== null) {
+            get_one_time_token();
+        }
+    } else {
+        write_operation_data_area_elm.style.display = "none";
+        require_login_area_elm.style.display = "block";
     }
 }
 

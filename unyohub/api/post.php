@@ -28,6 +28,11 @@ if (is_object($user)) {
         exit;
     }
 } elseif (isset($_POST["guest_id"], $_POST["zizai_captcha_id"], $_POST["zizai_captcha_characters"])){
+    if (!$config["allow_guest_user"]) {
+        print "ERROR: ゲストユーザーでの投稿は停止されています";
+        exit;
+    }
+    
     if (substr($_POST["guest_id"], 0, 1) !== "*" || strlen($_POST["guest_id"]) !== 13) {
         print "ERROR: ゲストIDが不正です";
         exit;

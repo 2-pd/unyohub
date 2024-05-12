@@ -42,8 +42,9 @@ if (isset($_POST["user_id"], $_POST["password"], $_POST["user_name"], $_POST["zi
             $data["website_url"] = NULL;
             
             print "<script>\n";
-            print "var user_data = ".json_encode($data, JSON_UNESCAPED_UNICODE).";";
+            print "var user_data = ".json_encode($data, JSON_UNESCAPED_UNICODE).";\n";
             print "window.opener.update_user_data(user_data);\n";
+            print "window.opener.mes('ユーザー登録が完了しました');\n";
             print "window.close();\n";
             print "</script>\n";
             print "ユーザー登録が完了しました。\n";
