@@ -44,8 +44,9 @@ _/_/_/_/ ファイル構成 _/_/_/_/
 └ api/
    └ ****.php ・・・クライアント端末と情報をやり取りするエンドポイント(詳細は別記)
    └ zizai_captcha/ ・・・Zizai CAPTCHAのエンドポイント
-└ user/ ・・・ユーザー設定画面
+└ user/ ・・・ユーザー用機能
    └ user_config_common.php ・・・ユーザー設定画面共通関数等
+   └ rules.php ・・・ルールとポリシーの表示
    └ sign_up.php ・・・ユーザーの新規登録
    └ send_password_reset_email.php ・・・パスワードリセットメールを送信する
    └ reset_password.php ・・・ユーザーのパスワードをリセットしてランダムな値を設定する

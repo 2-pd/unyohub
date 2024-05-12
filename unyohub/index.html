@@ -3832,17 +3832,6 @@ input[type="radio"] + label small, .chip + label small {
         <div id="screenshot_preview"></div>
         <button type="button" id="save_screenshot_button" class="wide_button" onclick="save_screenshot();">画像として保存</button>
     </div>
-    <div class="popup" id="rules_popup">
-        <button type="button" class="popup_close_button" onclick="popup_close();"></button>
-        <div id="rules_info" class="warning_text">
-            本アプリケーションでは新規のユーザー様にご利用ルールの確認をお願いしています。<br>
-            <br>
-            次の操作に移るボタンはルール本文の下部にあります。
-        </div>
-        <h2>ルールとポリシー</h2>
-        <div id="rules_area" class="wait_icon long_text"></div>
-        <button type="button" id="accept_rules_button" class="wide_button" onclick="rules_continue();">ルールに同意して続行</button>
-    </div>
     <div id="popup_screen">
         <div id="popup_screen_blank_area" onclick="close_square_popup();"></div>
         <div class="preview_popup" id="announcements_popup">
@@ -4270,7 +4259,7 @@ function add_slashes (text) {
 }
 
 function convert_to_html (text) {
-    var text_splitted = escape_html(text).replace(/https?:\/\/[^\s\\`\|\[\]\{\}\^]+/g, " <a href='$&' target='_blank' class='external_link'>$&</a> ").split("\n");
+    var text_splitted = escape_html(text).replace(/https?:\/\/[^\s\\`\|\[\]\{\}\^]+/g, "<a href='$&' target='_blank' class='external_link'>$&</a>").split("\n");
     
     for (var cnt = 0; cnt < text_splitted.length; cnt++) {
         if (text_splitted[cnt].substring(0, 2) === "# ") {
@@ -4399,7 +4388,7 @@ function get_guest_id () {
 }
 
 
-function ajax_fetch (end_point_url, query_str, callback_func, timeout = 30) {
+function ajax_post (end_point_url, query_str, callback_func, timeout = 30) {
     var ajax_request = new XMLHttpRequest();
     ajax_request.onloadend = function () {
         if (ajax_request.responseText.substring(0, 6) === "ERROR:") {
@@ -4416,16 +4405,10 @@ function ajax_fetch (end_point_url, query_str, callback_func, timeout = 30) {
         }
     };
     
-    if (query_str !== null) {
-        ajax_request.open("POST", end_point_url, true);
-        ajax_request.setRequestHeader("Content-Type","application/x-www-form-urlencoded;charset=UTF-8");
-        ajax_request.timeout = timeout * 1000;
-        ajax_request.send(query_str);
-    } else {
-        ajax_request.open("GET", end_point_url, true);
-        ajax_request.timeout = timeout * 1000;
-        ajax_request.send();
-    }
+    ajax_request.open("POST", end_point_url, true);
+    ajax_request.setRequestHeader("Content-Type","application/x-www-form-urlencoded;charset=UTF-8");
+    ajax_request.timeout = timeout * 1000;
+    ajax_request.send(query_str);
 }
 
 
@@ -4496,7 +4479,7 @@ function update_instance_info () {
     
     update_instance_info();
     
-    ajax_fetch("api/instance_info.php", last_modified_timestamp_q, function (response, last_modified) {
+    ajax_post("api/instance_info.php", last_modified_timestamp_q, function (response, last_modified) {
         if (response !== false && response !== "NO_UPDATES_AVAILABLE") {
             instance_info = JSON.parse(response);
             
@@ -4798,7 +4781,7 @@ function update_user_data (user_data_next = null) {
 }
 
 function check_logged_in () {
-    ajax_fetch("api/check_logged_in.php", null, function (response) {
+    ajax_post("api/check_logged_in.php", null, function (response) {
         if (response !== false) {
             if (response !== "NOT_LOGGED_IN"){
                 update_user_data(JSON.parse(response));
@@ -4935,7 +4918,7 @@ window.onload = function () {
     if (navigator.onLine) {
         check_logged_in();
         
-        ajax_fetch("api/railroads.php", "last_modified_timestamp=" + railroads_caches["last_modified_timestamp"], function (response, last_modified) {
+        ajax_post("api/railroads.php", "last_modified_timestamp=" + railroads_caches["last_modified_timestamp"], function (response, last_modified) {
             if (response !== false && response !== "NO_UPDATES_AVAILABLE") {
                 railroads_caches = JSON.parse(response);
                 
@@ -4968,7 +4951,7 @@ function check_announcements (show_important_announcements = false) {
         announcements_last_modified = "0";
     }
     
-    ajax_fetch("api/check_announcements.php", "last_modified_timestamp=" + announcements_last_modified, function (response) {
+    ajax_post("api/check_announcements.php", "last_modified_timestamp=" + announcements_last_modified, function (response) {
         if (response !== false) {
             if (response === "NEW_ANNOUNCEMENTS_NOT_EXIST") {
                 announcements_overview_elm.innerHTML = "新しいお知らせはありません";
@@ -5013,7 +4996,7 @@ function show_announcements (important_announcements_exist = false) {
         heading_elm.innerHTML = "お知らせの一覧";
     }
     
-    ajax_fetch("api/announcements.php", null, function (response) {
+    ajax_post("api/announcements.php", null, function (response) {
         if (response !== false) {
             draw_announcements(JSON.parse(response));
         }
@@ -5168,7 +5151,7 @@ function select_railroad (railroad_id) {
                 }
                 
                 if (navigator.onLine) {
-                    ajax_fetch("api/railroad_info.php", "railroad_id=" + escape_form_data(railroad_id) + "&last_modified_timestamp=" + last_modified_timestamp, function (response, last_modified) {
+                    ajax_post("api/railroad_info.php", "railroad_id=" + escape_form_data(railroad_id) + "&last_modified_timestamp=" + last_modified_timestamp, function (response, last_modified) {
                         if (response !== false && response !== "NO_UPDATES_AVAILABLE") {
                             railroad_info = JSON.parse(response);
                             
@@ -5220,7 +5203,7 @@ function select_railroad (railroad_id) {
                 }
                 
                 if (navigator.onLine) {
-                    ajax_fetch("api/train_icons.php", "railroad_id=" + escape_form_data(railroad_id) + "&last_modified_timestamp=" + last_modified_timestamp, function (response, last_modified) {
+                    ajax_post("api/train_icons.php", "railroad_id=" + escape_form_data(railroad_id) + "&last_modified_timestamp=" + last_modified_timestamp, function (response, last_modified) {
                         if (response !== false && response !== "NO_UPDATES_AVAILABLE") {
                             train_icons = {icons : JSON.parse(response)};
                             
@@ -5267,7 +5250,7 @@ function select_railroad (railroad_id) {
                 }
                 
                 if (navigator.onLine) {
-                    ajax_fetch("api/formations.php", "railroad_id=" + escape_form_data(railroad_id) + "&last_modified_timestamp=" + last_modified_timestamp, function (response, last_modified) {
+                    ajax_post("api/formations.php", "railroad_id=" + escape_form_data(railroad_id) + "&last_modified_timestamp=" + last_modified_timestamp, function (response, last_modified) {
                         if (response !== false && response !== "NO_UPDATES_AVAILABLE") {
                             formations = JSON.parse(response);
                             
@@ -5433,7 +5416,7 @@ function update_operation_table(resolve_func, reject_func, operation_table, last
     var railroad_id = railroad_info["railroad_id"];
     
     if (navigator.onLine) {
-        ajax_fetch("api/operation_table.php", "railroad_id=" + escape_form_data(railroad_id) + "&operation_table=" + escape_form_data(operation_table) + "&last_modified_timestamp=" + last_modified_timestamp, function (response, last_modified) {
+        ajax_post("api/operation_table.php", "railroad_id=" + escape_form_data(railroad_id) + "&operation_table=" + escape_form_data(operation_table) + "&last_modified_timestamp=" + last_modified_timestamp, function (response, last_modified) {
             if (response !== false && response !== "NO_UPDATES_AVAILABLE") {
                 var operation_response = JSON.parse(response);
                 
@@ -5588,7 +5571,7 @@ function update_timetable (resolve_func, reject_func, operation_table_or_ts) {
             }
             
             if (navigator.onLine) {
-                ajax_fetch("api/timetable.php", "railroad_id=" + escape_form_data(railroad_id) + "&operation_table=" + escape_form_data(operation_table) + "&last_modified_timestamp=" + last_modified_timestamp, function (response, last_modified) {
+                ajax_post("api/timetable.php", "railroad_id=" + escape_form_data(railroad_id) + "&operation_table=" + escape_form_data(operation_table) + "&last_modified_timestamp=" + last_modified_timestamp, function (response, last_modified) {
                     if (response !== false && response !== "NO_UPDATES_AVAILABLE") {
                         timetable = {timetable : JSON.parse(response)};
                         
@@ -5655,7 +5638,7 @@ function update_operation_data (resolve_func, reject_func, remote_data_only = fa
                     operation_data = {railroad_id : railroad_id, operation_date : operation_date, operations : {}, last_modified_timestamp : null};
                 }
                 
-                ajax_fetch("api/operation_data.php", "railroad_id=" + escape_form_data(railroad_id) + "&date=" + escape_form_data(operation_date) + "&last_modified_timestamp=" + last_modified_timestamp, function (response, last_modified) {
+                ajax_post("api/operation_data.php", "railroad_id=" + escape_form_data(railroad_id) + "&date=" + escape_form_data(operation_date) + "&last_modified_timestamp=" + last_modified_timestamp, function (response, last_modified) {
                     if (response !== false) {
                         if (response !== "NO_UPDATES_AVAILABLE" && operation_data["railroad_id"] === railroad_id && operation_data["operation_date"] === operation_date) {
                             Object.assign(operation_data["operations"], JSON.parse(response));
@@ -6472,7 +6455,7 @@ function get_operation_data_detail (operation_date, operation_number_or_list, ar
     
     area_elm.innerHTML = buf;
     
-    ajax_fetch("api/operation_data_detail.php", "railroad_id=" + escape_form_data(railroad_info["railroad_id"]) + "&date=" + operation_date + "&operation_numbers=" + escape_form_data(operation_numbers_str), function (response) {
+    ajax_post("api/operation_data_detail.php", "railroad_id=" + escape_form_data(railroad_info["railroad_id"]) + "&date=" + operation_date + "&operation_numbers=" + escape_form_data(operation_numbers_str), function (response) {
         if (response !== false) {
             var data = JSON.parse(response);
             
@@ -8092,7 +8075,7 @@ function formation_detail (formation_name) {
     formation_table_wrapper_elm.scrollTop = 0;
     
     if (navigator.onLine) {
-        ajax_fetch("api/formation_details.php", "railroad_id=" + escape_form_data(railroad_info["railroad_id"]) + "&formation_name=" + escape_form_data(formation_name), function (response) {
+        ajax_post("api/formation_details.php", "railroad_id=" + escape_form_data(railroad_info["railroad_id"]) + "&formation_name=" + escape_form_data(formation_name), function (response) {
             if (response !== false) {
                 var data = JSON.parse(response);
                 
@@ -8656,7 +8639,7 @@ function save_screenshot () {
 var one_time_token = null;
 
 function get_one_time_token () {
-    ajax_fetch("api/one_time_token.php", null, function (response) {
+    ajax_post("api/one_time_token.php", null, function (response) {
         if (response !== false) {
             var data = JSON.parse(response);
             
@@ -8844,7 +8827,7 @@ function post_operation_data () {
         send_data += "&guest_id=" + escape_form_data(get_guest_id()) + "&zizai_captcha_id=" + escape_form_data(document.getElementById("zizai_captcha_id").value) + "&zizai_captcha_characters=" + escape_form_data(document.getElementById("zizai_captcha_characters").value);
     }
     
-    ajax_fetch("api/post.php", send_data, function (response) {
+    ajax_post("api/post.php", send_data, function (response) {
         close_wait_screen();
         
         if (response !== false) {
@@ -8921,7 +8904,7 @@ function show_moderation_info (user_id, ip_address) {
         ip_address = "";
     }
     
-    ajax_fetch("api/moderation_info.php", "user_id=" + escape_form_data(user_id) + "&ip_address=" + escape_form_data(ip_address), function (response) {
+    ajax_post("api/moderation_info.php", "user_id=" + escape_form_data(user_id) + "&ip_address=" + escape_form_data(ip_address), function (response) {
         if (response === false) {
             return;
         }
@@ -8963,7 +8946,7 @@ function revoke_operation_data (yyyy_mm_dd, operation_number, user_id) {
         return;
     }
     
-    ajax_fetch("api/revoke.php", "railroad_id=" + escape_form_data(railroad_info["railroad_id"]) + "&date=" + escape_form_data(yyyy_mm_dd) + "&operation_number=" + escape_form_data(operation_number) + "&user_id=" + escape_form_data(user_id) + "&one_time_token=" + escape_form_data(one_time_token), function (response) {
+    ajax_post("api/revoke.php", "railroad_id=" + escape_form_data(railroad_info["railroad_id"]) + "&date=" + escape_form_data(yyyy_mm_dd) + "&operation_number=" + escape_form_data(operation_number) + "&user_id=" + escape_form_data(user_id) + "&one_time_token=" + escape_form_data(one_time_token), function (response) {
         close_wait_screen();
         
         if (response !== false) {
@@ -9008,7 +8991,7 @@ function revoke_users_all_operation_data (user_id) {
             return;
         }
         
-        ajax_fetch("api/revoke_users_all.php", "railroad_id=" + escape_form_data(railroad_info["railroad_id"]) + "&user_id=" + escape_form_data(user_id) + "&one_time_token=" + escape_form_data(one_time_token), function (response) {
+        ajax_post("api/revoke_users_all.php", "railroad_id=" + escape_form_data(railroad_info["railroad_id"]) + "&user_id=" + escape_form_data(user_id) + "&one_time_token=" + escape_form_data(one_time_token), function (response) {
             close_wait_screen();
             
             if (response === "SUCCESSFULLY_REVOKED") {
@@ -9054,7 +9037,7 @@ function mark_user_suspect (user_id) {
             return;
         }
         
-        ajax_fetch("api/mark_user_suspect.php", "user_id=" + escape_form_data(user_id) + "&one_time_token=" + escape_form_data(one_time_token), function (response) {
+        ajax_post("api/mark_user_suspect.php", "user_id=" + escape_form_data(user_id) + "&one_time_token=" + escape_form_data(one_time_token), function (response) {
             close_wait_screen();
             
             if (response === "SUCCEEDED") {
@@ -9078,7 +9061,7 @@ function mark_ip_address_suspect (ip_address) {
             return;
         }
         
-        ajax_fetch("api/mark_ip_address_suspect.php", "ip_address=" + escape_form_data(ip_address) + "&one_time_token=" + escape_form_data(one_time_token), function (response) {
+        ajax_post("api/mark_ip_address_suspect.php", "ip_address=" + escape_form_data(ip_address) + "&one_time_token=" + escape_form_data(one_time_token), function (response) {
             close_wait_screen();
             
             if (response === "SUCCEEDED") {
@@ -9120,7 +9103,7 @@ function challenge_login () {
     var user_id = document.getElementById("login_user_id").value;
     var password = document.getElementById("login_password").value;
     
-    ajax_fetch("api/login.php", "user_id=" + escape_form_data(user_id) + "&password=" + escape_form_data(password), function (response) {
+    ajax_post("api/login.php", "user_id=" + escape_form_data(user_id) + "&password=" + escape_form_data(password), function (response) {
         close_wait_screen();
         
         if (response !== false) {
@@ -9136,7 +9119,7 @@ function user_logout () {
     if (confirm("ログアウトしますか？")){
         open_wait_screen();
         
-        ajax_fetch("api/logout.php", null, function (response) {
+        ajax_post("api/logout.php", null, function (response) {
             close_wait_screen();
             
             if (response !== false) {
@@ -9183,7 +9166,7 @@ function change_user_data () {
         return;
     }
     
-    ajax_fetch("api/change_user_data.php", "user_name=" + escape_form_data(edit_user_data_user_name_elm.value) + "&email_address=" + escape_form_data(edit_user_data_email_address_elm.value) + "&website_url=" + escape_form_data(edit_user_data_website_url_elm.value) + "&one_time_token=" + escape_form_data(one_time_token), function (response) {
+    ajax_post("api/change_user_data.php", "user_name=" + escape_form_data(edit_user_data_user_name_elm.value) + "&email_address=" + escape_form_data(edit_user_data_email_address_elm.value) + "&website_url=" + escape_form_data(edit_user_data_website_url_elm.value) + "&one_time_token=" + escape_form_data(one_time_token), function (response) {
         close_wait_screen();
         
         if (response !== false) {
@@ -9199,7 +9182,7 @@ function change_user_data () {
 function change_password () {
     open_wait_screen();
     
-    ajax_fetch("api/change_user_password.php", "old_password=" + escape_form_data(document.getElementById("old_password").value) + "&new_password=" + escape_form_data(document.getElementById("new_password").value), function (response) {
+    ajax_post("api/change_user_password.php", "old_password=" + escape_form_data(document.getElementById("old_password").value) + "&new_password=" + escape_form_data(document.getElementById("new_password").value), function (response) {
         close_wait_screen();
         
         if (response === "SUCCEEDED") {
@@ -9346,33 +9329,21 @@ function show_rules (continue_func = null) {
         return;
     }
     
-    open_popup("rules_popup");
+    if (typeof continue_func === "function") {
+        rules_continue_func = continue_func;
+        var get_param = "?show_accept_button=yes";
+    } else {
+        rules_continue_func = null;
+        var get_param = "";
+    }
     
-    var rules_info_elm = document.getElementById("rules_info");
-    var accept_button_elm = document.getElementById("accept_rules_button");
-    
-    rules_info_elm.style.display = "none";
-    accept_button_elm.style.display = "none";
-    
-    ajax_fetch("rules.txt", null, function (response) {
-        if (response !== false) {
-            document.getElementById("rules_area").innerHTML = convert_to_html(response);
-            
-            if (typeof continue_func === "function") {
-                rules_continue_func = continue_func;
-                accept_button_elm.style.display = "block";
-                rules_info_elm.style.display = "block";
-            }
-        } else {
-            mes("ルール情報が表示できません", true);
-        }
-    });
+    window.open("user/rules.php" + get_param);
 }
 
-function rules_continue () {
-    popup_close();
-    
+function accept_rules () {
     rules_continue_func();
+    
+    rules_continue_func = null;
 }
 
 

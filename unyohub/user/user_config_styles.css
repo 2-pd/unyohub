@@ -26,15 +26,16 @@ body {
     padding: 50px max(10px, calc(50% - 240px));
     
     color: #333333;
+    word-break: break-all;
 }
 
-*[onclick], *[onclick] *, a, a *, button, select, label {
+*[onclick], *[onclick] *, a, a *, button {
     cursor: pointer;
     
     -webkit-tap-highlight-color: rgba(153, 153, 153, 0.2);
 }
 
-*[onclick]:hover, *[onclick]:hover *, a:hover, a:hover *, button:hover, select:hover, label:hover {
+*[onclick]:hover, *[onclick]:hover *, a:hover, a:hover *, button:hover {
     text-decoration: none !important;
 }
 
@@ -58,6 +59,39 @@ h3 {
     background-color: #444444;
     
     color: #ffffff;
+}
+
+h4 {
+    margin: 15px 0 10px 0;
+    
+    padding-left: 6px;
+    
+    border-left: 4px solid #666666;
+    
+    line-height: 32px;
+    font-size: 18px;
+}
+
+a {
+    color: #999999;
+}
+
+.external_link:after {
+    content: "";
+    
+    display: inline-block;
+    
+    width: 18px;
+    height: 1lh;
+    
+    margin-left: 2px;
+    
+    background-image: url(data:image/webp;base64,UklGRqYAAABXRUJQVlA4TJkAAAAvI8AIEDdAkG2z+hMc9h4Ekjazf4KHPRBI2sz+CR72QCRAAs1HVv+fMiq2HfsvilTCUSNJjlR77n0ptQbHQfAAhkEffxhjas4AiOj/BEiila70ZxQLrjOb+rHguiA7bDPFS7ziJV5pXlMJUBUzpTnqOpEAVVKMSnOSlIMLwFvtQAEcjStUGQqO1rXK0q5zZqb//+xvsb/E/RoA);
+    background-repeat: no-repeat;
+    background-size: 18px;
+    background-position: center;
+    
+    vertical-align: top;
 }
 
 button {
