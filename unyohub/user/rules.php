@@ -1,5 +1,5 @@
 <?php
-include "user_config_common.php";
+include "user_common.php";
 
 print_header("ルールとポリシー");
 

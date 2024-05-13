@@ -1,5 +1,5 @@
 <?php
-include "user_config_common.php";
+include "user_common.php";
 
 if (isset($_POST["user_id"], $_POST["password"], $_POST["user_name"], $_POST["zizai_captcha_id"], $_POST["zizai_captcha_characters"], $_POST["accept_rules"]) && $_POST["accept_rules"] === "YES") {
     $wakarana = new wakarana("../config");
@@ -62,6 +62,11 @@ print_header("新規ユーザー登録", TRUE);
     <script>
         function accept_rules () {
             document.getElementById("accept_rules_input").value = "YES";
+            submit_form();
+        }
+        
+        function submit_form () {
+            document.getElementById("submit_button").disabled = true;
             document.getElementById("sign_up_form").submit();
         }
     </script>
@@ -70,11 +75,13 @@ print_header("新規ユーザー登録", TRUE);
         
         <h2>新規ユーザー登録</h2>
         
-        <div class="warning_text"><?php
-        for ($cnt = 0; isset($error_list[$cnt]); $cnt++) {
-            print "・".htmlspecialchars($error_list[$cnt])."<br>\n";
-        }
-        ?></div>
+        <div class="warning_text">
+<?php
+for ($cnt = 0; isset($error_list[$cnt]); $cnt++) {
+    print "            ・".htmlspecialchars($error_list[$cnt])."<br>\n";
+}
+?>
+        </div>
         
         <h3>ユーザーID</h3>
         <div class="informational_text">半角英数字とアンダーバーの組み合わせで5文字以上が利用可能です。</div>
@@ -94,7 +101,7 @@ print_header("新規ユーザー登録", TRUE);
         <script> zizai_captcha_get_html(function (html) { document.getElementById("zizai_captcha_area").innerHTML = html; }); </script>
         
         <br>
-        <button type="button" class="wide_button" onclick="<?php print empty($_POST["accept_rules"]) ? "window.open('rules.php?show_accept_button=yes')" : "submit()" ?>;">ユーザー登録</button>
+        <button type="button" id="submit_button" class="wide_button" onclick="<?php print empty($_POST["accept_rules"]) ? "window.open('rules.php?show_accept_button=yes')" : "submit_form()" ?>;">ユーザー登録</button>
     </form>
 <?php
 

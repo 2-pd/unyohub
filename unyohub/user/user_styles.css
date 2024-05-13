@@ -159,6 +159,16 @@ input[type="text"], input[type="number"], input[type="password"] {
     color: #333333;
 }
 
+.link_block {
+    padding: 15px 0 10px 0;
+    
+    text-align: center;
+}
+
+.link_block a {
+    color: #666666;
+}
+
 .informational_text, .warning_text {
     max-width: 480px;
     
