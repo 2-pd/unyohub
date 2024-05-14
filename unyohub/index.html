@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width,initial-scale=1,interactive-widget=resizes-content">
 <script>
     const UNYOHUB_APP_NAME = "鉄道運用Hub";
-    const UNYOHUB_VERSION = "24.05-3";
+    const UNYOHUB_VERSION = "24.05-4";
     const UNYOHUB_INDEXEDDB_VERSION = 2310001;
     const UNYOHUB_LICENSE_TEXT = "このアプリケーションは無権利創作宣言に準拠して著作権放棄されています。";
     const UNYOHUB_LICENSE_URL = "https://www.2pd.jp/license/";
@@ -22,6 +22,8 @@
     outline: 0 !important;
     
     cursor: default;
+    
+    touch-action: manipulation;
 }
 
 *::-webkit-scrollbar {
@@ -2431,6 +2433,8 @@ a {
     
     margin: 0 auto;
     
+    padding-block: 0;
+    
     line-height: 24px;
     font-size: 18px;
     text-align: center;
@@ -3378,6 +3382,7 @@ input[type="search"] {
     margin: 0;
     
     padding: 2px 2px 1px 2px;
+    padding-block: 0;
     
     line-height: 24px;
     font-size: 18px;

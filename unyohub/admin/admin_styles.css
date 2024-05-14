@@ -6,6 +6,8 @@
     outline: 0 !important;
     
     cursor: default;
+    
+    touch-action: manipulation;
 }
 
 *::-webkit-scrollbar {
@@ -232,6 +234,9 @@ input[type="text"], input[type="number"], input[type="password"], input[type="se
     border-bottom: 2px solid #cccccc;
     
     color: #333333;
+    
+    appearance: none;
+    -webkit-appearance: none;
 }
 
 input[type="checkbox"] {

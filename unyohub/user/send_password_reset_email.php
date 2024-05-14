@@ -43,7 +43,10 @@ print_header("パスワードのリセット", TRUE);
     <script>
         function submit_form () {
             document.getElementById("submit_button").disabled = true;
-            document.getElementById("send_email_form").submit();
+            
+            setTimeout(function () {
+                document.getElementById("send_email_form").submit();
+            }, 10);
         }
     </script>
     <form action="send_password_reset_email.php" method="post" id="send_email_form" onsubmit="return false;">
@@ -51,11 +54,17 @@ print_header("パスワードのリセット", TRUE);
         
         <h2>パスワードのリセット</h2>
         
-        <div class="warning_text"><?php
-        for ($cnt = 0; isset($error_list[$cnt]); $cnt++) {
-            print "・".htmlspecialchars($error_list[$cnt])."<br>\n";
-        }
-        ?></div>
+<?php
+if (!empty($error_list)) {
+    print "        <div class=\"warning_text\">\n";
+    
+    for ($cnt = 0; isset($error_list[$cnt]); $cnt++) {
+        print "            ・".htmlspecialchars($error_list[$cnt])."<br>\n";
+    }
+    
+    print "        </div>\n";
+}
+?>
         
         <div class="informational_text">登録済みのメールアドレスを使用してパスワードを再発行することができます。</div>
         

@@ -67,7 +67,10 @@ print_header("新規ユーザー登録", TRUE);
         
         function submit_form () {
             document.getElementById("submit_button").disabled = true;
-            document.getElementById("sign_up_form").submit();
+            
+            setTimeout(function () {
+                document.getElementById("sign_up_form").submit();
+            }, 10);
         }
     </script>
     <form action="sign_up.php" method="post" id="sign_up_form" onsubmit="return false;">
@@ -75,13 +78,17 @@ print_header("新規ユーザー登録", TRUE);
         
         <h2>新規ユーザー登録</h2>
         
-        <div class="warning_text">
 <?php
-for ($cnt = 0; isset($error_list[$cnt]); $cnt++) {
-    print "            ・".htmlspecialchars($error_list[$cnt])."<br>\n";
+if (!empty($error_list)) {
+    print "        <div class=\"warning_text\">\n";
+    
+    for ($cnt = 0; isset($error_list[$cnt]); $cnt++) {
+        print "            ・".htmlspecialchars($error_list[$cnt])."<br>\n";
+    }
+    
+    print "        </div>\n";
 }
 ?>
-        </div>
         
         <h3>ユーザーID</h3>
         <div class="informational_text">半角英数字とアンダーバーの組み合わせで5文字以上が利用可能です。</div>
