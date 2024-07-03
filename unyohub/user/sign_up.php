@@ -72,6 +72,30 @@ print_header("新規ユーザー登録", TRUE);
                 document.getElementById("sign_up_form").submit();
             }, 10);
         }
+        
+        function send_verification_email () {
+            var send_email_button = document.getElementById("send_email_button");
+            send_email_button.disabled = true;
+            
+            setTimeout(function () {
+                send_email_button.disabled = false;
+            }, 5000);
+            
+            var ajax_request = new XMLHttpRequest();
+            
+            ajax_request.onloadend = function () {
+                if (ajax_request.responseText === "SUCCEEDED") {
+                    alert("入力されたメールアドレスに確認メールを送信しました。メールをご確認のうえ、本文に記載の確認コードをフォームにご入力ください");
+                } else {
+                    alert(ajax_request.responseText);
+                }
+            };
+            
+            ajax_request.open("POST", "../api/send_verification_email.php", true);
+            ajax_request.setRequestHeader("Content-Type","application/x-www-form-urlencoded;charset=UTF-8");
+            ajax_request.timeout = 5000;
+            ajax_request.send("email_address=" + encodeURIComponent(document.getElementById("email_address").value).replace(/%20/g, "+"));
+        }
     </script>
     <form action="sign_up.php" method="post" id="sign_up_form" onsubmit="return false;">
         <input type="hidden" name="accept_rules" id="accept_rules_input" value="<?php if (!empty($_POST["accept_rules"]) && $_POST["accept_rules"] === "YES") { print "YES"; } ?>">
@@ -100,6 +124,24 @@ if (!empty($error_list)) {
         <h3>パスワード</h3>
         <div class="informational_text">大文字・小文字・数字を全て含む10文字以上を設定してください。</div>
         <input type="password" name="password" autocomplete="new-password">
+        
+<?php
+if ($main_config["require_email_address"]) {
+    print <<< EOM
+            <h3>メールアドレス</h3>
+            <div class="informational_text">メールアドレスを入力後、確認メール送信ボタンを押して確認コードを発行してください。</div>
+            <input type="text" id="email_address" name="email_address" autocomplete="email">
+            
+            <button type="button" id="send_email_button" class="wide_button" onclick="send_verification_email();">確認メール送信</button>
+            
+            <h4>確認コード</h4>
+            <div class="informational_text">確認メールに記載された8桁の確認コード(大文字小文字区別なし)を入力してください。</div>
+            
+            <input type="text" name="verification_code" autocomplete="off">
+    
+    EOM;
+}
+?>
         
         <h3>画像認証</h3>
         <div class="informational_text">画像に表示されている文字を入力してください。</div>

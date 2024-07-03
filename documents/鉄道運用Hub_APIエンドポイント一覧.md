@@ -484,7 +484,6 @@ JSON化された時刻表の内容を返す
 **$_COOKIE["unyohub_login_token"]** : Wakaranaのログイントークン  
   
 **$_POST["user_name"]** : ハンドルネーム  
-**$_POST["email_address"]** : メールアドレス(パスワードリセットのみに使用)  
 **$_POST["website_url"]** : ユーザーのwebサイトのURL  
 **$_POST["one_time_token"]** : ワンタイムトークン(ログインしている場合)
 
@@ -499,6 +498,23 @@ JSON化された時刻表の内容を返す
     "email_address" : メールアドレス,  
     "website_url" : ユーザーのwebサイトのURL  
 } 
+  
+**エラーの場合** :  
+文字列「ERROR: 」とそれに続くエラー内容文
+
+
+## send_verification_email.php
+メールアドレス確認コードを発行し、メールを送信する
+
+### 引数
+**$_COOKIE["unyohub_login_token"]** : Wakaranaのログイントークン(既存ユーザーのメールアドレス変更の場合)  
+  
+**$_POST["email_address"]** : 確認コード送信先メールアドレス  
+**$_POST["one_time_token"]** : ワンタイムトークン(既存ユーザーのメールアドレス変更の場合)
+
+### 応答
+**変更に成功した場合** :  
+文字列「SUCCEEDED」  
   
 **エラーの場合** :  
 文字列「ERROR: 」とそれに続くエラー内容文
