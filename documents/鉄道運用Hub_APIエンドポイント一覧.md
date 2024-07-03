@@ -513,8 +513,34 @@ JSON化された時刻表の内容を返す
 **$_POST["one_time_token"]** : ワンタイムトークン(既存ユーザーのメールアドレス変更の場合)
 
 ### 応答
-**変更に成功した場合** :  
+**メールの送信に成功した場合** :  
 文字列「SUCCEEDED」  
+  
+**エラーの場合** :  
+文字列「ERROR: 」とそれに続くエラー内容文
+
+
+## change_user_email_address.php
+ログイン中のユーザーに対し、メールアドレス確認コードを照合してからメールアドレスを変更する
+
+### 引数
+**$_COOKIE["unyohub_login_token"]** : Wakaranaのログイントークン  
+  
+**$_POST["email_address"]** : 新しいメールアドレス  
+**$_POST["verification_code"]** : メールアドレス確認コード  
+**$_POST["one_time_token"]** : ワンタイムトークン
+
+### 応答
+**メールアドレスの変更に成功した場合** :  
+{  
+    "user_id" : ユーザーID,  
+    "user_name" : ハンドルネーム,  
+    "role" : ロール(「ADMIN」、「MODERATOR」、「BASE」のいずれか),  
+    "is_beginner" : ビギナーユーザーか否か,  
+    "created" : YYYY-MM-DD HH:MM:SS形式のユーザー登録日時,  
+    "email_address" : メールアドレス,  
+    "website_url" : ユーザーのwebサイトのURL  
+}  
   
 **エラーの場合** :  
 文字列「ERROR: 」とそれに続くエラー内容文

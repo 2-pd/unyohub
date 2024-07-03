@@ -1,7 +1,7 @@
 <?php
 include "../libs/wakarana/main.php";
 
-if (!isset($_POST["user_name"], $_POST["website_url"], $_POST["one_time_token"])) {
+if (!isset($_POST["email_address"], $_POST["verification_code"], $_POST["one_time_token"])) {
     print "ERROR: 送信値が不正です";
     exit;
 }
@@ -19,18 +19,23 @@ if (!$user->check_one_time_token($_POST["one_time_token"])) {
     exit;
 }
 
-if ($_POST["website_url"] !== "" && filter_var($_POST["website_url"], FILTER_VALIDATE_URL) === FALSE) {
-    print "ERROR: URLの書式に誤りがあります";
+if (!$wakarana->check_email_address($_POST["email_address"])) {
+    print "ERROR: 使用できないメールアドレスです";
     exit;
 }
 
-$user->set_name($_POST["user_name"]);
-
-if (!empty($_POST["website_url"])) {
-    $user->set_value("website_url", $_POST["website_url"]);
-} else {
-    $user->delete_value("website_url");
+if (!empty($wakarana->search_users_with_email_address($_POST["email_address"]))) {
+    print "ERROR: 既に使用されているメールアドレスです";
+    exit;
 }
+
+if (!$user->email_address_verify($_POST["email_address"], $_POST["verification_code"], TRUE)) {
+    print "ERROR: 正しいメールアドレス確認コードを入力してください";
+    exit;
+}
+
+$user->remove_all_email_addresses();
+$user->add_email_address($_POST["email_address"]);
 
 
 $data = array();

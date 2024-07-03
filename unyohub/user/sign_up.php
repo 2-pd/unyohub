@@ -46,7 +46,7 @@ if (isset($_POST["user_id"], $_POST["password"], $_POST["user_name"], $_POST["zi
             $data["created"] = $user->get_created();
             $data["role"] = "BASE";
             $data["is_beginner"] = TRUE;
-            $data["email_address"] = $user->get_email_addresses();
+            $data["email_address"] = $user->get_primary_email_address();
             $data["website_url"] = NULL;
             
             print "<script>\n";
