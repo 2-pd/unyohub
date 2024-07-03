@@ -23,10 +23,18 @@ if (isset($_POST["user_id"], $_POST["password"], $_POST["user_name"], $_POST["zi
         $error_list[] = "パスワードは大文字・小文字・数字を全て含む10文字以上を設定してください";
     }
     
+    if ($main_config["require_email_address"] && empty($error_list) && !$wakarana->email_address_verify($_POST["email_address"], $_POST["verification_code"])) {
+        $error_list[] = "正しいメールアドレス確認コードを入力してください";
+    }
+    
     if (empty($error_list)) {
         $user = $wakarana->add_user($_POST["user_id"], $_POST["password"], $_POST["user_name"]);
         
         if (is_object($user)) {
+            if ($main_config["require_email_address"]) {
+                $user->add_email_address($_POST["email_address"]);
+            }
+            
             $user->set_login_token();
             
             print_header();
@@ -38,7 +46,7 @@ if (isset($_POST["user_id"], $_POST["password"], $_POST["user_name"], $_POST["zi
             $data["created"] = $user->get_created();
             $data["role"] = "BASE";
             $data["is_beginner"] = TRUE;
-            $data["email_address"] = NULL;
+            $data["email_address"] = $user->get_email_addresses();
             $data["website_url"] = NULL;
             
             print "<script>\n";
@@ -130,15 +138,22 @@ if ($main_config["require_email_address"]) {
     print <<< EOM
             <h3>メールアドレス</h3>
             <div class="informational_text">メールアドレスを入力後、確認メール送信ボタンを押して確認コードを発行してください。</div>
-            <input type="text" id="email_address" name="email_address" autocomplete="email">
             
-            <button type="button" id="send_email_button" class="wide_button" onclick="send_verification_email();">確認メール送信</button>
+    EOM;
+    print "        <input type=\"text\" id=\"email_address\" name=\"email_address\" autocomplete=\"email\" value=\"";
+    if (isset($_POST["email_address"])) {
+        print addslashes($_POST["email_address"]);
+    }
+    print "\">\n";
+    
+    print <<< EOM
+            <button type="button" id="send_email_button" class="execute_button" onclick="send_verification_email();">確認メール送信</button>
             
             <h4>確認コード</h4>
             <div class="informational_text">確認メールに記載された8桁の確認コード(大文字小文字区別なし)を入力してください。</div>
             
             <input type="text" name="verification_code" autocomplete="off">
-    
+            
     EOM;
 }
 ?>
