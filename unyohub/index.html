@@ -5469,6 +5469,8 @@ function update_operation_table(resolve_func, reject_func, operation_table, last
                 var operation_groups_data = {railroad_id : railroad_id, operation_table : operation_table, last_modified_timestamp : last_modified_timestamp, operation_groups : []};
                 var line_operations_data = {railroad_id : railroad_id, operation_table : operation_table, last_modified_timestamp : last_modified_timestamp, lines : {}};
                 
+                var operations_stopped_trains = {};
+                
                 var lines = railroad_info["lines_order"];
                 for (var cnt = 0; cnt < lines.length; cnt++) {
                     line_operations_data["lines"][lines[cnt]] = {
@@ -5498,12 +5500,16 @@ function update_operation_table(resolve_func, reject_func, operation_table, last
                             main_color : operation_response[cnt]["operations"][cnt_2]["main_color"]
                         }
                         
+                        operations_stopped_trains[operation_number] = [];
+                        
                         var trains = operation_response[cnt]["operations"][cnt_2]["trains"];
                         
                         var previous_train_number = null;
                         for_3: for (var cnt_3 = 0; cnt_3 < trains.length; cnt_3++) {
                             if (trains[cnt_3]["starting_station"] !== trains[cnt_3]["terminal_station"] || trains[cnt_3]["train_number"].substring(0, 1) === ".") {
                                 operations_data["operations"][operation_number]["trains"].push(trains[cnt_3]);
+                            } else if (trains[cnt_3]["train_number"].substring(0, 1) !== ".") {
+                                operations_stopped_trains[operation_number].push(trains[cnt_3]);
                             }
                             
                             if (trains[cnt_3]["direction"] === "inbound") {
@@ -5522,10 +5528,16 @@ function update_operation_table(resolve_func, reject_func, operation_table, last
                                 if (line_operations_data["lines"][trains[cnt_3]["line_id"]][train_direction][trains[cnt_3]["train_number"]][cnt_4]["first_departure_time"] === trains[cnt_3]["first_departure_time"]) {
                                     var train_operations = line_operations_data["lines"][trains[cnt_3]["line_id"]][train_direction][trains[cnt_3]["train_number"]][cnt_4]["operation_numbers"];
                                     
-                                    for_5: for (var cnt_5 = 0; cnt_5 < train_operations.length; cnt_5++){
-                                        for (var cnt_6 = 0; cnt_6 < operations_data["operations"][train_operations[cnt_5]]["trains"].length; cnt_6++){
-                                            if (operations_data["operations"][train_operations[cnt_5]]["trains"][cnt_6]["first_departure_time"] === trains[cnt_3]["first_departure_time"]) {
-                                                if (operations_data["operations"][train_operations[cnt_5]]["trains"][cnt_6]["position_forward"] > trains[cnt_3]["position_forward"]) {
+                                    for_5: for (var cnt_5 = 0; cnt_5 < train_operations.length; cnt_5++) {
+                                        if (trains[cnt_3]["starting_station"] !== trains[cnt_3]["terminal_station"]) {
+                                            var operation_trains = operations_data["operations"][train_operations[cnt_5]]["trains"];
+                                        } else {
+                                            var operation_trains = operations_stopped_trains[train_operations[cnt_5]];
+                                        }
+                                        
+                                        for (var cnt_6 = 0; cnt_6 < operation_trains.length; cnt_6++) {
+                                            if (operation_trains[cnt_6]["first_departure_time"] === trains[cnt_3]["first_departure_time"]) {
+                                                if (operation_trains[cnt_6]["position_forward"] > trains[cnt_3]["position_forward"]) {
                                                     break for_5;
                                                 }
                                             }
