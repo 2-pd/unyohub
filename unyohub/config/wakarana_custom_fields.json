@@ -1,16 +1,23 @@
 {
     "website_url" : {
+        "is_numeric" : false,
         "maximum_length" : 500,
         "records_per_user" : 1,
         "allow_nonunique_value" : true
     },
+    "post_count" : {
+        "is_numeric" : true,
+        "records_per_user" : 1,
+        "allow_nonunique_value" : true
+    },
     "last_posted_date" : {
+        "is_numeric" : false,
         "maximum_length" : 10,
         "records_per_user" : 1,
         "allow_nonunique_value" : true
     },
     "days_posted" : {
-        "maximum_length" : 6,
+        "is_numeric" : true,
         "records_per_user" : 1,
         "allow_nonunique_value" : true
     }

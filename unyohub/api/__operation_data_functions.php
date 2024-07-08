@@ -276,6 +276,14 @@ function revoke_post ($wakarana, $operation_date_ts, $operation_number, $post_us
     
     $deleted_data = $db_obj->querySingle("DELETE FROM `unyohub_data` WHERE `operation_date` = '".$operation_date."' AND `operation_number` = '".$db_obj->escapeString($operation_number)."' AND `user_id` = '".$db_obj->escapeString($post_user_id)."' RETURNING *", TRUE);
     
+    if (substr($post_user_id, 0, 1) !== "*") {
+        $user = $wakarana->get_user($post_user_id);
+        
+        if (is_object($user)){
+            $user->set_value("post_count", intval($user->get_value("post_count")) - 1);
+        }
+    }
+    
     if (!empty($moderator_id) && !empty($deleted_data)) {
         connect_moderation_db();
         
@@ -301,8 +309,12 @@ function revoke_post ($wakarana, $operation_date_ts, $operation_number, $post_us
         if (substr($latest_data["user_id"], 0, 1) !== "*") {
             $post_user = $wakarana->get_user($latest_data["user_id"]);
             
-            if (is_object($post_user) && (intval($post_user->get_value("days_posted")) > 20 || $post_user->check_permission("moderate"))) {
-                $from_beginner = FALSE;
+            if (is_object($post_user)){
+                $days_posted = intval($post_user->get_value("days_posted"));
+                
+                if ($days_posted >= 20 || ($days_posted >= 10 && intval($post_user->get_value("post_count")) >= 50) || $post_user->check_permission("moderate")) {
+                    $from_beginner = FALSE;
+                }
             }
         }
         

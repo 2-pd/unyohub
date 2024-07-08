@@ -52,7 +52,8 @@ for ($cnt = 0; $cnt < count($operation_numbers); $cnt++) {
                     $data[$cnt_2]["is_moderator"] = TRUE;
                     $data[$cnt_2]["is_beginner"] = FALSE;
                 } else {
-                    $data[$cnt_2]["is_beginner"] = (intval($user->get_value("days_posted")) < 20);
+                    $days_posted = intval($user->get_value("days_posted"));
+                    $data[$cnt_2]["is_beginner"] = ($days_posted < 20 && ($days_posted < 10 || intval($user->get_value("post_count")) < 50));
                 }
                 
                 $data[$cnt_2]["website_url"] = $user->get_value("website_url");

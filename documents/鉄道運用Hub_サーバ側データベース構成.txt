@@ -179,6 +179,7 @@ _/_/_/_/ データベース _/_/_/_/
 
 _/_/_/_/ Wakarana カスタムフィールド _/_/_/_/
 
-website_url ・・・ユーザーのwebサイトのURL
-last_posted_date ・・・ユーザーが最後に運用情報を投稿した日付(YYYY-MM-DD形式)
-days_posted ・・・ユーザーの通算投稿日数
+website_url ・・・ユーザーのwebサイトのURL(最大500文字)
+post_count・・・ユーザーの合計投稿回数(数値)
+last_posted_date ・・・ユーザーが最後に運用情報を投稿した日付(YYYY-MM-DD形式、10文字)
+days_posted ・・・ユーザーの通算投稿日数(数値)

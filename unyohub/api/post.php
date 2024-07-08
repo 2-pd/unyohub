@@ -116,6 +116,7 @@ $posted_date = date("Y-m-d", $ts_now);
 $from_beginner = TRUE;
 if (is_object($user)) {
     $days_posted = intval($user->get_value("days_posted"));
+    $post_count = intval($user->get_value("post_count")) + 1;
     
     if ($user->get_value("last_posted_date") !== $posted_date) {
         $days_posted++;
@@ -124,7 +125,9 @@ if (is_object($user)) {
         $user->set_value("days_posted", $days_posted);
     }
     
-    if ($days_posted > 20 || $user->check_permission("moderate")) {
+    $user->set_value("post_count", $post_count);
+    
+    if ($days_posted >= 20 || ($days_posted >= 10 && $post_count >= 50) || $user->check_permission("moderate")) {
         $from_beginner = FALSE;
     }
 }
