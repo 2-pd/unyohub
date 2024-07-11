@@ -41,6 +41,7 @@ _/_/_/_/ ファイル構成 _/_/_/_/
       └ formations.json ・・・JSONに変換された編成表
       └ operations_****.json ・・・JSONに変換された各ダイヤの運用表データ
       └ timetable_****.json ・・・JSONに変換された各ダイヤの時刻表データ
+      └ railroad_announcements.json ・・・路線系統別のお知らせデータ
 └ api/
    └ ****.php ・・・クライアント端末と情報をやり取りするエンドポイント(詳細は別記)
    └ zizai_captcha/ ・・・Zizai CAPTCHAのエンドポイント
@@ -132,6 +133,7 @@ anti_troll_garbage_size 要注意ユーザーの投稿処理を遅延させる�
         "is_important" : 重要なお知らせか否か(BOOL値),
         "content" : お知らせの本文,
         "user_id" : お知らせを最後に編集したモデレーターのユーザーID,
+        "expiration_timestamp" : お知らせの有効期限のタイムスタンプ,
         "last_modified_timestamp" : お知らせが更新されたタイムスタンプ(UTC、秒単位)
     }...
 ]
@@ -336,3 +338,8 @@ anti_troll_garbage_size 要注意ユーザーの投稿処理を遅延させる�
         }
     }
 }
+
+
+███ railroad_announcements.json ███
+
+announcements.jsonと同様

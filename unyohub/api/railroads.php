@@ -35,7 +35,7 @@ if ($last_modified_max === FALSE) {
     exit;
 }
 
-$railroad_list = explode("\n", file_get_contents("../config/railroads.txt"));
+$railroad_list = file("../config/railroads.txt", FILE_IGNORE_NEW_LINES | FILE_SKIP_EMPTY_LINES);
 
 $railroads = array("railroads" => array(), "railroads_order" => array());
 foreach ($railroad_list as $railroad) {

@@ -149,6 +149,19 @@ h2 {
     text-align: center;
 }
 
+h3 {
+    max-width: 490px;
+    
+    margin: 15px auto;
+    
+    padding-left: 6px;
+    
+    border-left: 4px solid #666666;
+    
+    line-height: 32px;
+    font-size: 18px;
+}
+
 button, a.wide_button {
     background-color: rgba(255,255,255,0.9);
     background-image: linear-gradient(315deg, #666666 8px, transparent 8px);
@@ -220,6 +233,8 @@ input, select {
     
     width: 90%;
     
+    max-width: 480px;
+    
     margin: 10px auto;
     
     background-color: transparent;
@@ -237,6 +252,12 @@ input[type="text"], input[type="number"], input[type="password"], input[type="se
     
     appearance: none;
     -webkit-appearance: none;
+}
+
+input[type="datetime-local"] {
+    padding: 4px;
+    
+    border: 1px solid #cccccc;
 }
 
 input[type="checkbox"] {
