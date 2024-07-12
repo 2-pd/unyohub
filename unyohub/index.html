@@ -637,6 +637,7 @@ article {
     padding-right: 8px;
     
     background-color: #333333;
+    background-image: linear-gradient(135deg, transparent, rgba(255, 255, 255, 0.4));
 }
 
 .line_select_wrapper, .search_wrapper {
@@ -3485,12 +3486,12 @@ input[type="checkbox"], input[type="radio"] {
 }
 
 .toggle:checked + label:before {
-    border-color: #333333;
+    border-color: #009966;
     
-    background-color: #444444;
+    background-color: #33cc99;
 }
 
-.dark_mode .toggle + label:before {
+.dark_mode .toggle:not(:checked) + label:before {
     border-color: #999999;
     
     background-color: #666666;
@@ -3498,8 +3499,6 @@ input[type="checkbox"], input[type="radio"] {
 
 .dark_mode .toggle:checked + label:before {
     border-color: #ffffff;
-    
-    background-color: transparent;
 }
 
 .toggle + label:after {

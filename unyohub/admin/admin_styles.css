@@ -204,6 +204,7 @@ button, a.wide_button {
     padding-right: 8px;
     
     background-color: #333333;
+    background-image: linear-gradient(135deg, transparent, rgba(255, 255, 255, 0.4));
 }
 
 textarea {
@@ -302,9 +303,9 @@ input[type="checkbox"] {
 }
 
 .toggle:checked + label:before {
-    border-color: #333333;
+    border-color: #009966;
     
-    background-color: #444444;
+    background-color: #33cc99;
 }
 
 .toggle + label:after {

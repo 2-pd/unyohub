@@ -50,9 +50,7 @@ $title_escaped = "";
 $content_html = "";
 
 $ts = time();
-
-$expiration_ts = $ts + 86400;
-$expiration_datetime = date("Y-m-d", $expiration_ts)."T".date("H:i", $expiration_ts);
+$expiration_datetime = date("Y-m-d", $ts + 86400)."T03:00";
 
 if (isset($_POST["title"], $_POST["content"], $_POST["expiration_datetime"])) {
     $error_mes = "";
