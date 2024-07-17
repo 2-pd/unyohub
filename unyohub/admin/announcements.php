@@ -6,29 +6,6 @@ if (!$user->check_permission("admin")) {
     exit;
 }
 
-
-function save_announcements ($json_path, $announcements) {
-    $json_timestamp = 0;
-    
-    for ($cnt = 0; isset($announcements[$cnt]); $cnt++) {
-        if ($announcements[$cnt]["last_modified_timestamp"] > $json_timestamp) {
-            $json_timestamp = $announcements[$cnt]["last_modified_timestamp"];
-        }
-    }
-    
-    if ($json_timestamp === 0) {
-        $json_timestamp = time();
-    }
-    
-    if (file_exists($json_path) && fileowner($json_path) !== posix_geteuid()) {
-        unlink($json_path);
-    }
-    
-    file_put_contents($json_path, json_encode($announcements, JSON_UNESCAPED_UNICODE));
-    touch($json_path, $json_timestamp);
-}
-
-
 print_header();
 
 if (empty($_GET["railroad_id"])) {
@@ -78,7 +55,7 @@ if (isset($_POST["title"], $_POST["content"], $_POST["expiration_datetime"])) {
                 "last_modified_timestamp" => $last_modified_timestamp
             ));
             
-            save_announcements($json_path, $announcements);
+            file_put_contents($json_path, json_encode($announcements, JSON_UNESCAPED_UNICODE));
             
             print "<script> alert('お知らせを追加しました'); </script>";
         } else {
@@ -99,7 +76,7 @@ if (isset($_POST["title"], $_POST["content"], $_POST["expiration_datetime"])) {
     if (isset($_POST["one_time_token"]) && $user->check_one_time_token($_POST["one_time_token"])) {
         array_splice($announcements, intval($_POST["delete_index"]), 1);
         
-        save_announcements($json_path, $announcements);
+        file_put_contents($json_path, json_encode($announcements, JSON_UNESCAPED_UNICODE));
         
         print "<script> alert('お知らせを削除しました'); </script>";
     } else {
@@ -110,7 +87,7 @@ if (isset($_POST["title"], $_POST["content"], $_POST["expiration_datetime"])) {
 print "<article>";
 print "<h2>お知らせの編集</h2>";
 
-print "<h3>対称の路線系統</h3>";
+print "<h3>対象の路線系統</h3>";
 print "<select class='wide_select' onchange='location.href = location.origin + location.pathname + \"?railroad_id=\" + this.value;'>";
 print "<option value=''>全体のお知らせ</option>";
 

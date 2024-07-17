@@ -6,7 +6,7 @@
 <script>
     const UNYOHUB_APP_NAME = "鉄道運用Hub";
     const UNYOHUB_VERSION = "24.07-1";
-    const UNYOHUB_INDEXEDDB_VERSION = 2310001;
+    const UNYOHUB_INDEXEDDB_VERSION = 2407002;
     const UNYOHUB_LICENSE_TEXT = "このアプリケーションは無権利創作宣言に準拠して著作権放棄されています。";
     const UNYOHUB_LICENSE_URL = "https://www.2pd.jp/license/";
     const UNYOHUB_REPOSITORY_URL = "https://fossil.2pd.jp/unyohub/";
@@ -512,7 +512,7 @@ header {
     
     background-color: #ffffff;
     
-    z-index: 3;
+    z-index: 30;
 }
 
 #tab_area {
@@ -1898,6 +1898,72 @@ h2 .next_button {
     margin: 4px 0 0 0;
 }
 
+#railroad_announcement, #railroad_announcements_heading {
+    background-image: url(data:image/webp;base64,UklGRpIDAABXRUJQVlA4TIYDAAAvR8AREHVIjCRJkaTVX2l/yO5pWAFqoXci4AgAWEhaZm125+v2bKtSZ9vGA2zfH2zbpX1XGWvbceBIbtvspTdeYIoi/YSaERR/ZQatevJByVqvt6fzVcb/fiB2CF+9dUrwUq9Sj78YOPl22c+gPl95wDqQNfkFp0SsA20NMJopwGl9NMEsQIzHs0TeJE0HMckJ9qC3q1ehUO4YwI3xLUX67NF3LXGaAKbg6eZ0RGhUJOyVq5coY0RgR654TCCB5rQ4kQw95uxIcdqxRi1+GBnMYINDETUhkY5PI2bpg6jkOIk/mTUpOYSNQQ4VY4/bq1nUmhaahfYiY+QbzbtMqmqJ1DYuv+KvAzW/Ri3u0hBvHaHvcCpQX8WBa6KS8KtLpKWhd12K/6cJCvQxlWZoBNQ6ioAqHRnvL0LO/Ia4mmH8SN6ieyXBfZpU+UCspdSlJU8wLVrSiPlaTZlOTxoaUCgy7TNfh782mL+EATlSoh0MZO4o+nLTseYM4S/Xcm2R08BvRJAHBsL3IDo9y/2PvSxQtUnOAztVhZ87kuRdSAvYcKs0ZNWF2cUnl6XaKuuB4Qdim0wElguKMhC5DzGZujf/CEAH+5/l+Z/ZynD+i6+ywN70ATzvGpeDQInBQO9ODAT6rAUKd6IkP5jbv9CdCA/c+w647IR74JMiwNwJdv4USwDsBC5geR6e58nzfMRDIGwnIgJ3Vp8l/y09z3p8gvrgMOsD/+xk73nm61VTP0XtQ2xTPysLjdF9mGzqeakPiGB2AdvZX/DZwoGUaab3u87+63QXLgLb3X5A5B7ENP1Atz9xvAVI593+pLSlRdk7UNDvlwo5axYh2nrQiQIypEppSo8W1mMpPanrTE9Nf6tmNRqv+9sSzZnThYS1SMqt4BY50K0cWgEr4UMNjqxkwFUzj/Bfh8BmHnF5VaF4NP+K5rWqz5FEmz6puF8aEt9OYOpqiTSwNC7FzcyPFtDmQbfczo9jE62K9kIodxJI+USdeXZ6vnYqeqqBdD49X1eJpwZb3VIHC+pHmouONSpxNS4ersCOSH4vuMutRKxJktORS+41I8A45+mJwYF+JcK5YwL3+Qov/b93/3yIsenTRoJdniVyL2rFZKCRfB4y9dC1REia/Myev0KtZQLk2mEb5Wf7BhbPGbhqrZBfQ36rxa0dguKrVL9l994pWd6vb1nWr4TPPWOyAA==);
+    background-repeat: no-repeat;
+}
+
+#railroad_announcement {
+    display: block;
+    
+    position: fixed;
+    
+    left: 10px;
+    bottom: 60px;
+    
+    width: min(calc(100% - 60px), 500px);
+    height: 44px;
+    
+    padding: 3px max(5px, calc(50% - 250px)) 3px max(45px, calc(50% - 260px));
+    
+    opacity: 0.8;
+    
+    background-size: 24px;
+    background-position: 8px 50%;
+    background-color: #111111;
+    
+    border-radius: 10px 0 0 10px;
+    
+    overflow: hidden;
+    line-height: 22px;
+    font-size: 18px;
+    color: #ffff33;
+    font-weight: bold;
+    
+    box-shadow: 0 3px 3px rgba(0,0,0,0.2);
+    
+    z-index: 29;
+}
+
+#railroad_announcement:empty {
+    left: calc(100% - 40px);
+}
+
+#railroad_announcement:not(:empty) {
+    transition-duration: 1s;
+    transition-property: left;
+}
+
+.railroad_announcement_with_notification:before, .railroad_announcement_with_important_notification:before {
+    content: "";
+    
+    display: block;
+    
+    position: absolute;
+    top: 10px;
+    left: 24px;
+    
+    padding: 6px;
+    
+    background-color: #33cc99;
+    
+    border-radius: 6px;
+}
+
+.railroad_announcement_with_important_notification:before {
+    background-color: #ee3333;
+}
+
 footer {
     position: absolute;
     bottom: 0;
@@ -2537,13 +2603,23 @@ a {
     color: #ee3333;
 }
 
-#announcements_heading {
-    margin-top: -20px;
+#announcements_heading, #railroad_announcements_heading {
+    width: calc(100% - 40px);
+    height: 32px;
     
-    padding-top: 48px;
+    margin: -20px auto 20px auto;
+    
+    padding-top: 54px;
     
     background-size: 36px;
-    background-position: 50% 0;
+    background-position: 50% 10px;
+    
+    border-radius: 10px;
+}
+
+#railroad_announcements_heading {
+    font-size: 16px;
+    color: #ffffff;
 }
 
 #announcements_area input[type="checkbox"] + label.drop_down {
@@ -3754,6 +3830,7 @@ input[type="radio"] + label small, .chip + label small {
         <br>
         <div id="operation_table_info" class="informational_text"></div>
     </article>
+    <a href="javascript:void(0);" id="railroad_announcement" onclick="show_railroad_announcements();"></a>
     <footer>
         <div>
             <button type="button" id="position_reload_button" class="reload_button" onclick="position_mode('today', null);"></button>
@@ -3859,6 +3936,7 @@ input[type="radio"] + label small, .chip + label small {
         <div class="preview_popup" id="announcements_popup">
             <button type="button" class="popup_close_button" onclick="close_square_popup();"></button>
             <h3 id="announcements_heading">お知らせの一覧</h3>
+            <h3 id="railroad_announcements_heading">お知らせ</h3>
             <div id="announcements_area" class="wait_icon"></div>
         </div>
         <div class="square_popup" id="login_popup">
@@ -4539,21 +4617,42 @@ function update_instance_info () {
     var open_request = indexedDB.open("unyohub_caches", UNYOHUB_INDEXEDDB_VERSION);
     
     open_request.onerror = function () {
-        mes("ご利用のブラウザではIndexedDBが使用できないため" + UNYOHUB_APP_NAME + "は正常に動作できません", true);
+        mes("IndexedDBの初期化に失敗したため、" + UNYOHUB_APP_NAME + "は正常に動作できません", true);
     };
     
     open_request.onupgradeneeded = function () {
         var db = open_request.result;
         
-        db.createObjectStore("railroads", {keyPath : "railroad_id"});
-        db.createObjectStore("train_icons", {keyPath : "railroad_id"});
-        db.createObjectStore("formations", {keyPath : "railroad_id"});
-        db.createObjectStore("operations", {keyPath : ["railroad_id", "operation_table"]});
-        db.createObjectStore("line_operations", {keyPath : ["railroad_id", "operation_table"]});
-        db.createObjectStore("operation_groups", {keyPath : ["railroad_id", "operation_table"]});
-        db.createObjectStore("timetables", {keyPath : ["railroad_id", "operation_table"]});
-        var operation_data_store = db.createObjectStore("operation_data", {keyPath : ["railroad_id", "operation_date"]});
-        operation_data_store.createIndex("idx_od1", "operation_date");
+        var object_store_names = [...db.objectStoreNames];
+        
+        if (!object_store_names.includes("railroads")) {
+            db.createObjectStore("railroads", {keyPath : "railroad_id"});
+        }
+        if (!object_store_names.includes("train_icons")) {
+            db.createObjectStore("train_icons", {keyPath : "railroad_id"});
+        }
+        if (!object_store_names.includes("formations")) {
+            db.createObjectStore("formations", {keyPath : "railroad_id"});
+        }
+        if (!object_store_names.includes("operations")) {
+            db.createObjectStore("operations", {keyPath : ["railroad_id", "operation_table"]});
+        }
+        if (!object_store_names.includes("line_operations")) {
+            db.createObjectStore("line_operations", {keyPath : ["railroad_id", "operation_table"]});
+        }
+        if (!object_store_names.includes("operation_groups")) {
+            db.createObjectStore("operation_groups", {keyPath : ["railroad_id", "operation_table"]});
+        }
+        if (!object_store_names.includes("timetables")) {
+            db.createObjectStore("timetables", {keyPath : ["railroad_id", "operation_table"]});
+        }
+        if (!object_store_names.includes("operation_data")) {
+            var operation_data_store = db.createObjectStore("operation_data", {keyPath : ["railroad_id", "operation_date"]});
+            operation_data_store.createIndex("idx_od1", "operation_date");
+        }
+        if (!object_store_names.includes("announcements")) {
+            db.createObjectStore("announcements", {keyPath : "railroad_id"});
+        }
     };
     
     open_request.onsuccess = function () {
@@ -4922,8 +5021,6 @@ var menu_off_line_elm = document.getElementById("menu_off_line");
 window.ononline = function () {
     menu_off_line_elm.style.display = "none";
     
-    menu_announcements_elm.style.display = "block";
-    
     check_logged_in();
 }
 
@@ -4935,7 +5032,6 @@ function on_off_line () {
     menu_admin_elm.style.display = "none";
     menu_logged_in_elm.style.display = "none";
     menu_not_logged_in_elm.style.display = "none";
-    menu_announcements_elm.style.display = "none";
     
     announcements_overview_elm.innerHTML = "";
 }
@@ -4971,53 +5067,176 @@ window.onload = function () {
             
             update_railroad_list(railroads_caches);
         }, 10);
-        
-        check_announcements(true);
     } else {
         update_railroad_list(railroads_caches);
         on_off_line();
     }
+    
+    check_announcements(true);
 };
 
 
 var announcements_overview_elm = document.getElementById("announcements_overview");
 var menu_announcements_elm = document.getElementById("menu_announcements");
+var railroad_announcement_elm = document.getElementById("railroad_announcement");
+
+function mark_announcements_read (announcements_data) {
+    if (announcements_data["last_read_timestamp"] === announcements_data["last_modified_timestamp"]) {
+        return;
+    }
+    
+    var announcements_data_new = {...announcements_data};
+    
+    announcements_data_new["last_read_timestamp"] = announcements_data_new["last_modified_timestamp"];
+    
+    idb_start_transaction("announcements", true, function (transaction) {
+        var announcements_store = transaction.objectStore("announcements");
+        announcements_store.put(announcements_data_new);
+    });
+}
+
+function fetch_announcements (railroad_id, mark_read, callback_func) {
+    if (railroad_id === null) {
+        var railroad_id_key = "/";
+        var railroad_id_q = "";
+    } else {
+        var railroad_id_key = railroad_id;
+        var railroad_id_q = "railroad_id=" + escape_form_data(railroad_id) + "&";
+    }
+    
+    idb_start_transaction("announcements", false, function (transaction) {
+        var announcements_store = transaction.objectStore("announcements");
+        var get_request = announcements_store.get(railroad_id_key);
+        
+        get_request.onsuccess = function (evt) {
+            if (evt.target.result !== undefined) {
+                var announcements_data = evt.target.result;
+            } else {
+                var announcements_data = {announcements : [], last_modified_timestamp : 0, last_read_timestamp : 0};
+            }
+            
+            if (navigator.onLine) {
+                ajax_post("api/announcements.php", railroad_id_q + "last_modified_timestamp=" + announcements_data["last_modified_timestamp"], function (response, last_modified) {
+                    if (response === "NEW_ANNOUNCEMENTS_NOT_EXIST") {
+                        if (mark_read) {
+                            mark_announcements_read(announcements_data);
+                        }
+                        
+                        callback_func(announcements_data["announcements"], announcements_data["last_read_timestamp"]);
+                    } else {
+                        var announcements_data_new = {announcements : JSON.parse(response)};
+                        
+                        announcements_data_new["railroad_id"] = railroad_id_key;
+                        
+                        var last_modified_date = new Date(last_modified);
+                        announcements_data_new["last_modified_timestamp"] = Math.floor(last_modified_date.getTime() / 1000);
+                        
+                        if (mark_read) {
+                            announcements_data_new["last_read_timestamp"] = announcements_data_new["last_modified_timestamp"];
+                        } else {
+                            announcements_data_new["last_read_timestamp"] = announcements_data["last_read_timestamp"];
+                        }
+                        
+                        idb_start_transaction("announcements", true, function (transaction) {
+                            var announcements_store = transaction.objectStore("announcements");
+                            
+                            announcements_store.put(announcements_data_new);
+                        });
+                        
+                        callback_func(announcements_data_new["announcements"], announcements_data["last_read_timestamp"]);
+                    }
+                });
+            } else {
+                if (mark_read) {
+                    mark_announcements_read(announcements_data);
+                }
+                
+                callback_func(announcements_data["announcements"], announcements_data["last_read_timestamp"]);
+            }
+        };
+    });
+}
 
 function check_announcements (show_important_announcements = false) {
     announcement_last_checked = get_timestamp();
     
-    var announcements_last_modified = localStorage.getItem("unyohub_latest_announcement_timestamp");
-    
-    if (announcements_last_modified === null) {
-        announcements_last_modified = "0";
-    }
-    
-    ajax_post("api/check_announcements.php", "last_modified_timestamp=" + announcements_last_modified, function (response) {
-        if (response !== false) {
-            if (response === "NEW_ANNOUNCEMENTS_NOT_EXIST") {
-                announcements_overview_elm.innerHTML = "新しいお知らせはありません";
-                menu_announcements_elm.className = "";
-                menu_button_elm.classList.remove("menu_button_with_notification");
-            } else {
-                announcements_overview_elm.innerHTML = "<b class='new_icon'>新しいお知らせがあります</b>";
-                
-                if (response === "NEW_IMPORTANT_ANNOUNCEMENTS_EXIST") {
-                    menu_button_elm.classList.add("menu_button_with_notification");
-                    menu_announcements_elm.className = "new_icon_red";
-                    
+    fetch_announcements(null, false, function (announcements_data, last_read_timestamp) {
+        var ts = get_timestamp();
+        
+        var new_announcement_exists = false;
+        
+        for (var cnt = 0; cnt < announcements_data.length; cnt++) {
+            if (announcements_data[cnt]["expiration_timestamp"] >= ts && announcements_data[cnt]["last_modified_timestamp"] > last_read_timestamp) {
+                if (announcements_data[cnt]["is_important"]) {
                     if (show_important_announcements) {
-                        show_announcements(true);
+                        show_announcements(null, true);
+                    } else {
+                        menu_button_elm.classList.add("menu_button_with_notification");
+                        menu_announcements_elm.className = "new_icon_red";
                     }
-                } else {
-                    menu_button_elm.classList.remove("menu_button_with_notification");
-                    menu_announcements_elm.className = "new_icon";
+                    
+                    return;
+                }
+                
+                new_announcement_exists = true;
+            }
+        }
+        
+        if (new_announcement_exists) {
+            announcements_overview_elm.innerHTML = "<b class='new_icon'>新しいお知らせがあります</b>";
+            menu_announcements_elm.className = "new_icon";
+        } else {
+            announcements_overview_elm.innerHTML = "新しいお知らせはありません";
+            menu_announcements_elm.className = "";
+        }
+        
+        menu_button_elm.classList.remove("menu_button_with_notification");
+    });
+}
+
+function update_railroad_announcement (railroad_id) {
+    railroad_announcement_last_checked = get_timestamp();
+    
+    railroad_announcement_elm.innerText = "";
+    railroad_announcement_elm.className = "";
+    
+    fetch_announcements(railroad_id, false, function (announcements_data, last_read_timestamp) {
+        var ts = get_timestamp();
+        
+        var new_announcement_exists = false;
+        var new_important_announcement_exists = false;
+        
+        for (var cnt = 0; cnt < announcements_data.length; cnt++) {
+            if (announcements_data[cnt]["expiration_timestamp"] >= ts) {
+                if (announcements_data[cnt]["last_modified_timestamp"] > last_read_timestamp) {
+                    new_announcement_exists = true;
+                    
+                    if (announcements_data[cnt]["is_important"]) {
+                        new_important_announcement_exists = true;
+                    }
+                }
+                
+                if (announcements_data[cnt]["is_important"]) {
+                    if (railroad_announcement_elm.innerText.length >= 1) {
+                        railroad_announcement_elm.innerText = "複数の重要な情報があります";
+                        
+                        continue;
+                    }
+                    
+                    railroad_announcement_elm.innerText = announcements_data[cnt]["title"];
                 }
             }
+        }
+        
+        if (new_important_announcement_exists) {
+            railroad_announcement_elm.className = "railroad_announcement_with_important_notification";
+        } else if (new_announcement_exists) {
+            railroad_announcement_elm.className = "railroad_announcement_with_notification";
         }
     });
 }
 
-function show_announcements (important_announcements_exist = false) {
+function show_announcements (railroad_id = null, important_announcements_exist = false) {
     open_square_popup("announcements_popup");
     
     announcements_overview_elm.innerHTML = "新しいお知らせはありません";
@@ -5037,25 +5256,38 @@ function show_announcements (important_announcements_exist = false) {
         heading_elm.innerHTML = "お知らせの一覧";
     }
     
-    ajax_post("api/announcements.php", null, function (response) {
-        if (response !== false) {
-            draw_announcements(JSON.parse(response));
+    var railroad_heading_elm = document.getElementById("railroad_announcements_heading");
+    
+    if (railroad_id !== null) {
+        heading_elm.style.display = "none";
+        railroad_heading_elm.style.display = "block";
+        
+        var main_color = railroad_info["main_color"];
+        if (config["dark_mode"]) {
+            main_color = convert_color_dark_mode(main_color);
         }
+        
+        railroad_heading_elm.style.backgroundColor = main_color;
+        
+        railroad_heading_elm.innerText = railroad_info["railroad_name"] + "のお知らせ";
+    } else {
+        heading_elm.style.display = "block";
+        railroad_heading_elm.style.display = "none";
+    }
+    
+    fetch_announcements(railroad_id, true, function (announcements_data, last_read_timestamp) {
+        draw_announcements(announcements_data, last_read_timestamp);
     });
 }
 
-function draw_announcements (announcements_data) {
+function draw_announcements (announcements_data, last_read_timestamp) {
     var buf = "";
     
-    var announcements_last_modified = localStorage.getItem("unyohub_latest_announcement_timestamp");
-    
-    if (announcements_last_modified === null) {
-        announcements_last_modified = "0";
-    }
+    var ts = get_timestamp();
     
     for (var cnt = 0; cnt < announcements_data.length; cnt++) {
-        if (cnt === 0) {
-            localStorage.setItem("unyohub_latest_announcement_timestamp", announcements_data[cnt]["last_modified_timestamp"]);
+        if (announcements_data[cnt]["expiration_timestamp"] < ts) {
+            continue;
         }
         
         buf += "<input type='checkbox' id='announcement_" + cnt + "'><label for='announcement_" + cnt + "' class='drop_down";
@@ -5064,7 +5296,7 @@ function draw_announcements (announcements_data) {
             buf += " important_announcement";
         }
         
-        if (announcements_data[cnt]["last_modified_timestamp"] > announcements_last_modified) {
+        if (announcements_data[cnt]["last_modified_timestamp"] > last_read_timestamp) {
             buf += " new_icon";
         }
         
@@ -5080,6 +5312,12 @@ function draw_announcements (announcements_data) {
     }
     
     document.getElementById("announcements_area").innerHTML = buf;
+}
+
+function show_railroad_announcements () {
+    railroad_announcement_elm.className = "";
+    
+    show_announcements(railroad_info["railroad_id"]);
 }
 
 
@@ -5320,6 +5558,8 @@ function select_railroad (railroad_id) {
             };
         });
     });
+    
+    update_railroad_announcement(railroad_id);
     
     Promise.all([promise_1, promise_2, promise_3]).then(function () {
         update_formation_styles();
@@ -5724,6 +5964,7 @@ function update_operation_data (resolve_func, reject_func, remote_data_only = fa
 
 var background_updater_last_execution = null;
 var announcement_last_checked = null;
+var railroad_announcement_last_checked = null;
 var position_last_updated = null;
 
 function background_updater () {
@@ -5732,16 +5973,20 @@ function background_updater () {
     
     if (background_updater_last_execution !== null) {
         if (now_ts < background_updater_last_execution + 60) {
-            if (announcement_last_checked !== null && announcement_last_checked < now_ts - 1800) {
-                check_announcements();
-            }
-            
             var hh_and_mm = ("0" + date_now.getHours()).slice(-2) + ":" + ("0" + date_now.getMinutes()).slice(-2);
             
             if (mode_val === 0 && position_last_updated !== null && position_last_updated < hh_and_mm) {
                 position_change_time();
             }
             
+            if (announcement_last_checked !== null && now_ts > announcement_last_checked + 1800) {
+                check_announcements();
+            }
+            
+            if (railroad_info !== null && railroad_announcement_last_checked !== null && now_ts > railroad_announcement_last_checked + 900) {
+                update_railroad_announcement(railroad_info["railroad_id"]);
+            }
+        
             if (navigator.onLine && operation_data_last_updated !== null && operation_data_last_updated < now_ts - config["refresh_interval"] * 60) {
                 update_operation_data(function () {
                     switch (mode_val) {
@@ -9413,7 +9658,6 @@ function reset_cache_db () {
     if (confirm("キャッシュデータの削除により運用表や時刻表のデータが再ダウンロードされるため、多くの通信容量を消費する場合があります。\n\nよろしいですか？")) {
         localStorage.removeItem("unyohub_instance_info");
         localStorage.removeItem("unyohub_railroads_caches");
-        localStorage.removeItem("unyohub_latest_announcement_timestamp");
         
         var delete_request = indexedDB.deleteDatabase("unyohub_caches");
         

@@ -37,11 +37,6 @@ _/_/_/_/ クライアント側ローカルストレージ _/_/_/_/
 }
 
 
-███ unyohub_latest_announcement_timestamp ███
-
-これまでに閲覧したお知らせの中で最も新しいお知らせのタイムスタンプ値(UTC、秒単位)を文字列としてそのまま格納
-
-
 _/_/_/_/ クライアント側IndexedDB "unyohub_caches" _/_/_/_/
 
 ※「・」のある項目はKeyPathに指定する
@@ -184,3 +179,13 @@ _/_/_/_/ クライアント側IndexedDB "unyohub_caches" _/_/_/_/
 }
 
 index "idx_od1" keyPath : "operation_date"
+
+
+███ announcements ███
+
+{
+    ・railroad_id : 路線系統識別名(アプリ全体のお知らせの場合は「/」を指定),
+    last_modified_timestamp : このデータの元になったJSONデータが更新された日時のタイムスタンプ値(UTC、秒単位),
+    last_read_timestamp : 既読にしたJSONデータが更新された日時のタイムスタンプ(UTC、秒単位、存在しない場合有),
+    announcements : announcements.phpのレスポンスをパースしてそのまま格納
+}

@@ -83,40 +83,26 @@
 文字列「ERROR: 」とそれに続くエラー内容文
 
 
-## check_announcements.php
-新しいお知らせの有無を確認する
-
-### 引数
-**$_POST["last_modified_timestamp"]** : タイムスタンプ(UTC)
-
-### 応答
-**タイムスタンプより新しい重要なお知らせがあった場合** :  
-文字列「NEW_IMPORTANT_ANNOUNCEMENTS_EXIST」  
-  
-**announcements.jsonの変更日時がタイムスタンプより新しく、かつ、タイムスタンプより新しい重要なお知らせがなかった場合** :  
-文字列「NEW_ANNOUNCEMENTS_EXIST」  
-  
-**announcements.jsonの変更日時がタイムスタンプ以前だった場合** :  
-文字列「NEW_ANNOUNCEMENTS_NOT_EXIST」  
-  
-**エラーの場合** :  
-文字列「ERROR: 」とそれに続くエラー内容文
-
-
 ## announcements.php
 お知らせを取得する
 
 ### 引数
-(なし)
+**$_POST["railroad_id"]** : 路線系統識別名(路線系統別のお知らせを取得する場合のみ指定)  
+**$_POST["last_modified_timestamp"]** : タイムスタンプ(UTC、省略可能)
 
 ### 応答
+**タイムスタンプが指定された場合で、announcements.jsonが存在しないかタイムスタンプ以前に更新されていた場合** :  
+文字列「NEW_ANNOUNCEMENTS_NOT_EXIST」  
+  
+**それ以外の場合** :  
 [  
-    { 各お知らせの情報  
+    { 各お知らせの情報(有効期限が切れたものはサーバ側で除外される)  
         "title" : お知らせのタイトル,  
         "is_important" : 重要なお知らせか否か(BOOL値),  
         "content" : お知らせの本文,  
         "user_id" : お知らせを最後に編集したモデレーターのユーザーID,  
         "user_name" : お知らせを最後に編集したモデレーターのハンドルネーム,  
+        "expiration_timestamp" : お知らせの有効期限のタイムスタンプ(UTC、秒単位),  
         "last_modified_timestamp" : お知らせが更新されたタイムスタンプ(UTC、秒単位)  
     }...  
 ]  
