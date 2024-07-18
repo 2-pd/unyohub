@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width,initial-scale=1,interactive-widget=resizes-content">
 <script>
     const UNYOHUB_APP_NAME = "鉄道運用Hub";
-    const UNYOHUB_VERSION = "24.07-1";
+    const UNYOHUB_VERSION = "24.07-2";
     const UNYOHUB_INDEXEDDB_VERSION = 2407002;
     const UNYOHUB_LICENSE_TEXT = "このアプリケーションは無権利創作宣言に準拠して著作権放棄されています。";
     const UNYOHUB_LICENSE_URL = "https://www.2pd.jp/license/";
@@ -1926,7 +1926,7 @@ h2 .next_button {
     
     overflow: hidden;
     line-height: 22px;
-    font-size: 18px;
+    font-size: 16px;
     color: #ffff33;
     font-weight: bold;
     
@@ -5194,16 +5194,20 @@ function check_announcements (show_important_announcements = false) {
     });
 }
 
-function update_railroad_announcement (railroad_id) {
+function update_railroad_announcement (railroad_id, clear_text = false) {
     railroad_announcement_last_checked = get_timestamp();
     
-    railroad_announcement_elm.innerText = "";
+    if (clear_text) {
+        railroad_announcement_elm.innerText = "";
+    }
+    
     railroad_announcement_elm.className = "";
     
     fetch_announcements(railroad_id, false, function (announcements_data, last_read_timestamp) {
         var ts = get_timestamp();
         
         var new_announcement_exists = false;
+        var announcement_text = "";
         var new_important_announcement_exists = false;
         
         for (var cnt = 0; cnt < announcements_data.length; cnt++) {
@@ -5217,16 +5221,18 @@ function update_railroad_announcement (railroad_id) {
                 }
                 
                 if (announcements_data[cnt]["is_important"]) {
-                    if (railroad_announcement_elm.innerText.length >= 1) {
-                        railroad_announcement_elm.innerText = "複数の重要な情報があります";
+                    if (announcement_text.length >= 1) {
+                        announcement_text = "複数の重要な情報があります";
                         
                         continue;
                     }
                     
-                    railroad_announcement_elm.innerText = announcements_data[cnt]["title"];
+                    announcement_text = announcements_data[cnt]["title"];
                 }
             }
         }
+        
+        railroad_announcement_elm.innerText = announcement_text;
         
         if (new_important_announcement_exists) {
             railroad_announcement_elm.className = "railroad_announcement_with_important_notification";
@@ -5559,7 +5565,7 @@ function select_railroad (railroad_id) {
         });
     });
     
-    update_railroad_announcement(railroad_id);
+    update_railroad_announcement(railroad_id, true);
     
     Promise.all([promise_1, promise_2, promise_3]).then(function () {
         update_formation_styles();
@@ -5983,7 +5989,7 @@ function background_updater () {
                 check_announcements();
             }
             
-            if (railroad_info !== null && railroad_announcement_last_checked !== null && now_ts > railroad_announcement_last_checked + 900) {
+            if (railroad_info !== null && railroad_announcement_last_checked !== null && now_ts > railroad_announcement_last_checked + 600) {
                 update_railroad_announcement(railroad_info["railroad_id"]);
             }
         
@@ -9030,12 +9036,22 @@ function suggest_formation (formations_text) {
 function complete_formation (formation_text) {
     var operation_data_formation_elm = document.getElementById("operation_data_formation");
     
-    var formations_splitted = operation_data_formation_elm.value.split("+");
-    formations_splitted[formations_splitted.length - 1] = formation_text;
+    if (formation_text !== "+") {
+        var formations_splitted = operation_data_formation_elm.value.split("+");
+        formations_splitted[formations_splitted.length - 1] = formation_text;
+        
+        operation_data_formation_elm.value = formations_splitted.join("+");
+        
+        setTimeout(function () {
+            document.getElementById("formation_suggestion").innerHTML = "<a href='javascript:void(0);' onclick='complete_formation(\"+\");'>＋</a>";
+        }, 200);
+    } else {
+        operation_data_formation_elm.value += "+";
+    }
     
-    operation_data_formation_elm.value = formations_splitted.join("+");
-    
-    operation_data_formation_elm.focus();
+    if (window.navigator.userAgent.includes("Chrome") || !window.navigator.userAgent.includes("Safari")) {
+        operation_data_formation_elm.focus();
+    }
 }
 
 function clear_formation_suggestion () {
