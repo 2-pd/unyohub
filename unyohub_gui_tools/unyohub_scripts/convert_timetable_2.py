@@ -42,6 +42,9 @@ def convert_timetable_2 (mes, main_dir, operation_table):
             direction_data = {}
             previous_train_number = ""
             for train in timetable_data_t:
+                if train[0] == "":
+                    continue
+                
                 if train[0] != previous_train_number:
                     if train[0] in direction_data:
                         mes("【注意】直通情報のない同一名の列車が検出されました: " + line_id + " - " + train[0])
