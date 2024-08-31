@@ -15,5 +15,5 @@ _/_/_/_/ Wakaranaでロールに割り当て可能な権限の一覧 _/_/_/_/
 ・railroads/<路線系統ID>/formation (edit_data) : 路線系統IDに対応する路線系統で編成詳細情報の編集ができる
 ・railroads (edit_announcement) : 全体のお知らせを含む全てのお知らせを編集できる
 ・railroads/<路線系統ID> (edit_announcement) : 路線系統IDに対応する路線系統のお知らせを編集できる
-・railroads (moderation) : 全ての路線系統でモデレーション(他人の投稿の削除や要注意IPアドレスの指定)ができる
-・railroads/<路線系統ID> (moderation) : 路線系統IDに対応する路線系統でモデレーション(他人の投稿の削除や要注意IPアドレスの指定)ができる
+・railroads (moderate) : 全ての路線系統でモデレーション(他人の投稿の削除や要注意IPアドレスの指定)ができる
+・railroads/<路線系統ID> (moderate) : 路線系統IDに対応する路線系統でモデレーション(他人の投稿の削除や要注意IPアドレスの指定)ができる
