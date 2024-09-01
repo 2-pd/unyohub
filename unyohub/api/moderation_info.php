@@ -6,7 +6,7 @@ $wakarana = new wakarana("../config");
 
 $user = $wakarana->check();
 if (is_object($user)) {
-    if (!$user->check_permission("moderate")) {
+    if (!isset($_POST["railroad_id"]) || !$user->check_permission("railroads/".$_POST["railroad_id"], "moderate")) {
         print "ERROR: モデレーター権限が確認できませんでした。モデレーション情報は閲覧できません";
         exit;
     }

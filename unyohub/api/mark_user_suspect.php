@@ -2,7 +2,7 @@
 include "../libs/wakarana/main.php";
 include "__operation_data_functions.php";
 
-if (!isset($_POST["user_id"])) {
+if (!isset($_POST["railroad_id"], $_POST["user_id"])) {
     print "ERROR: 送信値が不正です";
     exit;
 }
@@ -12,7 +12,7 @@ $wakarana = new wakarana("../config");
 $user = $wakarana->check();
 if (is_object($user)) {
     if ($user->check_one_time_token($_POST["one_time_token"])) {
-        if (!$user->check_permission("moderate")) {
+        if (!$user->check_permission("railroads/".$_POST["railroad_id"], "moderate")) {
             print "ERROR: モデレーター権限が確認できませんでした。モデレーター専用機能は使用できません";
             exit;
         }

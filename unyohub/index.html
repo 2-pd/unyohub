@@ -4886,10 +4886,14 @@ function update_user_data (user_data_next = null) {
         var menu_user_name_elm = document.getElementById("menu_user_name");
         menu_user_name_elm.className = "";
         
-        if (user_data["role"] === "ADMIN" || user_data["role"] === "MODERATOR") {
+        if (user_data["is_management_member"]) {
             menu_admin_elm.style.display = "block";
             var honorific = "(管)";
         } else {
+            if (user_data["is_control_panel_user"]) {
+                menu_admin_elm.style.display = "block";
+            }
+            
             var honorific = "さん";
             
             if (user_data["is_beginner"]) {
@@ -6779,7 +6783,7 @@ function get_operation_data_detail (operation_date, operation_number_or_list, ar
                         var user_name_html = escape_html(data[operation_numbers[cnt]][cnt_2]["user_name"]);
                         var class_html = "";
                         
-                        if (!data[operation_numbers[cnt]][cnt_2]["is_moderator"]) {
+                        if (!data[operation_numbers[cnt]][cnt_2]["is_management_member"]) {
                             user_name_html += " 様";
                             
                             if (data[operation_numbers[cnt]][cnt_2]["is_beginner"]) {
@@ -6802,7 +6806,7 @@ function get_operation_data_detail (operation_date, operation_number_or_list, ar
                         var ip_address_str = "";
                     }
                     
-                    if (user_data !== null && (data[operation_numbers[cnt]][cnt_2]["user_id"] === user_data["user_id"] || user_data["role"] === "MODERATOR" || user_data["role"] === "ADMIN")) {
+                    if (user_data !== null && (data[operation_numbers[cnt]][cnt_2]["user_id"] === user_data["user_id"] || "ip_address" in data[operation_numbers[cnt]][cnt_2])) {
                         user_name_html += "<button type='button' onclick='edit_operation_data(\"" + operation_date + "\", \"" + add_slashes(operation_numbers[cnt]) + "\", \"" + add_slashes(data[operation_numbers[cnt]][cnt_2]["user_id"]) + "\", \"" + add_slashes(formation_text) + "\"" + ip_address_str + ");'>";
                         
                         if (data[operation_numbers[cnt]][cnt_2]["user_id"] === user_data["user_id"]) {
@@ -9196,7 +9200,7 @@ function edit_operation_data (yyyy_mm_dd, operation_number, user_id, formation_t
     
     buf += "<br><button type='button' class='wide_button' onclick='revoke_operation_data(\"" + yyyy_mm_dd + "\", \"" + add_slashes(operation_number) + "\", \"" + add_slashes(user_id) + "\");'>取り消す</button>";
     
-    if (user_id !== user_data["user_id"] && (user_data["role"] === "MODERATOR" || user_data["role"] === "ADMIN")) {
+    if (user_id !== user_data["user_id"]) {
         buf += "<button type='button' class='wide_button' onclick='revoke_users_all_operation_data(\"" + add_slashes(user_id) + "\");'>ユーザーの投稿を全て取り消す</button>";
     }
     
@@ -9204,7 +9208,7 @@ function edit_operation_data (yyyy_mm_dd, operation_number, user_id, formation_t
     
     get_one_time_token();
     
-    if (user_id !== user_data["user_id"] && (user_data["role"] === "MODERATOR" || user_data["role"] === "ADMIN")) {
+    if (user_id !== user_data["user_id"]) {
         show_moderation_info(user_id, ip_address);
     }
 }
@@ -9218,7 +9222,7 @@ function show_moderation_info (user_id, ip_address) {
         ip_address = "";
     }
     
-    ajax_post("api/moderation_info.php", "user_id=" + escape_form_data(user_id) + "&ip_address=" + escape_form_data(ip_address), function (response) {
+    ajax_post("api/moderation_info.php", "railroad_id=" + escape_form_data(railroad_info["railroad_id"]) + "&user_id=" + escape_form_data(user_id) + "&ip_address=" + escape_form_data(ip_address), function (response) {
         if (response === false) {
             return;
         }
@@ -9351,13 +9355,13 @@ function mark_user_suspect (user_id) {
             return;
         }
         
-        ajax_post("api/mark_user_suspect.php", "user_id=" + escape_form_data(user_id) + "&one_time_token=" + escape_form_data(one_time_token), function (response) {
+        ajax_post("api/mark_user_suspect.php", "railroad_id=" + escape_form_data(railroad_info["railroad_id"]) + "&user_id=" + escape_form_data(user_id) + "&one_time_token=" + escape_form_data(one_time_token), function (response) {
             close_wait_screen();
             
             if (response === "SUCCEEDED") {
                 mes("ユーザーを要注意に指定しました");
                 
-                show_moderation_info (user_id, null);
+                show_moderation_info(user_id, null);
             }
             
             get_one_time_token();
@@ -9377,13 +9381,13 @@ function mark_ip_address_suspect (ip_address) {
             return;
         }
         
-        ajax_post("api/mark_ip_address_suspect.php", "ip_address=" + escape_form_data(ip_address) + "&one_time_token=" + escape_form_data(one_time_token), function (response) {
+        ajax_post("api/mark_ip_address_suspect.php", "railroad_id=" + escape_form_data(railroad_info["railroad_id"]) + "&ip_address=" + escape_form_data(ip_address) + "&one_time_token=" + escape_form_data(one_time_token), function (response) {
             close_wait_screen();
             
             if (response === "SUCCEEDED") {
                 mes("IPアドレスを要注意に指定しました");
                 
-                show_moderation_info (null, ip_address);
+                show_moderation_info(null, ip_address);
             }
             
             get_one_time_token();

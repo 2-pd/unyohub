@@ -34,7 +34,8 @@
 {  
     "user_id" : ユーザーID,  
     "user_name" : ハンドルネーム,  
-    "role" : ロール(「ADMIN」、「MODERATOR」、「BASE」のいずれか),  
+    "is_control_panel_user" : 管理画面にアクセス可能か否か,  
+    "is_management_member" : 運営メンバーか否か,   
     "is_beginner" : ビギナーユーザーか否か,  
     "created" : YYYY-MM-DD HH:MM:SS形式のユーザー登録日時,  
     "email_address" : メールアドレス,  
@@ -58,7 +59,8 @@
 {  
     "user_id" : ユーザーID,  
     "user_name" : ハンドルネーム,  
-    "role" : ロール(「ADMIN」、「MODERATOR」、「BASE」のいずれか),  
+    "is_control_panel_user" : 管理画面にアクセス可能か否か,  
+    "is_management_member" : 運営メンバーか否か,   
     "is_beginner" : ビギナーユーザーか否か,  
     "created" : YYYY-MM-DD HH:MM:SS形式のユーザー登録日時,  
     "email_address" : メールアドレス,  
@@ -321,6 +323,8 @@ JSON化された時刻表の内容を返す
 指定した路線系統の指定した日付の指定した運用番号の詳細な運用情報を取得する
 
 ### 引数
+**$_COOKIE["unyohub_login_token"]** : Wakaranaのログイントークン(ある場合)  
+  
 **$_POST["railroad_id"]** : 路線系統識別名  
 **$_POST["date"]** : YYYY-MM-DD形式の日付  
 **$_POST["operation_numbers"]** : 運用番号(複数ある場合はカンマ区切りで)
@@ -332,13 +336,13 @@ JSON化された時刻表の内容を返す
         {  
             "user_id" : 情報提供者のユーザーID(アクセス者がモデレーターではない場合、この値はログインしていないユーザーならnull),  
             "user_name" : 情報提供者のハンドルネーム,  
-            "is_moderator" : ユーザーがモデレーターか否か,  
+            "is_management_member" : ユーザーが運営メンバーか否か,  
             "is_beginner" : ユーザーがビギナーか否か,  
             "website_url" : ユーザーのwebサイトのURL,  
             "formations" : 編成名(前位側・奇数向きから順に各編成を「+」で区切った文字列。運休の場合は空文字列),  
             "posted_datetime" : YYYY-MM-DD HH:MM:SS形式の投稿日時,  
             "comment" : 運用補足情報(コメント),  
-            "ip_address" : 投稿者のIPアドレス(アクセス者がモデレーターではない場合、この項目は存在しない)  
+            "ip_address" : 投稿者のIPアドレス(アクセス者が当該路線系統のモデレーター権限を持たない場合、この項目は存在しない)  
         }...  
     ]...  
 }  
@@ -354,6 +358,7 @@ JSON化された時刻表の内容を返す
 ### 引数
 **$_COOKIE["unyohub_login_token"]** : モデレーターユーザーのWakaranaのログイントークン  
   
+**$_POST["railroad_id"]** : 路線系統識別名  
 **$_POST["user_id"]** :モデレーション対象のユーザーIDまたは空文字列  
 **$_POST["ip_address"]** : モデレーション対象のIPアドレスまたは空文字列
 
@@ -478,7 +483,8 @@ JSON化された時刻表の内容を返す
 {  
     "user_id" : ユーザーID,  
     "user_name" : ハンドルネーム,  
-    "role" : ロール(「ADMIN」、「MODERATOR」、「BASE」のいずれか),  
+    "is_control_panel_user" : 管理画面にアクセス可能か否か,  
+    "is_management_member" : 運営メンバーか否か,   
     "is_beginner" : ビギナーユーザーか否か,  
     "created" : YYYY-MM-DD HH:MM:SS形式のユーザー登録日時,  
     "email_address" : メールアドレス,  
@@ -521,7 +527,8 @@ JSON化された時刻表の内容を返す
 {  
     "user_id" : ユーザーID,  
     "user_name" : ハンドルネーム,  
-    "role" : ロール(「ADMIN」、「MODERATOR」、「BASE」のいずれか),  
+    "is_control_panel_user" : 管理画面にアクセス可能か否か,  
+    "is_management_member" : 運営メンバーか否か,   
     "is_beginner" : ビギナーユーザーか否か,  
     "created" : YYYY-MM-DD HH:MM:SS形式のユーザー登録日時,  
     "email_address" : メールアドレス,  
@@ -555,6 +562,7 @@ JSON化された時刻表の内容を返す
 ### 引数
 **$_COOKIE["unyohub_login_token"]** : モデレーターユーザーのWakaranaのログイントークン  
   
+**$_POST["railroad_id"]** : 路線系統識別名  
 **$_POST["user_id"]** :モデレーション対象のユーザーID
 
 ### 応答
@@ -571,6 +579,7 @@ IPアドレスを要注意として標識する
 ### 引数
 **$_COOKIE["unyohub_login_token"]** : モデレーターユーザーのWakaranaのログイントークン  
   
+**$_POST["railroad_id"]** : 路線系統識別名  
 **$_POST["ip_address"]** : モデレーション対象のIPアドレス
 
 ### 応答

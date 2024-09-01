@@ -280,7 +280,7 @@ function revoke_post ($wakarana, $operation_date_ts, $operation_number, $post_us
         $user = $wakarana->get_user($post_user_id);
         
         if (is_object($user)){
-            $user->set_value("post_count", intval($user->get_value("post_count")) - 1);
+            $user->increment_value("post_count", -1);
         }
     }
     
@@ -312,7 +312,7 @@ function revoke_post ($wakarana, $operation_date_ts, $operation_number, $post_us
             if (is_object($post_user)){
                 $days_posted = intval($post_user->get_value("days_posted"));
                 
-                if ($days_posted >= 20 || ($days_posted >= 10 && intval($post_user->get_value("post_count")) >= 50) || $post_user->check_permission("moderate")) {
+                if ($days_posted >= 20 || ($days_posted >= 10 && intval($post_user->get_value("post_count")) >= 50) || $post_user->check_permission("management_member")) {
                     $from_beginner = FALSE;
                 }
             }

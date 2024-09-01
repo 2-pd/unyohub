@@ -12,7 +12,7 @@ $wakarana = new wakarana("../config");
 $user = $wakarana->check();
 if (is_object($user)) {
     if ($user->check_one_time_token($_POST["one_time_token"])) {
-        if (!$user->check_permission("moderate")) {
+        if (!$user->check_permission("railroads/".$_POST["railroad_id"], "moderate")) {
             print "ERROR: モデレーター権限が確認できませんでした。他のユーザーの投稿は削除できません";
             exit;
         }

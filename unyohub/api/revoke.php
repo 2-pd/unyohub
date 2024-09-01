@@ -18,7 +18,7 @@ if (is_object($user)) {
         $user_id = $user->get_id();
         
         if ($user_id !== $_POST["user_id"]) {
-            if (!$user->check_permission("moderate")) {
+            if (!$user->check_permission("railroads/".$_POST["railroad_id"], "moderate")) {
                 print "ERROR: モデレーター権限が確認できませんでした。他のユーザーの投稿は削除できません";
                 exit;
             }

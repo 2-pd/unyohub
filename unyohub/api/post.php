@@ -122,12 +122,12 @@ if (is_object($user)) {
         $days_posted++;
         
         $user->set_value("last_posted_date", $posted_date);
-        $user->set_value("days_posted", $days_posted);
+        $user->increment_value("days_posted");
     }
     
-    $user->set_value("post_count", $post_count);
+    $user->increment_value("post_count");
     
-    if ($days_posted >= 20 || ($days_posted >= 10 && $post_count >= 50) || $user->check_permission("moderate")) {
+    if ($days_posted >= 20 || ($days_posted >= 10 && $post_count >= 50) || $user->check_permission("management_member")) {
         $from_beginner = FALSE;
     }
 }

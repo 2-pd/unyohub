@@ -9,7 +9,7 @@ if (!isset($_POST["railroad_id"], $_POST["date"], $_POST["operation_numbers"])) 
 $wakarana = new wakarana("../config");
 
 $access_user = $wakarana->check();
-if (is_object($access_user) && $access_user->check_permission("moderate")) {
+if (is_object($access_user) && $access_user->check_permission("railroads/".$_POST["railroad_id"], "moderate")) {
     $access_user_is_moderator = TRUE;
 } else {
     $access_user_is_moderator = FALSE;
@@ -48,8 +48,8 @@ for ($cnt = 0; $cnt < count($operation_numbers); $cnt++) {
                     $data[$cnt_2]["user_name"] = "ハンドルネーム未設定";
                 }
                 
-                if ($user->check_permission("moderate")) {
-                    $data[$cnt_2]["is_moderator"] = TRUE;
+                if ($user->check_permission("management_member")) {
+                    $data[$cnt_2]["is_management_member"] = TRUE;
                     $data[$cnt_2]["is_beginner"] = FALSE;
                 } else {
                     $days_posted = intval($user->get_value("days_posted"));
