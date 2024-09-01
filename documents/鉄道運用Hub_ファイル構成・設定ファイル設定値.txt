@@ -25,8 +25,7 @@ _/_/_/_/ ファイル構成 _/_/_/_/
    └ zizai_captcha.db ・・・Zizai CAPTCHAデータベース
 └ config/
    └ main.ini ・・・運用観察Hub基本設定ファイル
-   └ railroads.txt ・・・路線系統識別名を1行に1つずつ列挙したファイル
-   └ railroads_cache.json ・・・railroads.txtから自動生成されるキャッシュファイル
+   └ railroads.json ・・・路線系統設定ファイル
    └ announcements.json ・・・お知らせデータ
    └ wakarana_config.ini ・・・Wakarana設定ファイル
    └ wakarana_custom_fields.json ・・・Wakaranaカスタムフィールド設定ファイル
@@ -104,14 +103,8 @@ log_ip_address 投稿者のIPアドレスを記録するか(BOOL値)
 anti_troll_garbage_size 要注意ユーザーの投稿処理を遅延させるために使用するダミーデータのサイズ(MB単位、整数値)
 
 
-███ railroads.txt ███
+███ railroads.json ███
 
-路線系統識別名を1行に1つずつ列挙
-
-
-███ railroads_cache.json ███
-
-※このファイルは変換スクリプトにより自動生成されるものである
 {
     "railroads" : {
         "路線系統識別名" : {
@@ -120,7 +113,7 @@ anti_troll_garbage_size 要注意ユーザーの投稿処理を遅延させる�
         "railroad_icon" : BASE64エンコードされた路線系統のアイコンデータ
         }...
     },
-    "railroads_order" : 路線系統識別名をrailroads.txtに記載された順に列挙した配列
+    "railroads_order" : 路線系統識別名を表示順に列挙した配列
 }
 
 

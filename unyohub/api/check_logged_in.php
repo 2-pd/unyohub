@@ -20,6 +20,7 @@ if (is_object($user)) {
         }
     } else {
         $data["is_control_panel_user"] = FALSE;
+        $data["is_management_member"] = FALSE;
     }
     $days_posted = intval($user->get_value("days_posted"));
     $data["is_beginner"] = ($days_posted < 20 && ($days_posted < 10 || intval($user->get_value("post_count")) < 50));

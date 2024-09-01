@@ -4,7 +4,7 @@ include "../libs/wakarana/main.php";
 $wakarana = new wakarana("../config");
 
 $user = $wakarana->check();
-if (!is_object($user) || !$user->check_permission("access_control_panel")) {
+if (!is_object($user) || !$user->check_permission("control_panel_user")) {
     print "【!】管理画面アクセス権限のあるユーザーとしてログインしていません";
     exit;
 }

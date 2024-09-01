@@ -1,20 +1,25 @@
 <?php
 include "admin_common.php";
 
-if (!$user->check_permission("admin")) {
-    print "【!】アクセス中のユーザーアカウントにはこのページにアクセスする権限がありません";
-    exit;
-}
-
-print_header();
-
 if (empty($_GET["railroad_id"])) {
     $railroad_id = "";
     $json_path = "../config/announcements.json";
+    
+    if (!$user->check_permission("railroads", "edit_announcement")) {
+        print "【!】アクセス中のユーザーアカウントにはこのページにアクセスする権限がありません";
+        exit;
+    }
 } else {
     $railroad_id = basename($_GET["railroad_id"]);
     $json_path = "../data/".$railroad_id."/announcements.json";
+    
+    if (!$user->check_permission("railroads/".$railroad_id, "edit_announcement")) {
+        print "【!】アクセス中のユーザーアカウントにはこのページにアクセスする権限がありません";
+        exit;
+    }
 }
+
+print_header();
 
 if (file_exists($json_path)) {
     $announcements = json_decode(file_get_contents($json_path), TRUE);
@@ -89,18 +94,15 @@ print "<h2>お知らせの編集</h2>";
 
 print "<h3>対象の路線系統</h3>";
 print "<select class='wide_select' onchange='location.href = location.origin + location.pathname + \"?railroad_id=\" + this.value;'>";
-print "<option value=''>全体のお知らせ</option>";
 
-$railroad_list = file("../config/railroads.txt", FILE_IGNORE_NEW_LINES | FILE_SKIP_EMPTY_LINES);
+if ($user->check_permission("railroads", "edit_announcement")) {
+    print "<option value=''>全体のお知らせ</option>";
+}
 
-foreach ($railroad_list as $railroad) {
-    $railroad = trim($railroad);
-    if (empty($railroad)) {
-        continue;
-    }
-    
-    $railroad_info = @json_decode(@file_get_contents("../data/".$railroad."/railroad_info.json"), TRUE);
-    if (empty($railroad_info)) {
+$railroads = json_decode(file_get_contents("../config/railroads.json"), TRUE);
+
+foreach ($railroads["railroads_order"] as $railroad) {
+    if (!$user->check_permission("railroads/".$railroad, "edit_announcement")) {
         continue;
     }
     
@@ -108,7 +110,7 @@ foreach ($railroad_list as $railroad) {
     if ($railroad === $railroad_id) {
         print " selected='selected'";
     }
-    print ">".htmlspecialchars($railroad_info["railroad_name"])."</option>";
+    print ">".htmlspecialchars($railroads["railroads"][$railroad]["railroad_name"])."</option>";
 }
 
 print "</select><br>";
