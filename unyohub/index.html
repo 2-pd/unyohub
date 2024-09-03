@@ -1224,12 +1224,18 @@ input[type="checkbox"]:checked + label.drop_down + div {
     border-collapse: collapse;
 }
 
+#operation_data_area table tr {
+    border-bottom: 1px solid #eeeeee;
+}
+
+#operation_data_area table tr:first-child {
+    border-top: 1px solid #eeeeee;
+}
+
 #operation_data_area th, #operation_data_area td {
     height: 24px;
     
-    padding: 2px 0;
-    
-    border: 2px solid #eeeeee;
+    padding: 6px 0;
     
     line-height: 24px;
     text-align: center;
@@ -1840,10 +1846,6 @@ h2 .next_button {
     font-weight: bold;
 }
 
-.key_and_value a {
-    color: inherit;
-}
-
 .key_and_value div:not(:empty) {
     margin: 8px 0 4px 0 !important;
 }
@@ -2267,7 +2269,7 @@ article .screenshot_button {
     background-color: #808080;
 }
 
-h3 a {
+h3 a, .descriptive_text a {
     color: inherit !important;
 }
 
@@ -2660,6 +2662,7 @@ a {
     
     font-size: 18px;
     text-align: left;
+    word-break: break-all;
 }
 
 .dark_mode .announcement {
@@ -5596,6 +5599,8 @@ function change_mode (num) {
     if (num === -1) {
         blank_article_elm.innerHTML = "";
         blank_article_elm.style.display = "block";
+        
+        article_elms[0].scrollTop = 0;
     } else {
         if (num === mode_val) {
             return;
@@ -7027,7 +7032,13 @@ function train_detail (line_id, train_number, first_departure_time, train_direct
                         buf += "+";
                     }
                     
-                    buf += train_operations_2[cnt_2] + "運用";
+                    buf += "<a href='javascript:void(0);' onclick='operation_detail(\"" + train_operations_2[cnt_2] + "\",";
+                    if (is_today) {
+                        buf += " " + get_timestamp() + ", true";
+                    } else {
+                        buf += " \"" + operations["operation_table"] + "\", false";
+                    }
+                    buf += ");'>" + train_operations_2[cnt_2] + "運用</a>";
                 }
                 
                 buf += after_train_str + "</div>";
@@ -9621,6 +9632,8 @@ function about_railroad_data () {
     buf += "</div>";
     
     document.getElementById("about_railroad_data_area").innerHTML = buf;
+    
+    document.getElementById("about_railroad_data_popup").scrollTop = 0;
 }
 
 
