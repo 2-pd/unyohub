@@ -55,6 +55,7 @@ _/_/_/_/ ファイル構成 _/_/_/_/
 └ admin/ ・・・管理画面
    └ admin_common.php ・・・管理画面共通関数等
    └ index.php ・・・管理画面トップページ
+   └ railroads.php ・・・路線系統の有効化・無効化や表示順の並び替え
    └ user_list.php ・・・ユーザー一覧、ユーザー検索
    └ user_data.php ・・・ユーザー情報の閲覧、編集
    └ announcements.php ・・・お知らせの編集

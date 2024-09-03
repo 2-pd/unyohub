@@ -136,7 +136,7 @@ print "<input type='checkbox' name='is_important' id='is_important' class='toggl
 print "<button type='submit' class='wide_button'>追加</button>";
 print "</form></div>";
 
-print "<form action='announcements.php?railroad_id=".$railroad_id."' method='post' id='delete_form'>";
+print "<form action='announcements.php?railroad_id=".$railroad_id."' method='post' id='delete_form' style='display: none;'>";
 print $token_html;
 print "<input type='hidden' name='delete_index' id='delete_index'>";
 print "</form>";

@@ -162,6 +162,26 @@ h3 {
     font-size: 18px;
 }
 
+table {
+    width: 500px;
+    
+    margin: 10px auto;
+    
+    border-collapse: collapse;
+}
+
+tr {
+    border-bottom: 1px solid #cccccc;
+}
+
+tr:last-child {
+    border-bottom: none;
+}
+
+td {
+    padding: 10px 5px;
+}
+
 button, a.wide_button {
     background-color: rgba(255,255,255,0.9);
     background-image: linear-gradient(315deg, #666666 8px, transparent 8px);
@@ -205,6 +225,10 @@ button, a.wide_button {
     
     background-color: #333333;
     background-image: linear-gradient(135deg, transparent, rgba(255, 255, 255, 0.4));
+}
+
+table button {
+    float: right;
 }
 
 textarea {

@@ -112,22 +112,17 @@
 
 
 ## railroads.php
-サーバに登録されている路線系統の一覧を取得する
+railroads.jsonを取得する
 
 ### 引数
 **$_POST["last_modified_timestamp"]** : タイムスタンプ(UTC)
 
 ### 応答
-**railroads_cache.jsonが存在しなかった場合** :  
-railroads.txtに登録されている各路線系統のrailroad_info.jsonからrailroads_cache.jsonを生成して返す  
-railroads_cache.jsonの変更日時は、生成日時ではなく、railroads.txtと各railroad_info.jsonのうち最も新しいものの変更日時がセットされる  
+**railroads.jsonの変更日時がタイムスタンプより新しかった場合** :  
+railroads.jsonの内容を返す  
 ▲クライアント端末からAccept-Encodingヘッダーが送信されていた場合、このデータは自動的にgzip圧縮される  
   
-**railroads_cache.jsonが存在し、その変更日時がタイムスタンプより新しかった場合** :  
-railroads_cache.jsonを返す  
-▲クライアント端末からAccept-Encodingヘッダーが送信されていた場合、このデータは自動的にgzip圧縮される  
-  
-**railroads_cache.jsonが存在し、その変更日時がタイムスタンプ以前だった場合** :  
+**railroads.jsonの変更日時がタイムスタンプ以前だった場合** :  
 文字列「NO_UPDATES_AVAILABLE」  
   
 **エラーの場合** :  
