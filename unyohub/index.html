@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width,initial-scale=1,interactive-widget=resizes-content">
 <script>
     const UNYOHUB_APP_NAME = "鉄道運用Hub";
-    const UNYOHUB_VERSION = "24.07-2";
+    const UNYOHUB_VERSION = "24.09-1";
     const UNYOHUB_INDEXEDDB_VERSION = 2407002;
     const UNYOHUB_LICENSE_TEXT = "このアプリケーションは無権利創作宣言に準拠して著作権放棄されています。";
     const UNYOHUB_LICENSE_URL = "https://www.2pd.jp/license/";
@@ -1232,6 +1232,10 @@ input[type="checkbox"]:checked + label.drop_down + div {
     border-top: 1px solid #eeeeee;
 }
 
+.dark_mode #operation_data_area tr {
+    border-color: #555555 !important;
+}
+
 #operation_data_area th, #operation_data_area td {
     height: 24px;
     
@@ -1241,12 +1245,24 @@ input[type="checkbox"]:checked + label.drop_down + div {
     text-align: center;
 }
 
-.dark_mode #operation_data_area th, .dark_mode #operation_data_area td {
-    border-color: #555555;
-}
-
 #operation_data_area th {
     width: 100px;
+}
+
+.before_operation {
+    background-image: repeating-linear-gradient(-45deg, transparent, transparent 8px, #eeeeee 8px, #eeeeee 12px);
+}
+
+.dark_mode .before_operation {
+    background-image: repeating-linear-gradient(-45deg, transparent, transparent 8px, #555555 8px, #555555 12px);
+}
+
+.after_operation {
+    background-color: #eeeeee;
+}
+
+.dark_mode .after_operation {
+    background-color: #555555;
 }
 
 #operation_data_area .train_icon, .formation_data_area .train_icon, .key_and_value .train_icon {
@@ -7747,24 +7763,26 @@ function operation_data_draw () {
     
     var buf = "<h2 style='background-color: " + bg_color + ";" + color_style + "'>" + railroad_info["operations"][operation_table_id]["operation_name"] + " ";
     
-    var show_write_operation_data_button = "true";
-    
     update_timetable_name(operation_table_id, operation_data_date);
     
     var today_ts = get_timestamp();
-    if (operation_data_date > today_ts) {
-        buf += "(明日)";
-    } else if (operation_data_date > today_ts - 86400) {
+    var now_str = get_hh_mm(today_ts);
+    var days_before = Math.floor((today_ts - operation_data_date) / 86400);
+    
+    var show_write_operation_data_button = "true";
+    if (days_before === 0) {
         buf += "(今日)";
-    } else if (today_ts - operation_data_date < 172800) {
+    } else if (days_before === -1) {
+        buf += "(明日)";
+    } else if (days_before === 1) {
         buf += "(昨日)";
     } else {
         show_write_operation_data_button = "false";
         
-        if (today_ts - operation_data_date <= 259200) {
+        if (days_before === 2) {
             buf += "(一昨日)";
         } else {
-            buf += "(" + Math.floor((today_ts - operation_data_date) / 86400) + "日前)";
+            buf += "(" + days_before + "日前)";
         }
     }
     
@@ -7785,6 +7803,14 @@ function operation_data_draw () {
             
             buf += "<tr onclick='operation_detail(\"" + operation_number + "\", " + operation_data_date + ", " + show_write_operation_data_button + ");'><th style='background-color: " + bg_color + ";'><u>" + operation_number + "</u><small>(" + operations["operations"][operation_number]["car_count"] + ")</th>";
             
+            if (days_before >= 1 || (days_before === 0 && operations["operations"][operation_number]["ending_time"] < now_str)) {
+                buf += "<td class='after_operation'";
+            } else if (days_before <= -1 || operations["operations"][operation_number]["starting_time"] > now_str) {
+                buf += "<td class='before_operation'";
+            } else {
+                buf += "<td";
+            }
+            
             if (operation_number in operation_data["operations"] && operation_data["operations"][operation_number] !== null) {
                 if (operation_data["operations"][operation_number]["posts_count"] === 0) {
                     if (!config["dark_mode"]) {
@@ -7793,7 +7819,7 @@ function operation_data_draw () {
                         var color = "#33ccff";
                     }
                     
-                    buf += "<td style='color: " + color + ";'>";
+                    buf += " style='color: " + color + ";'>";
                 } else if (operation_data["operations"][operation_number]["variant_exists"]) {
                     if (!config["dark_mode"]) {
                         var color = "#cc0000";
@@ -7801,13 +7827,13 @@ function operation_data_draw () {
                         var color = "#ff9999";
                     }
                     
-                    buf += "<td style='color: " + color + ";'>";
+                    buf += " style='color: " + color + ";'>";
                 } else if (config["colorize_beginners_posts"] && operation_data["operations"][operation_number]["from_beginner"]) {
                     var color = "#33cc99";
                     
-                    buf += "<td style='color: " + color + ";'>";
+                    buf += " style='color: " + color + ";'>";
                 } else {
-                    buf += "<td>";
+                    buf += ">";
                 }
                 
                 if (operation_data["operations"][operation_number]["formations"] !== "") {
@@ -7830,7 +7856,7 @@ function operation_data_draw () {
                 
                 buf += "</td>";
             } else {
-                buf += "<td><img src='" + UNYOHUB_UNKNOWN_TRAIN_ICON + "' alt='' class='train_icon'>?</td>";
+                buf += "><img src='" + UNYOHUB_UNKNOWN_TRAIN_ICON + "' alt='' class='train_icon'>?</td>";
             }
             buf += "</tr>";
         }
