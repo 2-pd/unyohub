@@ -34,6 +34,10 @@ $content_html = "";
 $ts = time();
 $expiration_datetime = date("Y-m-d", $ts + 86400)."T03:00";
 
+$important_checked = "";
+
+$drop_down_checked = "";
+
 if (isset($_POST["title"], $_POST["content"], $_POST["expiration_datetime"])) {
     $error_mes = "";
     
@@ -77,9 +81,27 @@ if (isset($_POST["title"], $_POST["content"], $_POST["expiration_datetime"])) {
         $content_html = htmlspecialchars($_POST["content"]);
         $expiration_datetime = addslashes($_POST["expiration_datetime"]);
     }
-} elseif (isset($_POST["delete_index"])) {
+} elseif (isset($_POST["delete_index"]) || isset($_POST["edit_index"])) {
     if (isset($_POST["one_time_token"]) && $user->check_one_time_token($_POST["one_time_token"])) {
-        array_splice($announcements, intval($_POST["delete_index"]), 1);
+        if (isset($_POST["delete_index"])) {
+            $delete_index = intval($_POST["delete_index"]);
+        } else {
+            $delete_index = intval($_POST["edit_index"]);
+            
+            $title_escaped = addslashes($announcements[$delete_index]["title"]);
+            $content_html = htmlspecialchars($announcements[$delete_index]["content"]);
+            
+            $expiration_ts = intval($announcements[$delete_index]["expiration_timestamp"]);
+            $expiration_datetime = date("Y-m-d", $expiration_ts)."T".date("H:i", $expiration_ts + 86400);
+            
+            if ($announcements[$delete_index]["is_important"]) {
+                $important_checked = " checked='checked'";
+            }
+            
+            $drop_down_checked = " checked='checked'";
+        }
+        
+        array_splice($announcements, $delete_index, 1);
         
         file_put_contents($json_path, json_encode($announcements, JSON_UNESCAPED_UNICODE));
         
@@ -117,7 +139,7 @@ print "</select><br>";
 
 $token_html = "<input type='hidden' name='one_time_token' value='".$user->create_one_time_token()."'>";
 
-print "<input type='checkbox' id='new_announcement'><label for='new_announcement' class='drop_down'>【+】新しいお知らせを追加</label>";
+print "<input type='checkbox' id='new_announcement'".$drop_down_checked."><label for='new_announcement' class='drop_down'>【+】お知らせを追加</label>";
 
 print "<div><form action='announcements.php?railroad_id=".$railroad_id."' method='post'>";
 print $token_html;
@@ -131,19 +153,28 @@ print "<textarea name='content'>".$content_html."</textarea>";
 print "<h3>有効期限</h3>";
 print "<input type='datetime-local' name='expiration_datetime' value='".$expiration_datetime."'><br>";
 
-print "<input type='checkbox' name='is_important' id='is_important' class='toggle' value='YES'><label for='is_important'>重要なお知らせ</label><br>";
+print "<input type='checkbox' name='is_important' id='is_important' class='toggle' value='YES'".$important_checked."><label for='is_important'>重要なお知らせ</label><br>";
 
 print "<button type='submit' class='wide_button'>追加</button>";
 print "</form></div>";
 
 print "<form action='announcements.php?railroad_id=".$railroad_id."' method='post' id='delete_form' style='display: none;'>";
 print $token_html;
-print "<input type='hidden' name='delete_index' id='delete_index'>";
+print "<input type='hidden' id='delete_index'>";
 print "</form>";
 print <<< EOM
 <script>
 function delete_announcement (idx) {
     if (confirm("このお知らせを削除しますか？")) {
+        document.getElementById("delete_index").setAttribute("name" ,"delete_index");
+        document.getElementById("delete_index").value = idx;
+        document.getElementById("delete_form").submit();
+    }
+}
+    
+function edit_announcement (idx) {
+    if (confirm("このお知らせを削除して編集しますか？")) {
+        document.getElementById("delete_index").setAttribute("name" ,"edit_index");
         document.getElementById("delete_index").value = idx;
         document.getElementById("delete_form").submit();
     }
@@ -176,7 +207,7 @@ for ($cnt = 0; isset($announcements[$cnt]); $cnt++) {
         print " ".floor(($announcements[$cnt]["expiration_timestamp"] - $ts) / 86400)."日";
     }
     print " ".(floor(($announcements[$cnt]["expiration_timestamp"] - $ts) / 3600) % 24)."時間 有効)</small>";
-    print "</div><button type='submit' class='wide_button' onclick='delete_announcement(\"".$cnt."\");'>このお知らせを削除</button>";
+    print "</div><button type='submit' class='half_button' onclick='delete_announcement(".$cnt.");'>削除</button><button type='submit' class='half_button' onclick='edit_announcement(".$cnt.");'>削除して編集</button>";
     print "</div>";
 }
 print "</div>";
