@@ -1231,15 +1231,15 @@ input[type="checkbox"]:checked + label.drop_down + div {
 }
 
 #operation_data_area table tr {
-    border-bottom: 1px solid #eeeeee;
+    border-bottom: 1px solid #dddddd;
 }
 
 #operation_data_area table tr:first-child {
-    border-top: 1px solid #eeeeee;
+    border-top: 1px solid #dddddd;
 }
 
 .dark_mode #operation_data_area tr {
-    border-color: #555555 !important;
+    border-color: #666666 !important;
 }
 
 #operation_data_area th, #operation_data_area td {
@@ -1256,11 +1256,7 @@ input[type="checkbox"]:checked + label.drop_down + div {
 }
 
 .before_operation {
-    background-image: repeating-linear-gradient(-45deg, transparent, transparent 8px, #eeeeee 8px, #eeeeee 12px);
-}
-
-.dark_mode .before_operation {
-    background-image: repeating-linear-gradient(-45deg, transparent, transparent 8px, #555555 8px, #555555 12px);
+    background-image: repeating-linear-gradient(-45deg, transparent, transparent 8px, rgba(153, 153, 153, 0.1) 8px, rgba(153, 153, 153, 0.1) 12px);
 }
 
 .after_operation {
@@ -3824,7 +3820,7 @@ input[type="radio"] + label small, .chip + label small {
     <article>
         <div class='line_select_wrapper'><select id="timetable_line_select" onchange="timetable_change_lines(this.value);"></select></div>
         <div id="direction_radio_area">
-            <h2 id="timetable_station_name"></h2>
+            <h2><button type="button" class="previous_button" onclick="timetable_select_neighboring_station(-1);"></button><span id="timetable_station_name"></span><button type="button" class="next_button" onclick="timetable_select_neighboring_station(1);"></button></h2>
             <div><input type="radio" name="direction_radio" id="radio_inbound" value="inbound" checked="checked" onchange="timetable_select_station(timetable_selected_station);"><label for="radio_inbound" id="radio_inbound_label">上り</label><input type="radio" name="direction_radio" id="radio_outbound" value="outbound" onchange="timetable_select_station(timetable_selected_station);"><label for="radio_outbound" id="radio_outbound_label">下り</label></div>
             <input type="checkbox" id="show_arriving_trains_check" class="chip" onchange="change_show_arriving_trains(this.checked);"><label for="show_arriving_trains_check">着列車を表示</label><input type="checkbox" id="show_starting_trains_only_check" class="chip" onchange="change_show_starting_trains_only(this.checked);"><label for="show_starting_trains_only_check">当駅始発のみ</label>
         </div>
@@ -4580,6 +4576,10 @@ function mes (message_text, is_error = false, display_time = 10) {
         box_elm.className = "error_message";
         
         console.error(UNYOHUB_APP_NAME + ": " + message_text);
+        
+        if (message_elm_list.length >= 1 && message_elm_list[message_elm_list.length - 1].innerText === message_text) {
+            delete_mes(message_elm_list[message_elm_list.length - 1]);
+        }
     }
     
     if (message_elm_list.length >= 3) {
@@ -7554,6 +7554,38 @@ function draw_station_timetable (station_name) {
     }
     
     article_elms[1].scrollTop = 0;
+}
+
+function timetable_select_neighboring_station (move_count) {
+    var station_list = railroad_info["lines"][timetable_line_select_elm.value]["stations"];
+    
+    for (var cnt = 0; cnt < station_list.length; cnt++) {
+        if (station_list[cnt]["station_name"] === timetable_selected_station) {
+            break;
+        }
+    }
+    
+    var station_index = cnt + move_count;
+    
+    while (true) {
+        if (station_index < 0) {
+            station_index = station_list.length - 1;
+        } else if (station_index > station_list.length - 1) {
+            station_index = 0;
+        }
+        
+        if (!("is_signal_station" in station_list[station_index]) || !station_list[station_index]["is_signal_station"]) {
+            break;
+        }
+        
+        if (move_count > 0) {
+            station_index++;
+        } else {
+            station_index--;
+        }
+    }
+    
+    timetable_select_station(station_list[station_index]["station_name"]);
 }
 
 function change_show_arriving_trains (bool_val) {
