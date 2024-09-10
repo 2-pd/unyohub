@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width,initial-scale=1,interactive-widget=resizes-content">
 <script>
     const UNYOHUB_APP_NAME = "鉄道運用Hub";
-    const UNYOHUB_VERSION = "24.09-1";
+    const UNYOHUB_VERSION = "24.09-2";
     const UNYOHUB_INDEXEDDB_VERSION = 2407002;
     const UNYOHUB_LICENSE_TEXT = "このアプリケーションは無権利創作宣言に準拠して著作権放棄されています。";
     const UNYOHUB_LICENSE_URL = "https://www.2pd.jp/license/";
@@ -1321,12 +1321,15 @@ input[type="checkbox"]:checked + label.drop_down + div {
     
     position: relative;
     
+    min-width: 36px;
+    
     margin: 8px 1px 10px 0;
     padding: 1px 5px;
     
     border: 1px solid #cccccc;
     
     line-height: 24px;
+    text-align: center;
 }
 
 .dark_mode .formation_table div, .dark_mode .formation_table span:before, .dark_mode .formation_table span:after {
@@ -1356,7 +1359,7 @@ input[type="checkbox"]:checked + label.drop_down + div {
     outline-offset: -2px;
 }
 
-.car_PL:before, .car_PL:after, .car_PL1:before, .car_PL2:after, .car_PG:before, .car_PG:after, .car_PG1:before, .car_PG2:after, .car_PD:before, .car_PD:after, .car_PD1:before, .car_PD2:after, .car_PX:before, .car_PX:after, .car_PX1:before, .car_PX2:after {
+.car_PL:before, .car_PL:after, .car_PL1:before, .car_PL2:after, .car_PG:before, .car_PG:after, .car_PG1:before, .car_PG2:after, .car_PD:before, .car_PD:after, .car_PD1:before, .car_PD2:after, .car_PX:before, .car_PX:after, .car_PX1:before, .car_PX2:after, .car_ZL:before, .car_ZL:after, .car_ZL1:before, .car_ZL2:after, .car_ZG:before, .car_ZG:after, .car_ZG1:before, .car_ZG2:after {
     content: "";
     
     display: block;
@@ -1375,7 +1378,7 @@ input[type="checkbox"]:checked + label.drop_down + div {
     background-image: url(data:image/webp;base64,UklGRr4AAABXRUJQVlA4TLIAAAAvF8ADELW4jSRJUlw/Gz7oGn5EnDyJ2zahI9BGxIIIpwEAoMnccXfP2jT5ATuBNaS5W9MLHC7gBJJ3kjs/oLZtG0bynPpFvuXf3TlygGweAW2+DGa+RXqV/LjBTVA8L+5asS2PmR2E5cRkU8bzTVPl95/xeMrGso7lMENaX/IWD0JDDhcTTYeLlnUtoCoOa6AAd2WiRMUyBo5nBXdQxbPXq/GB1ZbdqzHj1blaj344MEkC);
 }
 
-.car_PL:before, .car_PL:after, .car_PL1:before, .car_PL2:after {
+.car_PL:before, .car_PL:after, .car_PL1:before, .car_PL2:after, .car_ZL:before, .car_ZL:after, .car_ZL1:before, .car_ZL2:after {
     transform: scale(-1, 1);
 }
 
@@ -1387,11 +1390,15 @@ input[type="checkbox"]:checked + label.drop_down + div {
     background-image: url(data:image/webp;base64,UklGRtgAAABXRUJQVlA4TMwAAAAvF8ADEDU4iGw3bgTdCJLe1ZONoCTvSobwHeHEtq1leb+7/0By98RQiDaAfwBUIpU/UoksGtkteXJLPodnNm0bZS64bygZKMkgWYrXmtLocMFb5OqXtx9s6WIxoA8aCKQXs+4r9AK3aDbSQNKT8DpPL6a8xN/LZcJ/3EyyrvLnmfJFtI+rn1X9fKPDZX+LGHiGF47BxHCWZyLLi9oMaiuyBiPGgVYjK0+CBteeNpCGyTi6m5A7cXR8efcmAenlJy8N/jdiHNN3wGIGkgQ=);
 }
 
-.car_PL:before, .car_PL1:before, .car_PG:before, .car_PG1:before, .car_PX:before, .car_PX1:before, .car_PD:before, .car_PD1:before {
+.car_ZL:before, .car_ZL:after, .car_ZL1:before, .car_ZL2:after, .car_ZG:before, .car_ZG:after, .car_ZG1:before, .car_ZG2:after {
+    background-image: url(data:image/webp;base64,UklGRt4AAABXRUJQVlA4TNEAAAAvF8ADEFWwjSTJCaETAZbaWZRPknj3F8KLCCcCABDObHtr3tKq49VFO1mNyUbyfrBrM5LtfegUtm3byJndfaPGoghYk9KUJ7YkGmmFMWm3QEN+jJ1Klh/SAFteZCRNDtxkuVhysCd758HRG3GKjYTPN+1VT7DLXeFP5uRi9KXEhxmsvRkQ5KB26EpnKcHLlVN4cEjSQhGPzAgDgFzxLvhLQpr4yoyrl+YYXwancoKhH4os+HCEDFDzDd9GmhEy0Og/vPAfoNbqTSZMG1UtVYFCKgA=);
+}
+
+.car_PL:before, .car_PL1:before, .car_PG:before, .car_PG1:before, .car_PX:before, .car_PX1:before, .car_PD:before, .car_PD1:before, .car_ZL:before, .car_ZL1:before, .car_ZG:before, .car_ZG1:before {
     left: 5px;
 }
 
-.car_PL:after, .car_PL2:after, .car_PG:after, .car_PG2:after, .car_PX:after, .car_PX2:after, .car_PD:after, .car_PD2:after {
+.car_PL:after, .car_PL2:after, .car_PG:after, .car_PG2:after, .car_PX:after, .car_PX2:after, .car_PD:after, .car_PD2:after, .car_ZL:after, .car_ZL2:after, .car_ZG:after, .car_ZG2:after {
     right: 5px;
 }
 
@@ -2894,6 +2901,14 @@ a {
     background-color: #cccc33;
     
     border-color: #eeeeee;
+}
+
+.train_detail_departure_times:after {
+    content: "";
+    
+    display: block;
+    
+    clear: both;
 }
 
 .train_detail_departure_times:last-of-type {

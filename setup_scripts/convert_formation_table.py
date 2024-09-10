@@ -7,8 +7,8 @@ import json
 import sqlite3
 
 
-equipment_symbols = ["<",">","◇","⬠"]
-equipment_keywords = ["PL","PG","PX","PD"]
+equipment_symbols = ["<", ">", "◇", "⬠", "≦", "≧"]
+equipment_keywords = ["PL", "PG", "PX", "PD", "ZL", "ZG"]
 
 def replace_equipment_symbols (equipment_str):
     global equipment_symbols
