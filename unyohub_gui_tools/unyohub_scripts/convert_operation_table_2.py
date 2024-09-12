@@ -86,6 +86,11 @@ def convert_operation_table_2 (mes, main_dir, file_name):
                 min_car_count = car_count
                 max_car_count = car_count
             
+            if len(operations) >= cnt + 4 and len(operations[cnt + 3]) >= 1 and len(operations[cnt + 3][0]) >= 1:
+                comment = operations[cnt + 3][0]
+            else:
+                comment = None
+            
             output_data[-1]["operations"].append({
                 "operation_number" : operations[cnt][0].strip(),
                 "trains" : [],
@@ -98,7 +103,8 @@ def convert_operation_table_2 (mes, main_dir, file_name):
                 "car_count" : car_count,
                 "min_car_count" : min_car_count,
                 "max_car_count" : max_car_count,
-                "main_color" : operations[cnt + 2][0]
+                "main_color" : operations[cnt + 2][0],
+                "comment" : comment
             })
             
             cnt_2 = 3

@@ -135,6 +135,8 @@ def convert_operation_table_1 (mes, main_dir, file_name, json_file_name, digits_
                 color = operation[1]
             else:
                 color = "#ffffff"
+        elif operation[0].startswith("* "):
+            output_data[-1].append(operation[0][1:].strip())
         else:
             if len(operation[0].strip()) == 0:
                 mes("運用番号のない運用が見つかりました")

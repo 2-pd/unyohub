@@ -291,7 +291,7 @@ anti_troll_garbage_size 要注意ユーザーの投稿処理を遅延させる�
                 "min_car_count" : 充当可能な最小の編成両数,
                 "max_car_count" : 充当可能な最大の編成両数,
                 "main_color" : テーマカラー,
-                "comment" : コメント
+                "comment" : 補足説明文
             }...
         ]
     }...
