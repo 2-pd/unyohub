@@ -65,6 +65,7 @@ _/_/_/_/ データベース _/_/_/_/
   `operation_number` TEXT NOT NULL 運用番号(アルファベットなどを含む場合があるため文字列型)
   `user_id` TEXT NOT NULL 投稿者ID(未登録ユーザーの場合、クライアント端末が生成する12桁の乱数値の頭に「*」を付加した文字列を記録する)
   `formations` TEXT NOT NULL 充当組成(複数編成併結による運用の場合も「+」で区切って1レコードに格納)
+  `is_quotation` INTEGER 引用情報か否か
   `posted_datetime` TEXT NOT NULL 「YYYY-MM-DD HH:MM:SS」形式の情報投稿日時
   `comment` TEXT 運用補足情報(コメント)
   `ip_address` TEXT 投稿者のIPアドレス(IPアドレスを記録しない設定の場合はNULL)
@@ -83,6 +84,7 @@ _/_/_/_/ データベース _/_/_/_/
   `variant_exists` INTEGER 投稿情報に異なる情報が存在するかどうか
   `comment_exists` INTEGER 運用補足情報の有無
   `from_beginner` INTEGER ビギナーの投稿か否か
+  `is_quotation` INTEGER 引用情報か否か
   `updated_datetime` TEXT NOT NULL 「YYYY-MM-DD HH:MM:SS」形式の情報投稿日時
 
   PRIMARY KEY(`operation_date`, `operation_number`)

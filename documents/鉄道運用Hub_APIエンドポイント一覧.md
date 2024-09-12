@@ -215,7 +215,8 @@ formations.jsonの内容を返す
             "posts_count" : 情報の投稿数,  
             "variant_exists" : 投稿情報のバリエーションの有無,  
             "comment_exists" : 運用補足情報の有無,  
-            "from_beginner" : ビギナーの投稿か否か  
+            "from_beginner" : ビギナーの投稿か否か,  
+            "is_quotation" : 引用情報か否か  
         }...  
     ],  
     "operations_tomorrow" : [ 翌日の運用情報(なければNULL)  
@@ -225,7 +226,8 @@ formations.jsonの内容を返す
             "posts_count" : 情報の投稿数,  
             "variant_exists" : 投稿情報のバリエーションの有無,  
             "comment_exists" : 運用補足情報の有無,  
-            "from_beginner" : ビギナーの投稿か否か  
+            "from_beginner" : ビギナーの投稿か否か,  
+            "is_quotation" : 引用情報か否か  
         }...  
     ],  
     "last_seen_date" : 最終目撃日(YYYY-MM-DD形式、当日の運用情報がない場合のみ。データが全く存在しなければNULL),  
@@ -236,7 +238,8 @@ formations.jsonの内容を返す
             "posts_count" : 情報の投稿数,  
             "variant_exists" : 投稿情報のバリエーションの有無,  
             "comment_exists" : 運用補足情報の有無,  
-            "from_beginner" : ビギナーの投稿か否か  
+            "from_beginner" : ビギナーの投稿か否か,  
+            "is_quotation" : 引用情報か否か  
         }...  
     ]  
 }  
@@ -302,7 +305,8 @@ JSON化された時刻表の内容を返す
         "posts_count" : 情報の投稿数,  
         "variant_exists" : 投稿情報のバリエーションの有無,  
         "comment_exists" : 運用補足情報の有無,  
-        "from_beginner" : ビギナーの投稿か否か  
+        "from_beginner" : ビギナーの投稿か否か,  
+        "is_quotation" : 引用情報か否か  
     }...  
 }  
 ▲クライアント端末からAccept-Encodingヘッダーが送信されていた場合、このデータは自動的にgzip圧縮される  
@@ -335,6 +339,7 @@ JSON化された時刻表の内容を返す
             "is_beginner" : ユーザーがビギナーか否か,  
             "website_url" : ユーザーのwebサイトのURL,  
             "formations" : 編成名(前位側・奇数向きから順に各編成を「+」で区切った文字列。運休の場合は空文字列),  
+            "is_quotation" : 引用情報か否か,  
             "posted_datetime" : YYYY-MM-DD HH:MM:SS形式の投稿日時,  
             "comment" : 運用補足情報(コメント),  
             "ip_address" : 投稿者のIPアドレス(アクセス者が当該路線系統のモデレーター権限を持たない場合、この項目は存在しない)  
@@ -395,6 +400,7 @@ JSON化された時刻表の内容を返す
 **$_POST["date"]** : YYYY-MM-DD形式の日付  
 **$_POST["operation_number"]** : 運用番号  
 **$_POST["formations"]** : 編成を前位側(奇数側)から順に「+」で区切った文字列  
+**$_POST["is_quotation"]** : 引用情報か否か  
 **$_POST["comment"]** : 運用補足情報(コメント)  
 **$_POST["one_time_token"]** : ワンタイムトークン(ログインしている場合)  
 **$_POST["guest_id"]** : 　「*」から始まる仮ユーザーID(ログインしていない場合)  

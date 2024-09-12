@@ -173,7 +173,11 @@ _/_/_/_/ クライアント側IndexedDB "unyohub_caches" _/_/_/_/
     operations : {
         情報投稿のあった運用番号 : {
             formations : 編成名(最も新しい投稿の情報を前位側・奇数向きから順に「+」で区切った文字列),
-            variants_count : 投稿情報のバリエーション数
+            posts_count : 情報の投稿数,
+            variant_exists : 投稿情報のバリエーション数,
+            comment_exists : 運用補足情報の有無,
+            from_beginner : ビギナーの投稿か否か,
+            is_quotation : 引用情報か否か
         }...  
     }
 }
