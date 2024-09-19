@@ -6,7 +6,7 @@ import json
 import re
 
 
-def convert_time_style(time_data, with_station_initial = True):
+def convert_time_style (time_data, with_station_initial = True):
     if with_station_initial:
         time_str = time_data[1:]
     else:
@@ -21,7 +21,7 @@ def convert_time_style(time_data, with_station_initial = True):
         return time_str.zfill(5)
 
 
-def convert_station_name_and_track(station_name):
+def convert_station_name_and_track (station_name):
     if ":" in station_name:
         station_name_and_track = station_name.split(":")
         
@@ -30,11 +30,65 @@ def convert_station_name_and_track(station_name):
         return station_name
 
 
-def convert_operation_table_1 (mes, main_dir, file_name, json_file_name, digits_count, file_name_for_printing=None):
+def get_train_style (train_name):
+    global train_color_regexp_list
+    global train_color_list
+    
+    if "(" in train_name:
+        train_name = train_name[:train_name.find("(")]
+    
+    bg_color = "#000000"
+    fg_color = "#ffffff"
+    
+    for cnt in range(len(train_color_regexp_list)):
+        if train_color_regexp_list[cnt].search(train_name) != None:
+            bg_color = train_color_list[cnt]
+            
+            r = int(bg_color[1:3], 16)
+            g = int(bg_color[3:5], 16)
+            b = int(bg_color[5:], 16)
+            
+            if r + g + b >= 383:
+                fg_color = "#000000"
+            
+            break
+    
+    return {"background-color" : bg_color, "color" : fg_color}
+
+
+def get_cell_html (data_str, style_data):
+    if style_data != None:
+        style_str = " style=\""
+        
+        for property_name in style_data.keys():
+            style_str += property_name + ": " + style_data[property_name] + ";"
+        
+        style_str += "\""
+    else:
+        style_str = ""
+    
+    if len(data_str) >= 1 and data_str[0] != "※" and "(" in data_str:
+        bracket_pos = data_str.find("(")
+        
+        data_str = data_str[:bracket_pos] + "<small>" + data_str[bracket_pos:] + "</small>"
+    
+    return "<td" + style_str + ">" + data_str + "</td>"
+
+
+def convert_operation_table_1 (mes, main_dir, file_name, json_file_name, digits_count, file_name_for_printing=None, max_columns=16):
+    global train_color_regexp_list
+    global train_color_list
+    
     if file_name_for_printing != None:
         mes("運用表を印刷用に変換", True)
         
+        if max_columns < 6:
+            mes("出力する表の列数は6列以上必要です")
+            return
+        
         for_printing = True
+        
+        cell_styles = []
     else:
         mes("運用表の変換(ステップ1)", True)
         
@@ -45,6 +99,14 @@ def convert_operation_table_1 (mes, main_dir, file_name, json_file_name, digits_
     mes("railroad_info.json を読み込んでいます...")
     with open(main_dir + "/railroad_info.json", "r", encoding="utf-8") as json_f:
         railroad_info = json.load(json_f)
+    
+    if for_printing:
+        train_color_regexp_list = []
+        train_color_list = []
+        
+        for train_color_rule in railroad_info["train_color_rules"]:
+            train_color_regexp_list.append(re.compile(train_color_rule["pattern"]))
+            train_color_list.append(train_color_rule["color"])
     
     lines = railroad_info["lines_order"]
     
@@ -125,18 +187,27 @@ def convert_operation_table_1 (mes, main_dir, file_name, json_file_name, digits_
     train_list = []
     for operation in operations:
         if operation[0].startswith("# ") or operation[0].startswith("◆"):
-            if for_printing:
-                output_data.append(["◆" + operation[0][1:].strip()])
-                output_data.append(["運用番号", "出庫", "入庫", "", "列車"])
-            else:
-                output_data.append(["# " + operation[0][1:].strip()])
-            
             if re.match("^#[0-9A-Fa-f]{6}$", operation[1]) != None:
                 color = operation[1]
             else:
                 color = "#ffffff"
-        elif operation[0].startswith("* "):
-            output_data[-1].append(operation[0][1:].strip())
+            
+            if for_printing:
+                output_data.append(["◆" + operation[0][1:].strip()] + [""] * (max_columns - 1))
+                output_data.append(["運用番号", "出庫", "入庫", "", "列車"] + [""] * (max_columns - 5))
+                
+                cell_styles.append([{"background-color" : color, "font-weight" : "bold", "text-align" : "left"}] * max_columns)
+                cell_styles.append([{"font-size" : "small", "text-align" : "left"}] * max_columns)
+            else:
+                output_data.append(["# " + operation[0][1:].strip()])
+        elif operation[0].startswith("* ") or operation[0].startswith("※"):
+            if for_printing:
+                output_data[-1] = ["※ " + operation[0][1:].strip()] + [""] * (max_columns - 1)
+                output_data.append([""] * max_columns)
+                
+                cell_styles.append([None] * max_columns)
+            else:
+                output_data[-1].append(operation[0][1:].strip())
         else:
             if len(operation[0].strip()) == 0:
                 mes("運用番号のない運用が見つかりました")
@@ -146,6 +217,10 @@ def convert_operation_table_1 (mes, main_dir, file_name, json_file_name, digits_
                 output_row_1 = [operation[0], convert_station_name_and_track(operation[2]), convert_station_name_and_track(operation[4]), ""]
                 output_row_2 = ["所定" + operation[1].split("(")[0] + "両", operation[3].strip(), operation[5].strip(), ""]
                 output_row_3 = ["", "", "", ""]
+                
+                output_cell_styles_1 = [{"background-color" : color, "font-weight" : "bold", "text-align" : "left"}, None, None, None]
+                output_cell_styles_2 = [{"text-align" : "left"}, None, None, None]
+                output_cell_styles_3 = [None, None, None, None]
             else:
                 output_row_1 = [operation[0], operation[2], operation[4]]
                 output_row_2 = [operation[1], operation[3].strip(), operation[5].strip()]
@@ -158,6 +233,11 @@ def convert_operation_table_1 (mes, main_dir, file_name, json_file_name, digits_
                     output_row_1.append(train_cell)
                     output_row_2.append("")
                     output_row_3.append("")
+                    
+                    if for_printing:
+                        output_cell_styles_1.append(None)
+                        output_cell_styles_2.append(None)
+                        output_cell_styles_3.append(None)
                 elif train_cell != "" and train_cell != "○" and train_cell != "△":
                     train_time = train_cell.split("[")
                     
@@ -182,9 +262,17 @@ def convert_operation_table_1 (mes, main_dir, file_name, json_file_name, digits_
                         
                         train_rows[1] = train_rows[1][:-1]
                         
+                        if for_printing and train_name[0] == "?":
+                            train_name = train_name[1:]
+                        
                         output_row_1.append(train_name + car_count)
                         output_row_2.append(convert_time_style(train_rows[0]))
                         output_row_3.append(convert_time_style(train_rows[1]))
+                        
+                        if for_printing:
+                            output_cell_styles_1.append(get_train_style(train_name))
+                            output_cell_styles_2.append(None)
+                            output_cell_styles_3.append(None)
                     else:
                         if train_name not in train_number_list:
                             mes("列車番号が時刻表にありません: " + train_name)
@@ -200,9 +288,16 @@ def convert_operation_table_1 (mes, main_dir, file_name, json_file_name, digits_
                                 output_row_2.append(train_number_list[train_name][first_departure_time][0])
                                 output_row_3.append(train_number_list[train_name][first_departure_time][1])
                         else:
+                            if train_name[0] == "?":
+                                train_name = train_name[1:]
+                            
                             output_row_1.append(train_name + car_count)
                             output_row_2.append(train_number_list[train_name][first_departure_times[0]][0])
                             output_row_3.append(train_number_list[train_name][first_departure_times[-1]][1])
+                            
+                            output_cell_styles_1.append(get_train_style(train_name))
+                            output_cell_styles_2.append(None)
+                            output_cell_styles_3.append(None)
                         
                         if train_name + car_count in train_list:
                             mes("同一列車の同一組成位置が複数の運用に割り当てられています: " + train_name + car_count)
@@ -223,10 +318,51 @@ def convert_operation_table_1 (mes, main_dir, file_name, json_file_name, digits_
             else:
                 output_row_2[2] = convert_time_style(output_row_2[2], False)
             
+            if for_printing:
+                while True:
+                    if len(output_row_1) <= max_columns:
+                        empty_cells = [""] * (max_columns - len(output_row_1))
+                        
+                        output_row_1 += empty_cells
+                        output_row_2 += empty_cells
+                        output_row_3 += empty_cells
+                        
+                        none_cells = [None] * len(empty_cells)
+                        
+                        output_cell_styles_1 += none_cells
+                        output_cell_styles_2 += none_cells
+                        output_cell_styles_3 += none_cells
+                        
+                        break
+                    
+                    output_data.append(output_row_1[0:max_columns])
+                    output_data.append(output_row_2[0:max_columns])
+                    output_data.append(output_row_3[0:max_columns])
+                    
+                    output_row_1 = ["", "", "", ""] + output_row_1[max_columns:]
+                    output_row_2 = ["", "", "", ""] + output_row_2[max_columns:]
+                    output_row_3 = ["", "", "", ""] + output_row_3[max_columns:]
+                    
+                    cell_styles.append(output_cell_styles_1[0:max_columns])
+                    cell_styles.append(output_cell_styles_2[0:max_columns])
+                    cell_styles.append(output_cell_styles_3[0:max_columns])
+                    
+                    output_cell_styles_1 = [None, None, None, None] + output_cell_styles_1[max_columns:]
+                    output_cell_styles_2 = [None, None, None, None] + output_cell_styles_2[max_columns:]
+                    output_cell_styles_3 = [None, None, None, None] + output_cell_styles_3[max_columns:]
+            
             output_data.append(output_row_1)
             output_data.append(output_row_2)
             output_data.append(output_row_3)
             output_data.append([])
+            
+            if for_printing:
+                output_data[-1] = [""] * max_columns
+                
+                cell_styles.append(output_cell_styles_1)
+                cell_styles.append(output_cell_styles_2)
+                cell_styles.append(output_cell_styles_3)
+                cell_styles.append([None] * max_columns)
     
     if error_occurred:
         mes("エラー発生のため処理が中断されました")
@@ -240,7 +376,20 @@ def convert_operation_table_1 (mes, main_dir, file_name, json_file_name, digits_
     mes("データを " + os.path.basename(new_file_name) + " に書き込んでいます...")
     
     with open(new_file_name, "w", encoding="utf-8") as csv_f:
-        csv_writer = csv.writer(csv_f)
-        csv_writer.writerows(output_data)
+        if for_printing:
+            csv_f.write("<table style=\"border-collapse: collapse; text-align: center;\">\n")
+            
+            for cnt in range(len(output_data)):
+                csv_f.write("<tr>")
+                
+                for cnt_2 in range(max_columns):
+                    csv_f.write(get_cell_html(output_data[cnt][cnt_2], cell_styles[cnt][cnt_2]))
+                
+                csv_f.write("</tr>\n")
+                
+            csv_f.write("</table>\n")
+        else:
+            csv_writer = csv.writer(csv_f)
+            csv_writer.writerows(output_data)
     
     mes("処理が完了しました")

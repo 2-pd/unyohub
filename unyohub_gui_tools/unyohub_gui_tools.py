@@ -15,7 +15,7 @@ import webbrowser
 
 
 UNYOHUB_GUI_TOOLS_APP_NAME = "鉄道運用Hub用データ編集ツール"
-UNYOHUB_GUI_TOOLS_VERSION = "24.09-1"
+UNYOHUB_GUI_TOOLS_VERSION = "24.09-2"
 UNYOHUB_GUI_TOOLS_LICENSE_TEXT = "このアプリケーションは無権利創作宣言に準拠して著作権放棄されています"
 UNYOHUB_GUI_TOOLS_LICENSE_URL = "https://www.2pd.jp/license/"
 UNYOHUB_GUI_TOOLS_REPOSITORY_URL = "https://fossil.2pd.jp/unyohub/"
@@ -228,12 +228,10 @@ def convert_timetable_1 ():
     file_name = filedialog.askopenfilename(title="変換対象の時刻表CSVファイルを選択してください", filetypes=[("CSV形式の表ファイル","*.csv")], initialdir=config["main_dir"])
     
     if len(file_name) >= 1:
-        digits_count_str = simpledialog.askstring("列車番号の桁数を指定", "所定の桁数に満たない列車番号の前に「0」を付加する場合にはその桁数を入力してください")
+        digits_count = simpledialog.askinteger("列車番号の桁数を指定", "所定の桁数に満たない列車番号の前に「0」を付加する場合にはその桁数を入力してください", initialvalue=0)
         
-        if digits_count_str.isdecimal():
-            digits_count = int(digits_count_str)
-        else:
-            digits_count = 0
+        if digits_count == None:
+            return
         
         try:
             clear_mes()
@@ -279,25 +277,29 @@ def convert_operation_table_1 (for_printing):
         return
     
     if for_printing:
-        file_name_for_printing = filedialog.asksaveasfilename(title="印刷用運用表のファイル名を指定してください", filetypes=[("CSV形式の表ファイル","*.csv")], initialdir=config["main_dir"], initialfile=os.path.splitext(os.path.basename(file_name))[0] + "_印刷用.csv", defaultextension="csv")
+        file_name_for_printing = filedialog.asksaveasfilename(title="印刷用運用表のファイル名を指定してください", filetypes=[("HTMLファイル","*.html")], initialdir=config["main_dir"], initialfile=os.path.splitext(os.path.basename(file_name))[0] + "_印刷用.html", defaultextension="html")
         
         if len(file_name_for_printing) == 0:
             return
+        
+        max_columns = simpledialog.askinteger("運用表の列数を指定", "出力する運用表の列数を指定してください", initialvalue=16, minvalue=6)
+    
+        if max_columns == None:
+            return
     else:
         file_name_for_printing = None
+        max_columns = None
     
-    digits_count_str = simpledialog.askstring("列車番号の桁数を指定", "所定の桁数に満たない列車番号の前に「0」を付加する場合にはその桁数を入力してください")
+    digits_count = simpledialog.askinteger("列車番号の桁数を指定", "所定の桁数に満たない列車番号の前に「0」を付加する場合にはその桁数を入力してください", initialvalue=0)
     
-    if digits_count_str.isdecimal():
-        digits_count = int(digits_count_str)
-    else:
-        digits_count = 0
+    if digits_count == None:
+        return
     
     try:
         clear_mes()
         
         convert_operation_table_1 = importlib.import_module("unyohub_scripts.convert_operation_table_1")
-        convert_operation_table_1.convert_operation_table_1(mes, config["main_dir"], file_name, json_file_name, digits_count, file_name_for_printing)
+        convert_operation_table_1.convert_operation_table_1(mes, config["main_dir"], file_name, json_file_name, digits_count, file_name_for_printing, max_columns)
     except:
         error_mes(traceback.format_exc())
 
