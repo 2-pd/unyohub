@@ -263,8 +263,8 @@ anti_troll_garbage_size 要注意ユーザーの投稿処理を遅延させる�
 ※このファイルは変換スクリプトにより自動生成されるものである
 ※発車待ちの列車の列車番号は、発車後の列車番号の先頭に「_」を付加したものとなる
 [
-    { 各運用グループの情報
-        "operation_group_name" : 運用グループタイトル,
+    { 各運用系統の情報
+        "operation_group_name" : 運用系統タイトル,
         "operations" : [ 各運用の情報
             {
                 "operation_number" : 運用番号

@@ -89,7 +89,7 @@ _/_/_/_/ クライアント側IndexedDB "unyohub_caches" _/_/_/_/
                     direction : 上り列車か下り列車か(上り列車なら「inbound」、下り列車なら「outbound」)
                 }...
             ],
-            operation_group_name : 運用グループタイトル,
+            operation_group_name : 運用系統タイトル,
             starting_location : 出庫場所(車庫または駅),
             starting_track : 出庫番線,
             starting_time : 「HH:MM」形式の出庫時刻,
@@ -112,7 +112,7 @@ _/_/_/_/ クライアント側IndexedDB "unyohub_caches" _/_/_/_/
     last_modified_timestamp : このデータの元になったJSONファイルが更新された日時のタイムスタンプ値(UTC、秒単位),
     operation_groups : [
         {
-            operation_group_name : 運用グループタイトル,
+            operation_group_name : 運用系統タイトル,
             operation_numbers : 運用番号を配列で
         }
     ]

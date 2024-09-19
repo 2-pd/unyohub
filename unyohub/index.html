@@ -5792,7 +5792,8 @@ function update_operation_table(resolve_func, reject_func, operation_table, last
                             terminal_track : operation_response[cnt]["operations"][cnt_2]["terminal_track"],
                             ending_time : operation_response[cnt]["operations"][cnt_2]["ending_time"],
                             car_count : operation_response[cnt]["operations"][cnt_2]["car_count"],
-                            main_color : operation_response[cnt]["operations"][cnt_2]["main_color"]
+                            main_color : operation_response[cnt]["operations"][cnt_2]["main_color"],
+                            comment : "comment" in operation_response[cnt]["operations"][cnt_2] ? operation_response[cnt]["operations"][cnt_2]["comment"] : null//2024.11以降のバージョンで単純代入に置き換え
                         }
                         
                         operations_stopped_trains[operation_number] = [];
@@ -7471,7 +7472,7 @@ function draw_station_timetable (station_name) {
             buf += "<a href='javascript:void(0);' onclick='train_detail(\"" + line_id + "\", \"" + departure_times[keys[cnt]][keys_2[cnt_2]] + "\", \"" + first_departure_times[keys[cnt]][keys_2[cnt_2]] + "\", \"" + train_direction + "\", " + show_operation_data + ", " + is_today + ");' class='timetable_train'>";
             
             var train_operations = get_operations(line_id, departure_times[keys[cnt]][keys_2[cnt_2]], first_departure_times[keys[cnt]][keys_2[cnt_2]], train_direction);
-            if (show_operation_data) {
+            if (show_operation_data && train_operations !== null) {
                 var formation_data = convert_formation_data(line_id, train_operations, is_inbound);
                 
                 buf += "<img src='" + get_icon(formation_data["first_formation"]) + "' alt='' class='train_icon'>";
@@ -7511,32 +7512,34 @@ function draw_station_timetable (station_name) {
                 }
                 buf += "</small><br>";
                 
-                if (formation_data["comment_exists"]) {
-                    formation_data["formation_text"] += "*";
-                }
-                
-                if (formation_data["posts_count"] === 0) {
-                    if (!config["dark_mode"]) {
-                        var color = "#0099cc";
-                    } else {
-                        var color = "#33ccff";
+                if (train_operations !== null) {
+                    if (formation_data["comment_exists"]) {
+                        formation_data["formation_text"] += "*";
                     }
                     
-                    buf += "<span style='color: " + color + ";'>" + escape_html(formation_data["formation_text"]) + "</span>";
-                } else if (formation_data["variant_exists"]) {
-                    if (!config["dark_mode"]) {
-                        var color = "#cc0000";
+                    if (formation_data["posts_count"] === 0) {
+                        if (!config["dark_mode"]) {
+                            var color = "#0099cc";
+                        } else {
+                            var color = "#33ccff";
+                        }
+                        
+                        buf += "<span style='color: " + color + ";'>" + escape_html(formation_data["formation_text"]) + "</span>";
+                    } else if (formation_data["variant_exists"]) {
+                        if (!config["dark_mode"]) {
+                            var color = "#cc0000";
+                        } else {
+                            var color = "#ff9999";
+                        }
+                        
+                        buf += "<span style='color: " + color + ";'>" + escape_html(formation_data["formation_text"]) + "</span>";
+                    } else if (config["colorize_beginners_posts"] && formation_data["from_beginner"]) {
+                        var color = "#33cc99";
+                        
+                        buf += "<span style='color: " + color + ";'>" + escape_html(formation_data["formation_text"]) + "</span>";
                     } else {
-                        var color = "#ff9999";
+                        buf += escape_html(formation_data["formation_text"]);
                     }
-                    
-                    buf += "<span style='color: " + color + ";'>" + escape_html(formation_data["formation_text"]) + "</span>";
-                } else if (config["colorize_beginners_posts"] && formation_data["from_beginner"]) {
-                    var color = "#33cc99";
-                    
-                    buf += "<span style='color: " + color + ";'>" + escape_html(formation_data["formation_text"]) + "</span>";
-                } else {
-                    buf += escape_html(formation_data["formation_text"]);
                 }
             } else if (train_operations !== null) {
                 buf += "<br>";
@@ -7896,13 +7899,18 @@ function operation_data_draw () {
         }
         
         if (document.getElementById("radio_series").checked) {
-            var groups_tmp = {"不明" : []};
+            var groups_tmp = {"運休" : [], "不明" : []};
             for (cnt = 0; cnt < formations["series_names"].length; cnt++) {
                 groups_tmp[formations["series_names"][cnt]] = [];
             }
             
             for (cnt = 0; cnt < operation_numbers.length; cnt++) {
                 if (operation_numbers[cnt] in operation_data["operations"] && operation_data["operations"][operation_numbers[cnt]] !== null) {
+                    if (operation_data["operations"][operation_numbers[cnt]]["formations"] === "") {
+                        groups_tmp["運休"].push(operation_numbers[cnt]);
+                        continue;
+                    }
+                    
                     var formation_list = operation_data["operations"][operation_numbers[cnt]]["formations"].split("+");
                     
                     var series_list = [];
@@ -7936,6 +7944,10 @@ function operation_data_draw () {
                 if (groups_tmp[formations["series_names"][cnt]].length >= 1) {
                     groups.push({operation_group_name: formations["series_names"][cnt], operation_numbers:groups_tmp[formations["series_names"][cnt]]});
                 }
+            }
+            
+            if (groups_tmp["運休"].length >= 1) {
+                groups.push({operation_group_name: "運休", operation_numbers:groups_tmp["運休"]});
             }
             
             if (groups_tmp["不明"].length >= 1) {
@@ -8180,6 +8192,10 @@ function draw_operation_detail (operation_number, operation_data_date_ts_or_oper
         checked_strs.reverse()
     }
     buf += "<div><input type='radio' name='switch_simplify_operation_details' id='simplify_operation_details' onchange='change_simplify_operation_details(!this.checked, \"" + add_slashes(operation_number) + "\", " + operation_table_name_or_ts + ", " + is_today + ");'" + checked_strs[0] + "><label for='simplify_operation_details'>詳細表示</label><input type='radio'  name='switch_simplify_operation_details' id='not_simplify_operation_details' onchange='change_simplify_operation_details(this.checked, \"" + add_slashes(operation_number) + "\", " + operation_table_name_or_ts + ", " + is_today + ");'" + checked_strs[1] + "><label for='not_simplify_operation_details'>簡略表示</label></div>";
+    
+    if ("comment" in operations["operations"][operation_number] && operations["operations"][operation_number]["comment"] !== null) {//2024.11以降のバージョンで前半削除
+        buf += "<div class='descriptive_text'>" + escape_html(operations["operations"][operation_number]["comment"]) + "</div>";
+    }
     
     buf += "<div id='operation_trains_area'></div>";
     
@@ -8968,7 +8984,7 @@ function operation_table_list_number () {
     search_starting_location_list = sort_station_names(search_starting_location_list);
     search_terminal_location_list = sort_station_names(search_terminal_location_list);
     
-    var buf_2 = "<option value=''>運用グループ 指定なし</option>";
+    var buf_2 = "<option value=''>運用系統 指定なし</option>";
     for (cnt = 0; cnt < search_group_name_list.length; cnt++) {
         buf_2 += "<option value='" + search_group_name_list[cnt] + "'>" + search_group_name_list[cnt] + "</option>";
     }
