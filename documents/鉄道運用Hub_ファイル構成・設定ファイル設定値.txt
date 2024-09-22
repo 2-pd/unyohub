@@ -60,7 +60,8 @@ _/_/_/_/ ファイル構成 _/_/_/_/
    └ user_data.php ・・・ユーザー情報の閲覧、編集
    └ announcements.php ・・・お知らせの編集
    └ railroads.php ・・・路線系統別の操作一覧
-   └ formation.php ・・・編成情報の編集
+   └ formations.php ・・・編成情報の編集
+   └ train_icons.php ・・・管理画面で使用する車両アイコン画像を配信
    └ admin_styles.css ・・・管理画面用スタイルシート
 └ command_line_tools/
    └ ****.py ・・・コマンドラインやcronから実行するPythonツール(詳細は別記)

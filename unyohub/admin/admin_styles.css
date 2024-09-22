@@ -177,7 +177,9 @@ h3 {
 }
 
 table {
-    width: 500px;
+    width: 100%;
+    
+    max-width: 500px;
     
     margin: 10px auto;
     
@@ -194,6 +196,29 @@ tr:last-child {
 
 td {
     padding: 10px 5px;
+}
+
+a {
+    color: #666666;
+}
+
+a:has(.train_icon) {
+    display: block;
+    
+    line-height: 40px;
+    font-size: 20px;
+    text-align: center;
+}
+
+.train_icon {
+    max-width: 40px;
+    max-height: 40px;
+    
+    margin-right: 10px;
+    
+    vertical-align: top;
+    
+    filter: drop-shadow(0 1px 2px rgba(0,0,0,0.25));
 }
 
 button, a.wide_button {
