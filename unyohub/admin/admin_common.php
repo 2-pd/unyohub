@@ -1,4 +1,6 @@
 <?php
+define("RAILROADS_JSON_PATH", "../config/railroads.json");
+
 include "../libs/wakarana/main.php";
 
 $wakarana = new wakarana("../config");

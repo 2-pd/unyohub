@@ -55,11 +55,11 @@ _/_/_/_/ ファイル構成 _/_/_/_/
 └ admin/ ・・・管理画面
    └ admin_common.php ・・・管理画面共通関数等
    └ index.php ・・・管理画面トップページ
-   └ railroads.php ・・・路線系統の有効化・無効化や表示順の並び替え
+   └ enable_railroads.php ・・・路線系統の有効化・無効化や表示順の並び替え
    └ user_list.php ・・・ユーザー一覧、ユーザー検索
    └ user_data.php ・・・ユーザー情報の閲覧、編集
    └ announcements.php ・・・お知らせの編集
-   └ formation_list.php ・・・編成表の編集
+   └ railroads.php ・・・路線系統別の操作一覧
    └ formation.php ・・・編成情報の編集
    └ admin_styles.css ・・・管理画面用スタイルシート
 └ command_line_tools/

@@ -121,7 +121,7 @@ if ($user->check_permission("railroads", "edit_announcement")) {
     print "<option value=''>全体のお知らせ</option>";
 }
 
-$railroads = json_decode(file_get_contents("../config/railroads.json"), TRUE);
+$railroads = json_decode(file_get_contents(RAILROADS_JSON_PATH), TRUE);
 
 foreach ($railroads["railroads_order"] as $railroad) {
     if (!$user->check_permission("railroads/".$railroad, "edit_announcement")) {

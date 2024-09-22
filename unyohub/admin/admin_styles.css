@@ -140,7 +140,7 @@ article {
 }
 
 h2 {
-    max-width: 500px;
+    max-width: 480px;
     
     margin: 10px auto 20px auto;
     
@@ -149,10 +149,24 @@ h2 {
     text-align: center;
 }
 
+h2:has(img) {
+    padding: 5px 0;
+    
+    color: #ffffff;
+}
+
+h2 img {
+    display: block;
+    
+    width: 40px;
+    
+    margin: 5px auto;
+}
+
 h3 {
     max-width: 490px;
     
-    margin: 15px auto;
+    margin: 20px auto 10px auto;
     
     padding-left: 6px;
     
