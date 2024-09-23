@@ -18,6 +18,8 @@ html, body {
     min-height: 100%;
     
     overscroll-behavior-y: none;
+    
+    scroll-behavior: smooth;
 }
 
 body {
@@ -72,6 +74,20 @@ h4 {
     
     line-height: 32px;
     font-size: 18px;
+}
+
+ul {
+    max-width: 460px;
+    
+    margin: 10px auto 20px auto;
+    
+    padding: 0 10px 0 30px;
+}
+
+li {
+    color: #444444;
+    
+    list-style-type: square;
 }
 
 a {

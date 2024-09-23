@@ -26,6 +26,7 @@ _/_/_/_/ ファイル構成 _/_/_/_/
 └ config/
    └ main.ini ・・・運用観察Hub基本設定ファイル
    └ railroads.json ・・・路線系統設定ファイル
+   └ rules.txt ・・・ルールとポリシーを記載するテキストファイル
    └ announcements.json ・・・お知らせデータ
    └ wakarana_config.ini ・・・Wakarana設定ファイル
    └ wakarana_custom_fields.json ・・・Wakaranaカスタムフィールド設定ファイル
@@ -66,7 +67,6 @@ _/_/_/_/ ファイル構成 _/_/_/_/
 └ command_line_tools/
    └ ****.py ・・・コマンドラインやcronから実行するPythonツール(詳細は別記)
 └ README.html ・・・ユーザーマニュアル
-└ rules.txt ・・・ルールとポリシーを記載するテキストファイル
 └ .htaccess
 
 ※サーバにアップロードする必要のない各種変換処理スクリプト類は上記に含まれない
