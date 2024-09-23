@@ -139,6 +139,16 @@ article {
     z-index: -1;
 }
 
+nav {
+    max-width: 480px;
+    
+    margin: 5px auto 15px auto;
+}
+
+nav a {
+    padding: 5px;
+}
+
 h2 {
     max-width: 480px;
     
@@ -173,6 +183,16 @@ h3 {
     border-left: 4px solid #666666;
     
     line-height: 32px;
+    font-size: 18px;
+}
+
+h4 {
+    max-width: 480px;
+    
+    margin: 15px auto 0 auto;
+    
+    padding: 5px 10px;
+    
     font-size: 18px;
 }
 
@@ -290,7 +310,7 @@ textarea {
     box-sizing: content-box;
     
     width: calc(100% - 60px);
-    height: 180px;
+    height: 60px;
     
     max-width: 440px;
     
@@ -300,10 +320,16 @@ textarea {
     border: 1px solid #cccccc;
     border-radius: 5px;
 
-    font-size: 18px;
+    font-size: 16px;
     text-align: left;
     
     resize: none;
+}
+
+.announcement_content {
+    height: 180px;
+    
+    font-size: 18px;
 }
 
 input, select {

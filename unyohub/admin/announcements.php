@@ -112,6 +112,13 @@ if (isset($_POST["title"], $_POST["content"], $_POST["expiration_datetime"])) {
 }
 
 print "<article>";
+
+$railroads = json_decode(file_get_contents(RAILROADS_JSON_PATH), TRUE);
+
+if (!empty($railroad_id)) {
+    print "<nav><a href='railroads.php?railroad_id=".addslashes($railroad_id)."'>".htmlspecialchars($railroads["railroads"][$railroad_id]["railroad_name"])."</a> &gt;</nav>";
+}
+
 print "<h2>お知らせの編集</h2>";
 
 print "<h3>対象の路線系統</h3>";
@@ -120,8 +127,6 @@ print "<select class='wide_select' onchange='location.href = location.origin + l
 if ($user->check_permission("railroads", "edit_announcement")) {
     print "<option value=''>全体のお知らせ</option>";
 }
-
-$railroads = json_decode(file_get_contents(RAILROADS_JSON_PATH), TRUE);
 
 foreach ($railroads["railroads_order"] as $railroad) {
     if (!$user->check_permission("railroads/".$railroad, "edit_announcement")) {
@@ -148,7 +153,7 @@ print "<h3>件名</h3>";
 print "<input type='text' name='title' value='".$title_escaped."'>";
 
 print "<h3>本文</h3>";
-print "<textarea name='content'>".$content_html."</textarea>";
+print "<textarea name='content' class='announcement_content'>".$content_html."</textarea>";
 
 print "<h3>有効期限</h3>";
 print "<input type='datetime-local' name='expiration_datetime' value='".$expiration_datetime."'><br>";
