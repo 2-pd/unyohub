@@ -6,6 +6,7 @@
         "honsen" : {
             "line_name" : "南海本線",
             "line_color" : "#3399ff",
+            "line_symbol" : "本",
             "inbound_forward_direction" : true,
             "stations" : [
                 {
@@ -73,7 +74,8 @@
                     "station_name" : "羽衣",
                     "station_name_kana" : "はごろも",
                     "station_initial" : "衣",
-                    "is_major_station" : true
+                    "is_major_station" : true,
+                    "connecting_lines" : ["takashinohamasen"]
                 },
                 {
                     "station_name" : "高石",
@@ -210,6 +212,7 @@
         "kukosen" : {
             "line_name" : "空港線",
             "line_color" : "#9966cc",
+            "line_symbol" : "空",
             "inbound_forward_direction" : true,
             "double_station_spacing" : true,
             "stations" : [
@@ -236,6 +239,7 @@
         "shiomibashisen" : {
             "line_name" : "高野線(汐見橋線区間)",
             "line_color" : "#33cc66",
+            "line_symbol" : "汐",
             "inbound_forward_direction" : true,
             "show_final_destinations_in_position_mode" : true,
             "stations" : [
@@ -269,9 +273,36 @@
                 }
             ]
         },
+        "takashinohamasen" : {
+            "line_name" : "高師浜線",
+            "line_color" : "#666666",
+            "line_symbol" : "高",
+            "inbound_forward_direction" : true,
+            "show_final_destinations_in_position_mode" : true,
+            "stations" : [
+                {
+                    "station_name" : "羽衣",
+                    "station_name_kana" : "はごろも",
+                    "station_initial" : "衣",
+                    "is_major_station" : true,
+                    "connecting_lines" : ["honsen"]
+                },
+                {
+                    "station_name" : "伽羅橋",
+                    "station_name_kana" : "きゃらばし"
+                },
+                {
+                    "station_name" : "高師浜",
+                    "station_name_kana" : "たかしのはま",
+                    "station_initial" : "師",
+                    "is_major_station" : true
+                }
+            ]
+        },
         "tanagawasen" : {
             "line_name" : "多奈川線",
             "line_color" : "#666666",
+            "line_symbol" : "多",
             "inbound_forward_direction" : true,
             "show_final_destinations_in_position_mode" : true,
             "stations" : [
@@ -301,6 +332,7 @@
         "kadasen" : {
             "line_name" : "加太線",
             "line_color" : "#ff99cc",
+            "line_symbol" : "加",
             "inbound_forward_direction" : false,
             "show_final_destinations_in_position_mode" : true,
             "stations" : [
@@ -350,6 +382,7 @@
         "wakayamakosen" : {
             "line_name" : "和歌山港線",
             "line_color" : "#6666ff",
+            "line_symbol" : "港",
             "inbound_forward_direction" : true,
             "stations" : [
                 {
@@ -368,7 +401,7 @@
             ]
         }
     },
-    "lines_order" : ["honsen","kukosen","shiomibashisen","tanagawasen","kadasen","wakayamakosen"],
+    "lines_order" : ["honsen", "kukosen", "shiomibashisen", "takashinohamasen", "tanagawasen", "kadasen", "wakayamakosen"],
     "operations" : {
         "weekday" : {
             "operation_name" : "平日ダイヤ",
@@ -383,7 +416,7 @@
             "main_color" : "#ffbbdd"
         }
     },
-    "operations_order" : ["weekday","holiday","new_year"],
+    "operations_order" : ["weekday", "holiday", "new_year"],
     "operations_by_day" : [
         "holiday",
         "weekday",
@@ -410,7 +443,7 @@
     ],
     "deadhead_train_number" : "^(8|9|回)",
     "alias_of_forward_direction" : "難波方",
-    "description" : "南海本線と空港線、多奈川線、加太線、和歌山港線、及び、高野線のうち南海本線と同じく住ノ江検車区所属編成で運行される汐見橋-岸里玉出間の運用表・時刻表データです。",
+    "description" : "南海本線と空港線、高師浜線、多奈川線、加太線、和歌山港線、及び、高野線のうち南海本線と同じく住ノ江検車区所属編成で運行される汐見橋-岸里玉出間の運用表・時刻表データです。",
     "editors" : [
         {
             "editor_name" : "ほげほげ",
