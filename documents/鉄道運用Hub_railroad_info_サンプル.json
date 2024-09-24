@@ -276,7 +276,7 @@
         "takashinohamasen" : {
             "line_name" : "高師浜線",
             "line_color" : "#666666",
-            "line_symbol" : "高",
+            "line_symbol" : "師",
             "inbound_forward_direction" : true,
             "show_final_destinations_in_position_mode" : true,
             "stations" : [

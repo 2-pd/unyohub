@@ -85,6 +85,8 @@ ul {
 }
 
 li {
+    margin-bottom: 15px;
+    
     color: #444444;
     
     list-style-type: square;

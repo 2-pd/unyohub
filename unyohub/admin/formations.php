@@ -78,6 +78,8 @@ if (empty($_GET["formation_name"])) {
                 for ($cnt = 0; isset($cars_data[$cnt], $_POST["car_description_".$cnt]); $cnt++) {
                     $db_obj->querySingle("UPDATE `unyohub_cars` SET `description` = '".$db_obj->escapeString($_POST["car_description_".$cnt])."' WHERE `formation_name` = '".$formation_name."' AND `car_number` = '".$db_obj->escapeString($cars_data[$cnt]["car_number"])."'");
                 }
+                
+                print "<script> alert('編成情報を保存しました'); </script>";
             } else {
                 print "<script> alert('【!】ワンタイムトークンが無効です。処理はキャンセルされました。'); </script>";
             }

@@ -670,8 +670,9 @@ article {
     padding: 0 0 0 10px;
     
     border-color: #dddddd;
+    border-radius: 6px;
     
-    background-image: linear-gradient(315deg, #dddddd 12px, transparent 12px);
+    background-image: linear-gradient(315deg, #dddddd 10px, transparent 10px);
     background-color: #ffffff;
     
     font-size: 20px;
@@ -682,7 +683,7 @@ article {
 .dark_mode .line_select_wrapper a {
     background-color: #444444;
     
-    background-image: linear-gradient(315deg, #666666 12px, transparent 12px);
+    background-image: linear-gradient(315deg, #666666 10px, transparent 10px);
     border-color: #666666;
     
     color: #cccccc;
@@ -694,10 +695,12 @@ article {
     top: 2px;
     left: 2px;
     
-    width: 32px;
+    width: 28px;
     
-    line-height: 32px;
-    font-size: 14px;
+    border: 2px solid currentColor;
+    border-radius: 3px;
+    
+    line-height: 28px;
 }
 
 .position_row, .position_row_no_station {
@@ -1027,18 +1030,12 @@ h4.position_signal_station {
     margin-right: -4px;
 }
 
-#position_area_supplement, #operation_data_radio_area, #colorize_formation_table_radio_area {
+.radio_area {
     text-align: center;
 }
 
 #position_area:empty + #position_area_supplement {
     display: none;
-}
-
-#direction_radio_area {
-    display: none;
-    
-    text-align: center;
 }
 
 #direction_radio_area h2 {
@@ -3895,14 +3892,14 @@ input[type="radio"] + label small, .chip + label small {
     <article>
         <div class='line_select_wrapper'><a id="position_line_select" onclick="select_lines();"></a></div>
         <div id="position_area" class="wait_icon"></div>
-        <div id="position_area_supplement">
+        <div id="position_area_supplement" class="radio_area">
             <div><input type="radio" name="show_train_numbers_or_train_types" id="show_train_numbers_radio" onchange="change_show_train_types(!this.checked);"><label for="show_train_numbers_radio">列車番号を表示</label><input type="radio" name="show_train_numbers_or_train_types" id="show_train_types_radio" onchange="change_show_train_types(this.checked);"><label for="show_train_types_radio"><span id="show_train_types_label_train_type">種別</span><span id="show_train_types_label_final_destination">行き先</span>を表示</label></div>
             <div class="informational_text">列車の走行位置は時刻表に基づく推定であり、遅延や不定期列車の情報は反映されません</div>
         </div>
     </article>
     <article>
         <div class='line_select_wrapper'><a id="timetable_line_select" onclick="select_lines(timetable_selectable_lines, false);"></a></div>
-        <div id="direction_radio_area">
+        <div id="direction_radio_area" class="radio_area">
             <h2><button type="button" class="previous_button" onclick="timetable_select_neighboring_station(-1);"></button><span id="timetable_station_name"></span><button type="button" class="next_button" onclick="timetable_select_neighboring_station(1);"></button></h2>
             <div><input type="radio" name="direction_radio" id="radio_inbound" value="inbound" checked="checked" onchange="timetable_select_station(timetable_selected_station);"><label for="radio_inbound" id="radio_inbound_label">上り</label><input type="radio" name="direction_radio" id="radio_outbound" value="outbound" onchange="timetable_select_station(timetable_selected_station);"><label for="radio_outbound" id="radio_outbound_label">下り</label></div>
             <input type="checkbox" id="show_arriving_trains_check" class="chip" onchange="change_show_arriving_trains(this.checked);"><label for="show_arriving_trains_check">着列車を表示</label><input type="checkbox" id="show_starting_trains_only_check" class="chip" onchange="change_show_starting_trains_only(this.checked);"><label for="show_starting_trains_only_check">当駅始発のみ</label>
@@ -3911,14 +3908,14 @@ input[type="radio"] + label small, .chip + label small {
     </article>
     <article>
         <h2 id="operation_data_heading"></h2>
-        <div id="operation_data_radio_area"><input type="radio" name="operation_data_radio" id="radio_operation_groups" value="operation_groups" checked="checked" onchange="operation_data_draw();"><label for="radio_operation_groups">系統別</label><input type="radio" name="operation_data_radio" id="radio_series" value="series" onchange="operation_data_draw();"><label for="radio_series">形式別</label><input type="radio" name="operation_data_radio" id="radio_starting_location" value="starting_location" onchange="operation_data_draw();"><label for="radio_starting_location">出庫別</label><input type="radio" name="operation_data_radio" id="radio_terminal_location" value="terminal_location" onchange="operation_data_draw();"><label for="radio_terminal_location">入庫別</label></div>
+        <div class="radio_area"><input type="radio" name="operation_data_radio" id="radio_operation_groups" value="operation_groups" checked="checked" onchange="operation_data_draw();"><label for="radio_operation_groups">系統別</label><input type="radio" name="operation_data_radio" id="radio_series" value="series" onchange="operation_data_draw();"><label for="radio_series">形式別</label><input type="radio" name="operation_data_radio" id="radio_starting_location" value="starting_location" onchange="operation_data_draw();"><label for="radio_starting_location">出庫別</label><input type="radio" name="operation_data_radio" id="radio_terminal_location" value="terminal_location" onchange="operation_data_draw();"><label for="radio_terminal_location">入庫別</label></div>
         <div id="operation_data_area" class="wait_icon"></div>
     </article>
     <article id="formation_table_wrapper" onscroll="formation_table_wrapper_onscroll();">
         <button type="button" id="formation_screenshot_button" class="screenshot_button" onclick="take_screenshot('formation_table_area');"></button>
         <div id="formation_search_area">
             <div class='search_wrapper'><label for="car_number_search" class="search_icon">車両番号で検索</label><input type="search" id="car_number_search" onkeyup="draw_formation_table();" onsearch="draw_formation_table();" placeholder="車両番号で検索" autocomplete="off"></div>
-            <div id ="colorize_formation_table_radio_area"><input type="radio" name="colorize_formation_table_radio" id="colorize_formation_table" onchange="change_colorize_formation_table(this.checked);"><label for="colorize_formation_table">車体色を表示</label><input type="radio" name="colorize_formation_table_radio" id="not_colorize_formation_table" onchange="change_colorize_formation_table(!this.checked);"><label for="not_colorize_formation_table">白黒で表示</label></div>
+            <div id ="colorize_formation_table_radio_area" class="radio_area"><input type="radio" name="colorize_formation_table_radio" id="colorize_formation_table" onchange="change_colorize_formation_table(this.checked);"><label for="colorize_formation_table">車体色を表示</label><input type="radio" name="colorize_formation_table_radio" id="not_colorize_formation_table" onchange="change_colorize_formation_table(!this.checked);"><label for="not_colorize_formation_table">白黒で表示</label></div>
         </div>
         <div id="formation_table_area" class="wait_icon"></div>
     </article>
@@ -6170,9 +6167,6 @@ function position_mode (date_str = "today", position_time_additions = null) {
     position_area_elm.innerHTML = "";
     position_line_select_elm.style.display = "none";
     
-    var position_area_supplement_elm = document.getElementById("position_area_supplement");
-    position_area_supplement_elm.style.display = "none";
-    
     if (date_str === "tomorrow") {
         var timestamp_additions = 86400;
         
@@ -6242,8 +6236,6 @@ function position_mode (date_str = "today", position_time_additions = null) {
         
         position_line_select_elm.style.display = "block";
         position_change_lines(selected_line, position_scroll_amount);
-        
-        position_area_supplement_elm.style.display = "block";
     }).catch(function () {
         position_area_elm.innerHTML = "<div class='no_data'>表示に必要なデータが利用できません</div>";
         position_line_select_elm.style.display = "none";
@@ -6265,7 +6257,7 @@ function update_selected_line (line_id) {
         var line_symbol = railroad_info["lines"][line_id]["line_name"].substring(0, 1);
     }
     
-    var line_select_html = "<abbr style='background-color: " + line_color + ";''>" + line_symbol + "</abbr>" + escape_html(railroad_info["lines"][line_id]["line_name"]);
+    var line_select_html = "<abbr style='color: " + line_color + ";''>" + line_symbol + "</abbr>" + escape_html(railroad_info["lines"][line_id]["line_name"]);
     
     position_line_select_elm.innerHTML = line_select_html;
     timetable_line_select_elm.innerHTML = line_select_html;
@@ -7362,6 +7354,10 @@ function timetable_change_lines(line_id, force_station_select_mode = false) {
     if (timetable_selected_station === null || force_station_select_mode) {
         timetable_selectable_lines = railroad_info["lines_order"];
         
+        timetable_selected_station = null;
+        timetable_back_button_elm.style.display = "none";
+        direction_radio_area_elm.style.display = "none";
+        
         var station_indexes = {};
         for (var cnt = 0; cnt < railroad_info["lines"][line_id]["stations"].length; cnt++) {
             station_indexes[railroad_info["lines"][line_id]["stations"][cnt]["station_name_kana"]] = cnt;
@@ -7394,9 +7390,6 @@ function timetable_change_lines(line_id, force_station_select_mode = false) {
         buf += "</div>";
         
         timetable_area_elm.innerHTML = buf;
-        timetable_back_button_elm.style.display = "none";
-        direction_radio_area_elm.style.display = "none";
-        timetable_selected_station = null;
     } else {
         timetable_select_station(timetable_selected_station);
     }
@@ -9312,11 +9305,11 @@ function write_operation_data (yyyy_mm_dd, operation_number) {
         var speculative_post = false;
     }
     
-    buf += "<b>編成名または車両形式</b>";
+    buf += "<h4>編成名または車両形式</h4>";
     buf += "<div class='informational_text'><b>◀ " + alias_of_forward_direction + "</b></div>";
     buf += "<input type='text' id='operation_data_formation' autocomplete='off' oninput='suggest_formation(this.value);' onblur='clear_formation_suggestion();'><div class='suggestion_area'><div id='formation_suggestion'></div></div>";
     buf += "<div class='informational_text'>複数の編成が連結している場合は、" + alias_of_forward_direction + "の編成から順に「+」で区切って入力してください。<br>不明な編成には「不明」、運休情報は「運休」を入力可能です。</div>";
-    buf += "<b>運用補足情報</b><textarea id='operation_data_comment'></textarea>";
+    buf += "<h4>運用補足情報</h4><textarea id='operation_data_comment'></textarea>";
     
     if(speculative_post) {
         buf += "<div class='warning_text'>お手数ですが、この運用に充当される編成を特定した方法を補足情報にご入力ください。</div>";
