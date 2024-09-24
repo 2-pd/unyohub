@@ -76,6 +76,14 @@ $operation_date = date("Y-m-d", $ts);
 
 $operation_data = get_operation_info($ts, $_POST["operation_number"]);
 
+
+if (!empty($_POST["is_quotation"]) && $_POST["is_quotation"] === "YES") {
+    $is_quotation = TRUE;
+} else {
+    $is_quotation = FALSE;
+}
+
+
 if (mb_strlen($_POST["comment"]) > 140) {
     print "ERROR: コメントの最大文字数は140文字です";
     exit;
@@ -83,9 +91,16 @@ if (mb_strlen($_POST["comment"]) > 140) {
 
 $comment = preg_replace("/[\r\n][\r\n]++/u", "\n", preg_replace("/\A[\x00\s]++|[\x00\s]++\Z/u", "", $_POST["comment"]));
 
-if (strlen($comment) === 0 && (($operation_date === $posted_date && $operation_data["starting_time"] > date("H:i", $ts_now)) || $operation_date > $posted_date)) {
-    print "ERROR: 出庫前の運用に充当される編成を特定した方法をコメントにご入力ください";
-    exit;
+if (strlen($comment) === 0) {
+    if ($is_quotation) {
+        print "ERROR: 情報の出典を補足情報にご入力ください";
+        exit;
+    }
+    
+    if (($operation_date === $posted_date && $operation_data["starting_time"] > date("H:i", $ts_now)) || $operation_date > $posted_date) {
+        print "ERROR: 出庫前の運用に充当される編成を特定した方法を補足情報にご入力ください";
+        exit;
+    }
 }
 
 
@@ -142,21 +157,38 @@ if ($config["log_ip_address"]) {
 
 $posted_datetime = $posted_date." ".date("H:i:s", $ts_now);
 
-$db_obj->query("INSERT OR REPLACE INTO `unyohub_data` (`operation_date`, `operation_number`, `user_id`, `formations`, `posted_datetime`, `comment`, `ip_address`) VALUES ('".$operation_date."', '".$operation_number."', '".$db_obj->escapeString($user_id)."', '".$db_obj->escapeString($formations)."', '".$posted_datetime."', '".$db_obj->escapeString($comment)."', ".$ip_address_q.")");
+$db_obj->query("INSERT OR REPLACE INTO `unyohub_data` (`operation_date`, `operation_number`, `user_id`, `formations`, `is_quotation`, `posted_datetime`, `comment`, `ip_address`) VALUES ('".$operation_date."', '".$operation_number."', '".$db_obj->escapeString($user_id)."', '".$db_obj->escapeString($formations)."', ".intval($is_quotation).", '".$posted_datetime."', '".$db_obj->escapeString($comment)."', ".$ip_address_q.")");
 
 $data_cache_values = get_data_cache_values($operation_date, $operation_number, $formation_pattern);
 
 $comment_exists = boolval(strlen($comment));
 
-update_data_cache($operation_date, $operation_number, $formations, $posted_datetime, $formation_list, $data_cache_values["posts_count"], $data_cache_values["variant_exists"], $comment_exists, $from_beginner);
+update_data_cache($operation_date, $operation_number, $formations, $posted_datetime, $formation_list, $data_cache_values["posts_count"], $data_cache_values["variant_exists"], $comment_exists, $from_beginner, $is_quotation);
 
 if (!empty($operation_data["terminal_track"])) {
-    update_next_day_data($ts, $operation_data["terminal_location"], $operation_data["terminal_track"], $formations, $posted_datetime, $formation_list, $from_beginner);
+    update_next_day_data($ts, $operation_data["terminal_location"], $operation_data["terminal_track"], $formations, $posted_datetime, $formation_list, $from_beginner, $is_quotation);
 }
 
 
-$data = array($_POST["operation_number"] => array("formations" => $formations, "posts_count" => $data_cache_values["posts_count"], "variant_exists" => $data_cache_values["variant_exists"], "comment_exists" => $comment_exists, "from_beginner" => $from_beginner));
-print json_encode($data, JSON_UNESCAPED_UNICODE);
+$data = array("formations" => $formations, "posts_count" => $data_cache_values["posts_count"]);
+
+if ($data_cache_values["variant_exists"]) {
+    $data["variant_exists"] = TRUE;
+}
+
+if ($comment_exists) {
+    $data["comment_exists"] = TRUE;
+}
+
+if ($from_beginner) {
+    $data["from_beginner"] = TRUE;
+}
+
+if ($is_quotation) {
+    $data["is_quotation"] = TRUE;
+}
+
+print json_encode(array($_POST["operation_number"] => $data), JSON_UNESCAPED_UNICODE);
 
 
 if ($config["anti_troll_garbage_size"] >= 1 && $moderation_db_obj->querySingle("SELECT COUNT(`user_id`) FROM `unyohub_moderation_suspicious_users` WHERE `user_id` = '".$moderation_db_obj->escapeString($user_id)."'")) {

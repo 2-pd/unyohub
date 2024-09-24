@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width,initial-scale=1,interactive-widget=resizes-content">
 <script>
     const UNYOHUB_APP_NAME = "鉄道運用Hub";
-    const UNYOHUB_VERSION = "24.09-2";
+    const UNYOHUB_VERSION = "24.09-3";
     const UNYOHUB_INDEXEDDB_VERSION = 2407002;
     const UNYOHUB_LICENSE_TEXT = "このアプリケーションは無権利創作宣言に準拠して著作権放棄されています。";
     const UNYOHUB_LICENSE_URL = "https://www.2pd.jp/license/";
@@ -2642,6 +2642,14 @@ a {
 
 .warning_text {
     color: #ee3333;
+}
+
+.warning_text a {
+    color: #663333;
+}
+
+.dark_mode .warning_text a {
+    color: #ff9999;
 }
 
 #announcements_heading, #railroad_announcements_heading {
@@ -6421,10 +6429,16 @@ function convert_train_position_data (train_data) {
         }
         
         train_data["formation_html"] = "<b style='color: " + color + ";'>" + train_data["formation_html"] + "</b>";
-    } else if (config["colorize_beginners_posts"] && train_data["from_beginner"]) {
-        var color = "#33cc99";
+    } else if (train_data["is_quotation"]) {
+        if (!config["dark_mode"]) {
+            var color = "#9966ff";
+        } else {
+            var color = "#cc99ff";
+        }
         
         train_data["formation_html"] = "<b style='color: " + color + ";'>" + train_data["formation_html"] + "</b>";
+    } else if (config["colorize_beginners_posts"] && train_data["from_beginner"]) {
+        train_data["formation_html"] = "<b style='color: #33cc99;'>" + train_data["formation_html"] + "</b>";
     } else {
         train_data["formation_html"] = "<b>" + train_data["formation_html"] + "</b>";
     }
@@ -6635,6 +6649,7 @@ function get_train_positions (trains, line_id, hh_and_mm, is_inbound) {
                 variant_exists : formation_data["variant_exists"],
                 comment_exists : formation_data["comment_exists"],
                 from_beginner : formation_data["from_beginner"],
+                is_quotation : formation_data["is_quotation"],
                 first_formation : formation_data["first_formation"]
             });
             
@@ -6651,6 +6666,7 @@ function convert_formation_data (line_id, operation_list, is_inbound) {
     var variant_exists = false;
     var comment_exists = false;
     var from_beginner = false;
+    var is_quotation = false;
     
     if (operation_list !== null) {
         var formation_text = "";
@@ -6684,9 +6700,10 @@ function convert_formation_data (line_id, operation_list, is_inbound) {
                 }
                 
                 posts_count = Number(posts_count) + operation_data["operations"][operation_list[cnt]]["posts_count"];
-                variant_exists = variant_exists || operation_data["operations"][operation_list[cnt]]["variant_exists"];
-                comment_exists = comment_exists || operation_data["operations"][operation_list[cnt]]["comment_exists"];
-                from_beginner = from_beginner || operation_data["operations"][operation_list[cnt]]["from_beginner"];
+                variant_exists = variant_exists || ("variant_exists" in operation_data["operations"][operation_list[cnt]] && operation_data["operations"][operation_list[cnt]]["variant_exists"]);
+                comment_exists = comment_exists || ("comment_exists" in operation_data["operations"][operation_list[cnt]] && operation_data["operations"][operation_list[cnt]]["comment_exists"]);
+                from_beginner = from_beginner || ("from_beginner" in operation_data["operations"][operation_list[cnt]] && operation_data["operations"][operation_list[cnt]]["from_beginner"]);
+                is_quotation = is_quotation || ("is_quotation" in operation_data["operations"][operation_list[cnt]] && operation_data["operations"][operation_list[cnt]]["is_quotation"]);
             } else {
                 if (railroad_info["lines"][line_id]["inbound_forward_direction"] === is_inbound) {
                     if (cnt === 0) {
@@ -6713,6 +6730,7 @@ function convert_formation_data (line_id, operation_list, is_inbound) {
         variant_exists : variant_exists,
         comment_exists : comment_exists,
         from_beginner : from_beginner,
+        is_quotation : is_quotation,
         first_formation : first_formation
     };
 }
@@ -6919,15 +6937,15 @@ function get_operation_data_detail (operation_date, operation_number_or_list, ar
                         var user_name_html = escape_html(data[operation_numbers[cnt]][cnt_2]["user_name"]);
                         var class_html = "";
                         
-                        if (!data[operation_numbers[cnt]][cnt_2]["is_management_member"]) {
+                        if (!("is_management_member" in data[operation_numbers[cnt]][cnt_2] && data[operation_numbers[cnt]][cnt_2]["is_management_member"])) {
                             user_name_html += " 様";
                             
-                            if (data[operation_numbers[cnt]][cnt_2]["is_beginner"]) {
+                            if ("is_beginner" in data[operation_numbers[cnt]][cnt_2] && data[operation_numbers[cnt]][cnt_2]["is_beginner"]) {
                                 class_html = " class='beginner'";
                             }
                         }
                         
-                        if (data[operation_numbers[cnt]][cnt_2]["website_url"] !== null) {
+                        if ("website_url" in data[operation_numbers[cnt]][cnt_2] && data[operation_numbers[cnt]][cnt_2]["website_url"] !== null) {
                             user_name_html = "<span" + class_html + "><a href='" + add_slashes(data[operation_numbers[cnt]][cnt_2]["website_url"]) + "' target='_blank' class='external_link'>" + user_name_html + " <small>(" + data[operation_numbers[cnt]][cnt_2]["user_id"] + ")</small></a>";
                         } else {
                             user_name_html = "<span" + class_html + ">" + user_name_html + " <small>(" + data[operation_numbers[cnt]][cnt_2]["user_id"] + ")</small>";
@@ -6956,7 +6974,13 @@ function get_operation_data_detail (operation_date, operation_number_or_list, ar
                     
                     user_name_html += "</span>";
                     
-                    detail_html += "<div class='operation_data_detail'><b>" + formation_text + "<span>" + get_date_and_time(data[operation_numbers[cnt]][cnt_2]["posted_datetime"]) + "</span></b><div class='descriptive_text'>" + escape_html(data[operation_numbers[cnt]][cnt_2]["comment"]).replace(/\n/g, "<br>") + "</div>" + user_name_html + "</div>";
+                    detail_html += "<div class='operation_data_detail'><b>" + formation_text + "<span>" + get_date_and_time(data[operation_numbers[cnt]][cnt_2]["posted_datetime"]) + "</span></b>";
+                    
+                    if ("comment" in data[operation_numbers[cnt]][cnt_2] && data[operation_numbers[cnt]][cnt_2]["comment"] !== null) {
+                        detail_html += "<div class='descriptive_text'>" + escape_html(data[operation_numbers[cnt]][cnt_2]["comment"]).replace(/\n/g, "<br>") + "</div>";
+                    }
+                    
+                    detail_html += user_name_html + "</div>";
                 }
                 
                 if (cnt_2 === 0) {
@@ -7613,10 +7637,16 @@ function draw_station_timetable (station_name) {
                         }
                         
                         buf += "<span style='color: " + color + ";'>" + escape_html(formation_data["formation_text"]) + "</span>";
-                    } else if (config["colorize_beginners_posts"] && formation_data["from_beginner"]) {
-                        var color = "#33cc99";
+                    } else if (formation_data["is_quotation"]) {
+                        if (!config["dark_mode"]) {
+                            var color = "#9966ff";
+                        } else {
+                            var color = "#cc99ff";
+                        }
                         
                         buf += "<span style='color: " + color + ";'>" + escape_html(formation_data["formation_text"]) + "</span>";
+                    } else if (config["colorize_beginners_posts"] && formation_data["from_beginner"]) {
+                        buf += "<span style='color: #33cc99;'>" + escape_html(formation_data["formation_text"]) + "</span>";
                     } else {
                         buf += escape_html(formation_data["formation_text"]);
                     }
@@ -8094,7 +8124,7 @@ function operation_data_draw () {
                     }
                     
                     buf += " style='color: " + color + ";'>";
-                } else if (operation_data["operations"][operation_number]["variant_exists"]) {
+                } else if ("variant_exists" in operation_data["operations"][operation_number] && operation_data["operations"][operation_number]["variant_exists"]) {
                     if (!config["dark_mode"]) {
                         var color = "#cc0000";
                     } else {
@@ -8102,10 +8132,16 @@ function operation_data_draw () {
                     }
                     
                     buf += " style='color: " + color + ";'>";
-                } else if (config["colorize_beginners_posts"] && operation_data["operations"][operation_number]["from_beginner"]) {
-                    var color = "#33cc99";
+                } else if ("is_quotation" in operation_data["operations"][operation_number] && operation_data["operations"][operation_number]["is_quotation"]) {
+                    if (!config["dark_mode"]) {
+                        var color = "#9966ff";
+                    } else {
+                        var color = "#cc99ff";
+                    }
                     
                     buf += " style='color: " + color + ";'>";
+                } else if (config["colorize_beginners_posts"] && "from_beginner" in operation_data["operations"][operation_number] && operation_data["operations"][operation_number]["from_beginner"]) {
+                    buf += " style='color: #33cc99;'>";
                 } else {
                     buf += ">";
                 }
@@ -8124,7 +8160,7 @@ function operation_data_draw () {
                     buf += "<img src='" + UNYOHUB_CANCELED_TRAIN_ICON + "' alt='' class='train_icon'>運休";
                 }
                 
-                if (operation_data["operations"][operation_number]["comment_exists"]) {
+                if ("comment_exists" in operation_data["operations"][operation_number] && operation_data["operations"][operation_number]["comment_exists"]) {
                     buf += "*";
                 }
                 
@@ -9305,6 +9341,8 @@ function write_operation_data (yyyy_mm_dd, operation_number) {
         var speculative_post = false;
     }
     
+    buf += "<h4>確認方法</h4>";
+    buf += "<div class='radio_area'><input type='radio' name='identify_method' id='identify_method_direct' checked='checked'><label for='identify_method_direct' onclick='switch_identify_method(true);'>直接確認</label><input type='radio' name='identify_method' id='identify_method_quote'><label for='identify_method_quote' onclick='switch_identify_method(false);'>引用情報</label></div>";
     buf += "<h4>編成名または車両形式</h4>";
     buf += "<div class='informational_text'><b>◀ " + alias_of_forward_direction + "</b></div>";
     buf += "<input type='text' id='operation_data_formation' autocomplete='off' oninput='suggest_formation(this.value);' onblur='clear_formation_suggestion();'><div class='suggestion_area'><div id='formation_suggestion'></div></div>";
@@ -9312,11 +9350,12 @@ function write_operation_data (yyyy_mm_dd, operation_number) {
     buf += "<h4>運用補足情報</h4><textarea id='operation_data_comment'></textarea>";
     
     if(speculative_post) {
-        buf += "<div class='warning_text'>お手数ですが、この運用に充当される編成を特定した方法を補足情報にご入力ください。</div>";
+        buf += "<div class='warning_text' id='comment_guide'>お手数ですが、この運用に充当される編成を確認した方法を補足情報にご入力ください。</div>";
     } else {
-        buf += "<div class='informational_text'>差し替え等の特記事項がない場合は省略可能です。</div>";
+        buf += "<div class='informational_text' id='comment_guide'>差し替え等の特記事項がない場合は省略可能です。</div>";
     }
     
+    buf += "<div class='warning_text' id='quote_guide' style='display: none;'>情報の出典を補足情報にご入力ください。<br><br>また、お手数ですが、投稿前に<a href='javascript:void(0);' onclick='show_rules();'>ルールとポリシー</a>をご覧いただき、引用元が投稿ルールに反しない情報ソースであることをご確認願います。</div>";
     buf += "<button type='button' class='wide_button' onclick='check_post_operation_data();'>投稿する</button>";
     
     write_operation_data_area_elm.innerHTML = buf;
@@ -9331,6 +9370,19 @@ function write_operation_data (yyyy_mm_dd, operation_number) {
     } else {
         write_operation_data_area_elm.style.display = "none";
         require_login_area_elm.style.display = "block";
+    }
+}
+
+function switch_identify_method (direct) {
+    var comment_guide_elm = document.getElementById("comment_guide");
+    var quote_guide_elm = document.getElementById("quote_guide");
+    
+    if (direct) {
+        comment_guide_elm.style.display = "block";
+        quote_guide_elm.style.display = "none";
+    } else {
+        comment_guide_elm.style.display = "none";
+        quote_guide_elm.style.display = "block";
     }
 }
 
@@ -9457,6 +9509,11 @@ function post_operation_data () {
     }
     
     var send_data = "railroad_id=" + escape_form_data(railroad_info["railroad_id"]) + "&date=" + escape_form_data(post_yyyy_mm_dd) + "&operation_number=" + escape_form_data(post_operation_number) + "&formations=" + escape_form_data(document.getElementById("operation_data_formation").value) + "&comment=" + escape_form_data(document.getElementById("operation_data_comment").value);
+    
+    if (document.getElementById("identify_method_quote").checked) {
+        send_data += "&is_quotation=YES";
+    }
+    
     if (user_data !== null) {
         send_data += "&one_time_token=" + escape_form_data(one_time_token);
     } else {

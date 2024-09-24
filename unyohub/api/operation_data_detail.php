@@ -29,13 +29,16 @@ for ($cnt = 0; $cnt < count($operation_numbers); $cnt++) {
         $data[$cnt_2] = array(
             "user_id" => NULL,
             "user_name" => NULL,
-            "is_moderator" => FALSE,
-            "is_beginner" => TRUE,
-            "website_url" => NULL,
             "formations" => $operation["formations"],
             "posted_datetime" => $operation["posted_datetime"],
             "comment" => $operation["comment"]
         );
+        
+        if ($operation["is_quotation"]) {
+            $data[$cnt_2]["is_quotation"] = TRUE;
+        }
+        
+        $is_beginner = TRUE;
         
         if (substr($operation["user_id"], 0, 1) !== "*") {
             $user = $wakarana->get_user($operation["user_id"]);
@@ -50,13 +53,16 @@ for ($cnt = 0; $cnt < count($operation_numbers); $cnt++) {
                 
                 if ($user->check_permission("management_member")) {
                     $data[$cnt_2]["is_management_member"] = TRUE;
-                    $data[$cnt_2]["is_beginner"] = FALSE;
+                    $is_beginner = FALSE;
                 } else {
                     $days_posted = intval($user->get_value("days_posted"));
-                    $data[$cnt_2]["is_beginner"] = ($days_posted < 20 && ($days_posted < 10 || intval($user->get_value("post_count")) < 50));
+                    $is_beginner = ($days_posted < 20 && ($days_posted < 10 || intval($user->get_value("post_count")) < 50));
                 }
                 
-                $data[$cnt_2]["website_url"] = $user->get_value("website_url");
+                $website_url = $user->get_value("website_url");
+                if (!empty($website_url)) {
+                    $data[$cnt_2]["website_url"] = $website_url;
+                }
             }
         } elseif ($access_user_is_moderator) {
             $data[$cnt_2]["user_id"] = $operation["user_id"];
@@ -64,6 +70,10 @@ for ($cnt = 0; $cnt < count($operation_numbers); $cnt++) {
         
         if ($access_user_is_moderator) {
             $data[$cnt_2]["ip_address"] = $operation["ip_address"];
+        }
+        
+        if ($is_beginner) {
+            $data[$cnt_2][$is_beginner] = TRUE;
         }
     }
     
