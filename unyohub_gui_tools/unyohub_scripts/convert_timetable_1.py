@@ -48,11 +48,14 @@ def convert_timetable_1 (mes, file_name, digits_count):
         for line_id in line_list:
             train = list(itemgetter(*line_stations[line_id])(timetable_data_t[cnt]))
             
-            if sum([i != "" for i in train]) > 1:
+            if sum([i != "" and i != "||" for i in train]) > 1:
                 train = [timetable_data_t[cnt][0].strip().zfill(digits_count), timetable_data_t[cnt][1], "", "", "", "", "", ""] + train + ["", "", "", "", "", ""]
                 
                 for cnt_2 in range(8, len(train) - 6):
                     train[cnt_2] = train[cnt_2].strip()
+                    
+                    if train[cnt_2] == "||":
+                        train[cnt_2] = ""
                     
                     if train[cnt_2] != "":
                         if train[cnt_2][0] == "|":

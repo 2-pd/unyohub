@@ -123,17 +123,20 @@ def open_main_window ():
     button_convert_timetable_2 = tk.Button(main_win, text="時刻表の変換(ステップ2)", font=button_font, command=convert_timetable_2, bg="#666666", fg="#ffffff", relief=tk.FLAT, highlightbackground="#666666")
     button_convert_timetable_2.place(x=10, y=290, width=300, height=40)
     
+    button_generate_operation_table = tk.Button(main_win, text="運用情報付き時刻表の変換", font=button_font, command=generate_operation_table, bg="#666666", fg="#ffffff", relief=tk.FLAT, highlightbackground="#666666")
+    button_generate_operation_table.place(x=10, y=340, width=300, height=40)
+    
     button_convert_operation_table_for_printing = tk.Button(main_win, text="運用表を印刷用に変換", font=button_font, command=lambda: convert_operation_table_1(True), bg="#666666", fg="#ffffff", relief=tk.FLAT, highlightbackground="#666666")
-    button_convert_operation_table_for_printing.place(x=10, y=340, width=300, height=40)
+    button_convert_operation_table_for_printing.place(x=10, y=390, width=300, height=40)
     
     button_convert_operation_table_1 = tk.Button(main_win, text="運用表の変換(ステップ1)", font=button_font, command=lambda: convert_operation_table_1(False), bg="#666666", fg="#ffffff", relief=tk.FLAT, highlightbackground="#666666")
-    button_convert_operation_table_1.place(x=10, y=390, width=300, height=40)
+    button_convert_operation_table_1.place(x=10, y=440, width=300, height=40)
     
     button_convert_operation_table_2 = tk.Button(main_win, text="運用表の変換(ステップ2)", font=button_font, command=convert_operation_table_2, bg="#666666", fg="#ffffff", relief=tk.FLAT, highlightbackground="#666666")
-    button_convert_operation_table_2.place(x=10, y=440, width=300, height=40)
+    button_convert_operation_table_2.place(x=10, y=490, width=300, height=40)
     
     button_initialize_moderation_db = tk.Button(main_win, text="モデレーションDBのセットアップ", font=button_font, command=initialize_moderation_db, bg="#666666", fg="#ffffff", relief=tk.FLAT, highlightbackground="#666666")
-    button_initialize_moderation_db.place(x=10, y=490, width=300, height=40)
+    button_initialize_moderation_db.place(x=10, y=540, width=300, height=40)
     
     mes(UNYOHUB_GUI_TOOLS_APP_NAME + " v" + UNYOHUB_GUI_TOOLS_VERSION + "\n\n" + UNYOHUB_GUI_TOOLS_LICENSE_TEXT)
     
@@ -257,6 +260,21 @@ def convert_timetable_2 ():
             
             convert_timetable_2 = importlib.import_module("unyohub_scripts.convert_timetable_2")
             convert_timetable_2.convert_timetable_2(mes, config["main_dir"], operation_table)
+        except:
+            error_mes(traceback.format_exc())
+
+
+def generate_operation_table ():
+    global config
+    
+    operation_table = simpledialog.askstring("ダイヤ識別名の入力", "変換対象の運用情報付き時刻表ファイルに含まれるダイヤ識別名を入力してください")
+    
+    if len(operation_table) >= 1:
+        try:
+            clear_mes()
+            
+            generate_operation_table = importlib.import_module("unyohub_scripts.generate_operation_table")
+            generate_operation_table.generate_operation_table(mes, config["main_dir"], operation_table)
         except:
             error_mes(traceback.format_exc())
 
