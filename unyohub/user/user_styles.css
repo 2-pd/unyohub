@@ -93,7 +93,8 @@ li {
 }
 
 a {
-    color: #999999;
+    color: #666666;
+    font-weight: bold;
 }
 
 .external_link:after {

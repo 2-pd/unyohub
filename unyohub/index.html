@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width,initial-scale=1,interactive-widget=resizes-content">
 <script>
     const UNYOHUB_APP_NAME = "鉄道運用Hub";
-    const UNYOHUB_VERSION = "24.09-3";
+    const UNYOHUB_VERSION = "24.09-4";
     const UNYOHUB_INDEXEDDB_VERSION = 2407002;
     const UNYOHUB_LICENSE_TEXT = "このアプリケーションは無権利創作宣言に準拠して著作権放棄されています。";
     const UNYOHUB_LICENSE_URL = "https://www.2pd.jp/license/";
@@ -1455,6 +1455,18 @@ input[type="checkbox"]:checked + label.drop_down + div {
 
 .dark_mode .car_M span:before, .dark_mode .car_M span:after, .dark_mode .car_M1 span:first-of-type:before, .dark_mode .car_M1 span:first-of-type:after, .dark_mode .car_M2 span:last-of-type:before, .dark_mode .car_M2 span:last-of-type:after {
     background-color: #eeeeee;
+}
+
+.car_2W span:before, .car_2W1 span:first-child:before, .car_2W2 span:last-child:before {
+    margin: 0 4px !important;
+}
+
+.car_2W span:after, .car_2W1 span:first-child:after, .car_2W2 span:last-child:after {
+    display: none !important;
+}
+
+.car_F span {
+    display: none !important;
 }
 
 .train_icon_large {
@@ -3862,7 +3874,7 @@ input[type="radio"] + label small, .chip + label small {
     <div id="menu">
         <div id="menu_logged_in">
             <b id="menu_user_name"></b>
-            <a href="javascript:void(0);" onclick="edit_user_data();">ユーザー情報の編集</a>
+            <a href="javascript:void(0);" onclick="edit_user_data();">ユーザー情報</a>
             <a href="javascript:void(0);" onclick="user_logout();">ログアウト</a>
         </div>
         <div id="menu_admin">
