@@ -249,12 +249,52 @@ formations.jsonの内容を返す
 文字列「ERROR: 」とそれに続くエラー内容文
 
 
+## diagram_revisions.php
+指定した路線系統のダイヤ改正識別名一覧を取得する
+
+### 引数
+**$_POST["railroad_id"]** : 路線系統識別名  
+**$_POST["last_modified_timestamp"]** : タイムスタンプ(UTC)
+
+### 応答
+**diagram_revisions.txtの変更日時がタイムスタンプより新しかった場合** :  
+diagram_revisions.txtの各行の文字列を要素とする配列をJSON化した文字列を返す  
+▲クライアント端末からAccept-Encodingヘッダーが送信されていた場合、このデータは自動的にgzip圧縮される  
+  
+**diagram_revisions.txtの変更日時がタイムスタンプ以前だった場合** :  
+文字列「NO_UPDATES_AVAILABLE」  
+  
+**エラーの場合** :  
+文字列「ERROR: 」とそれに続くエラー内容文
+
+
+## diagram_info.php
+指定した路線系統の指定したダイヤ改正識別名のダイヤ情報を取得する
+
+### 引数
+**$_POST["railroad_id"]** : 路線系統識別名  
+**$_POST["diagram_revision"]** : ダイヤ改正識別名  
+**$_POST["last_modified_timestamp"]** : タイムスタンプ(UTC)
+
+### 応答
+**diagram_info.jsonの変更日時がタイムスタンプより新しかった場合** :  
+diagram_info.jsonの内容を返す  
+▲クライアント端末からAccept-Encodingヘッダーが送信されていた場合、このデータは自動的にgzip圧縮される  
+  
+**diagram_info.jsonの変更日時がタイムスタンプ以前だった場合** :  
+文字列「NO_UPDATES_AVAILABLE」  
+  
+**エラーの場合** :  
+文字列「ERROR: 」とそれに続くエラー内容文
+
+
 ## operation_table.php
 指定した路線系統・ダイヤのJSON化された運用表を取得する
 
 ### 引数
 **$_POST["railroad_id"]** : 路線系統識別名  
-**$_POST["operation_table"]** : 運用表識別名  
+**$_POST["diagram_revision"]** : ダイヤ改正識別名  
+**$_POST["diagram_id"]** : ダイヤ識別名  
 **$_POST["last_modified_timestamp"]** : タイムスタンプ(UTC)
 
 ### 応答
@@ -274,7 +314,8 @@ JSON化された運用表の内容を返す
 
 ### 引数
 **$_POST["railroad_id"]** : 路線系統識別名  
-**$_POST["operation_table"]** : 運用表識別名(運用表と時刻表は同一識別名のため)  
+**$_POST["diagram_revision"]** : ダイヤ改正識別名  
+**$_POST["timetable_id"]** : 時刻表識別名  
 **$_POST["last_modified_timestamp"]** : タイムスタンプ(UTC)
 
 ### 応答
@@ -466,94 +507,6 @@ JSON化された時刻表の内容を返す
 ### 応答
 **取り消しに成功した場合** :  
 文字列「SUCCESSFULLY_REVOKED」
-  
-**エラーの場合** :  
-文字列「ERROR: 」とそれに続くエラー内容文
-
-
-## change_user_data.php
-ログイン中のユーザーのプロフィールを書き換える
-
-### 引数
-**$_COOKIE["unyohub_login_token"]** : Wakaranaのログイントークン  
-  
-**$_POST["user_name"]** : ハンドルネーム  
-**$_POST["website_url"]** : ユーザーのwebサイトのURL  
-**$_POST["one_time_token"]** : ワンタイムトークン(ログインしている場合)
-
-### 応答
-**書き換えに成功した場合** :  
-{  
-    "user_id" : ユーザーID,  
-    "user_name" : ハンドルネーム,  
-    "is_control_panel_user" : 管理画面にアクセス可能か否か,  
-    "is_management_member" : 運営メンバーか否か,   
-    "is_beginner" : ビギナーユーザーか否か,  
-    "created" : YYYY-MM-DD HH:MM:SS形式のユーザー登録日時,  
-    "email_address" : メールアドレス,  
-    "website_url" : ユーザーのwebサイトのURL  
-} 
-  
-**エラーの場合** :  
-文字列「ERROR: 」とそれに続くエラー内容文
-
-
-## send_verification_email.php
-メールアドレス確認コードを発行し、メールを送信する
-
-### 引数
-**$_COOKIE["unyohub_login_token"]** : Wakaranaのログイントークン(既存ユーザーのメールアドレス変更の場合)  
-  
-**$_POST["email_address"]** : 確認コード送信先メールアドレス  
-**$_POST["one_time_token"]** : ワンタイムトークン(既存ユーザーのメールアドレス変更の場合)
-
-### 応答
-**メールの送信に成功した場合** :  
-文字列「SUCCEEDED」  
-  
-**エラーの場合** :  
-文字列「ERROR: 」とそれに続くエラー内容文
-
-
-## change_user_email_address.php
-ログイン中のユーザーに対し、メールアドレス確認コードを照合してからメールアドレスを変更する
-
-### 引数
-**$_COOKIE["unyohub_login_token"]** : Wakaranaのログイントークン  
-  
-**$_POST["email_address"]** : 新しいメールアドレス  
-**$_POST["verification_code"]** : メールアドレス確認コード  
-**$_POST["one_time_token"]** : ワンタイムトークン
-
-### 応答
-**メールアドレスの変更に成功した場合** :  
-{  
-    "user_id" : ユーザーID,  
-    "user_name" : ハンドルネーム,  
-    "is_control_panel_user" : 管理画面にアクセス可能か否か,  
-    "is_management_member" : 運営メンバーか否か,   
-    "is_beginner" : ビギナーユーザーか否か,  
-    "created" : YYYY-MM-DD HH:MM:SS形式のユーザー登録日時,  
-    "email_address" : メールアドレス,  
-    "website_url" : ユーザーのwebサイトのURL  
-}  
-  
-**エラーの場合** :  
-文字列「ERROR: 」とそれに続くエラー内容文
-
-
-## change_user_password.php
-ログイン中のユーザーのパスワードを変更する
-
-### 引数
-**$_COOKIE["unyohub_login_token"]** : Wakaranaのログイントークン  
-  
-**$_POST["old_password"]** : 古いパスワード  
-**$_POST["new_password"]** : 新しいパスワード
-
-### 応答
-**変更に成功した場合** :  
-文字列「SUCCEEDED」  
   
 **エラーの場合** :  
 文字列「ERROR: 」とそれに続くエラー内容文

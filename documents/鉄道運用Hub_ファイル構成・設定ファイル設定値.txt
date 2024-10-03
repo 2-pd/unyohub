@@ -39,16 +39,23 @@ _/_/_/_/ ファイル構成 _/_/_/_/
       └ railroad_info.json ・・・路線系統の設定ファイル
       └ train_icons.json ・・・列車アイコン画像埋め込み処理後のアイコン設定ファイル
       └ formations.json ・・・JSONに変換された編成表
-      └ operations_****.json ・・・JSONに変換された各ダイヤの運用表データ
-      └ timetable_****.json ・・・JSONに変換された各ダイヤの時刻表データ
       └ railroad_announcements.json ・・・路線系統別のお知らせデータ
+      └ diagram_revisions.txt ・・・ダイヤ改正識別名(「YYYY-MM-DD」形式)を新しいものから順に1行に1つずつ記載したテキストファイル
+      └ ****/ ・・・フォルダ名は各ダイヤ改正識別名を使用
+         └ diagram_info.json ・・・各改正日のダイヤに属するダイヤの情報
+         └ operation_table_****.json ・・・JSONに変換された各ダイヤの運用表データ
+         └ timetable_****.json ・・・JSONに変換された各ダイヤの時刻表データ
 └ api/
    └ ****.php ・・・クライアント端末と情報をやり取りするエンドポイント(詳細は別記)
    └ zizai_captcha/ ・・・Zizai CAPTCHAのエンドポイント
 └ user/ ・・・ユーザー用機能
    └ user_config_common.php ・・・ユーザー設定画面共通関数等
+   └ send_verification_email.php ・・・メールアドレス確認メールを送信するエンドポイント
    └ rules.php ・・・ルールとポリシーの表示
    └ sign_up.php ・・・ユーザーの新規登録
+   └ user_info.php ・・・ユーザー情報の確認、変更
+   └ change_email_address.php ・・・メールアドレスの変更
+   └ change_password.php ・・・パスワードの変更
    └ send_password_reset_email.php ・・・パスワードリセットメールを送信する
    └ reset_password.php ・・・ユーザーのパスワードをリセットしてランダムな値を設定する
    └ captcha.js ・・・Zizai CAPTCHAのクライアント側スクリプト
@@ -64,8 +71,9 @@ _/_/_/_/ ファイル構成 _/_/_/_/
    └ formations.php ・・・編成情報の編集
    └ train_icons.php ・・・管理画面で使用する車両アイコン画像を配信
    └ admin_styles.css ・・・管理画面用スタイルシート
-└ command_line_tools/
-   └ ****.py ・・・コマンドラインやcronから実行するPythonツール(詳細は別記)
+└ commands/
+   └ unyohub ・・・コマンドラインやcronから実行可能なPythonファイル(詳細は別記、拡張子なし)
+   └ ****.py ・・・unyohubから呼び出される各種処理の本体となるPythonファイル
 └ README.html ・・・ユーザーマニュアル
 └ .htaccess
 
@@ -161,25 +169,6 @@ anti_troll_garbage_size 要注意ユーザーの投稿処理を遅延させる�
         }...
     },
     "lines_order" : 路線識別名を表示させたい順に配列で,
-    "operations" : { 運用パターンの一覧
-        "ダイヤ識別名" : { この識別名は運用表JSONデータのファイル名に使用
-            "operation_name" : 運用名,
-            "main_color" : 時刻表の背景色
-        }
-    },
-    "operations_order" : ダイヤ識別名を表示させたい順に配列で,
-    "operations_by_day" : [ 曜日と運用パターン(曜日別ダイヤ)の対応関係(0:日曜→6:土曜)
-        日曜日と祝日に使用するダイヤ識別名,
-        月曜日に使用するダイヤ識別名,
-        火曜日に使用するダイヤ識別名,
-        水曜日に使用するダイヤ識別名,
-        木曜日に使用するダイヤ識別名,
-        金曜日に使用するダイヤ識別名,
-        土曜日に使用するダイヤ識別名
-    ],
-    "operations_by_date" : { 特定の日付限定の運用パターン
-        "**-**" : キーに"MM-DD"形式の日付、値にダイヤ識別名を指定...
-    },
     "train_color_rules" : [ 列車番号の色分け規則(配列で複数指定可能)
         {
             "pattern" : 列車番号の正規表現パターン,
@@ -259,50 +248,85 @@ anti_troll_garbage_size 要注意ユーザーの投稿処理を遅延させる�
 }
 
 
-███ operations_****.json ███
+███ diagram_info.json ███
+
+{
+    "diagrams" : { 運用パターンの一覧
+        "ダイヤ識別名" : { この識別名は運用表JSONデータのファイル名に使用
+            "diagram_name" : ダイヤ表示名,
+            "main_color" : 時刻表の背景色,
+            "timetable_id" : 時刻表識別名
+        }
+    },
+    "diagram_order" : ダイヤ識別名を表示させたい順に配列で,
+    "diagram_schedules" : [ ダイヤ判定規則(期間の一部または全部が重複した場合は、前に書かれているものが優先される)
+        {
+            "periods" : [ 実施期間の一覧
+                {
+                    "start_date" : 「YYYY-MM-DD」形式の期間開始日,
+                    "end_date" : 「YYYY-MM-DD」形式の期間終了日(ない場合はnull)
+                }...
+            ],
+            "diagrams_by_day" : [ その期間の各曜日と運用パターン(曜日別ダイヤ)の対応関係(0:日曜→6:土曜)
+                日曜日と祝日に使用するダイヤ識別名,
+                月曜日に使用するダイヤ識別名,
+                火曜日に使用するダイヤ識別名,
+                水曜日に使用するダイヤ識別名,
+                木曜日に使用するダイヤ識別名,
+                金曜日に使用するダイヤ識別名,
+                土曜日に使用するダイヤ識別名
+            ],
+        }...
+    ]
+}
+
+
+███ operation_table_****.json ███
 
 ※ファイル名の「****」部分はダイヤ識別名が入る
 ※このファイルは変換スクリプトにより自動生成されるものである
 ※発車待ちの列車の列車番号は、発車後の列車番号の先頭に「_」を付加したものとなる
-[
-    { 各運用系統の情報
-        "operation_group_name" : 運用系統タイトル,
-        "operations" : [ 各運用の情報
-            {
-                "operation_number" : 運用番号
-                "trains" : [ 各区間組成の情報の情報(折り返し等の発車待ちの情報も含む)
-                    {
-                        "train_number" : 列車番号(発車待ちや列車番号が不明な場合は仮ID),
-                        "line_id" : 走行路線の識別名,
-                        "first_departure_time" : 「HH:MM」形式の始発時刻,
-                        "final_arrival_time" : 「HH:MM」形式の終着時刻,
-                        "starting_station" : 始発駅,
-                        "terminal_station" : 終着駅,
-                        "position_forward" : 担当位置開始両数(進行方向から数えて何両目からがその運用か),
-                        "position_rear" : 担当位置終了両数(進行方向から数えて何両目までがその運用か),
-                        "direction" : 上り列車か下り列車か(上り列車か上り方面発車待ちなら「inbound」、下り列車か下り方面発車待ちなら「outbound」)
-                    }...
-                ],
-                "starting_location" : 出庫場所(車庫または駅),
-                "starting_track" : 出庫番線,
-                "starting_time" : 「HH:MM」形式の出庫時刻,
-                "terminal_location" : 入庫場所(車庫または駅),
-                "terminal_track" : 入庫番線,
-                "ending_time" : 「HH:MM」形式の入庫時刻,
-                "car_count" : 所定の編成両数,
-                "min_car_count" : 充当可能な最小の編成両数,
-                "max_car_count" : 充当可能な最大の編成両数,
-                "main_color" : テーマカラー,
-                "comment" : 補足説明文
-            }...
-        ]
-    }...
-]
+{
+    "operations" : {
+        "運用番号" : { 各運用の情報
+            "trains" : [ 各区間組成の情報の情報(折り返し等の発車待ちの情報も含む)
+                {
+                    "train_number" : 列車番号(発車待ちや列車番号が不明な場合は仮ID),
+                    "line_id" : 走行路線の識別名,
+                    "first_departure_time" : 「HH:MM」形式の始発時刻,
+                    "final_arrival_time" : 「HH:MM」形式の終着時刻,
+                    "starting_station" : 始発駅,
+                    "terminal_station" : 終着駅,
+                    "position_forward" : 担当位置開始両数(進行方向から数えて何両目からがその運用か),
+                    "position_rear" : 担当位置終了両数(進行方向から数えて何両目までがその運用か),
+                    "direction" : 上り列車か下り列車か(上り列車か上り方面発車待ちなら「inbound」、下り列車か下り方面発車待ちなら「outbound」)
+                }...
+            ],
+            "starting_location" : 出庫場所(車庫または駅),
+            "starting_track" : 出庫番線,
+            "starting_time" : 「HH:MM」形式の出庫時刻,
+            "terminal_location" : 入庫場所(車庫または駅),
+            "terminal_track" : 入庫番線,
+            "ending_time" : 「HH:MM」形式の入庫時刻,
+            "car_count" : 所定の編成両数,
+            "min_car_count" : 充当可能な最小の編成両数,
+            "max_car_count" : 充当可能な最大の編成両数,
+            "main_color" : テーマカラー,
+            "comment" : 補足説明文
+        }...
+    },
+    operation_groups : [
+        {
+            operation_group_name : 運用系統タイトル,
+            operation_numbers : 運用番号を配列で
+        }
+    ]
+}
 
 
 ███ timetable_****.json ███
 
-※ファイル名の「****」部分は「ダイヤ識別名」が入る
+※ファイル名の「****」部分は「時刻表識別名」が入る
 ※このファイルは変換スクリプトにより自動生成されるものである
 {
     "路線識別名" : {

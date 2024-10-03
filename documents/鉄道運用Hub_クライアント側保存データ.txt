@@ -68,11 +68,30 @@ _/_/_/_/ クライアント側IndexedDB "unyohub_caches" _/_/_/_/
 }
 
 
-███ operations ███
+███ diagram_revisions ███
 
 {
     ・railroad_id : 路線系統識別名,
-    ・operation_table : 運用表識別名,
+    last_modified_timestamp : このデータの元になったJSONファイルが更新された日時のタイムスタンプ値(UTC、秒単位),
+    diagram_revisions : diagram_revisions.phpのレスポンスをパースしてそのまま格納
+}
+
+
+███ diagrams ███
+
+{
+    ・railroad_id : 路線系統識別名,
+    ・diagram_revision : ダイヤ改正識別名,
+    以降の項目はdiagram_info.phpのレスポンスをパースしてそのまま展開して使用
+}
+
+
+███ operation_tables ███
+
+{
+    ・railroad_id : 路線系統識別名,
+    ・diagram_revision : ダイヤ改正識別名,
+    ・diagram_id : ダイヤ識別名,
     last_modified_timestamp : このデータの元になったJSONファイルが更新された日時のタイムスタンプ値(UTC、秒単位),
     operations : {
         運用番号 : { 各運用の情報
@@ -100,16 +119,7 @@ _/_/_/_/ クライアント側IndexedDB "unyohub_caches" _/_/_/_/
             main_color : 運用のテーマカラー,
             comment : コメント
         }...
-    }
-}
-
-
-███ operation_groups ███
-
-{
-    ・railroad_id : 路線系統識別名,
-    ・operation_table : 運用表識別名,
-    last_modified_timestamp : このデータの元になったJSONファイルが更新された日時のタイムスタンプ値(UTC、秒単位),
+    },
     operation_groups : [
         {
             operation_group_name : 運用系統タイトル,
@@ -123,7 +133,8 @@ _/_/_/_/ クライアント側IndexedDB "unyohub_caches" _/_/_/_/
 
 {
     ・railroad_id : 路線系統識別名,
-    ・operation_table : 運用表識別名,
+    ・diagram_revision : ダイヤ改正識別名,
+    ・diagram_id : ダイヤ識別名,
     last_modified_timestamp : このデータの元になったJSONファイルが更新された日時のタイムスタンプ値(UTC、秒単位),
     lines : {
         走行路線の識別名 : {
@@ -158,7 +169,8 @@ _/_/_/_/ クライアント側IndexedDB "unyohub_caches" _/_/_/_/
 
 {
     ・railroad_id : 路線系統識別名,
-    ・operation_table : 運用表識別名,
+    ・diagram_revision : ダイヤ改正識別名,
+    ・timetable_id : 時刻表識別名,
     last_modified_timestamp : このデータの元になったJSONファイルが更新された日時のタイムスタンプ値(UTC、秒単位),
     timetable : timetables.phpのレスポンスをパースしてそのまま格納
 }

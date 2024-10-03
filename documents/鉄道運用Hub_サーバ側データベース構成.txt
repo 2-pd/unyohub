@@ -24,7 +24,7 @@ _/_/_/_/ データベース _/_/_/_/
   INDEX `unyohub_idx_f1`(`series_name`)
 
 
-`unyohub_cars` 編成データ
+`unyohub_cars` 車両データ
   `formation_name` TEXT NOT NULL 編成名
   `car_number` TEXT NOT NULL 車番(乗り入れ他社の車両と被る可能性があるため一意制約を設けない)
   `car_order` INTEGER NOT NULL 編成内での車両の組成位置(前位側の先頭車を1として順に付番)
@@ -44,7 +44,8 @@ _/_/_/_/ データベース _/_/_/_/
 
 
 `unyohub_operations` 運用表データ
-  `operation_table` TEXT NOT NULL 運用表識別名
+  `diagram_revision` TEXT NOT NULL ダイヤ改正識別名
+  `diagram_id` TEXT NOT NULL ダイヤ識別名
   `operation_number` TEXT NOT NULL 運用番号(アルファベットなどを含む場合があるため文字列型)
   `starting_location` TEXT 出庫場所(車庫または駅番線)
   `starting_track` TEXT 出庫番線(不確定の場合はNULL)
@@ -55,9 +56,9 @@ _/_/_/_/ データベース _/_/_/_/
   `min_car_count` INTEGER NOT NULL 充当可能な最小の編成両数
   `max_car_count` INTEGER NOT NULL 充当可能な最大の編成両数
 
-  PRIMARY KEY(`operation_table`, `operation_number`)
-  UNIQUE INDEX `unyohub_idx_o1`(`operation_table`, `starting_location`, `starting_track`)
-  UNIQUE INDEX `unyohub_idx_o2`(`operation_table`, `terminal_location`, `terminal_track`)
+  PRIMARY KEY(`diagram_revision`, `diagram_id`, `operation_number`)
+  UNIQUE INDEX `unyohub_idx_o1`(`diagram_revision`, `diagram_id`, `starting_location`, `starting_track`)
+  UNIQUE INDEX `unyohub_idx_o2`(`diagram_revision`, `diagram_id`, `terminal_location`, `terminal_track`)
 
 
 `unyohub_data` ユーザー投稿データ
@@ -102,26 +103,28 @@ _/_/_/_/ データベース _/_/_/_/
 
 
 `unyohub_transition_statistics_same_day` 当日運用遷移統計データ
-  `operation_table` TEXT NOT NULL 運用表識別名
+  `diagram_revision` TEXT NOT NULL ダイヤ改正識別名
+  `diagram_id` TEXT NOT NULL ダイヤ識別名
   `operation_number` TEXT NOT NULL 運用番号(アルファベットなどを含む場合があるため文字列型)
   `later_operation_number` TEXT NOT NULL 後の運用番号(アルファベットなどを含む場合があるため文字列型)
   `percentage` REAL NOT NULL 確率(パーセント値)
 
-  PRIMARY KEY(`operation_table`, `operation_number`, `later_operation_number`)
-  INDEX `unyohub_idx_ts1`(`operation_table`, `operation_number`, `percentage`)
-  INDEX `unyohub_idx_ts2`(`operation_table`, `later_operation_number`, `percentage`)
+  PRIMARY KEY(`diagram_revision`, `diagram_id`, `operation_number`, `later_operation_number`)
+  INDEX `unyohub_idx_ts1`(`diagram_revision`, `diagram_id`, `operation_number`, `percentage`)
+  INDEX `unyohub_idx_ts2`(`diagram_revision`, `diagram_id`, `later_operation_number`, `percentage`)
 
 
 `unyohub_transition_statistics_to_next_day` 翌日運用遷移統計データ
-  `operation_table` TEXT NOT NULL 当日の運用表識別名
-  `next_day_operation_table` TEXT NOT NULL 翌日の運用表識別名
+  `diagram_revision` TEXT NOT NULL ダイヤ改正識別名
+  `diagram_id` TEXT NOT NULL 当日のダイヤ識別名
+  `next_day_diagram_id` TEXT NOT NULL 翌日のダイヤ識別名
   `operation_number` TEXT NOT NULL 当日の運用番号(アルファベットなどを含む場合があるため文字列型)
   `next_day_operation_number` TEXT NOT NULL 翌日の運用番号(アルファベットなどを含む場合があるため文字列型)
   `percentage` REAL NOT NULL 確率(パーセント値)
 
-  PRIMARY KEY(`operation_table`, `next_day_operation_table`, `operation_number`, `next_day_operation_number`)
-  INDEX `unyohub_idx_tn1`(`operation_table`, `operation_number`, `percentage`)
-  INDEX `unyohub_idx_tn2`(`next_day_operation_table`, `next_day_operation_number`, `percentage`)
+  PRIMARY KEY(`diagram_revision`, `diagram_id`, `next_day_diagram_id`, `operation_number`, `next_day_operation_number`)
+  INDEX `unyohub_idx_tn1`(`diagram_revision`, `diagram_id`, `operation_number`, `percentage`)
+  INDEX `unyohub_idx_tn2`(`diagram_revision`, `next_day_diagram_id`, `next_day_operation_number`, `percentage`)
 
 
 `unyohub_transition_data_caches_same_day` 当日運用遷移データキャッシュ
