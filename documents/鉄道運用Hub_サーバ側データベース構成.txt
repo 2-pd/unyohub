@@ -61,9 +61,21 @@ _/_/_/_/ データベース _/_/_/_/
   UNIQUE INDEX `unyohub_idx_o2`(`diagram_revision`, `diagram_id`, `terminal_location`, `terminal_track`)
 
 
+`unyohub_trains` 列車データ
+  `diagram_revision` TEXT NOT NULL ダイヤ改正識別名
+  `diagram_id` TEXT NOT NULL ダイヤ識別名
+  `operation_number` TEXT NOT NULL 運用番号(アルファベットなどを含む場合があるため文字列型)
+  `train_number` TEXT NOT NULL 列車番号(アルファベットなどを含む場合があるため文字列型)
+  `first_departure_time` TEXT NOT NULL 「HH:MM」形式の始発時刻
+  `final_arrival_time` TEXT NOT NULL 「HH:MM」形式の終着時刻
+
+  PRIMARY KEY(`diagram_revision`, `diagram_id`, `operation_number`, `train_number`)
+
+
 `unyohub_data` ユーザー投稿データ
   `operation_date` TEXT NOT NULL 「YYYY-MM-DD」形式の日付
   `operation_number` TEXT NOT NULL 運用番号(アルファベットなどを含む場合があるため文字列型)
+  `train_number` TEXT 目撃時の列車番号または「○」(出庫時)、「△」(入庫時)、NULL(引用情報の場合)
   `user_id` TEXT NOT NULL 投稿者ID(未登録ユーザーの場合、クライアント端末が生成する12桁の乱数値の頭に「*」を付加した文字列を記録する)
   `formations` TEXT NOT NULL 充当組成(複数編成併結による運用の場合も「+」で区切って1レコードに格納)
   `is_quotation` INTEGER 引用情報か否か

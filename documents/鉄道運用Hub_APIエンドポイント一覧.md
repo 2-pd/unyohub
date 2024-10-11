@@ -380,6 +380,7 @@ JSON化された時刻表の内容を返す
             "is_beginner" : ユーザーがビギナーか否か(ビギナーでなければ省略),  
             "website_url" : ユーザーのwebサイトのURL(なければ省略),  
             "formations" : 編成名(前位側・奇数向きから順に各編成を「+」で区切った文字列。運休の場合は空文字列),  
+            "train_number" : 列車番号または「○」(出庫時)、「△」(入庫時)、NULL(引用情報の場合),  
             "is_quotation" : 引用情報か否か(引用情報でなければ省略),  
             "posted_datetime" : YYYY-MM-DD HH:MM:SS形式の投稿日時,  
             "comment" : 運用補足情報(なければ省略),  
@@ -440,6 +441,7 @@ JSON化された時刻表の内容を返す
 **$_POST["railroad_id"]** : 路線系統識別名  
 **$_POST["date"]** : YYYY-MM-DD形式の日付  
 **$_POST["operation_number"]** : 運用番号  
+**$_POST["train_number"]** : 列車番号、「○」(出庫時)、「△」(入庫時)のいずれか(引用情報の場合は省略)  
 **$_POST["formations"]** : 編成を前位側(奇数側)から順に「+」で区切った文字列  
 **$_POST["is_quotation"]** : 引用情報か否か(引用情報の場合は文字列「YES」、引用情報でなければ省略可能)  
 **$_POST["comment"]** : 運用補足情報(コメント)  

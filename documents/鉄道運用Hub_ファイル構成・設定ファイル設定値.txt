@@ -163,7 +163,12 @@ anti_troll_garbage_size 要注意ユーザーの投稿処理を遅延させる�
                     "station_initial" : 駅頭文字(始発・終着列車のない非分岐駅では省略可能。このJSONに記載の他の駅と被る場合は別の文字を使用する),
                     "is_signal_station" : 信号場か否か(信号場でなければ省略可能。BOOL値),
                     "is_major_station" : 主要駅か否か(主要駅でなければ省略可能。BOOL値),
-                    "connecting_lines" : 直通路線の路線識別名を配列で列挙(分岐駅でなければ省略可能)
+                    "connecting_lines" : [ 直通路線一覧(分岐駅でなければ省略可能)
+                        {
+                            "line_id" : 路線識別名,
+                            "directions" : 分岐方向(「TL」(左上)、「TR」(右上)、「L」(左)、「R」(右)、「BL」(左下)、「BR」(右下))を配列で指定
+                        }...
+                    ]
                 }...
             ]
         }...
