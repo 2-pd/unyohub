@@ -1,7 +1,5 @@
 <?php
-include "../libs/wakarana/main.php";
-
-$main_config = parse_ini_file("../config/main.ini", FALSE, INI_SCANNER_TYPED);
+include "user_common.php";
 
 if (empty($_POST["email_address"])) {
     print "ERROR: メールアドレスが未入力です";
@@ -23,12 +21,7 @@ if (!empty($wakarana->search_users_with_email_address($_POST["email_address"])))
 $user = $wakarana->check();
 
 if (is_object($user)) {
-    if ($user->check_one_time_token($_POST["one_time_token"])) {
-        $verification_code = $user->create_email_address_verification_code($_POST["email_address"]);
-    } else {
-        print "ERROR: ワンタイムトークンの認証に失敗しました。再度ご送信ください";
-        exit();
-    }
+    $verification_code = $user->create_email_address_verification_code($_POST["email_address"]);
 } else {
     $verification_code = $wakarana->create_email_address_verification_code($_POST["email_address"]);
 }

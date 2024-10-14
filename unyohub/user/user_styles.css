@@ -203,6 +203,54 @@ input[type="text"], input[type="number"], input[type="password"] {
     color: #666666;
 }
 
+.key_and_value {
+    width: calc(100% - 60px);
+    
+    max-width: 440px;
+    
+    margin: 10px auto;
+    
+    border-bottom: 2px solid #dddddd;
+    
+    text-align: right;
+    font-size: 18px;
+}
+
+.key_and_value:after, .value_and_button:after {
+    content: "";
+    
+    display: block;
+    
+    clear: both;
+}
+
+.key_and_value b {
+    display: block;
+    
+    width: fit-content;
+    
+    float: left;
+    
+    font-weight: bold;
+}
+
+.value_and_button b {
+    display: inline-block;
+    
+    margin-left: 20px;
+    margin-right: 20px;
+    
+    line-height: 32px;
+    font-size: 20px;
+    word-break: break-all;
+}
+
+.value_and_button button {
+    float: right;
+    
+    margin: 0 20px !important;
+}
+
 .informational_text, .warning_text {
     max-width: 480px;
     

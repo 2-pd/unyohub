@@ -44,9 +44,9 @@ if (isset($_POST["user_id"], $_POST["password"], $_POST["user_name"], $_POST["zi
             $data["user_id"] = $user->get_id();
             $data["user_name"] = $user->get_name();
             $data["created"] = $user->get_created();
-            $data["role"] = "BASE";
+            $data["is_control_panel_user"] = FALSE;
+            $data["is_management_member"] = FALSE;
             $data["is_beginner"] = TRUE;
-            $data["email_address"] = $user->get_primary_email_address();
             $data["website_url"] = NULL;
             
             print "<script>\n";
@@ -99,8 +99,8 @@ print_header("新規ユーザー登録", TRUE);
                 }
             };
             
-            ajax_request.open("POST", "../api/send_verification_email.php", true);
-            ajax_request.setRequestHeader("Content-Type","application/x-www-form-urlencoded;charset=UTF-8");
+            ajax_request.open("POST", "send_verification_email.php", true);
+            ajax_request.setRequestHeader("Content-Type", "application/x-www-form-urlencoded;charset=UTF-8");
             ajax_request.timeout = 5000;
             ajax_request.send("email_address=" + encodeURIComponent(document.getElementById("email_address").value).replace(/%20/g, "+"));
         }

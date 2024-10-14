@@ -38,7 +38,6 @@
     "is_management_member" : 運営メンバーか否か,   
     "is_beginner" : ビギナーユーザーか否か,  
     "created" : YYYY-MM-DD HH:MM:SS形式のユーザー登録日時,  
-    "email_address" : メールアドレス,  
     "website_url" : ユーザーのwebサイトのURL  
 }  
   
@@ -63,7 +62,6 @@
     "is_management_member" : 運営メンバーか否か,   
     "is_beginner" : ビギナーユーザーか否か,  
     "created" : YYYY-MM-DD HH:MM:SS形式のユーザー登録日時,  
-    "email_address" : メールアドレス,  
     "website_url" : ユーザーのwebサイトのURL  
 }  
   
