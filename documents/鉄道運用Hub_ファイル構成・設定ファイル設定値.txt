@@ -73,7 +73,8 @@ _/_/_/_/ ファイル構成 _/_/_/_/
    └ admin_styles.css ・・・管理画面用スタイルシート
 └ commands/
    └ unyohub ・・・コマンドラインやcronから実行可能なPythonファイル(詳細は別記、拡張子なし)
-   └ ****.py ・・・unyohubから呼び出される各種処理の本体となるPythonファイル
+   └ modules/
+      └ ****.py ・・・unyohubから呼び出される各種処理の本体となるPythonファイル
 └ README.html ・・・ユーザーマニュアル
 └ .htaccess
 
