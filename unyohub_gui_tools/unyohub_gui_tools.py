@@ -204,7 +204,7 @@ def initialize_db ():
         try:
             clear_mes()
             
-            initialize_db = importlib.import_module("unyohub_scripts.initialize_db")
+            initialize_db = importlib.import_module("modules.initialize_db")
             initialize_db.initialize_db(mes, config["main_dir"])
         except:
             error_mes(traceback.format_exc())
@@ -233,7 +233,7 @@ def convert_timetable_1 ():
     if len(file_name) >= 1:
         digits_count = simpledialog.askinteger("列車番号の桁数を指定", "所定の桁数に満たない列車番号の前に「0」を付加する場合にはその桁数を入力してください", initialvalue=0)
         
-        if digits_count == None:
+        if digits_count is None:
             return
         
         try:
@@ -302,7 +302,7 @@ def convert_operation_table_1 (for_printing):
         
         max_columns = simpledialog.askinteger("運用表の列数を指定", "出力する運用表の列数を指定してください", initialvalue=16, minvalue=6)
     
-        if max_columns == None:
+        if max_columns is None:
             return
     else:
         file_name_for_printing = None
@@ -310,7 +310,7 @@ def convert_operation_table_1 (for_printing):
     
     digits_count = simpledialog.askinteger("列車番号の桁数を指定", "所定の桁数に満たない列車番号の前に「0」を付加する場合にはその桁数を入力してください", initialvalue=0)
     
-    if digits_count == None:
+    if digits_count is None:
         return
     
     try:
@@ -366,7 +366,7 @@ def open_app_info ():
     global is_windows
     global icon_image
     
-    if app_info_win != None and app_info_win.winfo_exists():
+    if app_info_win is not None and app_info_win.winfo_exists():
         return
     
     app_info_win = tk.Toplevel()

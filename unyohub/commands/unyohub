@@ -33,7 +33,13 @@ if len(args) >= 2:
         case "conv-formations":
             if len(args) == 3:
                 convert_formation_table = importlib.import_module("modules.convert_formation_table")
-                convert_formation_table.convert_formation_table(mes, data_dir + "/" + args[2])
+                convert_formation_table.convert_formation_table(mes, data_dir + "/" + os.path.basename(args[2]))
+            else:
+                print("\x1b[31m引数の数が異常です\x1b[0m")
+        case "initialize-db":
+            if len(args) == 3:
+                initialize_db = importlib.import_module("modules.initialize_db")
+                initialize_db.initialize_db(mes, data_dir + "/" + os.path.basename(args[2]))
             else:
                 print("\x1b[31m引数の数が異常です\x1b[0m")
         case _:
