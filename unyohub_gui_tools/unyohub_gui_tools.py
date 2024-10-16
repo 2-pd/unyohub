@@ -349,7 +349,7 @@ def initialize_moderation_db ():
         try:
             clear_mes()
             
-            initialize_moderation_db = importlib.import_module("unyohub_scripts.initialize_moderation_db")
+            initialize_moderation_db = importlib.import_module("modules.initialize_moderation_db")
             initialize_moderation_db.initialize_moderation_db(mes, db_file_path)
         except:
             error_mes(traceback.format_exc())

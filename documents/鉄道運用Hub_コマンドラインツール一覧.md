@@ -6,6 +6,14 @@
 
 # コマンドラインツール(「unyohub」コマンド)
 
+## unyohub setup-libs
+編成表データを変換する  
+処理本体は**libs_setup.php**
+
+### 引数
+**第1引数** : 管理者ユーザーID(省略時は「unyohub_admin」)
+
+
 ## unyohub conv-formations
 編成表データを変換する  
 処理本体は**convert_formation_table.py**
@@ -24,12 +32,20 @@
 **第3引数** : ダイヤ識別名
 
 
-## unyohub initialize-db
+## unyohub init-db
 各路線系統用データベースファイルを生成する  
 処理本体は**initialize_db.py**
 
 ### 引数
 **第1引数** : 路線系統識別名
+
+
+## unyohub init-moderation-db
+モデレーションログ格納データベースファイルを生成する  
+処理本体は**initialize_moderation_db.py**
+
+### 引数
+(なし)
 
 
 ## process_transition_data.py

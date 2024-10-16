@@ -1,13 +1,25 @@
 <?php
-include "libs/wakarana/main.php";
-include "libs/wakarana/config.php";
-include "libs/zizai_captcha/setup.php";
+include __DIR__."/../../libs/wakarana/main.php";
+include __DIR__."/../../libs/wakarana/config.php";
+include __DIR__."/../../libs/zizai_captcha/setup.php";
 
-
-$admin_user_id = "unyohub_admin";
 
 $wakarana_base_dir = "config";
 $zizai_captcha_config_path = "../../config/zizai_captcha_config.json";
+
+
+print "\n_/_/_/_/ 依存ライブラリのセットアップ _/_/_/_/\n\n";
+
+
+$admin_user_id = $argv[1];
+
+if (!wakarana::check_id_string($admin_user_id)) {
+    print "【エラー】管理者ユーザーIDとして使用できない文字列が指定されました\n";
+    exit;
+}
+
+
+chdir(dirname(__DIR__, 2));
 
 
 print "ライブラリデータフォルダを作成しています...\n";
@@ -57,7 +69,7 @@ if (empty($wakarana->get_user($admin_user_id))) {
     $admin_user = $wakarana->add_user($admin_user_id, $password, "管理人");
     $admin_user->add_role(WAKARANA_ADMIN_ROLE);
     
-    print "\n【デフォルトの管理者ユーザー】\n";
+    print "\n【管理者ユーザー】\n";
     print "ID: ".$admin_user_id."\n";
     print "パスワード: ".$password."\n\n";
 }

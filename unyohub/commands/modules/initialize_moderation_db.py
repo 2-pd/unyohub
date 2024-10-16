@@ -3,7 +3,7 @@
 import sqlite3
 
 def initialize_moderation_db (mes, db_file_path):
-    mes("モデレーション用データベースのセットアップ", True)
+    mes("モデレーション用データベースのセットアップ", is_heading=True)
     
     mes("データベースに接続しています...")
     
