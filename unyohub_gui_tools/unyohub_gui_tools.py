@@ -153,11 +153,13 @@ def close_main_window ():
     main_win.destroy()
 
 
-def mes (log_text, is_heading=False):
+def mes (log_text, is_error=False, is_heading=False):
     global console_area
     
     console_area.configure(state=tk.NORMAL)
-    if is_heading:
+    if is_error:
+        console_area.insert(tk.END, "【エラー】" + str(log_text) + "\n")
+    elif is_heading:
         console_area.insert(tk.END, "\n_/_/_/_/ " + str(log_text) + " _/_/_/_/\n\n")
     else:
         console_area.insert(tk.END, str(log_text) + "\n")
@@ -219,7 +221,7 @@ def embed_train_icon ():
         try:
             clear_mes()
             
-            embed_train_icon = importlib.import_module("unyohub_scripts.embed_train_icon")
+            embed_train_icon = importlib.import_module("modules.embed_train_icon")
             embed_train_icon.embed_train_icon(mes, dir_path)
         except:
             error_mes(traceback.format_exc())
@@ -239,7 +241,7 @@ def convert_timetable_1 ():
         try:
             clear_mes()
             
-            convert_timetable_1 = importlib.import_module("unyohub_scripts.convert_timetable_1")
+            convert_timetable_1 = importlib.import_module("modules.convert_timetable_1")
             convert_timetable_1.convert_timetable_1(mes, file_name, digits_count)
         except:
             error_mes(traceback.format_exc())
@@ -258,7 +260,7 @@ def convert_timetable_2 ():
         try:
             clear_mes()
             
-            convert_timetable_2 = importlib.import_module("unyohub_scripts.convert_timetable_2")
+            convert_timetable_2 = importlib.import_module("modules.convert_timetable_2")
             convert_timetable_2.convert_timetable_2(mes, config["main_dir"], operation_table)
         except:
             error_mes(traceback.format_exc())
@@ -316,7 +318,7 @@ def convert_operation_table_1 (for_printing):
     try:
         clear_mes()
         
-        convert_operation_table_1 = importlib.import_module("unyohub_scripts.convert_operation_table_1")
+        convert_operation_table_1 = importlib.import_module("modules.convert_operation_table_1")
         convert_operation_table_1.convert_operation_table_1(mes, config["main_dir"], file_name, json_file_name, digits_count, file_name_for_printing, max_columns)
     except:
         error_mes(traceback.format_exc())
@@ -335,7 +337,7 @@ def convert_operation_table_2 ():
         try:
             clear_mes()
             
-            convert_operation_table_2 = importlib.import_module("unyohub_scripts.convert_operation_table_2")
+            convert_operation_table_2 = importlib.import_module("modules.convert_operation_table_2")
             convert_operation_table_2.convert_operation_table_2(mes, config["main_dir"], file_name)
         except:
             error_mes(traceback.format_exc())

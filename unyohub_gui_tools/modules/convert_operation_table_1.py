@@ -41,7 +41,7 @@ def get_train_style (train_name):
     fg_color = "#ffffff"
     
     for cnt in range(len(train_color_regexp_list)):
-        if train_color_regexp_list[cnt].search(train_name) != None:
+        if train_color_regexp_list[cnt].search(train_name) is not None:
             bg_color = train_color_list[cnt]
             
             r = int(bg_color[1:3], 16)
@@ -57,7 +57,7 @@ def get_train_style (train_name):
 
 
 def get_cell_html (data_str, style_data):
-    if style_data != None:
+    if style_data is not None:
         style_str = " style=\""
         
         for property_name in style_data.keys():
@@ -79,18 +79,18 @@ def convert_operation_table_1 (mes, main_dir, file_name, json_file_name, digits_
     global train_color_regexp_list
     global train_color_list
     
-    if file_name_for_printing != None:
-        mes("運用表を印刷用に変換", True)
+    if file_name_for_printing is not None:
+        mes("運用表を印刷用に変換", is_heading=True)
         
         if max_columns < 6:
-            mes("出力する表の列数は6列以上必要です")
+            mes("出力する表の列数は6列以上必要です", True)
             return
         
         for_printing = True
         
         cell_styles = []
     else:
-        mes("運用表の変換(ステップ1)", True)
+        mes("運用表の変換(ステップ1)", is_heading=True)
         
         for_printing = False
     
@@ -149,21 +149,21 @@ def convert_operation_table_1 (mes, main_dir, file_name, json_file_name, digits_
                 starting_station_index = None
                 for train_data in timetable[line][direction + "_trains"][train_number]:
                     for cnt in range(len(train_data["departure_times"])):
-                        if train_data["departure_times"][cnt] != None:
+                        if train_data["departure_times"][cnt] is not None:
                             terminal_station_index = cnt
                             final_arrival_time = train_data["departure_times"][cnt]
                             
-                            if starting_station_index == None:
+                            if starting_station_index is None:
                                 starting_station_index = cnt
                                 first_departure_time = train_data["departure_times"][cnt]
                 
                 if "station_initial" not in stations[starting_station_index]:
-                    mes("省略表記の登録されていない始発駅が時刻表で検出されました: " + train_number)
+                    mes("省略表記の登録されていない始発駅が時刻表で検出されました: " + train_number, True)
                     error_occurred = True
                     continue
                 
                 if "station_initial" not in stations[terminal_station_index]:
-                    mes("省略表記の登録されていない終着駅が時刻表で検出されました: " + train_number)
+                    mes("省略表記の登録されていない終着駅が時刻表で検出されました: " + train_number, True)
                     error_occurred = True
                     continue
                 
@@ -187,7 +187,7 @@ def convert_operation_table_1 (mes, main_dir, file_name, json_file_name, digits_
     train_list = []
     for operation in operations:
         if operation[0].startswith("# ") or operation[0].startswith("◆"):
-            if re.match("^#[0-9A-Fa-f]{6}$", operation[1]) != None:
+            if re.match("^#[0-9A-Fa-f]{6}$", operation[1]) is not None:
                 color = operation[1]
             else:
                 color = "#ffffff"
@@ -210,7 +210,7 @@ def convert_operation_table_1 (mes, main_dir, file_name, json_file_name, digits_
                 output_data[-1].append(operation[0][1:].strip())
         else:
             if len(operation[0].strip()) == 0:
-                mes("運用番号のない運用が見つかりました")
+                mes("運用番号のない運用が見つかりました", True)
                 error_occurred = True
             
             if for_printing:
@@ -254,7 +254,7 @@ def convert_operation_table_1 (mes, main_dir, file_name, json_file_name, digits_
                     
                     if len(train_time) == 2:
                         if "-" not in train_time[1]:
-                            mes("時刻の指定が異常です: " + train_name)
+                            mes("時刻の指定が異常です: " + train_name, True)
                             error_occurred = True
                             continue
                         
@@ -275,7 +275,7 @@ def convert_operation_table_1 (mes, main_dir, file_name, json_file_name, digits_
                             output_cell_styles_3.append(None)
                     else:
                         if train_name not in train_number_list:
-                            mes("列車番号が時刻表にありません: " + train_name)
+                            mes("列車番号が時刻表にありません: " + train_name, True)
                             error_occurred = True
                             continue
                         
@@ -300,7 +300,7 @@ def convert_operation_table_1 (mes, main_dir, file_name, json_file_name, digits_
                             output_cell_styles_3.append(None)
                         
                         if train_name + car_count in train_list:
-                            mes("同一列車の同一組成位置が複数の運用に割り当てられています: " + train_name + car_count)
+                            mes("同一列車の同一組成位置が複数の運用に割り当てられています: " + train_name + car_count, True)
                             error_occurred = True
                         else:
                             train_list.append(train_name + car_count)

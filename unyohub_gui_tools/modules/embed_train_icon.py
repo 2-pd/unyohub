@@ -7,7 +7,7 @@ import json
 import base64
 
 def embed_train_icon (mes, dir_path):
-    mes("アイコン画像をファイルに埋め込み", True)
+    mes("アイコン画像をファイルに埋め込み", is_heading=True)
     
     mes("ファイルの一覧を取得しています...")
     extension_list = ["webp", "png", "gif", "jpeg", "jpg"]
@@ -39,7 +39,7 @@ def embed_train_icon (mes, dir_path):
             img_f = open(file_name, "rb")
             img_data = img_f.read()
         except:
-            mes("【エラー】" + file_base_name + " の読み込みに失敗しました")
+            mes(file_base_name + " の読み込みに失敗しました", True)
             return
         
         icon_id = file_base_name[0:file_base_name.rfind(".")]
@@ -51,7 +51,7 @@ def embed_train_icon (mes, dir_path):
         with open(dir_path + "/train_icons.json", "w", encoding="utf-8") as json_f:
             json.dump(train_icons, json_f, ensure_ascii=False, separators=(',', ':'))
     except:
-        mes("【エラー】train_icons.jsonの保存に失敗しました")
+        mes("train_icons.jsonの保存に失敗しました", True)
         return
     
     mes("処理が完了しました")

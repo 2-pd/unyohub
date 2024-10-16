@@ -6,7 +6,7 @@ from operator import itemgetter
 
 
 def convert_timetable_1 (mes, file_name, digits_count):
-    mes("時刻表の変換(ステップ1)", True)
+    mes("時刻表の変換(ステップ1)", is_heading=True)
     
     file_base_name = os.path.basename(file_name)
     dir_path = os.path.dirname(file_name) + "/"

@@ -14,7 +14,7 @@ def shape_time_string (time_string):
 
 
 def convert_timetable_2 (mes, main_dir, operation_table):
-    mes("時刻表の変換(ステップ2)", True)
+    mes("時刻表の変換(ステップ2)", is_heading=True)
 
     mes("railroad_info.json を読み込んでいます...")
     with open(main_dir + "/railroad_info.json", "r", encoding="utf-8") as json_f:
@@ -32,7 +32,7 @@ def convert_timetable_2 (mes, main_dir, operation_table):
             file_path = main_dir + "/" + file_name
             
             if not os.path.isfile(file_path):
-                mes("エラー: ファイル " + file_name + " が見つかりません")
+                mes("ファイル " + file_name + " が見つかりません", True)
                 return
             
             mes(file_name + " を処理しています...")
@@ -54,7 +54,7 @@ def convert_timetable_2 (mes, main_dir, operation_table):
                 
                 if train[0] != previous_train_number:
                     if train[0] in direction_data:
-                        mes("【注意】直通情報のない同一名の列車が検出されました: " + line_id + " - " + train[0])
+                        mes("《注意》直通情報のない同一名の列車が検出されました: " + line_id + " - " + train[0])
                     
                     direction_data[train[0]] = []
                     train_cnt = 0
@@ -79,8 +79,8 @@ def convert_timetable_2 (mes, main_dir, operation_table):
                         
                         departure_time = shape_time_string(departure_time)
                         
-                        if time_regexp.match(departure_time) == None or departure_time < last_departure_time:
-                            mes("【注意】異常な時刻値が検出されました: " + line_id + " - " + train[0])
+                        if time_regexp.match(departure_time) is None or departure_time < last_departure_time:
+                            mes("《注意》異常な時刻値が検出されました: " + line_id + " - " + train[0])
                         
                         last_departure_time = departure_time
                         
