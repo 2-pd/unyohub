@@ -15,7 +15,7 @@ import webbrowser
 
 
 UNYOHUB_GUI_TOOLS_APP_NAME = "鉄道運用Hub用データ編集ツール"
-UNYOHUB_GUI_TOOLS_VERSION = "24.09-2"
+UNYOHUB_GUI_TOOLS_VERSION = "24.10-1"
 UNYOHUB_GUI_TOOLS_LICENSE_TEXT = "このアプリケーションは無権利創作宣言に準拠して著作権放棄されています"
 UNYOHUB_GUI_TOOLS_LICENSE_URL = "https://www.2pd.jp/license/"
 UNYOHUB_GUI_TOOLS_REPOSITORY_URL = "https://fossil.2pd.jp/unyohub/"
@@ -275,7 +275,7 @@ def generate_operation_table ():
         try:
             clear_mes()
             
-            generate_operation_table = importlib.import_module("unyohub_scripts.generate_operation_table")
+            generate_operation_table = importlib.import_module("modules.generate_operation_table")
             generate_operation_table.generate_operation_table(mes, config["main_dir"], operation_table)
         except:
             error_mes(traceback.format_exc())

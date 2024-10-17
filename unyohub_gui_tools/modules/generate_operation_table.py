@@ -13,7 +13,7 @@ def shape_time_string (time_string):
 
 
 def generate_operation_table (mes, main_dir, operation_table_name):
-    mes("運用情報付き時刻表から運用表と変換用時刻表を生成", True)
+    mes("運用情報付き時刻表から運用表と変換用時刻表を生成", is_heading=True)
     
     
     inbound_file_base_name = operation_table_name + ".inbound.csv"
@@ -22,7 +22,7 @@ def generate_operation_table (mes, main_dir, operation_table_name):
     mes(inbound_file_base_name + " を読み込んでいます...")
     
     if not os.path.isfile(file_path):
-        mes("エラー: ファイル " + file_path + " が見つかりません")
+        mes("ファイル " + file_path + " が見つかりません", True)
         return
     
     with open(file_path, "r", encoding="utf-8") as csv_f:
@@ -35,7 +35,7 @@ def generate_operation_table (mes, main_dir, operation_table_name):
     mes(outbound_file_base_name + " を読み込んでいます...")
     
     if not os.path.isfile(file_path):
-        mes("エラー: ファイル " + file_path + " が見つかりません")
+        mes("ファイル " + file_path + " が見つかりません", True)
         return
     
     with open(file_path, "r", encoding="utf-8") as csv_f:
@@ -47,6 +47,25 @@ def generate_operation_table (mes, main_dir, operation_table_name):
     
     inbound_timetable_t = [list(x) for x in zip(*inbound_timetable)]
     outbound_timetable_t = [list(x) for x in zip(*outbound_timetable)]
+    
+    symbols_inbound = []
+    symbols_outbound = []
+    
+    for cnt in range(2, len(inbound_timetable_t[0])):
+        if "[" in inbound_timetable_t[0][cnt]:
+            symbol_start = inbound_timetable_t[0][cnt].find("[") + 1
+            symbol_end = inbound_timetable_t[0][cnt].find("]")
+            
+            symbols_inbound.append({"station" : cnt, "symbol" : inbound_timetable_t[0][cnt][symbol_start:symbol_end]})
+            inbound_timetable_t[0][cnt] = inbound_timetable_t[0][cnt][0:symbol_start - 1] + inbound_timetable_t[0][cnt][symbol_end + 1:]
+    
+    for cnt in range(2, len(outbound_timetable_t[0])):
+        if "[" in outbound_timetable_t[0][cnt]:
+            symbol_start = outbound_timetable_t[0][cnt].find("[") + 1
+            symbol_end = outbound_timetable_t[0][cnt].find("]")
+            
+            symbols_outbound.append({"station" : cnt, "symbol" : outbound_timetable_t[0][cnt][symbol_start:symbol_end]})
+            outbound_timetable_t[0][cnt] = outbound_timetable_t[0][cnt][0:symbol_start - 1] + outbound_timetable_t[0][cnt][symbol_end + 1:]
     
     operation_data = {}
     
@@ -61,6 +80,16 @@ def generate_operation_table (mes, main_dir, operation_table_name):
         
         if operation_number not in operation_data:
             operation_data[operation_number] = {}
+        
+        symbol_added = False
+        for symbol_data in symbols_inbound:
+            if len(inbound_timetable_t[cnt][symbol_data["station"]]) >= 1 and inbound_timetable_t[cnt][symbol_data["station"]][0] != "|":
+                if not symbol_added:
+                    symbol_added = True
+                    
+                    inbound_timetable_t[cnt][0] += "__"
+                
+                inbound_timetable_t[cnt][0] += symbol_data["symbol"]
         
         operation_data[operation_number][shape_time_string(next((item for item in inbound_timetable_t[cnt][2:] if item != ""), "99:99"))] = inbound_timetable_t[cnt][0]
         
@@ -77,6 +106,16 @@ def generate_operation_table (mes, main_dir, operation_table_name):
         
         if operation_number not in operation_data:
             operation_data[operation_number] = {}
+        
+        symbol_added = False
+        for symbol_data in symbols_outbound:
+            if len(outbound_timetable_t[cnt][symbol_data["station"]]) >= 1 and outbound_timetable_t[cnt][symbol_data["station"]][0] != "|":
+                if not symbol_added:
+                    symbol_added = True
+                    
+                    outbound_timetable_t[cnt][0] += "__"
+                
+                outbound_timetable_t[cnt][0] += symbol_data["symbol"]
         
         operation_data[operation_number][shape_time_string(next((item for item in outbound_timetable_t[cnt][2:] if item != ""), "99:99"))] = outbound_timetable_t[cnt][0]
         
@@ -109,7 +148,8 @@ def generate_operation_table (mes, main_dir, operation_table_name):
         last_train_number_is_even = True
         
         for cnt_2 in range(6, len(operation_table[cnt])):
-            tmp_number = int(operation_table[cnt][cnt_2].split("__")[1])
+            tmp_number_split = operation_table[cnt][cnt_2].split("__")
+            tmp_number = int(tmp_number_split[1])
             
             if tmp_number % 2 == 0:
                 if last_train_number_is_even:
@@ -118,6 +158,9 @@ def generate_operation_table (mes, main_dir, operation_table_name):
                     train_cnt += 1
                 
                 train_number = operation_table[cnt][0] + "-" + str(train_cnt)
+                
+                if len(tmp_number_split) == 3:
+                    train_number += tmp_number_split[2]
                 
                 inbound_train_numbers[operation_table[cnt][cnt_2]] = train_number
                 operation_table[cnt][cnt_2] = train_number
@@ -130,6 +173,9 @@ def generate_operation_table (mes, main_dir, operation_table_name):
                     train_cnt += 2
                 
                 train_number = operation_table[cnt][0] + "-" + str(train_cnt)
+                
+                if len(tmp_number_split) == 3:
+                    train_number += tmp_number_split[2]
                 
                 outbound_train_numbers[operation_table[cnt][cnt_2]] = train_number
                 operation_table[cnt][cnt_2] = train_number
