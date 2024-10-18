@@ -13,7 +13,7 @@ def shape_time_string (time_string):
     return time_string.zfill(5)
 
 
-def convert_timetable_2 (mes, main_dir, operation_table):
+def convert_timetable_2 (mes, main_dir, diagram_revision, diagram_id):
     mes("時刻表の変換(ステップ2)", is_heading=True)
 
     mes("railroad_info.json を読み込んでいます...")
@@ -28,8 +28,8 @@ def convert_timetable_2 (mes, main_dir, operation_table):
         line_data = {}
         
         for direction in ["inbound", "outbound"]:
-            file_name = "timetable_" + line_id + "." + operation_table + "." + direction + ".csv"
-            file_path = main_dir + "/" + file_name
+            file_name = "timetable_" + line_id + "." + diagram_id + "." + direction + ".csv"
+            file_path = main_dir + "/" + diagram_revision + "/" + file_name
             
             if not os.path.isfile(file_path):
                 mes("ファイル " + file_name + " が見つかりません", True)
@@ -110,10 +110,10 @@ def convert_timetable_2 (mes, main_dir, operation_table):
         
         output_data[line_id] = line_data
     
-    json_file_name = "timetable_" + operation_table + ".json"
+    json_file_name = "timetable_" + diagram_id + ".json"
     
     mes(json_file_name + " に保存しています...")
-    with open(main_dir + "/" + json_file_name, "w", encoding="utf-8") as json_f:
+    with open(main_dir + "/" + diagram_revision + "/" + json_file_name, "w", encoding="utf-8") as json_f:
         json.dump(output_data, json_f, ensure_ascii=False, separators=(',', ':'))
     
     mes("処理が完了しました")

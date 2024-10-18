@@ -12,12 +12,12 @@ def shape_time_string (time_string):
     return time_string.zfill(5)
 
 
-def generate_operation_table (mes, main_dir, operation_table_name):
+def generate_operation_table (mes, main_dir, diagram_revision, diagram_id):
     mes("運用情報付き時刻表から運用表と変換用時刻表を生成", is_heading=True)
     
     
-    inbound_file_base_name = operation_table_name + ".inbound.csv"
-    file_path = main_dir + "/" + inbound_file_base_name
+    inbound_file_base_name = diagram_id + ".inbound.csv"
+    file_path = main_dir + "/" + diagram_revision + "/" + inbound_file_base_name
     
     mes(inbound_file_base_name + " を読み込んでいます...")
     
@@ -29,8 +29,8 @@ def generate_operation_table (mes, main_dir, operation_table_name):
         csv_reader = csv.reader(csv_f)
         inbound_timetable = [data_row for data_row in csv_reader]
     
-    outbound_file_base_name = operation_table_name + ".outbound.csv"
-    file_path = main_dir + "/" + outbound_file_base_name
+    outbound_file_base_name = diagram_id + ".outbound.csv"
+    file_path = main_dir + "/" + diagram_revision + "/" + outbound_file_base_name
     
     mes(outbound_file_base_name + " を読み込んでいます...")
     
@@ -188,19 +188,19 @@ def generate_operation_table (mes, main_dir, operation_table_name):
     
     mes("データを新しいCSVファイルに書き込んでいます...")
     
-    new_file_path = main_dir + "/timetable_" + inbound_file_base_name
+    new_file_path = main_dir + "/" + diagram_revision + "/timetable_" + inbound_file_base_name
     
     with open(new_file_path, "w", encoding="utf-8") as csv_f:
         csv_writer = csv.writer(csv_f)
         csv_writer.writerows(inbound_timetable)
     
-    new_file_path = main_dir + "/timetable_" + outbound_file_base_name
+    new_file_path = main_dir + "/" + diagram_revision + "/timetable_" + outbound_file_base_name
     
     with open(new_file_path, "w", encoding="utf-8") as csv_f:
         csv_writer = csv.writer(csv_f)
         csv_writer.writerows(outbound_timetable)
     
-    new_file_path = main_dir + "/operations_" + operation_table_name + ".csv"
+    new_file_path = main_dir + "/" + diagram_revision + "/operation_table_" + diagram_id + ".csv"
     
     with open(new_file_path, "w", encoding="utf-8") as csv_f:
         csv_writer = csv.writer(csv_f)

@@ -96,7 +96,7 @@ def open_main_window ():
     main_menu_help.insert_separator(1)
     main_menu_help.add_command(label="バージョン情報", font=("",10), command=open_app_info)
     
-    console_scroll_y = tk.Scrollbar(orient="vertical", bg="#666666")
+    console_scroll_y = tk.Scrollbar(main_win, orient="vertical", bg="#666666")
     console_area = tk.Text(main_win, font=button_font, fg="#ffffff", bg="#333333", padx=10, pady=10, relief=tk.FLAT, yscrollcommand=console_scroll_y.set, state=tk.DISABLED)
     console_scroll_y["command"] = console_area.yview
     console_area.place(x=320, y=0, width=625, height=720)
@@ -189,6 +189,88 @@ def console_copy ():
     main_win.clipboard_append(console_area.get("0.0", tk.END).strip())
 
 
+def select_diagram (callback_func):
+    global config
+    global main_win
+    global select_diagram_win
+    global select_diagram_callback
+    global diagram_revision_list
+    global diagram_id_entry
+    
+    select_diagram_callback = callback_func
+    
+    dir_list = sorted([ dir_name for dir_name in os.listdir(config["main_dir"]) if os.path.isdir(config["main_dir"] + "/" + dir_name) ], reverse=True)
+    
+    if len(dir_list) == 0:
+        mes("現在の作業フォルダにはダイヤ改正日別フォルダがありません", True)
+        return
+    
+    if is_windows:
+        label_font = tk.font.Font(family="Yu Gothic", size=12)
+        list_font = tk.font.Font(family="Yu Gothic", size=10)
+        button_font = tk.font.Font(family="Yu Gothic", size=11)
+    else:
+        label_font = tk.font.Font(size=12)
+        list_font = tk.font.Font(size=10)
+        button_font = tk.font.Font(size=10)
+    
+    select_diagram_win = tk.Toplevel()
+    
+    select_diagram_win.title("ダイヤの選択")
+    select_diagram_win.geometry("480x240")
+    select_diagram_win.resizable(0, 0)
+    select_diagram_win.configure(bg="#444444")
+    
+    select_diagram_win.grab_set()
+    select_diagram_win.focus_set()
+    select_diagram_win.transient(main_win)
+    
+    select_diagram_win.protocol("WM_DELETE_WINDOW", close_select_diagram_win)
+    
+    label_diagram_revision = tk.Label(select_diagram_win, text="ダイヤ改正日フォルダ:", font=label_font, fg="#ffffff", bg="#444444")
+    label_diagram_revision.place(x=30, y=10)
+    
+    diagram_revision_list_var = tk.StringVar(value=dir_list)
+    diagram_revision_list_scroll_y = tk.Scrollbar(select_diagram_win, orient="vertical", bg="#666666")
+    diagram_revision_list = tk.Listbox(select_diagram_win, listvariable=diagram_revision_list_var, selectmode=tk.SINGLE, exportselection=False, font=button_font, bg="#333333", fg="#ffffff", relief=tk.FLAT, yscrollcommand=diagram_revision_list_scroll_y.set)
+    diagram_revision_list_scroll_y["command"] = diagram_revision_list.yview
+    diagram_revision_list.place(x=30, y=40, width=160, height=140)
+    diagram_revision_list_scroll_y.place(x=190, y=40, width=20, height=140)
+    diagram_revision_list.select_set(0)
+    
+    label_diagram_id = tk.Label(select_diagram_win, text="ダイヤ識別名:", font=label_font, fg="#ffffff", bg="#444444")
+    label_diagram_id.place(x=240, y=10)
+    
+    diagram_id_entry = tk.Entry(select_diagram_win, bg="#333333", fg="#ffffff", relief=tk.FLAT)
+    diagram_id_entry.place(x=240, y=40, width=200)
+    
+    button_ok = tk.Button(select_diagram_win, text="OK", font=button_font, command=select_diagram_ok, bg="#666666", fg="#ffffff", relief=tk.FLAT, highlightbackground="#666666")
+    button_ok.place(x=320, y=190, width=120, height=30)
+
+
+def select_diagram_ok ():
+    global select_diagram_callback
+    global diagram_revision_list
+    global diagram_id_entry
+    
+    diagram_revision = diagram_revision_list.get(diagram_revision_list.curselection())
+    diagram_id = diagram_id_entry.get()
+    
+    if len(diagram_id) == 0:
+        messagebox.showerror("エラー", "ダイヤ識別名を入力してください")
+        return
+    
+    close_select_diagram_win()
+    
+    select_diagram_callback(diagram_revision, diagram_id)
+
+
+def close_select_diagram_win ():
+    global select_diagram_win
+    
+    select_diagram_win.destroy()
+
+
 def change_main_dir ():
     global config
     
@@ -254,31 +336,34 @@ def convert_timetable_2 ():
         messagebox.showwarning("路線別時刻表を変換できません", "現在の作業フォルダには路線別時刻表ファイルの変換に必要な railroad_info.json が存在しません")
         return
     
-    operation_table = simpledialog.askstring("ダイヤ識別名の入力", "変換対象の路線別時刻表ファイルに含まれるダイヤ識別名を入力してください")
+    select_diagram(convert_timetable_2_exec)
+
+
+def convert_timetable_2_exec (diagram_revision, diagram_id):
     
-    if len(operation_table) >= 1:
-        try:
-            clear_mes()
-            
-            convert_timetable_2 = importlib.import_module("modules.convert_timetable_2")
-            convert_timetable_2.convert_timetable_2(mes, config["main_dir"], operation_table)
-        except:
-            error_mes(traceback.format_exc())
+    try:
+        clear_mes()
+        
+        convert_timetable_2 = importlib.import_module("modules.convert_timetable_2")
+        convert_timetable_2.convert_timetable_2(mes, config["main_dir"], diagram_revision, diagram_id)
+    except:
+        error_mes(traceback.format_exc())
 
 
 def generate_operation_table ():
     global config
     
-    operation_table = simpledialog.askstring("ダイヤ識別名の入力", "変換対象の運用情報付き時刻表ファイルに含まれるダイヤ識別名を入力してください")
-    
-    if len(operation_table) >= 1:
-        try:
-            clear_mes()
-            
-            generate_operation_table = importlib.import_module("modules.generate_operation_table")
-            generate_operation_table.generate_operation_table(mes, config["main_dir"], operation_table)
-        except:
-            error_mes(traceback.format_exc())
+    select_diagram(generate_operation_table_exec)
+
+
+def generate_operation_table_exec (diagram_revision, diagram_id):
+    try:
+        clear_mes()
+        
+        generate_operation_table = importlib.import_module("modules.generate_operation_table")
+        generate_operation_table.generate_operation_table(mes, config["main_dir"], diagram_revision, diagram_id)
+    except:
+        error_mes(traceback.format_exc())
 
 
 def convert_operation_table_1 (for_printing):
