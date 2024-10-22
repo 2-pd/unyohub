@@ -7,7 +7,7 @@ if (!isset($_POST["railroad_id"], $_POST["last_modified_timestamp"])) {
 $path = "../data/".basename($_POST["railroad_id"])."/formations.json";
 
 if (!file_exists($path)) {
-    print "ERROR: 路線系統データがありません";
+    print "ERROR: 編成表データがありません";
     exit;
 }
 

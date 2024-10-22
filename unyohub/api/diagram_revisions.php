@@ -1,13 +1,13 @@
 <?php
-if (!isset($_POST["railroad_id"], $_POST["diagram_revision"], $_POST["diagram_id"], $_POST["last_modified_timestamp"])) {
+if (!isset($_POST["railroad_id"], $_POST["last_modified_timestamp"])) {
     print "ERROR: 送信値が不正です";
     exit;
 }
 
-$path = "../data/".basename($_POST["railroad_id"])."/".basename($_POST["diagram_revision"])."/operation_table_".basename($_POST["diagram_id"]).".json";
+$path = "../data/".basename($_POST["railroad_id"])."/diagram_revisions.txt";
 
 if (!file_exists($path)) {
-    print "ERROR: 運用表データがありません";
+    print "ERROR: ダイヤ改正一覧データがありません";
     exit;
 }
 
@@ -18,10 +18,12 @@ if (intval($_POST["last_modified_timestamp"]) >= $last_modified) {
 } else {
     header("Last-Modified: ".gmdate("D, d M Y H:i:s", $last_modified)." GMT");
     
+    $diagram_revisions_json = json_encode(file($path, FILE_IGNORE_NEW_LINES | FILE_SKIP_EMPTY_LINES), JSON_UNESCAPED_UNICODE);
+    
     if (!empty($_SERVER["HTTP_ACCEPT_ENCODING"]) && strpos($_SERVER["HTTP_ACCEPT_ENCODING"], "gzip") !== FALSE) {
         header("Content-Encoding: gzip");
-        print gzencode(file_get_contents($path));
+        print gzencode($diagram_revisions_json);
     } else {
-        readfile($path);
+        print $diagram_revisions_json;
     }
 }
