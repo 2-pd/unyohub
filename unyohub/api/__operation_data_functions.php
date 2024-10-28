@@ -1,16 +1,11 @@
 <?php
 function load_railroad_data ($id) {
     global $railroad_id;
-    global $railroad_info;
     global $db_obj;
     
     $railroad_id = basename($id);
     
-    $base_path = "../data/".$railroad_id."/";
-    
-    $railroad_info = json_decode(file_get_contents($base_path."railroad_info.json"), TRUE);
-    
-    $db_obj = new SQLite3($base_path."railroad.db");
+    $db_obj = new SQLite3("../data/".$railroad_id."/railroad.db");
     $db_obj->busyTimeout(5000);
 }
 
@@ -25,59 +20,91 @@ function connect_moderation_db () {
     }
 }
 
-function get_operation_table ($ts) {
-    global $railroad_info;
+$diagram_revisions = NULL;
+$diagram_revision = NULL;
+$diagram_info = NULL;
+
+function update_diagram_revision ($ts) {
+    global $railroad_id;
+    global $diagram_revisions;
+    global $diagram_revision;
+    global $diagram_info;
     
-    $toshi = date("Y", $ts);
-    
-    $holiday_list = ["1/1", "2/11", "2/23", "4/29", "5/3", "5/4", "5/5", "8/11", "11/3", "11/23"];
-    $happy_monday_list = ["1-second", "7-third", "9-third", "10-second"];
-    
-    $holiday_list[] = "3/".floor(20.8431 + 0.242194 * ($toshi - 1980)) - floor(($toshi - 1980) / 4);
-    $shubun = floor(23.2488 + 0.242194 * ($toshi - 1980)) - floor(($toshi - 1980) / 4);
-    $holiday_list[] = "9/".$shubun;
-    
-    for ($hm_cnt = 0; $hm_cnt < count($happy_monday_list); $hm_cnt++) {
-        $bunkatsu = explode("-", $happy_monday_list[$hm_cnt]);
-        
-        $holiday_list[] = $bunkatsu[0]."/".date("j", strtotime($bunkatsu[1]." Monday of ".$toshi."-".$bunkatsu[0]));
+    if (is_null($diagram_revisions)) {
+        $diagram_revisions = file("../data/".$railroad_id."/diagram_revisions.txt", FILE_IGNORE_NEW_LINES | FILE_SKIP_EMPTY_LINES);
     }
     
-    for ($h_cnt = 0; $h_cnt < count($holiday_list); $h_cnt++) {
-        if (date("D", strtotime($toshi."/".$holiday_list[$h_cnt])) === "Sun") {
-            $bunkatsu = explode("/", $holiday_list[$h_cnt]);
+    $date_str = date("Y-m-d", $ts);
+    for ($cnt = 0; isset($diagram_revisions[$cnt]); $cnt++) {
+        if ($diagram_revisions[$cnt] <= $date_str) {
+            if ($diagram_revision !== $diagram_revisions[$cnt]) {
+                $diagram_revision = $diagram_revisions[$cnt];
+                $diagram_info = json_decode(file_get_contents("../data/".$railroad_id."/".$diagram_revision."/diagram_info.json"), TRUE);
+            }
             
-            $furikae_cnt = 0;
-            do {
-                $furikae_cnt++;
-                $hizuke = $bunkatsu[0]."/".(intval($bunkatsu[1]) + $furikae_cnt);
-            } while (array_search($hizuke, $holiday_list) !== FALSE);
-            
-            $holiday_list[] = $hizuke;
+            return TRUE;
         }
     }
     
-    if (array_search("9/".($shubun - 2), $holiday_list) !== FALSE) {
-        $holiday_list[] = "9/".($shubun - 1);
+    return FALSE;
+}
+
+function get_diagram_id ($ts) {
+    global $diagram_info;
+    
+    $year = date("Y", $ts);
+    
+    $holiday_list = ["01-01", "02-11", "02-23", "04-29", "05-03", "05-04", "05-05", "08-11", "11-03", "11-23"];
+    $happy_monday_list = [["01", "second"], ["07", "third"], ["09", "third"], ["10", "second"]];
+    
+    $holiday_list[] = "03-".floor(20.8431 + 0.242194 * ($year - 1980)) - floor(($year - 1980) / 4);
+    $shubun = floor(23.2488 + 0.242194 * ($year - 1980)) - floor(($year - 1980) / 4);
+    $holiday_list[] = "09-".$shubun;
+    
+    for ($hm_cnt = 0; $hm_cnt < count($happy_monday_list); $hm_cnt++) {
+        $holiday_list[] = $happy_monday_list[$hm_cnt][0]."-".date("d", strtotime($happy_monday_list[$hm_cnt][1]." Monday of ".$year."-".$happy_monday_list[$hm_cnt][0]));
     }
     
-    $today = date("n/j", $ts);
+    for ($h_cnt = 0; $h_cnt < count($holiday_list); $h_cnt++) {
+        if (date("D", strtotime($year."-".$holiday_list[$h_cnt])) === "Sun") {
+            $furikae_cnt = 0;
+            do {
+                $furikae_cnt++;
+                $furikae_date = substr($holiday_list[$h_cnt], 0, 2)."-".str_pad(intval(substr($holiday_list[$h_cnt], 3)) + $furikae_cnt, 2, "0", STR_PAD_LEFT);
+            } while (array_search($furikae_date, $holiday_list) !== FALSE);
+            
+            $holiday_list[] = $furikae_date;
+        }
+    }
+    
+    if (array_search("09-".($shubun - 2), $holiday_list) !== FALSE) {
+        $holiday_list[] = "09-".($shubun - 1);
+    }
+    
     $today_mm_dd = date("m-d", $ts);
-    if (array_key_exists($today_mm_dd, $railroad_info["operations_by_date"])) {
-        return $railroad_info["operations_by_date"][$today_mm_dd];
-    } elseif (array_search($today, $holiday_list) !== FALSE) {
-        return $railroad_info["operations_by_day"][0];
+    if (array_search($today_mm_dd, $holiday_list) !== FALSE) {
+        $day_index = 0;
     } else {
-        return $railroad_info["operations_by_day"][intval(date("w", $ts))];
+        $day_index = intval(date("w", $ts));
+    }
+    
+    $today = date("Y", $ts)."-".$today_mm_dd;
+    foreach ($diagram_info["diagram_schedules"] as $diagram_schedule) {
+        foreach ($diagram_schedule["periods"] as $period) {
+            if ($period["start_date"] <= $today && (is_null($period["end_date"]) || $period["end_date"] >= $today)) {
+                return $diagram_schedule["diagrams_by_day"][$day_index];
+            }
+        }
     }
 }
 
 function get_operation_info ($ts, $operation_number) {
     global $db_obj;
+    global $diagram_revision;
     
-    $operation_table = get_operation_table($ts);
+    $diagram_id = get_diagram_id($ts);
     
-    $operation_data = $db_obj->querySingle("SELECT * FROM `unyohub_operations` WHERE `operation_table` = '".$operation_table."' AND `operation_number` = '".$db_obj->escapeString($operation_number)."'", TRUE);
+    $operation_data = $db_obj->querySingle("SELECT * FROM `unyohub_operations` WHERE `diagram_revision` = '".$diagram_revision."' AND `diagram_id` = '".$diagram_id."' AND `operation_number` = '".$db_obj->escapeString($operation_number)."'", TRUE);
     
     if (empty($operation_data)) {
         print "ERROR: 運用番号が不正です";
@@ -247,12 +274,14 @@ function update_data_cache ($operation_date, $operation_number, $formations, $up
 
 function update_next_day_data ($today_ts, $starting_location, $starting_track, $formations, $posted_datetime, $formation_list = NULL, $from_beginner = NULL, $is_quotation = NULL) {
     global $db_obj;
+    global $diagram_revision;
     
     $next_day_ts = $today_ts + 86400;
     
-    $operation_table = get_operation_table($next_day_ts);
+    update_diagram_revision($next_day_ts);
+    $diagram_id = get_diagram_id($next_day_ts);
     
-    $operation_number = $db_obj->querySingle("SELECT `operation_number` FROM `unyohub_operations` WHERE `operation_table` = '".$operation_table."' AND `starting_location` = '".$db_obj->escapeString($starting_location)."' AND `starting_track` = '".$db_obj->escapeString($starting_track)."'");
+    $operation_number = $db_obj->querySingle("SELECT `operation_number` FROM `unyohub_operations` WHERE `diagram_revision` = '".$diagram_revision."' AND `diagram_id` = '".$diagram_id."' AND `starting_location` = '".$db_obj->escapeString($starting_location)."' AND `starting_track` = '".$db_obj->escapeString($starting_track)."'");
     
     if (!empty($operation_number)) {
         $operation_date = date("Y-m-d", $next_day_ts);
@@ -267,6 +296,8 @@ function revoke_post ($wakarana, $operation_date_ts, $operation_number, $post_us
     global $railroad_id;
     global $db_obj;
     global $moderation_db_obj;
+    
+    update_diagram_revision($operation_date_ts);
     
     $operation_data = get_operation_info($operation_date_ts, $operation_number);
     
@@ -351,7 +382,10 @@ function revoke_post ($wakarana, $operation_date_ts, $operation_number, $post_us
         }
         
         if (!empty($operation_data["starting_track"])) {
-            $previous_day_data = $db_obj->querySingle("SELECT `unyohub_data_caches`.`formations`, `unyohub_data_caches`.`from_beginner`, `unyohub_data_caches`.`is_quotation` FROM `unyohub_operations`, `unyohub_data_caches` WHERE `unyohub_operations`.`operation_table` = '".$db_obj->escapeString(get_operation_table($operation_date_ts - 86400))."' AND `unyohub_operations`.`terminal_location` = '".$db_obj->escapeString($operation_data["starting_location"])."' AND `unyohub_operations`.`terminal_track` = '".$db_obj->escapeString($operation_data["starting_track"])."' AND `unyohub_data_caches`.`operation_date` = '".date("Y-m-d", $operation_date_ts - 86400)."' AND `unyohub_data_caches`.`operation_number` = `unyohub_operations`.`operation_number`", TRUE);
+            $previous_day_ts = $operation_date_ts - 86400;
+            update_diagram_revision($previous_day_ts);
+            
+            $previous_day_data = $db_obj->querySingle("SELECT `unyohub_data_caches`.`formations`, `unyohub_data_caches`.`from_beginner`, `unyohub_data_caches`.`is_quotation` FROM `unyohub_operations`, `unyohub_data_caches` WHERE `unyohub_operations`.`diagram_id` = '".$db_obj->escapeString(get_diagram_id($previous_day_ts))."' AND `unyohub_operations`.`terminal_location` = '".$db_obj->escapeString($operation_data["starting_location"])."' AND `unyohub_operations`.`terminal_track` = '".$db_obj->escapeString($operation_data["starting_track"])."' AND `unyohub_data_caches`.`operation_date` = '".date("Y-m-d", $previous_day_ts)."' AND `unyohub_data_caches`.`operation_number` = `unyohub_operations`.`operation_number`", TRUE);
             
             if (!empty($previous_day_data)) {
                 update_data_cache($operation_date, $operation_number, $previous_day_data["formations"], $posted_datetime, explode("+", $previous_day_data["formations"]), 0, FALSE, FALSE, $previous_day_data["from_beginner"], $previous_day_data["is_quotation"]);

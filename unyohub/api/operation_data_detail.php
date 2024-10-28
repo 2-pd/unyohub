@@ -30,6 +30,7 @@ for ($cnt = 0; $cnt < count($operation_numbers); $cnt++) {
             "user_id" => NULL,
             "user_name" => NULL,
             "formations" => $operation["formations"],
+            "train_number" => $operation["train_number"],
             "posted_datetime" => $operation["posted_datetime"],
             "comment" => $operation["comment"]
         );

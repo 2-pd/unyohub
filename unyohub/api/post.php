@@ -73,6 +73,7 @@ if ($ts < $ts_now - 183600) {
 
 $operation_date = date("Y-m-d", $ts);
 
+update_diagram_revision($ts);
 
 $operation_data = get_operation_info($ts, $_POST["operation_number"]);
 
@@ -81,6 +82,18 @@ if (!empty($_POST["is_quotation"]) && $_POST["is_quotation"] === "YES") {
     $is_quotation = TRUE;
 } else {
     $is_quotation = FALSE;
+}
+
+
+if (!empty($_POST["train_number"])) {
+    $train_number_q = "'".$db_obj->escapeString($_POST["train_number"])."'";
+} else {
+    if (!$is_quotation) {
+        print "ERROR: 列車番号が指定されていません";
+        exit;
+    }
+    
+    $train_number_q = "NULL";
 }
 
 
@@ -157,7 +170,7 @@ if ($config["log_ip_address"]) {
 
 $posted_datetime = $posted_date." ".date("H:i:s", $ts_now);
 
-$db_obj->query("INSERT OR REPLACE INTO `unyohub_data` (`operation_date`, `operation_number`, `user_id`, `formations`, `is_quotation`, `posted_datetime`, `comment`, `ip_address`) VALUES ('".$operation_date."', '".$operation_number."', '".$db_obj->escapeString($user_id)."', '".$db_obj->escapeString($formations)."', ".intval($is_quotation).", '".$posted_datetime."', '".$db_obj->escapeString($comment)."', ".$ip_address_q.")");
+$db_obj->query("INSERT OR REPLACE INTO `unyohub_data` (`operation_date`, `operation_number`, `user_id`, `train_number`, `formations`, `is_quotation`, `posted_datetime`, `comment`, `ip_address`) VALUES ('".$operation_date."', '".$operation_number."', '".$db_obj->escapeString($user_id)."', ".$train_number_q.", '".$db_obj->escapeString($formations)."', ".intval($is_quotation).", '".$posted_datetime."', '".$db_obj->escapeString($comment)."', ".$ip_address_q.")");
 
 $data_cache_values = get_data_cache_values($operation_date, $operation_number, $formation_pattern);
 
