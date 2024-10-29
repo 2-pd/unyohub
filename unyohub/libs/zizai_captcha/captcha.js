@@ -1,14 +1,15 @@
 /* Zizai CAPTCHA 23.10-2 */
 
-const ZIZAI_CAPTCHA_GENERATE_ID_ENDPOINT = "../api/zizai_captcha/generate_id.php";
-const ZIZAI_CAPTCHA_IMAGE_PATH = "../api/zizai_captcha/image.php";
+const ZIZAI_CAPTCHA_GENERATE_ID_ENDPOINT = "generate_id.php";
+const ZIZAI_CAPTCHA_IMAGE_PATH = "image.php";
 
 const ZIZAI_CAPTCHA_RELOAD_IMAGE_DARK = "data:image/webp;base64,UklGRkQCAABXRUJQVlA4TDgCAAAvX8AXENXIkSTJkZx5zKkg01FzC479xP7/MbR3tkCkswJpDZxzjmMSeCkJuwg4AAAQTGZv2bZt87Jt27brsm3btm132babgNgrYE83KONCItmUUk++pRBdzEwUPHfOUOFstZzzvzJ/rJNmmlOEH+eRxZohflWTh1I0yPkwweHJqeqzYhYz8GqJzxZMIYfca7OsFZlV0qbvjW+QZENcMkfLPRpsjF0+a+l+Ke9JlqRNa3S3Skhpez3QxGKgPZ/Zlhpuqkg/TH5BNo3uLL7Z9HSx5q2i+IfnGuKHsA4YMcHZtEb3bEIWNS9izZvDChKFLye4pvG9jMovH3FcQdbetAUb/E4wr+st9SLiLL31eBdRrHn2LnZZWfIuduCUeBdxyI93UQz58i5MhTfvklXnkhn5lvvyLfflW+7Lt9yXcwMX+lV7CU9ufr94V/WfJ/dUk8VTBM7ZdIZvLcO3luFby/DtUYZzfKDlnfjG0jvxZ1Ed0Dnp53fvxKZxeydezMY7iZGX3unbV1CutNK4nsQJdkBrTSFb0HIGfltB4gjfrALFeeT4WkaEBZxUkP5S1ivNwOsMjI/Ai9G1jHmkv9SQxK3VfjaBV0vuF2u6in8HitHZdMbiXSIr5q/KPJ8cMPH+Xmm7zbVYNdEY/b2WsWIvcbvW0mNcbsX48clYuQOaxv4GOCfoR7h4Qj53Vfih/88U0QHc3IGjWpJZ4Xc1Tqkq9gN5ePu/CJlxiSTJ8u5RYpkkmGNRnFDHXgEB";
 const ZIZAI_CAPTCHA_RELOAD_IMAGE_LIGHT = null;
 
 var zizai_captcha_dir;
 (function(){
-    var path_splitted = location.href.split("/"); //captcha.jsから改変
+    var script_elms = document.getElementsByTagName("script");
+    var path_splitted = script_elms[script_elms.length - 1].src.split("/");
     path_splitted[path_splitted.length - 1] = "";
     
     zizai_captcha_dir = path_splitted.join("/");

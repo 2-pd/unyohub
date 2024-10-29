@@ -1,7 +1,7 @@
 <?php
 define("ZIZAI_CAPTCHA_CONFIG_PATH", "../../config/zizai_captcha_config.json");
 
-include "../../libs/zizai_captcha/main.php";
+include "main.php";
 
 $zc = new zizai_captcha(ZIZAI_CAPTCHA_CONFIG_PATH);
 

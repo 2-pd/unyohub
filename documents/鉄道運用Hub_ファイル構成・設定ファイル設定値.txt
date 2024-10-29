@@ -16,10 +16,13 @@ _/_/_/_/ 構成概要 _/_/_/_/
 _/_/_/_/ ファイル構成 _/_/_/_/
 
 /
-└ index.html ・・・アプリケーションフロントエンド本体
+└ index.html ・・・アプリケーションフロントエンドHTML
+└ main.js ・・・フロントエンド処理本体
+└ assets.css ・・・フロントエンドのスタイルシート
 └ libs/
    └ wakarana/ ・・・Wakarana一式
    └ zizai_captcha/ ・・・Zizai CAPTCHA一式
+   └ elem2img.js ・・・HTML要素画像化ライブラリ
 └ libs_data/
    └ wakarana.db ・・・Wakaranaデータベース
    └ zizai_captcha.db ・・・Zizai CAPTCHAデータベース
@@ -47,7 +50,6 @@ _/_/_/_/ ファイル構成 _/_/_/_/
          └ timetable_****.json ・・・JSONに変換された各ダイヤの時刻表データ
 └ api/
    └ ****.php ・・・クライアント端末と情報をやり取りするエンドポイント(詳細は別記)
-   └ zizai_captcha/ ・・・Zizai CAPTCHAのエンドポイント
 └ user/ ・・・ユーザー用機能
    └ user_config_common.php ・・・ユーザー設定画面共通関数等
    └ send_verification_email.php ・・・メールアドレス確認メールを送信するエンドポイント
@@ -58,7 +60,6 @@ _/_/_/_/ ファイル構成 _/_/_/_/
    └ change_password.php ・・・パスワードの変更
    └ send_password_reset_email.php ・・・パスワードリセットメールを送信する
    └ reset_password.php ・・・ユーザーのパスワードをリセットしてランダムな値を設定する
-   └ captcha.js ・・・Zizai CAPTCHAのクライアント側スクリプト
    └ user_config_styles.css ・・・ユーザー設定画面用スタイルシート
 └ admin/ ・・・管理画面
    └ admin_common.php ・・・管理画面共通関数等
@@ -83,7 +84,7 @@ _/_/_/_/ ファイル構成 _/_/_/_/
 
 _/_/_/_/ 設定ファイル設定値 _/_/_/_/
 
-███ index.html ███
+███ main.js ███
 
 ※鉄道運用Hubからフォークして新たなアプリケーションを開発する場合は必要に応じて以下の値を変更
   UNYOHUB_APP_NAME  アプリケーション名
@@ -167,7 +168,7 @@ anti_troll_garbage_size 要注意ユーザーの投稿処理を遅延させる�
                     "connecting_lines" : [ 直通路線一覧(分岐駅でなければ省略可能)
                         {
                             "line_id" : 路線識別名,
-                            "directions" : 分岐方向(「TL」(左上)、「TR」(右上)、「L」(左)、「R」(右)、「BL」(左下)、「BR」(右下))を配列で指定
+                            "directions" : 分岐方向(「TL」(左上)、「T」(上)、「TR」(右上)、「L」(左)、「R」(右)、「BL」(左下)、「B」(下)、「BR」(右下))を配列で指定
                         }...
                     ]
                 }...

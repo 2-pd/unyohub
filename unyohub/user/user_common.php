@@ -20,12 +20,12 @@ function print_header ($title = "", $load_captcha_js = FALSE, $show_close_button
         <meta name="viewport" content="width=device-width,initial-scale=1,interactive-widget=resizes-content">
         <title>{$title}</title>
         <link rel="stylesheet" href="user_styles.css">
-        <link rel="shortcut icon" href="../favicon.ico">
+        <link rel="shortcut icon" href="/favicon.ico">
     
     EOM;
     
     if ($load_captcha_js) {
-        print "    <script src=\"captcha.js\"></script>\n";
+        print "    <script src=\"/libs/zizai_captcha/captcha.js\"></script>\n";
     }
     
     print <<< EOM
