@@ -29,7 +29,12 @@
                     "station_name" : "岸里玉出",
                     "station_name_kana" : "きしのさとたまで",
                     "station_initial" : "岸",
-                    "connecting_lines" : ["shiomibashisen"]
+                    "connecting_lines" : [
+                        {
+                            "line_id" : "shiomibashisen",
+                            "directions" : ["TL"]
+                        }
+                    ]
                 },
                 {
                     "station_name" : "粉浜",
@@ -75,7 +80,12 @@
                     "station_name_kana" : "はごろも",
                     "station_initial" : "衣",
                     "is_major_station" : true,
-                    "connecting_lines" : ["takashinohamasen"]
+                    "connecting_lines" : [
+                        {
+                            "line_id" : "takashinohamasen",
+                            "directions" : ["BL"]
+                        }
+                    ]
                 },
                 {
                     "station_name" : "高石",
@@ -141,7 +151,12 @@
                     "station_name_kana" : "いずみさの",
                     "station_initial" : "佐",
                     "is_major_station" : true,
-                    "connecting_lines" : ["kukosen"]
+                    "connecting_lines" : [
+                        {
+                            "line_id" : "kukosen",
+                            "directions" : ["BL"]
+                        }
+                    ]
                 },
                 {
                     "station_name" : "羽倉崎",
@@ -183,7 +198,12 @@
                     "station_name_kana" : "みさきこうえん",
                     "station_initial" : "み",
                     "is_major_station" : true,
-                    "connecting_lines" : ["tanagawasen"]
+                    "connecting_lines" : [
+                        {
+                            "line_id" : "tanagawasen",
+                            "directions" : ["BL"]
+                        }
+                    ]
                 },
                 {
                     "station_name" : "孝子",
@@ -198,14 +218,24 @@
                     "station_name" : "紀ノ川",
                     "station_name_kana" : "きのかわ",
                     "station_initial" : "紀",
-                    "connecting_lines" : ["kadasen"]
+                    "connecting_lines" : [
+                        {
+                            "line_id" : "kadasen",
+                            "directions" : ["TL"]
+                        }
+                    ]
                 },
                 {
                     "station_name" : "和歌山市",
                     "station_name_kana" : "わかやまし",
                     "station_initial" : "市",
                     "is_major_station" : true,
-                    "connecting_lines" : ["wakayamakosen"]
+                    "connecting_lines" : [
+                        {
+                            "line_id" : "wakayamakosen",
+                            "directions" : ["B"]
+                        }
+                    ]
                 }
             ]
         },
@@ -221,7 +251,12 @@
                     "station_name_kana" : "いずみさの",
                     "station_initial" : "佐",
                     "is_major_station" : true,
-                    "connecting_lines" : ["honsen"]
+                    "connecting_lines" : [
+                        {
+                            "line_id" : "honsen",
+                            "directions" : ["TL", "BR"]
+                        }
+                    ]
                 },
                 {
                     "station_name" : "りんくうタウン",
@@ -269,7 +304,12 @@
                     "station_name" : "岸里玉出",
                     "station_name_kana" : "きしのさとたまで",
                     "station_initial" : "岸",
-                    "connecting_lines" : ["honsen"]
+                    "connecting_lines" : [
+                        {
+                            "line_id" : "honsen",
+                            "directions" : ["TR", "BL"]
+                        }
+                    ]
                 }
             ]
         },
@@ -285,7 +325,12 @@
                     "station_name_kana" : "はごろも",
                     "station_initial" : "衣",
                     "is_major_station" : true,
-                    "connecting_lines" : ["honsen"]
+                    "connecting_lines" : [
+                        {
+                            "line_id" : "honsen",
+                            "directions" : ["TL", "BR"]
+                        }
+                    ]
                 },
                 {
                     "station_name" : "伽羅橋",
@@ -311,7 +356,12 @@
                     "station_name_kana" : "みさきこうえん",
                     "station_initial" : "み",
                     "is_major_station" : true,
-                    "connecting_lines" : ["honsen"]
+                    "connecting_lines" : [
+                        {
+                            "line_id" : "honsen",
+                            "directions" : ["TL", "BR"]
+                        }
+                    ]
                 },
                 {
                     "station_name" : "深日町",
@@ -340,7 +390,12 @@
                     "station_name" : "紀ノ川",
                     "station_name_kana" : "きのかわ",
                     "station_initial" : "紀",
-                    "connecting_lines" : ["honsen"]
+                    "connecting_lines" : [
+                        {
+                            "line_id" : "honsen",
+                            "directions" : ["TR", "BL"]
+                        }
+                    ]
                 },
                 {
                     "station_name" : "梶取",
@@ -390,7 +445,12 @@
                     "station_name_kana" : "わかやまし",
                     "station_initial" : "市",
                     "is_major_station" : true,
-                    "connecting_lines" : ["honsen"]
+                    "connecting_lines" : [
+                        {
+                            "line_id" : "honsen",
+                            "directions" : ["T"]
+                        }
+                    ]
                 },
                 {
                     "station_name" : "和歌山港",
@@ -402,37 +462,6 @@
         }
     },
     "lines_order" : ["honsen", "kukosen", "shiomibashisen", "takashinohamasen", "tanagawasen", "kadasen", "wakayamakosen"],
-    "operations" : {
-        "weekday" : {
-            "operation_name" : "平日ダイヤ",
-            "main_color" : "#99ddff"
-        },
-        "holiday" : {
-            "operation_name" : "休日ダイヤ",
-            "main_color" : "#ffbbdd"
-        },
-        "new_year" : {
-            "operation_name" : "正月ダイヤ",
-            "main_color" : "#ffbbdd"
-        }
-    },
-    "operations_order" : ["weekday", "holiday", "new_year"],
-    "operations_by_day" : [
-        "holiday",
-        "weekday",
-        "weekday",
-        "weekday",
-        "weekday",
-        "weekday",
-        "holiday"
-    ],
-    "operations_by_date" : {
-        "01-01" : "new_year",
-        "01-02" : "new_year",
-        "01-03" : "new_year",
-        "12-30" : "holiday",
-        "12-31" : "holiday"
-    },
     "train_color_rules" : [
         {"pattern": "^0", "color": "#ff0000"},
         {"pattern": "^(1|2)", "color": "#ff6600"},

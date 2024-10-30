@@ -2,17 +2,17 @@ const UNYOHUB_APP_ID = "unyohub";
 const UNYOHUB_VERSION = "24.10-1";
 
 var files_to_cache = [
-        "./",
-        "main.js",
-        "assets.css",
-        "libs/zizai_captcha/captcha.js",
-        "libs/elem2img.js",
-        "apple-touch-icon.webp",
-        "maskable_icon.webp",
-        "monochrome_icon.webp",
-        "favicon.ico",
-        "splash_screen_image.webp",
-        "README.html"
+        "/",
+        "/main.js",
+        "/assets.css",
+        "/libs/zizai_captcha/captcha.js",
+        "/libs/elem2img.js",
+        "/apple-touch-icon.webp",
+        "/maskable_icon.webp",
+        "/monochrome_icon.webp",
+        "/favicon.ico",
+        "/splash_screen_image.webp",
+        "/README.html"
     ];
 
 var new_cache_name = UNYOHUB_APP_ID + "_v" + UNYOHUB_VERSION;

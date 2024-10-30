@@ -562,31 +562,31 @@ header {
 }
 
 #tab_position_mode {
-    border-color: #ee3333;
+    border-color: #ee3333 !important;
     
     background-image: url(data:image/webp;base64,UklGRuICAABXRUJQVlA4TNYCAAAvNUANEP/jIJJkV+n9gZxBAq6xyn9rA1Jk266q3o/MFHRQqMYJcxzgIP4c7jkOG0lylJo3eA8hkDWp8jeuattWlXUe7trASUAUK8SgBbXsn8/nLjuAZrCvb2dvr/l9nne0zHeKtVYZYgUNW2QKgqZAqCEIQo0GDYQCFQRBEBIIJSoUEAJhmoss4qCj/eGLpOrAMIHB0BIGgw9VHa0jhto5yUYxsTfXGRnm3ykdRdSpXcMaNplqSHS0ISxTfv68d9nF/gURtv9teHg7JBnhUx96aPt+vr+WWiZO2MYWtTv7///jz/5zmWczSbgf73Qqp68T6XD4OZDkOWq4v93vIbBiAhdoaChouEHDL1yhkLeg0C4QBEG4J9Go4aADM0AQALaQ1LNvbZxt27Zt2/bb77ZNk9wHphH9h+BGkiLJmbnMe/AHgctSX1Nhl9PqMo39S4Itc9UBG5CuqjkmQ2GbJtERDnGVdps2pj6ezJTYUCknt86GTBv1HjYs+yjtiaJoVjiVosZGSBXBUgCQeXpxay7OMgGdS3iTNlXG9Z2UqwybmgG8duD035RmqhrwClSnd0DOVB14AdUl5By4As+luoXcqtx4XpQblQ8vh3YmF69MdYa6SSneBPBAV5gHmsDrdQA/XVf6ny5HksCnGPpJPju/NRb4k1wkCMZshAxTJHbiBRIEJa14RpB0+7F8yf/z96pWEPV4cTxJgpp2nCZBNuXFMFOCnmaMFpb/SVG9UIrgyITeuGARn6+Tx/Wvc1Dz38wMCiYfJ7DjH669P6RD0u7ffpj2bK4g18b8lmnmcUE1//gcK8+eNneyZNm7209SyVNeW4WsXVif8kvhmTUdiQl2C6DUvW4cxbIcsyy9hLVXqdR7HMhZtFnmQI5yB5ZZ+7Mzewe64veyfghkxToEsipfiX808veDH7nYMRT1aMRsPen6pY6p+rFVN8aqe/sWbH8ppELj7Q8=);
 }
 
 #tab_timetable_mode {
-    border-color: #eebb33;
+    border-color: #eebb33 !important;
     
     background-image: url(data:image/webp;base64,UklGRmgEAABXRUJQVlA4TFsEAAAvNUANEA8GOZIkRZLn8n9t9RdiNcJ7MWOlGo4jSXKU7JO/swabsJvghwFabEOOJNlVVP2QDmAJRnHGZU6a1fv1FNzatlVV8+BEN6MWOqRJIo/0u9z3doCW+np1I2ohQlWQsdbKNGgWCJX+P42xlcTvd9Kq1f9/MaPMKK1WW6myO3oIlRKka1+9ojQL9Ds+lWpUBf3rKF7uTxQRGr0qlBJFiijWFMnany8yQ8sVsRIxQ21j7rBogUTTUZWffkEqFCFoFkg1JvAHgT8IBAIjBAJ/EBigQyDBDFrLf8NfsIfgJFqpHQ6DSiiYwhcMEDJV5glz8QdecCii9CJKh1dY0Bq+F0gllQizoMLS/EIr5srVxC0stVeeI0kyW4Q338z+lmkdNMkspSlbMgibsP4ndnN8H9/scnAYXZjtnb8jYqujSVfa8N+jSYBQx0p/ay2I+YNoVVK02u47SSSxmBpzJxPub53T9aLVz2f0/R7cnU/T4+k4QKK2bWcjff8/tjJaj7G2beNb27Zt27a928039rHlTfrn3xOI6P8EkMn2B0cPbFm7ceHCjeu2HDj6QJGN7Td3ruAoVx680R7WyxNr2ei6qy/DUJdWsfHVZ5Wx+9s51C0vDF1fxiEvvmBCHeGAc/q8+/474rp/f31/22+2H/MTFdXr3ew/8FNERKSptbVJRCTycbAf73odhTrIvoN+iIi49QUdHR0dsUnZuYX17pchPrxHBTvCeMYHV0Rq85K19miYnFf7fhbiJ4FOMx75U0Rqc7Q3iNbaaRiF+FyA+4vRgD8ikfxYbULHdhqBlrzwUVsZ9v8nUpOlfaPROnMC4O0KXWY48o9IXbI2p9OnAT4P3qwCM3+K1CXpMHTXeWDzS89xhh9EapJ1OLoS8Bkial8LBrkSydJhxU0B6xXRI4Y/RPJ1aLoY8EOinWCgSG2sBTGTwTNSK8EnkRxtga4Am9Rd9s6JSK22InWBh28fBb1F8uzQ48C1veCduMmW9AT7toFvUq8tKQU7NoDfUmBLEVi7HPxtanKMBNdaO66TDlYuBG5rW7MNLW3NiWDR/7Ic/GlyHRuciJMBVm4AvyVWW1oE1m4DnyXJljKw4wB4K9m29AL7j4K+4tgyFly7C2ZHCi1JXQDuqJUe/lhvSQV7Nyk6CIa7SVbETAF7iW4C/ppnRQnDW0Tt68DQWhviJ4H1ioiuAn7vWFDN8CQR0cvVYG5jbGjd5oE1rzx0EfDozmFlTGd4hfAOwMMyw0mZyHCb8nmxBPD4jDBSxzBceo/8TyGe1t1cj+mML1DQJ4jnV8b7OS0tjl981XzGTymweo6YJxXHILetzUUxJVPZ95AKRq93+TBPLk/1OC3Njie1Ygr7H3xN0aonfswLxvUsLUpLSEjrUtZz7AIO+FSRwcfL/EwvuUJmX2wNZ8c9Mq3ObTa35gqF+erMOjPrT76ikNXDZ5ui2XT4liIb1e1j+3asX75w4Yr1O/Zdu6PIJAA=);
 }
 
 #tab_operation_data_mode {
-    border-color: #33cc66;
+    border-color: #33cc66 !important;
     
     background-image: url(data:image/webp;base64,UklGRr4AAABXRUJQVlA4TLIAAAAvNUANEEdAJmCxGFJp7qSKKmYCkNFB/yI6OP0SeHdOTSMp0Kk5/0au5BVAcEDJ/AeA323Mu/i3jVikZhIYRZKkaC0cGTgJ6+RIABugsbC6eXqPfxH9Z+C2bSN27/buF0IHpZRgHfAgkkRLkiR4AK7SiiQJHRADEWmBA6Louk4LHBADMzyORYekX3zhLOD3/Id/IUlKEyRiBUhidlsll1UCVjZTAlY+XQJWgCTA5kGMEIEA);
 }
 
 #tab_formation_table_mode {
-    border-color: #0066dd;
+    border-color: #0066dd !important;
     
     background-image: url(data:image/webp;base64,UklGRpQBAABXRUJQVlA4TIcBAAAvNUANEK/BoJEkRbUn4wWeitf6eQfMtDYYNJKkqPa0nJLX/xo+74CZlkEjSYpqz8D7F/NSyAEzLdta2158cuhypoqdWQxiOwNYwD+ANlNSpjdAVYPaDtR1rTgMw4sXPy5kmVkjL6UAKtLMNMDDhZ6ZXynle9+3zczzPM97WRZpnufnOI7q//8/M0fcAIAPPb6IAKTv+5rMpIhI5nmeMpP6vg/+/+ewYgPAIgJg//8DQ0SgbequqRUZXEmSpCoLPFfc3d25/+FWnj/gryei/4zctnEknabtassr2Be03SBkUGWbGsgWSLPKMbQWNHIEUquq+RqCnniOk1JVp67pHgPgGlrTEkilKlS8K5u0UCR+VVZkNchoSzYXyvrvqv4cvgFIVwJSihD4ANKVAKQT8YdRMCs/hvS1ZOdTBl4YrllwY7hnwYPhuRtRV1NJI9qriZX1YjisR9RX0ifaqImVdWTAmASn6gRJJMlaiSyVCRJIlDWYcWZbZYIEkmVtFxPMh+oEScTO+mICAA==);
 }
 
 #tab_operation_table_mode {
-    border-color: #9933cc;
+    border-color: #9933cc !important;
     
     background-image: url(data:image/webp;base64,UklGRmQAAABXRUJQVlA4TFcAAAAvNUANEB8gECDs6xFnRUhA+P9NtEUVEhD+D1VFdf4D8C9pwCiSrFYEDehJGliP1LOBLarmDD8eI/ovICj0wAx3mQVMIC8gPj23ZZhZk5S6JP/0fuifqzgA);
 }
@@ -714,12 +714,14 @@ article {
     
     max-width: 500px;
     
-    margin: 0 auto;
+    margin: 10px auto ;
     
-    border-collapse: collapse;
+    border-spacing: 0;
 }
 
 #position_area th, #position_area td {
+    position: relative;
+    
     height: 80px;
     
     padding: 0;
@@ -740,8 +742,6 @@ article {
 }
 
 #position_area th {
-    position: relative;
-    
     width: 70px;
     height: 82px;
     
@@ -815,73 +815,21 @@ article {
     line-height: 20px;
 }
 
-.connecting_line_button {
-    display: block;
-    
-    position: absolute;
-    top: 20px;
-    left: -5px;
-    
-    width: 100%;
-    height: 36px;
-    
-    padding-left: 5px;
-    
-    border-color: #999999;
-    
-    line-height: 18px;
-    font-size: 14px;
-    color: #666666;
-    
-    overflow-y: hidden;
-}
-
-.dark_mode .connecting_line_button {
-    color: #eeeeee;
-}
-
-.connecting_line_button:before, .connecting_line_button:after {
-    content: "";
-    
-    display: block;
-    
-    position: absolute;
-    top: 0;
-    left: 0;
-    
-    width: 4px;
-    height: 36px;
-    
-    border-left: 4px solid;
-}
-
-.connecting_line_button:before {
-    border-color: inherit;
-}
-
-.connecting_line_button:after {
-    border-image: linear-gradient(to bottom, transparent, rgba(255, 255, 255, 0.5)) 1;
-}
-
 .position_inbound, .position_outbound {
-    position: relative;
-    
     width: calc(50% - 45px);
 }
 
 .position_line {
-    position: relative;
-    
     width: 20px;
     
     border-top: 2px solid currentColor;
 }
 
-#position_area tr:not(:first-child):not(:last-child) .position_line, .position_row_no_station .position_line {
+#position_area tr:not(:first-child):not(:last-child) .position_line {
     background-color: currentColor;
 }
 
-#position_area tr:not(:first-child) .position_line:before {
+#position_area tr:not(:first-child):not(.position_row_no_station) .position_line:not(.position_line_signal_station):before {
     content: "";
     
     position: absolute;
@@ -895,6 +843,8 @@ article {
     
     border: 1px solid #eeeeee;
     border-radius: 5px;
+    
+    z-index: 2;
 }
 
 .dark_mode #position_area tr:not(:first-child) .position_line:before {
@@ -903,11 +853,11 @@ article {
     border-color: #555555;
 }
 
-#position_area tr .position_line.position_line_signal_station:before {
-    display: none;
+#position_area .position_row_no_station .position_inbound, #position_area .position_row_no_station .position_outbound {
+    border-color: transparent;
 }
 
-#position_area tr:not(:first-child) .position_line.position_line_major_station:before {
+#position_area tr:not(:first-child):not(.position_row_no_station) .position_line.position_line_major_station:before {
     top: -8px;
     left: 3px;
     
@@ -916,6 +866,199 @@ article {
     
     border-width: 2px;
     border-radius: 7px;
+}
+
+#position_area tr:has(+ .position_row_junction_T) th, #position_area tr:has(+ .position_row_junction_T) td {
+    padding-bottom: 30px;
+}
+
+#position_area tr:has(+ .position_row_junction_LR:not(.position_row_junction_T)) th, #position_area tr:has(+ .position_row_junction_T) td {
+    padding-bottom: 10px;
+}
+
+#position_area .position_row_junction_B th, #position_area .position_row_junction_B td {
+    padding-top: 30px;
+}
+
+#position_area .position_row_junction_LR:not(.position_row_junction_B) th, #position_area .position_row_junction_LR:not(.position_row_junction_B) td {
+    padding-top: 10px;
+}
+
+.connecting_line_T, .connecting_line_B, .connecting_line_TL, .connecting_line_TR, .connecting_line_L, .connecting_line_R, .connecting_line_BL, .connecting_line_BR {
+    display: block;
+    
+    position: absolute;
+    
+    background-color: currentColor;
+    
+    font-size: 14px;
+    text-decoration: none;
+    
+    z-index: 1;
+}
+
+.connecting_line_T, .connecting_line_B {
+    left: 0;
+    
+    width: 20px;
+    height: 80px;
+}
+
+.connecting_line_T div, .connecting_line_B div {
+    position: absolute;
+    
+    width: fit-content;
+    
+    white-space: nowrap;
+}
+
+.dark_mode .connecting_line_T div, .dark_mode .connecting_line_B div {
+    color: #cccccc;
+}
+
+.connecting_line_T {
+    top: -81px;
+    
+    background-image: linear-gradient(to bottom, #ffffff 0, transparent 40px);
+}
+
+.dark_mode .connecting_line_T {
+    background-image: linear-gradient(to bottom, #444444 0, transparent 40px);
+}
+
+.connecting_line_T div {
+    top: 0;
+    right: 30px;
+    
+    text-align: right;
+}
+
+.connecting_line_B {
+    top: -1px;
+    
+    background-image: linear-gradient(to top, #ffffff 0, transparent 40px);
+}
+
+.dark_mode .connecting_line_B {
+    background-image: linear-gradient(to top, #444444 0, transparent 40px);
+}
+
+.connecting_line_B div {
+    bottom: 0;
+    left: 30px;
+}
+
+.connecting_line_TL, .connecting_line_TR, .connecting_line_L, .connecting_line_R, .connecting_line_BL, .connecting_line_BR {
+    width: min(155px, calc(50vw - 100px));
+    height: 20px;
+}
+
+.connecting_line_TL:after, .connecting_line_TR:before, .connecting_line_BL:after, .connecting_line_BR:before {
+    content: "";
+    
+    display: block;
+    
+    position: absolute;
+    
+    width: 30px;
+    height: 30px;
+    
+    background-color: currentColor;
+}
+
+.connecting_line_TL, .connecting_line_TR {
+    top: -31px;
+}
+
+.connecting_line_L, .connecting_line_R {
+    top: -11px;
+    
+    width: min(165px, calc(50vw - 90px));
+}
+
+.connecting_line_BL, .connecting_line_BR {
+    top: 9px;
+}
+
+.connecting_line_TL, .connecting_line_BL {
+    right: 30px;
+}
+
+.connecting_line_TR, .connecting_line_BR {
+    left: 30px;
+}
+
+.connecting_line_TL, .connecting_line_L, .connecting_line_BL {
+    padding-left: 20px;
+    
+    background-image: linear-gradient(to right, #ffffff 0, transparent 40px);
+}
+
+.dark_mode .connecting_line_TL, .dark_mode .connecting_line_L, .dark_mode .connecting_line_BL {
+    background-image: linear-gradient(to right, #444444 0, transparent 40px);
+}
+
+.connecting_line_TR, .connecting_line_R, .connecting_line_BR {
+    padding-right: 20px;
+    
+    background-image: linear-gradient(to left, #ffffff 0, transparent 40px);
+}
+
+.dark_mode .connecting_line_TR, .dark_mode .connecting_line_R, .dark_mode .connecting_line_BR {
+    background-image: linear-gradient(to left, #444444 0, transparent 40px);
+}
+
+.connecting_line_L {
+    right: 20px;
+}
+
+.connecting_line_R {
+    left: 20px;
+}
+
+.connecting_line_TL:after {
+    top: 0;
+    left: 100%;
+    
+    mask-image: radial-gradient(at bottom left, transparent 10px, #000000 10px);
+    
+    border-radius: 0 30px 0 0;
+}
+
+.connecting_line_TR:before {
+    top: 0;
+    right: 100%;
+    
+    mask-image: radial-gradient(at bottom right, transparent 10px, #000000 10px);
+    
+    border-radius: 30px 0 0 0;
+}
+
+.connecting_line_BL:after {
+    bottom: 0;
+    left: 100%;
+    
+    mask-image: radial-gradient(at top left, transparent 10px, #000000 10px);
+    
+    border-radius: 0 0 30px 0;
+}
+
+.connecting_line_BR:before {
+    bottom: 0;
+    right: 100%;
+    
+    mask-image: radial-gradient(at top right, transparent 10px, #000000 10px);
+    
+    border-radius: 0 0 0 30px;
+}
+
+.connecting_line_TL div, .connecting_line_TR div, .connecting_line_L div, .connecting_line_R div, .connecting_line_BL div, .connecting_line_BR div {
+    max-width: 100%;
+    
+    color: #ffffff;
+    text-align: center;
+    white-space: nowrap;
+    overflow: hidden;
 }
 
 .position_inbound div, .position_outbound div {
@@ -927,7 +1070,7 @@ article {
     line-height: 25px;
     text-decoration: none;
     
-    z-index: 1;
+    z-index: 3;
 }
 
 .position_inbound b, .position_outbound b {
@@ -969,6 +1112,14 @@ article {
     text-align: right;
 }
 
+.position_row_junction_LR:not(.position_row_junction_B) .position_inbound div {
+    top: 9px;
+}
+
+.position_row_junction_B .position_inbound div {
+    top: 29px;
+}
+
 .position_inbound .train_icon_wrapper:before {
     top: -6px;
     
@@ -986,6 +1137,14 @@ article {
 .position_outbound div {
     bottom: 0;
     left: 0;
+}
+
+tr:has(+ .position_row_junction_LR:not(.position_row_junction_T)) .position_outbound div {
+    bottom: 9px;
+}
+
+tr:has(+ .position_row_junction_T) .position_outbound div {
+    bottom: 29px;
 }
 
 .position_outbound .train_icon_wrapper:after {
