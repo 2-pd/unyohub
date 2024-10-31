@@ -5799,11 +5799,7 @@ function reset_cache_db () {
         var delete_request = indexedDB.deleteDatabase("unyohub_caches");
         
         delete_request.onsuccess = function () {
-            if (location.pathname === "/") {
-                location.reload();
-            } else {
-                location.pathname = "/";
-            }
+            reload_app();
         };
     }
 }
@@ -5832,6 +5828,19 @@ function accept_rules () {
     rules_continue_func();
     
     rules_continue_func = null;
+}
+
+
+function reload_app () {
+    wait_screen_elm.style.display = "block";
+    
+    setTimeout(function () {
+        if (location.pathname === "/") {
+            location.reload();
+        } else {
+            location.pathname = "/";
+        }
+    }, 100);
 }
 
 
