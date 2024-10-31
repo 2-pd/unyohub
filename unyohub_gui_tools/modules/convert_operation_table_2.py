@@ -202,23 +202,20 @@ def convert_operation_table_2 (mes, main_dir, file_name):
                                 mes(train_number + " の始発時刻が前の列車の終着時刻と矛盾しています: " + str(cnt + 1) + "行目 " + str(cnt_2 + 1) + "列目", True)
                                 error_occurred = True
                             
-                            if len(operations[operation_number]["trains"]) >= 1 and operations[operation_number]["trains"][-1]["train_number"] == train_number:
-                                stopped_train_number = train_number
-                            else:
-                                stopped_train_number = "_" + train_number
-                                time_id = previous_train_final_arrival_time + "-" + first_departure_time
-                                
-                                if stopped_train_number in stopped_train_list:
-                                    if time_id in stopped_train_list[stopped_train_number]:
-                                        stopped_train_index = stopped_train_list[stopped_train_number].index(time_id) + 1
-                                    else:
-                                        stopped_train_list[stopped_train_number].append(time_id)
-                                        stopped_train_index = len(stopped_train_list[stopped_train_number])
+                            stopped_train_number = "_" + train_number
+                            time_id = previous_train_final_arrival_time + "-" + first_departure_time
+                            
+                            if stopped_train_number in stopped_train_list:
+                                if time_id in stopped_train_list[stopped_train_number]:
+                                    stopped_train_index = stopped_train_list[stopped_train_number].index(time_id) + 1
                                 else:
-                                    stopped_train_list[stopped_train_number] = [time_id]
-                                    stopped_train_index = 1
-                                
-                                stopped_train_number = stopped_train_number + "__" + str(stopped_train_index)
+                                    stopped_train_list[stopped_train_number].append(time_id)
+                                    stopped_train_index = len(stopped_train_list[stopped_train_number])
+                            else:
+                                stopped_train_list[stopped_train_number] = [time_id]
+                                stopped_train_index = 1
+                            
+                            stopped_train_number = stopped_train_number + "__" + str(stopped_train_index)
                             
                             operations[operation_number]["trains"].append({
                                 "train_number" : stopped_train_number,

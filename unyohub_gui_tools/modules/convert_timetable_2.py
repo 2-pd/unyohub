@@ -46,9 +46,12 @@ def convert_timetable_2 (mes, main_dir, diagram_revision, diagram_id):
             
             timetable_data_t = [list(x) for x in zip(*timetable_data)]
             
+            station_list = timetable_data_t[0][8: -6]
+            trains = timetable_data_t[1:]
+            
             direction_data = {}
             previous_train_number = ""
-            for train in timetable_data_t:
+            for train in trains:
                 if train[0] == "":
                     continue
                 
@@ -86,22 +89,26 @@ def convert_timetable_2 (mes, main_dir, diagram_revision, diagram_id):
                         
                         departure_times[cnt] = before_departure_time + departure_time
                 
-                direction_data[train[0]][train_cnt]["first_departure_time"] = list(filter(lambda x: x != "", departure_times))[0][-5:]
+                for cnt in range(len(departure_times)):
+                    if departure_times[cnt] != "":
+                        direction_data[train[0]][train_cnt]["starting_station"] = station_list[cnt]
+                        break
+                
                 direction_data[train[0]][train_cnt]["train_type"] = train[1]
                 direction_data[train[0]][train_cnt]["previous_trains"] = []
                 direction_data[train[0]][train_cnt]["next_trains"] = []
                 
                 if train[2] != "":
-                    direction_data[train[0]][train_cnt]["previous_trains"].append({ "line_id" : train[2], "train_number" : train[3], "first_departure_time" : shape_time_string(train[4]) })
+                    direction_data[train[0]][train_cnt]["previous_trains"].append({ "line_id" : train[2], "train_number" : train[3], "starting_station" : train[4] })
                 
                 if train[5] != "":
-                    direction_data[train[0]][train_cnt]["previous_trains"].append({ "line_id" : train[5], "train_number" : train[6], "first_departure_time" : shape_time_string(train[7]) })
+                    direction_data[train[0]][train_cnt]["previous_trains"].append({ "line_id" : train[5], "train_number" : train[6], "starting_station" : train[7] })
                 
                 if train[-6] != "":
-                    direction_data[train[0]][train_cnt]["next_trains"].append({ "line_id" : train[-6], "train_number" : train[-5], "first_departure_time" : shape_time_string(train[-4]) })
+                    direction_data[train[0]][train_cnt]["next_trains"].append({ "line_id" : train[-6], "train_number" : train[-5], "starting_station" : train[-4] })
                 
                 if train[-3] != "":
-                    direction_data[train[0]][train_cnt]["next_trains"].append({ "line_id" : train[-3], "train_number" : train[-2], "first_departure_time" : shape_time_string(train[-1]) })
+                    direction_data[train[0]][train_cnt]["next_trains"].append({ "line_id" : train[-3], "train_number" : train[-2], "starting_station" : train[-1] })
                 
                 
                 direction_data[train[0]][train_cnt]["departure_times"] = [None if departure_time == "" else departure_time for departure_time in departure_times]

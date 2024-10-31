@@ -22,7 +22,8 @@ def convert_timetable_1 (mes, file_name, digits_count):
     
     new_timetable_t = {}
     
-    line_list = timetable_data_t[0][0].split()
+    line_list = timetable_data_t[1][0].split()
+    station_list = {}
     line_stations = {}
     rename_list = {}
     
@@ -33,15 +34,17 @@ def convert_timetable_1 (mes, file_name, digits_count):
             rename_list[line_list[cnt][:period_pos]] = line_list[cnt][period_pos + 1:]
             line_list[cnt] = line_list[cnt][:period_pos]
         
-        new_timetable_t[line_list[cnt]] = []
-        
+        station_list[line_list[cnt]] = []
         line_stations[line_list[cnt]] = []
         
-        for cnt_2 in range(2, len(timetable_data_t[0])):
-            if line_list[cnt] in timetable_data_t[0][cnt_2]:
+        for cnt_2 in range(2, len(timetable_data_t[1])):
+            if line_list[cnt] in timetable_data_t[1][cnt_2]:
+                station_list[line_list[cnt]].append(timetable_data_t[0][cnt_2].strip())
                 line_stations[line_list[cnt]].append(cnt_2)
+        
+        new_timetable_t[line_list[cnt]] = [["", "", "", "", "", "", "", ""] + station_list[line_list[cnt]] + ["", "", "", "", "", ""]]
     
-    for cnt in range(1, len(timetable_data_t)):
+    for cnt in range(2, len(timetable_data_t)):
         if timetable_data_t[cnt][0] == "":
             continue
         
@@ -71,14 +74,20 @@ def convert_timetable_1 (mes, file_name, digits_count):
                         train[cnt_2] = before_departure_time + departure_time.zfill(5)
                 
                 for line_id_2 in line_list:
-                    if len(new_timetable_t[line_id_2]) >= 1 and new_timetable_t[line_id_2][-1][0] == train[0]:
+                    if new_timetable_t[line_id_2][-1][0] == train[0]:
                         train[2] = line_id_2
                         train[3] = train[0]
-                        train[4] = list(filter(lambda x: x != "", new_timetable_t[line_id_2][-1][8:-6]))[0][-5:]
+                        for cnt_2 in range(8, len(new_timetable_t[line_id_2][-1]) - 6):
+                            if new_timetable_t[line_id_2][-1][cnt_2] != "":
+                                train[4] = station_list[line_id_2][cnt_2 - 8]
+                                break
                         
                         new_timetable_t[line_id_2][-1][-6] = line_id
                         new_timetable_t[line_id_2][-1][-5] = train[0]
-                        new_timetable_t[line_id_2][-1][-4] = list(filter(lambda x: x != "", train[8:-6]))[0][-5:]
+                        for cnt_2 in range(8, len(train) - 6):
+                            if train[cnt_2] != "":
+                                new_timetable_t[line_id_2][-1][-4] = station_list[line_id][cnt_2 - 8]
+                                break
                 
                 new_timetable_t[line_id].append(train)
     
