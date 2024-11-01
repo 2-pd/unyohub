@@ -1,3 +1,0 @@
-<Files ~ "\.(db|py)$">
-  deny from all
-</Files>

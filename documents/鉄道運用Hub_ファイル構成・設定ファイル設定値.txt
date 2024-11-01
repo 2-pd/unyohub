@@ -77,7 +77,6 @@ _/_/_/_/ ファイル構成 _/_/_/_/
    └ modules/
       └ ****.py ・・・unyohubから呼び出される各種処理の本体となるPythonファイル
 └ README.html ・・・ユーザーマニュアル
-└ .htaccess
 
 ※サーバにアップロードする必要のない各種変換処理スクリプト類は上記に含まれない
 
@@ -93,6 +92,7 @@ _/_/_/_/ 設定ファイル設定値 _/_/_/_/
   UNYOHUB_LICENSE_TEXT  ライセンス情報文
   UNYOHUB_LICENSE_URL  ライセンスのURL
   UNYOHUB_REPOSITORY_URL  ソースコードリポジトリのURL
+
 
 ███ service_worker.js ███
 
