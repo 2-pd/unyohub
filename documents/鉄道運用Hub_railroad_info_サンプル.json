@@ -1,0 +1,496 @@
+{
+    "railroad_name" : "南海 本線系統",
+    "main_color" : "#3399ff",
+    "railroad_icon" : "data:image/webp;base64,UklGRjICAABXRUJQVlA4TCYCAAAvO8AOEHVAkiRZqML9L50L4M34CPej0t8ISAIAlpEys7Zt27bPtvUD2zjZtm3btm17zEzAnNmpcAoNbvw6Uc52bsmbAx9oltwFc9955A+zmXl/Enh5DLAcYOOXoQL4xBfZA4y5xCON2Z7mJzEz7JL3Zx74/yZsVCTypp2aCONOxXWNAjDKnCb0m9Dzs51E6bQzAuMEKsHaw819kphC24c1+SSZTnKmwbMXvPOFuezgB5VLzrMfRvW51nmA/fBYyLVfgvuRcgbeSp3tiLvOLTS+7Yj/5l7W7PbvMovkd8NoKYt2ZjMIHeCq2N1EZJnaZiyQlvxB7oXXc5aNz15asy5zL/YpCtkKl7cK2y4G8hyqaJCbKpUeqsYTeKI1yoglUh0QQt8kWqdmKGUCDRg15sy1Rhu1hq2GwWDOMFhq+lNHV0JjGLw0MyWqqA1vSXau5dYUgo0kK3xzK7D0+u1gVqAPd8eoxDedwtYwOsk9+ZLOFj1rMsBFAhUM/lugsazQQFzBUGGTXh4LENayirkissnYAvssk6hoawq9G0i7aywr9rsM3HDJuoSKx66wvzJdsFSBbfOE60QKtRBqhS80h+kAM5JSVbNLDOE6wFgtoTDeJR5544Qqxcn/Ls1mMT0pdsk+KXDKmOJ5zrcP9SR/Tp/kWMWTlLF9Eusx+xzTM+R8g0H2tdsvSvJH9gAzzHzlkX/M5vwx8wTTZA9wy0aZY6idPn/KWM8Z",
+    "lines" : {
+        "honsen" : {
+            "line_name" : "南海本線",
+            "line_color" : "#3399ff",
+            "line_symbol" : "本",
+            "inbound_forward_direction" : true,
+            "stations" : [
+                {
+                    "station_name" : "難波",
+                    "station_name_kana" : "なんば",
+                    "station_initial" : "難",
+                    "is_major_station" : true
+                },
+                {
+                    "station_name" : "新今宮",
+                    "station_name_kana" : "しんいまみや",
+                    "is_major_station" : true
+                },
+                {
+                    "station_name" : "天下茶屋",
+                    "station_name_kana" : "てんがちゃや",
+                    "is_major_station" : true
+                },
+                {
+                    "station_name" : "岸里玉出",
+                    "station_name_kana" : "きしのさとたまで",
+                    "station_initial" : "岸",
+                    "connecting_lines" : [
+                        {
+                            "line_id" : "shiomibashisen",
+                            "directions" : ["TL"]
+                        }
+                    ]
+                },
+                {
+                    "station_name" : "粉浜",
+                    "station_name_kana" : "こはま"
+                },
+                {
+                    "station_name" : "住吉大社",
+                    "station_name_kana" : "すみよしたいしゃ"
+                },
+                {
+                    "station_name" : "住ノ江",
+                    "station_name_kana" : "すみのえ",
+                    "station_initial" : "住"
+                },
+                {
+                    "station_name" : "七道",
+                    "station_name_kana" : "しちどう"
+                },
+                {
+                    "station_name" : "堺",
+                    "station_name_kana" : "さかい",
+                    "station_initial" : "堺",
+                    "is_major_station" : true
+                },
+                {
+                    "station_name" : "湊",
+                    "station_name_kana" : "みなと"
+                },
+                {
+                    "station_name" : "石津川",
+                    "station_name_kana" : "いしづがわ"
+                },
+                {
+                    "station_name" : "諏訪ノ森",
+                    "station_name_kana" : "すわのもり"
+                },
+                {
+                    "station_name" : "浜寺公園",
+                    "station_name_kana" : "はまでらこうえん"
+                },
+                {
+                    "station_name" : "羽衣",
+                    "station_name_kana" : "はごろも",
+                    "station_initial" : "衣",
+                    "is_major_station" : true,
+                    "connecting_lines" : [
+                        {
+                            "line_id" : "takashinohamasen",
+                            "directions" : ["BL"]
+                        }
+                    ]
+                },
+                {
+                    "station_name" : "高石",
+                    "station_name_kana" : "たかいし",
+                    "station_initial" : "高"
+                },
+                {
+                    "station_name" : "北助松",
+                    "station_name_kana" : "きたすけまつ"
+                },
+                {
+                    "station_name" : "松ノ浜",
+                    "station_name_kana" : "まつのはま"
+                },
+                {
+                    "station_name" : "泉大津",
+                    "station_name_kana" : "いずみおおつ",
+                    "is_major_station" : true
+                },
+                {
+                    "station_name" : "忠岡",
+                    "station_name_kana" : "ただおか"
+                },
+                {
+                    "station_name" : "春木",
+                    "station_name_kana" : "はるき",
+                    "station_initial" : "春",
+                    "is_major_station" : true
+                },
+                {
+                    "station_name" : "和泉大宮",
+                    "station_name_kana" : "いずみおおみや"
+                },
+                {
+                    "station_name" : "岸和田",
+                    "station_name_kana" : "きしわだ",
+                    "is_major_station" : true
+                },
+                {
+                    "station_name" : "蛸地蔵",
+                    "station_name_kana" : "たこじぞう"
+                },
+                {
+                    "station_name" : "貝塚",
+                    "station_name_kana" : "かいづか",
+                    "station_initial" : "貝",
+                    "is_major_station" : true
+                },
+                {
+                    "station_name" : "二色浜",
+                    "station_name_kana" : "にしきのはま"
+                },
+                {
+                    "station_name" : "鶴原",
+                    "station_name_kana" : "つるはら"
+                },
+                {
+                    "station_name" : "井原里",
+                    "station_name_kana" : "いはらのさと"
+                },
+                {
+                    "station_name" : "泉佐野",
+                    "station_name_kana" : "いずみさの",
+                    "station_initial" : "佐",
+                    "is_major_station" : true,
+                    "connecting_lines" : [
+                        {
+                            "line_id" : "kukosen",
+                            "directions" : ["BL"]
+                        }
+                    ]
+                },
+                {
+                    "station_name" : "羽倉崎",
+                    "station_name_kana" : "はぐらざき",
+                    "station_initial" : "羽"
+                },
+                {
+                    "station_name" : "吉見ノ里",
+                    "station_name_kana" : "よしみのさと"
+                },
+                {
+                    "station_name" : "岡田浦",
+                    "station_name_kana" : "おかだうら"
+                },
+                {
+                    "station_name" : "樽井",
+                    "station_name_kana" : "たるい",
+                    "station_initial" : "樽"
+                },
+                {
+                    "station_name" : "尾崎",
+                    "station_name_kana" : "おざき",
+                    "is_major_station" : true
+                },
+                {
+                    "station_name" : "鳥取ノ荘",
+                    "station_name_kana" : "とっとりのしょう"
+                },
+                {
+                    "station_name" : "箱作",
+                    "station_name_kana" : "はこつくり"
+                },
+                {
+                    "station_name" : "淡輪",
+                    "station_name_kana" : "たんのわ"
+                },
+                {
+                    "station_name" : "みさき公園",
+                    "station_name_kana" : "みさきこうえん",
+                    "station_initial" : "み",
+                    "is_major_station" : true,
+                    "connecting_lines" : [
+                        {
+                            "line_id" : "tanagawasen",
+                            "directions" : ["BL"]
+                        }
+                    ]
+                },
+                {
+                    "station_name" : "孝子",
+                    "station_name_kana" : "きょうし"
+                },
+                {
+                    "station_name" : "和歌山大学前",
+                    "station_name_kana" : "わかやまだいがくまえ",
+                    "is_major_station" : true
+                },
+                {
+                    "station_name" : "紀ノ川",
+                    "station_name_kana" : "きのかわ",
+                    "station_initial" : "紀",
+                    "connecting_lines" : [
+                        {
+                            "line_id" : "kadasen",
+                            "directions" : ["TL"]
+                        }
+                    ]
+                },
+                {
+                    "station_name" : "和歌山市",
+                    "station_name_kana" : "わかやまし",
+                    "station_initial" : "市",
+                    "is_major_station" : true,
+                    "connecting_lines" : [
+                        {
+                            "line_id" : "wakayamakosen",
+                            "directions" : ["B"]
+                        }
+                    ]
+                }
+            ]
+        },
+        "kukosen" : {
+            "line_name" : "空港線",
+            "line_color" : "#9966cc",
+            "line_symbol" : "空",
+            "inbound_forward_direction" : true,
+            "double_station_spacing" : true,
+            "stations" : [
+                {
+                    "station_name" : "泉佐野",
+                    "station_name_kana" : "いずみさの",
+                    "station_initial" : "佐",
+                    "is_major_station" : true,
+                    "connecting_lines" : [
+                        {
+                            "line_id" : "honsen",
+                            "directions" : ["TL", "BR"]
+                        }
+                    ]
+                },
+                {
+                    "station_name" : "りんくうタウン",
+                    "station_name_kana" : "りんくうたうん",
+                    "is_major_station" : true
+                },
+                {
+                    "station_name" : "関西空港",
+                    "station_name_kana" : "かんさいくうこう",
+                    "station_initial" : "空",
+                    "is_major_station" : true
+                }
+            ]
+        },
+        "shiomibashisen" : {
+            "line_name" : "高野線(汐見橋線区間)",
+            "line_color" : "#33cc66",
+            "line_symbol" : "汐",
+            "inbound_forward_direction" : true,
+            "show_final_destinations_in_position_mode" : true,
+            "stations" : [
+                {
+                    "station_name" : "汐見橋",
+                    "station_name_kana" : "しおみばし",
+                    "station_initial" : "汐",
+                    "is_major_station" : true
+                },
+                {
+                    "station_name" : "芦原町",
+                    "station_name_kana" : "あしはらちょう"
+                },
+                {
+                    "station_name" : "木津川",
+                    "station_name_kana" : "きづがわ"
+                },
+                {
+                    "station_name" : "津守",
+                    "station_name_kana" : "つもり"
+                },
+                {
+                    "station_name" : "西天下茶屋",
+                    "station_name_kana" : "にしてんがちゃや"
+                },
+                {
+                    "station_name" : "岸里玉出",
+                    "station_name_kana" : "きしのさとたまで",
+                    "station_initial" : "岸",
+                    "connecting_lines" : [
+                        {
+                            "line_id" : "honsen",
+                            "directions" : ["TR", "BL"]
+                        }
+                    ]
+                }
+            ]
+        },
+        "takashinohamasen" : {
+            "line_name" : "高師浜線",
+            "line_color" : "#666666",
+            "line_symbol" : "師",
+            "inbound_forward_direction" : true,
+            "show_final_destinations_in_position_mode" : true,
+            "stations" : [
+                {
+                    "station_name" : "羽衣",
+                    "station_name_kana" : "はごろも",
+                    "station_initial" : "衣",
+                    "is_major_station" : true,
+                    "connecting_lines" : [
+                        {
+                            "line_id" : "honsen",
+                            "directions" : ["TL", "BR"]
+                        }
+                    ]
+                },
+                {
+                    "station_name" : "伽羅橋",
+                    "station_name_kana" : "きゃらばし"
+                },
+                {
+                    "station_name" : "高師浜",
+                    "station_name_kana" : "たかしのはま",
+                    "station_initial" : "師",
+                    "is_major_station" : true
+                }
+            ]
+        },
+        "tanagawasen" : {
+            "line_name" : "多奈川線",
+            "line_color" : "#666666",
+            "line_symbol" : "多",
+            "inbound_forward_direction" : true,
+            "show_final_destinations_in_position_mode" : true,
+            "stations" : [
+                {
+                    "station_name" : "みさき公園",
+                    "station_name_kana" : "みさきこうえん",
+                    "station_initial" : "み",
+                    "is_major_station" : true,
+                    "connecting_lines" : [
+                        {
+                            "line_id" : "honsen",
+                            "directions" : ["TL", "BR"]
+                        }
+                    ]
+                },
+                {
+                    "station_name" : "深日町",
+                    "station_name_kana" : "ふけちょう"
+                },
+                {
+                    "station_name" : "深日港",
+                    "station_name_kana" : "ふけこう"
+                },
+                {
+                    "station_name" : "多奈川",
+                    "station_name_kana" : "たながわ",
+                    "station_initial" : "多",
+                    "is_major_station" : true
+                }
+            ]
+        },
+        "kadasen" : {
+            "line_name" : "加太線",
+            "line_color" : "#ff99cc",
+            "line_symbol" : "加",
+            "inbound_forward_direction" : false,
+            "show_final_destinations_in_position_mode" : true,
+            "stations" : [
+                {
+                    "station_name" : "紀ノ川",
+                    "station_name_kana" : "きのかわ",
+                    "station_initial" : "紀",
+                    "connecting_lines" : [
+                        {
+                            "line_id" : "honsen",
+                            "directions" : ["TR", "BL"]
+                        }
+                    ]
+                },
+                {
+                    "station_name" : "梶取",
+                    "station_name_kana" : "かんどり",
+                    "is_signal_station" : true
+                },
+                {
+                    "station_name" : "東松江",
+                    "station_name_kana" : "ひがしまつえ"
+                },
+                {
+                    "station_name" : "中松江",
+                    "station_name_kana" : "なかまつえ"
+                },
+                {
+                    "station_name" : "八幡前",
+                    "station_name_kana" : "はちまんまえ"
+                },
+                {
+                    "station_name" : "西ノ庄",
+                    "station_name_kana" : "にしのしょう"
+                },
+                {
+                    "station_name" : "二里ヶ浜",
+                    "station_name_kana" : "にりがはま"
+                },
+                {
+                    "station_name" : "磯ノ浦",
+                    "station_name_kana" : "いそのうら"
+                },
+                {
+                    "station_name" : "加太",
+                    "station_name_kana" : "かだ",
+                    "station_initial" : "加",
+                    "is_major_station" : true
+                }
+            ]
+        },
+        "wakayamakosen" : {
+            "line_name" : "和歌山港線",
+            "line_color" : "#6666ff",
+            "line_symbol" : "港",
+            "inbound_forward_direction" : true,
+            "stations" : [
+                {
+                    "station_name" : "和歌山市",
+                    "station_name_kana" : "わかやまし",
+                    "station_initial" : "市",
+                    "is_major_station" : true,
+                    "connecting_lines" : [
+                        {
+                            "line_id" : "honsen",
+                            "directions" : ["T"]
+                        }
+                    ]
+                },
+                {
+                    "station_name" : "和歌山港",
+                    "station_name_kana" : "わかやまこう",
+                    "station_initial" : "港",
+                    "is_major_station" : true
+                }
+            ]
+        }
+    },
+    "lines_order" : ["honsen", "kukosen", "shiomibashisen", "takashinohamasen", "tanagawasen", "kadasen", "wakayamakosen"],
+    "train_color_rules" : [
+        {"pattern": "^0", "color": "#ff0000"},
+        {"pattern": "^(1|2)", "color": "#ff6600"},
+        {"pattern": "^3", "color": "#008000"},
+        {"pattern": "^4", "color": "#0066ff"},
+        {"pattern": "^7[0-2]", "color": "#660099"},
+        {"pattern": "^(8|9|回)", "color": "#999999"}
+    ],
+    "deadhead_train_number" : "^(8|9|回)",
+    "alias_of_forward_direction" : "難波方",
+    "description" : "南海本線と空港線、高師浜線、多奈川線、加太線、和歌山港線、及び、高野線のうち南海本線と同じく住ノ江検車区所属編成で運行される汐見橋-岸里玉出間の運用表・時刻表データです。",
+    "editors" : [
+        {
+            "editor_name" : "ほげほげ",
+            "editor_url" : "https://www.example.jp/",
+            "introduction_text" : "編成表を作成しました"
+        },
+        {
+            "editor_name" : "ふがふが",
+            "introduction_text" : "運用表と時刻表の編集担当です"
+        }
+    ],
+    "license_text" : "このサンプルファイルは無権利創作宣言に従って著作権放棄されています。\n無権利創作宣言の全文は https://www.2pd.jp/license/ でご覧いただけます。",
+    "acknowledgment" : "運用表作成のための調査において、○○氏と××氏に協力いただきました。",
+    "related_links" : [
+        {
+            "link_url" : "https://www.example.jp/nankai_honsen.pdf",
+            "link_text" : "運用表PDFファイル",
+            "link_description" : "印刷用の運用表データです"
+        }
+    ]
+}

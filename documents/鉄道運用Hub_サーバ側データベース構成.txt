@@ -1,0 +1,202 @@
+--------------------------------------------------------------------------------
+
+  ユーザー投稿型鉄道運用データベース「鉄道運用Hub」設計案    ページ(2)
+
+--------------------------------------------------------------------------------
+
+_/_/_/_/ データベース _/_/_/_/
+
+███ railroad.db ███
+
+`unyohub_series` 車両形式データ
+  `series_name` TEXT NOT NULL PRIMARY KEY 車両形式
+  `min_car_count` INTEGER NOT NULL その形式の最小の編成両数(unyohub_formationsのデータから算出可能であるが、動作高速化の観点から正規化しない)
+  `max_car_count` INTEGER NOT NULL その形式の最大の編成両数(unyohub_formationsのデータから算出可能であるが、動作高速化の観点から正規化しない)
+
+
+`unyohub_formations` 編成データ
+  `formation_name` TEXT NOT NULL PRIMARY KEY 編成名
+  `series_name` TEXT NOT NULL 車両形式
+  `car_count` INTEGER NOT NULL 編成両数(unyohub_carsのデータから算出可能であるが、動作高速化の観点から正規化しない)
+  `description` TEXT 補足説明文
+  `inspection_information` TEXT 検査情報
+
+  INDEX `unyohub_idx_f1`(`series_name`)
+
+
+`unyohub_cars` 車両データ
+  `formation_name` TEXT NOT NULL 編成名
+  `car_number` TEXT NOT NULL 車番(乗り入れ他社の車両と被る可能性があるため一意制約を設けない)
+  `car_order` INTEGER NOT NULL 編成内での車両の組成位置(前位側の先頭車を1として順に付番)
+  `manufacturer` TEXT 製造メーカー名
+  `constructed` TEXT 製造年月日
+  `description` TEXT 補足説明文
+
+  PRIMARY KEY(`formation_name`, `car_number`)
+  INDEX `unyohub_idx_c1`(`formation_name`, `car_order`) ※データの入れ替え処理が煩雑となることから一意制約としない
+
+
+`unyohub_coupling_groups` 併結グループ情報
+  `series_or_formation` TEXT NOT NULL 車両形式または編成名
+  `coupling_group` TEXT NOT NULL 併結グループID
+
+  PRIMARY KEY(`series_or_formation`, `coupling_group`)
+
+
+`unyohub_operations` 運用表データ
+  `diagram_revision` TEXT NOT NULL ダイヤ改正識別名
+  `diagram_id` TEXT NOT NULL ダイヤ識別名
+  `operation_number` TEXT NOT NULL 運用番号(アルファベットなどを含む場合があるため文字列型)
+  `starting_location` TEXT 出庫場所(車庫または駅番線)
+  `starting_track` TEXT 出庫番線(不確定の場合はNULL)
+  `starting_time` TEXT NOT NULL 「HH:MM」形式の出庫時刻
+  `terminal_location` TEXT 入庫場所(車庫または駅番線)
+  `terminal_track` TEXT 入庫番線(不確定の場合はNULL)
+  `ending_time` TEXT NOT NULL 「HH:MM」形式の入庫時刻
+  `min_car_count` INTEGER NOT NULL 充当可能な最小の編成両数
+  `max_car_count` INTEGER NOT NULL 充当可能な最大の編成両数
+
+  PRIMARY KEY(`diagram_revision`, `diagram_id`, `operation_number`)
+  UNIQUE INDEX `unyohub_idx_o1`(`diagram_revision`, `diagram_id`, `starting_location`, `starting_track`)
+  UNIQUE INDEX `unyohub_idx_o2`(`diagram_revision`, `diagram_id`, `terminal_location`, `terminal_track`)
+
+
+`unyohub_trains` 列車データ
+  `diagram_revision` TEXT NOT NULL ダイヤ改正識別名
+  `diagram_id` TEXT NOT NULL ダイヤ識別名
+  `operation_number` TEXT NOT NULL 運用番号(アルファベットなどを含む場合があるため文字列型)
+  `train_number` TEXT NOT NULL 列車番号(アルファベットなどを含む場合があるため文字列型)
+  `first_departure_time` TEXT NOT NULL 「HH:MM」形式の始発時刻
+  `final_arrival_time` TEXT NOT NULL 「HH:MM」形式の終着時刻
+
+  PRIMARY KEY(`diagram_revision`, `diagram_id`, `operation_number`, `train_number`)
+
+
+`unyohub_data` ユーザー投稿データ
+  `operation_date` TEXT NOT NULL 「YYYY-MM-DD」形式の日付
+  `operation_number` TEXT NOT NULL 運用番号(アルファベットなどを含む場合があるため文字列型)
+  `user_id` TEXT NOT NULL 投稿者ID(未登録ユーザーの場合、クライアント端末が生成する12桁の乱数値の頭に「*」を付加した文字列を記録する)
+  `train_number` TEXT 目撃時の列車番号または「○」(出庫時)、「△」(入庫時)、NULL(引用情報の場合)
+  `formations` TEXT NOT NULL 充当組成(複数編成併結による運用の場合も「+」で区切って1レコードに格納)
+  `is_quotation` INTEGER 引用情報か否か
+  `posted_datetime` TEXT NOT NULL 「YYYY-MM-DD HH:MM:SS」形式の情報投稿日時
+  `comment` TEXT 運用補足情報(コメント)
+  `ip_address` TEXT 投稿者のIPアドレス(IPアドレスを記録しない設定の場合はNULL)
+
+  PRIMARY KEY(`operation_date`, `operation_number`, `user_id`)
+  INDEX `unyohub_idx_d1`(`user_id`, `posted_datetime`)
+  INDEX `unyohub_idx_d2`(`operation_date`, `operation_number`, `posted_datetime`)
+  INDEX `unyohub_idx_d3`(`ip_address`, `posted_datetime`)
+
+
+`unyohub_data_caches` 運用データ概要キャッシュ
+  `operation_date` TEXT NOT NULL 「YYYY-MM-DD」形式の日付
+  `operation_number` TEXT NOT NULL 運用番号(アルファベットなどを含む場合があるため文字列型)
+  `formations` TEXT 充当組成(最も新しい投稿の情報を格納、複数編成併結による運用の場合も「+」で区切って1レコードに格納、運休の場合は空文字列)
+  `posts_count` INTEGER 投稿の個数(前日運用からの推測データの場合は「0」)
+  `variant_exists` INTEGER 投稿情報に異なる情報が存在するかどうか
+  `comment_exists` INTEGER 運用補足情報の有無
+  `from_beginner` INTEGER ビギナーの投稿か否か
+  `is_quotation` INTEGER 引用情報か否か
+  `updated_datetime` TEXT NOT NULL 「YYYY-MM-DD HH:MM:SS」形式の情報投稿日時
+
+  PRIMARY KEY(`operation_date`, `operation_number`)
+  INDEX `unyohub_idx_dc1`(`formations`, `operation_date`)
+  INDEX `unyohub_idx_dc2`(`operation_date`, `updated_datetime`)
+
+
+`unyohub_data_each_formation` 編成別運用データキャッシュ
+  `formation_name` TEXT NOT NULL 充当編成
+  `operation_date` TEXT NOT NULL 「YYYY-MM-DD」形式の日付
+  `operation_number` TEXT NOT NULL 運用番号(アルファベットなどを含む場合があるため文字列型)
+
+  PRIMARY KEY(`formation_name`, `operation_date`, `operation_number`)
+  INDEX `unyohub_idx_df1`(`operation_date`, `operation_number`)
+
+
+`unyohub_transition_statistics_same_day` 当日運用遷移統計データ
+  `diagram_revision` TEXT NOT NULL ダイヤ改正識別名
+  `diagram_id` TEXT NOT NULL ダイヤ識別名
+  `operation_number` TEXT NOT NULL 運用番号(アルファベットなどを含む場合があるため文字列型)
+  `later_operation_number` TEXT NOT NULL 後の運用番号(アルファベットなどを含む場合があるため文字列型)
+  `percentage` REAL NOT NULL 確率(パーセント値)
+
+  PRIMARY KEY(`diagram_revision`, `diagram_id`, `operation_number`, `later_operation_number`)
+  INDEX `unyohub_idx_ts1`(`diagram_revision`, `diagram_id`, `operation_number`, `percentage`)
+  INDEX `unyohub_idx_ts2`(`diagram_revision`, `diagram_id`, `later_operation_number`, `percentage`)
+
+
+`unyohub_transition_statistics_to_next_day` 翌日運用遷移統計データ
+  `diagram_revision` TEXT NOT NULL ダイヤ改正識別名
+  `diagram_id` TEXT NOT NULL 当日のダイヤ識別名
+  `next_day_diagram_id` TEXT NOT NULL 翌日のダイヤ識別名
+  `operation_number` TEXT NOT NULL 当日の運用番号(アルファベットなどを含む場合があるため文字列型)
+  `next_day_operation_number` TEXT NOT NULL 翌日の運用番号(アルファベットなどを含む場合があるため文字列型)
+  `percentage` REAL NOT NULL 確率(パーセント値)
+
+  PRIMARY KEY(`diagram_revision`, `diagram_id`, `next_day_diagram_id`, `operation_number`, `next_day_operation_number`)
+  INDEX `unyohub_idx_tn1`(`diagram_revision`, `diagram_id`, `operation_number`, `percentage`)
+  INDEX `unyohub_idx_tn2`(`diagram_revision`, `next_day_diagram_id`, `next_day_operation_number`, `percentage`)
+
+
+`unyohub_transition_data_caches_same_day` 当日運用遷移データキャッシュ
+  `operation_date` TEXT NOT NULL 「YYYY-MM-DD」形式の日付
+  `operation_number` TEXT NOT NULL 運用番号(アルファベットなどを含む場合があるため文字列型)
+  `later_operation_number` TEXT NOT NULL 後の運用番号(アルファベットなどを含む場合があるため文字列型)
+
+  PRIMARY KEY(`operation_date`, `operation_number`, `later_operation_number`)
+
+
+`unyohub_transition_data_caches_from_previous_day` 前日からの運用遷移データキャッシュ
+  `operation_date` TEXT NOT NULL 当日の「YYYY-MM-DD」形式の日付
+  `previous_day_operation_number` TEXT NOT NULL 前日の運用番号(アルファベットなどを含む場合があるため文字列型)
+  `operation_number` TEXT NOT NULL 当日の運用番号(アルファベットなどを含む場合があるため文字列型)
+
+  PRIMARY KEY(`operation_date`, `operation_number`, `previous_day_operation_number`)
+
+
+███ moderation.db ███
+
+`unyohub_moderation_deleted_data` モデレーターが削除したユーザー投稿データ
+  `moderator_id` TEXT NOT NULL モデレーターのユーザーID
+  `deleted_datetime` TEXT NOT NULL 「YYYY-MM-DD HH:MM:SS」形式の削除処理実施日時
+  `railroad_id` TEXT NOT NULL 路線系統識別名
+  `operation_date` TEXT NOT NULL 「YYYY-MM-DD」形式の日付
+  `operation_number` TEXT NOT NULL 運用番号(アルファベットなどを含む場合があるため文字列型)
+  `user_id` TEXT NOT NULL 投稿者ID(未登録ユーザーの場合、クライアント端末が生成する12桁の乱数値の頭に「*」を付加した文字列を記録する)
+  `formations` TEXT NOT NULL 充当組成(複数編成併結による運用の場合も「+」で区切って1レコードに格納)
+  `posted_datetime` TEXT NOT NULL 「YYYY-MM-DD HH:MM:SS」形式の情報投稿日時
+  `comment` TEXT 運用補足情報(コメント)
+  `ip_address` TEXT 投稿者のIPアドレス(IPアドレスを記録しない設定の場合はNULL)
+
+  INDEX `unyohub_moderation_idx_d1`(`moderator_id`, `deleted_datetime`)
+  INDEX `unyohub_moderation_idx_d2`(`deleted_datetime`)
+  INDEX `unyohub_moderation_idx_d3`(`user_id`, `posted_datetime`)
+  INDEX `unyohub_moderation_idx_d4`(`railroad_id`, `operation_date`, `operation_number`, `posted_datetime`)
+  INDEX `unyohub_moderation_idx_d5`(`ip_address`, `posted_datetime`)
+
+
+`unyohub_moderation_suspicious_users` 要注意ユーザーのリスト
+  `user_id` TEXT NOT NULL PRIMARY KEY 要注意ユーザーのID(未登録ユーザーの場合、クライアント端末が生成する12桁の乱数値の頭に「*」を付加した文字列を記録する)
+  `moderator_id` TEXT NOT NULL モデレート作業を行ったモデレーターのユーザーID
+  `marked_datetime` TEXT NOT NULL 「YYYY-MM-DD HH:MM:SS」形式の要注意と指定された日時
+
+  INDEX `unyohub_moderation_idx_su1`(`moderator_id`, `marked_datetime`)
+  INDEX `unyohub_moderation_idx_su2`(`marked_datetime`)
+
+
+`unyohub_moderation_suspicious_ip_addresses` 要注意IPアドレスのリスト
+  `ip_address` TEXT NOT NULL PRIMARY KEY 要注意IPアドレス
+  `moderator_id` TEXT NOT NULL モデレート作業を行ったモデレーターのユーザーID
+  `marked_datetime` TEXT NOT NULL 「YYYY-MM-DD HH:MM:SS」形式の要注意と指定された日時
+
+  INDEX `unyohub_moderation_idx_si1`(`moderator_id`, `marked_datetime`)
+  INDEX `unyohub_moderation_idx_si2`(`marked_datetime`)
+
+
+_/_/_/_/ Wakarana カスタムフィールド _/_/_/_/
+
+website_url ・・・ユーザーのwebサイトのURL(最大500文字)
+post_count・・・ユーザーの合計投稿回数(数値)
+last_posted_date ・・・ユーザーが最後に運用情報を投稿した日付(YYYY-MM-DD形式、10文字)
+days_posted ・・・ユーザーの通算投稿日数(数値)

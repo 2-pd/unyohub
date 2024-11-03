@@ -1,0 +1,244 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1,interactive-widget=resizes-content">
+    <title></title>
+    <link rel="styleSheet" href="/assets.css">
+    <link rel="apple-touch-icon" href="/apple-touch-icon.webp">
+    <link rel="shortcut icon" href="/favicon.ico">
+    <link rel="manifest" href="/manifest.json">
+    <style id="formation_styles"></style>
+</head>
+<body>
+    <header><a id="railroad_icon" href="javascript:void(0);" onclick="about_railroad_data();"></a><span id="instance_name"></span><a id="railroad_name" href="javascript:void(0);" onclick="open_popup('railroad_select_popup');"></a><a id="menu_button" href="javascript:void(0);" onclick="menu_click();"></a></header>
+    <div id="menu">
+        <div id="menu_logged_in">
+            <b id="menu_user_name"></b>
+            <a href="/user/user_info.php" target="_blank" rel="opener">ユーザー情報</a>
+            <a href="javascript:void(0);" onclick="user_logout();">ログアウト</a>
+        </div>
+        <div id="menu_admin">
+            <a href="/admin/index.php" target="_blank" rel="opener">管理画面を開く</a>
+        </div>
+        <div id="menu_not_logged_in">
+            <a href="javascript:void(0);" onclick="open_square_popup('login_popup');">ログイン</a>
+            <a href="/user/sign_up.php" target="_blank" rel="opener">新規登録</a>
+        </div>
+        <div id="menu_off_line">
+            <b class="off_line_message">端末がオフラインです</b>
+        </div>
+        <hr>
+        <a id="menu_announcements" href="javascript:void(0);" onclick="show_announcements();">お知らせ</a>
+        <hr>
+        <a href="javascript:void(0);" onclick="edit_config();">各種設定</a>
+        <hr>
+        <a href="javascript:void(0);" onclick="open_square_popup('about_popup');">このアプリについて</a>
+        <a href="README.html" target="_blank" rel="opener">このアプリの使い方</a>
+        <a href="javascript:void(0);" onclick="show_rules();">ルールとポリシー</a>
+        <hr>
+        <a href="javascript:void(0);" onclick="reload_app();">アプリの再起動</a>
+    </div>
+    <div id="splash_screen" class="splash_screen_loading">
+        <div id="splash_screen_inner">
+            <div id="splash_screen_login_status">サーバに接続しています...</div>
+            <a id="announcements_overview" href="javascript:void(0);" onclick="show_announcements();"></a>
+            <div id="splash_screen_buttons" class="wait_icon"></div>
+            <div id="splash_screen_bottom">
+                <a href="README.html" target="_blank" rel="opener">使い方</a>　<a href="javascript:void(0);" onclick="show_rules();">ルールとポリシー</a>
+                <div id="splash_screen_app_version"></div>
+            </div> 
+        </div>
+    </div>
+    <div id="blank_article" class="wait_icon"></div>
+    <div id="tab_area"><button type="button" onclick="position_mode();" id="tab_position_mode">走行位置</button><button type="button" onclick="timetable_mode();" id="tab_timetable_mode">時刻表</button><button type="button" onclick="operation_data_mode();" id="tab_operation_data_mode">運用データ</button><button type="button" onclick="formation_table_mode();" id="tab_formation_table_mode">編成表</button><button type="button" onclick="operation_table_mode();" id="tab_operation_table_mode">運用表</button></div>
+    <article>
+        <div class='line_select_wrapper'><a id="position_line_select" onclick="select_lines();"></a></div>
+        <table id="position_area" class="wait_icon"></table>
+        <div id="position_area_supplement" class="radio_area">
+            <div><input type="radio" name="show_train_numbers_or_train_types" id="show_train_numbers_radio" onchange="change_show_train_types(!this.checked);"><label for="show_train_numbers_radio">列車番号を表示</label><input type="radio" name="show_train_numbers_or_train_types" id="show_train_types_radio" onchange="change_show_train_types(this.checked);"><label for="show_train_types_radio"><span id="show_train_types_label_train_type">種別</span><span id="show_train_types_label_final_destination">行き先</span>を表示</label></div>
+            <div class="informational_text">列車の走行位置は時刻表に基づく推定であり、遅延や不定期列車の情報は反映されません</div>
+        </div>
+    </article>
+    <article>
+        <div class='line_select_wrapper'><a id="timetable_line_select" onclick="select_lines(timetable_selectable_lines, false);"></a></div>
+        <div id="direction_radio_area" class="radio_area">
+            <h2><button type="button" class="previous_button" onclick="timetable_select_neighboring_station(-1);"></button><span id="timetable_station_name"></span><button type="button" class="next_button" onclick="timetable_select_neighboring_station(1);"></button></h2>
+            <div><input type="radio" name="direction_radio" id="radio_inbound" value="inbound" checked="checked" onchange="timetable_select_station(timetable_selected_station);"><label for="radio_inbound" id="radio_inbound_label">上り</label><input type="radio" name="direction_radio" id="radio_outbound" value="outbound" onchange="timetable_select_station(timetable_selected_station);"><label for="radio_outbound" id="radio_outbound_label">下り</label></div>
+            <input type="checkbox" id="show_arriving_trains_check" class="chip" onchange="change_show_arriving_trains(this.checked);"><label for="show_arriving_trains_check">着列車を表示</label><input type="checkbox" id="show_starting_trains_only_check" class="chip" onchange="change_show_starting_trains_only(this.checked);"><label for="show_starting_trains_only_check">当駅始発のみ</label>
+        </div>
+        <div id="timetable_area" class="wait_icon"></div>
+    </article>
+    <article>
+        <h2 id="operation_data_heading"></h2>
+        <div class="radio_area"><input type="radio" name="operation_data_radio" id="radio_operation_groups" value="operation_groups" checked="checked" onchange="operation_data_draw();"><label for="radio_operation_groups">系統別</label><input type="radio" name="operation_data_radio" id="radio_series" value="series" onchange="operation_data_draw();"><label for="radio_series">形式別</label><input type="radio" name="operation_data_radio" id="radio_starting_location" value="starting_location" onchange="operation_data_draw();"><label for="radio_starting_location">出庫別</label><input type="radio" name="operation_data_radio" id="radio_terminal_location" value="terminal_location" onchange="operation_data_draw();"><label for="radio_terminal_location">入庫別</label></div>
+        <div id="operation_data_area" class="wait_icon"></div>
+    </article>
+    <article id="formation_table_wrapper" onscroll="formation_table_wrapper_onscroll();">
+        <button type="button" id="formation_screenshot_button" class="screenshot_button" onclick="take_screenshot('formation_table_area');"></button>
+        <div id="formation_search_area">
+            <div class='search_wrapper'><label for="car_number_search" class="search_icon">車両番号で検索</label><input type="search" id="car_number_search" onkeyup="draw_formation_table();" onsearch="draw_formation_table();" placeholder="車両番号で検索" autocomplete="off"></div>
+            <div id ="colorize_formation_table_radio_area" class="radio_area"><input type="radio" name="colorize_formation_table_radio" id="colorize_formation_table" onchange="change_colorize_formation_table(this.checked);"><label for="colorize_formation_table">車体色を表示</label><input type="radio" name="colorize_formation_table_radio" id="not_colorize_formation_table" onchange="change_colorize_formation_table(!this.checked);"><label for="not_colorize_formation_table">白黒で表示</label></div>
+        </div>
+        <div id="formation_table_area" class="wait_icon"></div>
+    </article>
+    <article>
+        <div id="operation_search_area">
+            <div class='search_wrapper'><label for="train_number_search" class="search_icon">列車番号で検索</label><input type="search" id="train_number_search" onkeyup="operation_table_list_number();" onsearch="operation_table_list_number();" placeholder="列車番号で検索" autocomplete="off"></div>
+            <input type="checkbox" id="operation_search_menu"><label for="operation_search_menu" class="drop_down">絞り込み条件 <span id="operation_search_filter_count"></span></label>
+            <div>
+                <select class="wide_select" id="operation_search_group_name" onchange="operation_table_list_number();"><option value="" selected="selected"></option></select>
+                <select class="wide_select" id="operation_search_car_count" onchange="operation_table_list_number();"><option value="" selected="selected"></option></select>
+                <select class="wide_select" id="operation_search_starting_location" onchange="operation_table_list_number();"><option value="" selected="selected"></option></select>
+                <select class="wide_select" id="operation_search_terminal_location" onchange="operation_table_list_number();"><option value="" selected="selected"></option></select>
+                <a href="javascript:void(0);" class="additional_setting_link" onclick="reset_operation_narrow_down(false);">絞り込み条件のリセット</a>
+            </div>
+        </div>
+        <div id="operation_table_area" class="wait_icon"></div>
+        <br>
+        <div id="operation_table_info" class="informational_text"></div>
+    </article>
+    <a href="javascript:void(0);" id="railroad_announcement" onclick="show_railroad_announcements();"></a>
+    <footer>
+        <div>
+            <button type="button" id="position_reload_button" class="reload_button" onclick="position_mode('today', null);"></button>
+            <select id="position_date_select" class="footer_select" onchange="position_mode(this.value, 0);"><option value="today" selected="selected">今日</option><option value="tomorrow">明日</option></select><button type="button" class="previous_button" onclick="position_change_time(-60);"></button><span id="position_hours" class="footer_value"></span><button type="button" class="next_button" onclick="position_change_time(60);"></button><button type="button" class="previous_button" onclick="position_change_time(-5);"></button><span id="position_minutes" class="footer_value"></span><button type="button" class="next_button" onclick="position_change_time(5);"></button>
+            <input type="time" id="position_time_button" class="time_button" onchange="position_time_button_change();">
+        </div>
+        <div>
+            <button type="button" id="timetable_back_button" class="back_button" onclick="timetable_change_lines(selected_line, true);"></button>
+            <button type="button" class="previous_button" onclick="timetable_diagram_previous();"></button><span id="timetable_operation_name" class="footer_value_wide"></span><button type="button" class="next_button" onclick="timetable_diagram_next();"></button><button type="button" class="list_button" onclick="timetable_list_diagrams();"></button>
+        </div>
+        <div>
+            <button type="button" class="reload_button" onclick="operation_data_change_date(null);"></button>
+            <button type="button" class="previous_button" onclick="operation_data_change_date(-1);"></button><span id="operation_data_date" class="footer_value_wide"></span><button type="button" class="next_button" onclick="operation_data_change_date(1);"></button>
+            <input type="date" id="operation_date_button" class="date_button" onchange="operation_date_button_change();">
+        </div>
+        <div>
+            <button type="button" id="formation_back_button" class="back_button" onclick="draw_formation_table();"></button>
+        </div>
+        <div>
+            <button type="button" class="previous_button" onclick="operation_table_previous();"></button><span id="operation_table_name" class="footer_value_wide"></span><button type="button" class="next_button" onclick="operation_table_next();"></button><button type="button" class="list_button" onclick="operation_table_list_tables();"></button>
+        </div>
+    </footer>
+    <div id="popup_background"></div>
+    <div class="popup" id="railroad_select_popup">
+        <button type="button" class="popup_close_button" onclick="popup_close();"></button>
+        <h2>路線系統の切り替え</h2>
+        <div id="railroad_select_area"></div>
+    </div>
+    <div class="popup" id="operation_detail_popup">
+        <button type="button" class="screenshot_button" onclick="take_screenshot('operation_detail_area', true);"></button>
+        <button type="button" class="popup_close_button" onclick="popup_close();"></button>
+        <div id="operation_detail_area" class="wait_icon"></div>
+    </div>
+    <div class="popup" id="config_popup">
+        <button type="button" class="popup_close_button" onclick="popup_close();"></button>
+        <h2>各種設定</h2>
+        <input type="checkbox" id="dark_mode_check" class="toggle" onchange="change_config();"><label for="dark_mode_check">ダークモード</label>
+        <input type="checkbox" id="colorize_beginners_posts_check" class="toggle" onchange="change_config();"><label for="colorize_beginners_posts_check">ビギナーの方の投稿を区別する</label>
+        <h3>運用情報の自動更新間隔</h3>
+        <input type="number" id="refresh_interval" min="1" max="60" onchange="change_config();">分ごと<br>
+        <h3>運用情報のキャッシュ保管日数</h3>
+        <input type="number" id="operation_data_cache_period" min="1" max="30" onchange="change_config();">日前以降のキャッシュを保管<br>
+        <a href="javascript:void(0);" class="additional_setting_link" onclick="reset_config_value();">デフォルト値に戻す</a>
+        <a href="javascript:void(0);" class="additional_setting_link" onclick="reset_cache_db();">キャッシュデータベースの初期化</a>
+        <div class="informational_text">変更内容は自動で保存されます</div>
+    </div>
+    <div class="popup" id="about_railroad_data_popup">
+        <button type="button" class="popup_close_button" onclick="popup_close();"></button>
+        <div id="about_railroad_data_area"></div>
+    </div>
+    <div class="popup" id="write_operation_data_popup">
+        <button type="button" class="popup_close_button" onclick="popup_close();"></button>
+        <h2>運用情報の投稿</h2>
+        <div id="write_operation_data_area"></div>
+        <div id="require_login_area">
+            <div class="warning_text">
+                情報投稿にはログインが必要です。<br>
+                ユーザーアカウントをまだ作成されていない場合は新規登録してください。
+            </div>
+            <div class="link_block">
+                <a href="javascript:void(0);" onclick="open_square_popup('login_popup');">ログイン</a>　<a href="/user/sign_up.php" target="_blank" rel="opener">新規登録</a>
+            </div>
+        </div>
+    </div>
+    <div class="popup" id="edit_operation_data_popup">
+        <button type="button" class="popup_close_button" onclick="popup_close();"></button>
+        <h2>運用情報の取り消し</h2>
+        <div id="edit_operation_data_area"></div>
+    </div>
+    <div class="popup" id="screenshot_popup">
+        <button type="button" class="popup_close_button" onclick="popup_close();"></button>
+        <h2>スクリーンショット</h2>
+        <div id="screenshot_preview"></div>
+        <button type="button" id="save_screenshot_button" class="wide_button" onclick="save_screenshot();">画像として保存</button>
+    </div>
+    <div id="popup_screen">
+        <div id="popup_screen_blank_area" onclick="close_square_popup();"></div>
+        <div class="preview_popup" id="announcements_popup">
+            <button type="button" class="popup_close_button" onclick="close_square_popup();"></button>
+            <h3 id="announcements_heading">お知らせの一覧</h3>
+            <h3 id="railroad_announcements_heading">お知らせ</h3>
+            <div id="announcements_area" class="wait_icon"></div>
+        </div>
+        <div class="square_popup" id="login_popup">
+            <button type="button" class="popup_close_button" onclick="close_square_popup();"></button>
+            <h4>IDまたはメールアドレス</h4>
+            <input type="text" id="login_user_id" autocomplete="username">
+            <h4>パスワード</h4>
+            <input type="password" id="login_password" autocomplete="current-password">
+            <div class="link_block">
+                <a href="/user/send_password_reset_email.php" target="_blank" rel="opener">パスワードを忘れた場合</a>
+            </div>
+            <button type="button" class="wide_button" onclick="challenge_login();">ログイン</button>
+        </div>
+        <div class="square_popup" id="captcha_popup">
+            <button type="button" class="popup_close_button" onclick="close_square_popup();"></button>
+            <div id="captcha_info">
+                <h3>画像認証</h3>
+                <div class="informational_text">画像に表示されている文字を入力してください。</div>
+            </div>
+            <div id="captcha_area" class="wait_icon"></div>
+            <button type="button" id="captcha_submit_button" class="wide_button">送信</button>
+        </div>
+        <div class="preview_popup" id="line_select_popup">
+            <button type="button" class="popup_close_button" onclick="close_square_popup();"></button>
+            <h3>路線の選択</h3>
+            <div id="line_select_area"></div>
+        </div>
+        <div class="preview_popup" id="train_detail_popup">
+            <button type="button" class="screenshot_button" onclick="take_screenshot('train_detail_area', true);"></button>
+            <button type="button" class="popup_close_button" onclick="close_square_popup();"></button>
+            <div id="train_detail_area" class="wait_icon"></div>
+        </div>
+        <div class="square_popup" id="select_operation_popup">
+            <button type="button" class="popup_close_button" onclick="close_square_popup();"></button>
+            <h3>情報を投稿する運用の選択</h3>
+            <div id="select_operation_area"></div>
+        </div>
+        <div class="preview_popup" id="train_number_popup">
+            <button type="button" class="popup_close_button" onclick="close_square_popup();"></button>
+            <h3>列車の選択</h3>
+            <div id="train_number_area"></div>
+        </div>
+        <div class="preview_popup" id="diagram_list_popup">
+            <button type="button" class="popup_close_button" onclick="close_square_popup();"></button>
+            <h3 id="diagram_list_heading"></h3>
+            <div id="diagram_list_area"></div>
+        </div>
+        <div class="square_popup" id="about_popup">
+            <button type="button" class="popup_close_button" onclick="close_square_popup();"></button>
+            <img src="/apple-touch-icon.webp" alt="" id="unyohub_icon">
+            <h3 id="app_version"></h3>
+            <small id="license_text"></small>
+            <a id="license_link" target="_blank" class="external_link">ライセンス</a>　<a id="repository_link" target="_blank" class="external_link">ソースコード</a>
+        </div>
+    </div>
+    <div id="wait_screen"></div>
+    <div id="message_area"></div>
+<script src="/main.js"></script>
+<script src="/libs/zizai_captcha/captcha.js"></script>
+<script src="/libs/elem2img.js"></script>
+</body>
+</html>

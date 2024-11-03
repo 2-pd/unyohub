@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!-- Created with Inkscape (http://www.inkscape.org/) -->
+
+<svg
+   width="40"
+   height="40"
+   viewBox="0 0 10.583333 10.583334"
+   version="1.1"
+   id="svg5"
+   inkscape:version="1.3 (0e150ed6c4, 2023-07-21)"
+   sodipodi:docname="情報マーク.svg"
+   inkscape:export-filename="情報マーク.webp"
+   inkscape:export-xdpi="96"
+   inkscape:export-ydpi="96"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:svg="http://www.w3.org/2000/svg"
+   xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+   xmlns:cc="http://creativecommons.org/ns#">
+  <sodipodi:namedview
+     id="namedview7"
+     pagecolor="#ffffff"
+     bordercolor="#666666"
+     borderopacity="1.0"
+     inkscape:pageshadow="2"
+     inkscape:pageopacity="0.0"
+     inkscape:pagecheckerboard="false"
+     inkscape:document-units="px"
+     showgrid="false"
+     units="px"
+     inkscape:zoom="5.8297418"
+     inkscape:cx="22.213677"
+     inkscape:cy="29.332345"
+     inkscape:window-width="1920"
+     inkscape:window-height="1008"
+     inkscape:window-x="0"
+     inkscape:window-y="0"
+     inkscape:window-maximized="1"
+     inkscape:current-layer="layer1"
+     inkscape:showpageshadow="2"
+     inkscape:deskcolor="#d1d1d1" />
+  <defs
+     id="defs2" />
+  <g
+     inkscape:label="レイヤー 1"
+     inkscape:groupmode="layer"
+     id="layer1">
+    <path
+       id="path1"
+       style="color:#000000;fill:#6699ee;stroke-linecap:square;stroke-linejoin:round;-inkscape-stroke:none;fill-opacity:1"
+       d="M 5.29115 -0.0010335287 C 4.9525496 -0.0010335337 4.6136349 0.12819456 4.3552898 0.38653972 L 0.38653972 4.3552898 C -0.1301506 4.8719801 -0.13015056 5.709803 0.38653972 6.2264934 L 4.3552898 10.195243 C 4.8719801 10.711934 5.7098031 10.711934 6.2264934 10.195243 L 10.195243 6.2264934 C 10.711934 5.7098031 10.711934 4.8719801 10.195243 4.3552898 L 6.2264934 0.38653972 C 5.9681482 0.12819458 5.6297504 -0.0010335237 5.29115 -0.0010335287 z M 4.7480307 2.3151042 L 5.8353028 2.3151042 L 5.8353028 3.1088542 L 4.7480307 3.1088542 L 4.7480307 2.3151042 z M 4.7480307 4.2994792 L 5.8353028 4.2994792 L 5.8353028 8.2682293 L 4.7480307 8.2682293 L 4.7480307 4.2994792 z " />
+  </g>
+  <metadata
+     id="metadata824">
+    <rdf:RDF>
+      <cc:Work
+         rdf:about="">
+        <cc:license
+           rdf:resource="http://creativecommons.org/publicdomain/zero/1.0/" />
+      </cc:Work>
+      <cc:License
+         rdf:about="http://creativecommons.org/publicdomain/zero/1.0/">
+        <cc:permits
+           rdf:resource="http://creativecommons.org/ns#Reproduction" />
+        <cc:permits
+           rdf:resource="http://creativecommons.org/ns#Distribution" />
+        <cc:permits
+           rdf:resource="http://creativecommons.org/ns#DerivativeWorks" />
+      </cc:License>
+    </rdf:RDF>
+  </metadata>
+</svg>

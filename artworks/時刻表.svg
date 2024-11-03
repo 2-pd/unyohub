@@ -1,0 +1,123 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!-- Created with Inkscape (http://www.inkscape.org/) -->
+
+<svg
+   width="54"
+   height="54"
+   viewBox="0 0 14.2875 14.2875"
+   version="1.1"
+   id="svg5"
+   inkscape:version="1.3 (0e150ed6c4, 2023-07-21)"
+   sodipodi:docname="時刻表.svg"
+   inkscape:export-filename="時刻表.webp"
+   inkscape:export-xdpi="96"
+   inkscape:export-ydpi="96"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:svg="http://www.w3.org/2000/svg"
+   xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+   xmlns:cc="http://creativecommons.org/ns#">
+  <sodipodi:namedview
+     id="namedview7"
+     pagecolor="#ffffff"
+     bordercolor="#666666"
+     borderopacity="1.0"
+     inkscape:pageshadow="2"
+     inkscape:pageopacity="0.0"
+     inkscape:pagecheckerboard="false"
+     inkscape:document-units="px"
+     showgrid="false"
+     units="px"
+     inkscape:zoom="8.2444999"
+     inkscape:cx="18.921706"
+     inkscape:cy="31.900055"
+     inkscape:window-width="1920"
+     inkscape:window-height="1052"
+     inkscape:window-x="1920"
+     inkscape:window-y="0"
+     inkscape:window-maximized="1"
+     inkscape:current-layer="layer1"
+     inkscape:showpageshadow="2"
+     inkscape:deskcolor="#d1d1d1" />
+  <defs
+     id="defs2" />
+  <g
+     inkscape:label="レイヤー 1"
+     inkscape:groupmode="layer"
+     id="layer1">
+    <circle
+       style="fill:#eebb33;stroke-width:0;stroke-linecap:square;fill-opacity:1"
+       id="path1"
+       cx="7.1437497"
+       cy="7.1437497"
+       r="7.1437497" />
+    <circle
+       style="fill:#f7f7f7;fill-opacity:1;stroke-width:0;stroke-linecap:square"
+       id="path2"
+       cx="7.1437502"
+       cy="7.1437502"
+       r="5.5562501" />
+    <path
+       id="path2-6"
+       style="fill:#cccccc;fill-opacity:1;stroke-width:0;stroke-linecap:square"
+       d="M 7.14375 1.5875 A 5.5562501 5.5562501 0 0 0 1.5875 7.14375 A 5.5562501 5.5562501 0 0 0 3.4736898 11.311454 A 5.5562501 5.5562501 0 0 1 2.1166667 7.6729167 A 5.5562501 5.5562501 0 0 1 7.6729167 2.1166667 A 5.5562501 5.5562501 0 0 1 11.327474 3.4891927 A 5.5562501 5.5562501 0 0 0 7.14375 1.5875 z " />
+    <circle
+       style="fill:#999999;fill-opacity:1;stroke-width:0;stroke-linecap:square"
+       id="path3-3"
+       cx="7.1437502"
+       cy="2.2489583"
+       r="0.39687502" />
+    <circle
+       style="fill:#999999;fill-opacity:1;stroke-width:0;stroke-linecap:square"
+       id="path3"
+       cx="12.038542"
+       cy="7.1437502"
+       r="0.39687502" />
+    <circle
+       style="fill:#999999;fill-opacity:1;stroke-width:0;stroke-linecap:square"
+       id="path3-5"
+       cx="7.1437502"
+       cy="12.038542"
+       r="0.39687502" />
+    <circle
+       style="fill:#999999;fill-opacity:1;stroke-width:0;stroke-linecap:square"
+       id="path3-7"
+       cx="2.2489583"
+       cy="7.1437502"
+       r="0.39687502" />
+    <rect
+       style="fill:#333333;fill-opacity:1;stroke-width:0;stroke-linecap:square"
+       id="rect2"
+       width="1.0583334"
+       height="5.5562496"
+       x="6.6145835"
+       y="2.1166666" />
+    <rect
+       style="fill:#333333;fill-opacity:1;stroke-width:0;stroke-linecap:square"
+       id="rect3"
+       width="4.2333336"
+       height="1.0583333"
+       x="6.6145835"
+       y="6.6145835" />
+  </g>
+  <metadata
+     id="metadata824">
+    <rdf:RDF>
+      <cc:Work
+         rdf:about="">
+        <cc:license
+           rdf:resource="http://creativecommons.org/publicdomain/zero/1.0/" />
+      </cc:Work>
+      <cc:License
+         rdf:about="http://creativecommons.org/publicdomain/zero/1.0/">
+        <cc:permits
+           rdf:resource="http://creativecommons.org/ns#Reproduction" />
+        <cc:permits
+           rdf:resource="http://creativecommons.org/ns#Distribution" />
+        <cc:permits
+           rdf:resource="http://creativecommons.org/ns#DerivativeWorks" />
+      </cc:License>
+    </rdf:RDF>
+  </metadata>
+</svg>

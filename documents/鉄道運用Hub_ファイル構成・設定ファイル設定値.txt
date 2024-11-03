@@ -1,0 +1,372 @@
+--------------------------------------------------------------------------------
+
+  ユーザー投稿型鉄道運用データベース「鉄道運用Hub」設計案    ページ(1)
+
+--------------------------------------------------------------------------------
+
+_/_/_/_/ 構成概要 _/_/_/_/
+
+・サーバサイドをPHP、クライアントサイドを単一HTMLファイルに記述したJavascriptとするシングルページアプリケーション(管理画面を除く)
+・データベースエンジンにはSQLiteを採用し、路線系統ごとに独立したデータベースファイルを作成する
+・Wakaranaによるユーザー登録機能を実装し、ユーザー投稿データはユーザーIDと紐付けて管理する
+・未登録ユーザーによる投稿を認めることも可能とするが、未登録ユーザーの投稿時にはZizai CAPTCHAによる画像認証を実施する
+・運用表及び時刻表はクライアント端末のIndexedDBにキャッシュし、通信量を削減する
+
+
+_/_/_/_/ ファイル構成 _/_/_/_/
+
+/
+└ index.html ・・・アプリケーションフロントエンドHTML
+└ main.js ・・・フロントエンド処理本体
+└ assets.css ・・・フロントエンドのスタイルシート
+└ libs/
+   └ wakarana/ ・・・Wakarana一式
+   └ zizai_captcha/ ・・・Zizai CAPTCHA一式
+   └ elem2img.js ・・・HTML要素画像化ライブラリ
+└ libs_data/
+   └ wakarana.db ・・・Wakaranaデータベース
+   └ zizai_captcha.db ・・・Zizai CAPTCHAデータベース
+└ config/
+   └ main.ini ・・・運用観察Hub基本設定ファイル
+   └ railroads.json ・・・路線系統設定ファイル
+   └ rules.txt ・・・ルールとポリシーを記載するテキストファイル
+   └ announcements.json ・・・お知らせデータ
+   └ wakarana_config.ini ・・・Wakarana設定ファイル
+   └ wakarana_custom_fields.json ・・・Wakaranaカスタムフィールド設定ファイル
+   └ zizai_captcha_config.json ・・・Zizai CAPTCHA設定ファイル
+   └ fonts/ ・・・Zizai CAPTCHAが使用するフォントファイル
+   └ moderation.db ・・・モデレーションログを格納するデータベース
+└ data/ ・・・路線系統ごとのデータフォルダ
+   └ ****/
+      └ railroad.db ・・・運用表・時刻表・ユーザー投稿データを格納するデータベース本体
+      └ railroad_info.json ・・・路線系統の設定ファイル
+      └ train_icons.json ・・・列車アイコン画像埋め込み処理後のアイコン設定ファイル
+      └ formations.json ・・・JSONに変換された編成表
+      └ railroad_announcements.json ・・・路線系統別のお知らせデータ
+      └ diagram_revisions.txt ・・・ダイヤ改正識別名(「YYYY-MM-DD」形式)を新しいものから順に1行に1つずつ記載したテキストファイル
+      └ ****/ ・・・フォルダ名は各ダイヤ改正識別名を使用
+         └ diagram_info.json ・・・各改正日のダイヤに属するダイヤの情報
+         └ operation_table_****.json ・・・JSONに変換された各ダイヤの運用表データ
+         └ timetable_****.json ・・・JSONに変換された各ダイヤの時刻表データ
+└ api/
+   └ ****.php ・・・クライアント端末と情報をやり取りするエンドポイント(詳細は別記)
+└ user/ ・・・ユーザー用機能
+   └ user_config_common.php ・・・ユーザー設定画面共通関数等
+   └ send_verification_email.php ・・・メールアドレス確認メールを送信するエンドポイント
+   └ rules.php ・・・ルールとポリシーの表示
+   └ sign_up.php ・・・ユーザーの新規登録
+   └ user_info.php ・・・ユーザー情報の確認、変更
+   └ change_email_address.php ・・・メールアドレスの変更
+   └ change_password.php ・・・パスワードの変更
+   └ send_password_reset_email.php ・・・パスワードリセットメールを送信する
+   └ reset_password.php ・・・ユーザーのパスワードをリセットしてランダムな値を設定する
+   └ user_config_styles.css ・・・ユーザー設定画面用スタイルシート
+└ admin/ ・・・管理画面
+   └ admin_common.php ・・・管理画面共通関数等
+   └ index.php ・・・管理画面トップページ
+   └ enable_railroads.php ・・・路線系統の有効化・無効化や表示順の並び替え
+   └ user_list.php ・・・ユーザー一覧、ユーザー検索
+   └ user_data.php ・・・ユーザー情報の閲覧、編集
+   └ announcements.php ・・・お知らせの編集
+   └ railroads.php ・・・路線系統別の操作一覧
+   └ formations.php ・・・編成情報の編集
+   └ train_icons.php ・・・管理画面で使用する車両アイコン画像を配信
+   └ admin_styles.css ・・・管理画面用スタイルシート
+└ commands/
+   └ unyohub ・・・コマンドラインやcronから実行可能なPythonファイル(詳細は別記、拡張子なし)
+   └ modules/
+      └ ****.py ・・・unyohubから呼び出される各種処理の本体となるPythonファイル
+└ README.html ・・・ユーザーマニュアル
+
+※サーバにアップロードする必要のない各種変換処理スクリプト類は上記に含まれない
+
+
+_/_/_/_/ 設定ファイル設定値 _/_/_/_/
+
+███ main.js ███
+
+※鉄道運用Hubからフォークして新たなアプリケーションを開発する場合は必要に応じて以下の値を変更
+  UNYOHUB_APP_NAME  アプリケーション名
+  UNYOHUB_VERSION  バージョン文字列
+  UNYOHUB_INDEXEDDB_VERSION  IndexedDBのデータベースバージョン数値
+  UNYOHUB_LICENSE_TEXT  ライセンス情報文
+  UNYOHUB_LICENSE_URL  ライセンスのURL
+  UNYOHUB_REPOSITORY_URL  ソースコードリポジトリのURL
+
+
+███ service_worker.js ███
+
+※設定ファイルではないが、編集可能な定数が存在する
+  UNYOHUB_APP_ID  アプリケーション識別名
+  UNYOHUB_VERSION  バージョン文字列
+
+
+███ main.ini ███
+
+instance_name 鉄道運用Hubインスタンスの表示名
+
+require_invite_code ユーザー登録時に招待コードを必要とするか(BOOL値)
+require_email_address ユーザー登録時にメールアドレス入力を必要とするか(BOOL値)
+allow_guest_user ログインしていないユーザーの投稿を認めるか(BOOL値)
+
+sender_email_address メール送信用アドレス(サーバに紐付けられているドメイン名であれば存在しないメールアドレスでも設定可能)
+
+log_ip_address 投稿者のIPアドレスを記録するか(BOOL値)
+anti_troll_garbage_size 要注意ユーザーの投稿処理を遅延させるために使用するダミーデータのサイズ(MB単位、整数値)
+
+
+███ railroads.json ███
+
+{
+    "railroads" : {
+        "路線系統識別名" : {
+        "railroad_name" : 路線系統表示名,
+        "main_color": 路線系統のテーマカラー,
+        "railroad_icon" : BASE64エンコードされた路線系統のアイコンデータ
+        }...
+    },
+    "railroads_order" : 路線系統識別名を表示順に列挙した配列
+}
+
+
+███ announcements.json ███
+
+※このファイルの更新日時は最も新しいお知らせが更新されたタイムスタンプと同一の値をセットする
+[
+    { 各お知らせの情報
+        "title" : お知らせのタイトル,
+        "is_important" : 重要なお知らせか否か(BOOL値),
+        "content" : お知らせの本文,
+        "user_id" : お知らせを最後に編集したモデレーターのユーザーID,
+        "expiration_timestamp" : お知らせの有効期限のタイムスタンプ,
+        "last_modified_timestamp" : お知らせが更新されたタイムスタンプ(UTC、秒単位)
+    }...
+]
+
+
+███ railroad_info.json ███
+
+{
+    "railroad_name" : 路線系統表示名,
+    "main_color" : 路線系統のテーマカラー,
+    "railroad_icon" : BASE64エンコードされた路線系統のアイコンデータ,
+    "lines" : { 個々の路線の情報
+        "路線識別名" : {
+            "line_name" : 路線名,
+            "line_color" : 路線のテーマカラー,
+            "line_symbol" : 路線記号または路線の略称(2文字以内。省略時は路線名の最初の文字で代用される),
+            "inbound_forward_direction" : 上り列車の進行方向と編成の前位側(奇数向き)方向が一致するかどうか(BOOL値),
+            "double_station_spacing" : 走行位置モードで駅間を2行で表示させるか(1行で表示させる場合は省略可能。BOOL値),
+            "show_final_destinations_in_position_mode" : 走行位置モードで種別の代わりに行き先を表示させるか(種別を表示させる場合は省略可能。BOOL値),
+            "stations" : [ 駅一覧
+                {
+                    "station_name" : 駅名,
+                    "station_name_kana" : 駅名のふりがな(ひらがな),
+                    "station_initial" : 駅頭文字(始発・終着列車のない非分岐駅では省略可能。このJSONに記載の他の駅と被る場合は別の文字を使用する),
+                    "is_signal_station" : 信号場か否か(信号場でなければ省略可能。BOOL値),
+                    "is_major_station" : 主要駅か否か(主要駅でなければ省略可能。BOOL値),
+                    "connecting_lines" : [ 直通路線一覧(分岐駅でなければ省略可能)
+                        {
+                            "line_id" : 路線識別名,
+                            "directions" : 分岐方向(「TL」(左上)、「T」(上)、「TR」(右上)、「L」(左)、「R」(右)、「BL」(左下)、「B」(下)、「BR」(右下))を配列で指定
+                        }...
+                    ]
+                }...
+            ]
+        }...
+    },
+    "lines_order" : 路線識別名を表示させたい順に配列で,
+    "train_color_rules" : [ 列車番号の色分け規則(配列で複数指定可能)
+        {
+            "pattern" : 列車番号の正規表現パターン,
+            "color" : 色コード文字列
+        }...
+    ],
+    "deadhead_train_number" : 回送列車の列車番号にマッチする正規表現パターン,
+    "alias_of_forward_direction" : 前位側(奇数側)の呼称(「北側」、「上り方」など),
+    "description" : 路線系統データの説明文(URLは表示時に自動でリンクに変換される。省略可能),
+    "editors" : [ 路線系統データ製作者の情報(省略可能)
+        {
+            "editor_name" : 路線系統データ製作者のハンドルネーム,
+            "editor_url" : 路線系統データ製作者のwebサイトURL(省略可能),
+            "introduction_text" : 製作者の紹介文(省略可能)
+        }...
+    ],
+    "license_text" : ライセンス文(URLは表示時に自動でリンクに変換される。省略可能),
+    "acknowledgment" : 謝辞の文(URLは表示時に自動でリンクに変換される。省略可能),
+    "related_links" : [ 関連リンク(省略可能)
+        {
+            "link_url" : リンクURL,
+            "link_text" : リンクテキスト,
+            "link_description" : リンクの説明(省略可能)
+        }...
+    ]
+}
+
+
+███ train_icons.json ███
+
+※このファイルは変換スクリプトにより自動生成されるものである
+{
+    "アイコンID" : アイコン画像のバイナリのBASE64文字列...
+}
+
+
+███ formations.json ███
+
+※このファイルは変換スクリプトにより自動生成されるものである
+{
+    "formations" : {
+        "編成名": { 各編成の情報
+            "cars" : [ 各車両の情報
+                {
+                    "car_number" : 車番,
+                    "abbr_number" : 車番の省略表記,
+                    "equipment" : 車両設備記号を配列で(省略可能),
+                    "coloring_id" : 車体塗装ID(省略可能)
+                }...
+            ],
+            "series_name" : 形式名,
+            "icon_id" : アイコンのID,
+            "heading" : 編成情報の見出し(省略可能)
+        }...
+    },
+    "series" : {
+        "形式名" : {
+            "formation_names" : 編成名を配列で,
+            "icon_id" : アイコンのID
+        }...
+    },
+    "series_names" : 形式名を配列で,
+    "body_colorings" : { 車体塗装情報(省略可能)
+        "車体塗装ID" : {
+            "base_color" : ベースカラーの色コード,
+            "font_color" : 車番の文字の色コード,
+            "stripes" : [ ベースカラー以外の塗装情報を重なり順の上側から列挙(塗装がベースカラーのみの場合は省略可能)
+                {
+                    "color" : 色コード,
+                    "start" : 開始点の数値(0〜100),
+                    "end" : 終了点の数値(0〜100),
+                    "verticalize" : 塗り分けが縦線の場合はtrue(falseの場合は省略可能)
+                }...
+            ]
+        }...
+    }
+}
+
+
+███ diagram_info.json ███
+
+{
+    "diagrams" : { 運用パターンの一覧
+        "ダイヤ識別名" : { この識別名は運用表JSONデータのファイル名に使用
+            "diagram_name" : ダイヤ表示名,
+            "main_color" : 時刻表の背景色,
+            "timetable_id" : 時刻表識別名
+        }
+    },
+    "diagram_order" : ダイヤ識別名を表示させたい順に配列で,
+    "diagram_schedules" : [ ダイヤ判定規則(期間の一部または全部が重複した場合は、前に書かれているものが優先される)
+        {
+            "periods" : [ 実施期間の一覧
+                {
+                    "start_date" : 「YYYY-MM-DD」形式の期間開始日,
+                    "end_date" : 「YYYY-MM-DD」形式の期間終了日(ない場合はnull)
+                }...
+            ],
+            "diagrams_by_day" : [ その期間の各曜日と運用パターン(曜日別ダイヤ)の対応関係(0:日曜→6:土曜)
+                日曜日と祝日に使用するダイヤ識別名,
+                月曜日に使用するダイヤ識別名,
+                火曜日に使用するダイヤ識別名,
+                水曜日に使用するダイヤ識別名,
+                木曜日に使用するダイヤ識別名,
+                金曜日に使用するダイヤ識別名,
+                土曜日に使用するダイヤ識別名
+            ],
+        }...
+    ]
+}
+
+
+███ operation_table_****.json ███
+
+※ファイル名の「****」部分はダイヤ識別名が入る
+※このファイルは変換スクリプトにより自動生成されるものである
+※発車待ちの列車の列車番号は、発車後の列車番号の先頭に「_」を付加したものとなる
+{
+    "operations" : {
+        "運用番号" : { 各運用の情報
+            "trains" : [ 各区間組成の情報の情報(折り返し等の発車待ちの情報も含む)
+                {
+                    "train_number" : 列車番号(発車待ちや列車番号が不明な場合は仮ID),
+                    "line_id" : 走行路線の識別名,
+                    "first_departure_time" : 「HH:MM」形式の始発時刻,
+                    "final_arrival_time" : 「HH:MM」形式の終着時刻,
+                    "starting_station" : 始発駅,
+                    "terminal_station" : 終着駅,
+                    "position_forward" : 担当位置開始両数(進行方向から数えて何両目からがその運用か),
+                    "position_rear" : 担当位置終了両数(進行方向から数えて何両目までがその運用か),
+                    "direction" : 上り列車か下り列車か(上り列車か上り方面発車待ちなら「inbound」、下り列車か下り方面発車待ちなら「outbound」)
+                }...
+            ],
+            "starting_location" : 出庫場所(車庫または駅),
+            "starting_track" : 出庫番線,
+            "starting_time" : 「HH:MM」形式の出庫時刻,
+            "terminal_location" : 入庫場所(車庫または駅),
+            "terminal_track" : 入庫番線,
+            "ending_time" : 「HH:MM」形式の入庫時刻,
+            "car_count" : 所定の編成両数,
+            "min_car_count" : 充当可能な最小の編成両数,
+            "max_car_count" : 充当可能な最大の編成両数,
+            "main_color" : テーマカラー,
+            "comment" : 補足説明文
+        }...
+    },
+    operation_groups : [
+        {
+            operation_group_name : 運用系統タイトル,
+            operation_numbers : 運用番号を配列で
+        }
+    ]
+}
+
+
+███ timetable_****.json ███
+
+※ファイル名の「****」部分は「時刻表識別名」が入る
+※このファイルは変換スクリプトにより自動生成されるものである
+{
+    "路線識別名" : {
+        "inbound_trains" : { 上り時刻表
+            "列車番号" : [
+                { 各区間組成の情報
+                    "starting_station" : 始発駅,
+                    "train_type" : 列車種別,
+                    "previous_trains" : [ 直通元の区間組成
+                        {
+                            "line_id" : 走行路線の識別名,
+                            "train_number" : 列車番号,
+                            "starting_station" : 始発駅
+                        }...
+                    ],
+                    "next_trains" : [ 直通先の区間組成
+                        {
+                            "line_id" : 走行路線の識別名,
+                            "train_number" : 列車番号,
+                            "starting_station" : 始発駅
+                        }...
+                    ],
+                    "departure_times" : 路線内の各駅発車時刻を配列で(時刻は「HH:MM」形式。通過駅及び走行区間に含まれていない駅はnull、通過時間の決まっている通過駅は時刻の前に半角縦線を付けて「|HH:MM」の形式とする)
+                }...
+            ]...
+        },
+        "outbound_trains" : { 下り時刻表
+            ※"inbound_trains"と同様
+        }
+    }
+}
+
+
+███ railroad_announcements.json ███
+
+announcements.jsonと同様

@@ -1,0 +1,29 @@
+{
+    "name": "鉄道運用Hub",
+    "short_name": "鉄道運用Hub",
+    "display": "standalone",
+    "start_url": "./",
+    "scope":"./",
+    "background_color": "#222222",
+    "theme_color": "#333333",
+    "icons": [
+        {
+            "src": "apple-touch-icon.webp",
+            "type": "image/webp",
+            "sizes": "192x192",
+            "purpose": "any"
+        },
+        {
+            "src": "maskable_icon.webp",
+            "type": "image/webp",
+            "sizes": "192x192",
+            "purpose": "maskable"
+        },
+        {
+            "src": "monochrome_icon.webp",
+            "type": "image/webp",
+            "sizes": "192x192",
+            "purpose": "monochrome"
+        }
+    ]
+}

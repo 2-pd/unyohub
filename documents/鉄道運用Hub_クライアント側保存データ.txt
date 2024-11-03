@@ -1,0 +1,207 @@
+--------------------------------------------------------------------------------
+
+  ユーザー投稿型鉄道運用データベース「鉄道運用Hub」設計案    ページ(4)
+
+--------------------------------------------------------------------------------
+
+_/_/_/_/ クライアント側ローカルストレージ _/_/_/_/
+
+███ unyohub_instance_info ███
+
+{
+    "last_modified_timestamp" : このデータの元となったINIファイルが更新された日時のタイムスタンプ値(UTC、秒単位),
+    以降の項目はinstance_info.phpのレスポンスをそのまま展開して使用
+}
+
+
+███ unyohub_config ███
+
+{
+    "guest_id" : ログインせずに運用情報を投稿する際の仮ID(「*」に続けて12桁の乱数値を付けた文字列),
+    "dark_mode" : ダークモードの有効無効(BOOL値),
+    "refresh_interval" : 運用データを自動で再取得する間隔(分単位の整数値),
+    "operation_data_cache_period" : 運用データのキャッシュ保管日数(整数値),
+    "show_train_types_in_position_mode" : 走行位置モードで列車番号の代わりに種別(または行き先)を表示させるか(BOOL値),
+    "show_arriving_trains_on_timetable" : 時刻表閲覧時に当駅止まりを表示するか(BOOL値),
+    "colorize_beginners_posts" : ビギナーユーザーから投稿された情報を色で区別して表示するか(BOOL値),
+    "colorize_formation_table" : 編成表の表示に実際の車体色を反映するか(BOOL値),
+    "simplify_operation_details" : 運用表の各運用詳細情報閲覧時に列車情報を簡略表示するか(BOOL値)
+}
+
+
+███ unyohub_railroads_caches ███
+
+{
+    "last_modified_timestamp" : このデータの元になったJSONファイルが更新された日時のタイムスタンプ値(UTC、秒単位),
+    以降の項目はrailroads.phpのレスポンスをそのまま展開して使用
+}
+
+
+_/_/_/_/ クライアント側IndexedDB "unyohub_caches" _/_/_/_/
+
+※「・」のある項目はKeyPathに指定する
+
+███ railroads ███
+
+{
+    ・railroad_id : 路線系統識別名,
+    last_modified_timestamp : このデータの元になったJSONファイルが更新された日時のタイムスタンプ値(UTC、秒単位),
+    以降の項目はrailroad_info.phpのレスポンスをそのまま展開して使用
+}
+
+
+███ train_icons ███
+
+{
+    ・railroad_id : 路線系統識別名,
+    last_modified_timestamp : このデータの元になったJSONファイルが更新された日時のタイムスタンプ値(UTC、秒単位),
+    icons : train_icons.phpのレスポンスをパースしてそのまま格納
+}
+
+
+███ formations ███
+
+{
+    ・railroad_id : 路線系統識別名,
+    last_modified_timestamp : このデータの元になったJSONファイルが更新された日時のタイムスタンプ値(UTC、秒単位),
+    以降の項目はformations.phpのレスポンスをパースしてそのまま展開して使用
+}
+
+
+███ diagram_revisions ███
+
+{
+    ・railroad_id : 路線系統識別名,
+    last_modified_timestamp : このデータの元になったJSONファイルが更新された日時のタイムスタンプ値(UTC、秒単位),
+    diagram_revisions : diagram_revisions.phpのレスポンスをパースしてそのまま格納
+}
+
+
+███ diagrams ███
+
+{
+    ・railroad_id : 路線系統識別名,
+    ・diagram_revision : ダイヤ改正識別名,
+    以降の項目はdiagram_info.phpのレスポンスをパースしてそのまま展開して使用
+}
+
+
+███ operation_tables ███
+
+{
+    ・railroad_id : 路線系統識別名,
+    ・diagram_revision : ダイヤ改正識別名,
+    ・diagram_id : ダイヤ識別名,
+    last_modified_timestamp : このデータの元になったJSONファイルが更新された日時のタイムスタンプ値(UTC、秒単位),
+    operations : {
+        運用番号 : { 各運用の情報
+            trains : [
+                { 各区間組成の情報(発車待ちの情報を含まない)
+                    train_number : 列車番号
+                    line_id : 走行路線の識別名,
+                    first_departure_time : 「HH:MM」形式の始発時刻,
+                    final_arrival_time : 「HH:MM」形式の終着時刻,
+                    starting_station : 始発駅,
+                    terminal_station : 終着駅,
+                    position_forward : 担当位置開始両数(進行方向から数えて何両目からがその運用か),
+                    position_rear : 担当位置終了両数(進行方向から数えて何両目までがその運用か),
+                    direction : 上り列車か下り列車か(上り列車なら「inbound」、下り列車なら「outbound」)
+                }...
+            ],
+            operation_group_name : 運用系統タイトル,
+            starting_location : 出庫場所(車庫または駅),
+            starting_track : 出庫番線,
+            starting_time : 「HH:MM」形式の出庫時刻,
+            terminal_location : 入庫場所(車庫または駅),
+            terminal_track : 入庫番線,
+            ending_time : 「HH:MM」形式の入庫時刻,
+            cars_count : 編成両数,
+            main_color : 運用のテーマカラー,
+            comment : コメント
+        }...
+    },
+    operation_groups : [
+        {
+            operation_group_name : 運用系統タイトル,
+            operation_numbers : 運用番号を配列で
+        }
+    ]
+}
+
+
+███ line_operations ███
+
+{
+    ・railroad_id : 路線系統識別名,
+    ・diagram_revision : ダイヤ改正識別名,
+    ・diagram_id : ダイヤ識別名,
+    last_modified_timestamp : このデータの元になったJSONファイルが更新された日時のタイムスタンプ値(UTC、秒単位),
+    lines : {
+        走行路線の識別名 : {
+            inbound_trains : { 上り列車と上り方面発車待ちの情報
+                列車番号または仮番号 : [
+                    { 各区間組成の情報
+                        first_departure_time : 「HH:MM」形式の始発時刻,
+                        final_arrival_time : 「HH:MM」形式の終着時刻,
+                        starting_station : 始発駅,
+                        terminal_station : 終着駅,
+                        operation_numbers : その区間組成を担当する運用の運用番号を配列で前位側(奇数側)から列挙
+                    }...
+                ]...
+            },
+            outbound_trains : { 下り列車と下り方面発車待ちの情報
+                列車番号 : [
+                    { 各区間組成の情報
+                        first_departure_time : 「HH:MM」形式の始発時刻,
+                        final_arrival_time : 「HH:MM」形式の終着時刻,
+                        starting_station : 始発駅,
+                        terminal_station : 終着駅,
+                        operation_numbers : その区間組成を担当する運用の運用番号を配列で前位側(奇数側)から列挙
+                    }...
+                ]...
+            }
+        }
+    }
+}
+
+
+███ timetables ███
+
+{
+    ・railroad_id : 路線系統識別名,
+    ・diagram_revision : ダイヤ改正識別名,
+    ・timetable_id : 時刻表識別名,
+    last_modified_timestamp : このデータの元になったJSONファイルが更新された日時のタイムスタンプ値(UTC、秒単位),
+    timetable : timetables.phpのレスポンスをパースしてそのまま格納
+}
+
+
+███ operation_data ███
+
+{
+    ・railroad_id : 路線系統識別名,
+    ・operation_date : 「YYYY-MM-DD」形式の日付,
+    last_modified_timestamp : サーバに最新のデータが投稿された日時のタイムスタンプ値(UTC、秒単位),
+    operations : {
+        情報投稿のあった運用番号 : {
+            formations : 編成名(最も新しい投稿の情報を前位側・奇数向きから順に「+」で区切った文字列),
+            posts_count : 情報の投稿数,
+            variant_exists : 投稿情報のバリエーション数,
+            comment_exists : 運用補足情報の有無,
+            from_beginner : ビギナーの投稿か否か,
+            is_quotation : 引用情報か否か
+        }...  
+    }
+}
+
+index "idx_od1" keyPath : "operation_date"
+
+
+███ announcements ███
+
+{
+    ・railroad_id : 路線系統識別名(アプリ全体のお知らせの場合は「/」を指定),
+    last_modified_timestamp : このデータの元になったJSONデータが更新された日時のタイムスタンプ値(UTC、秒単位),
+    last_read_timestamp : 既読にしたJSONデータが更新された日時のタイムスタンプ(UTC、秒単位、存在しない場合有),
+    announcements : announcements.phpのレスポンスをパースしてそのまま格納
+}

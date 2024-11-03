@@ -1,0 +1,147 @@
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <title>使い方 | 鉄道運用Hub用データ編集ツール</title>
+    <link rel="shortcut icon" href="files/tools_icon.ico">
+    <style>
+        * {
+            font-family: "Noto Sans CJK JP", "Meiryo", "Hiragino Kaku Gothic ProN", sans-serif;
+        }
+        
+        body {
+            margin: 0;
+            padding: 0 10px 100px 20px;
+            
+            background-color: #444444;
+            
+            line-height: 180%;
+            color: #ffffff;
+        }
+        
+        h1 {
+            font-size: 22px;
+            
+            margin-top: 20px;
+            margin-left: -15px;
+            
+            border-left: 6px solid #cccccc;
+            
+            line-height: 48px;
+            text-indent: 8px;
+        }
+        
+        h2 {
+            font-size: 18px;
+            
+            margin-top: 40px;
+            margin-left: -10px;
+            
+            background-color: #666666;
+            
+            line-height: 40px;
+            text-indent: 10px;
+        }
+        
+        h3 {
+            font-size: medium;
+            
+            margin-top: 40px;
+            margin-left: -5px;
+            
+            border-left: 4px solid #cccccc;
+            
+            line-height: 32px;
+            text-indent: 6px;
+        }
+        
+        a {
+            color: #cccccc;
+            font-weight: bold;
+        }
+    </style>
+</head>
+<body>
+    <h1>鉄道運用Hub用データ編集ツールの使い方</h1>
+    
+    <h2>目次</h2>
+    <a href="#yoken">システム要件</a><br>
+    <br>
+    <a href="#kido">アプリの起動</a><br>
+    <br>
+    <a href="#kihon">基本的な使い方</a><br>
+    　<a href="#folder">作業フォルダについて</a><br>
+    　<a href="#db_setup">データベースのセットアップ</a><br>
+    　<a href="#icon_umekomi">アイコン画像をファイルに埋め込み</a><br>
+    　<a href="#zikokuhyo">時刻表の変換</a><br>
+    　<a href="#unyohyo">運用表の変換</a><br>
+    　<a href="#moderation_db">モデレーションDBのセットアップ</a><br>
+    <br>
+    <a href="#license">ライセンス</a>
+    
+    <h2 id="yoken">システム要件</h2>
+    本ツールは、WindowsまたはGNU/Linuxのデスクトップ環境で動作するGUIアプリケーションです。<br>
+    <br>
+    本ツールを使用するためには、あらかじめ、使用するPCに最新のPython 3実行環境をインストールしておく必要があります。<br>
+    WindowsにPython 3をインストールする際、カスタム構成でインストールする場合は、「tcl/tk」を構成に含めるようにしてください。<br>
+    また、標準構成でインストールする場合でも、インストール画面の「Add Python 3.* to PATH」はチェックが入った状態でインストールを実行してください。
+    
+    
+    <h2 id="kido">アプリの起動</h2>
+    Windowsの場合は、 unyohub_tools_win.bat をダブルクリックすれば本ツールが起動します。<br>
+    GNU/Linuxの場合は、 unyohub_gui_tools.py をダブルクリックするか、同ファイルを端末エミュレータからPython3コマンドで実行してください。
+    
+    
+    <h2 id="kihon">基本的な使い方</h2>
+    
+    <h3 id="folder">作業フォルダについて</h3>
+    本ツールでは、各種ファイルの編集を行う前に、編集するファイルが入ったフォルダを作業フォルダとして指定する必要があります。<br>
+    <br>
+    一部のファイル変換処理では、作業フォルダ内で変換対象のファイルを検索して処理を行うほか、作業フォルダ内に存在する特定のファイルを自動的に読み込んで変換処理に使用します。
+    
+    <h3 id="db_setup">データベースのセットアップ</h3>
+    作業フォルダ内に各路線系統用のデータベースファイル「railroad.db」を生成します。<br>
+    <br>
+    既に作業フォルダ内に railroad.db が存在する場合は同ファイルのテーブルやインデックスを確認し、欠損しているものがあれば追加します。
+    
+    <h3 id="icon_umekomi">アイコン画像をファイルに埋め込み</h3>
+    指定したフォルダ内の画像ファイルを全てエンコードして、JSONファイル「train_icons.json」に埋め込みます。<br>
+    <br>
+    なお、この処理では作業フォルダを使用しません。
+    
+    <h3 id="zikokuhyo">時刻表の変換</h3>
+    本ツールでは、2段階に分けて時刻表をJSONファイルに変換します。<br>
+    <br>
+    ステップ1では、複数の路線にまたがって運転される列車を含む各列車の時刻が記載された時刻表ファイルを読み込み、路線ごとに分割して個別ファイルに出力します。<br>
+    この際、列車番号をゼロ埋めする必要がある場合は、列車番号の桁数を入力してください。<br>
+    <br>
+    ステップ2では、路線ごとに分割されたファイルを、路線系統基本情報ファイル「railroad_info.json」の路線情報に従って結合し、ダイヤごとの時刻表JSONファイルとして出力します。<br>
+    ダイヤ識別名は、 railroad_info.json で使用しているものと同一のものを指定してください。<br>
+    この処理では、作業フォルダ内に路線情報の入力が済んだ状態の railroad_info.json がなければならず、加えて、 railroad_info.json に記載されている全ての路線の指定したダイヤに対応する上り下りそれぞれの路線別時刻表CSVファイル(ステップ1で出力されるもの)が作業フォルダ内に揃っている必要があります。<br>
+    <br>
+    なお、この処理で使用する時刻表ファイルはCSV形式でなければならず、記載内容も本ツールが読み取り可能な様式に合わせて製作する必要があります。<br>
+    また、ステップ1とステップ2のそれぞれの処理で使用する時刻表CSVファイルは様式が大きく異なり、互換性はありません。
+    
+    <h3 id="unyohyo">運用表の変換</h3>
+    本ツールでは、2段階に分けて運用表をJSONファイルに変換します。<br>
+    <br>
+    ステップ1では、各列車が列車番号のみで記載された形式の運用表ファイルを読み込み、路線系統基本情報ファイル「railroad_info.json」の路線情報と、JSON形式に変換済みの時刻表データを使用して、各列車が区間組成(走行路線と編成に基づいて列車を正規化した概念)として記載された運用表に変換します。<br>
+    <br>
+    ステップ2では、列車が区間組成として記載された運用表を読み込み、記載内容に不備がないかを検査してからJSON形式に変換します。<br>
+    <br>
+    このほか、ステップ1と同様に各列車が列車番号のみで記載された形式の運用表ファイルを読み込み、各列車に始発駅と終着駅の時刻を併記して出力する「運用表を印刷用に変換」も利用可能です。<br>
+    <br>
+    なお、この処理で使用する運用表ファイルはCSV形式でなければならず、記載内容も本ツールが読み取り可能な様式に合わせて製作する必要があります。
+    
+    <h3 id="moderation_db">モデレーションDBのセットアップ</h3>
+    モデレーションログを格納するためのデータベースファイル「moderation.db」を生成します。<br>
+    <br>
+    既存の moderation.db を指定した場合は、同ファイルのテーブルやインデックスを確認し、欠損しているものがあれば追加します。<br>
+    <br>
+    なお、この処理では作業フォルダを使用しません。
+    
+    <h2 id="license">ライセンス</h2>
+    本ツール本体、及び、この利用説明を含む各付属ファイルは<a href="https://www.2pd.jp/license/">無権利創作宣言</a>に準拠して著作権放棄されています。<br>
+    これらのファイルの二次利用について、著作権による制約はありません。
+</body>
+</html>
