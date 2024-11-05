@@ -33,8 +33,7 @@
         <hr>
         <a href="javascript:void(0);" onclick="edit_config();">各種設定</a>
         <hr>
-        <a href="javascript:void(0);" onclick="open_square_popup('about_popup');">このアプリについて</a>
-        <a href="README.html" target="_blank" rel="opener">このアプリの使い方</a>
+        <a href="javascript:void(0);" onclick="show_about();">このアプリについて</a>
         <a href="javascript:void(0);" onclick="show_rules();">ルールとポリシー</a>
         <hr>
         <a href="javascript:void(0);" onclick="reload_app();">アプリの再起動</a>
@@ -45,7 +44,7 @@
             <a id="announcements_overview" href="javascript:void(0);" onclick="show_announcements();"></a>
             <div id="splash_screen_buttons" class="wait_icon"></div>
             <div id="splash_screen_bottom">
-                <a href="README.html" target="_blank" rel="opener">使い方</a>　<a href="javascript:void(0);" onclick="show_rules();">ルールとポリシー</a>
+                <a href="javascript:void(0);" onclick="show_about();">このアプリについて</a>　<a href="javascript:void(0);" onclick="show_rules();">ルールとポリシー</a>
                 <div id="splash_screen_app_version"></div>
             </div> 
         </div>
@@ -174,6 +173,10 @@
         <div id="screenshot_preview"></div>
         <button type="button" id="save_screenshot_button" class="wide_button" onclick="save_screenshot();">画像として保存</button>
     </div>
+    <div class="popup" id="about_popup">
+        <button type="button" class="popup_close_button" onclick="popup_close();"></button>
+        <div id="about_area"></div>
+    </div>
     <div id="popup_screen">
         <div id="popup_screen_blank_area" onclick="close_square_popup();"></div>
         <div class="preview_popup" id="announcements_popup">
@@ -226,13 +229,6 @@
             <button type="button" class="popup_close_button" onclick="close_square_popup();"></button>
             <h3 id="diagram_list_heading"></h3>
             <div id="diagram_list_area"></div>
-        </div>
-        <div class="square_popup" id="about_popup">
-            <button type="button" class="popup_close_button" onclick="close_square_popup();"></button>
-            <img src="/apple-touch-icon.webp" alt="" id="unyohub_icon">
-            <h3 id="app_version"></h3>
-            <small id="license_text"></small>
-            <a id="license_link" target="_blank" class="external_link">ライセンス</a>　<a id="repository_link" target="_blank" class="external_link">ソースコード</a>
         </div>
     </div>
     <div id="wait_screen"></div>

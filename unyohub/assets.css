@@ -4083,26 +4083,7 @@ input[type="radio"] + label small, .chip + label small {
     
     width: 96px;
     
-    margin: 10px auto;
+    margin: 20px auto;
     
     filter: drop-shadow(1px 2px 1px rgba(0,0,0,0.25));
-}
-
-#app_version {
-    margin: 15px 0 10px 0;
-}
-
-#license_text {
-    display: block;
-    
-    width: calc(100% - 20px);
-    
-    padding: 0 10px 15px 10px;
-    
-    font-size: 14px;
-    color: #666666;
-}
-
-.dark_mode #license_text {
-    color: #cccccc;
 }

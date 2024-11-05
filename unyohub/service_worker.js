@@ -11,8 +11,7 @@ var files_to_cache = [
         "/maskable_icon.webp",
         "/monochrome_icon.webp",
         "/favicon.ico",
-        "/splash_screen_image.webp",
-        "/README.html"
+        "/splash_screen_image.webp"
     ];
 
 var new_cache_name = UNYOHUB_APP_ID + "_v" + UNYOHUB_VERSION;

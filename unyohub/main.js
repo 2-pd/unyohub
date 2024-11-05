@@ -23,10 +23,6 @@ const UNYOHUB_LICENSE_URL = "https://www.2pd.jp/license/";
 const UNYOHUB_REPOSITORY_URL = "https://fossil.2pd.jp/unyohub/";
 
 
-document.getElementById("app_version").innerText = UNYOHUB_APP_NAME + " " + UNYOHUB_VERSION;
-document.getElementById("license_text").innerText = UNYOHUB_LICENSE_TEXT;
-document.getElementById("license_link").href = UNYOHUB_LICENSE_URL;
-document.getElementById("repository_link").href = UNYOHUB_REPOSITORY_URL;
 document.getElementById("splash_screen_app_version").innerText = "v" + UNYOHUB_VERSION;
 
 
@@ -266,6 +262,8 @@ function update_instance_info () {
     } else {
         instance_info = {
             instance_name : UNYOHUB_APP_NAME,
+            manual_url : null,
+            introduction_text : null,
             allow_guest_user : false
         };
         
@@ -5828,6 +5826,32 @@ function accept_rules () {
     rules_continue_func();
     
     rules_continue_func = null;
+}
+
+
+function show_about () {
+    open_popup("about_popup");
+    
+    var buf = "<img src='/apple-touch-icon.webp' alt='" + UNYOHUB_APP_NAME + "' id='unyohub_icon'>";
+    buf += "<h2>" + UNYOHUB_APP_NAME + " " + UNYOHUB_VERSION + "</h2>";
+    
+    if (instance_info["introduction_text"] !== null || instance_info["manual_url"] !== null) {
+        buf += "<h3>" + escape_html(instance_info["instance_name"]) + "について</h3>";
+        if (instance_info["introduction_text"] !== null) {
+            buf += "<div class='long_text'>" + convert_to_html(instance_info["introduction_text"]) + "</div>";
+        }
+        if (instance_info["manual_url"] !== null) {
+            buf += "<button onclick='window.open(\"" + instance_info["manual_url"] + "\", \"_blank\", \"noopener\");' class='wide_button'>" + escape_html(instance_info["instance_name"]) + "の使い方</button><br>";
+        }
+    }
+    
+    buf += "<h3>ソフトウェア情報</h3>";
+    buf += "<h4>ライセンス</h4>";
+    buf += "<div class='informational_text'>" + UNYOHUB_LICENSE_TEXT + "<br><br><a href='" + UNYOHUB_LICENSE_URL + "' target='_blank' class='external_link'>" + UNYOHUB_LICENSE_URL + "</a></div>";
+    buf += "<h4>ソースコード</h4>";
+    buf += "<div class='informational_text'><a href='" + UNYOHUB_REPOSITORY_URL + "' target='_blank' class='external_link'>" + UNYOHUB_REPOSITORY_URL + "</a></div>";
+    
+    document.getElementById("about_area").innerHTML = buf;
 }
 
 
