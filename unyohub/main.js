@@ -1563,7 +1563,7 @@ function update_operation_table(resolve_func, reject_func, diagram_id, last_modi
                                     }
                                     
                                     for (var cnt_5 = 0; cnt_5 < operation_trains.length; cnt_5++) {
-                                        if (operation_trains[cnt_5]["starting_station"] === train["starting_station"]) {
+                                        if (operation_trains[cnt_5]["train_number"] === train["train_number"] && operation_trains[cnt_5]["starting_station"] === train["starting_station"]) {
                                             if (operation_trains[cnt_5]["position_forward"] > train["position_forward"]) {
                                                 break for_4;
                                             }
@@ -1571,7 +1571,7 @@ function update_operation_table(resolve_func, reject_func, diagram_id, last_modi
                                     }
                                 }
                                 
-                                line_operations_data["lines"][train["line_id"]][train_direction][train["train_number"]][cnt_3]["operation_numbers"].splice(cnt_5, 0, operation_numbers[cnt]);
+                                line_operations_data["lines"][train["line_id"]][train_direction][train["train_number"]][cnt_3]["operation_numbers"].splice(cnt_4, 0, operation_numbers[cnt]);
                                 
                                 continue for_2;
                             } else if (line_operations_data["lines"][train["line_id"]][train_direction][train["train_number"]][cnt_3]["first_departure_time"] > train["first_departure_time"]) {

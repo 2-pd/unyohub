@@ -1128,18 +1128,14 @@ article {
     top: 29px;
 }
 
+.position_inbound div:not(.multiple_trains) .train_icon_wrapper {
+    float: right;
+}
+
 .position_inbound .train_icon_wrapper:before {
     top: -6px;
     
     border-bottom: 6px solid currentColor;
-}
-
-.position_inbound .train_icon_wrapper {
-    float: right;
-}
-
-.position_outbound .train_icon_wrapper {
-    float: left;
 }
 
 .position_outbound div {
@@ -1155,10 +1151,18 @@ tr:has(+ .position_row_junction_T) .position_outbound div {
     bottom: 29px;
 }
 
+.position_outbound div:not(.multiple_trains) .train_icon_wrapper {
+    float: left;
+}
+
 .position_outbound .train_icon_wrapper:after {
     bottom: 0;
     
     border-top: 6px solid currentColor;
+}
+
+.multiple_trains {
+    white-space: nowrap;
 }
 
 .train_type {
@@ -2923,7 +2927,7 @@ a {
 }
 
 .long_text {
-    margin: 20px 0 40px 0;
+    margin: 20px 5px 40px 5px;
     
     line-height: 1.8em;
     text-align: left;
