@@ -50,7 +50,7 @@
         </div>
     </div>
     <div id="blank_article" class="wait_icon"></div>
-    <div id="tab_area"><button type="button" onclick="position_mode();" id="tab_position_mode">走行位置</button><button type="button" onclick="timetable_mode();" id="tab_timetable_mode">時刻表</button><button type="button" onclick="operation_data_mode();" id="tab_operation_data_mode">運用データ</button><button type="button" onclick="formation_table_mode();" id="tab_formation_table_mode">編成表</button><button type="button" onclick="operation_table_mode();" id="tab_operation_table_mode">運用表</button></div>
+    <div id="tab_area"><a href="#" onclick="event.preventDefault(); position_mode();" id="tab_position_mode">走行位置</a><a href="#" onclick="event.preventDefault(); timetable_mode();" id="tab_timetable_mode">時刻表</a><a href="#" onclick="event.preventDefault(); operation_data_mode();" id="tab_operation_data_mode">運用データ</a><a href="#" onclick="event.preventDefault(); formations_mode();" id="tab_formations_mode">編成表</a><a href="#" onclick="event.preventDefault(); operation_table_mode();" id="tab_operation_table_mode">運用表</a></div>
     <article>
         <div class='line_select_wrapper'><a id="position_line_select" onclick="select_lines();"></a></div>
         <table id="position_area" class="wait_icon"></table>
