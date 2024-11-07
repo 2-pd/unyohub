@@ -64,7 +64,7 @@ if (empty($_GET["formation_name"])) {
     $formation_data = $db_obj->querySingle("SELECT `description`, `inspection_information` FROM `unyohub_formations` WHERE `formation_name` = '".$formation_name."'", TRUE);
     
     if (!empty($formation_data)) {
-        $cars_r = $db_obj->query("SELECT `car_number`, `description` FROM `unyohub_cars` WHERE `formation_name` = '".$formation_name."' ORDER BY `car_order` ASC");
+        $cars_r = $db_obj->query("SELECT `car_number`, `manufacturer`, `constructed`, `description` FROM `unyohub_cars` WHERE `formation_name` = '".$formation_name."' ORDER BY `car_order` ASC");
         
         $cars_data = array();
         while ($car_data = $cars_r->fetchArray(SQLITE3_ASSOC)) {
@@ -75,8 +75,8 @@ if (empty($_GET["formation_name"])) {
             if (isset($_POST["one_time_token"]) && $user->check_one_time_token($_POST["one_time_token"])) {
                 $db_obj->querySingle("UPDATE `unyohub_formations` SET `description` = '".$db_obj->escapeString($_POST["description"])."', `inspection_information` = '".$db_obj->escapeString($_POST["inspection_information"])."' WHERE `formation_name` = '".$formation_name."'");
                 
-                for ($cnt = 0; isset($cars_data[$cnt], $_POST["car_description_".$cnt]); $cnt++) {
-                    $db_obj->querySingle("UPDATE `unyohub_cars` SET `description` = '".$db_obj->escapeString($_POST["car_description_".$cnt])."' WHERE `formation_name` = '".$formation_name."' AND `car_number` = '".$db_obj->escapeString($cars_data[$cnt]["car_number"])."'");
+                for ($cnt = 0; isset($cars_data[$cnt], $_POST["car_manufacturer_".$cnt], $_POST["car_constructed_".$cnt], $_POST["car_description_".$cnt]); $cnt++) {
+                    $db_obj->querySingle("UPDATE `unyohub_cars` SET `manufacturer` = '".$db_obj->escapeString($_POST["car_manufacturer_".$cnt])."', `constructed` = '".$db_obj->escapeString($_POST["car_constructed_".$cnt])."', `description` = '".$db_obj->escapeString($_POST["car_description_".$cnt])."' WHERE `formation_name` = '".$formation_name."' AND `car_number` = '".$db_obj->escapeString($cars_data[$cnt]["car_number"])."'");
                 }
                 
                 print "<script> alert('編成情報を保存しました'); </script>";
@@ -87,7 +87,9 @@ if (empty($_GET["formation_name"])) {
             $formation_data["description"] = $_POST["description"];
             $formation_data["inspection_information"] = $_POST["inspection_information"];
             
-            for ($cnt = 0; isset($cars_data[$cnt], $_POST["car_description_".$cnt]); $cnt++) {
+            for ($cnt = 0; isset($cars_data[$cnt], $_POST["car_manufacturer_".$cnt], $_POST["car_constructed_".$cnt], $_POST["car_description_".$cnt]); $cnt++) {
+                $cars_data[$cnt]["manufacturer"] = $_POST["car_manufacturer_".$cnt];
+                $cars_data[$cnt]["constructed"] = $_POST["car_constructed_".$cnt];
                 $cars_data[$cnt]["description"] = $_POST["car_description_".$cnt];
             }
         }
@@ -101,10 +103,13 @@ if (empty($_GET["formation_name"])) {
         print "<h3>検査情報</h3>";
         print "<textarea name='inspection_information'>".htmlspecialchars($formation_data["inspection_information"])."</textarea>";
         
-        print "<h3>各車両の特記事項</h3>";
+        print "<h3>各車両の情報</h3>";
         
         for ($cnt = 0; isset($cars_data[$cnt]); $cnt++) {
             print "<h4>".htmlspecialchars($cars_data[$cnt]["car_number"])."</h4>";
+            print "<h5>製造メーカー / 製造年月日</h5>";
+            print "<div class='half_input_wrapper'><input type='text' name='car_manufacturer_".$cnt."' value='".addslashes($cars_data[$cnt]["manufacturer"])."'> / <input type='text' name='car_constructed_".$cnt."' value='".addslashes($cars_data[$cnt]["constructed"])."'></div>";
+            print "<h5>特記事項</h5>";
             print "<textarea name='car_description_".$cnt."'>".htmlspecialchars($cars_data[$cnt]["description"])."</textarea>";
         }
         

@@ -76,7 +76,6 @@ _/_/_/_/ ファイル構成 _/_/_/_/
    └ unyohub ・・・コマンドラインやcronから実行可能なPythonファイル(詳細は別記、拡張子なし)
    └ modules/
       └ ****.py ・・・unyohubから呼び出される各種処理の本体となるPythonファイル
-└ README.html ・・・ユーザーマニュアル
 
 ※サーバにアップロードする必要のない各種変換処理スクリプト類は上記に含まれない
 
@@ -104,6 +103,9 @@ _/_/_/_/ 設定ファイル設定値 _/_/_/_/
 ███ main.ini ███
 
 instance_name 鉄道運用Hubインスタンスの表示名
+
+manual_url ユーザーマニュアルのURL
+introduction_text インスタンスの紹介文
 
 require_invite_code ユーザー登録時に招待コードを必要とするか(BOOL値)
 require_email_address ユーザー登録時にメールアドレス入力を必要とするか(BOOL値)

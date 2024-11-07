@@ -196,6 +196,16 @@ h4 {
     font-size: 18px;
 }
 
+h5 {
+    max-width: 485px;
+    
+    margin: 10px auto 0 auto;
+    
+    padding-left: 15px;
+    
+    font-size: 16px;
+}
+
 table {
     width: 100%;
     
@@ -366,6 +376,22 @@ input[type="datetime-local"] {
 
 input[type="checkbox"] {
     display: none;
+}
+
+.half_input_wrapper {
+    max-width: 480px;
+    
+    margin: 5px auto;
+    
+    padding: 0 10px;
+}
+
+.half_input_wrapper input {
+    display: inline-block;
+    
+    width: 40%;
+    
+    margin: 0 10px;
 }
 
 .toggle + label {

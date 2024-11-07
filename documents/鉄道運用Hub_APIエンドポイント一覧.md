@@ -16,6 +16,8 @@
 **タイムスタンプが省略されるか、main.iniの変更日時がタイムスタンプより新しかった場合** :  
 {  
     "instance_name" : 鉄道運用Hubインスタンスの表示名,  
+    "manual_url" : ユーザーマニュアルのURL,  
+    "introduction_text" : インスタンスの紹介文,  
     "allow_guest_user" : ログインしていないユーザーの投稿を認めるか(BOOL値)  
 }  
   

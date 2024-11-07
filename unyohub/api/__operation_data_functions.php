@@ -385,9 +385,9 @@ function revoke_post ($wakarana, $operation_date_ts, $operation_number, $post_us
             $previous_day_ts = $operation_date_ts - 86400;
             update_diagram_revision($previous_day_ts);
             
-            $previous_day_data = $db_obj->querySingle("SELECT `unyohub_data_caches`.`formations`, `unyohub_data_caches`.`from_beginner`, `unyohub_data_caches`.`is_quotation` FROM `unyohub_operations`, `unyohub_data_caches` WHERE `unyohub_operations`.`diagram_id` = '".$db_obj->escapeString(get_diagram_id($previous_day_ts))."' AND `unyohub_operations`.`terminal_location` = '".$db_obj->escapeString($operation_data["starting_location"])."' AND `unyohub_operations`.`terminal_track` = '".$db_obj->escapeString($operation_data["starting_track"])."' AND `unyohub_data_caches`.`operation_date` = '".date("Y-m-d", $previous_day_ts)."' AND `unyohub_data_caches`.`operation_number` = `unyohub_operations`.`operation_number`", TRUE);
+            $previous_day_data = $db_obj->querySingle("SELECT `unyohub_data_caches`.`formations`, `unyohub_data_caches`.`posts_count`, `unyohub_data_caches`.`from_beginner`, `unyohub_data_caches`.`is_quotation` FROM `unyohub_operations`, `unyohub_data_caches` WHERE `unyohub_operations`.`diagram_id` = '".$db_obj->escapeString(get_diagram_id($previous_day_ts))."' AND `unyohub_operations`.`terminal_location` = '".$db_obj->escapeString($operation_data["starting_location"])."' AND `unyohub_operations`.`terminal_track` = '".$db_obj->escapeString($operation_data["starting_track"])."' AND `unyohub_data_caches`.`operation_date` = '".date("Y-m-d", $previous_day_ts)."' AND `unyohub_data_caches`.`operation_number` = `unyohub_operations`.`operation_number`", TRUE);
             
-            if (!empty($previous_day_data)) {
+            if (!empty($previous_day_data) && $previous_day_data["posts_count"] >= 1) {
                 update_data_cache($operation_date, $operation_number, $previous_day_data["formations"], $posted_datetime, explode("+", $previous_day_data["formations"]), 0, FALSE, FALSE, $previous_day_data["from_beginner"], $previous_day_data["is_quotation"]);
                 
                 return array("formations" => $previous_day_data["formations"], "posts_count" => 0, "variant_exists" => FALSE, "comment_exists" => FALSE, "from_beginner" => $previous_day_data["from_beginner"]);

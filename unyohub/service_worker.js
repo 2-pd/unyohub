@@ -1,5 +1,5 @@
 const UNYOHUB_APP_ID = "unyohub";
-const UNYOHUB_VERSION = "24.10-1";
+const UNYOHUB_VERSION = "24.11-1";
 
 var files_to_cache = [
         "/",
@@ -11,8 +11,7 @@ var files_to_cache = [
         "/maskable_icon.webp",
         "/monochrome_icon.webp",
         "/favicon.ico",
-        "/splash_screen_image.webp",
-        "/README.html"
+        "/splash_screen_image.webp"
     ];
 
 var new_cache_name = UNYOHUB_APP_ID + "_v" + UNYOHUB_VERSION;

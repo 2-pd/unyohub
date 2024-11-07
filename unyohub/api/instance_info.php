@@ -14,8 +14,22 @@ if (isset($_POST["last_modified_timestamp"]) && $last_modified <= intval($_POST[
     
     $main_config = parse_ini_file(MAIN_CONFIG_PATH, FALSE, INI_SCANNER_TYPED);
     
-    print json_encode(array(
+    $instance_info = array(
         "instance_name" => $main_config["instance_name"],
         "allow_guest_user" => $main_config["allow_guest_user"]
-    ), JSON_UNESCAPED_UNICODE);
+    );
+    
+    if (!empty($main_config["introduction_text"])) {
+        $instance_info["introduction_text"] = $main_config["introduction_text"];
+    } else {
+        $instance_info["introduction_text"] = NULL;
+    }
+    
+    if (!empty($main_config["manual_url"])) {
+        $instance_info["manual_url"] = $main_config["manual_url"];
+    } else {
+        $instance_info["manual_url"] = NULL;
+    }
+    
+    print json_encode($instance_info, JSON_UNESCAPED_UNICODE);
 }
