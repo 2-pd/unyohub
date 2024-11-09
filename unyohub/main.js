@@ -199,6 +199,15 @@ function ajax_post (end_point_name, query_str, callback_func, timeout = 30) {
 }
 
 
+function change_title (title_text, url = null) {
+    document.getElementsByTagName("title")[0].innerText = title_text;
+    
+    if (url !== null) {
+        history.pushState(null, "", url);
+    }
+}
+
+
 var message_area_elm = document.getElementById("message_area");
 var message_elm_list = [];
 
@@ -247,10 +256,8 @@ function delete_mes (box_elm) {
 
 var instance_info;
 
-var title_elm = document.getElementsByTagName("title")[0];
-
 function update_instance_info () {
-    title_elm.innerText = instance_info["instance_name"];
+    change_title(instance_info["instance_name"]);
     document.getElementById("instance_name").innerText = instance_info["instance_name"];
 }
 
@@ -1845,8 +1852,7 @@ var position_reload_button_elm = document.getElementById("position_reload_button
 var position_time_button_elm = document.getElementById("position_time_button");
 
 function position_mode (date_str = "today", position_time_additions = null) {
-    history.pushState(null, "", "/railroad_" + railroad_info["railroad_id"] + "/");
-    title_elm.innerText = railroad_info["railroad_name"] + " | " + instance_info["instance_name"];
+    change_title(railroad_info["railroad_name"] + " | " + instance_info["instance_name"], "/railroad_" + railroad_info["railroad_id"] + "/");
     
     change_mode(0);
     
@@ -3027,8 +3033,7 @@ var timetable_promise_list = [];
 var timetable_selectable_lines = [];
 
 function timetable_mode (load_data = true) {
-    history.pushState(null, "", "/railroad_" + railroad_info["railroad_id"] + "/timetable/");
-    title_elm.innerText = railroad_info["railroad_name"] + "の駅別発着車両運用 | " + instance_info["instance_name"];
+    change_title(railroad_info["railroad_name"] + "の駅別発着車両運用 | " + instance_info["instance_name"], "/railroad_" + railroad_info["railroad_id"] + "/timetable/");
     
     change_mode(1);
     
@@ -3600,8 +3605,7 @@ var operation_date_button_elm = document.getElementById("operation_date_button")
 var operation_all_data_loaded = false;
 
 function operation_data_mode () {
-    history.pushState(null, "", "/railroad_" + railroad_info["railroad_id"] + "/operation_data/");
-    title_elm.innerText = railroad_info["railroad_name"] + "の運用データ | " + instance_info["instance_name"];
+    change_title(railroad_info["railroad_name"] + "の運用データ | " + instance_info["instance_name"], "/railroad_" + railroad_info["railroad_id"] + "/operation_data/");
     
     change_mode(2);
     
@@ -4312,11 +4316,6 @@ var formation_table_drop_down_status;
 var formation_table_wrapper_scroll_amount;
 
 function formations_mode (formation_name = null) {
-    if (formation_name === null) {
-        history.pushState(null, "", "/railroad_" + railroad_info["railroad_id"] + "/formations/");
-    }
-    title_elm.innerText = railroad_info["railroad_name"] + "で運用中の編成一覧 | " + instance_info["instance_name"];
-    
     change_mode(3);
     
     car_number_search_elm.value = "";
@@ -4350,7 +4349,11 @@ function formation_table_wrapper_onscroll () {
     }
 }
 
-function draw_formation_table () {
+function draw_formation_table (update_title = true) {
+    if (update_title) {
+        change_title(railroad_info["railroad_name"] + "で運用中の編成一覧 | " + instance_info["instance_name"], "/railroad_" + railroad_info["railroad_id"] + "/formations/");
+    }
+    
     formation_screenshot_button_elm.style.display = "none";
     formation_back_button_elm.style.display = "none";
     
@@ -4452,7 +4455,7 @@ function change_colorize_formation_table (bool_val) {
     
     save_config();
     
-    draw_formation_table();
+    draw_formation_table(false);
 }
 
 function update_formation_table_drop_down_status (elm) {
@@ -4465,8 +4468,7 @@ function formation_detail (formation_name) {
         return;
     }
     
-    history.pushState(null, "", "/railroad_" + railroad_info["railroad_id"] + "/formations/" + encodeURIComponent(formation_name) + "/");
-    title_elm.innerText = formation_name + " (" + railroad_info["railroad_name"] + ") の車両・運用情報 | " + instance_info["instance_name"];
+    change_title(formation_name + " (" + railroad_info["railroad_name"] + ") の車両・運用情報 | " + instance_info["instance_name"], "/railroad_" + railroad_info["railroad_id"] + "/formations/" + encodeURIComponent(formation_name) + "/");
     
     formation_search_area_elm.style.display = "none";
     formation_table_area_elm.innerHTML = "";
@@ -4643,8 +4645,7 @@ var operation_table_info_elm = document.getElementById("operation_table_info");
 var operation_table_name_elm = document.getElementById("operation_table_name");
 
 function operation_table_mode (load_data = true, diagram_id = null) {
-    history.pushState(null, "", "/railroad_" + railroad_info["railroad_id"] + "/operation_table/");
-    title_elm.innerText = railroad_info["railroad_name"] + "の運用表 | " + instance_info["instance_name"];
+    change_title(railroad_info["railroad_name"] + "の運用表 | " + instance_info["instance_name"], "/railroad_" + railroad_info["railroad_id"] + "/operation_table/");
     
     change_mode(4);
     
@@ -5362,7 +5363,11 @@ function select_operation_to_write_data (line_id, train_number, starting_station
     for (var cnt = 0; cnt < train_operations.length; cnt++) {
         for (var cnt_2 = 0; cnt_2 < operation_table["operations"][train_operations[cnt]]["trains"].length; cnt_2++) {
             if (operation_table["operations"][train_operations[cnt]]["trains"][cnt_2]["train_number"] === train_number && operation_table["operations"][train_operations[cnt]]["trains"][cnt_2]["starting_station"] === starting_station) {
-                position_operations[operation_table["operations"][train_operations[cnt]]["trains"][cnt_2]["position_forward"] + "-" + operation_table["operations"][train_operations[cnt]]["trains"][cnt_2]["position_rear"]] = train_operations[cnt];
+                position_operations[("0" + operation_table["operations"][train_operations[cnt]]["trains"][cnt_2]["position_forward"]).slice(-2)] = {
+                    operation_number : train_operations[cnt],
+                    position_forward : operation_table["operations"][train_operations[cnt]]["trains"][cnt_2]["position_forward"],
+                    position_rear : operation_table["operations"][train_operations[cnt]]["trains"][cnt_2]["position_rear"]
+                };
                 
                 break;
             }
@@ -5388,7 +5393,13 @@ function select_operation_to_write_data (line_id, train_number, starting_station
             buf += "<td rowspan='" + position_keys.length + "'><span>進行方向</span></td>";
         }
         
-        buf += "<td onclick='write_operation_data(null, \"" + add_slashes(position_operations[position_keys[cnt]]) + "\", \"" + add_slashes(train_number) + "\");'><div><b>" + position_keys[cnt] + "</b>両目</div>" + escape_html(position_operations[position_keys[cnt]]) + "運用</td></tr>";
+        buf += "<td onclick='write_operation_data(null, \"" + add_slashes(position_operations[position_keys[cnt]]["operation_number"]) + "\", \"" + add_slashes(train_number) + "\");'><div><b>" + position_operations[position_keys[cnt]]["position_forward"];
+        
+        if (position_operations[position_keys[cnt]]["position_forward"] !== position_operations[position_keys[cnt]]["position_rear"]) {
+            buf += "-" + position_operations[position_keys[cnt]]["position_rear"];
+        }
+        
+        buf += "</b>両目</div>" + escape_html(position_operations[position_keys[cnt]]["operation_number"]) + "運用</td></tr>";
     }
     
     buf += "</table>";
