@@ -3173,8 +3173,12 @@ var direction_radio_area_elm = document.getElementById("direction_radio_area");
 
 function timetable_change_lines(line_id, force_station_select_mode = false) {
     if (line_id !== null) {
-        document.getElementById("radio_inbound_label").innerHTML = "上り<small>(" + escape_html(railroad_info["lines"][line_id]["stations"][0]["station_name"]) + "方面)</small>";
-        document.getElementById("radio_outbound_label").innerHTML = "下り<small>(" + escape_html(railroad_info["lines"][line_id]["stations"][railroad_info["lines"][line_id]["stations"].length - 1]["station_name"]) + "方面)</small>";
+        if (line_id in railroad_info["lines"]) {
+            document.getElementById("radio_inbound_label").innerHTML = "上り<small>(" + escape_html(railroad_info["lines"][line_id]["stations"][0]["station_name"]) + "方面)</small>";
+            document.getElementById("radio_outbound_label").innerHTML = "下り<small>(" + escape_html(railroad_info["lines"][line_id]["stations"][railroad_info["lines"][line_id]["stations"].length - 1]["station_name"]) + "方面)</small>";
+        } else {
+            line_id = null;
+        }
     }
     
     update_selected_line(line_id, false);
@@ -3250,6 +3254,8 @@ function timetable_select_station (station_name, line_id = null) {
         timetable_change_lines(line_id);
         
         return;
+    } else if (timetable_selected_line === null) {
+        return;
     }
     
     timetable_area_elm.innerHTML = "";
@@ -3271,6 +3277,12 @@ function draw_station_timetable (station_name) {
         if (railroad_info["lines"][timetable_selected_line]["stations"][station_index]["station_name"] === station_name) {
             break;
         }
+    }
+    
+    if (station_index >= railroad_info["lines"][timetable_selected_line]["stations"].length) {
+        timetable_change_lines(timetable_selected_line, true);
+        
+        return;
     }
     
     document.getElementById("timetable_station_name").innerText = railroad_info["lines"][timetable_selected_line]["stations"][station_index]["station_name"];

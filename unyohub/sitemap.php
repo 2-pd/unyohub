@@ -65,10 +65,22 @@ if (empty($_SERVER["PATH_INFO"])) {
         print "        <loc>".$railroad_root."/operation_table/</loc>\n";
         print "    </url>\n";
         
+        $railroad_info = json_decode(file_get_contents("data/".$railroad_id."/railroad_info.json"), TRUE);
         $formations = json_decode(file_get_contents("data/".$railroad_id."/formations.json"), TRUE);
         
-        $formation_names = array_keys($formations["formations"]);
+        foreach ($railroad_info["lines_order"] as $line_id) {
+            print "    <url>\n";
+            print "        <loc>".$railroad_root."/timetable/".$line_id."/</loc>\n";
+            print "    </url>\n";
+            
+            foreach ($railroad_info["lines"][$line_id]["stations"] as $station) {
+                print "    <url>\n";
+                print "        <loc>".$railroad_root."/timetable/".$line_id."/".urlencode($station["station_name"])."/</loc>\n";
+                print "    </url>\n";
+            }
+        }
         
+        $formation_names = array_keys($formations["formations"]);
         foreach ($formation_names as $formation_name) {
             print "    <url>\n";
             print "        <loc>".$railroad_root."/formations/".urlencode($formation_name)."/</loc>\n";
