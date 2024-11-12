@@ -469,6 +469,80 @@ header {
     text-decoration: underline;
 }
 
+.loading_icon:empty, .loading_icon:empty:before, .loading_icon:empty:after {
+    background-repeat: no-repeat;
+    
+    animation: loading_icon_up_down linear 0.6s infinite;
+}
+
+.loading_icon:empty {
+    width: 54px;
+    height: 32px;
+    
+    margin: 16px auto;
+    
+    line-height: 32px;
+    
+    animation-delay: 0.15s;
+}
+
+.loading_icon:empty:before, .loading_icon:empty:after {
+    content: "";
+    
+    display: inline-block;
+    
+    width: 12px;
+    height: 32px;
+}
+
+.loading_icon:empty:before {
+    float: left;
+}
+
+.loading_icon:empty:after {
+    float: right;
+    
+    animation-delay: 0.3s;
+}
+
+@keyframes loading_icon_up_down {
+    0% {
+        background-image: radial-gradient(circle at left 50% top 6px, rgba(153, 153, 153, 0.5) 0, rgba(153, 153, 153, 0.5) 6px, transparent 6px);
+        background-position-y: 20px;
+    }
+    
+    15% {
+        background-position-y: 15px;
+    }
+    
+    20% {
+        background-position-y: 5px;
+    }
+    
+    35% {
+        background-image: radial-gradient(circle at left 50% top 6px, rgba(153, 153, 153, 1) 0, rgba(153, 153, 153, 1) 6px, transparent 6px);
+        background-position-y: 0px;
+    }
+    
+    50% {
+        background-position-y: 5px;
+    }
+    
+    55% {
+        background-position-y: 15px;
+    }
+    
+    70% {
+        background-image: radial-gradient(circle at left 50% top 6px, rgba(153, 153, 153, 0.5) 0, rgba(153, 153, 153, 0.5) 6px, transparent 6px);
+        background-position-y: 20px;
+    }
+    
+    100% {
+        background-image: radial-gradient(circle at left 50% top 6px, rgba(153, 153, 153, 0.5) 0, rgba(153, 153, 153, 0.5) 6px, transparent 6px);
+        background-position-y: 20px;
+    }
+}
+
 #splash_screen_bottom {
     position: absolute;
     bottom: 10px;

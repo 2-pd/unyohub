@@ -1,7 +1,7 @@
 /*_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/*/
 
 const UNYOHUB_APP_NAME = "鉄道運用Hub";
-const UNYOHUB_VERSION = "24.11-1";
+const UNYOHUB_VERSION = "24.11-2";
 
 /*_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/*/
 
@@ -649,14 +649,16 @@ function check_logged_in () {
 
 var splash_screen_login_status_elm = document.getElementById("splash_screen_login_status");
 
-function update_railroad_list (railroads) {
+function update_railroad_list (railroads, loading = false) {
     var buttons_html = "";
     
     for (var cnt = 0; cnt < railroads["railroads_order"].length; cnt++) {
         buttons_html += "<a href='/railroad_" + railroads["railroads_order"][cnt] + "/' class='wide_button' onclick='event.preventDefault(); select_railroad(\"" + railroads["railroads_order"][cnt] + "\");'><img src='" + railroads["railroads"][railroads["railroads_order"][cnt]]["railroad_icon"] + "' alt='' style='background-color: " + railroads["railroads"][railroads["railroads_order"][cnt]]["main_color"] + ";'>" + escape_html(railroads["railroads"][railroads["railroads_order"][cnt]]["railroad_name"]) + "</a>";
     }
     
-    if (cnt === 0) {
+    if (loading) {
+        buttons_html += "<div class='loading_icon'></div>";
+    } else if (cnt === 0) {
         buttons_html = "<div class='no_data'>利用可能なデータがありません</div>";
     }
     
@@ -730,6 +732,8 @@ window.onload = function () {
     
     if (navigator.onLine) {
         check_logged_in();
+        
+        update_railroad_list(railroads_caches, true);
         
         ajax_post("railroads.php", "last_modified_timestamp=" + railroads_caches["last_modified_timestamp"], function (response, last_modified) {
             if (response !== false && response !== "NO_UPDATES_AVAILABLE") {
@@ -2684,7 +2688,7 @@ function get_operation_data_detail (operation_date, operation_number_or_list, ar
         }
         
         operation_numbers_str += operation_number_list[cnt];
-        buf += "<input type='checkbox' id='" + area_id + "_detail_" + add_slashes(operation_number_list[cnt]) + "'><label for='" + area_id + "_detail_" + add_slashes(operation_number_list[cnt]) + "' class='drop_down'>" + escape_html(operation_number_list[cnt]) + "運用 目撃情報</label><div class='descriptive_text'>情報を取得しています...</div>";
+        buf += "<div class='loading_icon'></div>";
     }
     
     area_elm.innerHTML = buf;
@@ -4577,12 +4581,12 @@ function formation_detail (formation_name) {
     
     var buf = "<h2><button type='button' class='previous_button' onclick='previous_formation(\"" + add_slashes(formation_name) + "\");'></button>" + escape_html(formation_name) + "<button type='button' class='next_button' onclick='next_formation(\"" + add_slashes(formation_name) + "\");'></button></h2>";
     
-    buf += "<img src='" + get_icon(formation_name) + "' alt='' class='train_icon_large'>";
+    buf += "<img src='" + get_icon(formation_name) + "' alt='" + add_slashes(formations["formations"][formation_name]["series_name"]) + "' class='train_icon_large'>";
     
     buf += "<div class='key_and_value'><b>車両形式</b>" + formations["formations"][formation_name]["series_name"] + "</div>";
     buf += "<div class='descriptive_text' id='formation_description'></div>";
     
-    buf += "<input type='checkbox' id='formation_operations'><label for='formation_operations' class='drop_down'>運用情報</label><div id='formation_operations_area'><div class='descriptive_text'>情報の取得を待機しています</div></div>";
+    buf += "<div id='formation_operations_area'></div>";
     
     buf += "<h3>検査情報</h3>";
     buf += "<div class='descriptive_text' id='inspection_information'>情報がありません</div>"
@@ -4622,7 +4626,11 @@ function formation_detail (formation_name) {
     formation_table_area_elm.innerHTML = buf;
     formation_table_wrapper_elm.scrollTop = 0;
     
+    var formation_operations_area_elm = document.getElementById("formation_operations_area");
+    
     if (navigator.onLine) {
+        formation_operations_area_elm.className = "loading_icon";
+        
         ajax_post("formation_details.php", "railroad_id=" + escape_form_data(railroad_info["railroad_id"]) + "&formation_name=" + escape_form_data(formation_name), function (response) {
             if (response !== false) {
                 var data = JSON.parse(response);
@@ -4638,8 +4646,9 @@ function formation_detail (formation_name) {
                     document.getElementById("car_description_" + cnt).innerText = data["cars"][cnt]["description"];
                 }
                 
+                var buf = "<input type='checkbox' id='formation_operations'><label for='formation_operations' class='drop_down'>運用情報</label>";
                 if (data["operations_today"] !== null || data["operations_tomorrow"] !== null) {
-                    var buf = "<div class='formation_operation_data'><h4>今日の運用情報</h4>";
+                    buf += "<div><div class='formation_operation_data'><h4>今日の運用情報</h4>";
                     if (data["operations_today"] !== null) {
                         for (cnt = 0; cnt < data["operations_today"].length; cnt++) {
                             buf += "<div class='key_and_value' onclick='operation_detail(\"" + add_slashes(data["operations_today"][cnt]["operation_number"]) + "\", " + get_timestamp() + ", false, \"" + add_slashes(data["operations_today"][cnt]["formations"]) + "\");'><u>" + escape_html(data["operations_today"][cnt]["operation_number"]) + "</u>" + data["operations_today"][cnt]["formations"] + "</div>";
@@ -4657,11 +4666,11 @@ function formation_detail (formation_name) {
                     } else {
                         buf += "<div class='descriptive_text'>明日の運用情報は判明していません</div>";
                     }
-                    buf += "</div>";
+                    buf += "</div></div>";
                 } else if (data["last_seen_date"] !== null) {
                     var last_seen_date_splitted = data["last_seen_date"].split("-");
                     
-                    var buf = "<div class='formation_operation_data_last_seen'><h4>最終目撃情報(" + last_seen_date_splitted[0] + "/" + Number(last_seen_date_splitted[1]) + "/" + Number(last_seen_date_splitted[2]) + ")</h4>";
+                    buf += "<div><div class='formation_operation_data_last_seen'><h4>最終目撃情報(" + last_seen_date_splitted[0] + "/" + Number(last_seen_date_splitted[1]) + "/" + Number(last_seen_date_splitted[2]) + ")</h4>";
                     
                     var dt = new Date(data["last_seen_date"] + " 12:00:00");
                     
@@ -4669,12 +4678,12 @@ function formation_detail (formation_name) {
                         buf += "<div class='key_and_value' onclick='operation_detail(\"" + add_slashes(data["operations_last_day"][cnt]["operation_number"]) + "\", " + Math.floor(dt.getTime() / 1000) + ", false, \"" + add_slashes(data["operations_last_day"][cnt]["formations"]) + "\");'><u>" + escape_html(data["operations_last_day"][cnt]["operation_number"]) + "</u>" + data["operations_last_day"][cnt]["formations"] + "</div>";
                     }
                     
-                    buf += "</div>";
+                    buf += "</div></div>";
                 } else {
-                    var buf = "<div class='descriptive_text'>この編成の運用情報が投稿されたことはありません</div>";
+                    buf += "<div class='descriptive_text'>この編成の運用情報が投稿されたことはありません</div>";
                 }
                 
-                document.getElementById("formation_operations_area").innerHTML = buf;
+                formation_operations_area_elm.innerHTML = buf;
             }
         });
     }
