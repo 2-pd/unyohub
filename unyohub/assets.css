@@ -469,6 +469,80 @@ header {
     text-decoration: underline;
 }
 
+.loading_icon:empty, .loading_icon:empty:before, .loading_icon:empty:after {
+    background-repeat: no-repeat;
+    
+    animation: loading_icon_up_down linear 0.6s infinite;
+}
+
+.loading_icon:empty {
+    width: 54px;
+    height: 32px;
+    
+    margin: 16px auto;
+    
+    line-height: 32px;
+    
+    animation-delay: 0.15s;
+}
+
+.loading_icon:empty:before, .loading_icon:empty:after {
+    content: "";
+    
+    display: inline-block;
+    
+    width: 12px;
+    height: 32px;
+}
+
+.loading_icon:empty:before {
+    float: left;
+}
+
+.loading_icon:empty:after {
+    float: right;
+    
+    animation-delay: 0.3s;
+}
+
+@keyframes loading_icon_up_down {
+    0% {
+        background-image: radial-gradient(circle at left 50% top 6px, rgba(153, 153, 153, 0.5) 0, rgba(153, 153, 153, 0.5) 6px, transparent 6px);
+        background-position-y: 20px;
+    }
+    
+    15% {
+        background-position-y: 15px;
+    }
+    
+    20% {
+        background-position-y: 5px;
+    }
+    
+    35% {
+        background-image: radial-gradient(circle at left 50% top 6px, rgba(153, 153, 153, 1) 0, rgba(153, 153, 153, 1) 6px, transparent 6px);
+        background-position-y: 0px;
+    }
+    
+    50% {
+        background-position-y: 5px;
+    }
+    
+    55% {
+        background-position-y: 15px;
+    }
+    
+    70% {
+        background-image: radial-gradient(circle at left 50% top 6px, rgba(153, 153, 153, 0.5) 0, rgba(153, 153, 153, 0.5) 6px, transparent 6px);
+        background-position-y: 20px;
+    }
+    
+    100% {
+        background-image: radial-gradient(circle at left 50% top 6px, rgba(153, 153, 153, 0.5) 0, rgba(153, 153, 153, 0.5) 6px, transparent 6px);
+        background-position-y: 20px;
+    }
+}
+
 #splash_screen_bottom {
     position: absolute;
     bottom: 10px;
@@ -523,6 +597,8 @@ header {
 
 #tab_area a {
     display: inline-block;
+    
+    position: relative;
     
     box-sizing: content-box;
     
@@ -704,6 +780,10 @@ article {
     color: #cccccc;
 }
 
+.line_select_wrapper a:has(abbr:empty) {
+    text-indent: -10px;
+}
+
 .line_select_wrapper abbr {
     position: absolute;
     
@@ -755,10 +835,9 @@ article {
     height: 82px;
     
     text-align: left;
-    font-weight: normal;
 }
 
-#position_area h4 {
+#position_area th a {
     position: absolute;
     top: -13px;
     left: -5px;
@@ -775,6 +854,7 @@ article {
     
     line-height: 28px;
     font-size: 15px;
+    color: inherit;
     text-decoration: underline;
     
     filter: drop-shadow(0 1px 2px rgba(0,0,0,0.25));
@@ -782,7 +862,7 @@ article {
     z-index: 2;
 }
 
-.dark_mode #position_area h4 {
+.dark_mode #position_area th a {
     background-color: #555555;
 }
 
@@ -801,6 +881,8 @@ article {
     text-decoration: none;
     
     filter: none;
+    
+    pointer-events: none;
 }
 
 .dark_mode #position_area .position_signal_station {
@@ -2969,6 +3051,10 @@ a:has(abbr) {
     text-decoration: none;
 }
 
+a:has(abbr:empty) {
+    text-indent: 46px;
+}
+
 a abbr {
     display: block;
     
@@ -2985,6 +3071,10 @@ a abbr {
     text-align: center;
     
     float: left;
+}
+
+a abbr:empty {
+    display: none;
 }
 
 .operation_data_detail {

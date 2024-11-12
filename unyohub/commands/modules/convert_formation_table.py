@@ -96,11 +96,15 @@ def convert_formation_table (mes, main_dir):
     
     series_name = None
     while cnt < len(formation_data):
-        if formation_data[cnt][0].startswith("# "):
+        formation_name = formation_data[cnt][0].strip()
+        
+        if len(formation_name) == 0:
+            cnt += 1
+        elif formation_name.startswith("# "):
             if series_name is not None:
                 insert_series_data(mes, cur, series_name, min_car_count, max_car_count, coupling_group_list)
             
-            series_name = formation_data[cnt][0][2:]
+            series_name = formation_name[2:]
             
             mes("・" + series_name + " のデータ処理を開始します...")
             
@@ -111,10 +115,8 @@ def convert_formation_table (mes, main_dir):
             min_car_count = None
             max_car_count = 0
             
-            cnt += 3
+            cnt += 2
         else:
-            formation_name = formation_data[cnt][0]
-            
             mes("　- " + formation_name + " のデータを処理しています...")
             
             json_data["series"][series_name]["formation_names"].append(formation_name)
@@ -171,7 +173,7 @@ def convert_formation_table (mes, main_dir):
                     if coupling_group not in coupling_group_list:
                         coupling_group_list.append(coupling_group)
             
-            cnt += 5
+            cnt += 4
     
     insert_series_data(mes, cur, series_name, min_car_count, max_car_count, coupling_group_list)
     
