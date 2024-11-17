@@ -445,15 +445,18 @@ function switch_dark_mode () {
         case 0:
             position_change_lines(position_selected_line);
             break;
+        
         case 1:
             update_selected_line(timetable_selected_line, false);
             if (timetable_selected_station !== null) {
                 timetable_select_station(timetable_selected_station);
             }
             break;
+        
         case 2:
             operation_data_draw();
             break;
+        
         case 4:
             operation_table_list_number();
             break;
@@ -1311,6 +1314,7 @@ function select_railroad (railroad_id, mode_name = "position_mode", mode_option_
             case "position_mode":
                 position_mode();
                 break;
+            
             case "timetable_mode":
                 timetable_selected_line = mode_option_1;
                 
@@ -1321,15 +1325,19 @@ function select_railroad (railroad_id, mode_name = "position_mode", mode_option_
                 }
                 
                 break;
+            
             case "operation_data_mode":
                 operation_data_mode();
                 break;
+            
             case "formations_mode":
                 formations_mode(mode_option_1);
                 break;
+            
             case "operation_table_mode":
                 operation_table_mode();
                 break;
+            
             default:
                 reload_app();
         }
@@ -1849,6 +1857,13 @@ function background_updater () {
                         case 0:
                             position_change_time(0);
                             break;
+                        
+                        case 1:
+                            if (timetable_selected_station !== null) {
+                                timetable_select_station(timetable_selected_station);
+                            }
+                            break;
+                        
                         case 2:
                             operation_data_draw();
                             break;
@@ -3092,8 +3107,13 @@ var timetable_line_select_elm = document.getElementById("timetable_line_select")
 var timetable_area_elm = document.getElementById("timetable_area");
 var timetable_back_button_elm = document.getElementById("timetable_back_button");
 
+var timetable_drop_down_status;
+var timetable_wrapper_scroll_amount;
+
 function timetable_mode (load_data = true) {
     change_mode(1);
+    
+    timetable_drop_down_status = {};
     
     if (load_data) {
         var ts = get_timestamp();
@@ -3175,6 +3195,12 @@ function update_timetable_date (diagram_id, date_string) {
 var timetable_selected_station = null;
 var direction_radio_area_elm = document.getElementById("direction_radio_area");
 
+function timetable_wrapper_onscroll () {
+    if (timetable_selected_station !== null) {
+        timetable_wrapper_scroll_amount = article_elms[1].scrollTop;
+    }
+}
+
 function timetable_change_lines(line_id, force_station_select_mode = false) {
     if (line_id !== null) {
         if (line_id in railroad_info["lines"]) {
@@ -3188,6 +3214,8 @@ function timetable_change_lines(line_id, force_station_select_mode = false) {
     update_selected_line(line_id, false);
     
     if (timetable_selected_station === null || force_station_select_mode) {
+        timetable_wrapper_scroll_amount = 0;
+        
         if (line_id === null) {
             change_title(railroad_info["railroad_name"] + "の駅別発着車両運用 | " + instance_info["instance_name"], "/railroad_" + railroad_info["railroad_id"] + "/timetable/");
             
@@ -3411,7 +3439,15 @@ function draw_station_timetable (station_name) {
     
     var buf = "";
     for (cnt = 0; cnt < keys.length; cnt++) {
-        buf += "<input type='checkbox' id='timetable_hour_" + keys[cnt] + "'><label for='timetable_hour_" + keys[cnt] + "' style='background-color: " + bg_color + ";" + color_style + "' class='drop_down'>" + Number(keys[cnt]) + "時</label><div>";
+        var checkbox_id = "timetable_hour_" + keys[cnt];
+        
+        buf += "<input type='checkbox' id='" + checkbox_id + "'";
+        
+        if (checkbox_id in timetable_drop_down_status && timetable_drop_down_status[checkbox_id]) {
+            buf += " checked='checked'";
+        }
+        
+        buf += " onclick='update_timetable_drop_down_status(this);'><label for='" + checkbox_id + "' style='background-color: " + bg_color + ";" + color_style + "' class='drop_down'>" + Number(keys[cnt]) + "時</label><div>";
         
         var keys_2 = Object.keys(departure_times[keys[cnt]]);
         keys_2.sort();
@@ -3525,7 +3561,7 @@ function draw_station_timetable (station_name) {
         timetable_area_elm.innerHTML = "<div class='no_data'>条件に合う列車は登録されていません</div>";
     }
     
-    article_elms[1].scrollTop = 0;
+    article_elms[1].scrollTop = timetable_wrapper_scroll_amount;
 }
 
 function timetable_select_neighboring_station (move_count) {
@@ -3696,6 +3732,10 @@ function timetable_list_diagrams () {
             document.getElementById("diagram_list_area").innerHTML = buf;
         });
     });
+}
+
+function update_timetable_drop_down_status (elm) {
+    timetable_drop_down_status[elm.id] = elm.checked;
 }
 
 
@@ -4019,7 +4059,7 @@ function operation_data_draw () {
                     
                     for (var cnt_3 = 0; cnt_3 < formation_list.length; cnt_3++){
                         if (cnt_3 >= 1) {
-                            buf += " +";
+                            buf += " <wbr>+";
                         }
                         
                         buf += "<img src='" + get_icon(formation_list[cnt_3]) + "' alt='' class='train_icon'>" + formation_list[cnt_3];
@@ -4404,7 +4444,6 @@ function next_operation_number (operation_number, operation_data_date_ts_or_oper
 }
 
 
-var formation_table_wrapper_elm = document.getElementById("formation_table_wrapper");
 var formation_search_area_elm = document.getElementById("formation_search_area");
 var car_number_search_elm = document.getElementById("car_number_search");
 var formation_table_area_elm = document.getElementById("formation_table_area");
@@ -4446,7 +4485,7 @@ function formations_mode (formation_name = null) {
 
 function formation_table_wrapper_onscroll () {
     if (selected_formation_name === null) {
-        formation_table_wrapper_scroll_amount = formation_table_wrapper_elm.scrollTop;
+        formation_table_wrapper_scroll_amount = article_elms[3].scrollTop;
     }
 }
 
@@ -4548,7 +4587,7 @@ function draw_formation_table (update_title = true) {
     formation_search_area_elm.style.display = "block";
     selected_formation_name = null;
     
-    formation_table_wrapper_elm.scrollTop = formation_table_wrapper_scroll_amount;
+    article_elms[3].scrollTop = formation_table_wrapper_scroll_amount;
 }
 
 function change_colorize_formation_table (bool_val) {
@@ -4624,7 +4663,7 @@ function formation_detail (formation_name) {
     buf += "</table>"
     
     formation_table_area_elm.innerHTML = buf;
-    formation_table_wrapper_elm.scrollTop = 0;
+    article_elms[3].scrollTop = 0;
     
     var formation_operations_area_elm = document.getElementById("formation_operations_area");
     
@@ -5035,9 +5074,11 @@ function draw_operation_table (is_today) {
             case "operation_number":
                 var buf_3 = "<th class='" + sorting_criteria_class_name + "' onclick='operation_table_reverse_order();'>運用番号</th><th onclick='sort_operation_table(\"starting_time\")'>出庫時刻</th><th onclick='sort_operation_table(\"ending_time\")'>入庫時刻</th>";
                 break;
+            
             case "starting_time":
                 var buf_3 = "<th onclick='sort_operation_table(\"operation_number\")'>運用番号</th><th class='" + sorting_criteria_class_name + "' onclick='operation_table_reverse_order();'>出庫時刻</th><th onclick='sort_operation_table(\"ending_time\")'>入庫時刻</th>";
                 break;
+            
             case "ending_time":
                 var buf_3 = "<th onclick='sort_operation_table(\"operation_number\")'>運用番号</th><th onclick='sort_operation_table(\"starting_time\")'>出庫時刻</th><th class='" + sorting_criteria_class_name + "' onclick='operation_table_reverse_order();'>入庫時刻</th>";
                 break;
@@ -5569,9 +5610,11 @@ function post_operation_data () {
                 case 0:
                     position_change_time(0);
                     break;
+                
                 case 1:
                     timetable_select_station(timetable_selected_station);
                     break;
+                
                 case 2:
                     operation_data_draw();
                     break;
@@ -5688,12 +5731,15 @@ function revoke_operation_data (yyyy_mm_dd, operation_number, user_id) {
                 case 0:
                     position_change_time(0);
                     break;
+                
                 case 1:
                     timetable_select_station(timetable_selected_station);
                     break;
+                
                 case 2:
                     operation_data_draw();
                     break;
+                
                 case 3:
                     if (selected_formation_name !== null) {
                         formation_detail(selected_formation_name);
@@ -5732,12 +5778,15 @@ function revoke_users_all_operation_data (user_id) {
                         case 0:
                             position_change_time(0);
                             break;
+                        
                         case 1:
                             timetable_select_station(timetable_selected_station);
                             break;
+                        
                         case 2:
                             operation_data_draw();
                             break;
+                        
                         case 3:
                             if (selected_formation_name !== null) {
                                 formation_detail(selected_formation_name);
@@ -6064,6 +6113,7 @@ window.onpopstate = function () {
                     timetable_change_lines(timetable_selected_line, true);
                 }
                 break;
+            
             case 3:
                 if (selected_formation_name !== null) {
                     draw_formation_table();
