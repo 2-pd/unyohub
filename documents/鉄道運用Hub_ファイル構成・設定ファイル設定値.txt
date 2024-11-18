@@ -6,17 +6,17 @@
 
 _/_/_/_/ 構成概要 _/_/_/_/
 
-・サーバサイドをPHP、クライアントサイドを単一HTMLファイルに記述したJavascriptとするシングルページアプリケーション(管理画面を除く)
+・サーバサイドをPHP、クライアントサイドを単一ページで完結可能なJavascriptとするシングルページアプリケーション(ユーザー登録画面や管理画面などの一部ページを除く)
 ・データベースエンジンにはSQLiteを採用し、路線系統ごとに独立したデータベースファイルを作成する
 ・Wakaranaによるユーザー登録機能を実装し、ユーザー投稿データはユーザーIDと紐付けて管理する
 ・未登録ユーザーによる投稿を認めることも可能とするが、未登録ユーザーの投稿時にはZizai CAPTCHAによる画像認証を実施する
-・運用表及び時刻表はクライアント端末のIndexedDBにキャッシュし、通信量を削減する
+・運用表や時刻表などの各種データはクライアント端末のIndexedDBにキャッシュし、通信量を削減する
 
 
 _/_/_/_/ ファイル構成 _/_/_/_/
 
 /
-└ index.html ・・・アプリケーションフロントエンドHTML
+└ index.php ・・・アプリケーションフロントエンドHTML
 └ main.js ・・・フロントエンド処理本体
 └ assets.css ・・・フロントエンドのスタイルシート
 └ libs/
@@ -84,22 +84,30 @@ _/_/_/_/ ファイル構成 _/_/_/_/
 
 _/_/_/_/ 設定ファイル設定値 _/_/_/_/
 
-███ main.js ███
+███ index.php ███
 
 ※鉄道運用Hubからフォークして新たなアプリケーションを開発する場合は必要に応じて以下の値を変更
   UNYOHUB_APP_NAME  アプリケーション名
   UNYOHUB_VERSION  バージョン文字列
-  UNYOHUB_INDEXEDDB_VERSION  IndexedDBのデータベースバージョン数値
   UNYOHUB_LICENSE_TEXT  ライセンス情報文
   UNYOHUB_LICENSE_URL  ライセンスのURL
   UNYOHUB_REPOSITORY_URL  ソースコードリポジトリのURL
+
+
+███ main.js ███
+
+※設定ファイルではないが、編集可能な定数が存在する
+  UNYOHUB_INDEXEDDB_VERSION  IndexedDBのデータベースバージョン数値(IndexedDBのデータベーススキーマに変更を行った場合のみ更新)
+  UNYOHUB_GENERIC_TRAIN_ICON  車両アイコンが登録されていない編成用のアイコン画像バイナリをBASE64エンコードした文字列
+  UNYOHUB_UNKNOWN_TRAIN_ICON  充当編成が不明な列車用のアイコン画像バイナリをBASE64エンコードした文字列
+  UNYOHUB_CANCELED_TRAIN_ICON  運休列車用のアイコン画像バイナリをBASE64エンコードした文字列
 
 
 ███ service_worker.js ███
 
 ※設定ファイルではないが、編集可能な定数が存在する
   UNYOHUB_APP_ID  アプリケーション識別名
-  UNYOHUB_VERSION  バージョン文字列
+  UNYOHUB_VERSION  バージョン文字列(index.phpのUNYOHUB_VERSIONと同じ文字列を指定)
 
 
 ███ main.ini ███

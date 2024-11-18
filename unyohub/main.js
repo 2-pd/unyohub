@@ -3,9 +3,6 @@
 const UNYOHUB_INDEXEDDB_VERSION = 2410001;
 
 
-document.getElementById("splash_screen_app_version").innerText = "v" + UNYOHUB_VERSION;
-
-
 const UNYOHUB_GENERIC_TRAIN_ICON = "data:image/webp;base64,UklGRngCAABXRUJQVlA4TGwCAAAvT8AdEJVIkm07bhst/QLu7Zlm2YK2CYgQP35pmv/Uls0uAgq2bcee31a2bc5bstkct2Tbjl60ze4t2bZtPRMQ53o2pNDRH8YI4BcYfVlNvSh4lsHnZOiTzqZEzTzPErPzCSdpnudFuv2aAcWwxMQBHRES3XFCAYqI2yb9LVYokNiCsUOMFV9U1gCRbyT58wfwklUxXrzIeBT/hJhAzpP4X8NCrHfNyC3QJFEQ1ayTuGA6LbObznnkdUvfgH63jYflyhLTdynrKjFLNFlYeaEZVAQYHCljCxiRIxqS7x6/Q8TtwgsBFkr86Ltq9OvtEXZBcQmY5OqAtoMjYDQ72KHCCuV22LTCthnkMvsis5JS7ZBihWk7TNn4w5E/O+kP50/6OAd0NqTIiQlOZPzB+ERENiwn2eMJoYs7dcstnSkYXAsUMrhR5/eU/kMehCPHgIMcZYcB+PEjF/nG58iLhA85yfuLqEY34OZvBcrFDz6/qAX2chTbIvl7ci9SqCfz/5EQ5EkKLPDxJHkXuHmSXIvs4slcoPck64pXnidwC2iefFGL4M2PKaps+sFGjUk/mKjR6AcNNbL8SJk1wvyYatnkB8baHs+PFxcItWDdC9biKB1eLMdSvBfEHYvg3gPuYjCLHrAwbPGA9mEUeUDhsBTtAVHDcPYgOw17ZXkAc9gOyVt/0w45LFjtj5VoZKA/+luo7o+qFmL7SzEtyb0/3FpeRP0hbAHDd2/8/MO2BLu9sRPNTPbGRBu1vVHTlhJ7I6ENbgodXsyjFvPwra21iFGLMH3+8CrxMs4mXW1RLVE5zio9bQW2lxj5colzHQ==";
 
 const UNYOHUB_UNKNOWN_TRAIN_ICON = "data:image/webp;base64,UklGRqADAABXRUJQVlA4TJMDAAAvT8AdELVQuq03kST1T3+OaO5eMQ8zM/OOeXbMzMwQUY6wrMGVWo2FMUWRldBVEVIACCDAyGa2bXtLNpvjlmzb0Yu22b0l27b9uAmwv+qFRQhPPi+MIP5C8vFEVGnAqwvsBoK2y7PtTt1wOHRnftjiwH04HI7cp5fEIMSoO1PXCJuZO73WooOb2fSG++pYCkXu7KBgqWyHLBvgFAoJgfwD3gojS2elHs/Of8JEoM+L839iEmwy62voS6DFfWi1hZk7V8yGVfbDJc+8r4df8OX1dZ5GZ1lhdta9MKuxoTstEia80YqQGSI4U3HCE3JCU/DfI242fZo3giRUCWDgrCc/Oz1vchHi2kVyc42wHJxdaOEkhyopVMphWwq7YtB3saWelJAuhzQpzMphRsbKSf7JCf9wXUozLixCdL/KmQufZ7InqrAYt7JHnDB6ePBsuac7hCLWBBmyuPPMZ0LmLumok5y6gpwUThEE8MdV5Be/KUodvlxJPkutOnpBzeUaZE7rwfcO2QqOrij2lRDY2m5u5kU+4Ft+4Vcad9/wHs9zAztpLQRWQnhLl/A6v9An7F7mOC0N2zvA/K8kf4k9iLqeH+gFfs81CHqYX5HZ3YuYW+mldjch5FI6Mf3PXIiIko/4FcEfUiBhoRd9JwJKvkbWV/yf7ir62F94nEOUeOPNHOVZovorSPcEMd3EW76NqMdI9zYxj+Ktv0DMW6QbxeyjvaWYr0k3HTEdaG8HMT+Tro9c9fa3ENP/9ZP592sjZlqHpZhlHZ4j5oQKN9PHPk4e21k7FXF+8Cx99JXk8Ah9yuUSbe7HlfmMrSgzfTGuzO24Mg/iunzPdbgur7AX0KR7hQvwdrPoRu/xHDewE29b3l146v9oEJJMdAiu4KdJ8K3goUlwrxRumqxVMNekMKtsVtME1QpymuyQrRgfevRWy3aqR/iVyLtIxVYd03owVUezHjTVkaNHyK4jQo9BXWGlB5Z1e8T5o8UpJOqMTS3YsCnpSiR4PFVI1IKEqcx41IAHi2ZZA5bixhrQGUeJBhTHhVgNiInDVYPCJW6zkgYoxm0S5CO/fhBnrOfHmjVkKD8Gm1CbHzVNiM8vxDUJnvnh0aTUyg/NJojwm9upw6JNjP3c2LPG87mtNqM+N+qaheTcSGqGagiPrwyTVobxG82aVixpxUT/9eHdnbc06+5nZVHrTnWa8+4Lsgz705b49Gn7qw4A";
@@ -447,6 +444,14 @@ function switch_dark_mode () {
 var splash_screen_elm = document.getElementById("splash_screen");
 
 switch_dark_mode();
+
+if (location.pathname === "/") {
+    var splash_screen_login_status_elm = document.getElementById("splash_screen_login_status");
+    var announcements_overview_elm = document.getElementById("announcements_overview");
+    
+    document.getElementById("splash_screen_app_version").innerText = "v" + UNYOHUB_VERSION;
+}
+
 splash_screen_elm.classList.remove("splash_screen_loading");
 
 
@@ -595,12 +600,16 @@ function update_user_data (user_data_next = null) {
         
         menu_user_name_elm.innerText = user_data["user_name"] + " " + honorific;
         
-        splash_screen_login_status_elm.innerHTML = "ようこそ <b>" + escape_html(user_data["user_name"]) + "</b> さん<br><a href='/user/user_info.php' target='_blank' rel='opener'>ユーザー情報</a>　<a href='javascript:void(0);' onclick='user_logout();'>ログアウト</a>";
+        if (location.pathname === "/") {
+            splash_screen_login_status_elm.innerHTML = "ようこそ <b>" + escape_html(user_data["user_name"]) + "</b> さん<br><a href='/user/user_info.php' target='_blank' rel='opener'>ユーザー情報</a>　<a href='javascript:void(0);' onclick='user_logout();'>ログアウト</a>";
+        }
     } else {
         menu_logged_in_elm.style.display = "none";
         menu_not_logged_in_elm.style.display = "block";
         
-        splash_screen_login_status_elm.innerHTML = "<b>ログインしていません</b><br><a href='javascript:void(0);' onclick='open_square_popup(\"login_popup\");'>ログイン</a>　<a href='/user/sign_up.php' target='_blank' rel='opener'>新規登録</a>";
+        if (location.pathname === "/") {
+            splash_screen_login_status_elm.innerHTML = "<b>ログインしていません</b><br><a href='javascript:void(0);' onclick='open_square_popup(\"login_popup\");'>ログイン</a>　<a href='/user/sign_up.php' target='_blank' rel='opener'>新規登録</a>";
+        }
     }
     
     if (!instance_info["allow_guest_user"] && popup_history.includes("write_operation_data_popup")) {
@@ -624,13 +633,11 @@ function check_logged_in () {
             } else {
                 update_user_data();
             }
-        } else {
+        } else if (location.pathname === "/") {
             splash_screen_login_status_elm.innerText = "【!】ログイン状態の確認に失敗しました";
         }
     });
 }
-
-var splash_screen_login_status_elm = document.getElementById("splash_screen_login_status");
 
 function update_railroad_list (railroads, loading = false) {
     var buttons_html = "";
@@ -646,7 +653,10 @@ function update_railroad_list (railroads, loading = false) {
     }
     
     document.getElementById("railroad_select_area").innerHTML = buttons_html;
-    document.getElementById("splash_screen_buttons").innerHTML = buttons_html;
+    
+    if (location.pathname === "/") {
+        document.getElementById("splash_screen_buttons").innerHTML = buttons_html;
+    }
     
     splash_screen_elm.className = "splash_screen_loaded";
 }
@@ -661,15 +671,16 @@ window.ononline = function () {
 }
 
 function on_off_line () {
-    splash_screen_login_status_elm.innerHTML = "<b class='off_line_message'>端末がオフラインです</b><br>前回アクセス時のデータを表示します";
-    
     menu_off_line_elm.style.display = "block";
     
     menu_admin_elm.style.display = "none";
     menu_logged_in_elm.style.display = "none";
     menu_not_logged_in_elm.style.display = "none";
     
-    announcements_overview_elm.innerHTML = "";
+    if (location.pathname === "/") {
+        splash_screen_login_status_elm.innerHTML = "<b class='off_line_message'>端末がオフラインです</b><br>前回アクセス時のデータを表示します";
+        announcements_overview_elm.innerHTML = "";
+    }
 }
 
 window.onoffline = on_off_line;
@@ -739,7 +750,6 @@ window.onload = function () {
 };
 
 
-var announcements_overview_elm = document.getElementById("announcements_overview");
 var menu_announcements_elm = document.getElementById("menu_announcements");
 var railroad_announcement_elm = document.getElementById("railroad_announcement");
 
@@ -846,10 +856,14 @@ function check_announcements (show_important_announcements = false) {
         }
         
         if (new_announcement_exists) {
-            announcements_overview_elm.innerHTML = "<b class='new_icon'>新しいお知らせがあります</b>";
+            if (location.pathname === "/") {
+                announcements_overview_elm.innerHTML = "<b class='new_icon'>新しいお知らせがあります</b>";
+            }
             menu_announcements_elm.className = "new_icon";
         } else {
-            announcements_overview_elm.innerHTML = "新しいお知らせはありません";
+            if (location.pathname === "/") {
+                announcements_overview_elm.innerHTML = "新しいお知らせはありません";
+            }
             menu_announcements_elm.className = "";
         }
         
@@ -908,9 +922,12 @@ function update_railroad_announcement (railroad_id, clear_text = false) {
 function show_announcements (railroad_id = null, important_announcements_exist = false) {
     open_square_popup("announcements_popup");
     
-    announcements_overview_elm.innerHTML = "新しいお知らせはありません";
     menu_button_elm.classList.remove("menu_button_with_notification");
     menu_announcements_elm.className = "";
+    
+    if (location.pathname === "/") {
+        announcements_overview_elm.innerHTML = "新しいお知らせはありません";
+    }
     
     var heading_elm = document.getElementById("announcements_heading");
     if (important_announcements_exist) {

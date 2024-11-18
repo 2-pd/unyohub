@@ -135,8 +135,6 @@ if (empty($_SERVER["PATH_INFO"]) || $_SERVER["PATH_INFO"] === "/") {
         header("Location: /", TRUE, 301);
         exit;
     }
-    
-    $path_info_str = $_SERVER["PATH_INFO"];
 } else {
     header("Location: /", TRUE, 301);
     exit;
@@ -204,15 +202,21 @@ print "        const UNYOHUB_LICENSE_TEXT = \"".UNYOHUB_LICENSE_TEXT."\";\n";
         <a href="javascript:void(0);" onclick="reload_app();">アプリの再起動</a>
     </div>
     <div id="splash_screen" class="splash_screen_loading">
-        <div id="splash_screen_inner">
-            <div id="splash_screen_login_status">サーバに接続しています...</div>
-            <a id="announcements_overview" href="javascript:void(0);" onclick="show_announcements();"></a>
-            <div id="splash_screen_buttons" class="wait_icon"></div>
-            <div id="splash_screen_bottom">
-                <a href="javascript:void(0);" onclick="show_about();">このアプリについて</a>　<a href="javascript:void(0);" onclick="show_rules();">ルールとポリシー</a>
-                <div id="splash_screen_app_version"></div>
-            </div> 
-        </div>
+<?php
+if ($path_info_str === "/") {
+    print <<<EOM
+            <div id="splash_screen_inner">
+                <div id="splash_screen_login_status">サーバに接続しています...</div>
+                <a id="announcements_overview" href="javascript:void(0);" onclick="show_announcements();"></a>
+                <div id="splash_screen_buttons" class="wait_icon"></div>
+                <div id="splash_screen_bottom">
+                    <a href="javascript:void(0);" onclick="show_about();">このアプリについて</a>　<a href="javascript:void(0);" onclick="show_rules();">ルールとポリシー</a>
+                    <div id="splash_screen_app_version"></div>
+                </div> 
+            </div>
+    EOM."\n";
+}
+?>
     </div>
     <div id="blank_article" class="wait_icon"></div>
     <div id="tab_area"><a href="#" onclick="event.preventDefault(); position_mode();" id="tab_position_mode">走行位置</a><a href="#" onclick="event.preventDefault(); timetable_mode();" id="tab_timetable_mode">時刻表</a><a href="#" onclick="event.preventDefault(); operation_data_mode();" id="tab_operation_data_mode">運用データ</a><a href="#" onclick="event.preventDefault(); formations_mode();" id="tab_formations_mode">編成表</a><a href="#" onclick="event.preventDefault(); operation_table_mode();" id="tab_operation_table_mode">運用表</a></div>
