@@ -1,14 +1,177 @@
-<!DOCTYPE html>
+<?php
+/* _/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/
+ *
+ *   鉄道運用Hub
+ *
+ * _/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/
+ * 
+ * LICENSE
+ * 
+ *   このソフトウェアは、無権利創作宣言に基づき著作権放棄されています。
+ *   営利・非営利を問わず、自由にご利用いただくことが可能です。
+ * 
+ *     https://www.2pd.jp/license/
+ * 
+ *   異なるライセンスの下で配布する際は名称(下記、UNYOHUB_APP_NAMEの値)を変更し、区別可能としてください。
+ *
+ */
+
+define("UNYOHUB_APP_NAME", "鉄道運用Hub");
+define("UNYOHUB_VERSION", "24.11-3");
+define("UNYOHUB_LICENSE_URL", "https://www.2pd.jp/license/");
+define("UNYOHUB_REPOSITORY_URL", "https://fossil.2pd.jp/unyohub/");
+define("UNYOHUB_LICENSE_TEXT", "このアプリケーションは無権利創作宣言に準拠して著作権放棄されています。");
+
+
+if (empty($_SERVER["PATH_INFO"]) || $_SERVER["PATH_INFO"] === "/") {
+    $path_info_str = "/";
+    $page_title = UNYOHUB_APP_NAME;
+    $page_description = "鉄道ファン向けの車両運用情報データベース　鉄道各社の本日、明日、過去の各列車充当編成が閲覧・投稿可能です。";
+} elseif (substr($_SERVER["PATH_INFO"], 0, 10) === "/railroad_") {
+    $path_info = explode("/", $_SERVER["PATH_INFO"]);
+    
+    $railroad_id = basename(substr($path_info[1], 9));
+    $railroad_info_path = "data/".$railroad_id."/railroad_info.json";
+    $path_info_str = "/railroad_".$railroad_id."/";
+    
+    if (file_exists($railroad_info_path)) {
+        $railroad_info = json_decode(file_get_contents($railroad_info_path), TRUE);
+        
+        if (empty($path_info[2])) {
+            $page_title = $railroad_info["railroad_name"]." | ".UNYOHUB_APP_NAME;
+            $page_description = $railroad_info["railroad_name"]."で本日、及び明日に運行される各列車の充当編成・推定走行位置です。";
+        } else {
+            switch ($path_info[2]) {
+                case "timetable":
+                    $path_info_str .= "timetable/";
+                    
+                    if (empty($path_info[3])) {
+                        $page_title = $railroad_info["railroad_name"]."の駅別発着車両運用 | ".UNYOHUB_APP_NAME;
+                        $page_description = "本日、及び明日に".$railroad_info["railroad_name"]."の各駅を発着する列車の充当編成一覧です。";
+                    } else {
+                        if (!array_key_exists($path_info[3], $railroad_info["lines"])) {
+                            header("Location: ".$path_info_str, TRUE, 301);
+                            exit;
+                        }
+                        
+                        $path_info_str .= $path_info[3]."/";
+                        
+                        if (empty($path_info[4])) {
+                            $page_title = $railroad_info["lines"][$path_info[3]]["line_name"]."の駅別発着車両運用 | ".UNYOHUB_APP_NAME;
+                            $page_description = "本日、及び明日に".$railroad_info["lines"][$path_info[3]]["line_name"]."の各駅を発着する列車の充当編成一覧です。";
+                        } else {
+                            foreach ($railroad_info["lines"][$path_info[3]]["stations"] as $station) {
+                                if ($station["station_name"] === $path_info[4]) {
+                                    goto station_exists;
+                                }
+                            }
+                            
+                            header("Location: ".$path_info_str, TRUE, 301);
+                            exit;
+                            
+                            station_exists:
+                            $path_info_str .= urlencode($path_info[4])."/";
+                            $page_title = $path_info[4]."駅(".$railroad_info["lines"][$path_info[3]]["line_name"].")発着列車の充当車両 | ".UNYOHUB_APP_NAME;
+                            $page_description = "本日、及び明日に".$railroad_info["lines"][$path_info[3]]["line_name"]."の".$path_info[4]."駅を発着する列車の充当編成一覧です。";
+                        }
+                    }
+                    
+                    break;
+                
+                case "operation_data":
+                    $path_info_str .= "operation_data/";
+                    $page_title = $railroad_info["railroad_name"]."の運用データ | ".UNYOHUB_APP_NAME;
+                    $page_description = "本日の".$railroad_info["railroad_name"]."の各編成運用状況です。";
+                    
+                    break;
+                
+                case "formations":
+                    $path_info_str .= "formations/";
+                    
+                    if (empty($path_info[3])) {
+                        $page_title = $railroad_info["railroad_name"]."で運用中の編成一覧 | ".UNYOHUB_APP_NAME;
+                        $page_description = $railroad_info["railroad_name"]."で現在運用されている編成の一覧表です。";
+                    } else {
+                        $formations_path = "data/".$railroad_id."/formations.json";
+                        
+                        if (!file_exists($formations_path)) {
+                            header("Location: /", TRUE, 302);
+                            exit;
+                        }
+                        
+                        $formations = json_decode(file_get_contents($formations_path), TRUE);
+                        
+                        if (!array_key_exists($path_info[3], $formations["formations"])) {
+                            header("Location: ".$path_info_str, TRUE, 301);
+                            exit;
+                        }
+                        
+                        $path_info_str .= urlencode($path_info[3])."/";
+                        $page_title = $path_info[3]." (".$railroad_info["railroad_name"].") の車両・運用情報 | ".UNYOHUB_APP_NAME;
+                        
+                        $car_numbers = array();
+                        foreach ($formations["formations"][$path_info[3]]["cars"] as $car) {
+                            $car_numbers[] = $car["car_number"];
+                        }
+                        
+                        $page_description = $railroad_info["railroad_name"]."で運用されている編成 ".$path_info[3]." ( ".implode(" - ", $car_numbers)." )の編成情報、及び運用状況です。";
+                    }
+                    
+                    break;
+                
+                case "operation_table":
+                    $path_info_str .= "operation_table/";
+                    $page_title = $railroad_info["railroad_name"]."の運用表 | ".UNYOHUB_APP_NAME;
+                    $page_description = $railroad_info["railroad_name"]."の各ダイヤの車両運用表です。";
+                    
+                    break;
+                
+                default:
+                    header("Location: ".$path_info_str, TRUE, 301);
+                    exit;
+            }
+        }
+    } else {
+        header("Location: /", TRUE, 301);
+        exit;
+    }
+} else {
+    header("Location: /", TRUE, 301);
+    exit;
+}
+?><!DOCTYPE html>
 <html>
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width,initial-scale=1,interactive-widget=resizes-content">
-    <title></title>
+<?php
+print "    <title>".htmlspecialchars($page_title)."</title>\n";
+
+$root_url = "http".(empty($_SERVER["HTTPS"]) ? "" : "s")."://".$_SERVER["HTTP_HOST"];
+$page_description = addslashes($page_description);
+
+print "    <meta property=\"og:title\" content=\"".addslashes($page_title)."\">\n";
+print "    <meta property=\"og:type\" content=\"website\">\n";
+print "    <meta property=\"og:image\" content=\"".$root_url."/apple-touch-icon.webp\">\n";
+print "    <meta property=\"og:url\" content=\"".$root_url.$path_info_str."\">\n";
+print "    <meta property=\"og:description\" content=\"".$page_description."\">\n";
+print "    <meta property=\"twitter:card\" content=\"summary\">\n";
+print "    <meta name=\"description\" content=\"".$page_description."\">\n";
+?>
     <link rel="styleSheet" href="/assets.css">
     <link rel="apple-touch-icon" href="/apple-touch-icon.webp">
     <link rel="shortcut icon" href="/favicon.ico">
     <link rel="manifest" href="/manifest.json">
     <style id="formation_styles"></style>
+    <script>
+<?php
+print "        const UNYOHUB_APP_NAME = \"".UNYOHUB_APP_NAME."\";\n";
+print "        const UNYOHUB_VERSION = \"".UNYOHUB_VERSION."\";\n";
+print "        const UNYOHUB_LICENSE_URL = \"".UNYOHUB_LICENSE_URL."\";\n";
+print "        const UNYOHUB_REPOSITORY_URL = \"".UNYOHUB_REPOSITORY_URL."\";\n";
+print "        const UNYOHUB_LICENSE_TEXT = \"".UNYOHUB_LICENSE_TEXT."\";\n";
+?>
+    </script>
 </head>
 <body>
     <header><a id="railroad_icon" href="javascript:void(0);" onclick="about_railroad_data();"></a><span id="instance_name"></span><a id="railroad_name" href="javascript:void(0);" onclick="open_popup('railroad_select_popup');"></a><a id="menu_button" href="javascript:void(0);" onclick="menu_click();"></a></header>
@@ -39,15 +202,21 @@
         <a href="javascript:void(0);" onclick="reload_app();">アプリの再起動</a>
     </div>
     <div id="splash_screen" class="splash_screen_loading">
-        <div id="splash_screen_inner">
-            <div id="splash_screen_login_status">サーバに接続しています...</div>
-            <a id="announcements_overview" href="javascript:void(0);" onclick="show_announcements();"></a>
-            <div id="splash_screen_buttons" class="wait_icon"></div>
-            <div id="splash_screen_bottom">
-                <a href="javascript:void(0);" onclick="show_about();">このアプリについて</a>　<a href="javascript:void(0);" onclick="show_rules();">ルールとポリシー</a>
-                <div id="splash_screen_app_version"></div>
-            </div> 
-        </div>
+<?php
+if ($path_info_str === "/") {
+    print <<<EOM
+            <div id="splash_screen_inner">
+                <div id="splash_screen_login_status">サーバに接続しています...</div>
+                <a id="announcements_overview" href="javascript:void(0);" onclick="show_announcements();"></a>
+                <div id="splash_screen_buttons" class="wait_icon"></div>
+                <div id="splash_screen_bottom">
+                    <a href="javascript:void(0);" onclick="show_about();">このアプリについて</a>　<a href="javascript:void(0);" onclick="show_rules();">ルールとポリシー</a>
+                    <div id="splash_screen_app_version"></div>
+                </div> 
+            </div>
+    EOM."\n";
+}
+?>
     </div>
     <div id="blank_article" class="wait_icon"></div>
     <div id="tab_area"><a href="#" onclick="event.preventDefault(); position_mode();" id="tab_position_mode">走行位置</a><a href="#" onclick="event.preventDefault(); timetable_mode();" id="tab_timetable_mode">時刻表</a><a href="#" onclick="event.preventDefault(); operation_data_mode();" id="tab_operation_data_mode">運用データ</a><a href="#" onclick="event.preventDefault(); formations_mode();" id="tab_formations_mode">編成表</a><a href="#" onclick="event.preventDefault(); operation_table_mode();" id="tab_operation_table_mode">運用表</a></div>
@@ -59,7 +228,7 @@
             <div class="informational_text">列車の走行位置は時刻表に基づく推定であり、遅延や不定期列車の情報は反映されません</div>
         </div>
     </article>
-    <article>
+    <article onscroll="timetable_wrapper_onscroll();">
         <div class='line_select_wrapper'><a id="timetable_line_select" onclick="select_lines(timetable_selectable_lines, false);"></a></div>
         <div id="direction_radio_area" class="radio_area">
             <h2><button type="button" class="previous_button" onclick="timetable_select_neighboring_station(-1);"></button><span id="timetable_station_name"></span><button type="button" class="next_button" onclick="timetable_select_neighboring_station(1);"></button></h2>
@@ -73,7 +242,7 @@
         <div class="radio_area"><input type="radio" name="operation_data_radio" id="radio_operation_groups" value="operation_groups" checked="checked" onchange="operation_data_draw();"><label for="radio_operation_groups">系統別</label><input type="radio" name="operation_data_radio" id="radio_series" value="series" onchange="operation_data_draw();"><label for="radio_series">形式別</label><input type="radio" name="operation_data_radio" id="radio_starting_location" value="starting_location" onchange="operation_data_draw();"><label for="radio_starting_location">出庫別</label><input type="radio" name="operation_data_radio" id="radio_terminal_location" value="terminal_location" onchange="operation_data_draw();"><label for="radio_terminal_location">入庫別</label></div>
         <div id="operation_data_area" class="wait_icon"></div>
     </article>
-    <article id="formation_table_wrapper" onscroll="formation_table_wrapper_onscroll();">
+    <article onscroll="formation_table_wrapper_onscroll();">
         <button type="button" id="formation_screenshot_button" class="screenshot_button" onclick="take_screenshot('formation_table_area');"></button>
         <div id="formation_search_area">
             <div class='search_wrapper'><label for="car_number_search" class="search_icon">車両番号で検索</label><input type="search" id="car_number_search" onkeyup="draw_formation_table();" onsearch="draw_formation_table();" placeholder="車両番号で検索" autocomplete="off"></div>
@@ -233,8 +402,9 @@
     </div>
     <div id="wait_screen"></div>
     <div id="message_area"></div>
-<script src="/main.js"></script>
-<script src="/libs/zizai_captcha/captcha.js"></script>
-<script src="/libs/elem2img.js"></script>
+    
+    <script src="/main.js"></script>
+    <script src="/libs/zizai_captcha/captcha.js"></script>
+    <script src="/libs/elem2img.js"></script>
 </body>
 </html>
