@@ -61,7 +61,7 @@ if (empty($_SERVER["PATH_INFO"]) || $_SERVER["PATH_INFO"] === "/") {
                             $page_description = "本日、及び明日に".$railroad_info["lines"][$path_info[3]]["line_name"]."の各駅を発着する列車の充当編成一覧です。";
                         } else {
                             foreach ($railroad_info["lines"][$path_info[3]]["stations"] as $station) {
-                                if ($station["station_name"] === $path_info[4]) {
+                                if ($station["station_name"] === $path_info[4] && empty($station["is_signal_station"])) {
                                     goto station_exists;
                                 }
                             }
@@ -114,7 +114,7 @@ if (empty($_SERVER["PATH_INFO"]) || $_SERVER["PATH_INFO"] === "/") {
                             $car_numbers[] = $car["car_number"];
                         }
                         
-                        $page_description = $railroad_info["railroad_name"]."で運用されている編成 ".$path_info[3]." ( ".implode(" - ", $car_numbers)." )の編成情報、及び運用状況です。";
+                        $page_description = $railroad_info["railroad_name"]."で運用されている編成 ".$path_info[3]." ( ".implode(" - ", $car_numbers)." ) の編成情報、及び運用状況です。";
                     }
                     
                     break;
