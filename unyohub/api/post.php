@@ -202,13 +202,3 @@ if ($is_quotation) {
 }
 
 print json_encode(array($_POST["operation_number"] => $data), JSON_UNESCAPED_UNICODE);
-
-
-if ($config["anti_troll_garbage_size"] >= 1 && $moderation_db_obj->querySingle("SELECT COUNT(`user_id`) FROM `unyohub_moderation_suspicious_users` WHERE `user_id` = '".$moderation_db_obj->escapeString($user_id)."'")) {
-    $garbage = str_repeat(" ", 1024);
-    
-    $loop_max = $config["anti_troll_garbage_size"] * 1024;
-    for ($cnt = 0; $cnt < $loop_max; $cnt++) {
-        print $garbage;
-    }
-}
