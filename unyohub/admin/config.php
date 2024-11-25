@@ -15,7 +15,7 @@ if (isset($_POST["instance_name"], $_POST["manual_url"], $_POST["introduction_te
     $config_str = "instance_name = \"".addslashes($_POST["instance_name"])."\"\n";
     $config_str .= "\n";
     $config_str .= "manual_url = \"".addslashes($_POST["manual_url"])."\"\n";
-    $config_str .= "introduction_text = \"".addslashes($_POST["introduction_text"])."\"\n";
+    $config_str .= "introduction_text = \"".str_replace(array("\r\n", "\n", "\r"), "\\n", addslashes($_POST["introduction_text"]))."\"\n";
     $config_str .= "\n";
     $config_str .= "require_invite_code = ".(!empty($_POST["require_invite_code"]) ? "true" : "false")."\n";
     $config_str .= "require_email_address = ".(!empty($_POST["require_email_address"]) ? "true" : "false")."\n";
@@ -51,7 +51,7 @@ print "<h3>ユーザーマニュアルのURL</h3>";
 print "<input type='text' name='manual_url' value='".addslashes($config["manual_url"])."'>";
 
 print "<h3>インスタンスの紹介文</h3>";
-print "<textarea name='introduction_text'>".htmlspecialchars($config["introduction_text"])."</textarea>";
+print "<textarea name='introduction_text'>".htmlspecialchars(stripcslashes($config["introduction_text"]))."</textarea>";
 
 print "<h3>ユーザー登録・投稿管理</h3>";
 print "<input type='checkbox' name='require_invite_code' id='require_invite_code' class='toggle' value='YES'";

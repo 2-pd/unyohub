@@ -378,7 +378,7 @@ input, select {
     font-size: 18px;
 }
 
-input[type="text"], input[type="number"], input[type="password"], input[type="search"], .wide_select {
+input[type="text"], input[type="number"], input[type="password"], input[type="search"], select {
     background-color: #ffffff;
     
     border: none;
@@ -408,12 +408,16 @@ input[type="checkbox"] {
     padding: 0 10px;
 }
 
-.half_input_wrapper input {
+.half_input_wrapper input, .half_input_wrapper select {
     display: inline-block;
     
     width: 40%;
     
     margin: 0 10px;
+}
+
+.half_input_wrapper input[type="number"] {
+    width: 60px;
 }
 
 .toggle + label {
