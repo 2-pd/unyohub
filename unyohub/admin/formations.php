@@ -56,7 +56,8 @@ if (empty($_GET["formation_name"])) {
     
     print "<h2>".htmlspecialchars($_GET["formation_name"])."</h2>";
     
-    $event_types = array("新製", "改修", "更新", "転属", "組換");
+    $event_types = array("construct", "modify", "renewal", "transfer", "rearrange");
+    $event_types_ja = array("construct" => "新製", "modify" => "改修", "renewal" => "更新", "transfer" => "転属", "rearrange" => "組換");
     
     $db_obj = new SQLite3("../data/".$railroad_id."/railroad.db");
     $db_obj->busyTimeout(5000);
@@ -185,7 +186,7 @@ if (empty($_GET["formation_name"])) {
             $event_month = intval(substr($histories_data[$cnt]["event_year_month"], 5));
             print "<div class='half_input_wrapper'><input type='number' name='event_year_".$cnt."' value='".intval(substr($histories_data[$cnt]["event_year_month"], 0, 4))."' max='2100' min='1901'>年<input type='number' name='event_month_".$cnt."' value='".($event_month >= 1 ? $event_month : "")."' max='12' min='0'>月 / <select name='event_type_".$cnt."'>";
             foreach ($event_types as $event_type) {
-                print "<option value='".$event_type."'".($histories_data[$cnt]["event_type"] === $event_type ? " selected='selected'" : "").">".$event_type."</option>";
+                print "<option value='".$event_type."'".($histories_data[$cnt]["event_type"] === $event_type ? " selected='selected'" : "").">".$event_types_ja[$event_type]."</option>";
             }
             print "</select></div>";
             print "<h5>変更内容</h5>";

@@ -512,10 +512,12 @@ header {
     }
     
     15% {
+        background-image: radial-gradient(circle at left 50% top 6px, rgba(153, 153, 153, 0.7) 0, rgba(153, 153, 153, 0.7) 6px, transparent 6px);
         background-position-y: 14px;
     }
     
     20% {
+        background-image: radial-gradient(circle at left 50% top 6px, rgba(153, 153, 153, 0.8) 0, rgba(153, 153, 153, 0.8) 6px, transparent 6px);
         background-position-y: 6px;
     }
     
@@ -525,10 +527,12 @@ header {
     }
     
     50% {
+        background-image: radial-gradient(circle at left 50% top 6px, rgba(153, 153, 153, 0.8) 0, rgba(153, 153, 153, 0.8) 6px, transparent 6px);
         background-position-y: 6px;
     }
     
     55% {
+        background-image: radial-gradient(circle at left 50% top 6px, rgba(153, 153, 153, 0.7) 0, rgba(153, 153, 153, 0.7) 6px, transparent 6px);
         background-position-y: 14px;
     }
     
@@ -1882,6 +1886,81 @@ input[type="checkbox"]:checked + label.drop_down + div {
     padding: 0;
     
     clear: both;
+}
+
+.history_item {
+    width: calc(100% - 40px);
+    
+    max-width: 460px;
+    
+    margin: 0 auto;
+    
+    padding: 10px;
+    
+    color: #666666;
+}
+
+.dark_mode .history_item {
+    color: #cccccc;
+}
+
+.history_item:not(:last-child) {
+    border-bottom: 1px solid #cccccc;
+}
+
+.dark_mode .history_item:not(:last-child) {
+    border-color: #999999;
+}
+
+.history_item time {
+    margin-left: -10px;
+    margin-bottom: 10px;
+    
+    line-height: 24px;
+    font-size: 18px;
+    font-weight: bold;
+    color: #333333;
+}
+
+.dark_mode .history_item time {
+    color: #ffffff;
+}
+
+.history_item h5 {
+    display: inline-block;
+    
+    margin: 0 0 10px 10px;
+    
+    padding: 4px 8px;
+    
+    border-radius: 4px;
+    
+    line-height: 16px;
+    font-size: 16px;
+    font-weight: normal;
+    color: #ffffff;
+    
+    vertical-align: top;
+}
+
+.event_type_construct {
+    background-color: #33cc99;
+}
+
+.event_type_modify {
+    background-color: #999999;
+}
+
+.event_type_renewal {
+    background-color: #eebb33;
+}
+
+.event_type_transfer {
+    background-color: #9933cc;
+}
+
+.event_type_rearrange {
+    background-color: #0066dd;
 }
 
 .search_highlight {

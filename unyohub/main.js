@@ -4637,15 +4637,20 @@ function formation_detail (formation_name) {
         
         buf += "<td class='" + car_class + "' " + car_style + "></td><td><b>" + formations["formations"][formation_name]["cars"][cnt]["car_number"] + "</b><span id='car_info_" + cnt + "'></span><div class='descriptive_text' id='car_description_" + cnt + "'></div></td></tr>";
     }
-    buf += "</table>"
+    buf += "</table>";
+    
+    buf += "<h3>車歴</h3>";
+    buf += "<div id='histories_area'></div>";
     
     formation_table_area_elm.innerHTML = buf;
     article_elms[3].scrollTop = 0;
     
     var formation_operations_area_elm = document.getElementById("formation_operations_area");
+    var histories_area_elm = document.getElementById("histories_area");
     
     if (navigator.onLine) {
         formation_operations_area_elm.className = "loading_icon";
+        histories_area.className = "loading_icon";
         
         ajax_post("formation_details.php", "railroad_id=" + escape_form_data(railroad_info["railroad_id"]) + "&formation_name=" + escape_form_data(formation_name), function (response) {
             if (response !== false) {
@@ -4700,6 +4705,25 @@ function formation_detail (formation_name) {
                 }
                 
                 formation_operations_area_elm.innerHTML = buf;
+                
+                var event_type_ja = {construct : "新製", modify : "改修", renewal : "更新", transfer : "転属", rearrange : "組換"};
+                
+                var buf = "";
+                for (cnt = 0; cnt < data["histories"].length; cnt++) {
+                    if (data["histories"][cnt]["event_year_month"].length === 4) {
+                        var event_year_month = data["histories"][cnt]["event_year_month"] + "年";
+                    } else {
+                        var event_year_month = data["histories"][cnt]["event_year_month"].substring(0, 4) + "年" + Number(data["histories"][cnt]["event_year_month"].substring(5)) + "月";
+                    }
+                    
+                    buf += "<div class='history_item'><time datetime='" + data["histories"][cnt]["event_year_month"] + "'>" + event_year_month + "</time><h5 class='event_type_" + data["histories"][cnt]["event_type"] + "'>" + event_type_ja[data["histories"][cnt]["event_type"]] + "</h5><br>" + escape_html(data["histories"][cnt]["event_content"]) + "</div>";
+                }
+                
+                if (cnt === 0) {
+                    buf = "<div class='descriptive_text'>車歴データが登録されていません</div>";
+                }
+                
+                histories_area_elm.innerHTML = buf;
             }
         });
     }
