@@ -20,7 +20,7 @@ if (isset($_POST["last_modified_timestamp"]) && $last_modified <= intval($_POST[
     );
     
     if (!empty($main_config["introduction_text"])) {
-        $instance_info["introduction_text"] = $main_config["introduction_text"];
+        $instance_info["introduction_text"] = stripcslashes($main_config["introduction_text"]);
     } else {
         $instance_info["introduction_text"] = NULL;
     }
