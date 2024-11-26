@@ -1720,11 +1720,11 @@ input[type="checkbox"]:checked + label.drop_down + div {
     right: 0;
 }
 
-.car_M span:before, .car_M span:after, .car_M1 span:first-of-type:before, .car_M1 span:first-of-type:after, .car_M2 span:last-of-type:before, .car_M2 span:last-of-type:after {
+.car_M span:before, .car_M span:after, .car_M1 span:first-of-type:before, .car_M1 span:first-of-type:after, .car_M2 span:last-of-type:before, .car_M2 span:last-of-type:after, .car_MO1 span:first-of-type:before, .car_MO2 span:last-of-type:before, .car_OM1 span:first-of-type:after, .car_OM2 span:last-of-type:after {
     background-color: #444444;
 }
 
-.dark_mode .car_M span:before, .dark_mode .car_M span:after, .dark_mode .car_M1 span:first-of-type:before, .dark_mode .car_M1 span:first-of-type:after, .dark_mode .car_M2 span:last-of-type:before, .dark_mode .car_M2 span:last-of-type:after {
+.dark_mode .car_M span:before, .dark_mode .car_M span:after, .dark_mode .car_M1 span:first-of-type:before, .dark_mode .car_M1 span:first-of-type:after, .dark_mode .car_M2 span:last-of-type:before, .dark_mode .car_M2 span:last-of-type:after, .dark_mode .car_MO1 span:first-of-type:before, .dark_mode .car_MO2 span:last-of-type:before, .dark_mode .car_OM1 span:first-of-type:after, .dark_mode .car_OM2 span:last-of-type:after {
     background-color: #eeeeee;
 }
 
@@ -1831,7 +1831,7 @@ input[type="checkbox"]:checked + label.drop_down + div {
     border-radius: 8px;
 }
 
-.car_info_car_M:before, .car_info_car_M1:before, .car_info_car_M:after, .car_info_car_M2:after {
+.car_info_car_M:before, .car_info_car_M1:before, .car_info_car_MO1:before, .car_info_car_OM1:before, .car_info_car_M:after, .car_info_car_M2:after, .car_info_car_MO2:after, .car_info_car_OM2:after {
     content: "M";
     
     display: block;
@@ -1849,11 +1849,11 @@ input[type="checkbox"]:checked + label.drop_down + div {
     text-align: center;
 }
 
-.car_info_car_M:before, .car_info_car_M1:before {
+.car_info_car_M:before, .car_info_car_M1:before, .car_info_car_MO1:before, .car_info_car_OM1:before {
     top: 4px;
 }
 
-.car_info_car_M:after, .car_info_car_M2:after {
+.car_info_car_M:after, .car_info_car_M2:after, .car_info_car_MO2:after, .car_info_car_OM2:after {
     bottom: 4px;
 }
 
@@ -1935,6 +1935,8 @@ input[type="checkbox"]:checked + label.drop_down + div {
     
     border-radius: 4px;
     
+    background-color: #999999;
+    
     line-height: 16px;
     font-size: 16px;
     font-weight: normal;
@@ -1943,23 +1945,19 @@ input[type="checkbox"]:checked + label.drop_down + div {
     vertical-align: top;
 }
 
-.event_type_construct {
+h5.event_type_construct {
     background-color: #33cc99;
 }
 
-.event_type_modify {
-    background-color: #999999;
-}
-
-.event_type_renewal {
+h5.event_type_renewal {
     background-color: #eebb33;
 }
 
-.event_type_transfer {
+h5.event_type_transfer {
     background-color: #9933cc;
 }
 
-.event_type_rearrange {
+h5.event_type_rearrange {
     background-color: #0066dd;
 }
 
