@@ -176,7 +176,7 @@ h2 img {
 h3 {
     max-width: 490px;
     
-    margin: 20px auto 10px auto;
+    margin: 30px auto 10px auto;
     
     padding-left: 6px;
     
@@ -189,17 +189,32 @@ h3 {
 h4 {
     max-width: 480px;
     
-    margin: 15px auto 0 auto;
+    margin: 20px auto 0 auto;
     
     padding: 5px 10px;
     
     font-size: 18px;
 }
 
+h4:before {
+    content: "";
+    
+    display: inline-block;
+    
+    width: 0.4lh;
+    height: 0.4lh;
+    
+    margin: 0.3lh 0.2lh 0.3lh -0.4lh;
+    
+    background-color: #999999;
+    
+    vertical-align: top;
+}
+
 h5 {
     max-width: 485px;
     
-    margin: 10px auto 0 auto;
+    margin: 15px auto 0 auto;
     
     padding-left: 15px;
     
@@ -336,6 +351,13 @@ textarea {
     resize: none;
 }
 
+.rule_content {
+    width: calc(100% - 30px);
+    height: 480px;
+    
+    max-width: 480px;
+}
+
 .announcement_content {
     height: 180px;
     
@@ -356,7 +378,7 @@ input, select {
     font-size: 18px;
 }
 
-input[type="text"], input[type="number"], input[type="password"], input[type="search"], .wide_select {
+input[type="text"], input[type="number"], input[type="password"], input[type="search"], select {
     background-color: #ffffff;
     
     border: none;
@@ -386,12 +408,16 @@ input[type="checkbox"] {
     padding: 0 10px;
 }
 
-.half_input_wrapper input {
+.half_input_wrapper input, .half_input_wrapper select {
     display: inline-block;
     
     width: 40%;
     
     margin: 0 10px;
+}
+
+.half_input_wrapper input[type="number"] {
+    width: 60px;
 }
 
 .toggle + label {
@@ -469,6 +495,8 @@ input[type="checkbox"] + label.drop_down {
     
     position: relative;
     
+    width: calc(100% - 20px);
+    
     max-width: 480px;
     min-height: 25px;
     
@@ -516,6 +544,8 @@ input[type="checkbox"]:checked + label.drop_down:after {
 input[type="checkbox"] + label.drop_down + div {
     display: none;
     
+    width: 100%;
+    
     max-width: 500px;
     
     margin: 0 auto 10px auto;
@@ -547,6 +577,15 @@ input[type="checkbox"]:checked + label.drop_down + div {
     max-width: 420px;
     
     padding: 10px 40px;
+}
+
+.informational_text {
+    max-width: 480px;
+    
+    margin: 10px auto;
+    padding: 0 10px 10px 15px;
+    
+    color: #666666;
 }
 
 .important_announcement {

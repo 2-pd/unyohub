@@ -25,6 +25,13 @@ while ($car_data = $cars_r->fetchArray(SQLITE3_ASSOC)) {
     $formation_data["cars"][] = $car_data;
 }
 
+$histories_r = $db_obj->query("SELECT `event_year_month`, `event_type`, `event_content` FROM `unyohub_formation_histories` WHERE `formation_name` = '".$formation_name."' ORDER BY `event_year_month` ASC");
+
+$formation_data["histories"] = array();
+while ($history_data = $histories_r->fetchArray(SQLITE3_ASSOC)) {
+    $formation_data["histories"][] = $history_data;
+}
+
 
 $ts_now = time();
 

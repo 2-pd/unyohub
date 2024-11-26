@@ -64,9 +64,11 @@ _/_/_/_/ ファイル構成 _/_/_/_/
 └ admin/ ・・・管理画面
    └ admin_common.php ・・・管理画面共通関数等
    └ index.php ・・・管理画面トップページ
+   └ config.php ・・・インスタンスの基本設定
    └ enable_railroads.php ・・・路線系統の有効化・無効化や表示順の並び替え
    └ user_list.php ・・・ユーザー一覧、ユーザー検索
    └ user_data.php ・・・ユーザー情報の閲覧、編集
+   └ edit_rules.php ・・・ルールとポリシーの編集
    └ announcements.php ・・・お知らせの編集
    └ railroads.php ・・・路線系統別の操作一覧
    └ formations.php ・・・編成情報の編集
@@ -124,7 +126,6 @@ allow_guest_user ログインしていないユーザーの投稿を認めるか
 sender_email_address メール送信用アドレス(サーバに紐付けられているドメイン名であれば存在しないメールアドレスでも設定可能)
 
 log_ip_address 投稿者のIPアドレスを記録するか(BOOL値)
-anti_troll_garbage_size 要注意ユーザーの投稿処理を遅延させるために使用するダミーデータのサイズ(MB単位、整数値)
 
 
 ███ railroads.json ███
@@ -181,6 +182,11 @@ anti_troll_garbage_size 要注意ユーザーの投稿処理を遅延させる�
                         {
                             "line_id" : 路線識別名,
                             "directions" : 分岐方向(「TL」(左上)、「T」(上)、「TR」(右上)、「L」(左)、「R」(右)、「BL」(左下)、「B」(下)、「BR」(右下))を配列で指定
+                        }...
+                    ],
+                    "connecting_railroads" : [ 乗り換え可能な路線系統
+                        {
+                            "railroad_id" : 路線系統識別名
                         }...
                     ]
                 }...

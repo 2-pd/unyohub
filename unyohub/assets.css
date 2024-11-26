@@ -130,8 +130,8 @@ header {
     display: none;
 }
 
-#railroad_name, #railroad_select_popup h2 {
-    background-image: url(data:image/webp;base64,UklGRnACAABXRUJQVlA4TGMCAAAvd8AdELVAsG03bTT73xRj9DQ860HZcSwNMzMzR8C5bdvU89m2nfwAu7LN0pV6Jx1Lq7RtJ5WdyrbN7ciNJEVyam8DOUz7goO9jEIh36Al/FAS3AIRs3hqvOZJNW0yzjK/HE54TLM/OLJMBf6Or2l7eH/6eD6NZ1Kg0ZQzzzNI87LcRLzyFdLcMidlRMEPpJehKUwdgXzmOcuGuPkK+Vwxqcl/MTyQzRVojXiurNx8hdZwqZm/ATT27IGCnNw/4P2dr1AQdrFxhxuvwCm8NC7e+zFXwC1cfPnSPOAYcnyx5okVXz+eePEFXLN1if4pdbbImEYHDT40fJ5mexxJJJ+gqFwMTy1NGq1Bba4IdaCoXAxlm1zycw7LNubOZ3Gvg785Wh/3Onj1lF8SGTK+JTK97hP1DYrKrd77ul1qas4lrbl6rd5BtkAcHHCeQJlfB9k1kRRJM6FKcNZDcA99CQ2sRYMS0uvvMKF5HZXU9HeUrrha6E8Q4K9RpN9HOu7jhbthmAG7KRoy0oBVIsEBhvTaQynIDRlhQJcQEEGjqCwz5MYtEmc3nJSVo8L20phwRpgcGtwjKTci4tbgZJqdF2h+pHVpRoZtRm4wT7wa7EDtopfCpsH7hD4WbQKG+nbrJp62Gw2hNC78G9pT50x+oe6BLJB0Aazga9y6q+dv+6H7Nw5JBIYWde9Hqe2n8WEMcTk3uIJfoeCl/dvIVxRSDAxJqNFQk21DCqsJtLv8ymKyA8bwBwx1r3rA0R3ChIf90VirJS22pfoE8M9G5dNfo+XNYPvOH+nVb5gosD0ltYew10gOAAA=);
+#railroad_name, #railroad_select_popup h2, .connecting_railroads_button {
+    background-image: url(data:image/webp;base64,UklGRnACAABXRUJQVlA4TGMCAAAvd8AdELVAsG03bTT73xRj9DQ860HZcSwNMzMzR8C5bdvU89m2nfwAu7LN0pV6Jx1Lq7RtJ5WdyrbN7ciNJEVyam8DOUz7goO9jEIh36Al/FAS3AIRs3hqvOZJNW0yzjK/HE54TLM/OLJMBf6Or2l7eH/6eD6NZ1Kg0ZQzzzNI87LcRLzyFdLcMidlRMEPpJehKUwdgXzmOcuGuPkK+Vwxqcl/MTyQzRVojXiurNx8hdZwqZm/ATT27IGCnNw/4P2dr1AQdrFxhxuvwCm8NC7e+zFXwC1cfPnSPOAYcnyx5okVXz+eePEFXLN1if4pdbbImEYHDT40fJ5mexxJJJ+gqFwMTy1NGq1Bba4IdaCoXAxlm1zycw7LNubOZ3Gvg785Wh/3Onj1lF8SGTK+JTK97hP1DYrKrd77ul1qas4lrbl6rd5BtkAcHHCeQJlfB9k1kRRJM6FKcNZDcA99CQ2sRYMS0uvvMKF5HZXU9HeUrrha6E8Q4K9RpN9HOu7jhbthmAG7KRoy0oBVIsEBhvTaQynIDRlhQJcQEEGjqCwz5MYtEmc3nJSVo8L20phwRpgcGtwjKTci4tbgZJqdF2h+pHVpRoZtRm4wT7wa7EDtopfCpsH7hD4WbQKG+nbrJp62Gw2hNC78G9pT50x+oe6BLJB0Aazga9y6q+dv+6H7Nw5JBIYWde9Hqe2n8WEMcTk3uIJfoeCl/dvIVxRSDAxJqNFQk21DCqsJtLv8ymKyA8bwBwx1r3rA0R3ChIf90VirJS22pfoE8M9G5dNfo+XNYPvOH+nVb5gosD0ltYew10gOAAA=) !important;
     background-repeat: no-repeat;
 }
 
@@ -333,6 +333,10 @@ header {
     padding-top: 28px;
 }
 
+#menu_reload_button:after {
+    content: "の再読み込み";
+}
+
 #splash_screen, #railroad_select_popup {
     position: fixed;
     top: 0;
@@ -512,10 +516,12 @@ header {
     }
     
     15% {
+        background-image: radial-gradient(circle at left 50% top 6px, rgba(153, 153, 153, 0.7) 0, rgba(153, 153, 153, 0.7) 6px, transparent 6px);
         background-position-y: 14px;
     }
     
     20% {
+        background-image: radial-gradient(circle at left 50% top 6px, rgba(153, 153, 153, 0.8) 0, rgba(153, 153, 153, 0.8) 6px, transparent 6px);
         background-position-y: 6px;
     }
     
@@ -525,10 +531,12 @@ header {
     }
     
     50% {
+        background-image: radial-gradient(circle at left 50% top 6px, rgba(153, 153, 153, 0.8) 0, rgba(153, 153, 153, 0.8) 6px, transparent 6px);
         background-position-y: 6px;
     }
     
     55% {
+        background-image: radial-gradient(circle at left 50% top 6px, rgba(153, 153, 153, 0.7) 0, rgba(153, 153, 153, 0.7) 6px, transparent 6px);
         background-position-y: 14px;
     }
     
@@ -803,7 +811,7 @@ article {
     
     max-width: 500px;
     
-    margin: 10px auto ;
+    margin: 0 auto 10px;
     
     border-spacing: 0;
 }
@@ -889,6 +897,26 @@ article {
     border-color: #555555;
     
     background-color: #444444;
+}
+
+.connecting_railroads_button {
+    position: absolute;
+    
+    top: 20px;
+    left: 0;
+    
+    width: 36px;
+    height: 36px;
+    
+    border: 2px solid #cccccc;
+    border-radius: 3px;
+    
+    background-size: 30px;
+    background-position: center;
+}
+
+.dark_mode .connecting_railroads_button {
+    border-color: #999999;
 }
 
 .train_icon {
@@ -1320,6 +1348,8 @@ input[type="checkbox"] + label.drop_down {
     
     position: relative;
     
+    width: calc(100% - 20px);
+    
     max-width: 480px;
     min-height: 25px;
     
@@ -1370,6 +1400,8 @@ input[type="checkbox"]:checked + label.drop_down:after {
 
 input[type="checkbox"] + label.drop_down + div {
     display: none;
+    
+    width: 100%;
     
     max-width: 500px;
     
@@ -1716,11 +1748,11 @@ input[type="checkbox"]:checked + label.drop_down + div {
     right: 0;
 }
 
-.car_M span:before, .car_M span:after, .car_M1 span:first-of-type:before, .car_M1 span:first-of-type:after, .car_M2 span:last-of-type:before, .car_M2 span:last-of-type:after {
+.car_M span:before, .car_M span:after, .car_M1 span:first-of-type:before, .car_M1 span:first-of-type:after, .car_M2 span:last-of-type:before, .car_M2 span:last-of-type:after, .car_MO1 span:first-of-type:before, .car_MO2 span:last-of-type:before, .car_OM1 span:first-of-type:after, .car_OM2 span:last-of-type:after {
     background-color: #444444;
 }
 
-.dark_mode .car_M span:before, .dark_mode .car_M span:after, .dark_mode .car_M1 span:first-of-type:before, .dark_mode .car_M1 span:first-of-type:after, .dark_mode .car_M2 span:last-of-type:before, .dark_mode .car_M2 span:last-of-type:after {
+.dark_mode .car_M span:before, .dark_mode .car_M span:after, .dark_mode .car_M1 span:first-of-type:before, .dark_mode .car_M1 span:first-of-type:after, .dark_mode .car_M2 span:last-of-type:before, .dark_mode .car_M2 span:last-of-type:after, .dark_mode .car_MO1 span:first-of-type:before, .dark_mode .car_MO2 span:last-of-type:before, .dark_mode .car_OM1 span:first-of-type:after, .dark_mode .car_OM2 span:last-of-type:after {
     background-color: #eeeeee;
 }
 
@@ -1827,7 +1859,7 @@ input[type="checkbox"]:checked + label.drop_down + div {
     border-radius: 8px;
 }
 
-.car_info_car_M:before, .car_info_car_M1:before, .car_info_car_M:after, .car_info_car_M2:after {
+.car_info_car_M:before, .car_info_car_M1:before, .car_info_car_MO1:before, .car_info_car_OM1:before, .car_info_car_M:after, .car_info_car_M2:after, .car_info_car_MO2:after, .car_info_car_OM2:after {
     content: "M";
     
     display: block;
@@ -1845,11 +1877,11 @@ input[type="checkbox"]:checked + label.drop_down + div {
     text-align: center;
 }
 
-.car_info_car_M:before, .car_info_car_M1:before {
+.car_info_car_M:before, .car_info_car_M1:before, .car_info_car_MO1:before, .car_info_car_OM1:before {
     top: 4px;
 }
 
-.car_info_car_M:after, .car_info_car_M2:after {
+.car_info_car_M:after, .car_info_car_M2:after, .car_info_car_MO2:after, .car_info_car_OM2:after {
     bottom: 4px;
 }
 
@@ -1882,6 +1914,79 @@ input[type="checkbox"]:checked + label.drop_down + div {
     padding: 0;
     
     clear: both;
+}
+
+.history_item {
+    width: calc(100% - 40px);
+    
+    max-width: 460px;
+    
+    margin: 0 auto;
+    
+    padding: 10px;
+    
+    color: #666666;
+}
+
+.dark_mode .history_item {
+    color: #cccccc;
+}
+
+.history_item:not(:last-child) {
+    border-bottom: 1px solid #cccccc;
+}
+
+.dark_mode .history_item:not(:last-child) {
+    border-color: #999999;
+}
+
+.history_item time {
+    margin-left: -10px;
+    margin-bottom: 10px;
+    
+    line-height: 24px;
+    font-size: 18px;
+    font-weight: bold;
+    color: #333333;
+}
+
+.dark_mode .history_item time {
+    color: #ffffff;
+}
+
+.history_item h5 {
+    display: inline-block;
+    
+    margin: 0 0 10px 10px;
+    
+    padding: 4px 8px;
+    
+    border-radius: 4px;
+    
+    background-color: #999999;
+    
+    line-height: 16px;
+    font-size: 16px;
+    font-weight: normal;
+    color: #ffffff;
+    
+    vertical-align: top;
+}
+
+h5.event_type_construct {
+    background-color: #33cc99;
+}
+
+h5.event_type_renewal {
+    background-color: #eebb33;
+}
+
+h5.event_type_transfer {
+    background-color: #9933cc;
+}
+
+h5.event_type_rearrange {
+    background-color: #0066dd;
 }
 
 .search_highlight {

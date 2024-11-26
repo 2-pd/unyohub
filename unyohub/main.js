@@ -236,6 +236,7 @@ var instance_info;
 function update_instance_info () {
     change_title(instance_info["instance_name"]);
     document.getElementById("instance_name").innerText = instance_info["instance_name"];
+    document.getElementById("menu_reload_button").innerText = instance_info["instance_name"];
 }
 
 (function () {
@@ -639,15 +640,63 @@ function check_logged_in () {
     });
 }
 
-function update_railroad_list (railroads, loading = false) {
-    var buttons_html = "";
-    
-    for (var cnt = 0; cnt < railroads["railroads_order"].length; cnt++) {
-        buttons_html += "<a href='/railroad_" + railroads["railroads_order"][cnt] + "/' class='wide_button' onclick='event.preventDefault(); select_railroad(\"" + railroads["railroads_order"][cnt] + "\");'><img src='" + railroads["railroads"][railroads["railroads_order"][cnt]]["railroad_icon"] + "' alt='' style='background-color: " + railroads["railroads"][railroads["railroads_order"][cnt]]["main_color"] + ";'>" + escape_html(railroads["railroads"][railroads["railroads_order"][cnt]]["railroad_name"]) + "</a>";
+
+var railroads = null;
+
+function get_railroad_list (callback_func) {
+    if (railroads !== null) {
+        callback_func(railroads, true);
+        
+        return;
     }
     
-    if (loading) {
-        buttons_html += "<div class='loading_icon'></div>";
+    var cache_json = localStorage.getItem("unyohub_railroads_caches");
+    
+    if (cache_json !== null) {
+        railroads = JSON.parse(cache_json);
+    } else {
+        railroads = {
+            railroads : {},
+            railroads_order : [],
+            last_modified_timestamp : 0
+        };
+    }
+    
+    if (navigator.onLine) {
+        callback_func(railroads, false);
+        
+        ajax_post("railroads.php", "last_modified_timestamp=" + railroads["last_modified_timestamp"], function (response, last_modified) {
+            if (response !== false && response !== "NO_UPDATES_AVAILABLE") {
+                railroads = JSON.parse(response);
+                
+                var last_modified_date = new Date(last_modified);
+                railroads["last_modified_timestamp"] = Math.floor(last_modified_date.getTime() / 1000);
+                
+                localStorage.setItem("unyohub_railroads_caches", JSON.stringify(railroads));
+            }
+            
+            callback_func(railroads, true);
+        }, 10);
+    } else {
+        callback_func(railroads, true);
+    }
+}
+
+function update_railroad_list (railroads, loading_completed, railroad_list = null) {
+    if (railroad_list === null) {
+        railroad_list = railroads["railroads_order"];
+    }
+    
+    var buttons_html = "";
+    
+    for (var cnt = 0; cnt < railroad_list.length; cnt++) {
+        buttons_html += "<a href='/railroad_" + railroad_list[cnt] + "/' class='wide_button' onclick='event.preventDefault(); select_railroad(\"" + railroad_list[cnt] + "\");'><img src='" + railroads["railroads"][railroad_list[cnt]]["railroad_icon"] + "' alt='' style='background-color: " + railroads["railroads"][railroad_list[cnt]]["main_color"] + ";'>" + escape_html(railroads["railroads"][railroad_list[cnt]]["railroad_name"]) + "</a>";
+    }
+    
+    if (!loading_completed) {
+        if (cnt >= 1) {
+            buttons_html += "<div class='loading_icon'></div>";
+        }
     } else if (cnt === 0) {
         buttons_html = "<div class='no_data'>利用可能なデータがありません</div>";
     }
@@ -659,6 +708,14 @@ function update_railroad_list (railroads, loading = false) {
     }
     
     splash_screen_elm.className = "splash_screen_loaded";
+}
+
+function show_railroad_list (railroad_list = null) {
+    open_popup("railroad_select_popup");
+    
+    get_railroad_list(function (railroads, loading_completed) {
+        update_railroad_list(railroads, loading_completed, railroad_list);
+    });
 }
 
 
@@ -710,39 +767,13 @@ window.onload = function () {
         }
     } else if (location.pathname.length >= 2) {
         reload_app();
-    }
-    
-    var cache_json = localStorage.getItem("unyohub_railroads_caches");
-    
-    if (cache_json !== null) {
-        var railroads_caches = JSON.parse(cache_json);
     } else {
-        var railroads_caches = {
-            railroads : {},
-            railroads_order : [],
-            last_modified_timestamp : 0
-        };
+        get_railroad_list(update_railroad_list);
     }
     
     if (navigator.onLine) {
         check_logged_in();
-        
-        update_railroad_list(railroads_caches, true);
-        
-        ajax_post("railroads.php", "last_modified_timestamp=" + railroads_caches["last_modified_timestamp"], function (response, last_modified) {
-            if (response !== false && response !== "NO_UPDATES_AVAILABLE") {
-                railroads_caches = JSON.parse(response);
-                
-                var last_modified_date = new Date(last_modified);
-                railroads_caches["last_modified_timestamp"] = Math.floor(last_modified_date.getTime() / 1000);
-                
-                localStorage.setItem("unyohub_railroads_caches", JSON.stringify(railroads_caches));
-            }
-            
-            update_railroad_list(railroads_caches);
-        }, 10);
     } else {
-        update_railroad_list(railroads_caches);
         on_off_line();
     }
     
@@ -1294,11 +1325,13 @@ function select_railroad (railroad_id, mode_name = "position_mode", mode_option_
         });
     });
     
-    document.getElementById("tab_position_mode").setAttribute("href", "/railroad_" + railroad_id + "/");
-    document.getElementById("tab_timetable_mode").setAttribute("href", "/railroad_" + railroad_id + "/timetable/");
-    document.getElementById("tab_operation_data_mode").setAttribute("href", "/railroad_" + railroad_id + "/operation_data/");
-    document.getElementById("tab_formations_mode").setAttribute("href", "/railroad_" + railroad_id + "/formations/");
-    document.getElementById("tab_operation_table_mode").setAttribute("href", "/railroad_" + railroad_id + "/operation_table/");
+    if (!location.pathname.startsWith("/railroad_" + railroad_id + "/")) {
+        document.getElementById("tab_position_mode").setAttribute("href", "/railroad_" + railroad_id + "/");
+        document.getElementById("tab_timetable_mode").setAttribute("href", "/railroad_" + railroad_id + "/timetable/");
+        document.getElementById("tab_operation_data_mode").setAttribute("href", "/railroad_" + railroad_id + "/operation_data/");
+        document.getElementById("tab_formations_mode").setAttribute("href", "/railroad_" + railroad_id + "/formations/");
+        document.getElementById("tab_operation_table_mode").setAttribute("href", "/railroad_" + railroad_id + "/operation_table/");
+    }
     
     update_railroad_announcement(railroad_id, true);
     
@@ -1338,7 +1371,7 @@ function select_railroad (railroad_id, mode_name = "position_mode", mode_option_
     }, function () {
         mes("選択された路線系統はデータが利用できません", true);
         
-        open_popup('railroad_select_popup');
+        show_railroad_list();
         blank_article_elm.innerHTML = "<div class='no_data'><a href='javascript:void(0);' onclick='open_popup(\"railroad_select_popup\");'>路線系統を選択</a>してください</div>";
     });
 }
@@ -2106,6 +2139,17 @@ function position_change_lines (line_id, position_scroll_amount = -1) {
             }
             
             buf += "</a>";
+            
+            if ("connecting_railroads" in railroad_info["lines"][line_id]["stations"][cnt - 1]) {
+                var connecting_railroad_list = [];
+                for (var cnt_2 = 0; cnt_2 < railroad_info["lines"][line_id]["stations"][cnt - 1]["connecting_railroads"].length; cnt_2++) {
+                    connecting_railroad_list.push("\"" + railroad_info["lines"][line_id]["stations"][cnt - 1]["connecting_railroads"][cnt_2]["railroad_id"] + "\"");
+                }
+                
+                if (connecting_railroad_list.length >= 1) {
+                    buf += "<button type='button' class='connecting_railroads_button' onclick='show_railroad_list([" + connecting_railroad_list.join(",") + "]);'></button>";
+                }
+            }
         } else {
             buf += "<tr><th>";
         }
@@ -4637,15 +4681,20 @@ function formation_detail (formation_name) {
         
         buf += "<td class='" + car_class + "' " + car_style + "></td><td><b>" + formations["formations"][formation_name]["cars"][cnt]["car_number"] + "</b><span id='car_info_" + cnt + "'></span><div class='descriptive_text' id='car_description_" + cnt + "'></div></td></tr>";
     }
-    buf += "</table>"
+    buf += "</table>";
+    
+    buf += "<h3>車歴</h3>";
+    buf += "<div id='histories_area'></div>";
     
     formation_table_area_elm.innerHTML = buf;
     article_elms[3].scrollTop = 0;
     
     var formation_operations_area_elm = document.getElementById("formation_operations_area");
+    var histories_area_elm = document.getElementById("histories_area");
     
     if (navigator.onLine) {
         formation_operations_area_elm.className = "loading_icon";
+        histories_area.className = "loading_icon";
         
         ajax_post("formation_details.php", "railroad_id=" + escape_form_data(railroad_info["railroad_id"]) + "&formation_name=" + escape_form_data(formation_name), function (response) {
             if (response !== false) {
@@ -4700,6 +4749,25 @@ function formation_detail (formation_name) {
                 }
                 
                 formation_operations_area_elm.innerHTML = buf;
+                
+                var event_type_ja = {construct : "新製", modify : "改修", renewal : "更新", transfer : "転属", rearrange : "組換"};
+                
+                var buf = "";
+                for (cnt = 0; cnt < data["histories"].length; cnt++) {
+                    if (data["histories"][cnt]["event_year_month"].length === 4) {
+                        var event_year_month = data["histories"][cnt]["event_year_month"] + "年";
+                    } else {
+                        var event_year_month = data["histories"][cnt]["event_year_month"].substring(0, 4) + "年" + Number(data["histories"][cnt]["event_year_month"].substring(5)) + "月";
+                    }
+                    
+                    buf += "<div class='history_item'><time datetime='" + data["histories"][cnt]["event_year_month"] + "'>" + event_year_month + "</time><h5 class='event_type_" + data["histories"][cnt]["event_type"] + "'>" + event_type_ja[data["histories"][cnt]["event_type"]] + "</h5><br>" + escape_html(data["histories"][cnt]["event_content"]) + "</div>";
+                }
+                
+                if (cnt === 0) {
+                    buf = "<div class='descriptive_text'>車歴データが登録されていません</div>";
+                }
+                
+                histories_area_elm.innerHTML = buf;
             }
         });
     }

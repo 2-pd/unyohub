@@ -208,6 +208,13 @@ formations.jsonの内容を返す
     "series_name" : 形式名,  
     "description" : 補足説明文,  
     "inspection_information" : 検査情報,  
+    "histories" : [ 車歴情報  
+        {  
+            "event_year_month" : 「YYYY-MM」形式の年月、または「YYYY」形式の年,  
+            "event_type" : 変更の種類(「新製」、「改修」、「更新」、「転属」、「組換」のいずれか),  
+            "event_content" : 変更内容説明文  
+        }...  
+    ],  
     "operations_today" : [ 当日の運用情報(なければNULL)  
         {  
             "operation_number" : 運用番号,  
