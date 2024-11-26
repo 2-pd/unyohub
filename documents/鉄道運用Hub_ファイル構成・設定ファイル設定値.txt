@@ -183,6 +183,11 @@ log_ip_address 投稿者のIPアドレスを記録するか(BOOL値)
                             "line_id" : 路線識別名,
                             "directions" : 分岐方向(「TL」(左上)、「T」(上)、「TR」(右上)、「L」(左)、「R」(右)、「BL」(左下)、「B」(下)、「BR」(右下))を配列で指定
                         }...
+                    ],
+                    "connecting_railroads" : [ 乗り換え可能な路線系統
+                        {
+                            "railroad_id" : 路線系統識別名
+                        }...
                     ]
                 }...
             ]

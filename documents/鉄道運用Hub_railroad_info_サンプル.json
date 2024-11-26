@@ -13,17 +13,41 @@
                     "station_name" : "難波",
                     "station_name_kana" : "なんば",
                     "station_initial" : "難",
-                    "is_major_station" : true
+                    "is_major_station" : true,
+                    "connecting_railroads" : [
+                        {
+                            "railroad_id" : "koya"
+                        },
+                        {
+                            "railroad_id" : "midosuji"
+                        }
+                    ]
                 },
                 {
                     "station_name" : "新今宮",
                     "station_name_kana" : "しんいまみや",
-                    "is_major_station" : true
+                    "is_major_station" : true,
+                    "connecting_railroads" : [
+                        {
+                            "railroad_id" : "koya"
+                        },
+                        {
+                            "railroad_id" : "hankai"
+                        },
+                        {
+                            "railroad_id" : "midosuji"
+                        }
+                    ]
                 },
                 {
                     "station_name" : "天下茶屋",
                     "station_name_kana" : "てんがちゃや",
-                    "is_major_station" : true
+                    "is_major_station" : true,
+                    "connecting_railroads" : [
+                        {
+                            "railroad_id" : "koya"
+                        }
+                    ]
                 },
                 {
                     "station_name" : "岸里玉出",
@@ -34,15 +58,30 @@
                             "line_id" : "shiomibashisen",
                             "directions" : ["TL"]
                         }
+                    ],
+                    "connecting_railroads" : [
+                        {
+                            "railroad_id" : "koya"
+                        }
                     ]
                 },
                 {
                     "station_name" : "粉浜",
-                    "station_name_kana" : "こはま"
+                    "station_name_kana" : "こはま",
+                    "connecting_railroads" : [
+                        {
+                            "railroad_id" : "hankai"
+                        }
+                    ]
                 },
                 {
                     "station_name" : "住吉大社",
-                    "station_name_kana" : "すみよしたいしゃ"
+                    "station_name_kana" : "すみよしたいしゃ",
+                    "connecting_railroads" : [
+                        {
+                            "railroad_id" : "hankai"
+                        }
+                    ]
                 },
                 {
                     "station_name" : "住ノ江",
@@ -73,7 +112,12 @@
                 },
                 {
                     "station_name" : "浜寺公園",
-                    "station_name_kana" : "はまでらこうえん"
+                    "station_name_kana" : "はまでらこうえん",
+                    "connecting_railroads" : [
+                        {
+                            "railroad_id" : "hankai"
+                        }
+                    ]
                 },
                 {
                     "station_name" : "羽衣",
@@ -235,6 +279,11 @@
                             "line_id" : "wakayamakosen",
                             "directions" : ["B"]
                         }
+                    ],
+                    "connecting_railroads" : [
+                        {
+                            "railroad_id" : "wakayama"
+                        }
                     ]
                 }
             ]
@@ -308,6 +357,11 @@
                         {
                             "line_id" : "honsen",
                             "directions" : ["TR", "BL"]
+                        }
+                    ],
+                    "connecting_railroads" : [
+                        {
+                            "railroad_id" : "koya"
                         }
                     ]
                 }
@@ -449,6 +503,11 @@
                         {
                             "line_id" : "honsen",
                             "directions" : ["T"]
+                        }
+                    ],
+                    "connecting_railroads" : [
+                        {
+                            "railroad_id" : "wakayama"
                         }
                     ]
                 },

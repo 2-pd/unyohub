@@ -74,7 +74,7 @@ for ($cnt = 0; $cnt < count($operation_numbers); $cnt++) {
         }
         
         if ($is_beginner) {
-            $data[$cnt_2][$is_beginner] = TRUE;
+            $data[$cnt_2]["is_beginner"] = TRUE;
         }
     }
     

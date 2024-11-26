@@ -17,7 +17,7 @@
  */
 
 define("UNYOHUB_APP_NAME", "鉄道運用Hub");
-define("UNYOHUB_VERSION", "24.11-3");
+define("UNYOHUB_VERSION", "24.11-4");
 define("UNYOHUB_LICENSE_URL", "https://www.2pd.jp/license/");
 define("UNYOHUB_REPOSITORY_URL", "https://fossil.2pd.jp/unyohub/");
 define("UNYOHUB_LICENSE_TEXT", "このアプリケーションは無権利創作宣言に準拠して著作権放棄されています。");
@@ -26,20 +26,26 @@ define("UNYOHUB_LICENSE_TEXT", "このアプリケーションは無権利創作
 if (empty($_SERVER["PATH_INFO"]) || $_SERVER["PATH_INFO"] === "/") {
     $path_info_str = "/";
     $page_title = UNYOHUB_APP_NAME;
-    $page_description = "鉄道ファン向けの車両運用情報データベース　鉄道各社の本日、明日、過去の各列車充当編成が閲覧・投稿可能です。";
+    $page_description = "鉄道ファン向けの車両運用情報データベース　鉄道各社の本日、明日、過去の各列車充当編成が運用表と時刻表から確認・投稿可能です。";
+    $railroad_root = "#";
 } elseif (substr($_SERVER["PATH_INFO"], 0, 10) === "/railroad_") {
     $path_info = explode("/", $_SERVER["PATH_INFO"]);
     
     $railroad_id = basename(substr($path_info[1], 9));
     $railroad_info_path = "data/".$railroad_id."/railroad_info.json";
     $path_info_str = "/railroad_".$railroad_id."/";
+    $railroad_root = $path_info_str;
     
     if (file_exists($railroad_info_path)) {
         $railroad_info = json_decode(file_get_contents($railroad_info_path), TRUE);
         
         if (empty($path_info[2])) {
             $page_title = $railroad_info["railroad_name"]." | ".UNYOHUB_APP_NAME;
-            $page_description = $railroad_info["railroad_name"]."で本日、及び明日に運行される各列車の充当編成・推定走行位置です。";
+            $line_names = array();
+            foreach ($railroad_info["lines_order"] as $line_id) {
+                $line_names[] = $railroad_info["lines"][$line_id]["line_name"];
+            }
+            $page_description = $railroad_info["railroad_name"]."の各路線(".implode("、" ,$line_names).")で本日、及び明日に運行される各列車の充当編成・推定走行位置です。";
         } else {
             switch ($path_info[2]) {
                 case "timetable":
@@ -89,7 +95,7 @@ if (empty($_SERVER["PATH_INFO"]) || $_SERVER["PATH_INFO"] === "/") {
                     $path_info_str .= "formations/";
                     
                     if (empty($path_info[3])) {
-                        $page_title = $railroad_info["railroad_name"]."で運用中の編成一覧 | ".UNYOHUB_APP_NAME;
+                        $page_title = $railroad_info["railroad_name"]."の編成表 | ".UNYOHUB_APP_NAME;
                         $page_description = $railroad_info["railroad_name"]."で現在運用されている編成の一覧表です。";
                     } else {
                         $formations_path = "data/".$railroad_id."/formations.json";
@@ -157,6 +163,7 @@ print "    <meta property=\"og:url\" content=\"".$root_url.$path_info_str."\">\n
 print "    <meta property=\"og:description\" content=\"".$page_description."\">\n";
 print "    <meta property=\"twitter:card\" content=\"summary\">\n";
 print "    <meta name=\"description\" content=\"".$page_description."\">\n";
+print "    <link rel=\"canonical\" href=\"".$root_url.$path_info_str."\">\n";
 ?>
     <link rel="styleSheet" href="/assets.css">
     <link rel="apple-touch-icon" href="/apple-touch-icon.webp">
@@ -174,7 +181,7 @@ print "        const UNYOHUB_LICENSE_TEXT = \"".UNYOHUB_LICENSE_TEXT."\";\n";
     </script>
 </head>
 <body>
-    <header><a id="railroad_icon" href="javascript:void(0);" onclick="about_railroad_data();"></a><span id="instance_name"></span><a id="railroad_name" href="javascript:void(0);" onclick="open_popup('railroad_select_popup');"></a><a id="menu_button" href="javascript:void(0);" onclick="menu_click();"></a></header>
+    <header><a id="railroad_icon" href="javascript:void(0);" onclick="about_railroad_data();"></a><span id="instance_name"></span><a id="railroad_name" href="javascript:void(0);" onclick="show_railroad_list();"></a><a id="menu_button" href="javascript:void(0);" onclick="menu_click();"></a></header>
     <div id="menu">
         <div id="menu_logged_in">
             <b id="menu_user_name"></b>
@@ -199,7 +206,7 @@ print "        const UNYOHUB_LICENSE_TEXT = \"".UNYOHUB_LICENSE_TEXT."\";\n";
         <a href="javascript:void(0);" onclick="show_about();">このアプリについて</a>
         <a href="javascript:void(0);" onclick="show_rules();">ルールとポリシー</a>
         <hr>
-        <a href="javascript:void(0);" onclick="reload_app();">アプリの再起動</a>
+        <a id="menu_reload_button" href="/" onclick="event.preventDefault(); reload_app();"><?php print UNYOHUB_APP_NAME; ?></a>
     </div>
     <div id="splash_screen" class="splash_screen_loading">
 <?php
@@ -219,7 +226,7 @@ if ($path_info_str === "/") {
 ?>
     </div>
     <div id="blank_article" class="wait_icon"></div>
-    <div id="tab_area"><a href="#" onclick="event.preventDefault(); position_mode();" id="tab_position_mode">走行位置</a><a href="#" onclick="event.preventDefault(); timetable_mode();" id="tab_timetable_mode">時刻表</a><a href="#" onclick="event.preventDefault(); operation_data_mode();" id="tab_operation_data_mode">運用データ</a><a href="#" onclick="event.preventDefault(); formations_mode();" id="tab_formations_mode">編成表</a><a href="#" onclick="event.preventDefault(); operation_table_mode();" id="tab_operation_table_mode">運用表</a></div>
+    <div id="tab_area"><a href="<?php print $railroad_root; ?>" onclick="event.preventDefault(); position_mode();" id="tab_position_mode">走行位置</a><a href="<?php print $railroad_root; ?>timetable/" onclick="event.preventDefault(); timetable_mode();" id="tab_timetable_mode">時刻表</a><a href="<?php print $railroad_root; ?>operation_data/" onclick="event.preventDefault(); operation_data_mode();" id="tab_operation_data_mode">運用データ</a><a href="<?php print $railroad_root; ?>formations/" onclick="event.preventDefault(); formations_mode();" id="tab_formations_mode">編成表</a><a href="<?php print $railroad_root; ?>operation_table/" onclick="event.preventDefault(); operation_table_mode();" id="tab_operation_table_mode">運用表</a></div>
     <article>
         <div class='line_select_wrapper'><a id="position_line_select" onclick="select_lines();"></a></div>
         <table id="position_area" class="wait_icon"></table>
