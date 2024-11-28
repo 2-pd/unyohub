@@ -688,9 +688,9 @@ article {
     display: none;
     
     width: calc(100vw - 10px);
-    height: calc(100% - 240px);
+    height: calc(100% - 250px);
     
-    padding: 55px 5px 50px 5px;
+    padding: 55px 5px 60px 5px;
     
     background-color: #ffffff;
     
@@ -1941,6 +1941,8 @@ input[type="checkbox"]:checked + label.drop_down + div {
 }
 
 .history_item time {
+    display: inline-block;
+    
     margin-left: -10px;
     margin-bottom: 10px;
     
@@ -3040,6 +3042,8 @@ a {
 }
 
 #announcements_area input[type="checkbox"] + label.drop_down {
+    width: calc(100% - 80px);
+    
     padding: 10px 40px;
 }
 

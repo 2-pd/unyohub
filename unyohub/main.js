@@ -4517,7 +4517,7 @@ function formation_table_wrapper_onscroll () {
 
 function draw_formation_table (update_title = true) {
     if (update_title) {
-        change_title(railroad_info["railroad_name"] + "で運用中の編成一覧 | " + instance_info["instance_name"], "/railroad_" + railroad_info["railroad_id"] + "/formations/");
+        change_title(railroad_info["railroad_name"] + "の編成表 | " + instance_info["instance_name"], "/railroad_" + railroad_info["railroad_id"] + "/formations/");
     }
     
     formation_screenshot_button_elm.style.display = "none";
@@ -4760,7 +4760,7 @@ function formation_detail (formation_name) {
                         var event_year_month = data["histories"][cnt]["event_year_month"].substring(0, 4) + "年" + Number(data["histories"][cnt]["event_year_month"].substring(5)) + "月";
                     }
                     
-                    buf += "<div class='history_item'><time datetime='" + data["histories"][cnt]["event_year_month"] + "'>" + event_year_month + "</time><h5 class='event_type_" + data["histories"][cnt]["event_type"] + "'>" + event_type_ja[data["histories"][cnt]["event_type"]] + "</h5><br>" + escape_html(data["histories"][cnt]["event_content"]) + "</div>";
+                    buf += "<div class='history_item'><time datetime='" + data["histories"][cnt]["event_year_month"] + "'>" + event_year_month + "</time><h5 class='event_type_" + data["histories"][cnt]["event_type"] + "'>" + event_type_ja[data["histories"][cnt]["event_type"]] + "</h5><br>" + convert_to_html(data["histories"][cnt]["event_content"]) + "</div>";
                 }
                 
                 if (cnt === 0) {

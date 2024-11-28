@@ -574,6 +574,8 @@ input[type="checkbox"]:checked + label.drop_down + div {
 }
 
 #announcements_area input[type="checkbox"] + label.drop_down {
+    width: calc(100% - 80px);
+    
     max-width: 420px;
     
     padding: 10px 40px;
