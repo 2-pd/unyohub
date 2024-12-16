@@ -16,8 +16,11 @@
 **タイムスタンプが省略されるか、main.iniの変更日時がタイムスタンプより新しかった場合** :  
 {  
     "instance_name" : 鉄道運用Hubインスタンスの表示名,  
-    "manual_url" : ユーザーマニュアルのURL,  
-    "introduction_text" : インスタンスの紹介文,  
+    "introduction_text" : インスタンスの紹介文(未設定なら省略),  
+    "manual_url" : ユーザーマニュアルのURL(未設定なら省略),  
+    "administrator_name" : インスタンス運営者名(未設定なら省略),  
+    "administrator_url" : インスタンス運営者紹介ページのURL(未設定なら省略),  
+    "administrator_introduction" : インスタンス運営者の紹介文(未設定なら省略),  
     "allow_guest_user" : ログインしていないユーザーの投稿を認めるか(BOOL値)  
 }  
   
@@ -186,10 +189,36 @@ formations.jsonの内容を返す
 文字列「ERROR: 」とそれに続くエラー内容文
 
 
+## formation_overviews.php
+指定した路線系統の編成情報概要を取得する
+
+### 引数
+**$_POST["railroad_id"]** : 路線系統識別名  
+**$_POST["last_modified_timestamp"]** : タイムスタンプ(UTC)
+
+### 応答
+**タイムスタンプの時刻より後に概要情報が更新された編成があった場合** :  
+{  
+    "編成名" : {  
+        "caption" : 1行見出し,  
+        "unavailable" : 運用離脱中か否か(BOOL値)  
+    }...  
+}  
+▲クライアント端末からAccept-Encodingヘッダーが送信されていた場合、このデータは自動的にgzip圧縮される  
+  
+**タイムスタンプの時刻より後に概要情報が更新された編成がない場合** :  
+文字列「NO_UPDATES_AVAILABLE」  
+  
+**エラーの場合** :  
+文字列「ERROR: 」とそれに続くエラー内容文
+
+
 ## formation_details.php
 指定した編成の詳細情報を取得する
 
 ### 引数
+**$_COOKIE["unyohub_login_token"]** : Wakaranaのログイントークン(ある場合)  
+  
 **$_POST["railroad_id"]** : 路線系統識別名  
 **$_POST["formation_name"]** : 編成名
 
@@ -206,15 +235,20 @@ formations.jsonの内容を返す
         }...  
     ],  
     "series_name" : 形式名,  
+    "affiliation" : 所属車両基地,  
+    "caption" : 1行見出し,  
     "description" : 補足説明文,  
+    "unavailable" : 運用離脱中か否か,  
     "inspection_information" : 検査情報,  
     "histories" : [ 車歴情報  
         {  
             "event_year_month" : 「YYYY-MM」形式の年月、または「YYYY」形式の年,  
-            "event_type" : 変更の種類(「新製」、「改修」、「更新」、「転属」、「組換」のいずれか),  
+            "event_type" : 変更の種類(「construct」、「modify」、「repaint」、「renewal」、「transfer」、「rearrange」、「other」のいずれか),  
             "event_content" : 変更内容説明文  
         }...  
     ],  
+    "updated_timestamp" : 編成情報が更新されたタイムスタンプ(UTC),  
+    "edited_user_id" : 最後に編集したユーザーのID(コントロールパネルアクセス権のあるユーザーでアクセスした場合のみ),  
     "operations_today" : [ 当日の運用情報(なければNULL)  
         {  
             "operation_number" : 運用番号,  
