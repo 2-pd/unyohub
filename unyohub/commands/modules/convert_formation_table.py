@@ -4,6 +4,7 @@
 import csv
 import json
 import sqlite3
+import time
 
 
 equipment_symbols = ["<", ">", "◇", "⬠", "≦", "≧"]
@@ -48,6 +49,8 @@ def convert_formation_table (mes, main_dir):
     cur.execute("DELETE FROM `unyohub_coupling_groups`")
     
     mes("データを変換しています...")
+    
+    datetime_now = time.strftime("%Y-%m-%d %H:%M:%S")
     
     formation_list_old = []
     for row_data in cur.execute("SELECT `formation_name` FROM `unyohub_formations`"):
@@ -155,7 +158,7 @@ def convert_formation_table (mes, main_dir):
             
             car_count = len(car_list)
             
-            cur.execute("INSERT INTO `unyohub_formations`(`formation_name`, `series_name`, `car_count`, `description`, `inspection_information`) VALUES (:formation_name, :series_name, :car_count, '', '') ON CONFLICT(`formation_name`) DO UPDATE SET `series_name` = :series_name_2, `car_count` = :car_count_2", {"formation_name" : formation_name, "series_name" : series_name, "car_count" : car_count, "series_name_2" : series_name, "car_count_2" : car_count})
+            cur.execute("INSERT INTO `unyohub_formations`(`formation_name`, `series_name`, `car_count`, `affiliation`, `caption`, `description`, `unavailable`, `inspection_information`, `overview_updated`, `updated_datetime`, `edited_user_id`) VALUES (:formation_name, :series_name, :car_count, '', '', '', FALSE, '', :overview_updated, :updated_datetime, NULL) ON CONFLICT(`formation_name`) DO UPDATE SET `series_name` = :series_name_2, `car_count` = :car_count_2", {"formation_name" : formation_name, "series_name" : series_name, "car_count" : car_count, "overview_updated" : datetime_now, "updated_datetime" : datetime_now, "series_name_2" : series_name, "car_count_2" : car_count})
             
             formation_list.append(formation_name)
             
@@ -184,6 +187,7 @@ def convert_formation_table (mes, main_dir):
     for deleted_formation_name in deleted_formations:
         cur.execute("DELETE FROM `unyohub_formations` WHERE `formation_name` = :formation_name", {"formation_name" : deleted_formation_name})
         cur.execute("DELETE FROM `unyohub_cars` WHERE `formation_name` = :formation_name", {"formation_name" : deleted_formation_name})
+        cur.execute("DELETE FROM `unyohub_formation_histories` WHERE `formation_name` = :formation_name", {"formation_name" : deleted_formation_name})
     
     mes("データベースの書き込み処理を完了しています...")
     

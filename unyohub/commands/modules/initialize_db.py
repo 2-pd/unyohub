@@ -15,7 +15,7 @@ def initialize_db (mes, main_dir):
     cur.execute("CREATE TABLE IF NOT EXISTS `unyohub_series`(`series_name` TEXT NOT NULL PRIMARY KEY, `min_car_count` INTEGER NOT NULL, `max_car_count` INTEGER NOT NULL)")
     
     mes("テーブル「unyohub_formations」を作成しています...")
-    cur.execute("CREATE TABLE IF NOT EXISTS `unyohub_formations`(`formation_name` TEXT NOT NULL PRIMARY KEY, `series_name` TEXT NOT NULL, `car_count` INTEGER NOT NULL, `description` TEXT, `inspection_information` TEXT)")
+    cur.execute("CREATE TABLE IF NOT EXISTS `unyohub_formations`(`formation_name` TEXT NOT NULL PRIMARY KEY, `series_name` TEXT NOT NULL, `car_count` INTEGER NOT NULL, `affiliation` TEXT, `caption` TEXT, `description` TEXT, `unavailable` INTEGER NOT NULL, `inspection_information` TEXT, `overview_updated` TEXT NOT NULL, `updated_datetime` TEXT NOT NULL, `edited_user_id` TEXT)")
     cur.execute("CREATE INDEX IF NOT EXISTS `unyohub_idx_f1` ON `unyohub_formations`(`series_name`)")
     
     mes("テーブル「unyohub_cars」を作成しています...")
