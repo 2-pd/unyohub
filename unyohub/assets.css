@@ -395,7 +395,7 @@ header {
     opacity: 0.25;
 }
 
-#splash_screen_inner, #railroad_select_area {
+#splash_screen_inner, #railroad_select_popup_inner {
     position: relative;
     
     width: 100%;
@@ -3420,11 +3420,11 @@ a abbr:empty {
     border-top: none;
 }
 
-#operation_detail_area {
+#operation_detail_popup_inner {
     text-align: center;
 }
 
-#operation_detail_area h2 .previous_button, #operation_detail_area h2 .next_button {
+#operation_detail_popup_inner h2 .previous_button, #operation_detail_popup_inner h2 .next_button {
     height: 60px;
 }
 

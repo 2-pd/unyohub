@@ -482,7 +482,7 @@ var popup_background_elm = document.getElementById("popup_background");
 var popup_history = new Array();
 var square_popup_is_open = false;
 
-function open_popup (id) {
+function open_popup (id, title = null, allow_creenshot = false) {
     if (square_popup_is_open) {
         close_square_popup();
     }
@@ -491,9 +491,31 @@ function open_popup (id) {
     
     var elm = document.getElementById(id);
     
+    if (elm === null) {
+        elm = document.createElement("div");
+        elm.id = id;
+        elm.className = "popup";
+        
+        var buf = "<button type='button' class='popup_close_button' onclick='popup_close();'></button>";
+        
+        if (allow_creenshot) {
+            buf += "<button type='button' class='screenshot_button' onclick='take_screenshot(\"" + id + "_inner\", true);'></button>";
+        }
+        
+        if (title !== null) {
+            buf += "<h2>" + title + "</h2>";
+        }
+        
+        buf += "<div id='" + id + "_inner'></div>";
+        
+        elm.innerHTML = buf;
+        
+        document.getElementsByTagName("body")[0].appendChild(elm);
+    }
+    
     if (!elm.classList.contains("popup_active")) {
         elm.classList.add("popup_active");
-        elm.style.zIndex = popup_history.length + 50;
+        elm.style.zIndex = popup_history.length + 51;
         
         popup_history.push(id);
         
@@ -501,9 +523,15 @@ function open_popup (id) {
     }
     
     history.pushState(null, "", location.pathname + "#" + id);
+    
+    return document.getElementById(id + "_inner");
 }
 
 function popup_close (close_all = false, update_url = true) {
+    if (popup_history.length === 0) {
+        return;
+    }
+    
     var id = popup_history.pop();
     
     if (popup_history.length === 0) {
@@ -618,18 +646,6 @@ function update_user_data (user_data_next = null) {
             splash_screen_login_status_elm.innerHTML = "<b>ログインしていません</b><br><a href='javascript:void(0);' onclick='open_square_popup(\"login_popup\");'>ログイン</a>　<a href='/user/sign_up.php' target='_blank' rel='opener'>新規登録</a>";
         }
     }
-    
-    if (!instance_info["allow_guest_user"] && popup_history.includes("write_operation_data_popup")) {
-        if (user_data !== null) {
-            write_operation_data_area_elm.style.display = "block";
-            require_login_area_elm.style.display = "none";
-            
-            get_one_time_token();
-        } else {
-            write_operation_data_area_elm.style.display = "none";
-            require_login_area_elm.style.display = "block";
-        }
-    }
 }
 
 function check_logged_in () {
@@ -707,7 +723,10 @@ function update_railroad_list (railroads, loading_completed, railroad_list = nul
         buttons_html = "<div class='no_data'>利用可能なデータがありません</div>";
     }
     
-    document.getElementById("railroad_select_area").innerHTML = buttons_html;
+    var popup_inner_elm = document.getElementById("railroad_select_popup_inner");
+    if (popup_inner_elm !== null) {
+        popup_inner_elm.innerHTML = buttons_html;
+    }
     
     if (location.pathname === "/") {
         document.getElementById("splash_screen_buttons").innerHTML = buttons_html;
@@ -717,7 +736,7 @@ function update_railroad_list (railroads, loading_completed, railroad_list = nul
 }
 
 function show_railroad_list (railroad_list = null) {
-    open_popup("railroad_select_popup");
+    open_popup("railroad_select_popup", "路線系統の切り替え");
     
     get_railroad_list(function (railroads, loading_completed) {
         update_railroad_list(railroads, loading_completed, railroad_list);
@@ -1378,7 +1397,7 @@ function select_railroad (railroad_id, mode_name = "position_mode", mode_option_
         mes("選択された路線系統はデータが利用できません", true);
         
         show_railroad_list();
-        blank_article_elm.innerHTML = "<div class='no_data'><a href='javascript:void(0);' onclick='open_popup(\"railroad_select_popup\");'>路線系統を選択</a>してください</div>";
+        blank_article_elm.innerHTML = "<div class='no_data'><a href='javascript:void(0);' onclick='show_railroad_list();'>路線系統を選択</a>してください</div>";
     });
 }
 
@@ -4118,14 +4137,14 @@ function operation_data_draw () {
     operation_data_area_elm.innerHTML = buf;
 }
 
-var operation_detail_area_elm = document.getElementById("operation_detail_area");
 var operation_detail_write_button_enabled = false;
 
 function operation_detail (operation_number, operation_data_date_ts_or_diagram_id, show_write_operation_data_button = null, formation_text = null) {
-    open_popup("operation_detail_popup");
+    var popup_inner_elm = open_popup("operation_detail_popup", null, true);
     
-    operation_detail_area_elm.innerHTML = "";
-    operation_detail_area_elm.scrollTop = 0;
+    popup_inner_elm.className = "wait_icon";
+    popup_inner_elm.innerHTML = "";
+    popup_inner_elm.scrollTop = 0;
     
     if (show_write_operation_data_button !== null) {
         operation_detail_write_button_enabled = show_write_operation_data_button;
@@ -4263,7 +4282,7 @@ function draw_operation_detail (operation_number, diagram_id, operation_data_dat
         buf += "<button type='button' class='wide_button' onclick='write_operation_data(\"" + operation_data_date_str + "\", \"" + operation_number + "\");'>運用情報を投稿</button>";
     }
     
-    operation_detail_area_elm.innerHTML = buf;
+    document.getElementById("operation_detail_popup_inner").innerHTML = buf;
     
     draw_operation_trains(operation_number, diagram_id_or_ts, is_today);
     
@@ -4751,7 +4770,7 @@ function formation_detail (formation_name) {
                     
                     buf += "</div></div>";
                 } else {
-                    buf += "<div class='descriptive_text'>この編成の運用情報が投稿されたことはありません</div>";
+                    buf += "<div><div class='descriptive_text'>この編成の運用情報が投稿されたことはありません</div></div>";
                 }
                 
                 formation_operations_area_elm.innerHTML = buf;
@@ -5250,13 +5269,10 @@ function operation_table_list_tables () {
 }
 
 
-var screenshot_preview_elm = document.getElementById("screenshot_preview");
-var save_screenshot_button_elm = document.getElementById("save_screenshot_button");
-
 function take_screenshot (elm_id, is_popup = false) {
-    open_popup("screenshot_popup");
-    screenshot_preview_elm.innerHTML = "";
-    save_screenshot_button_elm.style.display = "none";
+    var popup_inner_elm = open_popup("screenshot_popup", "スクリーンショット");
+    
+    popup_inner_elm.innerHTML = "<div id='screenshot_preview'></div><button type='button' id='save_screenshot_button' class='wide_button' onclick='save_screenshot();' style='display: none;'>画像として保存</button>";
     
     var screenshot_area_elm = document.createElement("div");
     screenshot_area_elm.classList.add("screenshot_area");
@@ -5285,8 +5301,8 @@ function take_screenshot (elm_id, is_popup = false) {
     }
     
     e2i.get_png(function (image_data) {
-        screenshot_preview_elm.innerHTML = "<img src='" + image_data + "' alt=''>";
-        save_screenshot_button_elm.style.display = "block";
+        document.getElementById("screenshot_preview").innerHTML = "<img src='" + image_data + "' alt=''>";
+        document.getElementById("save_screenshot_button").style.display = "block";
     }, screenshot_area_elm, 2);
     
     screenshot_area_elm.remove();
@@ -5296,7 +5312,7 @@ function save_screenshot () {
     var ts = get_timestamp();
     var dt = new Date(ts * 1000);
     
-    Elem2Img.save_image(screenshot_preview_elm.getElementsByTagName("img")[0].src, UNYOHUB_APP_NAME + "_" + get_date_string(ts) + "_" + ("0" + dt.getHours()).slice(-2) + ("0" + dt.getMinutes()).slice(-2) + ("0" + dt.getSeconds()).slice(-2) + ".png");
+    Elem2Img.save_image(document.getElementById("screenshot_preview").getElementsByTagName("img")[0].src, UNYOHUB_APP_NAME + "_" + get_date_string(ts) + "_" + ("0" + dt.getHours()).slice(-2) + ("0" + dt.getMinutes()).slice(-2) + ("0" + dt.getSeconds()).slice(-2) + ".png");
 }
 
 
@@ -5316,11 +5332,8 @@ var post_yyyy_mm_dd;
 var post_operation_number;
 var post_train_number;
 
-var write_operation_data_area_elm = document.getElementById("write_operation_data_area");
-var require_login_area_elm = document.getElementById("require_login_area");
-
 function write_operation_data (yyyy_mm_dd, operation_number, train_number = null) {
-    open_popup("write_operation_data_popup");
+    var popup_inner_elm = open_popup("write_operation_data_popup", "運用情報の投稿");
     
     var yyyy_mm_dd_today = get_date_string(get_timestamp());
     
@@ -5334,63 +5347,63 @@ function write_operation_data (yyyy_mm_dd, operation_number, train_number = null
     
     var alias_of_forward_direction = escape_html(railroad_info["alias_of_forward_direction"]);
     
-    var buf = "<h3>" + escape_html(operation_number) + "運用</h3>";
-    
-    if (post_yyyy_mm_dd > yyyy_mm_dd_today || (post_yyyy_mm_dd === yyyy_mm_dd_today && operation_table["operations"][operation_number]["starting_time"] > get_hh_mm())) {
-        var speculative_post = true;
-        
-        buf += "<div class='warning_text'>【!】出庫前の運用に情報を投稿しようとしています</div>";
-    } else {
-        var speculative_post = false;
-    }
-    
-    buf += "<h4>確認方法</h4>";
-    buf += "<div class='radio_area'><input type='radio' name='identify_method' id='identify_method_direct' checked='checked'><label for='identify_method_direct' onclick='switch_identify_method(true);'>直接確認</label><input type='radio' name='identify_method' id='identify_method_quote'><label for='identify_method_quote' onclick='switch_identify_method(false);'>引用情報</label></div>";
-    
-    buf += "<h4>編成名または車両形式</h4>";
-    buf += "<div class='informational_text'><b>◀ " + alias_of_forward_direction + "</b></div>";
-    buf += "<input type='text' id='operation_data_formation' autocomplete='off' oninput='suggest_formation(this.value);' onblur='clear_formation_suggestion();'><div class='suggestion_area'><div id='formation_suggestion'></div></div>";
-    buf += "<div class='informational_text'>複数の編成が連結している場合は、" + alias_of_forward_direction + "の編成から順に「+」で区切って入力してください。<br>不明な編成には「不明」、運休情報は「運休」を入力可能です。</div>";
-    
-    buf += "<input type='checkbox' id='operation_data_details'";
-    if (speculative_post) {
-        buf += " checked='checked'";
-    }
-    buf += "><label for='operation_data_details' class='drop_down'>詳細情報</label><div>";
-    
-    buf += "<div id='train_number_data'>";
-    buf += "<h4>目撃時の列車</h4>";
-    buf += "<b id='operation_data_train_number'></b><button onclick='open_square_popup(\"train_number_popup\");'>変更</button>";
-    buf += "</div>";
-    
-    buf += "<h4>運用補足情報</h4>";
-    buf += "<textarea id='operation_data_comment'></textarea>";
-    
-    if(speculative_post) {
-        buf += "<div class='warning_text' id='comment_guide'>お手数ですが、この運用に充当される編成を確認した方法を補足情報にご入力ください。</div>";
-    } else {
-        buf += "<div class='informational_text' id='comment_guide'>差し替え等の特記事項がない場合は省略可能です。</div>";
-    }
-    
-    buf += "<div class='warning_text' id='quote_guide' style='display: none;'>情報の出典を補足情報にご入力ください。<br><br>また、お手数ですが、投稿前に<a href='javascript:void(0);' onclick='show_rules();'>ルールとポリシー</a>をご覧いただき、引用元が投稿ルールに反しない情報ソースであることをご確認願います。</div>";
-    
-    buf += "</div><br>";
-    
-    buf += "<button type='button' class='wide_button' onclick='check_post_operation_data();'>投稿する</button>";
-    
-    write_operation_data_area_elm.innerHTML = buf;
-    
     if (instance_info["allow_guest_user"] || user_data !== null) {
-        write_operation_data_area_elm.style.display = "block";
-        require_login_area_elm.style.display = "none";
+        var buf = "<div id='write_operation_data_area'>";
+        buf += "<h3>" + escape_html(operation_number) + "運用</h3>";
+        
+        if (post_yyyy_mm_dd > yyyy_mm_dd_today || (post_yyyy_mm_dd === yyyy_mm_dd_today && operation_table["operations"][operation_number]["starting_time"] > get_hh_mm())) {
+            var speculative_post = true;
+            
+            buf += "<div class='warning_text'>【!】出庫前の運用に情報を投稿しようとしています</div>";
+        } else {
+            var speculative_post = false;
+        }
+        
+        buf += "<h4>確認方法</h4>";
+        buf += "<div class='radio_area'><input type='radio' name='identify_method' id='identify_method_direct' checked='checked'><label for='identify_method_direct' onclick='switch_identify_method(true);'>直接確認</label><input type='radio' name='identify_method' id='identify_method_quote'><label for='identify_method_quote' onclick='switch_identify_method(false);'>引用情報</label></div>";
+        
+        buf += "<h4>編成名または車両形式</h4>";
+        buf += "<div class='informational_text'><b>◀ " + alias_of_forward_direction + "</b></div>";
+        buf += "<input type='text' id='operation_data_formation' autocomplete='off' oninput='suggest_formation(this.value);' onblur='clear_formation_suggestion();'><div class='suggestion_area'><div id='formation_suggestion'></div></div>";
+        buf += "<div class='informational_text'>複数の編成が連結している場合は、" + alias_of_forward_direction + "の編成から順に「+」で区切って入力してください。<br>不明な編成には「不明」、運休情報は「運休」を入力可能です。</div>";
+        
+        buf += "<input type='checkbox' id='operation_data_details'";
+        if (speculative_post) {
+            buf += " checked='checked'";
+        }
+        buf += "><label for='operation_data_details' class='drop_down'>詳細情報</label><div>";
+        
+        buf += "<div id='train_number_data'>";
+        buf += "<h4>目撃時の列車</h4>";
+        buf += "<b id='operation_data_train_number'></b><button onclick='open_square_popup(\"train_number_popup\");'>変更</button>";
+        buf += "</div>";
+        
+        buf += "<h4>運用補足情報</h4>";
+        buf += "<textarea id='operation_data_comment'></textarea>";
+        
+        if(speculative_post) {
+            buf += "<div class='warning_text' id='comment_guide'>お手数ですが、この運用に充当される編成を確認した方法を補足情報にご入力ください。</div>";
+        } else {
+            buf += "<div class='informational_text' id='comment_guide'>差し替え等の特記事項がない場合は省略可能です。</div>";
+        }
+        
+        buf += "<div class='warning_text' id='quote_guide' style='display: none;'>情報の出典を補足情報にご入力ください。<br><br>また、お手数ですが、投稿前に<a href='javascript:void(0);' onclick='show_rules();'>ルールとポリシー</a>をご覧いただき、引用元が投稿ルールに反しない情報ソースであることをご確認願います。</div>";
+        
+        buf += "</div><br>";
+        
+        buf += "<button type='button' class='wide_button' onclick='check_post_operation_data();'>投稿する</button>";
+        
+        buf += "</div>";
         
         if (user_data !== null) {
             get_one_time_token();
         }
     } else {
-        write_operation_data_area_elm.style.display = "none";
-        require_login_area_elm.style.display = "block";
+        var buf = "<div class='warning_text'>情報投稿にはログインが必要です。<br>ユーザーアカウントをまだ作成されていない場合は新規登録してください。</div>";
+        buf += "<div class='link_block'><a href='javascript:void(0);' onclick='open_square_popup(\"login_popup\");'>ログイン</a>　<a href='/user/sign_up.php' target='_blank' rel='opener'>新規登録</a></div>";
     }
+    
+    popup_inner_elm.innerHTML = buf;
     
     buf = "<a href='javascript:void(0);' onclick='set_train_number(\"○\")'>○ 出庫時</a>";
     
@@ -5681,7 +5694,7 @@ function post_operation_data () {
 }
 
 function edit_operation_data (yyyy_mm_dd, operation_number, user_id, formation_text, ip_address = null) {
-    open_popup("edit_operation_data_popup");
+    var popup_inner_elm = open_popup("edit_operation_data_popup", "運用情報の取り消し");
     
     buf = "<h3>投稿内容</h3>";
     buf += "<div class='key_and_value'><b>運行日</b>" + yyyy_mm_dd.substring(0, 4) + "年 " + Number(yyyy_mm_dd.substring(5, 7)) + "月 " + Number(yyyy_mm_dd.substring(8)) + "日</div>";
@@ -5705,7 +5718,7 @@ function edit_operation_data (yyyy_mm_dd, operation_number, user_id, formation_t
         buf += "<button type='button' class='wide_button' onclick='revoke_users_all_operation_data(\"" + add_slashes(user_id) + "\");'>ユーザーの投稿を全て取り消す</button>";
     }
     
-    document.getElementById("edit_operation_data_area").innerHTML = buf;
+    popup_inner_elm.innerHTML = buf;
     
     get_one_time_token();
     
@@ -5963,7 +5976,7 @@ function user_logout () {
 
 
 function about_railroad_data () {
-    open_popup("about_railroad_data_popup");
+    var popup_inner_elm = open_popup("about_railroad_data_popup");
     
     var main_color = railroad_info["main_color"];
     if (config["dark_mode"]) {
@@ -6017,30 +6030,33 @@ function about_railroad_data () {
     buf += "ダイヤ改正一覧情報: " + get_date_and_time(diagram_revisions["last_modified_timestamp"]);
     buf += "</div>";
     
-    document.getElementById("about_railroad_data_area").innerHTML = buf;
+    popup_inner_elm.innerHTML = buf;
     
     document.getElementById("about_railroad_data_popup").scrollTop = 0;
 }
 
 
-var dark_mode_check_elm = document.getElementById("dark_mode_check");
-var colorize_beginners_posts_check_elm = document.getElementById("colorize_beginners_posts_check");
-var refresh_interval_elm = document.getElementById("refresh_interval");
-var operation_data_cache_period_elm = document.getElementById("operation_data_cache_period");
-
 function edit_config () {
-    open_popup("config_popup");
+    var popup_inner_elm = open_popup("config_popup", "アプリの設定");
     
-    dark_mode_check_elm.checked = config["dark_mode"];
-    colorize_beginners_posts_check_elm.checked = config["colorize_beginners_posts"];
-    refresh_interval_elm.value = config["refresh_interval"];
-    operation_data_cache_period_elm.value = config["operation_data_cache_period"];
+    var buf = "<input type='checkbox' id='dark_mode_check' class='toggle' onchange='change_config();'" + (config["dark_mode"] ? "checked='checked'" : "") + "><label for='dark_mode_check'>ダークモード</label>";
+    buf += "<input type='checkbox' id='colorize_beginners_posts_check' class='toggle' onchange='change_config();'" + (config["colorize_beginners_posts"] ? "checked='checked'" : "") + "><label for='colorize_beginners_posts_check'>ビギナーの方の投稿を区別する</label>";
+    buf += "<h3>運用情報の自動更新間隔</h3>";
+    buf += "<input type='number' id='refresh_interval' min='1' max='60' onchange='change_config();' value='" + config["refresh_interval"] + "'>分ごと<br>";
+    buf += "<h3>運用情報のキャッシュ保管日数</h3>";
+    buf += "<input type='number' id='operation_data_cache_period' min='1' max='30' onchange='change_config();' value='" + config["operation_data_cache_period"] + "'>日前以降のキャッシュを保管<br>";
+    buf += "<a href='javascript:void(0);' class='additional_setting_link' onclick='reset_config_value();'>デフォルト値に戻す</a>";
+    buf += "<a href='javascript:void(0);' class='additional_setting_link' onclick='reset_cache_db();'>キャッシュデータベースの初期化</a>";
+    buf += "<div class='informational_text'>変更内容は自動で保存されます</div>";
+    
+    popup_inner_elm.innerHTML = buf;
 }
 
 function change_config () {
-    config["dark_mode"] = dark_mode_check_elm.checked;
-    config["colorize_beginners_posts"] = colorize_beginners_posts_check_elm.checked;
+    config["dark_mode"] = document.getElementById("dark_mode_check").checked;
+    config["colorize_beginners_posts"] = document.getElementById("colorize_beginners_posts_check").checked;
     
+    var refresh_interval_elm = document.getElementById("refresh_interval");
     if (Number(refresh_interval_elm.value) > 60) {
         refresh_interval_elm.value = 60;
     } else if (Number(refresh_interval_elm.value) < 1) {
@@ -6048,6 +6064,7 @@ function change_config () {
     }
     config["refresh_interval"] = Number(refresh_interval_elm.value);
     
+    var operation_data_cache_period_elm = document.getElementById("operation_data_cache_period");
     if (Number(operation_data_cache_period_elm.value) > 30) {
         operation_data_cache_period_elm.value = 30;
     } else if (Number(operation_data_cache_period_elm.value) < 1) {
@@ -6064,10 +6081,10 @@ function reset_config_value () {
     if (confirm("設定をリセットしますか？")) {
         var dafault_config = get_default_config();
         
-        dark_mode_check_elm.checked = dafault_config["dark_mode"];
-        colorize_beginners_posts_check_elm.checked = dafault_config["colorize_beginners_posts_check"];
-        refresh_interval_elm.value = dafault_config["refresh_interval"];
-        operation_data_cache_period_elm.value = dafault_config["operation_data_cache_period"];
+        document.getElementById("dark_mode_check").checked = dafault_config["dark_mode"];
+        document.getElementById("colorize_beginners_posts_check").checked = dafault_config["colorize_beginners_posts_check"];
+        document.getElementById("refresh_interval").value = dafault_config["refresh_interval"];
+        document.getElementById("operation_data_cache_period").value = dafault_config["operation_data_cache_period"];
         
         change_config();
     }
@@ -6114,7 +6131,7 @@ function accept_rules () {
 
 
 function show_about () {
-    open_popup("about_popup");
+    var popup_inner_elm = open_popup("about_popup");
     
     var buf = "<img src='/apple-touch-icon.webp' alt='" + UNYOHUB_APP_NAME + "' id='unyohub_icon'>";
     buf += "<h2>" + escape_html(instance_info["instance_name"]) + "</h2>";
@@ -6148,7 +6165,7 @@ function show_about () {
     buf += "<h5>ソースコード</h5>";
     buf += "<div class='informational_text'><a href='" + UNYOHUB_REPOSITORY_URL + "' target='_blank' class='external_link'>" + UNYOHUB_REPOSITORY_URL + "</a></div>";
     
-    document.getElementById("about_area").innerHTML = buf;
+    popup_inner_elm.innerHTML = buf;
 }
 
 

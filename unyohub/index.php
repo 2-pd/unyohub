@@ -298,62 +298,6 @@ if ($path_info_str === "/") {
         </div>
     </footer>
     <div id="popup_background"></div>
-    <div class="popup" id="railroad_select_popup">
-        <button type="button" class="popup_close_button" onclick="popup_close();"></button>
-        <h2>路線系統の切り替え</h2>
-        <div id="railroad_select_area"></div>
-    </div>
-    <div class="popup" id="operation_detail_popup">
-        <button type="button" class="screenshot_button" onclick="take_screenshot('operation_detail_area', true);"></button>
-        <button type="button" class="popup_close_button" onclick="popup_close();"></button>
-        <div id="operation_detail_area" class="wait_icon"></div>
-    </div>
-    <div class="popup" id="config_popup">
-        <button type="button" class="popup_close_button" onclick="popup_close();"></button>
-        <h2>アプリの設定</h2>
-        <input type="checkbox" id="dark_mode_check" class="toggle" onchange="change_config();"><label for="dark_mode_check">ダークモード</label>
-        <input type="checkbox" id="colorize_beginners_posts_check" class="toggle" onchange="change_config();"><label for="colorize_beginners_posts_check">ビギナーの方の投稿を区別する</label>
-        <h3>運用情報の自動更新間隔</h3>
-        <input type="number" id="refresh_interval" min="1" max="60" onchange="change_config();">分ごと<br>
-        <h3>運用情報のキャッシュ保管日数</h3>
-        <input type="number" id="operation_data_cache_period" min="1" max="30" onchange="change_config();">日前以降のキャッシュを保管<br>
-        <a href="javascript:void(0);" class="additional_setting_link" onclick="reset_config_value();">デフォルト値に戻す</a>
-        <a href="javascript:void(0);" class="additional_setting_link" onclick="reset_cache_db();">キャッシュデータベースの初期化</a>
-        <div class="informational_text">変更内容は自動で保存されます</div>
-    </div>
-    <div class="popup" id="about_railroad_data_popup">
-        <button type="button" class="popup_close_button" onclick="popup_close();"></button>
-        <div id="about_railroad_data_area"></div>
-    </div>
-    <div class="popup" id="write_operation_data_popup">
-        <button type="button" class="popup_close_button" onclick="popup_close();"></button>
-        <h2>運用情報の投稿</h2>
-        <div id="write_operation_data_area"></div>
-        <div id="require_login_area">
-            <div class="warning_text">
-                情報投稿にはログインが必要です。<br>
-                ユーザーアカウントをまだ作成されていない場合は新規登録してください。
-            </div>
-            <div class="link_block">
-                <a href="javascript:void(0);" onclick="open_square_popup('login_popup');">ログイン</a>　<a href="/user/sign_up.php" target="_blank" rel="opener">新規登録</a>
-            </div>
-        </div>
-    </div>
-    <div class="popup" id="edit_operation_data_popup">
-        <button type="button" class="popup_close_button" onclick="popup_close();"></button>
-        <h2>運用情報の取り消し</h2>
-        <div id="edit_operation_data_area"></div>
-    </div>
-    <div class="popup" id="screenshot_popup">
-        <button type="button" class="popup_close_button" onclick="popup_close();"></button>
-        <h2>スクリーンショット</h2>
-        <div id="screenshot_preview"></div>
-        <button type="button" id="save_screenshot_button" class="wide_button" onclick="save_screenshot();">画像として保存</button>
-    </div>
-    <div class="popup" id="about_popup">
-        <button type="button" class="popup_close_button" onclick="popup_close();"></button>
-        <div id="about_area"></div>
-    </div>
     <div id="popup_screen">
         <div id="popup_screen_blank_area" onclick="close_square_popup();"></div>
         <div class="preview_popup" id="announcements_popup">
