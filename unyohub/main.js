@@ -236,7 +236,16 @@ var instance_info;
 function update_instance_info () {
     change_title(instance_info["instance_name"]);
     document.getElementById("instance_name").innerText = instance_info["instance_name"];
+    document.getElementById("menu_instance_name").innerText = instance_info["instance_name"];
     document.getElementById("menu_reload_button").innerText = instance_info["instance_name"];
+    
+    var menu_manual_button_elm = document.getElementById("menu_manual_button");
+    if ("manual_url" in instance_info) {
+        menu_manual_button_elm.style.display = "block";
+        menu_manual_button_elm.setAttribute("href", instance_info["manual_url"]);
+    } else {
+        menu_manual_button_elm.style.display = "none";
+    }
 }
 
 (function () {
@@ -248,10 +257,7 @@ function update_instance_info () {
         var last_modified_timestamp_q = "last_modified_timestamp=" + instance_info["last_modified_timestamp"];
     } else {
         instance_info = {
-            instance_name : UNYOHUB_APP_NAME,
-            manual_url : null,
-            introduction_text : null,
-            allow_guest_user : false
+            instance_name : UNYOHUB_APP_NAME
         };
         
         var last_modified_timestamp_q = null;
@@ -3772,7 +3778,7 @@ var operation_date_button_elm = document.getElementById("operation_date_button")
 var operation_all_data_loaded = false;
 
 function operation_data_mode () {
-    change_title(railroad_info["railroad_name"] + "の運用データ | " + instance_info["instance_name"], "/railroad_" + railroad_info["railroad_id"] + "/operation_data/");
+    change_title(railroad_info["railroad_name"] + "の車両運用データ | " + instance_info["instance_name"], "/railroad_" + railroad_info["railroad_id"] + "/operation_data/");
     
     change_mode(2);
     
@@ -6111,22 +6117,35 @@ function show_about () {
     open_popup("about_popup");
     
     var buf = "<img src='/apple-touch-icon.webp' alt='" + UNYOHUB_APP_NAME + "' id='unyohub_icon'>";
-    buf += "<h2>" + UNYOHUB_APP_NAME + " " + UNYOHUB_VERSION + "</h2>";
+    buf += "<h2>" + escape_html(instance_info["instance_name"]) + "</h2>";
     
-    if (instance_info["introduction_text"] !== null || instance_info["manual_url"] !== null) {
-        buf += "<h3>" + escape_html(instance_info["instance_name"]) + "について</h3>";
-        if (instance_info["introduction_text"] !== null) {
-            buf += "<div class='long_text'>" + convert_to_html(instance_info["introduction_text"]) + "</div>";
-        }
-        if (instance_info["manual_url"] !== null) {
-            buf += "<button onclick='window.open(\"" + instance_info["manual_url"] + "\", \"_blank\", \"noopener\");' class='wide_button'>" + escape_html(instance_info["instance_name"]) + "の使い方</button><br>";
-        }
+    if ("introduction_text" in instance_info) {
+        buf += "<div class='long_text'>" + convert_to_html(instance_info["introduction_text"]) + "</div>";
     }
     
-    buf += "<h3>ソフトウェア情報</h3>";
-    buf += "<h4>ライセンス</h4>";
-    buf += "<div class='informational_text'>" + UNYOHUB_LICENSE_TEXT + "<br><br><a href='" + UNYOHUB_LICENSE_URL + "' target='_blank' class='external_link'>" + UNYOHUB_LICENSE_URL + "</a></div>";
-    buf += "<h4>ソースコード</h4>";
+    if ("manual_url" in instance_info) {
+        buf += "<a href='" + add_slashes(instance_info["manual_url"]) + "' target='_blank' class='external_link'>" + escape_html(instance_info["instance_name"]) + "の使い方</a><br><br>";
+    }
+    buf += "<a href='/user/rules.php' target='_blank'>ルールとポリシー</a>";
+    
+    buf += "<h3>運営者</h3>";
+    if ("administrator_name" in instance_info) {
+        if ("administrator_url" in instance_info) {
+            buf += "<h4><a href='" + add_slashes(instance_info["administrator_url"]) + "' target='_blank' class='external_link'>" + escape_html(instance_info["administrator_name"]) + "</a></h4>";
+        } else {
+            buf += "<h4>" + escape_html(instance_info["administrator_name"]) + "</h4>";
+        }
+    }
+    if ("administrator_introduction" in instance_info) {
+        buf += "<div class='long_text'>" + convert_to_html(instance_info["administrator_introduction"]) + "</div>";
+    }
+    
+    buf += "<h3>アプリケーション情報</h3>";
+    buf += "<h4>" + UNYOHUB_APP_NAME + " v" + UNYOHUB_VERSION + "</h4>";
+    buf += "<a href='" + UNYOHUB_APP_INFO_URL + "' target='_blank' class='external_link'>" + UNYOHUB_APP_NAME + "について</a>";
+    buf += "<h5>ライセンス</h5>";
+    buf += "<div class='informational_text'>" + UNYOHUB_LICENSE_TEXT + "</div>";
+    buf += "<h5>ソースコード</h5>";
     buf += "<div class='informational_text'><a href='" + UNYOHUB_REPOSITORY_URL + "' target='_blank' class='external_link'>" + UNYOHUB_REPOSITORY_URL + "</a></div>";
     
     document.getElementById("about_area").innerHTML = buf;

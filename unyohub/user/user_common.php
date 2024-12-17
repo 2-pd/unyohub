@@ -7,10 +7,12 @@ $main_config = parse_ini_file("../config/main.ini", FALSE, INI_SCANNER_TYPED);
 function print_header ($title = "", $load_captcha_js = FALSE, $show_close_button = TRUE) {
     global $main_config;
     
+    $instance_name = htmlspecialchars($main_config["instance_name"]);
+    
     if (empty($title)) {
-        $title = htmlspecialchars($main_config["instance_name"]);
+        $title = $instance_name;
     } else {
-        $title = htmlspecialchars($title." | ".$main_config["instance_name"]);
+        $title = htmlspecialchars($title)." | ".$instance_name;
     }
     
     print <<< EOM
@@ -35,7 +37,7 @@ function print_header ($title = "", $load_captcha_js = FALSE, $show_close_button
     EOM;
     
     if ($show_close_button) {
-        print "    <button type=\"button\" class=\"popup_close_button\" onclick=\"window.close();\"></button>\n";
+        print "    <a href=\"/\" class=\"popup_close_button\" onclick=\"event.preventDefault(); window.close();\">".$instance_name."</a>\n";
     }
 }
 

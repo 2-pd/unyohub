@@ -46,6 +46,9 @@ if (empty($_SERVER["PATH_INFO"])) {
         print "    <url>\n";
         print "        <loc>".$root_url."/user/rules.php</loc>\n";
         print "    </url>\n";
+        print "    <url>\n";
+        print "        <loc>".$root_url."/user/sign_up.php</loc>\n";
+        print "    </url>\n";
     } else {
         $railroad_root = $root_url."/railroad_".$railroad_id;
         

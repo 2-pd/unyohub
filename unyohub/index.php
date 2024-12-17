@@ -86,7 +86,7 @@ if (empty($_SERVER["PATH_INFO"]) || $_SERVER["PATH_INFO"] === "/") {
                 
                 case "operation_data":
                     $path_info_str .= "operation_data/";
-                    $page_title = $railroad_info["railroad_name"]."の運用データ | ".UNYOHUB_APP_NAME;
+                    $page_title = $railroad_info["railroad_name"]."の車両運用データ | ".UNYOHUB_APP_NAME;
                     $page_description = "本日の".$railroad_info["railroad_name"]."の各編成運用状況です。";
                     
                     break;
@@ -174,7 +174,7 @@ print "    <link rel=\"canonical\" href=\"".$root_url.$path_info_str."\">\n";
 <?php
 print "        const UNYOHUB_APP_NAME = \"".UNYOHUB_APP_NAME."\";\n";
 print "        const UNYOHUB_VERSION = \"".UNYOHUB_VERSION."\";\n";
-print "        const UNYOHUB_LICENSE_URL = \"".UNYOHUB_LICENSE_URL."\";\n";
+print "        const UNYOHUB_APP_INFO_URL = \"".UNYOHUB_APP_INFO_URL."\";\n";
 print "        const UNYOHUB_REPOSITORY_URL = \"".UNYOHUB_REPOSITORY_URL."\";\n";
 print "        const UNYOHUB_LICENSE_TEXT = \"".UNYOHUB_LICENSE_TEXT."\";\n";
 ?>
@@ -201,10 +201,11 @@ print "        const UNYOHUB_LICENSE_TEXT = \"".UNYOHUB_LICENSE_TEXT."\";\n";
         <hr>
         <a id="menu_announcements" href="javascript:void(0);" onclick="show_announcements();">お知らせ</a>
         <hr>
-        <a href="javascript:void(0);" onclick="edit_config();">各種設定</a>
+        <a href="javascript:void(0);" onclick="edit_config();">アプリの設定</a>
         <hr>
-        <a href="javascript:void(0);" onclick="show_about();">このアプリについて</a>
+        <a href="javascript:void(0);" onclick="show_about();"><span id="menu_instance_name"><?php print UNYOHUB_APP_NAME; ?></span>について</a>
         <a href="javascript:void(0);" onclick="show_rules();">ルールとポリシー</a>
+        <a id="menu_manual_button" href="#" target="_blank">このアプリの使い方</a>
         <hr>
         <a id="menu_reload_button" href="/" onclick="event.preventDefault(); reload_app();"><?php print UNYOHUB_APP_NAME; ?></a>
     </div>
@@ -309,7 +310,7 @@ if ($path_info_str === "/") {
     </div>
     <div class="popup" id="config_popup">
         <button type="button" class="popup_close_button" onclick="popup_close();"></button>
-        <h2>各種設定</h2>
+        <h2>アプリの設定</h2>
         <input type="checkbox" id="dark_mode_check" class="toggle" onchange="change_config();"><label for="dark_mode_check">ダークモード</label>
         <input type="checkbox" id="colorize_beginners_posts_check" class="toggle" onchange="change_config();"><label for="colorize_beginners_posts_check">ビギナーの方の投稿を区別する</label>
         <h3>運用情報の自動更新間隔</h3>

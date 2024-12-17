@@ -3102,7 +3102,7 @@ a {
     color: #cccccc;
 }
 
-#about_railroad_data_popup, #about_railroad_data_popup .informational_text {
+#about_railroad_data_popup, #about_railroad_data_popup .informational_text, #about_popup, #about_popup .informational_text {
     text-align: center;
 }
 
@@ -4282,6 +4282,18 @@ input[type="radio"]:checked + label {
 
 input[type="radio"] + label small, .chip + label small {
     font-size: 14px;
+}
+
+#about_popup h4 {
+    padding: none;
+    
+    border: none;
+}
+
+#about_popup h5 {
+    margin: 20px 0 0 0;
+    
+    font-size: 16px;
 }
 
 #unyohub_icon {

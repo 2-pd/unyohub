@@ -11,11 +11,15 @@ print_header();
 
 $config_str = file_get_contents("../config/main.ini");
 
-if (isset($_POST["instance_name"], $_POST["manual_url"], $_POST["introduction_text"], $_POST["sender_email_address"])) {
+if (isset($_POST["instance_name"], $_POST["introduction_text"], $_POST["manual_url"], $_POST["administrator_name"], $_POST["administrator_url"], $_POST["administrator_introduction"], $_POST["sender_email_address"])) {
     $config_str = "instance_name = \"".addslashes($_POST["instance_name"])."\"\n";
     $config_str .= "\n";
-    $config_str .= "manual_url = \"".addslashes($_POST["manual_url"])."\"\n";
     $config_str .= "introduction_text = \"".str_replace(array("\r\n", "\n", "\r"), "\\n", addslashes($_POST["introduction_text"]))."\"\n";
+    $config_str .= "manual_url = \"".addslashes($_POST["manual_url"])."\"\n";
+    $config_str .= "\n";
+    $config_str .= "administrator_name = \"".addslashes($_POST["administrator_name"])."\"\n";
+    $config_str .= "administrator_url = \"".addslashes($_POST["administrator_url"])."\"\n";
+    $config_str .= "administrator_introduction = \"".str_replace(array("\r\n", "\n", "\r"), "\\n", addslashes($_POST["administrator_introduction"]))."\"\n";
     $config_str .= "\n";
     $config_str .= "require_invite_code = ".(!empty($_POST["require_invite_code"]) ? "true" : "false")."\n";
     $config_str .= "require_email_address = ".(!empty($_POST["require_email_address"]) ? "true" : "false")."\n";
@@ -44,14 +48,21 @@ print "<h2>インスタンスの基本設定</h2>";
 print "<form action='config.php' method='post'>";
 print "<input type='hidden' name='one_time_token' value='".$user->create_one_time_token()."'>";
 
-print "<h3>インスタンス名</h3>";
+print "<h3>インスタンス情報</h3>";
+print "<h4>インスタンス名</h4>";
 print "<input type='text' name='instance_name' value='".addslashes($config["instance_name"])."'>";
-
-print "<h3>ユーザーマニュアルのURL</h3>";
+print "<h4>インスタンスの紹介文</h4>";
+print "<textarea name='introduction_text'>".htmlspecialchars(stripcslashes($config["introduction_text"]))."</textarea>";
+print "<h4>ユーザーマニュアルのURL</h4>";
 print "<input type='text' name='manual_url' value='".addslashes($config["manual_url"])."'>";
 
-print "<h3>インスタンスの紹介文</h3>";
-print "<textarea name='introduction_text'>".htmlspecialchars(stripcslashes($config["introduction_text"]))."</textarea>";
+print "<h3>運営者情報</h3>";
+print "<h4>運営者名</h4>";
+print "<input type='text' name='administrator_name' value='".addslashes($config["administrator_name"])."'>";
+print "<h4>運営者紹介ページのURL</h4>";
+print "<input type='text' name='administrator_url' value='".addslashes($config["administrator_url"])."'>";
+print "<h4>運営者の紹介文</h4>";
+print "<textarea name='administrator_introduction'>".htmlspecialchars(stripcslashes($config["administrator_introduction"]))."</textarea>";
 
 print "<h3>ユーザー登録・投稿管理</h3>";
 print "<input type='checkbox' name='require_invite_code' id='require_invite_code' class='toggle' value='YES'";
