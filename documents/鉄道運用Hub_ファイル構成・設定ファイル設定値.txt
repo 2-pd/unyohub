@@ -249,8 +249,7 @@ log_ip_address 投稿者のIPアドレスを記録するか(BOOL値)
                 }...
             ],
             "series_name" : 形式名,
-            "icon_id" : アイコンのID,
-            "heading" : 編成情報の見出し(省略可能)
+            "icon_id" : アイコンのID
         }...
     },
     "series" : {

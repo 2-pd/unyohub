@@ -125,9 +125,6 @@ def convert_formation_table (mes, main_dir):
             json_data["series"][series_name]["formation_names"].append(formation_name)
             json_data["formations"][formation_name] = {"cars" : [], "series_name" : series_name, "icon_id" : formation_data[cnt + 1][0]}
             
-            if len(formation_data[cnt + 3][0]) >= 1:
-                json_data["formations"][formation_name]["heading"] = formation_data[cnt + 3][0]
-            
             car_list_old = []
             for row_data in cur.execute("SELECT `car_number` FROM `unyohub_cars` WHERE `formation_name` = :formation_name", {"formation_name" : formation_name}):
                 car_list_old.append(row_data[0])
