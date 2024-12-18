@@ -56,8 +56,8 @@ if (empty($_GET["formation_name"])) {
     
     print "<h2>".htmlspecialchars($_GET["formation_name"])."</h2>";
     
-    $event_types = array("construct", "modify", "renewal", "transfer", "rearrange");
-    $event_types_ja = array("construct" => "新製", "modify" => "改修", "renewal" => "更新", "transfer" => "転属", "rearrange" => "組換");
+    $event_types = array("construct", "modify", "repaint", "renewal", "transfer", "rearrange", "other");
+    $event_types_ja = array("construct" => "新製", "modify" => "改修", "repaint" => "塗装変更", "renewal" => "更新", "transfer" => "転属", "rearrange" => "組換", "other" => "その他");
     
     $db_obj = new SQLite3("../data/".$railroad_id."/railroad.db");
     $db_obj->busyTimeout(5000);
@@ -143,6 +143,11 @@ if (empty($_GET["formation_name"])) {
             }
         }
         
+        $buf = "";
+        foreach ($event_types as $event_type) {
+            $buf .= "<option value='".$event_type."'>".$event_types_ja[$event_type]."</option>";
+        }
+        
         print <<< EOM
         <script>
         function add_history () {
@@ -151,7 +156,7 @@ if (empty($_GET["formation_name"])) {
             
             var history_item_elm = document.createElement("div");
             history_item_elm.className = "history_item";
-            history_item_elm.innerHTML = "<h5>変更年月 / 変更の種類</h5><div class='half_input_wrapper'><input type='number' name='event_year_" + cnt + "' value='" + dt.getFullYear() + "' max='2100' min='1901'>年<input type='number' name='event_month_" + cnt + "' max='12' min='0'>月 / <select name='event_type_" + cnt + "'><option value='construct'>新製</option><option value='modify'>改修</option><option value='renewal'>更新</option><option value='transfer'>転属</option><option value='rearrange'>組換</option></select></div><h5>変更内容</h5><textarea name='event_content_" + cnt + "'></textarea>";
+            history_item_elm.innerHTML = "<h5>変更年月 / 変更の種類</h5><div class='half_input_wrapper'><input type='number' name='event_year_" + cnt + "' value='" + dt.getFullYear() + "' max='2100' min='1901'>年<input type='number' name='event_month_" + cnt + "' max='12' min='0'>月 / <select name='event_type_" + cnt + "'>{$buf}</select></div><h5>変更内容</h5><textarea name='event_content_" + cnt + "'></textarea>";
             
             document.getElementById("histories_area").appendChild(history_item_elm);
         }

@@ -1979,8 +1979,12 @@ h5.event_type_construct {
     background-color: #33cc99;
 }
 
+h5.event_type_repaint {
+    background-color: #eeaa22;
+}
+
 h5.event_type_renewal {
-    background-color: #eebb33;
+    background-color: #ee2266;
 }
 
 h5.event_type_transfer {
@@ -1988,7 +1992,7 @@ h5.event_type_transfer {
 }
 
 h5.event_type_rearrange {
-    background-color: #0066dd;
+    background-color: #2266cc;
 }
 
 .search_highlight {
