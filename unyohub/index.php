@@ -182,7 +182,7 @@ print "        const UNYOHUB_LICENSE_TEXT = \"".UNYOHUB_LICENSE_TEXT."\";\n";
 </head>
 <body>
     <header><a id="railroad_icon" href="javascript:void(0);" onclick="about_railroad_data();"></a><span id="instance_name"></span><a id="railroad_name" href="javascript:void(0);" onclick="show_railroad_list();"></a><a id="menu_button" href="javascript:void(0);" onclick="menu_click();"></a></header>
-    <div id="menu">
+    <nav id="menu">
         <div id="menu_logged_in">
             <b id="menu_user_name"></b>
             <a href="/user/user_info.php" target="_blank" rel="opener">ユーザー情報</a>
@@ -208,7 +208,7 @@ print "        const UNYOHUB_LICENSE_TEXT = \"".UNYOHUB_LICENSE_TEXT."\";\n";
         <a id="menu_manual_button" href="#" target="_blank">このアプリの使い方</a>
         <hr>
         <a id="menu_reload_button" href="/" onclick="event.preventDefault(); reload_app();"><?php print UNYOHUB_APP_NAME; ?></a>
-    </div>
+    </nav>
     <div id="splash_screen" class="splash_screen_loading">
 <?php
 if ($path_info_str === "/") {
@@ -300,57 +300,6 @@ if ($path_info_str === "/") {
     <div id="popup_background"></div>
     <div id="popup_screen">
         <div id="popup_screen_blank_area" onclick="close_square_popup();"></div>
-        <div class="preview_popup" id="announcements_popup">
-            <button type="button" class="popup_close_button" onclick="close_square_popup();"></button>
-            <h3 id="announcements_heading">お知らせの一覧</h3>
-            <h3 id="railroad_announcements_heading">お知らせ</h3>
-            <div id="announcements_area" class="wait_icon"></div>
-        </div>
-        <div class="square_popup" id="login_popup">
-            <button type="button" class="popup_close_button" onclick="close_square_popup();"></button>
-            <h4>IDまたはメールアドレス</h4>
-            <input type="text" id="login_user_id" autocomplete="username">
-            <h4>パスワード</h4>
-            <input type="password" id="login_password" autocomplete="current-password">
-            <div class="link_block">
-                <a href="/user/send_password_reset_email.php" target="_blank" rel="opener">パスワードを忘れた場合</a>
-            </div>
-            <button type="button" class="wide_button" onclick="challenge_login();">ログイン</button>
-        </div>
-        <div class="square_popup" id="captcha_popup">
-            <button type="button" class="popup_close_button" onclick="close_square_popup();"></button>
-            <div id="captcha_info">
-                <h3>画像認証</h3>
-                <div class="informational_text">画像に表示されている文字を入力してください。</div>
-            </div>
-            <div id="captcha_area" class="wait_icon"></div>
-            <button type="button" id="captcha_submit_button" class="wide_button">送信</button>
-        </div>
-        <div class="preview_popup" id="line_select_popup">
-            <button type="button" class="popup_close_button" onclick="close_square_popup();"></button>
-            <h3>路線の選択</h3>
-            <div id="line_select_area"></div>
-        </div>
-        <div class="preview_popup" id="train_detail_popup">
-            <button type="button" class="screenshot_button" onclick="take_screenshot('train_detail_area', true);"></button>
-            <button type="button" class="popup_close_button" onclick="close_square_popup();"></button>
-            <div id="train_detail_area" class="wait_icon"></div>
-        </div>
-        <div class="square_popup" id="select_operation_popup">
-            <button type="button" class="popup_close_button" onclick="close_square_popup();"></button>
-            <h3>情報を投稿する運用の選択</h3>
-            <div id="select_operation_area"></div>
-        </div>
-        <div class="preview_popup" id="train_number_popup">
-            <button type="button" class="popup_close_button" onclick="close_square_popup();"></button>
-            <h3>列車の選択</h3>
-            <div id="train_number_area"></div>
-        </div>
-        <div class="preview_popup" id="diagram_list_popup">
-            <button type="button" class="popup_close_button" onclick="close_square_popup();"></button>
-            <h3 id="diagram_list_heading"></h3>
-            <div id="diagram_list_area"></div>
-        </div>
     </div>
     <div id="wait_screen"></div>
     <div id="message_area"></div>

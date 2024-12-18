@@ -1500,11 +1500,11 @@ input[type="checkbox"]:checked + label.drop_down + div {
     color: #cccccc;
 }
 
-#diagram_list_area .wide_button {
+#diagram_list_popup .wide_button {
     background-image: linear-gradient(315deg, #ffffff 14px, transparent 14px) !important;
 }
 
-.dark_mode #diagram_list_area .wide_button {
+.dark_mode #diagram_list_popup .wide_button {
     background-image: linear-gradient(315deg, #666666 14px, transparent 14px) !important;
 }
 
@@ -2992,11 +2992,11 @@ a {
     text-align: center;
 }
 
-.link_block a {
+.link_block a, h4 a {
     color: #666666;
 }
 
-.dark_mode .link_block a {
+.dark_mode .link_block a, .dark_mode h4 a {
     color: #cccccc;
 }
 
@@ -3123,6 +3123,12 @@ a {
     margin: 5px auto;
 }
 
+#about_railroad_data_popup h4, #about_popup h4 {
+    padding: none;
+    
+    border: none;
+}
+
 .long_text {
     margin: 20px 5px 40px 5px;
     
@@ -3131,8 +3137,8 @@ a {
     word-break: break-all;
 }
 
-#captcha_info {
-    margin-top: -30px;
+#captcha_popup h3 {
+    margin-top: -10px;
 }
 
 #captcha_area {
@@ -3743,11 +3749,11 @@ a abbr:empty {
     border-radius: 0 0 12px 12px;
 }
 
-#train_number_area {
+#train_number_popup_inner {
     margin-bottom: 50px;
 }
 
-#train_number_area a {
+#train_number_popup a {
     display: block;
     
     width: 240px;
@@ -3763,11 +3769,11 @@ a abbr:empty {
     text-align: left;
 }
 
-.dark_mode #train_number_area a {
+.dark_mode #train_number_popup a {
     border-color: #999999;
 }
 
-#train_number_area small {
+#train_number_popup small {
     padding-top: 4px;
     
     line-height: 24px;
@@ -3778,7 +3784,7 @@ a abbr:empty {
     float: right;
 }
 
-.dark_mode #train_number_area small {
+.dark_mode #train_number_popup small {
     color: #cccccc;
 }
 
@@ -4286,12 +4292,6 @@ input[type="radio"]:checked + label {
 
 input[type="radio"] + label small, .chip + label small {
     font-size: 14px;
-}
-
-#about_popup h4 {
-    padding: none;
-    
-    border: none;
 }
 
 #about_popup h5 {
