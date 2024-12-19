@@ -186,6 +186,9 @@ def convert_operation_table_1 (mes, main_dir, file_name, json_file_name, digits_
     output_data = []
     train_list = []
     for operation in operations:
+        if len(operation[0].strip()) == 0:
+            continue
+        
         if operation[0].startswith("# ") or operation[0].startswith("◆"):
             if re.match("^#[0-9A-Fa-f]{6}$", operation[1]) is not None:
                 color = operation[1]
@@ -209,10 +212,6 @@ def convert_operation_table_1 (mes, main_dir, file_name, json_file_name, digits_
             else:
                 output_data[-1].append(operation[0][1:].strip())
         else:
-            if len(operation[0].strip()) == 0:
-                mes("運用番号のない運用が見つかりました", True)
-                error_occurred = True
-            
             if for_printing:
                 output_row_1 = [operation[0], convert_station_name_and_track(operation[2]), convert_station_name_and_track(operation[4]), ""]
                 output_row_2 = ["所定" + operation[1].split("(")[0] + "両", operation[3].strip(), operation[5].strip(), ""]
