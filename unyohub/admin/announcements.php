@@ -152,13 +152,13 @@ print $token_html;
 print "<h3>件名</h3>";
 print "<input type='text' name='title' value='".$title_escaped."'>";
 
+print "<div class='chip_wrapper'><input type='checkbox' name='is_important' id='is_important' class='chip' value='YES'".$important_checked."><label for='is_important'>重要なお知らせ</label></div>";
+
 print "<h3>本文</h3>";
 print "<textarea name='content' class='announcement_content'>".$content_html."</textarea>";
 
 print "<h3>有効期限</h3>";
 print "<input type='datetime-local' name='expiration_datetime' value='".$expiration_datetime."'><br>";
-
-print "<input type='checkbox' name='is_important' id='is_important' class='toggle' value='YES'".$important_checked."><label for='is_important'>重要なお知らせ</label><br>";
 
 print "<button type='submit' class='wide_button'>追加</button>";
 print "</form></div>";
