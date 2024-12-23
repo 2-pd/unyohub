@@ -103,7 +103,7 @@ function get_default_config () {
         "refresh_interval" : 5,
         "operation_data_cache_period" : 7,
         "show_train_types_in_position_mode" : false,
-        "show_arriving_trains_on_timetable" : true,
+        "show_deadhead_trains_on_timetable" : true,
         "show_starting_trains_only_on_timetable" : false,
         "colorize_beginners_posts" : false,
         "colorize_formation_table" : true,
@@ -3034,7 +3034,7 @@ function train_detail (line_id, train_number, starting_station, train_direction,
         if (is_today){
             var now_str = get_hh_mm();
         }
-        var previous_departure_times = null;
+        var previous_departure_time = null;
         
         for (cnt = 0; cnt < train_data.length; cnt++) {
             if (train_data[cnt] === null) {
@@ -3042,6 +3042,8 @@ function train_detail (line_id, train_number, starting_station, train_direction,
             }
             
             var stations = [...railroad_info["lines"][train_data[cnt]["line_id"]]["stations"]];
+            
+            var is_deadhead_train = (railroad_info["deadhead_train_number_regexp"].test(train_data[cnt]["train_number"]) || train_data[cnt]["train_type"]=== "回送") ? true : false;
             
             buf += "<h4>" + escape_html(railroad_info["lines"][train_data[cnt]["line_id"]]["line_name"]) + "　";
             
@@ -3106,15 +3108,15 @@ function train_detail (line_id, train_number, starting_station, train_direction,
                         var station_index = cnt_2;
                     }
                     
-                    if (is_today && ((previous_departure_times !== null && previous_departure_times < now_str && train_data[cnt]["departure_times"][cnt_2] >= now_str) || train_data[cnt]["departure_times"][cnt_2] === now_str)) {
-                        var highlight_str = " train_detail_departure_times_highlight";
+                    if (is_today && ((previous_departure_time !== null && previous_departure_time < now_str && train_data[cnt]["departure_times"][cnt_2] >= now_str) || train_data[cnt]["departure_times"][cnt_2] === now_str)) {
+                        var highlight_str = " train_detail_departure_time_highlight";
                     } else {
                         var highlight_str = "";
                     }
                     
-                    buf += "<div class='train_detail_departure_times" + highlight_str + "' style='border-color: " + border_color + ";'><u onclick='show_station_timetable(\"" + train_data[cnt]["line_id"] + "\", \"" + stations[station_index]["station_name"] + "\", " + train_data[cnt]["is_inbound"] + ");'>" + escape_html(stations[station_index]["station_name"]) + "</u><span style='float: right;'>" + train_data[cnt]["departure_times"][cnt_2] + "</span></div>";
+                    buf += "<div class='train_detail_departure_time" + (is_deadhead_train ? " deadhead_train_departure_time" : "") + highlight_str + "' style='border-color: " + border_color + ";'><u onclick='show_station_timetable(\"" + train_data[cnt]["line_id"] + "\", \"" + stations[station_index]["station_name"] + "\", " + train_data[cnt]["is_inbound"] + ");' >" + escape_html(stations[station_index]["station_name"]) + "</u><span style='float: right;'>" + train_data[cnt]["departure_times"][cnt_2] + "</span></div>";
                     
-                    previous_departure_times = train_data[cnt]["departure_times"][cnt_2];
+                    previous_departure_time = train_data[cnt]["departure_times"][cnt_2];
                 }
             }
         }
@@ -3405,21 +3407,19 @@ function draw_station_timetable (station_name) {
         var is_inbound = false;
     }
     
-    document.getElementById("show_arriving_trains_check").checked = config["show_arriving_trains_on_timetable"];
+    document.getElementById("show_deadhead_trains_check").checked = config["show_deadhead_trains_on_timetable"];
     document.getElementById("show_starting_trains_only_check").checked = config["show_starting_trains_only_on_timetable"];
     
     var keys = Object.keys(timetable["timetable"][timetable_selected_line][train_direction]);
-    var departure_times = {};
-    var starting_stations = {};
-    var train_types = {};
-    var is_starting_stations = {};
-    var is_terminal_stations = {};
+    var train_infos = {};
     
     for (cnt = 0; cnt < keys.length; cnt++) {
         for (var cnt_2 = 0; cnt_2 < timetable["timetable"][timetable_selected_line][train_direction][keys[cnt]].length; cnt_2++) {
             var departure_time = timetable["timetable"][timetable_selected_line][train_direction][keys[cnt]][cnt_2]["departure_times"][station_index];
             
-            if (departure_time !== null && departure_time.substring(0, 1) !== "|"){
+            if (departure_time !== null && departure_time.substring(0, 1) !== "|") {
+                var is_deadhead_train = (railroad_info["deadhead_train_number_regexp"].test(keys[cnt]) || timetable["timetable"][timetable_selected_line][train_direction][keys[cnt]][cnt_2]["train_type"] === "回送") ? true : false;
+                
                 var is_terminal_station = true;
                 
                 for (var cnt_3 = station_index + 1; cnt_3 < timetable["timetable"][timetable_selected_line][train_direction][keys[cnt]][cnt_2]["departure_times"].length; cnt_3++) {
@@ -3438,7 +3438,7 @@ function draw_station_timetable (station_name) {
                     }
                 }
                 
-                if (!config["show_arriving_trains_on_timetable"] && is_terminal_station) {
+                if (!config["show_deadhead_trains_on_timetable"] && (is_deadhead_train || is_terminal_station)) {
                     continue;
                 }
                 
@@ -3461,24 +3461,23 @@ function draw_station_timetable (station_name) {
                 
                 hh_and_mm = departure_time.split(":");
                 
-                if (!(hh_and_mm[0] in departure_times)) {
-                    departure_times[hh_and_mm[0]] = {};
-                    starting_stations[hh_and_mm[0]] = {};
-                    train_types[hh_and_mm[0]] = {};
-                    is_starting_stations[hh_and_mm[0]] = {};
-                    is_terminal_stations[hh_and_mm[0]] = {};
+                if (!(hh_and_mm[0] in train_infos)) {
+                    train_infos[hh_and_mm[0]] = {};
                 }
                 
-                departure_times[hh_and_mm[0]][hh_and_mm[1]] = keys[cnt];
-                starting_stations[hh_and_mm[0]][hh_and_mm[1]] = timetable["timetable"][timetable_selected_line][train_direction][keys[cnt]][cnt_2]["starting_station"];
-                train_types[hh_and_mm[0]][hh_and_mm[1]] = timetable["timetable"][timetable_selected_line][train_direction][keys[cnt]][cnt_2]["train_type"];
-                is_starting_stations[hh_and_mm[0]][hh_and_mm[1]] = is_starting_station;
-                is_terminal_stations[hh_and_mm[0]][hh_and_mm[1]] = is_terminal_station;
+                train_infos[hh_and_mm[0]][hh_and_mm[1]] = {
+                    train_number : keys[cnt],
+                    starting_station : timetable["timetable"][timetable_selected_line][train_direction][keys[cnt]][cnt_2]["starting_station"],
+                    train_type : timetable["timetable"][timetable_selected_line][train_direction][keys[cnt]][cnt_2]["train_type"],
+                    is_starting_station : is_starting_station,
+                    is_terminal_station : is_terminal_station,
+                    is_deadhead_train :  is_deadhead_train
+                };
             }
         }
     }
     
-    keys = Object.keys(departure_times);
+    keys = Object.keys(train_infos);
     keys.sort();
     
     if (timetable_date === "__today__" || timetable_date === "__tomorrow__") {
@@ -3516,38 +3515,41 @@ function draw_station_timetable (station_name) {
         
         buf += " onclick='update_timetable_drop_down_status(this);'><label for='" + checkbox_id + "' style='background-color: " + bg_color + ";" + color_style + "' class='drop_down'>" + Number(keys[cnt]) + "時</label><div>";
         
-        var keys_2 = Object.keys(departure_times[keys[cnt]]);
+        var keys_2 = Object.keys(train_infos[keys[cnt]]);
         keys_2.sort();
         
         for (cnt_2 = 0; cnt_2 < keys_2.length; cnt_2++) {
-            buf += "<a href='javascript:void(0);' onclick='train_detail(\"" + timetable_selected_line + "\", \"" + departure_times[keys[cnt]][keys_2[cnt_2]] + "\", \"" + starting_stations[keys[cnt]][keys_2[cnt_2]] + "\", \"" + train_direction + "\", " + show_operation_data + ", " + is_today + ");' class='timetable_train'>";
+            var train_info = train_infos[keys[cnt]][keys_2[cnt_2]];
             
-            var train_operations = get_operations(timetable_selected_line, departure_times[keys[cnt]][keys_2[cnt_2]], starting_stations[keys[cnt]][keys_2[cnt_2]], train_direction);
+            buf += "<a href='javascript:void(0);' onclick='train_detail(\"" + timetable_selected_line + "\", \"" + train_info["train_number"] + "\", \"" + train_info["starting_station"] + "\", \"" + train_direction + "\", " + show_operation_data + ", " + is_today + ");' class='timetable_train'>";
+            
+            var train_operations = get_operations(timetable_selected_line, train_info["train_number"], train_info["starting_station"], train_direction);
+            
+            var icon_style = train_info["is_deadhead_train"] ? " style='opacity: 0.5;'" : "";
             if (show_operation_data && train_operations !== null) {
                 var formation_data = convert_formation_data(timetable_selected_line, train_operations, is_inbound);
                 
-                buf += "<img src='" + get_icon(formation_data["first_formation"]) + "' alt='' class='train_icon'>";
+                buf += "<img src='" + get_icon(formation_data["first_formation"]) + "' alt='' class='train_icon'" + icon_style + ">";
             } else {
-                buf += "<img src='" + UNYOHUB_GENERIC_TRAIN_ICON + "' alt='' class='train_icon'>";
+                buf += "<img src='" + UNYOHUB_GENERIC_TRAIN_ICON + "' alt='' class='train_icon'" + icon_style + ">";
             }
             
-            var color = get_train_color(departure_times[keys[cnt]][keys_2[cnt_2]]);
-            
+            var color = get_train_color(train_info["train_number"]);
             if (config["dark_mode"]) {
                 color = convert_font_color_dark_mode(color);
             }
             
             buf += "<span style='color: " + color + ";'><b>" + Number(keys_2[cnt_2]);
             
-            if (is_starting_stations[keys[cnt]][keys_2[cnt_2]]) {
+            if (train_info["is_starting_station"]) {
                 buf += "<small>(始)</small>";
-            } else if (is_terminal_stations[keys[cnt]][keys_2[cnt_2]]) {
+            } else if (train_info["is_terminal_station"]) {
                 buf += "(着)";
             }
             
-            buf += "</b>" + escape_html(train_types[keys[cnt]][keys_2[cnt_2]]) + "</span>　";
+            buf += "</b>" + escape_html(train_info["train_type"]) + "</span>　";
             
-            buf += get_final_destination(timetable_selected_line, departure_times[keys[cnt]][keys_2[cnt_2]], starting_stations[keys[cnt]][keys_2[cnt_2]]);
+            buf += get_final_destination(timetable_selected_line, train_info["train_number"], train_info["starting_station"]);
             
             if (show_operation_data) {
                 buf += "　<small>";
@@ -3664,7 +3666,7 @@ function timetable_select_neighboring_station (move_count) {
 }
 
 function change_show_arriving_trains (bool_val) {
-    config["show_arriving_trains_on_timetable"] = bool_val;
+    config["show_deadhead_trains_on_timetable"] = bool_val;
     
     save_config();
     

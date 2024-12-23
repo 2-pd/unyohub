@@ -3311,7 +3311,7 @@ a abbr:empty {
     font-size: 18px;
 }
 
-.train_detail_departure_times {
+.train_detail_departure_time {
     position: relative;
     
     width: 240px;
@@ -3325,11 +3325,11 @@ a abbr:empty {
     text-align: left;
 }
 
-.train_detail_departure_times_highlight {
+.train_detail_departure_time_highlight {
     font-weight: bold;
 }
 
-.train_detail_departure_times:before {
+.train_detail_departure_time:before {
     content: "";
     
     position: absolute;
@@ -3344,7 +3344,7 @@ a abbr:empty {
     border-radius: 4px;
 }
 
-.train_detail_departure_times_highlight:before {
+.train_detail_departure_time_highlight:before {
     top: 11px;
     left: -17px;
     
@@ -3357,17 +3357,17 @@ a abbr:empty {
     border-radius: 7px;
 }
 
-.dark_mode .train_detail_departure_times:before {
+.dark_mode .train_detail_departure_time:before {
     background-color: #eeeeee;
 }
 
-.dark_mode .train_detail_departure_times_highlight:before {
+.dark_mode .train_detail_departure_time_highlight:before {
     background-color: #cccc33;
     
     border-color: #eeeeee;
 }
 
-.train_detail_departure_times:after {
+.train_detail_departure_time:after {
     content: "";
     
     display: block;
@@ -3375,8 +3375,20 @@ a abbr:empty {
     clear: both;
 }
 
-.train_detail_departure_times:last-of-type {
+.train_detail_departure_time:last-of-type {
     margin-bottom: 60px;
+}
+
+.deadhead_train_departure_time span:before {
+    content: "(";
+    
+    color: #999999;
+}
+
+.deadhead_train_departure_time span:after {
+    content: ")";
+    
+    color: #999999;
 }
 
 #train_detail_popup .informational_text {
@@ -3938,13 +3950,13 @@ a abbr:empty {
     display: none !important;
 }
 
-.screenshot_area .search_highlight, .screenshot_area .train_detail_departure_times_highlight {
+.screenshot_area .search_highlight, .screenshot_area .train_detail_departure_time_highlight {
     background-color: inherit !important;
     
     font-weight: inherit !important;
 }
 
-.screenshot_area .train_detail_departure_times_highlight:before {
+.screenshot_area .train_detail_departure_time_highlight:before {
     top: 14px;
     left: -14px;
     
@@ -3957,7 +3969,7 @@ a abbr:empty {
     border-radius: 4px;
 }
 
-.dark_mode.screenshot_area .train_detail_departure_times_highlight:before {
+.dark_mode.screenshot_area .train_detail_departure_time_highlight:before {
     background-color: #eeeeee;
 }
 
