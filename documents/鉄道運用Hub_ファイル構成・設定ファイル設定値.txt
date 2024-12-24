@@ -91,9 +91,9 @@ _/_/_/_/ 設定ファイル設定値 _/_/_/_/
 ※鉄道運用Hubからフォークして新たなアプリケーションを開発する場合は必要に応じて以下の値を変更
   UNYOHUB_APP_NAME  アプリケーション名
   UNYOHUB_VERSION  バージョン文字列
-  UNYOHUB_LICENSE_TEXT  ライセンス情報文
-  UNYOHUB_LICENSE_URL  ライセンスのURL
+  UNYOHUB_APP_INFO_URL  アプリ情報のURL
   UNYOHUB_REPOSITORY_URL  ソースコードリポジトリのURL
+  UNYOHUB_LICENSE_TEXT  ライセンス情報文
 
 
 ███ main.js ███
@@ -116,8 +116,12 @@ _/_/_/_/ 設定ファイル設定値 _/_/_/_/
 
 instance_name 鉄道運用Hubインスタンスの表示名
 
-manual_url ユーザーマニュアルのURL
 introduction_text インスタンスの紹介文
+manual_url ユーザーマニュアルのURL
+
+administrator_name インスタンス運営者名
+administrator_url インスタンス運営者紹介ページのURL
+administrator_introduction インスタンス運営者の紹介文
 
 require_invite_code ユーザー登録時に招待コードを必要とするか(BOOL値)
 require_email_address ユーザー登録時にメールアドレス入力を必要とするか(BOOL値)
@@ -245,8 +249,7 @@ log_ip_address 投稿者のIPアドレスを記録するか(BOOL値)
                 }...
             ],
             "series_name" : 形式名,
-            "icon_id" : アイコンのID,
-            "heading" : 編成情報の見出し(省略可能)
+            "icon_id" : アイコンのID
         }...
     },
     "series" : {

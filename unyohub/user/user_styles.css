@@ -115,7 +115,7 @@ a {
     vertical-align: top;
 }
 
-button {
+button, .popup_close_button {
     background-color: rgba(255,255,255,0.9);
     background-image: linear-gradient(315deg, #666666 8px, transparent 8px);
     
@@ -141,6 +141,9 @@ button {
     background-size: 30px;
     
     border: none;
+    
+    color: transparent;
+    overflow: hidden;
     
     z-index: 10;
 }

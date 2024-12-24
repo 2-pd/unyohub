@@ -7,7 +7,8 @@ $wakarana = new wakarana("../config");
 
 $user = $wakarana->check();
 if (!is_object($user) || !$user->check_permission("control_panel_user")) {
-    print "【!】管理画面アクセス権限のあるユーザーとしてログインしていません";
+    print "【!】管理画面アクセス権限のあるユーザーとしてログインしていません<br>\n";
+    print "<a href=\"/\">鉄道運用Hub トップページ</a>";
     exit;
 }
 

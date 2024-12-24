@@ -18,8 +18,14 @@ _/_/_/_/ データベース _/_/_/_/
   `formation_name` TEXT NOT NULL PRIMARY KEY 編成名
   `series_name` TEXT NOT NULL 車両形式
   `car_count` INTEGER NOT NULL 編成両数(unyohub_carsのデータから算出可能であるが、動作高速化の観点から正規化しない)
+  `affiliation` TEXT 所属車両基地
+  `caption` TEXT 1行見出し
   `description` TEXT 補足説明文
+  `unavailable` INTEGER NOT NULL 運用離脱中か否か
   `inspection_information` TEXT 検査情報
+  `overview_updated` TEXT NOT NULL 「YYYY-MM-DD HH:MM:SS」形式の概要情報(見出し・運用離脱)更新日時
+  `updated_datetime` TEXT NOT NULL 「YYYY-MM-DD HH:MM:SS」形式の最終編集日時
+  `edited_user_id` TEXT 最後に編集したユーザーのID(未編集の場合はNULL)
 
   INDEX `unyohub_idx_f1`(`series_name`)
 
@@ -39,7 +45,7 @@ _/_/_/_/ データベース _/_/_/_/
 `unyohub_formation_histories` 車歴データ
   `formation_name` TEXT NOT NULL 編成名
   `event_year_month` TEXT NOT NULL 「YYYY-MM」形式の年月、または「YYYY」形式の年
-  `event_type` TEXT NOT NULL 変更の種類(「construct」(新製)、「modify」(改修)、「renewal」(更新)、「transfer」(転属)、「rearrange」(組換)のいずれか)
+  `event_type` TEXT NOT NULL 変更の種類(「construct」(新製)、「modify」(改修)、「repaint」(塗装変更)、「renewal」(更新)、「transfer」(転属)、「rearrange」(組換)、「other」(その他)のいずれか)
   `event_content` TEXT 変更内容説明文
 
   INDEX `unyohub_idx_fh1`(`formation_name`, `event_year_month`)

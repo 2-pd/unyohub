@@ -395,7 +395,7 @@ header {
     opacity: 0.25;
 }
 
-#splash_screen_inner, #railroad_select_area {
+#splash_screen_inner, #railroad_select_popup_inner {
     position: relative;
     
     width: 100%;
@@ -688,9 +688,9 @@ article {
     display: none;
     
     width: calc(100vw - 10px);
-    height: calc(100% - 240px);
+    height: calc(100% - 250px);
     
-    padding: 55px 5px 50px 5px;
+    padding: 55px 5px 60px 5px;
     
     background-color: #ffffff;
     
@@ -1500,11 +1500,11 @@ input[type="checkbox"]:checked + label.drop_down + div {
     color: #cccccc;
 }
 
-#diagram_list_area .wide_button {
+#diagram_list_popup .wide_button {
     background-image: linear-gradient(315deg, #ffffff 14px, transparent 14px) !important;
 }
 
-.dark_mode #diagram_list_area .wide_button {
+.dark_mode #diagram_list_popup .wide_button {
     background-image: linear-gradient(315deg, #666666 14px, transparent 14px) !important;
 }
 
@@ -1788,7 +1788,7 @@ input[type="checkbox"]:checked + label.drop_down + div {
     color: #666666;
 }
 
-.descriptive_text:empty {
+.descriptive_text:empty, .key_and_value:empty, a abbr:empty, #message_area:empty {
     display: none;
 }
 
@@ -1941,6 +1941,8 @@ input[type="checkbox"]:checked + label.drop_down + div {
 }
 
 .history_item time {
+    display: inline-block;
+    
     margin-left: -10px;
     margin-bottom: 10px;
     
@@ -1977,8 +1979,12 @@ h5.event_type_construct {
     background-color: #33cc99;
 }
 
+h5.event_type_repaint {
+    background-color: #eeaa22;
+}
+
 h5.event_type_renewal {
-    background-color: #eebb33;
+    background-color: #ee2266;
 }
 
 h5.event_type_transfer {
@@ -1986,7 +1992,7 @@ h5.event_type_transfer {
 }
 
 h5.event_type_rearrange {
-    background-color: #0066dd;
+    background-color: #2266cc;
 }
 
 .search_highlight {
@@ -2226,6 +2232,22 @@ h2 .previous_button {
 
 h2 .next_button {
     right: -50px;
+}
+
+#formation_caption {
+    display: block;
+    
+    max-width: 500px;
+    
+    margin: 20px auto;
+    
+    text-align: center;
+    font-size: 18px;
+    color: #666666;
+}
+
+.dark_mode #formation_caption {
+    color: #cccccc;
 }
 
 #formation_table_area h3, #operation_table_area h3 {
@@ -2986,11 +3008,11 @@ a {
     text-align: center;
 }
 
-.link_block a {
+.link_block a, h4 a {
     color: #666666;
 }
 
-.dark_mode .link_block a {
+.dark_mode .link_block a, .dark_mode h4 a {
     color: #cccccc;
 }
 
@@ -3008,8 +3030,8 @@ a {
     color: #999999;
 }
 
-.warning_text {
-    color: #ee3333;
+.warning_text, .warning_sentence {
+    color: #ee3333 !important;
 }
 
 .warning_text a {
@@ -3040,6 +3062,8 @@ a {
 }
 
 #announcements_area input[type="checkbox"] + label.drop_down {
+    width: calc(100% - 80px);
+    
     padding: 10px 40px;
 }
 
@@ -3098,7 +3122,7 @@ a {
     color: #cccccc;
 }
 
-#about_railroad_data_popup, #about_railroad_data_popup .informational_text {
+#about_railroad_data_popup, #about_railroad_data_popup .informational_text, #about_popup, #about_popup .informational_text {
     text-align: center;
 }
 
@@ -3115,6 +3139,12 @@ a {
     margin: 5px auto;
 }
 
+#about_railroad_data_popup h4, #about_popup h4 {
+    padding: none;
+    
+    border: none;
+}
+
 .long_text {
     margin: 20px 5px 40px 5px;
     
@@ -3123,8 +3153,8 @@ a {
     word-break: break-all;
 }
 
-#captcha_info {
-    margin-top: -30px;
+#captcha_popup h3 {
+    margin-top: -10px;
 }
 
 #captcha_area {
@@ -3177,10 +3207,6 @@ a abbr {
     text-align: center;
     
     float: left;
-}
-
-a abbr:empty {
-    display: none;
 }
 
 .operation_data_detail {
@@ -3297,7 +3323,7 @@ a abbr:empty {
     font-size: 18px;
 }
 
-.train_detail_departure_times {
+.train_detail_departure_time {
     position: relative;
     
     width: 240px;
@@ -3311,11 +3337,11 @@ a abbr:empty {
     text-align: left;
 }
 
-.train_detail_departure_times_highlight {
+.train_detail_departure_time_highlight {
     font-weight: bold;
 }
 
-.train_detail_departure_times:before {
+.train_detail_departure_time:before {
     content: "";
     
     position: absolute;
@@ -3330,7 +3356,7 @@ a abbr:empty {
     border-radius: 4px;
 }
 
-.train_detail_departure_times_highlight:before {
+.train_detail_departure_time_highlight:before {
     top: 11px;
     left: -17px;
     
@@ -3343,17 +3369,17 @@ a abbr:empty {
     border-radius: 7px;
 }
 
-.dark_mode .train_detail_departure_times:before {
+.dark_mode .train_detail_departure_time:before {
     background-color: #eeeeee;
 }
 
-.dark_mode .train_detail_departure_times_highlight:before {
+.dark_mode .train_detail_departure_time_highlight:before {
     background-color: #cccc33;
     
     border-color: #eeeeee;
 }
 
-.train_detail_departure_times:after {
+.train_detail_departure_time:after {
     content: "";
     
     display: block;
@@ -3361,8 +3387,20 @@ a abbr:empty {
     clear: both;
 }
 
-.train_detail_departure_times:last-of-type {
+.train_detail_departure_time:last-of-type {
     margin-bottom: 60px;
+}
+
+.deadhead_train_departure_time span:before {
+    content: "(";
+    
+    color: #999999;
+}
+
+.deadhead_train_departure_time span:after {
+    content: ")";
+    
+    color: #999999;
 }
 
 #train_detail_popup .informational_text {
@@ -3416,11 +3454,11 @@ a abbr:empty {
     border-top: none;
 }
 
-#operation_detail_area {
+#operation_detail_popup_inner {
     text-align: center;
 }
 
-#operation_detail_area h2 .previous_button, #operation_detail_area h2 .next_button {
+#operation_detail_popup_inner h2 .previous_button, #operation_detail_popup_inner h2 .next_button {
     height: 60px;
 }
 
@@ -3617,6 +3655,13 @@ a abbr:empty {
     vertical-align: top;
 }
 
+.suggestion_area small {
+    margin-left: 5px;
+    
+    font-size: 14px;
+    color: #999999;
+}
+
 #operation_data_train_number {
     display: inline-block;
     
@@ -3735,11 +3780,11 @@ a abbr:empty {
     border-radius: 0 0 12px 12px;
 }
 
-#train_number_area {
+#train_number_popup_inner {
     margin-bottom: 50px;
 }
 
-#train_number_area a {
+#train_number_popup a {
     display: block;
     
     width: 240px;
@@ -3755,11 +3800,11 @@ a abbr:empty {
     text-align: left;
 }
 
-.dark_mode #train_number_area a {
+.dark_mode #train_number_popup a {
     border-color: #999999;
 }
 
-#train_number_area small {
+#train_number_popup small {
     padding-top: 4px;
     
     line-height: 24px;
@@ -3770,7 +3815,7 @@ a abbr:empty {
     float: right;
 }
 
-.dark_mode #train_number_area small {
+.dark_mode #train_number_popup small {
     color: #cccccc;
 }
 
@@ -3816,10 +3861,6 @@ a abbr:empty {
     width: 300px;
     
     z-index: 300;
-}
-
-#message_area:empty {
-    display: none;
 }
 
 #message_area div {
@@ -3924,13 +3965,13 @@ a abbr:empty {
     display: none !important;
 }
 
-.screenshot_area .search_highlight, .screenshot_area .train_detail_departure_times_highlight {
+.screenshot_area .search_highlight, .screenshot_area .train_detail_departure_time_highlight {
     background-color: inherit !important;
     
     font-weight: inherit !important;
 }
 
-.screenshot_area .train_detail_departure_times_highlight:before {
+.screenshot_area .train_detail_departure_time_highlight:before {
     top: 14px;
     left: -14px;
     
@@ -3943,7 +3984,7 @@ a abbr:empty {
     border-radius: 4px;
 }
 
-.dark_mode.screenshot_area .train_detail_departure_times_highlight:before {
+.dark_mode.screenshot_area .train_detail_departure_time_highlight:before {
     background-color: #eeeeee;
 }
 
@@ -4278,6 +4319,12 @@ input[type="radio"]:checked + label {
 
 input[type="radio"] + label small, .chip + label small {
     font-size: 14px;
+}
+
+#about_popup h5 {
+    margin: 20px 0 0 0;
+    
+    font-size: 16px;
 }
 
 #unyohub_icon {

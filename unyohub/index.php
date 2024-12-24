@@ -17,8 +17,8 @@
  */
 
 define("UNYOHUB_APP_NAME", "鉄道運用Hub");
-define("UNYOHUB_VERSION", "24.11-4");
-define("UNYOHUB_LICENSE_URL", "https://www.2pd.jp/license/");
+define("UNYOHUB_VERSION", "24.12-1");
+define("UNYOHUB_APP_INFO_URL", "https://create.2pd.jp/apps/unyohub/");
 define("UNYOHUB_REPOSITORY_URL", "https://fossil.2pd.jp/unyohub/");
 define("UNYOHUB_LICENSE_TEXT", "このアプリケーションは無権利創作宣言に準拠して著作権放棄されています。");
 
@@ -86,7 +86,7 @@ if (empty($_SERVER["PATH_INFO"]) || $_SERVER["PATH_INFO"] === "/") {
                 
                 case "operation_data":
                     $path_info_str .= "operation_data/";
-                    $page_title = $railroad_info["railroad_name"]."の運用データ | ".UNYOHUB_APP_NAME;
+                    $page_title = $railroad_info["railroad_name"]."の車両運用データ | ".UNYOHUB_APP_NAME;
                     $page_description = "本日の".$railroad_info["railroad_name"]."の各編成運用状況です。";
                     
                     break;
@@ -174,7 +174,7 @@ print "    <link rel=\"canonical\" href=\"".$root_url.$path_info_str."\">\n";
 <?php
 print "        const UNYOHUB_APP_NAME = \"".UNYOHUB_APP_NAME."\";\n";
 print "        const UNYOHUB_VERSION = \"".UNYOHUB_VERSION."\";\n";
-print "        const UNYOHUB_LICENSE_URL = \"".UNYOHUB_LICENSE_URL."\";\n";
+print "        const UNYOHUB_APP_INFO_URL = \"".UNYOHUB_APP_INFO_URL."\";\n";
 print "        const UNYOHUB_REPOSITORY_URL = \"".UNYOHUB_REPOSITORY_URL."\";\n";
 print "        const UNYOHUB_LICENSE_TEXT = \"".UNYOHUB_LICENSE_TEXT."\";\n";
 ?>
@@ -182,7 +182,7 @@ print "        const UNYOHUB_LICENSE_TEXT = \"".UNYOHUB_LICENSE_TEXT."\";\n";
 </head>
 <body>
     <header><a id="railroad_icon" href="javascript:void(0);" onclick="about_railroad_data();"></a><span id="instance_name"></span><a id="railroad_name" href="javascript:void(0);" onclick="show_railroad_list();"></a><a id="menu_button" href="javascript:void(0);" onclick="menu_click();"></a></header>
-    <div id="menu">
+    <nav id="menu">
         <div id="menu_logged_in">
             <b id="menu_user_name"></b>
             <a href="/user/user_info.php" target="_blank" rel="opener">ユーザー情報</a>
@@ -201,13 +201,14 @@ print "        const UNYOHUB_LICENSE_TEXT = \"".UNYOHUB_LICENSE_TEXT."\";\n";
         <hr>
         <a id="menu_announcements" href="javascript:void(0);" onclick="show_announcements();">お知らせ</a>
         <hr>
-        <a href="javascript:void(0);" onclick="edit_config();">各種設定</a>
+        <a href="javascript:void(0);" onclick="edit_config();">アプリの設定</a>
         <hr>
-        <a href="javascript:void(0);" onclick="show_about();">このアプリについて</a>
+        <a href="javascript:void(0);" onclick="show_about();"><span id="menu_instance_name"><?php print UNYOHUB_APP_NAME; ?></span>について</a>
         <a href="javascript:void(0);" onclick="show_rules();">ルールとポリシー</a>
+        <a id="menu_manual_button" href="#" target="_blank">このアプリの使い方</a>
         <hr>
         <a id="menu_reload_button" href="/" onclick="event.preventDefault(); reload_app();"><?php print UNYOHUB_APP_NAME; ?></a>
-    </div>
+    </nav>
     <div id="splash_screen" class="splash_screen_loading">
 <?php
 if ($path_info_str === "/") {
@@ -240,7 +241,7 @@ if ($path_info_str === "/") {
         <div id="direction_radio_area" class="radio_area">
             <h2><button type="button" class="previous_button" onclick="timetable_select_neighboring_station(-1);"></button><span id="timetable_station_name"></span><button type="button" class="next_button" onclick="timetable_select_neighboring_station(1);"></button></h2>
             <div><input type="radio" name="direction_radio" id="radio_inbound" value="inbound" checked="checked" onchange="timetable_select_station(timetable_selected_station);"><label for="radio_inbound" id="radio_inbound_label">上り</label><input type="radio" name="direction_radio" id="radio_outbound" value="outbound" onchange="timetable_select_station(timetable_selected_station);"><label for="radio_outbound" id="radio_outbound_label">下り</label></div>
-            <input type="checkbox" id="show_arriving_trains_check" class="chip" onchange="change_show_arriving_trains(this.checked);"><label for="show_arriving_trains_check">着列車を表示</label><input type="checkbox" id="show_starting_trains_only_check" class="chip" onchange="change_show_starting_trains_only(this.checked);"><label for="show_starting_trains_only_check">当駅始発のみ</label>
+            <input type="checkbox" id="show_deadhead_trains_check" class="chip" onchange="change_show_arriving_trains(this.checked);"><label for="show_deadhead_trains_check">回送・着列車を表示</label><input type="checkbox" id="show_starting_trains_only_check" class="chip" onchange="change_show_starting_trains_only(this.checked);"><label for="show_starting_trains_only_check">当駅始発のみ</label>
         </div>
         <div id="timetable_area" class="wait_icon"></div>
     </article>
@@ -297,115 +298,8 @@ if ($path_info_str === "/") {
         </div>
     </footer>
     <div id="popup_background"></div>
-    <div class="popup" id="railroad_select_popup">
-        <button type="button" class="popup_close_button" onclick="popup_close();"></button>
-        <h2>路線系統の切り替え</h2>
-        <div id="railroad_select_area"></div>
-    </div>
-    <div class="popup" id="operation_detail_popup">
-        <button type="button" class="screenshot_button" onclick="take_screenshot('operation_detail_area', true);"></button>
-        <button type="button" class="popup_close_button" onclick="popup_close();"></button>
-        <div id="operation_detail_area" class="wait_icon"></div>
-    </div>
-    <div class="popup" id="config_popup">
-        <button type="button" class="popup_close_button" onclick="popup_close();"></button>
-        <h2>各種設定</h2>
-        <input type="checkbox" id="dark_mode_check" class="toggle" onchange="change_config();"><label for="dark_mode_check">ダークモード</label>
-        <input type="checkbox" id="colorize_beginners_posts_check" class="toggle" onchange="change_config();"><label for="colorize_beginners_posts_check">ビギナーの方の投稿を区別する</label>
-        <h3>運用情報の自動更新間隔</h3>
-        <input type="number" id="refresh_interval" min="1" max="60" onchange="change_config();">分ごと<br>
-        <h3>運用情報のキャッシュ保管日数</h3>
-        <input type="number" id="operation_data_cache_period" min="1" max="30" onchange="change_config();">日前以降のキャッシュを保管<br>
-        <a href="javascript:void(0);" class="additional_setting_link" onclick="reset_config_value();">デフォルト値に戻す</a>
-        <a href="javascript:void(0);" class="additional_setting_link" onclick="reset_cache_db();">キャッシュデータベースの初期化</a>
-        <div class="informational_text">変更内容は自動で保存されます</div>
-    </div>
-    <div class="popup" id="about_railroad_data_popup">
-        <button type="button" class="popup_close_button" onclick="popup_close();"></button>
-        <div id="about_railroad_data_area"></div>
-    </div>
-    <div class="popup" id="write_operation_data_popup">
-        <button type="button" class="popup_close_button" onclick="popup_close();"></button>
-        <h2>運用情報の投稿</h2>
-        <div id="write_operation_data_area"></div>
-        <div id="require_login_area">
-            <div class="warning_text">
-                情報投稿にはログインが必要です。<br>
-                ユーザーアカウントをまだ作成されていない場合は新規登録してください。
-            </div>
-            <div class="link_block">
-                <a href="javascript:void(0);" onclick="open_square_popup('login_popup');">ログイン</a>　<a href="/user/sign_up.php" target="_blank" rel="opener">新規登録</a>
-            </div>
-        </div>
-    </div>
-    <div class="popup" id="edit_operation_data_popup">
-        <button type="button" class="popup_close_button" onclick="popup_close();"></button>
-        <h2>運用情報の取り消し</h2>
-        <div id="edit_operation_data_area"></div>
-    </div>
-    <div class="popup" id="screenshot_popup">
-        <button type="button" class="popup_close_button" onclick="popup_close();"></button>
-        <h2>スクリーンショット</h2>
-        <div id="screenshot_preview"></div>
-        <button type="button" id="save_screenshot_button" class="wide_button" onclick="save_screenshot();">画像として保存</button>
-    </div>
-    <div class="popup" id="about_popup">
-        <button type="button" class="popup_close_button" onclick="popup_close();"></button>
-        <div id="about_area"></div>
-    </div>
     <div id="popup_screen">
         <div id="popup_screen_blank_area" onclick="close_square_popup();"></div>
-        <div class="preview_popup" id="announcements_popup">
-            <button type="button" class="popup_close_button" onclick="close_square_popup();"></button>
-            <h3 id="announcements_heading">お知らせの一覧</h3>
-            <h3 id="railroad_announcements_heading">お知らせ</h3>
-            <div id="announcements_area" class="wait_icon"></div>
-        </div>
-        <div class="square_popup" id="login_popup">
-            <button type="button" class="popup_close_button" onclick="close_square_popup();"></button>
-            <h4>IDまたはメールアドレス</h4>
-            <input type="text" id="login_user_id" autocomplete="username">
-            <h4>パスワード</h4>
-            <input type="password" id="login_password" autocomplete="current-password">
-            <div class="link_block">
-                <a href="/user/send_password_reset_email.php" target="_blank" rel="opener">パスワードを忘れた場合</a>
-            </div>
-            <button type="button" class="wide_button" onclick="challenge_login();">ログイン</button>
-        </div>
-        <div class="square_popup" id="captcha_popup">
-            <button type="button" class="popup_close_button" onclick="close_square_popup();"></button>
-            <div id="captcha_info">
-                <h3>画像認証</h3>
-                <div class="informational_text">画像に表示されている文字を入力してください。</div>
-            </div>
-            <div id="captcha_area" class="wait_icon"></div>
-            <button type="button" id="captcha_submit_button" class="wide_button">送信</button>
-        </div>
-        <div class="preview_popup" id="line_select_popup">
-            <button type="button" class="popup_close_button" onclick="close_square_popup();"></button>
-            <h3>路線の選択</h3>
-            <div id="line_select_area"></div>
-        </div>
-        <div class="preview_popup" id="train_detail_popup">
-            <button type="button" class="screenshot_button" onclick="take_screenshot('train_detail_area', true);"></button>
-            <button type="button" class="popup_close_button" onclick="close_square_popup();"></button>
-            <div id="train_detail_area" class="wait_icon"></div>
-        </div>
-        <div class="square_popup" id="select_operation_popup">
-            <button type="button" class="popup_close_button" onclick="close_square_popup();"></button>
-            <h3>情報を投稿する運用の選択</h3>
-            <div id="select_operation_area"></div>
-        </div>
-        <div class="preview_popup" id="train_number_popup">
-            <button type="button" class="popup_close_button" onclick="close_square_popup();"></button>
-            <h3>列車の選択</h3>
-            <div id="train_number_area"></div>
-        </div>
-        <div class="preview_popup" id="diagram_list_popup">
-            <button type="button" class="popup_close_button" onclick="close_square_popup();"></button>
-            <h3 id="diagram_list_heading"></h3>
-            <div id="diagram_list_area"></div>
-        </div>
     </div>
     <div id="wait_screen"></div>
     <div id="message_area"></div>

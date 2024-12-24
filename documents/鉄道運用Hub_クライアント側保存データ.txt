@@ -22,7 +22,7 @@ _/_/_/_/ クライアント側ローカルストレージ _/_/_/_/
     "refresh_interval" : 運用データを自動で再取得する間隔(分単位の整数値),
     "operation_data_cache_period" : 運用データのキャッシュ保管日数(整数値),
     "show_train_types_in_position_mode" : 走行位置モードで列車番号の代わりに種別(または行き先)を表示させるか(BOOL値),
-    "show_arriving_trains_on_timetable" : 時刻表閲覧時に当駅止まりを表示するか(BOOL値),
+    "show_deadhead_trains_on_timetable" : 時刻表閲覧時に回送と当駅止まりを表示するか(BOOL値),
     "colorize_beginners_posts" : ビギナーユーザーから投稿された情報を色で区別して表示するか(BOOL値),
     "colorize_formation_table" : 編成表の表示に実際の車体色を反映するか(BOOL値),
     "simplify_operation_details" : 運用表の各運用詳細情報閲覧時に列車情報を簡略表示するか(BOOL値)
@@ -68,6 +68,15 @@ _/_/_/_/ クライアント側IndexedDB "unyohub_caches" _/_/_/_/
 }
 
 
+███ formation_overviews ███
+
+{
+    ・railroad_id : 路線系統識別名,
+    last_modified_timestamp : サーバ側DBにおける全編成の caption_updated のうち最も新しい値のタイムスタンプ(UTC、秒単位),
+    formations : formation_overviews.phpのレスポンスをパースしてそのまま格納
+}
+
+
 ███ diagram_revisions ███
 
 {
@@ -82,6 +91,7 @@ _/_/_/_/ クライアント側IndexedDB "unyohub_caches" _/_/_/_/
 {
     ・railroad_id : 路線系統識別名,
     ・diagram_revision : ダイヤ改正識別名,
+    last_modified_timestamp : このデータの元になったJSONファイルが更新された日時のタイムスタンプ値(UTC、秒単位),
     以降の項目はdiagram_info.phpのレスポンスをパースしてそのまま展開して使用
 }
 

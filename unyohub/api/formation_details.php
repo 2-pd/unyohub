@@ -1,8 +1,14 @@
 <?php
+include "../libs/wakarana/main.php";
+
+
 if (!isset($_POST["railroad_id"], $_POST["formation_name"])) {
     print "ERROR: 送信値が不正です";
     exit;
 }
+
+
+$wakarana = new wakarana("../config");
 
 
 $db_obj = new SQLite3("../data/".basename($_POST["railroad_id"])."/railroad.db");
@@ -11,7 +17,7 @@ $db_obj->busyTimeout(5000);
 
 $formation_name = $db_obj->escapeString($_POST["formation_name"]);
 
-$formation_data = $db_obj->querySingle("SELECT `formation_name`, `series_name`, `description`, `inspection_information` FROM `unyohub_formations` WHERE `formation_name` = '".$formation_name."'", TRUE);
+$formation_data = $db_obj->querySingle("SELECT `formation_name`, `series_name`, `affiliation`, `caption`, `description`, `unavailable`, `inspection_information`, `updated_datetime`, `edited_user_id` FROM `unyohub_formations` WHERE `formation_name` = '".$formation_name."'", TRUE);
 
 if (empty($formation_data)) {
     print "ERROR: 編成詳細データがありません";
@@ -74,6 +80,23 @@ if (is_null($formation_data["operations_today"]) && is_null($formation_data["ope
         $formation_data["operations_last_day"] = NULL;
     }
 }
+
+
+$user = $wakarana->check();
+if (!empty($formation_data["edited_user_id"]) && is_object($user) && $user->check_permission("control_panel_user")) {
+    $edited_user = $wakarana->get_user($formation_data["edited_user_id"]);
+    
+    if (is_object($edited_user)) {
+        $formation_data["edited_user_name"] = $edited_user->get_name();
+    }
+}
+
+unset($formation_data["edited_user_id"]);
+
+
+$formation_data["updated_timestamp"] = strtotime($formation_data["updated_datetime"]);
+
+unset($formation_data["updated_datetime"]);
 
 
 if (!empty($_SERVER["HTTP_ACCEPT_ENCODING"]) && strpos($_SERVER["HTTP_ACCEPT_ENCODING"], "gzip") !== FALSE) {

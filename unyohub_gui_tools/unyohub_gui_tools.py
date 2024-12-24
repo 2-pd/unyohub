@@ -15,7 +15,7 @@ import webbrowser
 
 
 UNYOHUB_GUI_TOOLS_APP_NAME = "鉄道運用Hub用データ編集ツール"
-UNYOHUB_GUI_TOOLS_VERSION = "24.10-2"
+UNYOHUB_GUI_TOOLS_VERSION = "24.12-1"
 UNYOHUB_GUI_TOOLS_LICENSE_TEXT = "このアプリケーションは無権利創作宣言に準拠して著作権放棄されています"
 UNYOHUB_GUI_TOOLS_LICENSE_URL = "https://www.2pd.jp/license/"
 UNYOHUB_GUI_TOOLS_REPOSITORY_URL = "https://fossil.2pd.jp/unyohub/"
@@ -189,13 +189,14 @@ def console_copy ():
     main_win.clipboard_append(console_area.get("0.0", tk.END).strip())
 
 
-def select_diagram (callback_func):
+def select_diagram (callback_func, enable_generate_number_check=False):
     global config
     global main_win
     global select_diagram_win
     global select_diagram_callback
     global diagram_revision_list
     global diagram_id_entry
+    global generate_number_value
     
     select_diagram_callback = callback_func
     
@@ -244,6 +245,13 @@ def select_diagram (callback_func):
     diagram_id_entry = tk.Entry(select_diagram_win, bg="#333333", fg="#ffffff", relief=tk.FLAT)
     diagram_id_entry.place(x=240, y=40, width=200)
     
+    if enable_generate_number_check:
+        generate_number_value = tk.BooleanVar()
+        generate_number_check = tk.Checkbutton(select_diagram_win, variable=generate_number_value, text="仮の列車番号を生成する", font=list_font, bg="#333333", fg="#999999", activebackground="#666666", activeforeground="#ffffff")
+        generate_number_check.place(x=240, y=80, width=200)
+    else:
+        generate_number_value = None
+    
     button_ok = tk.Button(select_diagram_win, text="OK", font=button_font, command=select_diagram_ok, bg="#666666", fg="#ffffff", relief=tk.FLAT, highlightbackground="#666666")
     button_ok.place(x=320, y=190, width=120, height=30)
 
@@ -252,6 +260,7 @@ def select_diagram_ok ():
     global select_diagram_callback
     global diagram_revision_list
     global diagram_id_entry
+    global generate_number_value
     
     diagram_revision = diagram_revision_list.get(diagram_revision_list.curselection())
     diagram_id = diagram_id_entry.get()
@@ -262,7 +271,10 @@ def select_diagram_ok ():
     
     close_select_diagram_win()
     
-    select_diagram_callback(diagram_revision, diagram_id)
+    if generate_number_value != None:
+        select_diagram_callback(diagram_revision, diagram_id, generate_number_value.get())
+    else:
+        select_diagram_callback(diagram_revision, diagram_id)
 
 
 def close_select_diagram_win ():
@@ -353,15 +365,15 @@ def convert_timetable_2_exec (diagram_revision, diagram_id):
 def generate_operation_table ():
     global config
     
-    select_diagram(generate_operation_table_exec)
+    select_diagram(generate_operation_table_exec, True)
 
 
-def generate_operation_table_exec (diagram_revision, diagram_id):
+def generate_operation_table_exec (diagram_revision, diagram_id, generate_train_number):
     try:
         clear_mes()
         
         generate_operation_table = importlib.import_module("modules.generate_operation_table")
-        generate_operation_table.generate_operation_table(mes, config["main_dir"], diagram_revision, diagram_id)
+        generate_operation_table.generate_operation_table(mes, config["main_dir"], diagram_revision, diagram_id, generate_train_number)
     except:
         error_mes(traceback.format_exc())
 

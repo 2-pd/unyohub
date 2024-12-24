@@ -57,7 +57,7 @@ def convert_timetable_1 (mes, file_name, digits_count):
                 for cnt_2 in range(8, len(train) - 6):
                     train[cnt_2] = train[cnt_2].strip()
                     
-                    if train[cnt_2] == "||":
+                    if train[cnt_2] == "||" or train[cnt_2] == "ﾚ":
                         train[cnt_2] = ""
                     
                     if train[cnt_2] != "":
@@ -69,7 +69,12 @@ def convert_timetable_1 (mes, file_name, digits_count):
                             before_departure_time = ""
                         
                         if ":" not in departure_time:
-                            departure_time = departure_time[:-2] + ":" + departure_time[-2:]
+                            if int(departure_time) >= 300:
+                                departure_time = departure_time[:-2] + ":" + departure_time[-2:]
+                            elif len(departure_time) >= 3:
+                                departure_time = str(int(departure_time[:-2]) + 24) + ":" + departure_time[-2:]
+                            else:
+                                departure_time = "24:" + departure_time.zfill(2)
                         
                         train[cnt_2] = before_departure_time + departure_time.zfill(5)
                 

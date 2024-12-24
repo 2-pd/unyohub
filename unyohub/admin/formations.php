@@ -56,15 +56,15 @@ if (empty($_GET["formation_name"])) {
     
     print "<h2>".htmlspecialchars($_GET["formation_name"])."</h2>";
     
-    $event_types = array("construct", "modify", "renewal", "transfer", "rearrange");
-    $event_types_ja = array("construct" => "新製", "modify" => "改修", "renewal" => "更新", "transfer" => "転属", "rearrange" => "組換");
+    $event_types = array("construct", "modify", "repaint", "renewal", "transfer", "rearrange", "other");
+    $event_types_ja = array("construct" => "新製", "modify" => "改修", "repaint" => "塗装変更", "renewal" => "更新", "transfer" => "転属", "rearrange" => "組換", "other" => "その他");
     
     $db_obj = new SQLite3("../data/".$railroad_id."/railroad.db");
     $db_obj->busyTimeout(5000);
     
     $formation_name = $db_obj->escapeString($_GET["formation_name"]);
     
-    $formation_data = $db_obj->querySingle("SELECT `description`, `inspection_information` FROM `unyohub_formations` WHERE `formation_name` = '".$formation_name."'", TRUE);
+    $formation_data = $db_obj->querySingle("SELECT `affiliation`, `caption`, `description`, `unavailable`, `inspection_information` FROM `unyohub_formations` WHERE `formation_name` = '".$formation_name."'", TRUE);
     
     if (!empty($formation_data)) {
         $cars_r = $db_obj->query("SELECT `car_number`, `manufacturer`, `constructed`, `description` FROM `unyohub_cars` WHERE `formation_name` = '".$formation_name."' ORDER BY `car_order` ASC");
@@ -81,9 +81,13 @@ if (empty($_GET["formation_name"])) {
             $histories_data[] = $history_data;
         }
         
-        if (isset($_POST["description"], $_POST["inspection_information"])) {
+        if (isset($_POST["affiliation"], $_POST["caption"], $_POST["description"], $_POST["inspection_information"])) {
+            $is_unavailable = !empty($_POST["unavailable"]);
+            $overview_changed = ($_POST["caption"] !== $formation_data["caption"] || $is_unavailable != $formation_data["unavailable"]);
+            $updated_datetime = date("Y-m-d H:i:s");
+            
             if (isset($_POST["one_time_token"]) && $user->check_one_time_token($_POST["one_time_token"])) {
-                $db_obj->querySingle("UPDATE `unyohub_formations` SET `description` = '".$db_obj->escapeString($_POST["description"])."', `inspection_information` = '".$db_obj->escapeString($_POST["inspection_information"])."' WHERE `formation_name` = '".$formation_name."'");
+                $db_obj->querySingle("UPDATE `unyohub_formations` SET `affiliation` = '".$db_obj->escapeString($_POST["affiliation"])."', `caption` = '".$db_obj->escapeString($_POST["caption"])."', `description` = '".$db_obj->escapeString($_POST["description"])."', `unavailable` = ".(empty($_POST["unavailable"]) ? "FALSE" : "TRUE").", `inspection_information` = '".$db_obj->escapeString($_POST["inspection_information"])."',".($overview_changed ? " `overview_updated` = '".$updated_datetime."'," : "")." `updated_datetime` = '".$updated_datetime."', `edited_user_id` = '".$user->get_id()."' WHERE `formation_name` = '".$formation_name."'");
                 
                 for ($cnt = 0; isset($cars_data[$cnt], $_POST["car_manufacturer_".$cnt], $_POST["car_constructed_".$cnt], $_POST["car_description_".$cnt]); $cnt++) {
                     $db_obj->querySingle("UPDATE `unyohub_cars` SET `manufacturer` = '".$db_obj->escapeString($_POST["car_manufacturer_".$cnt])."', `constructed` = '".$db_obj->escapeString($_POST["car_constructed_".$cnt])."', `description` = '".$db_obj->escapeString($_POST["car_description_".$cnt])."' WHERE `formation_name` = '".$formation_name."' AND `car_number` = '".$db_obj->escapeString($cars_data[$cnt]["car_number"])."'");
@@ -108,7 +112,10 @@ if (empty($_GET["formation_name"])) {
                 print "<script> alert('【!】ワンタイムトークンが無効です。処理はキャンセルされました。'); </script>";
             }
             
+            $formation_data["affiliation"] = $_POST["affiliation"];
+            $formation_data["caption"] = $_POST["caption"];
             $formation_data["description"] = $_POST["description"];
+            $formation_data["unavailable"] = $is_unavailable;
             $formation_data["inspection_information"] = $_POST["inspection_information"];
             
             for ($cnt = 0; isset($cars_data[$cnt], $_POST["car_manufacturer_".$cnt], $_POST["car_constructed_".$cnt], $_POST["car_description_".$cnt]); $cnt++) {
@@ -143,6 +150,11 @@ if (empty($_GET["formation_name"])) {
             }
         }
         
+        $buf = "";
+        foreach ($event_types as $event_type) {
+            $buf .= "<option value='".$event_type."'>".$event_types_ja[$event_type]."</option>";
+        }
+        
         print <<< EOM
         <script>
         function add_history () {
@@ -151,7 +163,7 @@ if (empty($_GET["formation_name"])) {
             
             var history_item_elm = document.createElement("div");
             history_item_elm.className = "history_item";
-            history_item_elm.innerHTML = "<h5>変更年月 / 変更の種類</h5><div class='half_input_wrapper'><input type='number' name='event_year_" + cnt + "' value='" + dt.getFullYear() + "' max='2100' min='1901'>年<input type='number' name='event_month_" + cnt + "' max='12' min='0'>月 / <select name='event_type_" + cnt + "'><option value='construct'>新製</option><option value='modify'>改修</option><option value='renewal'>更新</option><option value='transfer'>転属</option><option value='rearrange'>組換</option></select></div><h5>変更内容</h5><textarea name='event_content_" + cnt + "'></textarea>";
+            history_item_elm.innerHTML = "<h5>変更年月 / 変更の種類</h5><div class='half_input_wrapper'><input type='number' name='event_year_" + cnt + "' value='" + dt.getFullYear() + "' max='2100' min='1901'>年<input type='number' name='event_month_" + cnt + "' max='12' min='0'>月 / <select name='event_type_" + cnt + "'>{$buf}</select></div><h5>変更内容</h5><textarea name='event_content_" + cnt + "'></textarea>";
             
             document.getElementById("histories_area").appendChild(history_item_elm);
         }
@@ -161,10 +173,17 @@ if (empty($_GET["formation_name"])) {
         print "<form action='formations.php?railroad_id=".$railroad_id."&formation_name=".urlencode($_GET["formation_name"])."' method='post'>";
         print "<input type='hidden' name='one_time_token' value='".$user->create_one_time_token()."'>";
         
+        print "<h3>編成の一行見出し</h3>";
+        print "<input type='text' name='caption' value='".addslashes($formation_data["caption"])."'>";
+        
+        print "<h3>所属車両基地等</h3>";
+        print "<input type='text' name='affiliation' value='".addslashes($formation_data["affiliation"])."'>";
+        
         print "<h3>編成の特記事項</h3>";
         print "<textarea name='description'>".htmlspecialchars($formation_data["description"])."</textarea>";
         
         print "<h3>検査情報</h3>";
+        print "<div class='chip_wrapper'><input type='checkbox' name='unavailable' id='unavailable' class='chip' value='YES'".($formation_data["unavailable"] ? " checked='checked'" : "")."><label for='unavailable'>運用離脱中</label></div>";
         print "<textarea name='inspection_information'>".htmlspecialchars($formation_data["inspection_information"])."</textarea>";
         
         print "<h3>各車両の情報</h3>";

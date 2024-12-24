@@ -21,14 +21,22 @@ if (isset($_POST["last_modified_timestamp"]) && $last_modified <= intval($_POST[
     
     if (!empty($main_config["introduction_text"])) {
         $instance_info["introduction_text"] = stripcslashes($main_config["introduction_text"]);
-    } else {
-        $instance_info["introduction_text"] = NULL;
     }
     
     if (!empty($main_config["manual_url"])) {
         $instance_info["manual_url"] = $main_config["manual_url"];
-    } else {
-        $instance_info["manual_url"] = NULL;
+    }
+    
+    if (!empty($main_config["administrator_name"])) {
+        $instance_info["administrator_name"] = $main_config["administrator_name"];
+        
+        if (!empty($main_config["administrator_url"])) {
+            $instance_info["administrator_url"] = $main_config["administrator_url"];
+        }
+    }
+    
+    if (!empty($main_config["administrator_introduction"])) {
+        $instance_info["administrator_introduction"] = stripcslashes($main_config["administrator_introduction"]);
     }
     
     print json_encode($instance_info, JSON_UNESCAPED_UNICODE);
