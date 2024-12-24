@@ -1788,7 +1788,7 @@ input[type="checkbox"]:checked + label.drop_down + div {
     color: #666666;
 }
 
-.descriptive_text:empty {
+.descriptive_text:empty, .key_and_value:empty, a abbr:empty, #message_area:empty {
     display: none;
 }
 
@@ -2232,6 +2232,22 @@ h2 .previous_button {
 
 h2 .next_button {
     right: -50px;
+}
+
+#formation_caption {
+    display: block;
+    
+    max-width: 500px;
+    
+    margin: 20px auto;
+    
+    text-align: center;
+    font-size: 18px;
+    color: #666666;
+}
+
+.dark_mode #formation_caption {
+    color: #cccccc;
 }
 
 #formation_table_area h3, #operation_table_area h3 {
@@ -3014,8 +3030,8 @@ a {
     color: #999999;
 }
 
-.warning_text {
-    color: #ee3333;
+.warning_text, .warning_sentence {
+    color: #ee3333 !important;
 }
 
 .warning_text a {
@@ -3191,10 +3207,6 @@ a abbr {
     text-align: center;
     
     float: left;
-}
-
-a abbr:empty {
-    display: none;
 }
 
 .operation_data_detail {
@@ -3643,6 +3655,13 @@ a abbr:empty {
     vertical-align: top;
 }
 
+.suggestion_area small {
+    margin-left: 5px;
+    
+    font-size: 14px;
+    color: #999999;
+}
+
 #operation_data_train_number {
     display: inline-block;
     
@@ -3842,10 +3861,6 @@ a abbr:empty {
     width: 300px;
     
     z-index: 300;
-}
-
-#message_area:empty {
-    display: none;
 }
 
 #message_area div {

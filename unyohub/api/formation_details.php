@@ -83,7 +83,7 @@ if (is_null($formation_data["operations_today"]) && is_null($formation_data["ope
 
 
 $user = $wakarana->check();
-if (is_object($user) && $user->check_permission("control_panel_user")) {
+if (!empty($formation_data["edited_user_id"]) && is_object($user) && $user->check_permission("control_panel_user")) {
     $edited_user = $wakarana->get_user($formation_data["edited_user_id"]);
     
     if (is_object($edited_user)) {

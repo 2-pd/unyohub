@@ -73,7 +73,7 @@ _/_/_/_/ クライアント側IndexedDB "unyohub_caches" _/_/_/_/
 {
     ・railroad_id : 路線系統識別名,
     last_modified_timestamp : サーバ側DBにおける全編成の caption_updated のうち最も新しい値のタイムスタンプ(UTC、秒単位),
-    以降の項目はformation_overviews.phpのレスポンスをパースしてそのまま展開して使用
+    formations : formation_overviews.phpのレスポンスをパースしてそのまま格納
 }
 
 
