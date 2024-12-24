@@ -248,7 +248,7 @@ formations.jsonの内容を返す
         }...  
     ],  
     "updated_timestamp" : 編成情報が更新されたタイムスタンプ(UTC),  
-    "edited_user_id" : 最後に編集したユーザーのID(コントロールパネルアクセス権のあるユーザーでアクセスした場合のみ),  
+    "edited_user_name" : 最後に編集したユーザーのハンドルネーム(コントロールパネルアクセス権のあるユーザーでアクセスした場合のみ),  
     "operations_today" : [ 当日の運用情報(なければNULL)  
         {  
             "operation_number" : 運用番号,  
