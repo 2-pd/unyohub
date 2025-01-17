@@ -126,6 +126,7 @@ administrator_introduction インスタンス運営者の紹介文
 require_invite_code ユーザー登録時に招待コードを必要とするか(BOOL値)
 require_email_address ユーザー登録時にメールアドレス入力を必要とするか(BOOL値)
 allow_guest_user ログインしていないユーザーの投稿を認めるか(BOOL値)
+require_comments_on_speculative_posts 未出庫の運用への情報投稿時にコメント入力を強制するか(BOOL値)
 
 sender_email_address メール送信用アドレス(サーバに紐付けられているドメイン名であれば存在しないメールアドレスでも設定可能)
 
@@ -337,6 +338,7 @@ log_ip_address 投稿者のIPアドレスを記録するか(BOOL値)
             "terminal_track" : 入庫番線,
             "ending_time" : 「HH:MM」形式の入庫時刻,
             "car_count" : 所定の編成両数,
+            "hidden_by_default" : 運用情報が投稿されていない場合に走行位置モードで表示を隠すか(隠さない場合は省略可能。BOOL値),
             "min_car_count" : 充当可能な最小の編成両数,
             "max_car_count" : 充当可能な最大の編成両数,
             "main_color" : テーマカラー,

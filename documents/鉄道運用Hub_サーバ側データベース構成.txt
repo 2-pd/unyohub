@@ -28,6 +28,7 @@ _/_/_/_/ データベース _/_/_/_/
   `edited_user_id` TEXT 最後に編集したユーザーのID(未編集の場合はNULL)
 
   INDEX `unyohub_idx_f1`(`series_name`)
+  INDEX `unyohub_idx_f2`(`overview_updated`)
 
 
 `unyohub_cars` 車両データ
@@ -93,12 +94,13 @@ _/_/_/_/ データベース _/_/_/_/
   `user_id` TEXT NOT NULL 投稿者ID(未登録ユーザーの場合、クライアント端末が生成する12桁の乱数値の頭に「*」を付加した文字列を記録する)
   `train_number` TEXT 目撃時の列車番号または「○」(出庫時)、「△」(入庫時)、NULL(引用情報の場合)
   `formations` TEXT NOT NULL 充当組成(複数編成併結による運用の場合も「+」で区切って1レコードに格納)
-  `is_quotation` INTEGER 引用情報か否か
+  `reassigned` INTEGER NOT NULL 差し替え情報か否か
+  `is_quotation` INTEGER NOT NULL 引用情報か否か
   `posted_datetime` TEXT NOT NULL 「YYYY-MM-DD HH:MM:SS」形式の情報投稿日時
   `comment` TEXT 運用補足情報(コメント)
   `ip_address` TEXT 投稿者のIPアドレス(IPアドレスを記録しない設定の場合はNULL)
 
-  PRIMARY KEY(`operation_date`, `operation_number`, `user_id`)
+  PRIMARY KEY(`operation_date`, `operation_number`, `user_id`, `formations`)
   INDEX `unyohub_idx_d1`(`user_id`, `posted_datetime`)
   INDEX `unyohub_idx_d2`(`operation_date`, `operation_number`, `posted_datetime`)
   INDEX `unyohub_idx_d3`(`ip_address`, `posted_datetime`)
@@ -107,17 +109,19 @@ _/_/_/_/ データベース _/_/_/_/
 `unyohub_data_caches` 運用データ概要キャッシュ
   `operation_date` TEXT NOT NULL 「YYYY-MM-DD」形式の日付
   `operation_number` TEXT NOT NULL 運用番号(アルファベットなどを含む場合があるため文字列型)
+  `assign_order` INTEGER NOT NULL 当該運用に何番目に充当された編成の情報か(1から始まり、差し替えのたびに1ずつ増える)
   `formations` TEXT 充当組成(最も新しい投稿の情報を格納、複数編成併結による運用の場合も「+」で区切って1レコードに格納、運休の場合は空文字列)
   `posts_count` INTEGER 投稿の個数(前日運用からの推測データの場合は「0」)
   `variant_exists` INTEGER 投稿情報に異なる情報が存在するかどうか
   `comment_exists` INTEGER 運用補足情報の有無
   `from_beginner` INTEGER ビギナーの投稿か否か
   `is_quotation` INTEGER 引用情報か否か
-  `updated_datetime` TEXT NOT NULL 「YYYY-MM-DD HH:MM:SS」形式の情報投稿日時
+  `updated_datetime` TEXT NOT NULL 「YYYY-MM-DD HH:MM:SS」形式の情報更新日時(同一日の同一運用番号のレコードは全て同じ更新日時とする)
 
-  PRIMARY KEY(`operation_date`, `operation_number`)
+  PRIMARY KEY(`operation_date`, `operation_number`, `assign_order`)
   INDEX `unyohub_idx_dc1`(`formations`, `operation_date`)
-  INDEX `unyohub_idx_dc2`(`operation_date`, `updated_datetime`)
+  INDEX `unyohub_idx_dc2`(`operation_date`, `updated_datetime`, `operation_number`, `assign_order`)
+  INDEX `unyohub_idx_dc3`(`operation_number`, `operation_date`, `assign_order`)
 
 
 `unyohub_data_each_formation` 編成別運用データキャッシュ
