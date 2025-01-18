@@ -52,9 +52,9 @@ def convert_formation_table (mes, main_dir):
     
     datetime_now = time.strftime("%Y-%m-%d %H:%M:%S")
     
-    formation_list_old = []
+    formation_list_old = set()
     for row_data in cur.execute("SELECT `formation_name` FROM `unyohub_formations`"):
-        formation_list_old.append(row_data[0])
+        formation_list_old.add(row_data[0])
     
     json_data = {"formations" : {}, "series" : {}, "series_names" : []}
     
@@ -95,7 +95,9 @@ def convert_formation_table (mes, main_dir):
     if len(body_colorings) >= 1:
         json_data["body_colorings"] = body_colorings
     
-    formation_list = []
+    formation_list = set()
+    car_numbers = set()
+    abbr_numbers = set()
     
     series_name = None
     while cnt < len(formation_data):
@@ -122,56 +124,70 @@ def convert_formation_table (mes, main_dir):
         else:
             mes("　- " + formation_name + " のデータを処理しています...")
             
-            json_data["series"][series_name]["formation_names"].append(formation_name)
-            json_data["formations"][formation_name] = {"cars" : [], "series_name" : series_name, "icon_id" : formation_data[cnt + 1][0]}
-            
-            car_list_old = []
-            for row_data in cur.execute("SELECT `car_number` FROM `unyohub_cars` WHERE `formation_name` = :formation_name", {"formation_name" : formation_name}):
-                car_list_old.append(row_data[0])
-            
-            car_list = []
-            
-            for cnt_2 in range(1, len(formation_data[cnt])):
-                if formation_data[cnt][cnt_2] != "":
-                    car_number = formation_data[cnt][cnt_2]
-                    
-                    json_data["formations"][formation_name]["cars"].append({"car_number" : car_number, "abbr_number" : formation_data[cnt + 1][cnt_2]})
-                    
-                    if len(formation_data[cnt + 2][cnt_2]) >= 1:
-                        json_data["formations"][formation_name]["cars"][-1]["coloring_id"] = formation_data[cnt + 2][cnt_2]
-                    
-                    equipment = replace_equipment_symbols(formation_data[cnt + 3][cnt_2].upper()).split()
-                    if len(equipment) >= 1:
-                        json_data["formations"][formation_name]["cars"][-1]["equipment"] = equipment
-                    
-                    cur.execute("INSERT INTO `unyohub_cars`(`formation_name`, `car_number`, `car_order`, `manufacturer`, `constructed`, `description`) VALUES (:formation_name, :car_number, :car_order, '', '', '') ON CONFLICT(`formation_name`, `car_number`) DO UPDATE SET `car_order` = :car_order_2", {"formation_name" : formation_name, "car_number" : car_number, "car_order" : cnt_2, "car_order_2" : cnt_2})
-                    
-                    car_list.append(car_number)
-            
-            deleted_cars = list(set(car_list_old) - set(car_list))
-            
-            for deleted_car_number in deleted_cars:
-                cur.execute("DELETE FROM `unyohub_cars` WHERE `formation_name` = :formation_name AND `car_number` = :car_number", {"formation_name" : formation_name, "car_number" : deleted_car_number})
-            
-            car_count = len(car_list)
-            
-            cur.execute("INSERT INTO `unyohub_formations`(`formation_name`, `series_name`, `car_count`, `affiliation`, `caption`, `description`, `unavailable`, `inspection_information`, `overview_updated`, `updated_datetime`, `edited_user_id`) VALUES (:formation_name, :series_name, :car_count, '', '', '', FALSE, '', :overview_updated, :updated_datetime, NULL) ON CONFLICT(`formation_name`) DO UPDATE SET `series_name` = :series_name_2, `car_count` = :car_count_2", {"formation_name" : formation_name, "series_name" : series_name, "car_count" : car_count, "overview_updated" : datetime_now, "updated_datetime" : datetime_now, "series_name_2" : series_name, "car_count_2" : car_count})
-            
-            formation_list.append(formation_name)
-            
-            if car_count > max_car_count:
-                max_car_count = car_count
-            
-            if min_car_count is None or car_count < min_car_count:
-                min_car_count = car_count
-            
-            coupling_groups = formation_data[cnt + 2][0].split()
-            for coupling_group in coupling_groups:
-                if len(coupling_group) >= 1:
-                    cur.execute("INSERT INTO `unyohub_coupling_groups`(`series_or_formation`, `coupling_group`) VALUES (:series_or_formation, :coupling_group)", {"series_or_formation" : formation_name, "coupling_group" : coupling_group})
-                    
-                    if coupling_group not in coupling_group_list:
-                        coupling_group_list.append(coupling_group)
+            if formation_name in formation_list:
+                mes("同一の編成名が複数の編成に設定されています: " + formation_name, True)
+            else:
+                json_data["series"][series_name]["formation_names"].append(formation_name)
+                json_data["formations"][formation_name] = {"cars" : [], "series_name" : series_name, "icon_id" : formation_data[cnt + 1][0]}
+                
+                car_list_old = set()
+                for row_data in cur.execute("SELECT `car_number` FROM `unyohub_cars` WHERE `formation_name` = :formation_name", {"formation_name" : formation_name}):
+                    car_list_old.add(row_data[0])
+                
+                car_list = set()
+                
+                for cnt_2 in range(1, len(formation_data[cnt])):
+                    if formation_data[cnt][cnt_2] != "":
+                        car_number = formation_data[cnt][cnt_2].strip()
+                        abbr_number = formation_data[cnt + 1][cnt_2].strip()
+                        
+                        if car_number in car_numbers:
+                            mes("《注意》同一の車両番号が複数の車両に設定されています: " + car_number)
+                        else:
+                            car_numbers.add(car_number)
+                        
+                        if abbr_number in abbr_numbers:
+                            mes("《注意》同一の車両番号省略表記が複数の車両に設定されています: " + abbr_number)
+                        else:
+                            abbr_numbers.add(abbr_number)
+                        
+                        json_data["formations"][formation_name]["cars"].append({"car_number" : car_number, "abbr_number" : abbr_number})
+                        
+                        if len(formation_data[cnt + 2][cnt_2]) >= 1:
+                            json_data["formations"][formation_name]["cars"][-1]["coloring_id"] = formation_data[cnt + 2][cnt_2]
+                        
+                        equipment = replace_equipment_symbols(formation_data[cnt + 3][cnt_2].upper()).split()
+                        if len(equipment) >= 1:
+                            json_data["formations"][formation_name]["cars"][-1]["equipment"] = equipment
+                        
+                        cur.execute("INSERT INTO `unyohub_cars`(`formation_name`, `car_number`, `car_order`, `manufacturer`, `constructed`, `description`) VALUES (:formation_name, :car_number, :car_order, '', '', '') ON CONFLICT(`formation_name`, `car_number`) DO UPDATE SET `car_order` = :car_order_2", {"formation_name" : formation_name, "car_number" : car_number, "car_order" : cnt_2, "car_order_2" : cnt_2})
+                        
+                        car_list.add(car_number)
+                
+                deleted_cars = list(car_list_old - car_list)
+                
+                for deleted_car_number in deleted_cars:
+                    cur.execute("DELETE FROM `unyohub_cars` WHERE `formation_name` = :formation_name AND `car_number` = :car_number", {"formation_name" : formation_name, "car_number" : deleted_car_number})
+                
+                car_count = len(car_list)
+                
+                cur.execute("INSERT INTO `unyohub_formations`(`formation_name`, `series_name`, `car_count`, `affiliation`, `caption`, `description`, `unavailable`, `inspection_information`, `overview_updated`, `updated_datetime`, `edited_user_id`) VALUES (:formation_name, :series_name, :car_count, '', '', '', FALSE, '', :overview_updated, :updated_datetime, NULL) ON CONFLICT(`formation_name`) DO UPDATE SET `series_name` = :series_name_2, `car_count` = :car_count_2", {"formation_name" : formation_name, "series_name" : series_name, "car_count" : car_count, "overview_updated" : datetime_now, "updated_datetime" : datetime_now, "series_name_2" : series_name, "car_count_2" : car_count})
+                
+                formation_list.add(formation_name)
+                
+                if car_count > max_car_count:
+                    max_car_count = car_count
+                
+                if min_car_count is None or car_count < min_car_count:
+                    min_car_count = car_count
+                
+                coupling_groups = formation_data[cnt + 2][0].split()
+                for coupling_group in coupling_groups:
+                    if len(coupling_group) >= 1:
+                        cur.execute("INSERT INTO `unyohub_coupling_groups`(`series_or_formation`, `coupling_group`) VALUES (:series_or_formation, :coupling_group)", {"series_or_formation" : formation_name, "coupling_group" : coupling_group})
+                        
+                        if coupling_group not in coupling_group_list:
+                            coupling_group_list.append(coupling_group)
             
             cnt += 4
     
@@ -179,7 +195,7 @@ def convert_formation_table (mes, main_dir):
     
     mes("データベースからformations.csvにない編成を削除しています...")
     
-    deleted_formations = list(set(formation_list_old) - set(formation_list))
+    deleted_formations = list(formation_list_old - formation_list)
     
     for deleted_formation_name in deleted_formations:
         cur.execute("DELETE FROM `unyohub_formations` WHERE `formation_name` = :formation_name", {"formation_name" : deleted_formation_name})
