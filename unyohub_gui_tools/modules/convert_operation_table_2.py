@@ -95,6 +95,12 @@ def convert_operation_table_2 (mes, main_dir, file_name):
             
             operation_number = operation_data[cnt][0].strip()
             
+            if operation_number[0] == "@":
+                operation_number = operation_number[1:].strip()
+                hidden_by_default = True
+            else:
+                hidden_by_default = False
+            
             operations[operation_number] = {
                 "trains" : [],
                 "starting_location" : starting_location,
@@ -109,6 +115,9 @@ def convert_operation_table_2 (mes, main_dir, file_name):
                 "main_color" : operation_data[cnt + 2][0],
                 "comment" : comment
             }
+            
+            if hidden_by_default:
+                operations[operation_number]["hidden_by_default"] = True
             
             operation_groups[-1]["operation_numbers"].append(operation_number)
             
