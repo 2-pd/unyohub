@@ -48,7 +48,7 @@
 }  
   
 **ログインしていない場合** :  
-文字列「NOT_LOGGED_IN」 
+文字列「NOT_LOGGED_IN」
 
 
 ## login.php
@@ -56,7 +56,7 @@
 
 ### 引数
 **$_POST["user_id"]** : ユーザーID  
-**$_POST["password"]** : パスワード
+**$_POST["password"]** : パスワード  
 **$_POST["totp_pin"]** : TOTPのワンタイムコード(2要素認証未設定ユーザーでは空文字列)
 
 ### 応答
@@ -83,7 +83,7 @@
 
 ### 応答
 **ログアウトに成功した場合** :  
-文字列「LOGGED_OUT」 
+文字列「LOGGED_OUT」  
   
 **ログアウトに失敗した場合** :  
 文字列「ERROR: 」とそれに続くエラー内容文
@@ -577,7 +577,7 @@ JSON化された時刻表の内容を返す
 
 ### 応答
 **取り消しに成功した場合** :  
-文字列「SUCCESSFULLY_REVOKED」
+文字列「SUCCESSFULLY_REVOKED」  
   
 **エラーの場合** :  
 文字列「ERROR: 」とそれに続くエラー内容文

@@ -4334,5 +4334,7 @@ input[type="radio"] + label small, .chip + label small {
     
     margin: 20px auto;
     
+    border-radius: 21px;
+    
     filter: drop-shadow(1px 2px 1px rgba(0,0,0,0.25));
 }

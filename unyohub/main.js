@@ -246,6 +246,10 @@ function update_instance_info () {
     } else {
         menu_manual_button_elm.style.display = "none";
     }
+    
+    if (location.pathname === "/") {
+        document.getElementById("splash_screen_instance_name").innerText = instance_info["instance_name"];
+    }
 }
 
 (function () {
@@ -2462,6 +2466,8 @@ function calculate_train_position (line_id, minutes_now, previous_station_index,
 }
 
 function get_train_positions (trains, line_id, hh_and_mm, is_inbound) {
+    var hidden_formation_regexp = /^(\?|運休)(\+(\?|運休))*$/;
+    
     var station_list = [...railroad_info["lines"][line_id]["stations"]];
     
     if (is_inbound) {
@@ -2567,21 +2573,31 @@ function get_train_positions (trains, line_id, hh_and_mm, is_inbound) {
             
             var formation_data = convert_formation_data(line_id, operation_list, is_inbound);
             
-            line_positions[train_position].push({
-                train_number : train_numbers[cnt],
-                train_type : train_type,
-                starting_station : trains[train_numbers[cnt]][cnt_2]["starting_station"],
-                first_departure_time : trains[train_numbers[cnt]][cnt_2]["first_departure_time"],
-                final_arrival_time : trains[train_numbers[cnt]][cnt_2]["final_arrival_time"],
-                operation_numbers : trains[train_numbers[cnt]][cnt_2]["operation_numbers"],
-                formation_text : formation_data["formation_text"],
-                posts_count : formation_data["posts_count"],
-                variant_exists : formation_data["variant_exists"],
-                comment_exists : formation_data["comment_exists"],
-                from_beginner : formation_data["from_beginner"],
-                is_quotation : formation_data["is_quotation"],
-                first_formation : formation_data["first_formation"]
-            });
+            var hidden_by_default = true;
+            for (var cnt_3 = 0; cnt_3 < operation_list.length; cnt_3++) {
+                if (!("hidden_by_default" in operation_table["operations"][[operation_list[cnt_3]]] && operation_table["operations"][[operation_list[cnt_3]]]["hidden_by_default"])) {
+                    hidden_by_default = false;
+                    break;
+                }
+            }
+            
+            if (!(hidden_by_default && hidden_formation_regexp.test(formation_data["formation_text"]))) {
+                line_positions[train_position].push({
+                    train_number : train_numbers[cnt],
+                    train_type : train_type,
+                    starting_station : trains[train_numbers[cnt]][cnt_2]["starting_station"],
+                    first_departure_time : trains[train_numbers[cnt]][cnt_2]["first_departure_time"],
+                    final_arrival_time : trains[train_numbers[cnt]][cnt_2]["final_arrival_time"],
+                    operation_numbers : trains[train_numbers[cnt]][cnt_2]["operation_numbers"],
+                    formation_text : formation_data["formation_text"],
+                    posts_count : formation_data["posts_count"],
+                    variant_exists : formation_data["variant_exists"],
+                    comment_exists : formation_data["comment_exists"],
+                    from_beginner : formation_data["from_beginner"],
+                    is_quotation : formation_data["is_quotation"],
+                    first_formation : formation_data["first_formation"]
+                });
+            }
             
             break;
         }
@@ -3385,7 +3401,7 @@ function timetable_change_lines(line_id, force_station_select_mode = false, draw
                 continue;
             }
             
-            for (var cnt_2 = Math.max(kana_rows_cnt, 0); kana_rows_regexp[cnt_2].exec(station_names[cnt]) === null; cnt_2++) {}
+            for (var cnt_2 = Math.max(kana_rows_cnt, 0); !kana_rows_regexp[cnt_2].test(station_names[cnt]); cnt_2++) {}
             if (cnt_2 > kana_rows_cnt) {
                 if (kana_rows_cnt >= 0) {
                     buf += "</div>";
@@ -5500,7 +5516,7 @@ function write_operation_data (yyyy_mm_dd, operation_number, train_number = null
         buf += "<div class='informational_text'>複数の編成が連結している場合は、" + alias_of_forward_direction + "の編成から順に「+」で区切って入力してください。<br>不明な編成には「不明」、運休情報は「運休」を入力可能です。</div>";
         
         buf += "<input type='checkbox' id='operation_data_details'";
-        if (speculative_post) {
+        if (speculative_post && instance_info["require_comments_on_speculative_posts"]) {
             buf += " checked='checked'";
         }
         buf += "><label for='operation_data_details' class='drop_down'>詳細情報</label><div>";
@@ -5519,7 +5535,7 @@ function write_operation_data (yyyy_mm_dd, operation_number, train_number = null
         buf += "<h4>運用補足情報</h4>";
         buf += "<textarea id='operation_data_comment'></textarea>";
         
-        if(speculative_post) {
+        if(speculative_post && instance_info["require_comments_on_speculative_posts"]) {
             buf += "<div class='warning_text' id='comment_guide'>お手数ですが、この運用に充当される編成を確認した方法を補足情報にご入力ください。</div>";
         } else {
             buf += "<div class='informational_text' id='comment_guide'>差し替え等の特記事項がない場合は省略可能です。</div>";

@@ -16,7 +16,8 @@ if (isset($_POST["last_modified_timestamp"]) && $last_modified <= intval($_POST[
     
     $instance_info = array(
         "instance_name" => $main_config["instance_name"],
-        "allow_guest_user" => $main_config["allow_guest_user"]
+        "allow_guest_user" => $main_config["allow_guest_user"],
+        "require_comments_on_speculative_posts" => $main_config["require_comments_on_speculative_posts"]
     );
     
     if (!empty($main_config["introduction_text"])) {

@@ -110,7 +110,7 @@ if (strlen($comment) === 0) {
         exit;
     }
     
-    if (($operation_date === $posted_date && $operation_data["starting_time"] > date("H:i", $ts_now)) || $operation_date > $posted_date) {
+    if ($config["require_comments_on_speculative_posts"] && (($operation_date === $posted_date && $operation_data["starting_time"] > date("H:i", $ts_now)) || $operation_date > $posted_date)) {
         print "ERROR: 出庫前の運用に充当される編成を特定した方法を補足情報にご入力ください";
         exit;
     }
