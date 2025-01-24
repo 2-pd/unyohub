@@ -42,30 +42,41 @@ if (empty($_SERVER["PATH_INFO"])) {
     if ($_SERVER["PATH_INFO"] === "/main/") {
         print "    <url>\n";
         print "        <loc>".$root_url."/</loc>\n";
+        print "        <changefreq>yearly</changefreq>\n";
+        print "        <priority>1.0</priority>\n";
         print "    </url>\n";
         print "    <url>\n";
         print "        <loc>".$root_url."/user/rules.php</loc>\n";
-        print "    </url>\n";
-        print "    <url>\n";
-        print "        <loc>".$root_url."/user/sign_up.php</loc>\n";
+        print "        <changefreq>yearly</changefreq>\n";
+        print "        <priority>0.1</priority>\n";
         print "    </url>\n";
     } else {
         $railroad_root = $root_url."/railroad_".$railroad_id;
         
         print "    <url>\n";
         print "        <loc>".$railroad_root."/</loc>\n";
+        print "        <changefreq>always</changefreq>\n";
+        print "        <priority>0.9</priority>\n";
         print "    </url>\n";
         print "    <url>\n";
         print "        <loc>".$railroad_root."/timetable/</loc>\n";
+        print "        <changefreq>yearly</changefreq>\n";
+        print "        <priority>0.8</priority>\n";
         print "    </url>\n";
         print "    <url>\n";
         print "        <loc>".$railroad_root."/operation_data/</loc>\n";
+        print "        <changefreq>daily</changefreq>\n";
+        print "        <priority>0.8</priority>\n";
         print "    </url>\n";
         print "    <url>\n";
         print "        <loc>".$railroad_root."/formations/</loc>\n";
+        print "        <changefreq>monthly</changefreq>\n";
+        print "        <priority>0.8</priority>\n";
         print "    </url>\n";
         print "    <url>\n";
         print "        <loc>".$railroad_root."/operation_table/</loc>\n";
+        print "        <changefreq>yearly</changefreq>\n";
+        print "        <priority>0.8</priority>\n";
         print "    </url>\n";
         
         $railroad_info = json_decode(file_get_contents("data/".$railroad_id."/railroad_info.json"), TRUE);
@@ -74,12 +85,16 @@ if (empty($_SERVER["PATH_INFO"])) {
         foreach ($railroad_info["lines_order"] as $line_id) {
             print "    <url>\n";
             print "        <loc>".$railroad_root."/timetable/".$line_id."/</loc>\n";
+            print "        <changefreq>yearly</changefreq>\n";
+            print "        <priority>0.7</priority>\n";
             print "    </url>\n";
             
             foreach ($railroad_info["lines"][$line_id]["stations"] as $station) {
                 if (empty($station["is_signal_station"])) {
                     print "    <url>\n";
                     print "        <loc>".$railroad_root."/timetable/".$line_id."/".urlencode($station["station_name"])."/</loc>\n";
+                    print "        <changefreq>daily</changefreq>\n";
+                    print "        <priority>0.4</priority>\n";
                     print "    </url>\n";
                 }
             }
@@ -89,6 +104,8 @@ if (empty($_SERVER["PATH_INFO"])) {
         foreach ($formation_names as $formation_name) {
             print "    <url>\n";
             print "        <loc>".$railroad_root."/formations/".urlencode($formation_name)."/</loc>\n";
+            print "        <changefreq>yearly</changefreq>\n";
+            print "        <priority>0.6</priority>\n";
             print "    </url>\n";
         }
     }

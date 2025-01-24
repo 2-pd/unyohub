@@ -2033,7 +2033,7 @@ var position_reload_button_elm = document.getElementById("position_reload_button
 var position_time_button_elm = document.getElementById("position_time_button");
 
 function position_mode (date_str = "today", position_time_additions = null) {
-    change_title(railroad_info["railroad_name"] + " | " + instance_info["instance_name"], "/railroad_" + railroad_info["railroad_id"] + "/");
+    change_title(railroad_info["railroad_name"] + "の運用情報 | " + instance_info["instance_name"], "/railroad_" + railroad_info["railroad_id"] + "/");
     
     change_mode(0);
     

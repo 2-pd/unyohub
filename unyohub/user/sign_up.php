@@ -65,7 +65,7 @@ if (isset($_POST["user_id"], $_POST["password"], $_POST["user_name"], $_POST["zi
     }
 }
 
-print_header("新規ユーザー登録", TRUE);
+print_header("新規ユーザー登録", TRUE, TRUE);
 
 ?>
     <script>

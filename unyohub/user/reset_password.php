@@ -1,7 +1,7 @@
 <?php
 include "user_common.php";
 
-print_header("パスワードのリセット", FALSE, FALSE);
+print_header("パスワードのリセット", TRUE, FALSE, FALSE);
 
 print "    <h2>パスワードのリセット</h2>\n";
 
