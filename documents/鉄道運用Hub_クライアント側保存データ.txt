@@ -17,12 +17,14 @@ _/_/_/_/ クライアント側ローカルストレージ _/_/_/_/
 ███ unyohub_config ███
 
 {
+    "unyohub_version" : 最終実行時のアプリバージョン文字列,
     "guest_id" : ログインせずに運用情報を投稿する際の仮ID(「*」に続けて12桁の乱数値を付けた文字列),
     "dark_mode" : ダークモードの有効無効(BOOL値),
     "refresh_interval" : 運用データを自動で再取得する間隔(分単位の整数値),
     "operation_data_cache_period" : 運用データのキャッシュ保管日数(整数値),
     "show_train_types_in_position_mode" : 走行位置モードで列車番号の代わりに種別(または行き先)を表示させるか(BOOL値),
     "show_deadhead_trains_on_timetable" : 時刻表閲覧時に回送と当駅止まりを表示するか(BOOL値),
+    "show_starting_trains_only_on_timetable" : 時刻表閲覧時に当駅始発のみを表示するか(BOOL値),
     "colorize_corrected_posts" : 訂正のあった情報を色で区別して表示するか(BOOL値),
     "colorize_beginners_posts" : ビギナーユーザーから投稿された情報を色で区別して表示するか(BOOL値),
     "colorize_formation_table" : 編成表の表示に実際の車体色を反映するか(BOOL値),

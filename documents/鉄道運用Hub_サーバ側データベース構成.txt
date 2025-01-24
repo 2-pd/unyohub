@@ -91,18 +91,18 @@ _/_/_/_/ データベース _/_/_/_/
 `unyohub_data` ユーザー投稿データ
   `operation_date` TEXT NOT NULL 「YYYY-MM-DD」形式の日付
   `operation_number` TEXT NOT NULL 運用番号(アルファベットなどを含む場合があるため文字列型)
+  `assign_order` INTEGER NOT NULL 当該運用に何番目に充当された編成の情報か(1から始まり、差し替えのたびに1ずつ増える)
   `user_id` TEXT NOT NULL 投稿者ID(未登録ユーザーの場合、クライアント端末が生成する12桁の乱数値の頭に「*」を付加した文字列を記録する)
   `train_number` TEXT 目撃時の列車番号または「○」(出庫時)、「△」(入庫時)、NULL(引用情報の場合)
   `formations` TEXT NOT NULL 充当組成(複数編成併結による運用の場合も「+」で区切って1レコードに格納)
-  `reassigned` INTEGER NOT NULL 差し替え情報か否か
   `is_quotation` INTEGER NOT NULL 引用情報か否か
   `posted_datetime` TEXT NOT NULL 「YYYY-MM-DD HH:MM:SS」形式の情報投稿日時
   `comment` TEXT 運用補足情報(コメント)
   `ip_address` TEXT 投稿者のIPアドレス(IPアドレスを記録しない設定の場合はNULL)
 
-  PRIMARY KEY(`operation_date`, `operation_number`, `user_id`, `formations`)
+  PRIMARY KEY(`operation_date`, `operation_number`, `assign_order`, `user_id`)
   INDEX `unyohub_idx_d1`(`user_id`, `posted_datetime`)
-  INDEX `unyohub_idx_d2`(`operation_date`, `operation_number`, `posted_datetime`)
+  INDEX `unyohub_idx_d2`(`operation_date`, `operation_number`, `assign_order`, `posted_datetime`)
   INDEX `unyohub_idx_d3`(`ip_address`, `posted_datetime`)
 
 
