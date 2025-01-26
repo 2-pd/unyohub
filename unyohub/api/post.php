@@ -1,5 +1,4 @@
 <?php
-include "../libs/wakarana/main.php";
 include "../libs/zizai_captcha/main.php";
 include "__operation_data_functions.php";
 
@@ -16,8 +15,6 @@ if ($moderation_db_obj->querySingle("SELECT COUNT(`ip_address`) FROM `unyohub_mo
     print "ERROR: ご利用のIPアドレスは投稿制限に達しました";
     exit;
 }
-
-$wakarana = new wakarana("../config");
 
 $user = $wakarana->check();
 if (is_object($user)) {
@@ -78,6 +75,17 @@ update_diagram_revision($ts);
 $operation_data = get_operation_info($ts, $_POST["operation_number"]);
 
 
+if (!empty($_POST["assign_order"])) {
+    $assign_order = intval($_POST["assign_order"]);
+    
+    if ($assign_order < 1 || $assign_order > 10) {
+        print "ERROR: 差し替え回数が制限値を逸脱しています";
+        exit;
+    }
+} else {
+    $assign_order = 1;
+}
+
 if (!empty($_POST["is_quotation"]) && $_POST["is_quotation"] === "YES") {
     $is_quotation = TRUE;
 } else {
@@ -122,26 +130,21 @@ $operation_number = $db_obj->escapeString($_POST["operation_number"]);
 $formations = preg_replace("/不明/u", "?", mb_convert_kana($_POST["formations"], "KVa"));
 
 if ($formations !== "運休" && $formations !== "ウヤ" && $formations !== "トケ") {
-    $formation_data = check_formation($formations);
+    $formation_info = get_formation_info($formations, TRUE);
     
-    if ($formation_data["min_car_count_range"] > $operation_data["max_car_count"] || $formation_data["max_car_count_range"] < $operation_data["min_car_count"]) {
+    if ($formation_info["min_car_count_range"] > $operation_data["max_car_count"] || $formation_info["max_car_count_range"] < $operation_data["min_car_count"]) {
         print "ERROR: 編成の両数が異常です";
         exit;
     }
-    
-    $formation_pattern = $formation_data["formation_pattern"];
-    $formation_list = $formation_data["formation_list"];
 } else {
     $formations = "";
-    $formation_pattern = array("");
-    $formation_list = array();
+    $formation_info = get_formation_info($formations);
 }
 
 
 $ts_now = time();
 $posted_date = date("Y-m-d", $ts_now);
 
-$from_beginner = TRUE;
 if (is_object($user)) {
     $days_posted = intval($user->get_value("days_posted"));
     $post_count = intval($user->get_value("post_count")) + 1;
@@ -154,10 +157,6 @@ if (is_object($user)) {
     }
     
     $user->increment_value("post_count");
-    
-    if ($days_posted >= 20 || ($days_posted >= 10 && $post_count >= 50) || $user->check_permission("management_member")) {
-        $from_beginner = FALSE;
-    }
 }
 
 
@@ -170,35 +169,30 @@ if ($config["log_ip_address"]) {
 
 $posted_datetime = $posted_date." ".date("H:i:s", $ts_now);
 
-$db_obj->query("INSERT OR REPLACE INTO `unyohub_data` (`operation_date`, `operation_number`, `user_id`, `train_number`, `formations`, `is_quotation`, `posted_datetime`, `comment`, `ip_address`) VALUES ('".$operation_date."', '".$operation_number."', '".$db_obj->escapeString($user_id)."', ".$train_number_q.", '".$db_obj->escapeString($formations)."', ".intval($is_quotation).", '".$posted_datetime."', '".$db_obj->escapeString($comment)."', ".$ip_address_q.")");
+$db_obj->query("INSERT OR REPLACE INTO `unyohub_data` (`operation_date`, `operation_number`, `assign_order`, `user_id`, `train_number`, `formations`, `is_quotation`, `posted_datetime`, `comment`, `ip_address`) VALUES ('".$operation_date."', '".$operation_number."', ".$assign_order.", '".$db_obj->escapeString($user_id)."', ".$train_number_q.", '".$db_obj->escapeString($formations)."', ".intval($is_quotation).", '".$posted_datetime."', '".$db_obj->escapeString($comment)."', ".$ip_address_q.")");
 
-$data_cache_values = get_data_cache_values($operation_date, $operation_number, $formation_pattern);
-
-$comment_exists = boolval(strlen($comment));
-
-update_data_cache($operation_date, $operation_number, $formations, $posted_datetime, $formation_list, $data_cache_values["posts_count"], $data_cache_values["variant_exists"], $comment_exists, $from_beginner, $is_quotation);
+$data_cache_values = update_data_cache($operation_date, $operation_number, $posted_datetime, array($assign_order => array("formation_pattern" => $formation_info["formation_pattern"], "formation_list" => $formation_info["formation_list"])));
 
 if (!empty($operation_data["terminal_track"])) {
-    update_next_day_data($ts, $operation_data["terminal_location"], $operation_data["terminal_track"], $formations, $posted_datetime, $formation_list, $from_beginner, $is_quotation);
+    update_next_day_data($ts, $operation_data["terminal_location"], $operation_data["terminal_track"], $data_cache_values["formations"], $posted_datetime, $data_cache_values["formation_list"], $data_cache_values["from_beginner"], $data_cache_values["is_quotation"]);
 }
 
+unset($data_cache_values["formation_list"]);
 
-$data = array("formations" => $formations, "posts_count" => $data_cache_values["posts_count"]);
-
-if ($data_cache_values["variant_exists"]) {
-    $data["variant_exists"] = TRUE;
+if (!$data_cache_values["variant_exists"]) {
+    unset($data_cache_values["variant_exists"]);
 }
 
-if ($comment_exists) {
-    $data["comment_exists"] = TRUE;
+if (!$data_cache_values["comment_exists"]) {
+    unset($data_cache_values["comment_exists"]);
 }
 
-if ($from_beginner) {
-    $data["from_beginner"] = TRUE;
+if (!$data_cache_values["from_beginner"]) {
+    unset($data_cache_values["from_beginner"]);
 }
 
-if ($is_quotation) {
-    $data["is_quotation"] = TRUE;
+if (!$data_cache_values["is_quotation"]) {
+    unset($data_cache_values["is_quotation"]);
 }
 
-print json_encode(array($_POST["operation_number"] => $data), JSON_UNESCAPED_UNICODE);
+print json_encode(array($_POST["operation_number"] => $data_cache_values), JSON_UNESCAPED_UNICODE);

@@ -105,6 +105,7 @@ function get_default_config () {
         "show_train_types_in_position_mode" : false,
         "show_deadhead_trains_on_timetable" : true,
         "show_starting_trains_only_on_timetable" : false,
+        "colorize_corrected_posts" : false,
         "colorize_beginners_posts" : false,
         "colorize_formation_table" : true,
         "simplify_operation_details" : false
@@ -1120,7 +1121,7 @@ function update_formation_styles () {
             var coloring_ids = Object.keys(formations["body_colorings"]);
             
             for (cnt = 0; cnt < coloring_ids.length; cnt++) {
-                var base_color = formations["body_colorings"][coloring_ids[cnt]]["base_color"]
+                var base_color = formations["body_colorings"][coloring_ids[cnt]]["base_color"];
                 
                 var css_code = ".car_coloring_" + coloring_ids[cnt] + " { background-color: " + base_color + "; color: " + formations["body_colorings"][coloring_ids[cnt]]["font_color"] + "; text-shadow: -1.4px -1.4px " + base_color + ", -0.5px -1.4px " + base_color + ", 0.5px -1.4px " + base_color + ", 1.4px -1.4px " + base_color + ", -1.4px -0.5px " + base_color + ", 1.4px -0.5px " + base_color + ", -1.4px 0.5px " + base_color + ", 1.4px 0.5px " + base_color + ", -1.4px 1.4px " + base_color + ", -0.5px 1.4px " + base_color + ", 0.5px 1.4px " + base_color + ", 1.4px 1.4px " + base_color + ";";
                 
@@ -1657,7 +1658,7 @@ function load_operation_table (resolve_func, reject_func, diagram_id, update_lin
     var tables = ["operation_tables"];
     
     if (update_line_operations) {
-        tables.push("line_operations")
+        tables.push("line_operations");
     }
     
     idb_start_transaction(tables, false, function (transaction) {
@@ -2837,8 +2838,12 @@ function change_show_train_types (bool_val) {
     position_change_time(0);
 }
 
+var assign_order_maxima = {};
+
 function get_operation_data_detail (operation_date, operation_number_or_list, area_id) {
-    var area_elm = document.getElementById(area_id)
+    assign_order_maxima = {};
+    
+    var area_elm = document.getElementById(area_id);
     
     if (Array.isArray(operation_number_or_list)) {
         operation_number_list = operation_number_or_list;
@@ -2869,6 +2874,10 @@ function get_operation_data_detail (operation_date, operation_number_or_list, ar
                 detail_html += "<input type='checkbox' id='" + area_id + "_detail_" + add_slashes(operation_numbers[cnt]) + "'><label for='" + area_id + "_detail_" + add_slashes(operation_numbers[cnt]) + "' class='drop_down'>" + escape_html(operation_numbers[cnt]) + "運用 目撃情報</label><div>";
                 
                 for (var cnt_2 = 0; cnt_2 < data[operation_numbers[cnt]].length; cnt_2++) {
+                    if (cnt_2 === 0) {
+                        assign_order_maxima[operation_numbers[cnt]] = data[operation_numbers[cnt]][cnt_2]["assign_order"];
+                    }
+                    
                     if (data[operation_numbers[cnt]][cnt_2]["formations"] !== "") {
                         var formation_text = data[operation_numbers[cnt]][cnt_2]["formations"];
                     } else {
@@ -2921,7 +2930,7 @@ function get_operation_data_detail (operation_date, operation_number_or_list, ar
                     }
                     
                     if (user_data !== null && (data[operation_numbers[cnt]][cnt_2]["user_id"] === user_data["user_id"] || "ip_address" in data[operation_numbers[cnt]][cnt_2])) {
-                        user_name_html += "<button type='button' onclick='edit_operation_data(\"" + operation_date + "\", \"" + add_slashes(operation_numbers[cnt]) + "\", \"" + add_slashes(data[operation_numbers[cnt]][cnt_2]["user_id"]) + "\", \"" + add_slashes(formation_text) + "\"" + ip_address_str + ");'>";
+                        user_name_html += "<button type='button' onclick='edit_operation_data(\"" + operation_date + "\", \"" + add_slashes(operation_numbers[cnt]) + "\", " + data[operation_numbers[cnt]][cnt_2]["assign_order"] + ", \"" + add_slashes(data[operation_numbers[cnt]][cnt_2]["user_id"]) + "\", \"" + add_slashes(formation_text) + "\"" + ip_address_str + ");'>";
                         
                         if (data[operation_numbers[cnt]][cnt_2]["user_id"] === user_data["user_id"]) {
                             user_name_html += "取り消し";
@@ -2944,6 +2953,8 @@ function get_operation_data_detail (operation_date, operation_number_or_list, ar
                 }
                 
                 if (cnt_2 === 0) {
+                    assign_order_maxima[operation_numbers[cnt]] = 0;
+                    
                     detail_html += "<div class='descriptive_text'>";
                     if (operation_date === get_date_string(get_timestamp())) {
                         detail_html += "まだ目撃情報が投稿されていません";
@@ -4362,7 +4373,7 @@ function draw_operation_detail (operation_number, diagram_id, operation_data_dat
     
     var checked_strs = [" checked='checked'", ""];
     if (config["simplify_operation_details"]) {
-        checked_strs.reverse()
+        checked_strs.reverse();
     }
     buf += "<div><input type='radio' name='switch_simplify_operation_details' id='simplify_operation_details' onchange='change_simplify_operation_details(!this.checked, \"" + add_slashes(operation_number) + "\", " + diagram_id_or_ts + ", " + is_today + ");'" + checked_strs[0] + "><label for='simplify_operation_details'>詳細表示</label><input type='radio'  name='switch_simplify_operation_details' id='not_simplify_operation_details' onchange='change_simplify_operation_details(this.checked, \"" + add_slashes(operation_number) + "\", " + diagram_id_or_ts + ", " + is_today + ");'" + checked_strs[1] + "><label for='not_simplify_operation_details'>簡略表示</label></div>";
     
@@ -5521,6 +5532,9 @@ function write_operation_data (yyyy_mm_dd, operation_number, train_number = null
         }
         buf += "><label for='operation_data_details' class='drop_down'>詳細情報</label><div>";
         
+        buf += "<h4>情報の種類</h4>";
+        buf += "<div class='radio_area'><input type='radio' name='operation_data_type' id='operation_data_type_normal' checked='checked'><label for='operation_data_type_normal'>通常または訂正の情報</label><input type='radio' name='operation_data_type' id='operation_data_type_reassign'><label for='operation_data_type_reassign'>差し替えの情報</label></div>";
+        
         if (post_yyyy_mm_dd === yyyy_mm_dd_today) {
             var now_hh_mm = get_hh_mm();
         } else {
@@ -5728,7 +5742,7 @@ function clear_formation_suggestion () {
 }
 
 function select_operation_to_write_data (line_id, train_number, starting_station, train_direction) {
-    var train_operations = get_operations(line_id, train_number, starting_station, train_direction)
+    var train_operations = get_operations(line_id, train_number, starting_station, train_direction);
     
     if (train_operations.length === 1) {
         write_operation_data(null, train_operations[0], train_number);
@@ -5801,7 +5815,7 @@ function check_post_operation_data () {
 function post_operation_data () {
     open_wait_screen();
     
-    if (user_data !== null && one_time_token === null) {
+    if ((user_data !== null && one_time_token === null) || !(post_operation_number in assign_order_maxima)) {
         close_wait_screen();
         
         mes("内部処理が完了していないため、数秒待ってから再送信してください", true);
@@ -5809,7 +5823,25 @@ function post_operation_data () {
         return;
     }
     
-    var send_data = "railroad_id=" + escape_form_data(railroad_info["railroad_id"]) + "&date=" + escape_form_data(post_yyyy_mm_dd) + "&operation_number=" + escape_form_data(post_operation_number) + "&formations=" + escape_form_data(document.getElementById("operation_data_formation").value) + "&comment=" + escape_form_data(document.getElementById("operation_data_comment").value);
+    if (document.getElementById("operation_data_type_reassign").checked) {
+        if (assign_order_maxima[post_operation_number] === 0) {
+            close_wait_screen();
+            
+            mes("他の情報が投稿されていない運用に差し替え情報を投稿することはできません", true);
+            
+            return;
+        }
+        
+        var assign_order = assign_order_maxima[post_operation_number] + 1;
+    } else {
+        if (assign_order_maxima[post_operation_number] >= 1) {
+            var assign_order = assign_order_maxima[post_operation_number];
+        } else {
+            var assign_order = 1;
+        }
+    }
+    
+    var send_data = "railroad_id=" + escape_form_data(railroad_info["railroad_id"]) + "&date=" + escape_form_data(post_yyyy_mm_dd) + "&operation_number=" + escape_form_data(post_operation_number) + "&assign_order=" + assign_order + "&formations=" + escape_form_data(document.getElementById("operation_data_formation").value) + "&comment=" + escape_form_data(document.getElementById("operation_data_comment").value);
     
     if (document.getElementById("identify_method_quote").checked) {
         send_data += "&is_quotation=YES";
@@ -5859,7 +5891,7 @@ function post_operation_data () {
     });
 }
 
-function edit_operation_data (yyyy_mm_dd, operation_number, user_id, formation_text, ip_address = null) {
+function edit_operation_data (yyyy_mm_dd, operation_number, assign_order, user_id, formation_text, ip_address = null) {
     var popup_inner_elm = open_popup("edit_operation_data_popup", "運用情報の取り消し");
     
     buf = "<h3>投稿内容</h3>";
@@ -5878,7 +5910,7 @@ function edit_operation_data (yyyy_mm_dd, operation_number, user_id, formation_t
         buf += "<br>";
     }
     
-    buf += "<br><button type='button' class='wide_button' onclick='revoke_operation_data(\"" + yyyy_mm_dd + "\", \"" + add_slashes(operation_number) + "\", \"" + add_slashes(user_id) + "\");'>取り消す</button>";
+    buf += "<br><button type='button' class='wide_button' onclick='revoke_operation_data(\"" + yyyy_mm_dd + "\", \"" + add_slashes(operation_number) + "\", " + assign_order + ",\"" + add_slashes(user_id) + "\");'>取り消す</button>";
     
     if (user_id !== user_data["user_id"]) {
         buf += "<button type='button' class='wide_button' onclick='revoke_users_all_operation_data(\"" + add_slashes(user_id) + "\");'>ユーザーの投稿を全て取り消す</button>";
@@ -5933,7 +5965,7 @@ function show_moderation_info (user_id, ip_address) {
     });
 }
 
-function revoke_operation_data (yyyy_mm_dd, operation_number, user_id) {
+function revoke_operation_data (yyyy_mm_dd, operation_number, assign_order, user_id) {
     open_wait_screen();
     
     if (one_time_token === null) {
@@ -5944,7 +5976,7 @@ function revoke_operation_data (yyyy_mm_dd, operation_number, user_id) {
         return;
     }
     
-    ajax_post("revoke.php", "railroad_id=" + escape_form_data(railroad_info["railroad_id"]) + "&date=" + escape_form_data(yyyy_mm_dd) + "&operation_number=" + escape_form_data(operation_number) + "&user_id=" + escape_form_data(user_id) + "&one_time_token=" + escape_form_data(one_time_token), function (response) {
+    ajax_post("revoke.php", "railroad_id=" + escape_form_data(railroad_info["railroad_id"]) + "&date=" + escape_form_data(yyyy_mm_dd) + "&operation_number=" + escape_form_data(operation_number) + "&assign_order=" + assign_order + "&user_id=" + escape_form_data(user_id) + "&one_time_token=" + escape_form_data(one_time_token), function (response) {
         close_wait_screen();
         
         if (response !== false) {
@@ -6217,6 +6249,7 @@ function edit_config () {
     var popup_inner_elm = open_popup("config_popup", "アプリの設定");
     
     var buf = "<input type='checkbox' id='dark_mode_check' class='toggle' onchange='change_config();'" + (config["dark_mode"] ? "checked='checked'" : "") + "><label for='dark_mode_check'>ダークモード</label>";
+    buf += "<input type='checkbox' id='colorize_corrected_posts_check' class='toggle' onchange='change_config();'" + (config["colorize_corrected_posts"] ? "checked='checked'" : "") + "><label for='colorize_corrected_posts_check'>訂正された投稿を区別する</label>";
     buf += "<input type='checkbox' id='colorize_beginners_posts_check' class='toggle' onchange='change_config();'" + (config["colorize_beginners_posts"] ? "checked='checked'" : "") + "><label for='colorize_beginners_posts_check'>ビギナーの方の投稿を区別する</label>";
     buf += "<h3>運用情報の自動更新間隔</h3>";
     buf += "<input type='number' id='refresh_interval' min='1' max='60' onchange='change_config();' value='" + config["refresh_interval"] + "'>分ごと<br>";
@@ -6231,6 +6264,7 @@ function edit_config () {
 
 function change_config () {
     config["dark_mode"] = document.getElementById("dark_mode_check").checked;
+    config["colorize_corrected_posts"] = document.getElementById("colorize_corrected_posts_check").checked;
     config["colorize_beginners_posts"] = document.getElementById("colorize_beginners_posts_check").checked;
     
     var refresh_interval_elm = document.getElementById("refresh_interval");
@@ -6259,7 +6293,8 @@ function reset_config_value () {
         var dafault_config = get_default_config();
         
         document.getElementById("dark_mode_check").checked = dafault_config["dark_mode"];
-        document.getElementById("colorize_beginners_posts_check").checked = dafault_config["colorize_beginners_posts_check"];
+        document.getElementById("colorize_corrected_posts_check").checked = dafault_config["colorize_corrected_posts"];
+        document.getElementById("colorize_beginners_posts_check").checked = dafault_config["colorize_beginners_posts"];
         document.getElementById("refresh_interval").value = dafault_config["refresh_interval"];
         document.getElementById("operation_data_cache_period").value = dafault_config["operation_data_cache_period"];
         

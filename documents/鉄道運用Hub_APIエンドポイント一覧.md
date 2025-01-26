@@ -254,6 +254,7 @@ formations.jsonの内容を返す
         {  
             "operation_number" : 運用番号,  
             "formations" : 組成情報,  
+            "relieved_formations" : 差し替え前の編成を充当順に配列で,  
             "posts_count" : 情報の投稿数,  
             "variant_exists" : 投稿情報のバリエーションの有無,  
             "comment_exists" : 運用補足情報の有無,  
@@ -265,6 +266,7 @@ formations.jsonの内容を返す
         {  
             "operation_number" : 運用番号,  
             "formations" : 組成情報,  
+            "relieved_formations" : 差し替え前の編成を充当順に配列で,  
             "posts_count" : 情報の投稿数,  
             "variant_exists" : 投稿情報のバリエーションの有無,  
             "comment_exists" : 運用補足情報の有無,  
@@ -277,6 +279,7 @@ formations.jsonの内容を返す
         {  
             "operation_number" : 運用番号,  
             "formations" : 組成情報,  
+            "relieved_formations" : 差し替え前の編成を充当順に配列で,  
             "posts_count" : 情報の投稿数,  
             "variant_exists" : 投稿情報のバリエーションの有無,  
             "comment_exists" : 運用補足情報の有無,  
@@ -385,7 +388,7 @@ JSON化された時刻表の内容を返す
 {  
     "タイムスタンプの時刻より後に情報投稿のあった運用番号" : { 当該の運用番号に投稿された情報が全て取り消された場合、この連想配列ではなくnullが格納される  
         "formations" : 編成名(最も新しい投稿の情報を前位側・奇数向きから順に各編成を「+」で区切った文字列。運休の場合は空文字列),  
-        "relieved_formations" : 差し替え前の編成を充当順に配列で  
+        "relieved_formations" : 差し替え前の編成を充当順に配列で,  
         "posts_count" : 情報の投稿数,  
         "variant_exists" : 投稿情報のバリエーションの有無(なければ省略),  
         "comment_exists" : 運用補足情報の有無(なければ省略),  
@@ -452,7 +455,8 @@ JSON化された時刻表の内容を返す
     "YYYY-MM-DD形式の日付" : [  
         {  
             "operation_number" : 運用番号,  
-            "formations" : 編成名(前位側・奇数向きから順に各編成を「+」で区切った文字列。運休の場合は空文字列)  
+            "formations" : 編成名(前位側・奇数向きから順に各編成を「+」で区切った文字列。運休の場合は空文字列),  
+            "relieved_formations" : 差し替え前の編成を充当順に配列で  
         }...  
     ]...  
 }  
@@ -525,6 +529,7 @@ JSON化された時刻表の内容を返す
 {  
   "投稿された運用番号" : {  
         "formations" : 編成名(最も新しい投稿の情報を前位側・奇数向きから順に各編成を「+」で区切った文字列。運休の場合は空文字列),  
+        "relieved_formations" : 差し替え前の編成を充当順に配列で,  
         "posts_count" : 情報の投稿数,  
         "variant_exists" : 投稿情報のバリエーションの有無(なければ省略),  
         "comment_exists" : 運用補足情報の有無(なければ省略),  
@@ -546,6 +551,7 @@ JSON化された時刻表の内容を返す
 **$_POST["railroad_id"]** : 路線系統識別名  
 **$_POST["date"]** : YYYY-MM-DD形式の日付  
 **$_POST["operation_number"]** : 運用番号  
+**$_POST["assign_order"]** : 当該運用に何番目に充当された編成の情報か(1から始まり、差し替えのたびに1ずつ増える。上限値は10で、省略時は1とみなす)  
 **$_POST["user_id"]** : ユーザーID。モデレーターは他のユーザーの投稿も取り消すことができる。  
 **$_POST["one_time_token"]** : ワンタイムトークン
 
@@ -554,6 +560,7 @@ JSON化された時刻表の内容を返す
 {  
   "取り消し操作対象の運用番号" : { 他のユーザーからの情報がない場合、この連想配列ではなくnullが格納される  
         "formations" : 他のユーザーの情報に基づく編成名(最も新しい投稿の情報を前位側・奇数向きから順に各編成を「+」で区切った文字列),  
+        "relieved_formations" : 差し替え前の編成を充当順に配列で,  
         "posts_count" : 情報の投稿数,  
         "variant_exists" : 投稿情報のバリエーションの有無(なければ省略),  
         "comment_exists" : 運用補足情報の有無(なければ省略),  

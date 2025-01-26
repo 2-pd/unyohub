@@ -1,8 +1,5 @@
 <?php
-include "../libs/wakarana/main.php";
 include "__operation_data_functions.php";
-
-$wakarana = new wakarana("../config");
 
 $user = $wakarana->check();
 if (is_object($user)) {

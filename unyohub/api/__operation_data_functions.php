@@ -1,4 +1,8 @@
 <?php
+include "../libs/wakarana/main.php";
+
+$wakarana = new wakarana("../config");
+
 function load_railroad_data ($id) {
     global $railroad_id;
     global $db_obj;
@@ -114,8 +118,15 @@ function get_operation_info ($ts, $operation_number) {
     return $operation_data;
 }
 
-function check_formation ($formations_str) {
+function get_formation_info ($formations_str, $validate = FALSE) {
     global $db_obj;
+    
+    $formation_pattern = array("");
+    $formation_list = array();
+    
+    if ($formations_str === "") {
+        return array("formation_pattern" => $formation_pattern, "formation_list" => $formation_list);
+    }
     
     $formations = explode("+", $formations_str);
     
@@ -124,17 +135,19 @@ function check_formation ($formations_str) {
         exit;
     }
     
-    $coupling_group_intersection = NULL;
-    $formation_pattern = array("");
-    $formation_list = array();
     $formation_pattern_last = array(NULL);
-    $min_car_count_range = 0;
-    $max_car_count_range = 0;
+    
+    if ($validate) {
+        $coupling_group_intersection = NULL;
+        $min_car_count_range = 0;
+        $max_car_count_range = 0;
+    }
+    
     foreach ($formations as $formation) {
         if ($formation !== "?") {
             $formation_escaped = $db_obj->escapeString($formation);
             
-            $formation_data = $db_obj->querySingle("SELECT `series_name`, `car_count` FROM `unyohub_formations` WHERE `formation_name` = '".$formation_escaped."' OR `series_name` = '".$formation_escaped."' LIMIT 1", TRUE);
+            $formation_data = $db_obj->querySingle("SELECT `series_name`".($validate ? ", `car_count`" : "")." FROM `unyohub_formations` WHERE `formation_name` = '".$formation_escaped."' OR `series_name` = '".$formation_escaped."' LIMIT 1", TRUE);
             
             if (empty($formation_data)) {
                 print "ERROR: 入力された編成名・車両形式に誤りがあります";
@@ -143,34 +156,38 @@ function check_formation ($formations_str) {
             
             $series_name = $formation_data["series_name"];
             
-            $coupling_groups_r = $db_obj->query("SELECT `coupling_group` FROM `unyohub_coupling_groups` WHERE `series_or_formation` = '".$formation_escaped."'");
-            
-            $coupling_groups = [];
-            while ($coupling_group_data = $coupling_groups_r->fetchArray(SQLITE3_NUM)) {
-                $coupling_groups[] = $coupling_group_data[0];
-            }
-            
-            if ($min_car_count_range === 0) {
-                $coupling_group_intersection = $coupling_groups;
-            } else {
-                if (is_null($coupling_group_intersection)) {
-                    $coupling_group_intersection = $coupling_groups;
-                } else {
-                    $coupling_group_intersection = array_intersect($coupling_group_intersection, $coupling_groups);
+            if ($validate) {
+                $coupling_groups_r = $db_obj->query("SELECT `coupling_group` FROM `unyohub_coupling_groups` WHERE `series_or_formation` = '".$formation_escaped."'");
+                
+                $coupling_groups = [];
+                while ($coupling_group_data = $coupling_groups_r->fetchArray(SQLITE3_NUM)) {
+                    $coupling_groups[] = $coupling_group_data[0];
                 }
                 
-                if (empty($coupling_group_intersection)) {
-                    print "ERROR: 併結できない編成の組み合わせです";
-                    exit;
+                if ($min_car_count_range === 0) {
+                    $coupling_group_intersection = $coupling_groups;
+                } else {
+                    if (is_null($coupling_group_intersection)) {
+                        $coupling_group_intersection = $coupling_groups;
+                    } else {
+                        $coupling_group_intersection = array_intersect($coupling_group_intersection, $coupling_groups);
+                    }
+                    
+                    if (empty($coupling_group_intersection)) {
+                        print "ERROR: 併結できない編成の組み合わせです";
+                        exit;
+                    }
                 }
             }
             
             if ($series_name !== $formation) {
                 $formation_list[] = $formation;
                 
-                $min_car_count_range += $formation_data["car_count"];
-                $max_car_count_range += $formation_data["car_count"];
-            } else {
+                if ($validate) {
+                    $min_car_count_range += $formation_data["car_count"];
+                    $max_car_count_range += $formation_data["car_count"];
+                }
+            } elseif ($validate) {
                 $series_data = $db_obj->querySingle("SELECT `min_car_count`, `max_car_count` FROM `unyohub_series` WHERE `series_name` = '".$formation_escaped."'", TRUE);
                 
                 $min_car_count_range += $series_data["min_car_count"];
@@ -183,13 +200,15 @@ function check_formation ($formations_str) {
         } else {
             $series_name = "?";
             
-            if (is_array($coupling_group_intersection) && empty($coupling_group_intersection)) {
-                print "ERROR: 併結できない編成の組み合わせです";
-                exit;
+            if ($validate) {
+                if (is_array($coupling_group_intersection) && empty($coupling_group_intersection)) {
+                    print "ERROR: 併結できない編成の組み合わせです";
+                    exit;
+                }
+                
+                $min_car_count_range += 1;
+                $max_car_count_range += 20;
             }
-            
-            $min_car_count_range += 1;
-            $max_car_count_range += 20;
         }
         
         $formation_pattern_2 = array();
@@ -227,52 +246,114 @@ function check_formation ($formations_str) {
         $formation_pattern_last = $formation_pattern_last_2;
     }
     
-    if (!empty($formation_list) && max(array_count_values($formation_list)) >= 2) {
+    if ($validate && !empty($formation_list) && max(array_count_values($formation_list)) >= 2) {
         print "ERROR: 投稿しようとしている情報には同一の編成が複数含まれています";
         exit;
     }
     
-    return array("formation_pattern" => array_merge(array_unique($formation_pattern)), "formation_list" => $formation_list, "min_car_count_range" => $min_car_count_range, "max_car_count_range" => $max_car_count_range);
-}
-
-function get_data_cache_values ($operation_date, $operation_number, $formation_pattern) {
-    global $db_obj;
-    
-    $post_data_r = $db_obj->query("SELECT `formations`, `is_quotation` FROM `unyohub_data` WHERE `operation_date` = '".$operation_date."' AND `operation_number` = '".$operation_number."' ORDER BY `posted_datetime` DESC");
-    
-    $variant_exists = FALSE;
-    for ($posts_count = 0; $post_data = $post_data_r->fetchArray(SQLITE3_ASSOC); $posts_count++) {
-        if ($posts_count !== 0 && !$post_data["is_quotation"] && !in_array($post_data["formations"], $formation_pattern)) {
-            $variant_exists = TRUE;
-        }
+    if ($validate) {
+        return array("formation_pattern" => array_merge(array_unique($formation_pattern)), "formation_list" => $formation_list, "min_car_count_range" => $min_car_count_range, "max_car_count_range" => $max_car_count_range);
+    } else {
+        return array("formation_pattern" => array_merge(array_unique($formation_pattern)), "formation_list" => $formation_list);
     }
-    
-    return array("posts_count" => $posts_count, "variant_exists" => $variant_exists);
 }
 
-function update_data_cache ($operation_date, $operation_number, $formations, $updated_datetime, $formation_list = NULL, $posts_count = NULL, $variant_exists = NULL, $comment_exists = NULL, $from_beginner = NULL, $is_quotation = NULL) {
+function update_data_cache ($operation_date, $operation_number, $updated_datetime, $corrected_formation_info = array()) {
+    global $wakarana;
     global $db_obj;
     
     $operation_number = $db_obj->escapeString($operation_number);
     
-    if ($formations !== NULL) {
-        $formations_str = "'".$db_obj->escapeString($formations)."'";
-    } else {
-        $formations_str = "NULL";
-    }
-    
-    $db_obj->query("INSERT OR REPLACE INTO `unyohub_data_caches` (`operation_date`, `operation_number`, `formations`, `posts_count`, `variant_exists`, `comment_exists`, `from_beginner`, `is_quotation`, `updated_datetime`) VALUES ('".$operation_date."', '".$operation_number."', ".$formations_str.", ".intval($posts_count).", ".intval($variant_exists).", ".intval($comment_exists).", ".intval($from_beginner).", ".intval($is_quotation).", '".$updated_datetime."')");
-    
+    $db_obj->query("DELETE FROM `unyohub_data_caches` WHERE `operation_date` = '".$operation_date."' AND `operation_number` = '".$operation_number."'");
     $db_obj->query("DELETE FROM `unyohub_data_each_formation` WHERE `operation_date` = '".$operation_date."' AND `operation_number` = '".$operation_number."'");
     
-    if ($formations !== NULL) {
-        foreach ($formation_list as $formation_name) {
-            $db_obj->query("INSERT INTO `unyohub_data_each_formation` (`formation_name`, `operation_date`, `operation_number`) VALUES ('".$db_obj->escapeString($formation_name)."', '".$operation_date."', '".$operation_number."')");
+    $post_data_r = $db_obj->query("SELECT `assign_order`, `user_id`, `formations`, `is_quotation`, `posted_datetime`, `comment` FROM `unyohub_data` WHERE `operation_date` = '".$operation_date."' AND `operation_number` = '".$operation_number."' ORDER BY `assign_order` DESC,`posted_datetime` DESC");
+    
+    $data_cache_values = NULL;
+    
+    $formation_list = array();
+    
+    $assign_order = NULL;
+    $corrected_formations = NULL;
+    $posts_count = 0;
+    
+    do {
+        $post_data = $post_data_r->fetchArray(SQLITE3_ASSOC);
+        
+        if ($posts_count === 0 && empty($post_data)) {
+            $db_obj->query("INSERT INTO `unyohub_data_caches` (`operation_date`, `operation_number`, `assign_order`, `formations`, `posts_count`, `variant_exists`, `comment_exists`, `from_beginner`, `is_quotation`, `updated_datetime`) VALUES ('".$operation_date."', '".$operation_number."', 0, NULL, NULL, NULL, NULL, NULL, NULL, '".$updated_datetime."')");
+            
+            return NULL;
         }
+        
+        if (empty($post_data) || ($assign_order !== $post_data["assign_order"])) {
+            if (!empty($assign_order)) {
+                $from_beginner = TRUE;
+                if (substr($user_id, 0, 1) !== "*") {
+                    $post_user = $wakarana->get_user($user_id);
+                    
+                    if (is_object($post_user)){
+                        $days_posted = intval($post_user->get_value("days_posted"));
+                        
+                        if ($days_posted >= 20 || ($days_posted >= 10 && intval($post_user->get_value("post_count")) >= 50) || $post_user->check_permission("management_member")) {
+                            $from_beginner = FALSE;
+                        }
+                    }
+                }
+                
+                if (empty($post_data) || ($corrected_formations !== $post_data["formations"])) {
+                    $db_obj->query("INSERT INTO `unyohub_data_caches` (`operation_date`, `operation_number`, `assign_order`, `formations`, `posts_count`, `variant_exists`, `comment_exists`, `from_beginner`, `is_quotation`, `updated_datetime`) VALUES ('".$operation_date."', '".$operation_number."', ".$assign_order.", '".$db_obj->escapeString($corrected_formations)."', ".$posts_count.", ".intval($variant_exists).", ".intval($comment_exists).", ".intval($from_beginner).", ".intval($is_quotation).", '".$updated_datetime."')");
+                    
+                    if (empty($data_cache_values)) {
+                        $data_cache_values = array("formations" => $corrected_formations, "variant_exists" => $variant_exists, "comment_exists" => $comment_exists, "from_beginner" => $from_beginner, "is_quotation" => $is_quotation);
+                    } else {
+                        if (!isset($data_cache_values["relieved_formations"])) {
+                            $data_cache_values["relieved_formations"] = array($corrected_formations);
+                        } else {
+                            array_unshift($data_cache_values["relieved_formations"], $corrected_formations);
+                        }
+                    }
+                }
+            }
+            
+            if (!empty($post_data)) {
+                $assign_order = $post_data["assign_order"];
+                if ($corrected_formations !== $post_data["formations"]) {
+                    $corrected_formations = $post_data["formations"];
+                    $user_id = $post_data["user_id"];
+                    $is_quotation = $post_data["is_quotation"];
+                    $comment_exists = boolval(strlen($post_data["comment"]));
+                    $variant_exists = FALSE;
+                }
+                
+                if (isset($corrected_formation_info[$assign_order])) {
+                    $formation_info = $corrected_formation_info[$assign_order];
+                } else {
+                    $formation_info = get_formation_info($corrected_formations);
+                }
+                
+                $formation_list = array_merge($formation_list, $formation_info["formation_list"]);
+            }
+        } elseif ($corrected_formations !== $post_data["formations"] && !$post_data["is_quotation"] && !$variant_exists && !in_array($post_data["formations"], $formation_info["formation_pattern"])) {
+            $variant_exists = TRUE;
+        }
+        
+        $posts_count++;
+    } while (!empty($post_data));
+    
+    $formation_list = array_merge(array_unique($formation_list));
+    
+    foreach ($formation_list as $formation_name) {
+        $db_obj->query("INSERT INTO `unyohub_data_each_formation` (`formation_name`, `operation_date`, `operation_number`) VALUES ('".$db_obj->escapeString($formation_name)."', '".$operation_date."', '".$operation_number."')");
     }
+    
+    $data_cache_values["posts_count"] = $posts_count;
+    $data_cache_values["formation_list"] = $formation_list;
+    
+    return $data_cache_values;
 }
 
-function update_next_day_data ($today_ts, $starting_location, $starting_track, $formations, $posted_datetime, $formation_list = NULL, $from_beginner = NULL, $is_quotation = NULL) {
+function update_next_day_data ($today_ts, $starting_location, $starting_track, $formations, $updated_datetime, $formation_list = NULL, $from_beginner = NULL, $is_quotation = NULL) {
     global $db_obj;
     global $diagram_revision;
     
@@ -284,15 +365,30 @@ function update_next_day_data ($today_ts, $starting_location, $starting_track, $
     $operation_number = $db_obj->querySingle("SELECT `operation_number` FROM `unyohub_operations` WHERE `diagram_revision` = '".$diagram_revision."' AND `diagram_id` = '".$diagram_id."' AND `starting_location` = '".$db_obj->escapeString($starting_location)."' AND `starting_track` = '".$db_obj->escapeString($starting_track)."'");
     
     if (!empty($operation_number)) {
+        if (!is_null($formations)) {
+            $formations_q = "'".$db_obj->escapeString($formations)."'";
+        } else {
+            $formations_q = "NULL";
+        }
+        
         $operation_date = date("Y-m-d", $next_day_ts);
         
-        if (empty($db_obj->querySingle("SELECT `posts_count` FROM `unyohub_data_caches` WHERE `operation_date` = '".$operation_date."' AND `operation_number` = '".$operation_number."'"))) {
-            update_data_cache($operation_date, $operation_number, $formations, $posted_datetime, $formation_list, 0, FALSE, FALSE, $from_beginner, $is_quotation);
+        if (empty($db_obj->querySingle("SELECT `posts_count` FROM `unyohub_data_caches` WHERE `operation_date` = '".$operation_date."' AND `operation_number` = '".$operation_number."' AND `assign_order` >= 1 LIMIT 1"))) {
+            $db_obj->query("INSERT OR REPLACE INTO `unyohub_data_caches` (`operation_date`, `operation_number`, `assign_order`, `formations`, `posts_count`, `variant_exists`, `comment_exists`, `from_beginner`, `is_quotation`, `updated_datetime`) VALUES ('".$operation_date."', '".$db_obj->escapeString($operation_number)."', 0, ".$formations_q.", 0, NULL, NULL, ".intval($from_beginner).", ".intval($is_quotation).", '".$updated_datetime."')");
+            
+            $db_obj->query("DELETE FROM `unyohub_data_each_formation` WHERE `operation_date` = '".$operation_date."' AND `operation_number` = '".$operation_number."'");
+            
+            if (!empty($formation_list)) {
+                foreach ($formation_list as $formation_name) {
+                    $db_obj->query("INSERT INTO `unyohub_data_each_formation` (`formation_name`, `operation_date`, `operation_number`) VALUES ('".$db_obj->escapeString($formation_name)."', '".$operation_date."', '".$operation_number."')");
+                }
+            }
         }
     }
 }
 
-function revoke_post ($wakarana, $operation_date_ts, $operation_number, $post_user_id, $moderator_id) {
+function revoke_post ($operation_date_ts, $operation_number, $assign_order, $post_user_id, $moderator_id) {
+    global $wakarana;
     global $railroad_id;
     global $db_obj;
     global $moderation_db_obj;
@@ -305,7 +401,7 @@ function revoke_post ($wakarana, $operation_date_ts, $operation_number, $post_us
     
     $operation_date = date("Y-m-d", $operation_date_ts);
     
-    $deleted_data = $db_obj->querySingle("DELETE FROM `unyohub_data` WHERE `operation_date` = '".$operation_date."' AND `operation_number` = '".$db_obj->escapeString($operation_number)."' AND `user_id` = '".$db_obj->escapeString($post_user_id)."' RETURNING *", TRUE);
+    $deleted_data = $db_obj->querySingle("DELETE FROM `unyohub_data` WHERE `operation_date` = '".$operation_date."' AND `operation_number` = '".$db_obj->escapeString($operation_number)."' AND `assign_order` = '".intval($assign_order)."' AND `user_id` = '".$db_obj->escapeString($post_user_id)."' RETURNING *", TRUE);
     
     if (substr($post_user_id, 0, 1) !== "*") {
         $user = $wakarana->get_user($post_user_id);
@@ -321,81 +417,20 @@ function revoke_post ($wakarana, $operation_date_ts, $operation_number, $post_us
         $moderation_db_obj->query("INSERT INTO `unyohub_moderation_deleted_data` (`moderator_id`, `deleted_datetime`, `railroad_id`, `operation_date`, `operation_number`, `user_id`, `formations`, `posted_datetime`, `comment`, `ip_address`) VALUES ('".$moderator_id."', '".$posted_datetime."', '".$moderation_db_obj->escapeString($railroad_id)."', '".$moderation_db_obj->escapeString($deleted_data["operation_date"])."', '".$moderation_db_obj->escapeString($deleted_data["operation_number"])."', '".$moderation_db_obj->escapeString($deleted_data["user_id"])."', '".$moderation_db_obj->escapeString($deleted_data["formations"])."', '".$moderation_db_obj->escapeString($deleted_data["posted_datetime"])."', '".$moderation_db_obj->escapeString($deleted_data["comment"])."', '".$moderation_db_obj->escapeString($deleted_data["ip_address"])."')");
     }
     
-    $latest_data = $db_obj->querySingle("SELECT `formations`, `user_id`, `is_quotation`, `comment` FROM `unyohub_data` WHERE `operation_date` = '".$operation_date."' AND `operation_number` = '".$operation_number."' ORDER BY `posted_datetime` DESC LIMIT 1", TRUE);
+    $data_cache_values = update_data_cache($operation_date, $operation_number, $posted_datetime);
     
-    if (!empty($latest_data)) {
-        if ($latest_data["formations"] !== "") {
-            $formation_data = check_formation($latest_data["formations"]);
-            
-            $formation_pattern = $formation_data["formation_pattern"];
-            $formation_list = $formation_data["formation_list"];
+    if (!empty($operation_data["terminal_track"])) {
+        if (!empty($data_cache_values)) {
+            update_next_day_data($operation_date_ts, $operation_data["terminal_location"], $operation_data["terminal_track"], $data_cache_values["formations"], $posted_datetime, $data_cache_values["formation_list"]
+            , $data_cache_values["from_beginner"], $data_cache_values["is_quotation"]);
         } else {
-            $formation_pattern = array("");
-            $formation_list = array();
-        }
-        
-        $from_beginner = TRUE;
-        if (substr($latest_data["user_id"], 0, 1) !== "*") {
-            $post_user = $wakarana->get_user($latest_data["user_id"]);
-            
-            if (is_object($post_user)){
-                $days_posted = intval($post_user->get_value("days_posted"));
-                
-                if ($days_posted >= 20 || ($days_posted >= 10 && intval($post_user->get_value("post_count")) >= 50) || $post_user->check_permission("management_member")) {
-                    $from_beginner = FALSE;
-                }
-            }
-        }
-        
-        $data_cache_values = get_data_cache_values($operation_date, $operation_number, $formation_pattern);
-        
-        $comment_exists = boolval(strlen($latest_data["comment"]));
-        
-        update_data_cache($operation_date, $operation_number, $latest_data["formations"], $posted_datetime, $formation_list, $data_cache_values["posts_count"], $data_cache_values["variant_exists"], $comment_exists, $from_beginner, $latest_data["is_quotation"]);
-        
-        if (!empty($operation_data["terminal_track"])) {
-            update_next_day_data($operation_date_ts, $operation_data["terminal_location"], $operation_data["terminal_track"], $latest_data["formations"], $posted_datetime, $formation_list, $from_beginner, $latest_data["is_quotation"]);
-        }
-        
-        $data = array("formations" => $latest_data["formations"], "posts_count" => $data_cache_values["posts_count"]);
-        
-        if ($data_cache_values["variant_exists"]) {
-            $data["variant_exists"] = TRUE;
-        }
-        
-        if ($comment_exists) {
-            $data["comment_exists"] = TRUE;
-        }
-        
-        if ($from_beginner) {
-            $data["from_beginner"] = TRUE;
-        }
-        
-        if ($latest_data["is_quotation"]) {
-            $data["is_quotation"] = TRUE;
-        }
-        
-        return $data;
-    } else {
-        if (!empty($operation_data["terminal_track"])) {
             update_next_day_data($operation_date_ts, $operation_data["terminal_location"], $operation_data["terminal_track"], NULL, $posted_datetime);
         }
-        
-        if (!empty($operation_data["starting_track"])) {
-            $previous_day_ts = $operation_date_ts - 86400;
-            update_diagram_revision($previous_day_ts);
-            
-            $previous_day_data = $db_obj->querySingle("SELECT `unyohub_data_caches`.`formations`, `unyohub_data_caches`.`posts_count`, `unyohub_data_caches`.`from_beginner`, `unyohub_data_caches`.`is_quotation` FROM `unyohub_operations`, `unyohub_data_caches` WHERE `unyohub_operations`.`diagram_id` = '".$db_obj->escapeString(get_diagram_id($previous_day_ts))."' AND `unyohub_operations`.`terminal_location` = '".$db_obj->escapeString($operation_data["starting_location"])."' AND `unyohub_operations`.`terminal_track` = '".$db_obj->escapeString($operation_data["starting_track"])."' AND `unyohub_data_caches`.`operation_date` = '".date("Y-m-d", $previous_day_ts)."' AND `unyohub_data_caches`.`operation_number` = `unyohub_operations`.`operation_number`", TRUE);
-            
-            if (!empty($previous_day_data) && $previous_day_data["posts_count"] >= 1) {
-                update_data_cache($operation_date, $operation_number, $previous_day_data["formations"], $posted_datetime, explode("+", $previous_day_data["formations"]), 0, FALSE, FALSE, $previous_day_data["from_beginner"], $previous_day_data["is_quotation"]);
-                
-                return array("formations" => $previous_day_data["formations"], "posts_count" => 0, "variant_exists" => FALSE, "comment_exists" => FALSE, "from_beginner" => $previous_day_data["from_beginner"]);
-            }
-        }
-        
-        update_data_cache($operation_date, $operation_number, NULL, $posted_datetime);
-        
-        return NULL;
     }
+    
+    if (!empty($data_cache_values)) {
+        unset($data_cache_values["formation_list"]);
+    }
+    
+    return $data_cache_values;
 }
