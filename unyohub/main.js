@@ -2342,29 +2342,13 @@ function convert_train_position_data (train_data) {
     }
     
     if (train_data["posts_count"] === 0) {
-        if (!config["dark_mode"]) {
-            var color = "#0099cc";
-        } else {
-            var color = "#33ccff";
-        }
-        
-        train_data["formation_html"] = "<b style='color: " + color + ";'>" + train_data["formation_html"] + "</b>";
-    } else if (train_data["variant_exists"]) {
-        if (!config["dark_mode"]) {
-            var color = "#cc0000";
-        } else {
-            var color = "#ff9999";
-        }
-        
-        train_data["formation_html"] = "<b style='color: " + color + ";'>" + train_data["formation_html"] + "</b>";
+        train_data["formation_html"] = "<b style='color: " + (!config["dark_mode"] ? "#0099cc" : "#33ccff") + ";'>" + train_data["formation_html"] + "</b>";
+    } else if (train_data["reassigned"]) {
+        train_data["formation_html"] = "<b style='color: " + (!config["dark_mode"] ? "#cc0000" : "#ff9999") + ";'>" + train_data["formation_html"] + "</b>";
+    } else if (config["colorize_corrected_posts"] && train_data["variant_exists"]) {
+        train_data["formation_html"] = "<b style='color: " + (!config["dark_mode"] ? "#ee7700" : "#ffcc99") + ";'>" + train_data["formation_html"] + "</b>";
     } else if (train_data["is_quotation"]) {
-        if (!config["dark_mode"]) {
-            var color = "#9966ff";
-        } else {
-            var color = "#cc99ff";
-        }
-        
-        train_data["formation_html"] = "<b style='color: " + color + ";'>" + train_data["formation_html"] + "</b>";
+        train_data["formation_html"] = "<b style='color: " + (!config["dark_mode"] ? "#9966ff" : "#cc99ff") + ";'>" + train_data["formation_html"] + "</b>";
     } else if (config["colorize_beginners_posts"] && train_data["from_beginner"]) {
         train_data["formation_html"] = "<b style='color: #33cc99;'>" + train_data["formation_html"] + "</b>";
     } else {
@@ -2591,6 +2575,7 @@ function get_train_positions (trains, line_id, hh_and_mm, is_inbound) {
                     final_arrival_time : trains[train_numbers[cnt]][cnt_2]["final_arrival_time"],
                     operation_numbers : trains[train_numbers[cnt]][cnt_2]["operation_numbers"],
                     formation_text : formation_data["formation_text"],
+                    reassigned : formation_data["reassigned"],
                     posts_count : formation_data["posts_count"],
                     variant_exists : formation_data["variant_exists"],
                     comment_exists : formation_data["comment_exists"],
@@ -2609,6 +2594,7 @@ function get_train_positions (trains, line_id, hh_and_mm, is_inbound) {
 
 function convert_formation_data (line_id, operation_list, is_inbound) {
     var first_formation = null;
+    var reassigned = false;
     var posts_count = null;
     var variant_exists = false;
     var comment_exists = false;
@@ -2646,6 +2632,7 @@ function convert_formation_data (line_id, operation_list, is_inbound) {
                     formation_text = operation_formation_text + formation_text;
                 }
                 
+                reassigned = reassigned || ("relieved_formations" in operation_data["operations"][operation_list[cnt]] && operation_data["operations"][operation_list[cnt]]["relieved_formations"].length >= 1);
                 posts_count = Number(posts_count) + operation_data["operations"][operation_list[cnt]]["posts_count"];
                 variant_exists = variant_exists || ("variant_exists" in operation_data["operations"][operation_list[cnt]] && operation_data["operations"][operation_list[cnt]]["variant_exists"]);
                 comment_exists = comment_exists || ("comment_exists" in operation_data["operations"][operation_list[cnt]] && operation_data["operations"][operation_list[cnt]]["comment_exists"]);
@@ -2673,6 +2660,7 @@ function convert_formation_data (line_id, operation_list, is_inbound) {
     
     return {
         formation_text : formation_text,
+        reassigned : reassigned,
         posts_count : posts_count,
         variant_exists : variant_exists,
         comment_exists : comment_exists,
@@ -3655,29 +3643,13 @@ function draw_station_timetable (station_name) {
                     }
                     
                     if (formation_data["posts_count"] === 0) {
-                        if (!config["dark_mode"]) {
-                            var color = "#0099cc";
-                        } else {
-                            var color = "#33ccff";
-                        }
-                        
-                        buf += "<span style='color: " + color + ";'>" + escape_html(formation_data["formation_text"]) + "</span>";
-                    } else if (formation_data["variant_exists"]) {
-                        if (!config["dark_mode"]) {
-                            var color = "#cc0000";
-                        } else {
-                            var color = "#ff9999";
-                        }
-                        
-                        buf += "<span style='color: " + color + ";'>" + escape_html(formation_data["formation_text"]) + "</span>";
+                        buf += "<span style='color: " + (!config["dark_mode"] ? "#0099cc" : "#33ccff") + ";'>" + escape_html(formation_data["formation_text"]) + "</span>";
+                    } else if (formation_data["reassigned"]) {
+                        buf += "<span style='color: " + (!config["dark_mode"] ? "#cc0000" : "#ff9999") + ";'>" + escape_html(formation_data["formation_text"]) + "</span>";
+                    } else if (config["colorize_corrected_posts"] && formation_data["variant_exists"]) {
+                        buf += "<span style='color: " + (!config["dark_mode"] ? "#ee7700" : "#ffcc99") + ";'>" + escape_html(formation_data["formation_text"]) + "</span>";
                     } else if (formation_data["is_quotation"]) {
-                        if (!config["dark_mode"]) {
-                            var color = "#9966ff";
-                        } else {
-                            var color = "#cc99ff";
-                        }
-                        
-                        buf += "<span style='color: " + color + ";'>" + escape_html(formation_data["formation_text"]) + "</span>";
+                        buf += "<span style='color: " + (!config["dark_mode"] ? "#9966ff" : "#cc99ff") + ";'>" + escape_html(formation_data["formation_text"]) + "</span>";
                     } else if (config["colorize_beginners_posts"] && formation_data["from_beginner"]) {
                         buf += "<span style='color: #33cc99;'>" + escape_html(formation_data["formation_text"]) + "</span>";
                     } else {
@@ -4180,47 +4152,43 @@ function operation_data_draw () {
             
             if (operation_number in operation_data["operations"] && operation_data["operations"][operation_number] !== null) {
                 if (operation_data["operations"][operation_number]["posts_count"] === 0) {
-                    if (!config["dark_mode"]) {
-                        var color = "#0099cc";
-                    } else {
-                        var color = "#33ccff";
-                    }
-                    
-                    buf += " style='color: " + color + ";'>";
-                } else if ("variant_exists" in operation_data["operations"][operation_number] && operation_data["operations"][operation_number]["variant_exists"]) {
-                    if (!config["dark_mode"]) {
-                        var color = "#cc0000";
-                    } else {
-                        var color = "#ff9999";
-                    }
-                    
-                    buf += " style='color: " + color + ";'>";
+                    buf += " style='color: " + (!config["dark_mode"] ? "#0099cc" : "#33ccff") + ";'>";
+                } else if ("relieved_formations" in operation_data["operations"][operation_number] && operation_data["operations"][operation_number]["relieved_formations"].length >= 1) {
+                    buf += " style='color: " + (!config["dark_mode"] ? "#cc0000" : "#ff9999") + ";'>";
+                } else if (config["colorize_corrected_posts"] && "variant_exists" in operation_data["operations"][operation_number] && operation_data["operations"][operation_number]["variant_exists"]) {
+                    buf += " style='color: " + (!config["dark_mode"] ? "#ee7700" : "#ffcc99") + ";'>";
                 } else if ("is_quotation" in operation_data["operations"][operation_number] && operation_data["operations"][operation_number]["is_quotation"]) {
-                    if (!config["dark_mode"]) {
-                        var color = "#9966ff";
-                    } else {
-                        var color = "#cc99ff";
-                    }
-                    
-                    buf += " style='color: " + color + ";'>";
+                    buf += " style='color: " + (!config["dark_mode"] ? "#9966ff" : "#cc99ff") + ";'>";
                 } else if (config["colorize_beginners_posts"] && "from_beginner" in operation_data["operations"][operation_number] && operation_data["operations"][operation_number]["from_beginner"]) {
                     buf += " style='color: #33cc99;'>";
                 } else {
                     buf += ">";
                 }
                 
-                if (operation_data["operations"][operation_number]["formations"] !== "") {
-                    var formation_list = operation_data["operations"][operation_number]["formations"].split("+");
-                    
-                    for (var cnt_3 = 0; cnt_3 < formation_list.length; cnt_3++){
-                        if (cnt_3 >= 1) {
-                            buf += " <wbr>+";
-                        }
-                        
-                        buf += "<img src='" + get_icon(formation_list[cnt_3]) + "' alt='' class='train_icon'>" + formation_list[cnt_3];
+                var assigned_formations = [operation_data["operations"][operation_number]["formations"]];
+                
+                if ("relieved_formations" in operation_data["operations"][operation_number] && operation_data["operations"][operation_number]["relieved_formations"].length >= 1) {
+                    assigned_formations = operation_data["operations"][operation_number]["relieved_formations"].concat(assigned_formations);
+                }
+                
+                for (var cnt_3 = 0; cnt_3 < assigned_formations.length; cnt_3++) {
+                    if (cnt_3 >= 1) {
+                        buf += "<br>→ ";
                     }
-                } else {
-                    buf += "<img src='" + UNYOHUB_CANCELED_TRAIN_ICON + "' alt='' class='train_icon'>運休";
+                    
+                    if (assigned_formations[cnt_3] !== "") {
+                        var formation_list = assigned_formations[cnt_3].split("+");
+                        
+                        for (var cnt_4 = 0; cnt_4 < formation_list.length; cnt_4++){
+                            if (cnt_4 >= 1) {
+                                buf += " <wbr>+";
+                            }
+                            
+                            buf += "<img src='" + get_icon(formation_list[cnt_4]) + "' alt='' class='train_icon'>" + formation_list[cnt_4];
+                        }
+                    } else {
+                        buf += "<img src='" + UNYOHUB_CANCELED_TRAIN_ICON + "' alt='' class='train_icon'>運休";
+                    }
                 }
                 
                 if ("comment_exists" in operation_data["operations"][operation_number] && operation_data["operations"][operation_number]["comment_exists"]) {
