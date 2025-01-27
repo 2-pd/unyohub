@@ -23,17 +23,17 @@ function add_slashes (text) {
 }
 
 function convert_to_html (text) {
-    var text_splitted = escape_html(text).replace(/https?:\/\/[^\s\\`\|\[\]\{\}\^]+/g, "<a href='$&' target='_blank' class='external_link'>$&</a>").split("\n");
+    var split_text = escape_html(text).replace(/https?:\/\/[^\s\\`\|\[\]\{\}\^]+/g, "<a href='$&' target='_blank' class='external_link'>$&</a>").split("\n");
     
-    for (var cnt = 0; cnt < text_splitted.length; cnt++) {
-        if (text_splitted[cnt].substring(0, 2) === "# ") {
-            text_splitted[cnt] = "<h4>" + text_splitted[cnt].substring(2) + "</h4>";
-        } else if (cnt + 1 < text_splitted.length && text_splitted[cnt + 1].substring(2) !== "# ") {
-            text_splitted[cnt] += "<br>";
+    for (var cnt = 0; cnt < split_text.length; cnt++) {
+        if (split_text[cnt].substring(0, 2) === "# ") {
+            split_text[cnt] = "<h4>" + split_text[cnt].substring(2) + "</h4>";
+        } else if (cnt + 1 < split_text.length && split_text[cnt + 1].substring(2) !== "# ") {
+            split_text[cnt] += "<br>";
         }
     }
     
-    return text_splitted.join("");
+    return split_text.join("");
 }
 
 
@@ -4171,6 +4171,9 @@ function operation_data_draw () {
                     assigned_formations = operation_data["operations"][operation_number]["relieved_formations"].concat(assigned_formations);
                 }
                 
+                if (assigned_formations.length >= 2) {
+                    buf += "<span class='relieved_formations'>";
+                }
                 for (var cnt_3 = 0; cnt_3 < assigned_formations.length; cnt_3++) {
                     if (cnt_3 >= 1) {
                         buf += "<br>→ ";
@@ -4188,6 +4191,10 @@ function operation_data_draw () {
                         }
                     } else {
                         buf += "<img src='" + UNYOHUB_CANCELED_TRAIN_ICON + "' alt='' class='train_icon'>運休";
+                    }
+                    
+                    if (cnt_3 === assigned_formations.length - 2) {
+                        buf += "</span>";
                     }
                 }
                 
@@ -4732,6 +4739,27 @@ function update_formation_table_drop_down_status (elm) {
     formation_table_drop_down_status[elm.id] = elm.checked;
 }
 
+function get_operation_data_html (data, ts, no_data_text = "情報がありません") {
+    if (data !== null) {
+        buf = "";
+        for (var cnt = 0; cnt < data.length; cnt++) {
+            buf += "<div class='key_and_value' onclick='operation_detail(\"" + add_slashes(data[cnt]["operation_number"]) + "\", " + ts + ", false, \"" + add_slashes(data[cnt]["formations"]) + "\");'><u>" + escape_html(data[cnt]["operation_number"]) + "</u>";
+            
+            if ("relieved_formations" in data[cnt]) {
+                for (var cnt_2 = 0; cnt_2 < data[cnt]["relieved_formations"].length; cnt_2++) {
+                    buf += escape_html(data[cnt]["relieved_formations"][cnt_2]) + "<br>→ ";
+                }
+            }
+            
+            buf += data[cnt]["formations"] + "</div>";
+        }
+        
+        return buf;
+    } else {
+        return "<div class='descriptive_text'>" + no_data_text + "</div>";
+    }
+}
+
 function formation_detail (formation_name) {
     change_title(formation_name + " (" + railroad_info["railroad_name"] + ") の車両・運用情報 | " + instance_info["instance_name"], "/railroad_" + railroad_info["railroad_id"] + "/formations/" + encodeURIComponent(formation_name) + "/");
     
@@ -4853,37 +4881,15 @@ function formation_detail (formation_name) {
                 
                 var buf = "<input type='checkbox' id='formation_operations'><label for='formation_operations' class='drop_down'>運用情報</label>";
                 if (data["operations_today"] !== null || data["operations_tomorrow"] !== null) {
-                    buf += "<div><div class='formation_operation_data'><h4>今日の運用情報</h4>";
-                    if (data["operations_today"] !== null) {
-                        for (cnt = 0; cnt < data["operations_today"].length; cnt++) {
-                            buf += "<div class='key_and_value' onclick='operation_detail(\"" + add_slashes(data["operations_today"][cnt]["operation_number"]) + "\", " + get_timestamp() + ", false, \"" + add_slashes(data["operations_today"][cnt]["formations"]) + "\");'><u>" + escape_html(data["operations_today"][cnt]["operation_number"]) + "</u>" + data["operations_today"][cnt]["formations"] + "</div>";
-                        }
-                    } else {
-                        buf += "<div class='descriptive_text'>情報がありません</div>";
-                    }
-                    buf += "</div>";
+                    var ts = get_timestamp();
                     
-                    buf += "<div class='formation_operation_data'><h4>明日の運用情報</h4>";
-                    if (data["operations_tomorrow"] !== null) {
-                        for (cnt = 0; cnt < data["operations_tomorrow"].length; cnt++) {
-                            buf += "<div class='key_and_value' onclick='operation_detail(\"" + add_slashes(data["operations_tomorrow"][cnt]["operation_number"]) + "\", " + (get_timestamp() + 86400) + ", false, \"" + add_slashes(data["operations_tomorrow"][cnt]["formations"]) + "\");'><u>" + escape_html(data["operations_tomorrow"][cnt]["operation_number"]) + "</u>" + data["operations_tomorrow"][cnt]["formations"] + "</div>";
-                        }
-                    } else {
-                        buf += "<div class='descriptive_text'>明日の運用情報は判明していません</div>";
-                    }
-                    buf += "</div></div>";
+                    buf += "<div><div class='formation_operation_data'><h4>今日の運用情報</h4>" + get_operation_data_html(data["operations_today"], ts) + "</div>";
+                    buf += "<div class='formation_operation_data'><h4>明日の運用情報</h4>" + get_operation_data_html(data["operations_tomorrow"], ts + 86400, "明日の運用情報は判明していません") + "</div></div>";
                 } else if (data["last_seen_date"] !== null) {
-                    var last_seen_date_splitted = data["last_seen_date"].split("-");
-                    
-                    buf += "<div><div class='formation_operation_data_last_seen'><h4>最終目撃情報(" + last_seen_date_splitted[0] + "/" + Number(last_seen_date_splitted[1]) + "/" + Number(last_seen_date_splitted[2]) + ")</h4>";
-                    
+                    var last_seen_date_split = data["last_seen_date"].split("-");
                     var dt = new Date(data["last_seen_date"] + " 12:00:00");
                     
-                    for (cnt = 0; cnt < data["operations_last_day"].length; cnt++) {
-                        buf += "<div class='key_and_value' onclick='operation_detail(\"" + add_slashes(data["operations_last_day"][cnt]["operation_number"]) + "\", " + Math.floor(dt.getTime() / 1000) + ", false, \"" + add_slashes(data["operations_last_day"][cnt]["formations"]) + "\");'><u>" + escape_html(data["operations_last_day"][cnt]["operation_number"]) + "</u>" + data["operations_last_day"][cnt]["formations"] + "</div>";
-                    }
-                    
-                    buf += "</div></div>";
+                    buf += "<div><div class='formation_operation_data_last_seen'><h4>最終目撃情報(" + last_seen_date_split[0] + "/" + Number(last_seen_date_split[1]) + "/" + Number(last_seen_date_split[2]) + ")</h4>" + get_operation_data_html(data["operations_last_day"], Math.floor(dt.getTime() / 1000)) + "</div></div>";
                 } else {
                     buf += "<div><div class='descriptive_text'>この編成の運用情報が投稿されたことはありません</div></div>";
                 }

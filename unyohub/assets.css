@@ -1585,6 +1585,14 @@ input[type="checkbox"]:checked + label.drop_down + div {
     vertical-align: text-top;
 }
 
+.relieved_formations {
+    color: #999999;
+}
+
+.relieved_formations .train_icon {
+    opacity: 0.5;
+}
+
 .formation_table {
     margin: 0 auto;
     
