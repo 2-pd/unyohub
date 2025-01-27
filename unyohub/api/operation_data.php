@@ -29,15 +29,12 @@ while ($operation = $operations_r->fetchArray(SQLITE3_ASSOC)) {
         if ($operation["variant_exists"]) {
             $operation_data_item["variant_exists"] = TRUE;
         }
-        
         if ($operation["comment_exists"]) {
             $operation_data_item["comment_exists"] = TRUE;
         }
-        
         if ($operation["from_beginner"]) {
             $operation_data_item["from_beginner"] = TRUE;
         }
-        
         if ($operation["is_quotation"]) {
             $operation_data_item["is_quotation"] = TRUE;
         }

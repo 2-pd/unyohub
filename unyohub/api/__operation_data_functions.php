@@ -272,6 +272,7 @@ function update_data_cache ($operation_date, $operation_number, $updated_datetim
     $data_cache_values = NULL;
     
     $formation_list = array();
+    $latest_formation_list = array();
     
     $assign_order = NULL;
     $corrected_formations = NULL;
@@ -302,7 +303,7 @@ function update_data_cache ($operation_date, $operation_number, $updated_datetim
                 }
                 
                 if (empty($post_data) || ($corrected_formations !== $post_data["formations"])) {
-                    $db_obj->query("INSERT INTO `unyohub_data_caches` (`operation_date`, `operation_number`, `assign_order`, `formations`, `posts_count`, `variant_exists`, `comment_exists`, `from_beginner`, `is_quotation`, `updated_datetime`) VALUES ('".$operation_date."', '".$operation_number."', ".$assign_order.", '".$db_obj->escapeString($corrected_formations)."', ".$posts_count.", ".intval($variant_exists).", ".intval($comment_exists).", ".intval($from_beginner).", ".intval($is_quotation).", '".$updated_datetime."')");
+                    $db_obj->query("INSERT INTO `unyohub_data_caches` (`operation_date`, `operation_number`, `assign_order`, `formations`, `posts_count`, `variant_exists`, `comment_exists`, `from_beginner`, `is_quotation`, `updated_datetime`) VALUES ('".$operation_date."', '".$operation_number."', ".$assign_order_max.", '".$db_obj->escapeString($corrected_formations)."', ".$posts_count.", ".intval($variant_exists).", ".intval($comment_exists).", ".intval($from_beginner).", ".intval($is_quotation).", '".$updated_datetime."')");
                     
                     if (empty($data_cache_values)) {
                         $data_cache_values = array("formations" => $corrected_formations, "variant_exists" => $variant_exists, "comment_exists" => $comment_exists, "from_beginner" => $from_beginner, "is_quotation" => $is_quotation);
@@ -319,6 +320,7 @@ function update_data_cache ($operation_date, $operation_number, $updated_datetim
             if (!empty($post_data)) {
                 $assign_order = $post_data["assign_order"];
                 if ($corrected_formations !== $post_data["formations"]) {
+                    $assign_order_max = $post_data["assign_order"];
                     $corrected_formations = $post_data["formations"];
                     $user_id = $post_data["user_id"];
                     $is_quotation = $post_data["is_quotation"];
@@ -332,7 +334,12 @@ function update_data_cache ($operation_date, $operation_number, $updated_datetim
                     $formation_info = get_formation_info($corrected_formations);
                 }
                 
-                $formation_list = array_merge($formation_list, $formation_info["formation_list"]);
+                if ($posts_count === 0) {
+                    $formation_list = $formation_info["formation_list"];
+                    $latest_formation_list = $formation_info["formation_list"];
+                } else {
+                    $formation_list = array_merge($formation_list, $formation_info["formation_list"]);
+                }
             }
         } elseif ($corrected_formations !== $post_data["formations"] && !$post_data["is_quotation"] && !$variant_exists && !in_array($post_data["formations"], $formation_info["formation_pattern"])) {
             $variant_exists = TRUE;
@@ -348,7 +355,7 @@ function update_data_cache ($operation_date, $operation_number, $updated_datetim
     }
     
     $data_cache_values["posts_count"] = $posts_count;
-    $data_cache_values["formation_list"] = $formation_list;
+    $data_cache_values["formation_list"] = $latest_formation_list;
     
     return $data_cache_values;
 }

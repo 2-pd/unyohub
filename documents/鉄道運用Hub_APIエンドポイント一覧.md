@@ -256,10 +256,10 @@ formations.jsonの内容を返す
             "formations" : 組成情報,  
             "relieved_formations" : 差し替え前の編成を充当順に配列で,  
             "posts_count" : 情報の投稿数,  
-            "variant_exists" : 投稿情報のバリエーションの有無,  
-            "comment_exists" : 運用補足情報の有無,  
-            "from_beginner" : ビギナーの投稿か否か,  
-            "is_quotation" : 引用情報か否か  
+            "variant_exists" : 投稿情報のバリエーションの有無(なければ省略),  
+            "comment_exists" : 運用補足情報の有無(なければ省略),  
+            "from_beginner" : ビギナーの投稿か否か(ビギナーでなければ省略),  
+            "is_quotation" : 引用情報か否か(引用情報でなければ省略)  
         }...  
     ],  
     "operations_tomorrow" : [ 翌日の運用情報(なければNULL)  
@@ -268,10 +268,10 @@ formations.jsonの内容を返す
             "formations" : 組成情報,  
             "relieved_formations" : 差し替え前の編成を充当順に配列で,  
             "posts_count" : 情報の投稿数,  
-            "variant_exists" : 投稿情報のバリエーションの有無,  
-            "comment_exists" : 運用補足情報の有無,  
-            "from_beginner" : ビギナーの投稿か否か,  
-            "is_quotation" : 引用情報か否か  
+            "variant_exists" : 投稿情報のバリエーションの有無(なければ省略),  
+            "comment_exists" : 運用補足情報の有無(なければ省略),  
+            "from_beginner" : ビギナーの投稿か否か(ビギナーでなければ省略),  
+            "is_quotation" : 引用情報か否か(引用情報でなければ省略)  
         }...  
     ],  
     "last_seen_date" : 最終目撃日(YYYY-MM-DD形式、当日の運用情報がない場合のみ。データが全く存在しなければNULL),  
@@ -281,10 +281,10 @@ formations.jsonの内容を返す
             "formations" : 組成情報,  
             "relieved_formations" : 差し替え前の編成を充当順に配列で,  
             "posts_count" : 情報の投稿数,  
-            "variant_exists" : 投稿情報のバリエーションの有無,  
-            "comment_exists" : 運用補足情報の有無,  
-            "from_beginner" : ビギナーの投稿か否か,  
-            "is_quotation" : 引用情報か否か  
+            "variant_exists" : 投稿情報のバリエーションの有無(なければ省略),  
+            "comment_exists" : 運用補足情報の有無(なければ省略),  
+            "from_beginner" : ビギナーの投稿か否か(ビギナーでなければ省略),  
+            "is_quotation" : 引用情報か否か(引用情報でなければ省略)  
         }...  
     ]  
 }  

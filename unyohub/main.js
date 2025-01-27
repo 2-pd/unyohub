@@ -5533,7 +5533,7 @@ function write_operation_data (yyyy_mm_dd, operation_number, train_number = null
         buf += "><label for='operation_data_details' class='drop_down'>詳細情報</label><div>";
         
         buf += "<h4>情報の種類</h4>";
-        buf += "<div class='radio_area'><input type='radio' name='operation_data_type' id='operation_data_type_normal' checked='checked'><label for='operation_data_type_normal'>通常または訂正の情報</label><input type='radio' name='operation_data_type' id='operation_data_type_reassign'><label for='operation_data_type_reassign'>差し替えの情報</label></div>";
+        buf += "<div class='radio_area'><input type='radio' name='operation_data_type' id='operation_data_type_normal' checked='checked'><label for='operation_data_type_normal'>通常・訂正の情報</label><input type='radio' name='operation_data_type' id='operation_data_type_reassign'><label for='operation_data_type_reassign'>未報告の差し替え情報</label></div>";
         
         if (post_yyyy_mm_dd === yyyy_mm_dd_today) {
             var now_hh_mm = get_hh_mm();

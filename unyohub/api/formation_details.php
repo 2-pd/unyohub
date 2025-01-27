@@ -2,6 +2,47 @@
 include "../libs/wakarana/main.php";
 
 
+function shape_operation_data ($sql_r) {
+    $operations = array();
+    $operation_number = NULL;
+    $cnt = 0;
+    
+    while ($operation_data = $sql_r->fetchArray(SQLITE3_ASSOC)) {
+        if ($operation_data["operation_number"] !== $operation_number) {
+            if (!$operation_data["variant_exists"]) {
+                unset($operation_data["variant_exists"]);
+            }
+            if (!$operation_data["comment_exists"]) {
+                unset($operation_data["comment_exists"]);
+            }
+            if (!$operation_data["from_beginner"]) {
+                unset($operation_data["from_beginner"]);
+            }
+            if (!$operation_data["is_quotation"]) {
+                unset($operation_data["is_quotation"]);
+            }
+            
+            $operations[] = $operation_data;
+            
+            $operation_number = $operation_data["operation_number"];
+            $cnt++;
+        } else {
+            if (!isset($operations[$cnt - 1]["relieved_formations"])) {
+                $operations[$cnt - 1]["relieved_formations"] = array();
+            }
+            
+            $operations[$cnt - 1]["relieved_formations"][] = $operation_data["formations"];
+        }
+    }
+    
+    if ($cnt >= 1) {
+        return $operations;
+    } else {
+        return NULL;
+    }
+}
+
+
 if (!isset($_POST["railroad_id"], $_POST["formation_name"])) {
     print "ERROR: 送信値が不正です";
     exit;
@@ -42,26 +83,14 @@ while ($history_data = $histories_r->fetchArray(SQLITE3_ASSOC)) {
 $ts_now = time();
 
 $posted_date = date("Y-m-d", $ts_now - 10800);
-$operations_r = $db_obj->query("SELECT `unyohub_data_caches`.* FROM `unyohub_data_each_formation`, `unyohub_data_caches` WHERE `unyohub_data_each_formation`.`formation_name` = '".$formation_name."' AND `unyohub_data_each_formation`.`operation_date` = '".$posted_date."' AND `unyohub_data_each_formation`.`operation_date` = `unyohub_data_caches`.`operation_date` AND `unyohub_data_each_formation`.`operation_number` = `unyohub_data_caches`.`operation_number` ORDER BY `unyohub_data_each_formation`.`operation_number` ASC");
+$operations_r = $db_obj->query("SELECT `unyohub_data_caches`.`operation_number`, `unyohub_data_caches`.`formations`, `unyohub_data_caches`.`posts_count`, `unyohub_data_caches`.`variant_exists`, `unyohub_data_caches`.`comment_exists`, `unyohub_data_caches`.`from_beginner`, `unyohub_data_caches`.`is_quotation` FROM `unyohub_data_each_formation`, `unyohub_data_caches` WHERE `unyohub_data_each_formation`.`formation_name` = '".$formation_name."' AND `unyohub_data_each_formation`.`operation_date` = '".$posted_date."' AND `unyohub_data_each_formation`.`operation_date` = `unyohub_data_caches`.`operation_date` AND `unyohub_data_each_formation`.`operation_number` = `unyohub_data_caches`.`operation_number` ORDER BY `unyohub_data_each_formation`.`operation_number` ASC, `unyohub_data_caches`.`assign_order` DESC");
 
-$formation_data["operations_today"] = array();
-while ($operation_data = $operations_r->fetchArray(SQLITE3_ASSOC)) {
-    $formation_data["operations_today"][] = $operation_data;
-}
-if (empty($formation_data["operations_today"])) {
-    $formation_data["operations_today"] = NULL;
-}
+$formation_data["operations_today"] = shape_operation_data($operations_r);
 
 $posted_date = date("Y-m-d", $ts_now + 75600);
-$operations_r = $db_obj->query("SELECT `unyohub_data_caches`.* FROM `unyohub_data_each_formation`, `unyohub_data_caches` WHERE `unyohub_data_each_formation`.`formation_name` = '".$formation_name."' AND `unyohub_data_each_formation`.`operation_date` = '".$posted_date."' AND `unyohub_data_each_formation`.`operation_date` = `unyohub_data_caches`.`operation_date` AND `unyohub_data_each_formation`.`operation_number` = `unyohub_data_caches`.`operation_number` ORDER BY `unyohub_data_each_formation`.`operation_number` ASC");
+$operations_r = $db_obj->query("SELECT `unyohub_data_caches`.`operation_number`, `unyohub_data_caches`.`formations`, `unyohub_data_caches`.`posts_count`, `unyohub_data_caches`.`variant_exists`, `unyohub_data_caches`.`comment_exists`, `unyohub_data_caches`.`from_beginner`, `unyohub_data_caches`.`is_quotation` FROM `unyohub_data_each_formation`, `unyohub_data_caches` WHERE `unyohub_data_each_formation`.`formation_name` = '".$formation_name."' AND `unyohub_data_each_formation`.`operation_date` = '".$posted_date."' AND `unyohub_data_each_formation`.`operation_date` = `unyohub_data_caches`.`operation_date` AND `unyohub_data_each_formation`.`operation_number` = `unyohub_data_caches`.`operation_number` ORDER BY `unyohub_data_each_formation`.`operation_number` ASC, `unyohub_data_caches`.`assign_order` DESC");
 
-$formation_data["operations_tomorrow"] = array();
-while ($operation_data = $operations_r->fetchArray(SQLITE3_ASSOC)) {
-    $formation_data["operations_tomorrow"][] = $operation_data;
-}
-if (empty($formation_data["operations_tomorrow"])) {
-    $formation_data["operations_tomorrow"] = NULL;
-}
+$formation_data["operations_tomorrow"] = shape_operation_data($operations_r);
 
 if (is_null($formation_data["operations_today"]) && is_null($formation_data["operations_tomorrow"])) {
     $last_seen_date = $db_obj->querySingle("SELECT `operation_date` FROM `unyohub_data_each_formation` WHERE `formation_name` = '".$formation_name."' ORDER BY `operation_date` DESC LIMIT 1");
@@ -69,12 +98,9 @@ if (is_null($formation_data["operations_today"]) && is_null($formation_data["ope
     if (!empty($last_seen_date)) {
         $formation_data["last_seen_date"] = $last_seen_date;
         
-        $operations_r = $db_obj->query("SELECT `unyohub_data_caches`.* FROM `unyohub_data_each_formation`, `unyohub_data_caches` WHERE `unyohub_data_each_formation`.`formation_name` = '".$formation_name."' AND `unyohub_data_each_formation`.`operation_date` = '".$last_seen_date."' AND `unyohub_data_each_formation`.`operation_date` = `unyohub_data_caches`.`operation_date` AND `unyohub_data_each_formation`.`operation_number` = `unyohub_data_caches`.`operation_number` ORDER BY `unyohub_data_each_formation`.`operation_number` ASC");
+        $operations_r = $db_obj->query("SELECT `unyohub_data_caches`.`operation_number`, `unyohub_data_caches`.`formations`, `unyohub_data_caches`.`posts_count`, `unyohub_data_caches`.`variant_exists`, `unyohub_data_caches`.`comment_exists`, `unyohub_data_caches`.`from_beginner`, `unyohub_data_caches`.`is_quotation` FROM `unyohub_data_each_formation`, `unyohub_data_caches` WHERE `unyohub_data_each_formation`.`formation_name` = '".$formation_name."' AND `unyohub_data_each_formation`.`operation_date` = '".$last_seen_date."' AND `unyohub_data_each_formation`.`operation_date` = `unyohub_data_caches`.`operation_date` AND `unyohub_data_each_formation`.`operation_number` = `unyohub_data_caches`.`operation_number` ORDER BY `unyohub_data_each_formation`.`operation_number` ASC, `unyohub_data_caches`.`assign_order` DESC");
         
-        $formation_data["operations_last_day"] = array();
-        while ($operation_data = $operations_r->fetchArray(SQLITE3_ASSOC)) {
-            $formation_data["operations_last_day"][] = $operation_data;
-        }
+        $formation_data["operations_last_day"] = shape_operation_data($operations_r);
     } else {
         $formation_data["last_seen_date"] = NULL;
         $formation_data["operations_last_day"] = NULL;
