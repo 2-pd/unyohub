@@ -119,9 +119,8 @@ _/_/_/_/ データベース _/_/_/_/
   `updated_datetime` TEXT NOT NULL 「YYYY-MM-DD HH:MM:SS」形式の情報更新日時(同一日の同一運用番号のレコードは全て同じ更新日時とする)
 
   PRIMARY KEY(`operation_date`, `operation_number`, `assign_order`)
-  INDEX `unyohub_idx_dc1`(`formations`, `operation_date`)
-  INDEX `unyohub_idx_dc2`(`operation_date`, `updated_datetime`, `operation_number`, `assign_order`)
-  INDEX `unyohub_idx_dc3`(`operation_number`, `operation_date`, `assign_order`)
+  INDEX `unyohub_idx_dc1`(`operation_date`, `updated_datetime`, `operation_number`, `assign_order`)
+  INDEX `unyohub_idx_dc2`(`operation_number`, `operation_date`, `assign_order`)
 
 
 `unyohub_data_each_formation` 編成別運用データキャッシュ

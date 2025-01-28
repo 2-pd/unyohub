@@ -25,20 +25,20 @@ def mes (log_text, is_error=False, is_heading=False):
 def print_usage ():
     print("\n\x1b[94m_/_/_/_/\x1b[0m 使用可能なコマンド \x1b[94m_/_/_/_/\x1b[0m\n")
     
-    print("\x1b[93msetup-libs\x1b[0m \x1b[90m作成する管理者ユーザーのID\x1b[0m")
+    print("\x1b[93msetup-libs\x1b[0m \x1b[90m<作成する管理者ユーザーのID>\x1b[0m")
     print("  ライブラリの初期設定を行う\n")
     
-    print("\x1b[93mconv-formations\x1b[0m \x1b[90m路線系統識別名\x1b[0m")
+    print("\x1b[93mconv-formations\x1b[0m \x1b[90m<路線系統識別名>\x1b[0m")
     print("  編成表データを変換する\n")
     
-    print("\x1b[93mupdate-operations\x1b[0m \x1b[90m路線系統識別名 ダイヤ改正識別名 ダイヤ識別名\x1b[0m")
+    print("\x1b[93mupdate-operations\x1b[0m \x1b[90m<路線系統識別名> <ダイヤ改正識別名> <ダイヤ識別名>\x1b[0m")
     print("  運用表をデータベースに書き込む\n")
     
-    print("\x1b[93minit-db\x1b[0m \x1b[90m路線系統識別名\x1b[0m")
+    print("\x1b[93minit-db\x1b[0m \x1b[90m<路線系統識別名>\x1b[0m")
     print("  各路線系統用データベースファイルを生成する\n")
     
     print("\x1b[93minit-moderation-db\x1b[0m")
-    print("  モデレーションログ格納データベースファイルを生成する")
+    print("  モデレーションログ格納データベースファイルを生成する\n")
 
 
 print(UNYOHUB_COMMANDS_APP_NAME + " \x1b[90mv" + UNYOHUB_COMMANDS_VERSION + "\x1b[0m")

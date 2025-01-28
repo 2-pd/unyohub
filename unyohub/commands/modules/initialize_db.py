@@ -1,5 +1,6 @@
 # coding: utf-8
 
+import os
 import sqlite3
 
 def initialize_db (mes, main_dir):
@@ -7,7 +8,14 @@ def initialize_db (mes, main_dir):
     
     mes("データベースに接続しています...")
     
-    conn = sqlite3.connect(main_dir + "/railroad.db")
+    db_path = main_dir + "/railroad.db"
+    
+    if not os.path.exists(db_path):
+        new_db = True
+    else:
+        new_db = False
+    
+    conn = sqlite3.connect(db_path)
     
     cur = conn.cursor()
     
@@ -46,9 +54,8 @@ def initialize_db (mes, main_dir):
     
     mes("テーブル「unyohub_data_caches」を作成しています...")
     cur.execute("CREATE TABLE IF NOT EXISTS `unyohub_data_caches`(`operation_date` TEXT NOT NULL, `operation_number` TEXT NOT NULL, `assign_order` INTEGER NOT NULL, `formations` TEXT, `posts_count` INTEGER, `variant_exists` INTEGER, `comment_exists` INTEGER, `from_beginner` INTEGER, `is_quotation` INTEGER, `updated_datetime` TEXT NOT NULL, PRIMARY KEY(`operation_date`, `operation_number`, `assign_order`))")
-    cur.execute("CREATE INDEX IF NOT EXISTS `unyohub_idx_dc1` ON `unyohub_data_caches`(`formations`, `operation_date`)")
-    cur.execute("CREATE INDEX IF NOT EXISTS `unyohub_idx_dc2` ON `unyohub_data_caches`(`operation_date`, `updated_datetime`, `operation_number`, `assign_order`)")
-    cur.execute("CREATE INDEX IF NOT EXISTS `unyohub_idx_dc3` ON `unyohub_data_caches`(`operation_number`, `operation_date`, `assign_order`)")
+    cur.execute("CREATE INDEX IF NOT EXISTS `unyohub_idx_dc1` ON `unyohub_data_caches`(`operation_date`, `updated_datetime`, `operation_number`, `assign_order`)")
+    cur.execute("CREATE INDEX IF NOT EXISTS `unyohub_idx_dc2` ON `unyohub_data_caches`(`operation_number`, `operation_date`, `assign_order`)")
     
     mes("テーブル「unyohub_data_each_formation」を作成しています...")
     cur.execute("CREATE TABLE IF NOT EXISTS `unyohub_data_each_formation`(`formation_name` TEXT NOT NULL, `operation_date` TEXT NOT NULL, `operation_number` TEXT NOT NULL, PRIMARY KEY(`formation_name`, `operation_date`, `operation_number`))")
@@ -57,5 +64,8 @@ def initialize_db (mes, main_dir):
     mes("変更を保存しています...")
     conn.commit()
     conn.close()
+    
+    if new_db and os.name == "posix":
+        os.chmod(db_path, 0o766)
     
     mes("処理が完了しました")
