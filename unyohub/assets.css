@@ -702,7 +702,7 @@ article {
     background-color: #444444;
 }
 
-.wide_button {
+.wide_button, .write_button {
     display: block;
     
     position: relative;
@@ -721,8 +721,40 @@ article {
     overflow: hidden;
 }
 
-.dark_mode .wide_button {
+.dark_mode .wide_button, .dark_mode .write_button {
     background-image: linear-gradient(315deg, #cccccc 14px, transparent 14px) !important;
+}
+
+.write_button {
+    position: fixed;
+    bottom: 20px;
+    left: max(25px, calc(50% - 225px));
+    
+    width: calc(100% - 50px) !important;
+    
+    max-width: 450px;
+    
+    z-index: 2;
+}
+
+.write_button:before {
+    content: "";
+    
+    display: inline-block;
+    
+    height: 26px;
+    width: 26px;
+    
+    margin-right: 4px;
+    
+    background-image: url(data:image/webp;base64,UklGRsoBAABXRUJQVlA4TL0BAAAvM8AMELXIkWzbdao3H0JC+3h3XQkbaj7MHWkHGxMfIm8O9gi+qQg4tG2bdr5tW7GTzjY62zYrO52qjLS2bVW2bdu+ExDXR+LbMFlbRDs8AZlcEHAG8zrFcQQ4z1wzsiIvV9J5IPH55n1V8kayDfH8C5nYuAzQyZg5ZQr2WMDJGjkVhHC5gsdDpkcPT17XI6ZGwprPJT0pLA9Jb5nJDq4DtLoCDZnJ7iHag6JcylDTrMKS5WyOA8RyX4nvZfnbS+e02kA15/DsPQCRu/+byPCc7FIn1eOJTe220T1aYuo9PCx/eND66ojwoDz1ZhWWXZtfjabwZCxlPufyHt0l9ZYflg/tQHv79GjpqeMblhOfV43ZM5gHVSnzj2FYorvWqAjLAdqnUuYNkUf3T/0mLO840zg6xXlQCNBxCktkfGhMlkdrAcj8zrXCcmaeOmVhuYCzpH3/eLTI1P+H5TGVG42NTaRHLwXok11YosK3Rld40pvy77PHzDh1isKzRWlcjxSTSV8jNDwH6IjgXmFhAfeoKlqVbhI2NwL1A8S2muIqzmdCnyiWz3FFTQu6DednGmgnBZ0BVhXuVVVxAS0AAA==);
+    background-size: 26px;
+    
+    vertical-align: top;
+}
+
+.dark_mode .write_button:before {
+    background-image: url(data:image/webp;base64,UklGRtYBAABXRUJQVlA4TMkBAAAvM8AMENXIrW1btRuVrnrUhBpQqpjM772zj6CAzzvYhvhY2TZlDCHTccQwIqBAAEDAedu2Oa/ZRrNtM9lrSrtV27aSbdu2NwF15xhxMRSZI1YOHvi3cZ7+M5DWVRQOvYpZGEoh1xvRkQKdL3jbZLyOSTJP8UfYN6xVtoCD0SNmDNKYge8fMHoHPAbnxQY8nFM1EGa83D9A9D7mPj7WRGJJBu6pbWwPLt2DNOttY2cG18hCr43BGxrdkwWWDIeSHOX4WudXUXKJ1Puwwak00W0StxG3By1N2JqfUjRmUGxw38/IGpFgHmEl+RL3HFZmEA2UmQ/Lkkwt/HDZWJoYNf3/VKIRzuaRV5IfsM/lReA0Ms18+pTkxL7LYWYG0kClafzBoCRD5zmH8pKcAXPS9DfwNNLPPFJKcsDglMPhGw0UmA/HkjwR4Z3DxH2NaDaNn9QsyRMz8ygtyRkYi9zjc6oGIsxnXEmeEHHNYX0G1fhqHrYlOSnxxaGzNNFj+tWFRhqZz8LSnCI5XCVB5IYeh5DS3ALuQnDHYP6jRnejhUnjknlNoK5ke5Rtwllwdap/r8QlqofAA0IpX2Q92sbkQXsb1F3q3d11E0oAAA==);
 }
 
 .wide_button img {
@@ -737,6 +769,40 @@ article {
     
     background-color: #333333;
     background-image: linear-gradient(135deg, transparent, rgba(255, 255, 255, 0.4));
+}
+
+.execute_button, .execute_link:after {
+    background-image: url(data:image/webp;base64,UklGRo4AAABXRUJQVlA4TIIAAAAvLcAJEC8gEEhhuy0QSGG7LRBIYbstJCDc91gT4B8iXAUHkWRLzXAYGCACcBALcRD/cjhHQkT/Fblt26iDV79DHQE+Xhbcz9F+9j/bn6pYsWLFihUrVqxYsWLFihUrVqxYee539r0seG4+Wy8LqlSpUqVKlSpVqlSpUqVKlSpVqlQB);
+    background-repeat: no-repeat;
+    background-size: 23px 20px;
+}
+
+.dark_mode .execute_button, .dark_mode .execute_link:after {
+    background-image: url(data:image/webp;base64,UklGRpwAAABXRUJQVlA4TI8AAAAvLcAJEC9AkG3T+bse4RwE2Tadv+sRHoJsm87f9QgPmYDF9qkurQgCbDuKVfkvHESSLTXDYWCACMBBLMRB/MvhHAkR/Vfktm2jDl79DnUEWL0suJ+j/ex7tj9VsWLFihUrVqxYsWLFihUrVqxYsfLc7+x/WfDcfPa5LKhSpUqVKlWqVKlSpUqVKlWqVKlSBQA=);
+}
+
+.execute_button {
+    display: block;
+    
+    width: min(calc(75% - 5px), 370px) !important;
+    
+    margin: 10px 0 10px max(25%, calc(50% - 125px)) !important;
+    padding: 5px 30px 5px 0 !important;
+    
+    border: none;
+    
+    background-position: right;
+    background-color: transparent !important;
+    
+    line-height: 20px;
+    font-size: 16px;
+    color: #666666;
+    text-align: right;
+    text-decoration: underline;
+}
+
+.dark_mode .execute_button, .dark_mode .execute_link {
+    color: #cccccc;
 }
 
 .line_select_wrapper, .search_wrapper {
@@ -2801,12 +2867,29 @@ a {
     padding: 5px 10px;
 }
 
-.additional_setting_link {
+.execute_link {
     display: block;
     
     width: fit-content;
     
-    margin: 20px auto 10px auto;
+    margin: 25px auto 15px auto;
+    
+    line-height: 20px;
+    color: #666666;
+    text-indent: 10px;
+}
+
+.execute_link:after {
+    content: "";
+    
+    display: inline-block;
+    
+    width: 23px;
+    height: 20px;
+    
+    margin-left: 5px;
+    
+    vertical-align: top;
 }
 
 #screenshot_preview {
@@ -3414,18 +3497,6 @@ a abbr {
 #train_detail_popup .informational_text {
     margin-top: 20px;
     margin-bottom: 80px;
-}
-
-#train_detail_popup .wide_button, #operation_detail_popup .wide_button {
-    position: fixed;
-    bottom: 20px;
-    left: max(25px, calc(50% - 225px));
-    
-    width: calc(100% - 50px) !important;
-    
-    max-width: 450px;
-    
-    z-index: 2;
 }
 
 .train_overview, .operation_table_train, .location_overview {

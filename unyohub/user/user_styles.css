@@ -148,7 +148,7 @@ button, .popup_close_button {
     z-index: 10;
 }
 
-.wide_button, .execute_button {
+.wide_button {
     display: block;
     
     position: relative;
@@ -168,13 +168,26 @@ button, .popup_close_button {
 }
 
 .execute_button {
-    width: calc(50% - 10px) !important;
+    display: block;
     
-    margin: 20px 0 10px 50%;
-    padding: 5px 5px;
+    width: calc(75% - 15px) !important;
     
-    line-height: 22px;
-    font-size: 14px;
+    margin: 10px 0 10px 25% !important;
+    padding: 5px 30px 5px 0 !important;
+    
+    border: none;
+    
+    background-image: url(data:image/webp;base64,UklGRo4AAABXRUJQVlA4TIIAAAAvLcAJEC8gEEhhuy0QSGG7LRBIYbstJCDc91gT4B8iXAUHkWRLzXAYGCACcBALcRD/cjhHQkT/Fblt26iDV79DHQE+Xhbcz9F+9j/bn6pYsWLFihUrVqxYsWLFihUrVqxYee539r0seG4+Wy8LqlSpUqVKlSpVqlSpUqVKlSpVqlQB);
+    background-repeat: no-repeat;
+    background-size: 23px 20px;
+    background-position: right;
+    background-color: transparent !important;
+    
+    line-height: 20px;
+    font-size: 16px;
+    color: #666666;
+    text-align: right;
+    text-decoration: underline;
 }
 
 input[type="text"], input[type="number"], input[type="password"] {
