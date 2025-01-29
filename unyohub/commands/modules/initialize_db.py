@@ -8,14 +8,14 @@ def initialize_db (mes, main_dir):
     
     mes("データベースに接続しています...")
     
-    db_path = main_dir + "/railroad.db"
+    db_file_path = main_dir + "/railroad.db"
     
-    if not os.path.exists(db_path):
+    if not os.path.exists(db_file_path):
         new_db = True
     else:
         new_db = False
     
-    conn = sqlite3.connect(db_path)
+    conn = sqlite3.connect(db_file_path)
     
     cur = conn.cursor()
     
@@ -66,6 +66,6 @@ def initialize_db (mes, main_dir):
     conn.close()
     
     if new_db and os.name == "posix":
-        os.chmod(db_path, 0o766)
+        os.chmod(db_file_path, 0o766)
     
     mes("処理が完了しました")
