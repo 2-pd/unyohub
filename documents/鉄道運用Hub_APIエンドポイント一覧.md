@@ -21,7 +21,8 @@
     "administrator_name" : インスタンス運営者名(未設定なら省略),  
     "administrator_url" : インスタンス運営者紹介ページのURL(未設定なら省略),  
     "administrator_introduction" : インスタンス運営者の紹介文(未設定なら省略),  
-    "allow_guest_user" : ログインしていないユーザーの投稿を認めるか(BOOL値)  
+    "allow_guest_user" : ログインしていないユーザーの投稿を認めるか(BOOL値),  
+    "require_comments_on_speculative_posts" : 未出庫の運用への情報投稿時にコメント入力を強制するか(BOOL値)  
 }  
   
 **main.iniの変更日時がタイムスタンプ以前だった場合** :  
@@ -47,7 +48,7 @@
 }  
   
 **ログインしていない場合** :  
-文字列「NOT_LOGGED_IN」 
+文字列「NOT_LOGGED_IN」
 
 
 ## login.php
@@ -55,7 +56,7 @@
 
 ### 引数
 **$_POST["user_id"]** : ユーザーID  
-**$_POST["password"]** : パスワード
+**$_POST["password"]** : パスワード  
 **$_POST["totp_pin"]** : TOTPのワンタイムコード(2要素認証未設定ユーザーでは空文字列)
 
 ### 応答
@@ -82,7 +83,7 @@
 
 ### 応答
 **ログアウトに成功した場合** :  
-文字列「LOGGED_OUT」 
+文字列「LOGGED_OUT」  
   
 **ログアウトに失敗した場合** :  
 文字列「ERROR: 」とそれに続くエラー内容文
@@ -253,22 +254,24 @@ formations.jsonの内容を返す
         {  
             "operation_number" : 運用番号,  
             "formations" : 組成情報,  
+            "relieved_formations" : 差し替え前の編成を充当順に配列で(差し替えがなければ省略),  
             "posts_count" : 情報の投稿数,  
-            "variant_exists" : 投稿情報のバリエーションの有無,  
-            "comment_exists" : 運用補足情報の有無,  
-            "from_beginner" : ビギナーの投稿か否か,  
-            "is_quotation" : 引用情報か否か  
+            "variant_exists" : 投稿情報のバリエーションの有無(なければ省略),  
+            "comment_exists" : 運用補足情報の有無(なければ省略),  
+            "from_beginner" : ビギナーの投稿か否か(ビギナーでなければ省略),  
+            "is_quotation" : 引用情報か否か(引用情報でなければ省略)  
         }...  
     ],  
     "operations_tomorrow" : [ 翌日の運用情報(なければNULL)  
         {  
             "operation_number" : 運用番号,  
             "formations" : 組成情報,  
+            "relieved_formations" : 差し替え前の編成を充当順に配列で(差し替えがなければ省略),  
             "posts_count" : 情報の投稿数,  
-            "variant_exists" : 投稿情報のバリエーションの有無,  
-            "comment_exists" : 運用補足情報の有無,  
-            "from_beginner" : ビギナーの投稿か否か,  
-            "is_quotation" : 引用情報か否か  
+            "variant_exists" : 投稿情報のバリエーションの有無(なければ省略),  
+            "comment_exists" : 運用補足情報の有無(なければ省略),  
+            "from_beginner" : ビギナーの投稿か否か(ビギナーでなければ省略),  
+            "is_quotation" : 引用情報か否か(引用情報でなければ省略)  
         }...  
     ],  
     "last_seen_date" : 最終目撃日(YYYY-MM-DD形式、当日の運用情報がない場合のみ。データが全く存在しなければNULL),  
@@ -276,11 +279,12 @@ formations.jsonの内容を返す
         {  
             "operation_number" : 運用番号,  
             "formations" : 組成情報,  
+            "relieved_formations" : 差し替え前の編成を充当順に配列で(差し替えがなければ省略),  
             "posts_count" : 情報の投稿数,  
-            "variant_exists" : 投稿情報のバリエーションの有無,  
-            "comment_exists" : 運用補足情報の有無,  
-            "from_beginner" : ビギナーの投稿か否か,  
-            "is_quotation" : 引用情報か否か  
+            "variant_exists" : 投稿情報のバリエーションの有無(なければ省略),  
+            "comment_exists" : 運用補足情報の有無(なければ省略),  
+            "from_beginner" : ビギナーの投稿か否か(ビギナーでなければ省略),  
+            "is_quotation" : 引用情報か否か(引用情報でなければ省略)  
         }...  
     ]  
 }  
@@ -384,6 +388,7 @@ JSON化された時刻表の内容を返す
 {  
     "タイムスタンプの時刻より後に情報投稿のあった運用番号" : { 当該の運用番号に投稿された情報が全て取り消された場合、この連想配列ではなくnullが格納される  
         "formations" : 編成名(最も新しい投稿の情報を前位側・奇数向きから順に各編成を「+」で区切った文字列。運休の場合は空文字列),  
+        "relieved_formations" : 差し替え前の編成を充当順に配列で(差し替えがなければ省略),  
         "posts_count" : 情報の投稿数,  
         "variant_exists" : 投稿情報のバリエーションの有無(なければ省略),  
         "comment_exists" : 運用補足情報の有無(なければ省略),  
@@ -414,7 +419,7 @@ JSON化された時刻表の内容を返す
 **正常時** :  
 {  
     "運用番号" : [  
-        {  
+        { 投稿された運用情報。充当順の逆順で、同じ充当順の情報は新しい順に  
             "user_id" : 情報提供者のユーザーID(アクセス者がモデレーターではない場合、この値はログインしていないユーザーならnull),  
             "user_name" : 情報提供者のハンドルネーム,  
             "is_management_member" : ユーザーが運営メンバーか否か(運営メンバーでなければ省略),  
@@ -422,6 +427,7 @@ JSON化された時刻表の内容を返す
             "website_url" : ユーザーのwebサイトのURL(なければ省略),  
             "formations" : 編成名(前位側・奇数向きから順に各編成を「+」で区切った文字列。運休の場合は空文字列),  
             "train_number" : 列車番号または「○」(出庫時)、「△」(入庫時)、NULL(引用情報の場合),  
+            "assign_order" : 当該運用に何番目に充当された編成の情報か(1から始まり、差し替えのたびに1ずつ増える),  
             "is_quotation" : 引用情報か否か(引用情報でなければ省略),  
             "posted_datetime" : YYYY-MM-DD HH:MM:SS形式の投稿日時,  
             "comment" : 運用補足情報(なければ省略),  
@@ -433,6 +439,32 @@ JSON化された時刻表の内容を返す
   
 **エラーの場合** :  
 文字列「ERROR: 」とそれに続くエラー内容文
+
+
+## operation_data_history.php
+指定した編成または運用番号の過去30日間の運用履歴を取得する
+
+### 引数
+**$_POST["railroad_id"]** : 路線系統識別名  
+**$_POST["formation_name"]** : 編成名(運用番号を指定する場合は省略)  
+**$_POST["operation_number"]** : 運用番号(編成名を指定する場合は省略)
+
+### 応答
+**正常時** :  
+{  
+    "YYYY-MM-DD形式の日付" : [  
+        {  
+            "operation_number" : 運用番号,  
+            "formations" : 編成名(前位側・奇数向きから順に各編成を「+」で区切った文字列。運休の場合は空文字列),  
+            "relieved_formations" : 差し替え前の編成を充当順に配列で(差し替えがなければ省略)  
+        }...  
+    ]...  
+}  
+▲クライアント端末からAccept-Encodingヘッダーが送信されていた場合、このデータは自動的にgzip圧縮される  
+  
+**エラーの場合** :  
+文字列「ERROR: 」とそれに続くエラー内容文
+
 
 
 ## moderation_info.php
@@ -482,6 +514,7 @@ JSON化された時刻表の内容を返す
 **$_POST["railroad_id"]** : 路線系統識別名  
 **$_POST["date"]** : YYYY-MM-DD形式の日付  
 **$_POST["operation_number"]** : 運用番号  
+**$_POST["assign_order"]** : 当該運用に何番目に充当された編成の情報か(1から始まり、差し替えのたびに1ずつ増える。上限値は10で、省略時は1とみなす)  
 **$_POST["train_number"]** : 列車番号、「○」(出庫時)、「△」(入庫時)のいずれか(引用情報の場合は省略)  
 **$_POST["formations"]** : 編成を前位側(奇数側)から順に「+」で区切った文字列  
 **$_POST["is_quotation"]** : 引用情報か否か(引用情報の場合は文字列「YES」、引用情報でなければ省略可能)  
@@ -496,6 +529,7 @@ JSON化された時刻表の内容を返す
 {  
   "投稿された運用番号" : {  
         "formations" : 編成名(最も新しい投稿の情報を前位側・奇数向きから順に各編成を「+」で区切った文字列。運休の場合は空文字列),  
+        "relieved_formations" : 差し替え前の編成を充当順に配列で(差し替えがなければ省略),  
         "posts_count" : 情報の投稿数,  
         "variant_exists" : 投稿情報のバリエーションの有無(なければ省略),  
         "comment_exists" : 運用補足情報の有無(なければ省略),  
@@ -517,6 +551,7 @@ JSON化された時刻表の内容を返す
 **$_POST["railroad_id"]** : 路線系統識別名  
 **$_POST["date"]** : YYYY-MM-DD形式の日付  
 **$_POST["operation_number"]** : 運用番号  
+**$_POST["assign_order"]** : 当該運用に何番目に充当された編成の情報か(1から始まり、差し替えのたびに1ずつ増える。上限値は10で、省略時は1とみなす)  
 **$_POST["user_id"]** : ユーザーID。モデレーターは他のユーザーの投稿も取り消すことができる。  
 **$_POST["one_time_token"]** : ワンタイムトークン
 
@@ -525,6 +560,7 @@ JSON化された時刻表の内容を返す
 {  
   "取り消し操作対象の運用番号" : { 他のユーザーからの情報がない場合、この連想配列ではなくnullが格納される  
         "formations" : 他のユーザーの情報に基づく編成名(最も新しい投稿の情報を前位側・奇数向きから順に各編成を「+」で区切った文字列),  
+        "relieved_formations" : 差し替え前の編成を充当順に配列で(差し替えがなければ省略),  
         "posts_count" : 情報の投稿数,  
         "variant_exists" : 投稿情報のバリエーションの有無(なければ省略),  
         "comment_exists" : 運用補足情報の有無(なければ省略),  
@@ -549,7 +585,7 @@ JSON化された時刻表の内容を返す
 
 ### 応答
 **取り消しに成功した場合** :  
-文字列「SUCCESSFULLY_REVOKED」
+文字列「SUCCESSFULLY_REVOKED」  
   
 **エラーの場合** :  
 文字列「ERROR: 」とそれに続くエラー内容文

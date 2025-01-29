@@ -1,13 +1,10 @@
 <?php
-include "../libs/wakarana/main.php";
 include "__operation_data_functions.php";
 
 if (!isset($_POST["railroad_id"], $_POST["ip_address"])) {
     print "ERROR: 送信値が不正です";
     exit;
 }
-
-$wakarana = new wakarana("../config");
 
 $user = $wakarana->check();
 if (is_object($user)) {

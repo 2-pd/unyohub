@@ -15,7 +15,7 @@ import webbrowser
 
 
 UNYOHUB_GUI_TOOLS_APP_NAME = "鉄道運用Hub用データ編集ツール"
-UNYOHUB_GUI_TOOLS_VERSION = "24.12-1"
+UNYOHUB_GUI_TOOLS_VERSION = "25.01-1"
 UNYOHUB_GUI_TOOLS_LICENSE_TEXT = "このアプリケーションは無権利創作宣言に準拠して著作権放棄されています"
 UNYOHUB_GUI_TOOLS_LICENSE_URL = "https://www.2pd.jp/license/"
 UNYOHUB_GUI_TOOLS_REPOSITORY_URL = "https://fossil.2pd.jp/unyohub/"
@@ -117,14 +117,14 @@ def open_main_window ():
     button_embed_train_icon = tk.Button(main_win, text="アイコン画像をファイルに埋め込み", font=button_font, command=embed_train_icon, bg="#666666", fg="#ffffff", relief=tk.FLAT, highlightbackground="#666666")
     button_embed_train_icon.place(x=10, y=190, width=300, height=40)
     
+    button_generate_operation_table = tk.Button(main_win, text="運用情報付き時刻表の変換", font=button_font, command=generate_operation_table, bg="#666666", fg="#ffffff", relief=tk.FLAT, highlightbackground="#666666")
+    button_generate_operation_table.place(x=10, y=240, width=300, height=40)
+    
     button_convert_timetable_1 = tk.Button(main_win, text="時刻表の変換(ステップ1)", font=button_font, command=convert_timetable_1, bg="#666666", fg="#ffffff", relief=tk.FLAT, highlightbackground="#666666")
-    button_convert_timetable_1.place(x=10, y=240, width=300, height=40)
+    button_convert_timetable_1.place(x=10, y=290, width=300, height=40)
     
     button_convert_timetable_2 = tk.Button(main_win, text="時刻表の変換(ステップ2)", font=button_font, command=convert_timetable_2, bg="#666666", fg="#ffffff", relief=tk.FLAT, highlightbackground="#666666")
-    button_convert_timetable_2.place(x=10, y=290, width=300, height=40)
-    
-    button_generate_operation_table = tk.Button(main_win, text="運用情報付き時刻表の変換", font=button_font, command=generate_operation_table, bg="#666666", fg="#ffffff", relief=tk.FLAT, highlightbackground="#666666")
-    button_generate_operation_table.place(x=10, y=340, width=300, height=40)
+    button_convert_timetable_2.place(x=10, y=340, width=300, height=40)
     
     button_convert_operation_table_for_printing = tk.Button(main_win, text="運用表を印刷用に変換", font=button_font, command=lambda: convert_operation_table_1(True), bg="#666666", fg="#ffffff", relief=tk.FLAT, highlightbackground="#666666")
     button_convert_operation_table_for_printing.place(x=10, y=390, width=300, height=40)
@@ -321,6 +321,22 @@ def embed_train_icon ():
             error_mes(traceback.format_exc())
 
 
+def generate_operation_table ():
+    global config
+    
+    select_diagram(generate_operation_table_exec, True)
+
+
+def generate_operation_table_exec (diagram_revision, diagram_id, generate_train_number):
+    try:
+        clear_mes()
+        
+        generate_operation_table = importlib.import_module("modules.generate_operation_table")
+        generate_operation_table.generate_operation_table(mes, config["main_dir"], diagram_revision, diagram_id, generate_train_number)
+    except:
+        error_mes(traceback.format_exc())
+
+
 def convert_timetable_1 ():
     global config
     
@@ -362,22 +378,6 @@ def convert_timetable_2_exec (diagram_revision, diagram_id):
         error_mes(traceback.format_exc())
 
 
-def generate_operation_table ():
-    global config
-    
-    select_diagram(generate_operation_table_exec, True)
-
-
-def generate_operation_table_exec (diagram_revision, diagram_id, generate_train_number):
-    try:
-        clear_mes()
-        
-        generate_operation_table = importlib.import_module("modules.generate_operation_table")
-        generate_operation_table.generate_operation_table(mes, config["main_dir"], diagram_revision, diagram_id, generate_train_number)
-    except:
-        error_mes(traceback.format_exc())
-
-
 def convert_operation_table_1 (for_printing):
     global config
     
@@ -399,7 +399,7 @@ def convert_operation_table_1 (for_printing):
         if len(file_name_for_printing) == 0:
             return
         
-        max_columns = simpledialog.askinteger("運用表の列数を指定", "出力する運用表の列数を指定してください", initialvalue=16, minvalue=6)
+        max_columns = simpledialog.askinteger("運用表の列数を指定", "出力する運用表の列数を指定してください", initialvalue=20, minvalue=6)
     
         if max_columns is None:
             return

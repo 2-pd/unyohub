@@ -22,7 +22,7 @@ $operation_numbers = explode(",", $_POST["operation_numbers"]);
 
 $operation_data = array();
 for ($cnt = 0; $cnt < count($operation_numbers); $cnt++) {
-    $operations_r = $db_obj->query("SELECT * FROM `unyohub_data` WHERE `operation_date` = '".$db_obj->escapeString($_POST["date"])."' AND `operation_number` = '".$db_obj->escapeString($operation_numbers[$cnt])."' ORDER BY `posted_datetime` DESC");
+    $operations_r = $db_obj->query("SELECT * FROM `unyohub_data` WHERE `operation_date` = '".$db_obj->escapeString($_POST["date"])."' AND `operation_number` = '".$db_obj->escapeString($operation_numbers[$cnt])."' ORDER BY `assign_order` DESC, `posted_datetime` DESC");
     
     $data = array();
     for ($cnt_2 = 0; $operation = $operations_r->fetchArray(SQLITE3_ASSOC); $cnt_2++) {
@@ -31,6 +31,7 @@ for ($cnt = 0; $cnt < count($operation_numbers); $cnt++) {
             "user_name" => NULL,
             "formations" => $operation["formations"],
             "train_number" => $operation["train_number"],
+            "assign_order" => $operation["assign_order"],
             "posted_datetime" => $operation["posted_datetime"],
             "comment" => $operation["comment"]
         );

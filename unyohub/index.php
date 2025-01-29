@@ -17,7 +17,7 @@
  */
 
 define("UNYOHUB_APP_NAME", "鉄道運用Hub");
-define("UNYOHUB_VERSION", "24.12-1");
+define("UNYOHUB_VERSION", "25.01-1");
 define("UNYOHUB_APP_INFO_URL", "https://create.2pd.jp/apps/unyohub/");
 define("UNYOHUB_REPOSITORY_URL", "https://fossil.2pd.jp/unyohub/");
 define("UNYOHUB_LICENSE_TEXT", "このアプリケーションは無権利創作宣言に準拠して著作権放棄されています。");
@@ -40,7 +40,7 @@ if (empty($_SERVER["PATH_INFO"]) || $_SERVER["PATH_INFO"] === "/") {
         $railroad_info = json_decode(file_get_contents($railroad_info_path), TRUE);
         
         if (empty($path_info[2])) {
-            $page_title = $railroad_info["railroad_name"]." | ".UNYOHUB_APP_NAME;
+            $page_title = $railroad_info["railroad_name"]."の運用情報 | ".UNYOHUB_APP_NAME;
             $line_names = array();
             foreach ($railroad_info["lines_order"] as $line_id) {
                 $line_names[] = $railroad_info["lines"][$line_id]["line_name"];
@@ -192,7 +192,7 @@ print "        const UNYOHUB_LICENSE_TEXT = \"".UNYOHUB_LICENSE_TEXT."\";\n";
             <a href="/admin/index.php" target="_blank" rel="opener">管理画面を開く</a>
         </div>
         <div id="menu_not_logged_in">
-            <a href="javascript:void(0);" onclick="open_square_popup('login_popup');">ログイン</a>
+            <a href="javascript:void(0);" onclick="show_login_form();">ログイン</a>
             <a href="/user/sign_up.php" target="_blank" rel="opener">新規登録</a>
         </div>
         <div id="menu_off_line">
@@ -212,13 +212,14 @@ print "        const UNYOHUB_LICENSE_TEXT = \"".UNYOHUB_LICENSE_TEXT."\";\n";
     <div id="splash_screen" class="splash_screen_loading">
 <?php
 if ($path_info_str === "/") {
+    $unyohub_app_name = UNYOHUB_APP_NAME;
     print <<<EOM
             <div id="splash_screen_inner">
                 <div id="splash_screen_login_status">サーバに接続しています...</div>
                 <a id="announcements_overview" href="javascript:void(0);" onclick="show_announcements();"></a>
                 <div id="splash_screen_buttons" class="wait_icon"></div>
                 <div id="splash_screen_bottom">
-                    <a href="javascript:void(0);" onclick="show_about();">このアプリについて</a>　<a href="javascript:void(0);" onclick="show_rules();">ルールとポリシー</a>
+                    <a href="javascript:void(0);" onclick="show_about();"><span id="splash_screen_instance_name">{$unyohub_app_name}</span>について</a>　<a href="javascript:void(0);" onclick="show_rules();">ルールとポリシー</a>
                     <div id="splash_screen_app_version"></div>
                 </div> 
             </div>

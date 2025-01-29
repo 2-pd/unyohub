@@ -1,7 +1,7 @@
 <?php
 include "user_common.php";
 
-print_header("ルールとポリシー");
+print_header("ルールとポリシー", FALSE);
 
 if (!empty($_GET["show_accept_button"])) {
     print <<< EOM

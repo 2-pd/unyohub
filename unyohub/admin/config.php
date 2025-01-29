@@ -24,6 +24,7 @@ if (isset($_POST["instance_name"], $_POST["introduction_text"], $_POST["manual_u
     $config_str .= "require_invite_code = ".(!empty($_POST["require_invite_code"]) ? "true" : "false")."\n";
     $config_str .= "require_email_address = ".(!empty($_POST["require_email_address"]) ? "true" : "false")."\n";
     $config_str .= "allow_guest_user = ".(!empty($_POST["allow_guest_user"]) ? "true" : "false")."\n";
+    $config_str .= "require_comments_on_speculative_posts = ".(!empty($_POST["require_comments_on_speculative_posts"]) ? "true" : "false")."\n";
     $config_str .= "\n";
     $config_str .= "sender_email_address = \"".addslashes($_POST["sender_email_address"])."\"\n";
     $config_str .= "\n";
@@ -64,7 +65,7 @@ print "<input type='text' name='administrator_url' value='".addslashes($config["
 print "<h4>運営者の紹介文</h4>";
 print "<textarea name='administrator_introduction'>".htmlspecialchars(stripcslashes($config["administrator_introduction"]))."</textarea>";
 
-print "<h3>ユーザー登録・投稿管理</h3>";
+print "<h3>ユーザー登録管理</h3>";
 print "<input type='checkbox' name='require_invite_code' id='require_invite_code' class='toggle' value='YES'";
 if ($config["require_invite_code"]) {
     print " checked='checked'";
@@ -75,11 +76,18 @@ if ($config["require_email_address"]) {
     print " checked='checked'";
 }
 print "><label for='require_email_address'>ユーザー登録時にメールアドレス入力を強制する</label>";
+
+print "<h3>投稿管理</h3>";
 print "<input type='checkbox' name='allow_guest_user' id='allow_guest_user' class='toggle' value='YES'";
 if ($config["allow_guest_user"]) {
     print " checked='checked'";
 }
 print "><label for='allow_guest_user'>ログインしていないユーザーの投稿を認める</label>";
+print "<input type='checkbox' name='require_comments_on_speculative_posts' id='require_comments_on_speculative_posts' class='toggle' value='YES'";
+if ($config["require_comments_on_speculative_posts"]) {
+    print " checked='checked'";
+}
+print "><label for='require_comments_on_speculative_posts'>未出庫運用への情報投稿時にコメント入力を強制</label>";
 
 print "<h3>メール送信用アドレス</h3>";
 print "<div class='informational_text'>このインスタンスのサーバに割り当てられているドメインであれば、存在しないメールアドレスでも設定可能です。</div>";

@@ -7,7 +7,7 @@
 # コマンドラインツール(「unyohub」コマンド)
 
 ## unyohub setup-libs
-編成表データを変換する  
+ライブラリの初期設定を行う  
 処理本体は**libs_setup.php**
 
 ### 引数
@@ -23,7 +23,7 @@
 
 
 ## unyohub update-operations
-運用表をDBに書き込む  
+運用表をデータベースに書き込む  
 処理本体は**write_operations_to_db.py**
 
 ### 引数

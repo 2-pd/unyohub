@@ -6,11 +6,23 @@ import json
 import re
 
 
-def shape_time_string (time_string):
-    if ":" not in time_string:
-        time_string = time_string[:-2] + ":" + time_string[-2:]
+def shape_time_string (time_str):
+    if ":" not in time_str:
+        if int(time_str) >= 300:
+            time_str = time_str[:-2] + ":" + time_str[-2:]
+        elif len(time_str) >= 3:
+            time_str = str(int(time_str[:-2]) + 24) + ":" + time_str[-2:]
+        else:
+            time_str = "24:" + time_str.zfill(2)
+    else:
+        time_str_split = time_str.split(":")
+        
+        if int(time_str_split[0]) <= 2:
+            time_str_split[0] = str(int(time_str_split[0]) + 24)
+        
+        time_str = time_str_split[0] + ":" + time_str_split[1].zfill(2)
     
-    return time_string.zfill(5)
+    return time_str.zfill(5)
 
 
 def convert_timetable_2 (mes, main_dir, diagram_revision, diagram_id):

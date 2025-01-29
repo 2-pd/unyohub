@@ -1,14 +1,11 @@
 <?php
-include "../libs/wakarana/main.php";
 include "../libs/zizai_captcha/main.php";
 include "__operation_data_functions.php";
 
-if (!isset($_POST["railroad_id"], $_POST["date"], $_POST["operation_number"], $_POST["user_id"], $_POST["one_time_token"])) {
+if (!isset($_POST["railroad_id"], $_POST["date"], $_POST["operation_number"], $_POST["assign_order"], $_POST["user_id"], $_POST["one_time_token"])) {
     print "ERROR: 送信値が不正です";
     exit;
 }
-
-$wakarana = new wakarana("../config");
 
 $moderator_id = NULL;
 
@@ -43,6 +40,21 @@ if ($ts === FALSE) {
     exit;
 }
 
-$data = array($_POST["operation_number"] => revoke_post($wakarana, $ts, $_POST["operation_number"], $_POST["user_id"], $moderator_id));
+$data_cache_values = revoke_post($ts, $_POST["operation_number"], $_POST["assign_order"], $_POST["user_id"], $moderator_id);
+
+if (!$data_cache_values["variant_exists"]) {
+    unset($data_cache_values["variant_exists"]);
+}
+if (!$data_cache_values["comment_exists"]) {
+    unset($data_cache_values["comment_exists"]);
+}
+if (!$data_cache_values["from_beginner"]) {
+    unset($data_cache_values["from_beginner"]);
+}
+if (!$data_cache_values["is_quotation"]) {
+    unset($data_cache_values["is_quotation"]);
+}
+
+$data = array($_POST["operation_number"] => $data_cache_values);
 
 print json_encode($data, JSON_UNESCAPED_UNICODE);

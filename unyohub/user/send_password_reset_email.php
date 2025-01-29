@@ -37,7 +37,7 @@ if (isset($_POST["user_id"], $_POST["email_address"], $_POST["zizai_captcha_id"]
     }
 }
 
-print_header("パスワードのリセット", TRUE);
+print_header("パスワードのリセット", TRUE, TRUE);
 
 ?>
     <script>

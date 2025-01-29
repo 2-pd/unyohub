@@ -75,6 +75,13 @@ def convert_timetable_1 (mes, file_name, digits_count):
                                 departure_time = str(int(departure_time[:-2]) + 24) + ":" + departure_time[-2:]
                             else:
                                 departure_time = "24:" + departure_time.zfill(2)
+                        else:
+                            departure_time_split = departure_time.split(":")
+                            
+                            if int(departure_time_split[0]) <= 2:
+                                departure_time_split[0] = str(int(departure_time_split[0]) + 24)
+                            
+                            departure_time = departure_time_split[0] + ":" + departure_time_split[1].zfill(2)
                         
                         train[cnt_2] = before_departure_time + departure_time.zfill(5)
                 
