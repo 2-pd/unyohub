@@ -21,14 +21,16 @@ _/_/_/_/ データベース _/_/_/_/
   `affiliation` TEXT 所属車両基地
   `caption` TEXT 1行見出し
   `description` TEXT 補足説明文
+  `semifixed_formation` TEXT 編成が組み込まれている半固定編成(「+」区切り、半固定編成を組成していない場合はNULL)
   `unavailable` INTEGER NOT NULL 運用離脱中か否か
   `inspection_information` TEXT 検査情報
-  `overview_updated` TEXT NOT NULL 「YYYY-MM-DD HH:MM:SS」形式の概要情報(見出し・運用離脱)更新日時
+  `overview_updated` TEXT NOT NULL 「YYYY-MM-DD HH:MM:SS」形式の概要情報(見出し・半固定編成・運用離脱)更新日時
   `updated_datetime` TEXT NOT NULL 「YYYY-MM-DD HH:MM:SS」形式の最終編集日時
   `edited_user_id` TEXT 最後に編集したユーザーのID(未編集の場合はNULL)
 
   INDEX `unyohub_idx_f1`(`series_name`)
   INDEX `unyohub_idx_f2`(`overview_updated`)
+  INDEX `unyohub_idx_f3`(`semifixed_formation`)
 
 
 `unyohub_cars` 車両データ

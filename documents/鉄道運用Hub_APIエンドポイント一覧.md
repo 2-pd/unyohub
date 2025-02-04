@@ -202,6 +202,7 @@ formations.jsonの内容を返す
 {  
     "編成名" : {  
         "caption" : 1行見出し,  
+        "semifixed_formation" : 編成が組み込まれている半固定編成(「+」区切り、半固定編成を組成していない場合は省略),  
         "unavailable" : 運用離脱中か否か(BOOL値)  
     }...  
 }  
@@ -239,6 +240,7 @@ formations.jsonの内容を返す
     "affiliation" : 所属車両基地,  
     "caption" : 1行見出し,  
     "description" : 補足説明文,  
+    "semifixed_formation" : 編成が組み込まれている半固定編成(「+」区切り、半固定編成を組成していない場合は省略),  
     "unavailable" : 運用離脱中か否か,  
     "inspection_information" : 検査情報,  
     "histories" : [ 車歴情報  
@@ -420,8 +422,8 @@ JSON化された時刻表の内容を返す
 {  
     "運用番号" : [  
         { 投稿された運用情報。充当順の逆順で、同じ充当順の情報は新しい順に  
-            "user_id" : 情報提供者のユーザーID(アクセス者がモデレーターではない場合、この値はログインしていないユーザーならnull),  
-            "user_name" : 情報提供者のハンドルネーム,  
+            "user_id" : 情報提供者のユーザーID,  
+            "user_name" : 情報提供者のハンドルネーム(設定されていない場合はnull),  
             "is_management_member" : ユーザーが運営メンバーか否か(運営メンバーでなければ省略),  
             "is_beginner" : ユーザーがビギナーか否か(ビギナーでなければ省略),  
             "website_url" : ユーザーのwebサイトのURL(なければ省略),  
