@@ -1623,7 +1623,8 @@ input[type="checkbox"]:checked + label.drop_down + div {
     
     line-height: 24px;
     text-align: center;
-    white-space: nowrap;
+    white-space: pre-wrap;
+    word-break: keep-all;
 }
 
 #operation_data_area th {

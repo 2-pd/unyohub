@@ -666,6 +666,8 @@ function update_user_data (user_data_next = null) {
         var menu_user_name_elm = document.getElementById("menu_user_name");
         menu_user_name_elm.className = "";
         
+        var user_name = user_data["user_name"] !== null ? user_data["user_name"] : "ハンドルネーム未設定";
+        
         if (user_data["is_management_member"]) {
             menu_admin_elm.style.display = "block";
             var honorific = "(管)";
@@ -681,10 +683,10 @@ function update_user_data (user_data_next = null) {
             }
         }
         
-        menu_user_name_elm.innerText = user_data["user_name"] + " " + honorific;
+        menu_user_name_elm.innerText = user_name + " " + honorific;
         
         if (location.pathname === "/") {
-            splash_screen_login_status_elm.innerHTML = "ようこそ <b>" + escape_html(user_data["user_name"]) + "</b> さん<br><a href='/user/user_info.php' target='_blank' rel='opener'>ユーザー情報</a>　<a href='javascript:void(0);' onclick='user_logout();'>ログアウト</a>";
+            splash_screen_login_status_elm.innerHTML = "ようこそ <b>" + escape_html(user_name) + "</b> さん<br><a href='/user/user_info.php' target='_blank' rel='opener'>ユーザー情報</a>　<a href='javascript:void(0);' onclick='user_logout();'>ログアウト</a>";
         }
     } else {
         menu_logged_in_elm.style.display = "none";
@@ -1781,17 +1783,15 @@ function update_operation_table (resolve_func, reject_func, diagram_id, last_mod
                                 var train_operations = line_operations_data["lines"][train["line_id"]][train_direction][train["train_number"]][cnt_3]["operation_numbers"];
                                 
                                 for_4: for (var cnt_4 = 0; cnt_4 < train_operations.length; cnt_4++) {
-                                    if (train["train_number"].substring(1) !== "_") {
+                                    if (train["train_number"].substring(0, 1) !== "_") {
                                         var operation_trains = operation_response["operations"][train_operations[cnt_4]]["trains"];
                                     } else {
                                         var operation_trains = operations_stopped_trains[train_operations[cnt_4]];
                                     }
                                     
                                     for (var cnt_5 = 0; cnt_5 < operation_trains.length; cnt_5++) {
-                                        if (operation_trains[cnt_5]["train_number"] === train["train_number"] && operation_trains[cnt_5]["starting_station"] === train["starting_station"]) {
-                                            if (operation_trains[cnt_5]["position_forward"] > train["position_forward"]) {
-                                                break for_4;
-                                            }
+                                        if (operation_trains[cnt_5]["train_number"] === train["train_number"] && operation_trains[cnt_5]["starting_station"] === train["starting_station"] && operation_trains[cnt_5]["position_forward"] > train["position_forward"]) {
+                                            break for_4;
                                         }
                                     }
                                 }
@@ -2888,8 +2888,8 @@ function get_operation_data_detail (operation_date, operation_number_or_list, ar
                         }
                     }
                     
-                    if (data[operation_numbers[cnt]][cnt_2]["user_name"] !== null) {
-                        var user_name_html = escape_html(data[operation_numbers[cnt]][cnt_2]["user_name"]);
+                    if (data[operation_numbers[cnt]][cnt_2]["user_id"] !== null && data[operation_numbers[cnt]][cnt_2]["user_id"].substring(0, 1) !== "*") {
+                        var user_name_html = data[operation_numbers[cnt]][cnt_2]["user_name"] !== null ? escape_html(data[operation_numbers[cnt]][cnt_2]["user_name"]) : data[operation_numbers[cnt]][cnt_2]["user_id"];
                         var class_html = "";
                         
                         if (!("is_management_member" in data[operation_numbers[cnt]][cnt_2] && data[operation_numbers[cnt]][cnt_2]["is_management_member"])) {
@@ -4726,21 +4726,25 @@ function update_formation_table_drop_down_status (elm) {
     formation_table_drop_down_status[elm.id] = elm.checked;
 }
 
-function get_operation_data_html (data, ts, no_data_text = "情報がありません") {
+function get_operation_data_html (data, ts, clickable = true, no_data_text = "情報がありません") {
     if (data !== null) {
         buf = "";
         for (var cnt = 0; cnt < data.length; cnt++) {
-            buf += "<div class='key_and_value' onclick='operation_detail(\"" + add_slashes(data[cnt]["operation_number"]) + "\", " + ts + ", false, \"" + add_slashes(data[cnt]["formations"]) + "\");'><u>" + escape_html(data[cnt]["operation_number"]) + "</u>";
+            if (clickable) {
+                buf += "<div class='key_and_value' onclick='operation_detail(\"" + add_slashes(data[cnt]["operation_number"]) + "\", " + ts + ", false, \"" + add_slashes(data[cnt]["formations"]) + "\");'><u>" + escape_html(data[cnt]["operation_number"]) + "</u>";
+            } else {
+                buf += "<div class='key_and_value'><b>" + escape_html(data[cnt]["operation_number"]) + "</b>";
+            }
             
             if ("relieved_formations" in data[cnt]) {
                 buf += "<span class='relieved_formations'>";
                 for (var cnt_2 = 0; cnt_2 < data[cnt]["relieved_formations"].length; cnt_2++) {
-                    buf += (cnt_2 >= 1 ? "<br>→ " : "") + escape_html(data[cnt]["relieved_formations"][cnt_2]);
+                    buf += (cnt_2 >= 1 ? "<br>→ " : "") + (data[cnt]["relieved_formations"][cnt_2] !== "" ? escape_html(data[cnt]["relieved_formations"][cnt_2]) : "運休");
                 }
                 buf += "</span><br>→ ";
             }
             
-            buf += data[cnt]["formations"] + "</div>";
+            buf += (data[cnt]["formations"] !== "" ? escape_html(data[cnt]["formations"]) : "運休") + "</div>";
         }
         
         return buf;
@@ -4876,7 +4880,7 @@ function formation_detail (formation_name) {
                     var ts = get_timestamp();
                     
                     buf += "<div><div class='formation_operation_data'><h4>今日の運用情報</h4>" + get_operation_data_html(data["operations_today"], ts) + "</div>";
-                    buf += "<div class='formation_operation_data'><h4>明日の運用情報</h4>" + get_operation_data_html(data["operations_tomorrow"], ts + 86400, "明日の運用情報は判明していません") + "</div></div>";
+                    buf += "<div class='formation_operation_data'><h4>明日の運用情報</h4>" + get_operation_data_html(data["operations_tomorrow"], ts + 86400, true, "明日の運用情報は判明していません") + "</div></div>";
                 } else if (data["last_seen_date"] !== null) {
                     var last_seen_date_split = data["last_seen_date"].split("-");
                     var dt = new Date(data["last_seen_date"] + " 12:00:00");
@@ -4962,7 +4966,7 @@ function operation_data_history (formation_name, operation_number = null) {
                 
                 buf += "<h4>" + Number(yyyy_mm_dd.substring(5, 7)) + "月" + Number(yyyy_mm_dd.substring(8)) + "日 (" + YOBI_LIST[day_value] + ")</h4>";
                 if (yyyy_mm_dd in data) {
-                    buf += get_operation_data_html(data[yyyy_mm_dd], ts);
+                    buf += get_operation_data_html(data[yyyy_mm_dd], ts, get_diagram_revision(yyyy_mm_dd) === operation_table["diagram_revision"]);
                 } else {
                     buf += "<div class='descriptive_text'>情報がありません</div>";
                 }
@@ -5540,7 +5544,7 @@ function write_operation_data (yyyy_mm_dd, operation_number, train_number = null
         buf += "><label for='operation_data_details' class='drop_down'>詳細情報</label><div>";
         
         buf += "<h4>情報の種類</h4>";
-        buf += "<div class='radio_area'><input type='radio' name='operation_data_type' id='operation_data_type_normal' checked='checked'><label for='operation_data_type_normal'>通常・訂正の情報</label><input type='radio' name='operation_data_type' id='operation_data_type_reassign'><label for='operation_data_type_reassign'>未報告の差し替え情報</label></div>";
+        buf += "<div class='radio_area'><input type='radio' name='operation_data_type' id='operation_data_type_normal' checked='checked'><label for='operation_data_type_normal'>通常・訂正の情報</label><input type='radio' name='operation_data_type' id='operation_data_type_reassign'><label for='operation_data_type_reassign'>新しい差し替え情報</label></div>";
         
         if (post_yyyy_mm_dd === yyyy_mm_dd_today) {
             var now_hh_mm = get_hh_mm();

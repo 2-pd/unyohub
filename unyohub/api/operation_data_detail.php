@@ -50,7 +50,7 @@ for ($cnt = 0; $cnt < count($operation_numbers); $cnt++) {
                 $data[$cnt_2]["user_name"] = $user->get_name();
                 
                 if (empty($data[$cnt_2]["user_name"])) {
-                    $data[$cnt_2]["user_name"] = "ハンドルネーム未設定";
+                    $data[$cnt_2]["user_name"] = NULL;
                 }
                 
                 if ($user->check_permission("management_member")) {
