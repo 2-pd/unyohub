@@ -67,10 +67,10 @@ _/_/_/_/ データベース _/_/_/_/
   `operation_number` TEXT NOT NULL 運用番号(アルファベットなどを含む場合があるため文字列型)
   `starting_location` TEXT 出庫場所(車庫または駅番線)
   `starting_track` TEXT 出庫番線(不確定の場合はNULL)
-  `starting_time` TEXT NOT NULL 「HH:MM」形式の出庫時刻
+  `starting_time` TEXT 「HH:MM」形式の出庫時刻(終日待機の場合はNULL)
   `terminal_location` TEXT 入庫場所(車庫または駅番線)
   `terminal_track` TEXT 入庫番線(不確定の場合はNULL)
-  `ending_time` TEXT NOT NULL 「HH:MM」形式の入庫時刻
+  `ending_time` TEXT 「HH:MM」形式の入庫時刻(終日待機の場合はNULL)
   `min_car_count` INTEGER NOT NULL 充当可能な最小の編成両数
   `max_car_count` INTEGER NOT NULL 充当可能な最大の編成両数
 

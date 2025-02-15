@@ -23,9 +23,10 @@ def initialize_db (mes, main_dir):
     cur.execute("CREATE TABLE IF NOT EXISTS `unyohub_series`(`series_name` TEXT NOT NULL PRIMARY KEY, `min_car_count` INTEGER NOT NULL, `max_car_count` INTEGER NOT NULL)")
     
     mes("テーブル「unyohub_formations」を作成しています...")
-    cur.execute("CREATE TABLE IF NOT EXISTS `unyohub_formations`(`formation_name` TEXT NOT NULL PRIMARY KEY, `series_name` TEXT NOT NULL, `car_count` INTEGER NOT NULL, `affiliation` TEXT, `caption` TEXT, `description` TEXT, `unavailable` INTEGER NOT NULL, `inspection_information` TEXT, `overview_updated` TEXT NOT NULL, `updated_datetime` TEXT NOT NULL, `edited_user_id` TEXT)")
+    cur.execute("CREATE TABLE IF NOT EXISTS `unyohub_formations`(`formation_name` TEXT NOT NULL PRIMARY KEY, `series_name` TEXT NOT NULL, `car_count` INTEGER NOT NULL, `affiliation` TEXT, `caption` TEXT, `description` TEXT, `semifixed_formation` TEXT, `unavailable` INTEGER NOT NULL, `inspection_information` TEXT, `overview_updated` TEXT NOT NULL, `updated_datetime` TEXT NOT NULL, `edited_user_id` TEXT)")
     cur.execute("CREATE INDEX IF NOT EXISTS `unyohub_idx_f1` ON `unyohub_formations`(`series_name`)")
     cur.execute("CREATE INDEX IF NOT EXISTS `unyohub_idx_f2` ON `unyohub_formations`(`overview_updated`)")
+    cur.execute("CREATE INDEX IF NOT EXISTS `unyohub_idx_f3` ON `unyohub_formations`(`semifixed_formation`)")
     
     mes("テーブル「unyohub_cars」を作成しています...")
     cur.execute("CREATE TABLE IF NOT EXISTS `unyohub_cars`(`formation_name` TEXT NOT NULL, `car_number` TEXT NOT NULL, `car_order` INTEGER NOT NULL, `manufacturer` TEXT, `constructed` TEXT, `description` TEXT, PRIMARY KEY(`formation_name`, `car_number`))")
@@ -39,7 +40,7 @@ def initialize_db (mes, main_dir):
     cur.execute("CREATE TABLE IF NOT EXISTS `unyohub_coupling_groups`(`series_or_formation` TEXT NOT NULL, `coupling_group` TEXT NOT NULL, PRIMARY KEY(`series_or_formation`, `coupling_group`))")
     
     mes("テーブル「unyohub_operations」を作成しています...")
-    cur.execute("CREATE TABLE IF NOT EXISTS `unyohub_operations`(`diagram_revision` TEXT NOT NULL, `diagram_id` TEXT NOT NULL, `operation_number` TEXT NOT NULL, `starting_location` TEXT, `starting_track` TEXT, `starting_time` TEXT NOT NULL, `terminal_location` TEXT, `terminal_track` TEXT, `ending_time` TEXT NOT NULL, `min_car_count` INTEGER NOT NULL, `max_car_count` INTEGER NOT NULL, PRIMARY KEY(`diagram_revision`, `diagram_id`, `operation_number`))")
+    cur.execute("CREATE TABLE IF NOT EXISTS `unyohub_operations`(`diagram_revision` TEXT NOT NULL, `diagram_id` TEXT NOT NULL, `operation_number` TEXT NOT NULL, `starting_location` TEXT, `starting_track` TEXT, `starting_time` TEXT, `terminal_location` TEXT, `terminal_track` TEXT, `ending_time` TEXT, `min_car_count` INTEGER NOT NULL, `max_car_count` INTEGER NOT NULL, PRIMARY KEY(`diagram_revision`, `diagram_id`, `operation_number`))")
     cur.execute("CREATE UNIQUE INDEX IF NOT EXISTS `unyohub_idx_o1` ON `unyohub_operations`(`diagram_revision`, `diagram_id`, `starting_location`, `starting_track`)")
     cur.execute("CREATE UNIQUE INDEX IF NOT EXISTS `unyohub_idx_o2` ON `unyohub_operations`(`diagram_revision`, `diagram_id`, `terminal_location`, `terminal_track`)")
     
