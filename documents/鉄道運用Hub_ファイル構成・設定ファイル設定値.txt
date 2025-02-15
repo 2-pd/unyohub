@@ -66,6 +66,7 @@ _/_/_/_/ ファイル構成 _/_/_/_/
    └ index.php ・・・管理画面トップページ
    └ config.php ・・・インスタンスの基本設定
    └ enable_railroads.php ・・・路線系統の有効化・無効化や表示順の並び替え
+   └ categorize_railroads.php ・・・路線系統グループの編集
    └ user_list.php ・・・ユーザー一覧、ユーザー検索
    └ user_data.php ・・・ユーザー情報の閲覧、編集
    └ edit_rules.php ・・・ルールとポリシーの編集
@@ -124,6 +125,8 @@ administrator_name インスタンス運営者名
 administrator_url インスタンス運営者紹介ページのURL
 administrator_introduction インスタンス運営者の紹介文
 
+available_days_ahead 何日先の日付まで運用情報の閲覧と投稿が可能か(1〜30の整数値)
+
 require_invite_code ユーザー登録時に招待コードを必要とするか(BOOL値)
 require_email_address ユーザー登録時にメールアドレス入力を必要とするか(BOOL値)
 allow_guest_user ログインしていないユーザーの投稿を認めるか(BOOL値)
@@ -144,7 +147,19 @@ log_ip_address 投稿者のIPアドレスを記録するか(BOOL値)
         "railroad_icon" : BASE64エンコードされた路線系統のアイコンデータ
         }...
     },
-    "railroads_order" : 路線系統識別名を表示順に列挙した配列
+    "categories" : [ 路線系統グループ
+        {
+            "category_name" : グループ名,
+            "category_color" : グループのテーマカラー,
+            "railroads" : グループに属する路線系統の識別名を配列で(サブグループを指定した場合は省略),
+            "subcategories" : [ 路線系統サブグループ(路線系統を指定した場合は省略)
+                {
+                    "subcategory_name" : サブグループ名,
+                    "railroads" : サブグループに属する路線系統の識別名を配列で
+                }...
+            ]
+        }...
+    ]
 }
 
 

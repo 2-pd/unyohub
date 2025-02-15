@@ -21,6 +21,7 @@
     "administrator_name" : インスタンス運営者名(未設定なら省略),  
     "administrator_url" : インスタンス運営者紹介ページのURL(未設定なら省略),  
     "administrator_introduction" : インスタンス運営者の紹介文(未設定なら省略),  
+    "available_days_ahead" : 何日先の日付まで運用情報の閲覧と投稿が可能か,  
     "allow_guest_user" : ログインしていないユーザーの投稿を認めるか(BOOL値),  
     "require_comments_on_speculative_posts" : 未出庫の運用への情報投稿時にコメント入力を強制するか(BOOL値)  
 }  
@@ -522,7 +523,7 @@ JSON化された時刻表の内容を返す
 **$_POST["is_quotation"]** : 引用情報か否か(引用情報の場合は文字列「YES」、引用情報でなければ省略可能)  
 **$_POST["comment"]** : 運用補足情報(コメント)  
 **$_POST["one_time_token"]** : ワンタイムトークン(ログインしている場合)  
-**$_POST["guest_id"]** : 　「*」から始まる仮ユーザーID(ログインしていない場合)  
+**$_POST["guest_id"]** : 「*」から始まる仮ユーザーID(ログインしていない場合)  
 **$_POST["zizai_captcha_id"]** : Zizai CAPTCHAのセッションID(ログインしていない場合)  
 **$_POST["zizai_captcha_characters"]** : Zizai CAPTCHAのユーザー入力文字列(ログインしていない場合)
 
