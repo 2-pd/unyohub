@@ -68,6 +68,11 @@ if ($ts < $ts_now - 183600) {
     exit;
 }
 
+if ($ts > $ts_now + (86400 * $config["available_days_ahead"]) - 10800) {
+    print "ERROR: ".($config["available_days_ahead"] + 1)."日以上先の運用情報を投稿することはできません";
+    exit;
+}
+
 $operation_date = date("Y-m-d", $ts);
 
 update_diagram_revision($ts);
@@ -118,7 +123,7 @@ if (strlen($comment) === 0) {
         exit;
     }
     
-    if ($config["require_comments_on_speculative_posts"] && (($operation_date === $posted_date && $operation_data["starting_time"] > date("H:i", $ts_now)) || $operation_date > $posted_date)) {
+    if ($config["require_comments_on_speculative_posts"] && (($operation_date === $posted_date && !is_null($operation_data["starting_time"]) && $operation_data["starting_time"] > date("H:i", $ts_now)) || $operation_date > $posted_date)) {
         print "ERROR: 出庫前の運用に充当される編成を特定した方法を補足情報にご入力ください";
         exit;
     }
