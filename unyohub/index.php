@@ -40,7 +40,7 @@ if (empty($_SERVER["PATH_INFO"]) || $_SERVER["PATH_INFO"] === "/") {
         $railroad_info = json_decode(file_get_contents($railroad_info_path), TRUE);
         
         if (empty($path_info[2])) {
-            $page_title = $railroad_info["railroad_name"]."の運用情報 | ".UNYOHUB_APP_NAME;
+            $page_title = $railroad_info["railroad_name"]."の車両運用情報 | ".UNYOHUB_APP_NAME;
             $line_names = array();
             foreach ($railroad_info["lines_order"] as $line_id) {
                 $line_names[] = $railroad_info["lines"][$line_id]["line_name"];
@@ -86,8 +86,8 @@ if (empty($_SERVER["PATH_INFO"]) || $_SERVER["PATH_INFO"] === "/") {
                 
                 case "operation_data":
                     $path_info_str .= "operation_data/";
-                    $page_title = $railroad_info["railroad_name"]."の車両運用データ | ".UNYOHUB_APP_NAME;
-                    $page_description = "本日の".$railroad_info["railroad_name"]."の各編成運用状況です。";
+                    $page_title = $railroad_info["railroad_name"]."の運用履歴データ | ".UNYOHUB_APP_NAME;
+                    $page_description = "本日及び過去の".$railroad_info["railroad_name"]."における各編成の運用履歴です。";
                     
                     break;
                 
@@ -113,14 +113,14 @@ if (empty($_SERVER["PATH_INFO"]) || $_SERVER["PATH_INFO"] === "/") {
                         }
                         
                         $path_info_str .= urlencode($path_info[3])."/";
-                        $page_title = $path_info[3]." (".$railroad_info["railroad_name"].") の車両・運用情報 | ".UNYOHUB_APP_NAME;
+                        $page_title = $path_info[3]." (".$railroad_info["railroad_name"].") の編成情報・運用 | ".UNYOHUB_APP_NAME;
                         
                         $car_numbers = array();
                         foreach ($formations["formations"][$path_info[3]]["cars"] as $car) {
                             $car_numbers[] = $car["car_number"];
                         }
                         
-                        $page_description = $railroad_info["railroad_name"]."で運用されている編成 ".$path_info[3]." ( ".implode(" - ", $car_numbers)." ) の編成情報、及び運用状況です。";
+                        $page_description = $railroad_info["railroad_name"]."で運用されている編成 ".$path_info[3]." ( ".implode(" - ", $car_numbers)." ) の車両設備・車歴情報、及び運用状況です。";
                     }
                     
                     break;

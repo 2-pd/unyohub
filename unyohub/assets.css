@@ -2158,11 +2158,15 @@ h5.event_type_rearrange {
     background-color: #eeeeee;
     
     line-height: 20px;
+    font-size: 15px;
     text-align: left;
+    color: #666666;
 }
 
 .dark_mode .operation_table .operation_overview {
     background-color: #555555;
+    
+    color: #cccccc;
 }
 
 .operation_table td small {
