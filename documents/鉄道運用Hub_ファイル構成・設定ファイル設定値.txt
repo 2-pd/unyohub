@@ -155,6 +155,7 @@ log_ip_address 投稿者のIPアドレスを記録するか(BOOL値)
             "subcategories" : [ 路線系統サブグループ(路線系統を指定した場合は省略)
                 {
                     "subcategory_name" : サブグループ名,
+                    "subcategory_color" : サブグループのテーマカラー,
                     "railroads" : サブグループに属する路線系統の識別名を配列で
                 }...
             ]
