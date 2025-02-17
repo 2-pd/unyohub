@@ -3047,13 +3047,13 @@ function train_detail (line_id, train_number, starting_station, train_direction,
                         if (formations_data[cnt_2] in formations["formations"]) {
                             buf += "<a href='javascript:void(0);' onclick='close_square_popup(); formations_mode(\"" + add_slashes(formations_data[cnt_2]) + "\");'><img src='" + get_icon(formations_data[cnt_2]) + "' alt='' class='train_icon'>" + escape_html(formations_data[cnt_2]) + "</a>";
                             
-                            var $overview = get_formation_overview(formations_data[cnt_2]);
-                            if ($overview["caption"].length >= 1) {
+                            var overview = get_formation_overview(formations_data[cnt_2]);
+                            if (overview["caption"].length >= 1) {
                                 if (heading_str.length >= 1) {
                                     heading_str += "<br>";
                                 }
                                 
-                                heading_str += escape_html(formations_data[cnt_2] + " : " + $overview["caption"]);
+                                heading_str += escape_html(formations_data[cnt_2] + " : " + overview["caption"]);
                             }
                         } else if (formations_data[cnt_2] === "?") {
                             buf += "<img src='" + UNYOHUB_UNKNOWN_TRAIN_ICON + "' alt='' class='train_icon'>" + "?";
@@ -4312,13 +4312,13 @@ function draw_operation_detail (operation_number, diagram_id, operation_data_dat
                     if (formations_data[cnt_2] in formations["formations"]) {
                         buf += "<a href='javascript:void(0);' onclick='popup_close(true); formations_mode(\"" + add_slashes(formations_data[cnt_2]) + "\");'><img src='" + get_icon(formations_data[cnt_2]) + "' alt='' class='train_icon'>" + escape_html(formations_data[cnt_2]) + "</a>";
                         
-                        var $overview = get_formation_overview(formations_data[cnt_2]);
-                        if ($overview["caption"].length >= 1) {
+                        var overview = get_formation_overview(formations_data[cnt_2]);
+                        if (overview["caption"].length >= 1) {
                             if (heading_str.length >= 1) {
                                 heading_str += "<br>";
                             }
                             
-                            heading_str += escape_html(formations_data[cnt_2] + " : " + $overview["caption"]);
+                            heading_str += escape_html(formations_data[cnt_2] + " : " + overview["caption"]);
                         }
                     } else if (formations_data[cnt_2] === "?") {
                         buf += "<img src='" + UNYOHUB_UNKNOWN_TRAIN_ICON + "' alt='' class='train_icon'>" + "?";
@@ -4631,16 +4631,16 @@ function draw_formation_table (update_title = true) {
         var search_hit_formation_count = 0;
         for (var cnt_2 = 0; cnt_2 < formations["series"][formations["series_names"][cnt]]["formation_names"].length; cnt_2++) {
             var formation_name = formations["series"][formations["series_names"][cnt]]["formation_names"][cnt_2];
-            var $overview = get_formation_overview(formation_name);
+            var overview = get_formation_overview(formation_name);
             
-            var buf_3 = "<tr onclick='formation_detail(\"" + add_slashes(formation_name) + "\");'><th><img src='" + get_icon(formation_name) + "' alt='' class='train_icon'" + ($overview["unavailable"] ? " style='opacity: 0.5;'" : "") + "></th>";
+            var buf_3 = "<tr onclick='formation_detail(\"" + add_slashes(formation_name) + "\");'><th><img src='" + get_icon(formation_name) + "' alt='' class='train_icon'" + (overview["unavailable"] ? " style='opacity: 0.5;'" : "") + "></th>";
             
             buf_3 += "<td><h5><a href='/railroad_" + railroad_info["railroad_id"] + "/formations/" + add_slashes(encodeURIComponent(formation_name)) + "/' onclick='event.preventDefault();'>" + escape_html(formation_name) + "</a>";
             
-            if ($overview["unavailable"]) {
+            if (overview["unavailable"]) {
                 buf_3 += "<b class='warning_sentence'>運用離脱中</b>";
-            } else if ($overview["caption"].length >= 1) {
-                buf_3 += escape_html($overview["caption"]);
+            } else if (overview["caption"].length >= 1) {
+                buf_3 += escape_html(overview["caption"]);
             }
             
             buf_3 += "</h5>";
@@ -4774,18 +4774,20 @@ function formation_detail (formation_name) {
     document.getElementById("formation_screenshot_button").style.display = "block";
     document.getElementById("formation_back_button").style.display = "block";
     
-    var $overview = get_formation_overview(formation_name);
+    var overview = get_formation_overview(formation_name);
     
     var buf = "<h2><button type='button' class='previous_button' onclick='previous_formation(\"" + add_slashes(formation_name) + "\");'></button>" + escape_html(formation_name) + "<button type='button' class='next_button' onclick='next_formation(\"" + add_slashes(formation_name) + "\");'></button></h2>";
     
     buf += "<img src='" + get_icon(formation_name) + "' alt='" + add_slashes(formations["formations"][formation_name]["series_name"]) + "' class='train_icon_large'>";
     
-    buf += "<strong id='formation_caption'>" + $overview["caption"] + "</strong>";
+    buf += "<strong id='formation_caption'>" + overview["caption"] + "</strong>";
     
     buf += "<div id='formation_operations_area'></div>";
     if (navigator.onLine) {
         buf += "<button type='button' class='execute_button' onclick='operation_data_history(\"" + add_slashes(formation_name) + "\");'>過去30日間の運用</button>";
     }
+    
+    buf += "<div id='semifixed_formation_area'></div>";
     
     buf += "<h3>基本情報</h3>";
     buf += "<div class='key_and_value'><b>車両形式</b>" + formations["formations"][formation_name]["series_name"] + "</div>";
@@ -4794,7 +4796,7 @@ function formation_detail (formation_name) {
     buf += "<div class='descriptive_text' id='formation_description'></div>";
     
     buf += "<h3>検査情報</h3>";
-    if ($overview["unavailable"]) {
+    if (overview["unavailable"]) {
         buf += "<div class='descriptive_text warning_sentence' id='inspection_information'>運用離脱中</div>";
     } else {
         buf += "<div class='descriptive_text' id='inspection_information'>情報がありません</div>";
@@ -4883,6 +4885,17 @@ function formation_detail (formation_name) {
                 for (var cnt = 0; cnt < data["cars"].length; cnt++) {
                     document.getElementById("car_info_" + cnt).innerText = data["cars"][cnt]["manufacturer"] + " " + data["cars"][cnt]["constructed"];
                     document.getElementById("car_description_" + cnt).innerText = data["cars"][cnt]["description"];
+                }
+                
+                if ("semifixed_formation" in data) {
+                    var buf = "<h3>半固定編成</h3><div>";
+                    var semifixed_formations = data["semifixed_formation"].split("+");
+                    
+                    for (cnt = 0; cnt < semifixed_formations.length; cnt++) {
+                        buf += (cnt >= 1 ? " + " : "") + (semifixed_formations[cnt] !== formation_name ? "<a href='javascript:void(0);' onclick='formation_detail(\"" + add_slashes(semifixed_formations[cnt]) + "\");'>" : "<b>") + "<img src='" + get_icon(semifixed_formations[cnt]) + "' alt='' class='train_icon'>" + escape_html(semifixed_formations[cnt]) + (semifixed_formations[cnt] !== formation_name ? "</a>" : "</b>");
+                    }
+                    
+                    document.getElementById("semifixed_formation_area").innerHTML = buf + "</div>";
                 }
                 
                 var buf = "<input type='checkbox' id='formation_operations'><label for='formation_operations' class='drop_down'>運用情報</label>";
@@ -5024,13 +5037,17 @@ function get_train_color (train_name, default_value = "inherit") {
 }
 
 function get_formation_overview (formation_name) {
-    var overview = { caption: "", unavailable: false };
+    var overview = { caption: "", semifixed_formation : null, unavailable: false };
     
     if (formation_name in formation_overviews["formations"]) {
         overview["unavailable"] = formation_overviews["formations"][formation_name]["unavailable"];
         
         if (formation_overviews["formations"][formation_name]["caption"] !== null) {
             overview["caption"] = formation_overviews["formations"][formation_name]["caption"];
+        }
+        
+        if ("semifixed_formation" in formation_overviews["formations"][formation_name]) {
+            overview["semifixed_formation"] = formation_overviews["formations"][formation_name]["semifixed_formation"];
         }
     }
     
@@ -5222,15 +5239,15 @@ function draw_operation_table (is_today) {
         }
         
         if (operation_table["operations"][operation_numbers[cnt]]["starting_track"] !== null) {
-            var $starting_track_text = "<small>(" + operation_table["operations"][operation_numbers[cnt]]["starting_track"] + ")</small>";
+            var starting_track_text = "<small>(" + operation_table["operations"][operation_numbers[cnt]]["starting_track"] + ")</small>";
         } else {
-            var $starting_track_text = "";
+            var starting_track_text = "";
         }
         
         if (operation_table["operations"][operation_numbers[cnt]]["terminal_track"] !== null) {
-            var $terminal_track_text = "<small>(" + operation_table["operations"][operation_numbers[cnt]]["terminal_track"] + ")</small>";
+            var terminal_track_text = "<small>(" + operation_table["operations"][operation_numbers[cnt]]["terminal_track"] + ")</small>";
         } else {
-            var $terminal_track_text = "";
+            var terminal_track_text = "";
         }
         
         var trains = operation_table["operations"][operation_numbers[cnt]]["trains"];
@@ -5285,8 +5302,8 @@ function draw_operation_table (is_today) {
         if (search_keyword === "" || search_hit_count >= 1) {
             buf += "<tr onclick='operation_detail(\"" + operation_numbers[cnt] + "\", " + operation_table_name_or_ts + ", " + is_today_str + ");'>";
             buf += "<th rowspan='2' style='background-color: " + color + "'><b>" + operation_numbers[cnt] + "</b>" + operation_table["operations"][operation_numbers[cnt]]["operation_group_name"] + "<br>(" + operation_table["operations"][operation_numbers[cnt]]["car_count"] + "両)</th>";
-            buf += "<td>" + operation_table["operations"][operation_numbers[cnt]]["starting_location"] + $starting_track_text + "<time" + (operation_table["operations"][operation_numbers[cnt]]["starting_time"] !== null ? ">" + operation_table["operations"][operation_numbers[cnt]]["starting_time"] : " datetime='PT24H'>N/A") + "</time></td>";
-            buf += "<td>" + operation_table["operations"][operation_numbers[cnt]]["terminal_location"] + $terminal_track_text + "<time" + (operation_table["operations"][operation_numbers[cnt]]["ending_time"] !== null ? ">" + operation_table["operations"][operation_numbers[cnt]]["ending_time"] : " datetime='PT24H'>N/A") + "</time></td>";
+            buf += "<td>" + operation_table["operations"][operation_numbers[cnt]]["starting_location"] + starting_track_text + "<time" + (operation_table["operations"][operation_numbers[cnt]]["starting_time"] !== null ? ">" + operation_table["operations"][operation_numbers[cnt]]["starting_time"] : " datetime='PT24H'>N/A") + "</time></td>";
+            buf += "<td>" + operation_table["operations"][operation_numbers[cnt]]["terminal_location"] + terminal_track_text + "<time" + (operation_table["operations"][operation_numbers[cnt]]["ending_time"] !== null ? ">" + operation_table["operations"][operation_numbers[cnt]]["ending_time"] : " datetime='PT24H'>N/A") + "</time></td>";
             buf += "</tr>";
             buf += "<tr onclick='operation_detail(\"" + operation_numbers[cnt] + "\", " + operation_table_name_or_ts + ", " + is_today_str + ");'><td colspan='2' class='operation_overview'>";
             buf += buf_2;
@@ -5721,17 +5738,37 @@ function suggest_formation (formations_text) {
         });
         
         for (var cnt = 0; cnt < suggestion_list.length; cnt++) {
-            var $overview = get_formation_overview(suggestion_list[cnt]);
+            var overview = get_formation_overview(suggestion_list[cnt]);
             
-            buf += "<a href='javascript:void(0);' onclick='complete_formation(\"" + add_slashes(suggestion_list[cnt]) + "\");'>";
-            if ($overview["unavailable"]) {
-                buf += "<img src='" + get_icon(suggestion_list[cnt]) + "' alt='' class='train_icon' style='opacity: 0.5;'>" + suggestion_list[cnt] + "<small class='warning_sentence'>(運用離脱中)</small>";
+            buf += "<a href='javascript:void(0);' ";
+            
+            if (overview["semifixed_formation"] !== null) {
+                buf += "onclick='complete_formation(\"" + add_slashes(overview["semifixed_formation"]) + "\");'>";
+                
+                var suggestion_formations = overview["semifixed_formation"].split("+");
+                
+                for (var cnt_2 = 0; cnt_2 < suggestion_formations.length; cnt_2++) {
+                    buf += (cnt_2 >= 1 ? " + " : "") + "<img src='" + get_icon(suggestion_formations[cnt_2]) + "' alt='' class='train_icon'" + (overview["unavailable"] ? " style='opacity: 0.5;'" : "") + ">" + (suggestion_formations[cnt_2] === suggestion_list[cnt] ? "<b>" : "") + add_slashes(suggestion_formations[cnt_2]) + (suggestion_formations[cnt_2] === suggestion_list[cnt] ? "</b>" : "");
+                }
+                
+                if (overview["unavailable"]) {
+                    buf += "<small class='warning_sentence'>(離脱中)</small>";
+                } else {
+                    buf += "<small>(半固定)</small>";
+                }
             } else {
-                buf += "<img src='" + get_icon(suggestion_list[cnt]) + "' alt='' class='train_icon'>" + suggestion_list[cnt];
-                if ($overview["caption"].length >= 1) {
-                    buf += "<small>(" + $overview["caption"] + ")</small>";
+                buf += "onclick='complete_formation(\"" + add_slashes(suggestion_list[cnt]) + "\");'>";
+                
+                if (overview["unavailable"]) {
+                    buf += "<img src='" + get_icon(suggestion_list[cnt]) + "' alt='' class='train_icon' style='opacity: 0.5;'>" + add_slashes(suggestion_list[cnt]) + "<small class='warning_sentence'>(運用離脱中)</small>";
+                } else {
+                    buf += "<img src='" + get_icon(suggestion_list[cnt]) + "' alt='' class='train_icon'><b>" + add_slashes(suggestion_list[cnt]) + "</b>";
+                    if (overview["caption"].length >= 1) {
+                        buf += "<small>(" + overview["caption"] + ")</small>";
+                    }
                 }
             }
+            
             buf += "</a>";
         }
     }

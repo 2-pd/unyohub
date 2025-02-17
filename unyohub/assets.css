@@ -2335,6 +2335,16 @@ h2 .next_button {
     max-width: 500px;
 }
 
+#semifixed_formation_area div {
+    max-width: 500px;
+    
+    margin: 0 auto;
+    
+    line-height: 30px;
+    font-size: 18px;
+    text-align: center;
+}
+
 .key_and_value {
     width: calc(100% - 60px);
     
@@ -3390,7 +3400,7 @@ a abbr {
     font-weight: bold;
 }
 
-.formation_data_area a {
+.formation_data_area a, #semifixed_formation_area a {
     color: inherit;
     white-space: nowrap;
 }
@@ -3730,7 +3740,7 @@ a abbr {
     border-color: #808080;
 }
 
-.suggestion_area .train_icon {
+.suggestion_area .train_icon, #semifixed_formation_area .train_icon {
     max-width: 30px;
     max-height: 30px;
     
