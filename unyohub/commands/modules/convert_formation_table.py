@@ -203,8 +203,7 @@ def convert_formation_table (mes, main_dir):
         mes("　- " + deleted_formation_name + " のデータを削除しています...")
         
         for row_data in cur.execute("SELECT `semifixed_formation` FROM `unyohub_formations` WHERE `formation_name` = :formation_name", {"formation_name" : deleted_formation_name}):
-            for formation_name in row_data[0].split("+"):
-                uncoupled_formations.add(formation_name)
+            uncoupled_formations.add(row_data[0])
         
         cur.execute("DELETE FROM `unyohub_formations` WHERE `formation_name` = :formation_name", {"formation_name" : deleted_formation_name})
         cur.execute("DELETE FROM `unyohub_cars` WHERE `formation_name` = :formation_name", {"formation_name" : deleted_formation_name})
@@ -212,8 +211,8 @@ def convert_formation_table (mes, main_dir):
     
     mes("半固定編成の情報を整理しています...")
     
-    for uncoupled_formation_name in list(uncoupled_formations - deleted_formations):
-        cur.execute("UPDATE `unyohub_formations` SET `semifixed_formation` = NULL, `overview_updated` = :overview_updated WHERE `formation_name` = :formation_name", {"formation_name" : uncoupled_formation_name, "overview_updated" : datetime_now})
+    for uncoupled_formation in list(uncoupled_formations):
+        cur.execute("UPDATE `unyohub_formations` SET `semifixed_formation` = NULL, `overview_updated` = :overview_updated WHERE `semifixed_formation` = :semifixed_formation", {"semifixed_formation" : uncoupled_formation, "overview_updated" : datetime_now})
     
     mes("データベースの書き込み処理を完了しています...")
     

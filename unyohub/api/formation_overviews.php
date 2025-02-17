@@ -17,11 +17,15 @@ if (empty($updated_datetime)) {
 }
 
 
-$overviews_r = $db_obj->query("SELECT `formation_name`, `caption`, `unavailable` FROM `unyohub_formations`");
+$overviews_r = $db_obj->query("SELECT `formation_name`, `caption`, `semifixed_formation`, `unavailable` FROM `unyohub_formations`");
 
 $formation_overviews = array();
 while ($formation_overview = $overviews_r->fetchArray(SQLITE3_ASSOC)) {
     $formation_overviews[$formation_overview["formation_name"]] = array("caption" => $formation_overview["caption"], "unavailable" => $formation_overview["unavailable"]);
+    
+    if (!empty($formation_overview["semifixed_formation"])) {
+        $formation_overviews[$formation_overview["formation_name"]]["semifixed_formation"] = $formation_overview["semifixed_formation"];
+    }
 }
 
 
