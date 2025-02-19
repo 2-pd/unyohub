@@ -434,6 +434,14 @@ function switch_dark_mode () {
     }
     
     switch (mode_val) {
+        case -1:
+            if (document.readyState === "complete") {
+                get_railroad_list(function (railroads, loading_completed) {
+                    update_railroad_list(railroads, "splash_screen_inner", loading_completed);
+                });
+            }
+            
+            break;
         case 0:
             position_change_lines(position_selected_line);
             break;
@@ -462,9 +470,7 @@ switch_dark_mode();
 
 if (location.pathname === "/") {
     var splash_screen_login_status_elm = document.getElementById("splash_screen_login_status");
-    var announcements_overview_elm = document.getElementById("announcements_overview");
-    
-    document.getElementById("splash_screen_app_version").innerText = "v" + UNYOHUB_VERSION;
+    var splash_screen_announcement_elm = document.getElementById("splash_screen_announcement");
 }
 
 splash_screen_elm.classList.remove("splash_screen_loading");
@@ -686,14 +692,14 @@ function update_user_data (user_data_next = null) {
         menu_user_name_elm.innerText = user_name + " " + honorific;
         
         if (location.pathname === "/") {
-            splash_screen_login_status_elm.innerHTML = "ようこそ <b>" + escape_html(user_name) + "</b> さん<br><a href='/user/user_info.php' target='_blank' rel='opener'>ユーザー情報</a>　<a href='javascript:void(0);' onclick='user_logout();'>ログアウト</a>";
+            splash_screen_login_status_elm.innerHTML = "<b>" + escape_html(user_name) + "</b> さん<a id='logout_button' href='javascript:void(0);' onclick='user_logout();'>ログアウト</a><a id='user_info_button' href='/user/user_info.php' target='_blank' rel='opener'>利用者情報</a>";
         }
     } else {
         menu_logged_in_elm.style.display = "none";
         menu_not_logged_in_elm.style.display = "block";
         
         if (location.pathname === "/") {
-            splash_screen_login_status_elm.innerHTML = "<b>ログインしていません</b><br><a href='javascript:void(0);' onclick='show_login_form();'>ログイン</a>　<a href='/user/sign_up.php' target='_blank' rel='opener'>新規登録</a>";
+            splash_screen_login_status_elm.innerHTML = "<b>ログインしていません</b><a id='login_button' href='javascript:void(0);' onclick='show_login_form();'>ログイン</a><a id='sign_up_button' href='/user/sign_up.php' target='_blank' rel='opener'>新規登録</a>";
         }
     }
 }
@@ -714,6 +720,8 @@ function check_logged_in () {
 
 
 var railroads = null;
+
+var icon_area_elm = null;
 
 function get_railroad_list (callback_func) {
     if (railroads !== null) {
@@ -756,42 +764,105 @@ function get_railroad_list (callback_func) {
     }
 }
 
-function update_railroad_list (railroads, loading_completed, railroad_list = null) {
-    if (railroad_list === null) {
-        railroad_list = railroads["railroads_order"];
+function update_railroad_list (railroads, area_id, loading_completed, categories = null) {
+    if (categories === null) {
+        categories = railroads["categories"];
     }
     
-    var buttons_html = "";
+    var categories_html = "";
+    var icons_html = "";
     
-    for (var cnt = 0; cnt < railroad_list.length; cnt++) {
-        buttons_html += "<a href='/railroad_" + railroad_list[cnt] + "/' class='wide_button' onclick='event.preventDefault(); select_railroad(\"" + railroad_list[cnt] + "\");'><img src='" + railroads["railroads"][railroad_list[cnt]]["railroad_icon"] + "' alt='' style='background-color: " + railroads["railroads"][railroad_list[cnt]]["main_color"] + ";'>" + escape_html(railroads["railroads"][railroad_list[cnt]]["railroad_name"]) + "</a>";
+    var heading_cnt = 0;
+    
+    for (var cnt = 0; cnt < categories.length; cnt++) {
+        var category = categories[cnt];
+        
+        var category_html = " style='color: " + (config["dark_mode"] ? convert_color_dark_mode(category["category_color"]) : category["category_color"]) + ";'><b>" + escape_html(category["category_name"]) + "</b></";
+        categories_html += "<li class='category_index' onclick='scroll_to_category(" + heading_cnt + ");'" + category_html + "li>";
+        icons_html += "<h3 class='icon_heading'" + category_html + "h3>";
+        
+        heading_cnt++;
+        
+        if ("subcategories" in category) {
+            for (var cnt_2 = 0; cnt_2 < category["subcategories"].length; cnt_2++) {
+                var subcategory = category["subcategories"][cnt_2];
+                
+                var subcategory_html = " style='color: " + (config["dark_mode"] ? convert_color_dark_mode(subcategory["subcategory_color"]) : subcategory["subcategory_color"]) + ";'><span>" + escape_html(subcategory["subcategory_name"]) + "</span></";
+                categories_html += "<li class='subcategory_index' onclick='scroll_to_category(" + heading_cnt + ");'" + subcategory_html + "li>";
+                icons_html += "<h4 class='icon_heading'" + subcategory_html + "h3>";
+                
+                heading_cnt++;
+                
+                var railroad_list = subcategory["railroads"];
+                for (var cnt_3 = 0; cnt_3 < railroad_list.length; cnt_3++) {
+                    icons_html += "<a href='/railroad_" + railroad_list[cnt_3] + "/' onclick='event.preventDefault(); select_railroad(\"" + railroad_list[cnt_3] + "\");'><img src='" + railroads["railroads"][railroad_list[cnt_3]]["railroad_icon"] + "' alt='' style='background-color: " + railroads["railroads"][railroad_list[cnt_3]]["main_color"] + ";'>" + escape_html(railroads["railroads"][railroad_list[cnt_3]]["railroad_name"]) + "</a>";
+                }
+            }
+        } else if ("railroads" in category) {
+            var railroad_list = category["railroads"];
+            for (var cnt_3 = 0; cnt_3 < railroad_list.length; cnt_3++) {
+                icons_html += "<a href='/railroad_" + railroad_list[cnt_3] + "/' onclick='event.preventDefault(); select_railroad(\"" + railroad_list[cnt_3] + "\");'><img src='" + railroads["railroads"][railroad_list[cnt_3]]["railroad_icon"] + "' alt='' style='background-color: " + railroads["railroads"][railroad_list[cnt_3]]["main_color"] + ";'>" + escape_html(railroads["railroads"][railroad_list[cnt_3]]["railroad_name"]) + "</a>";
+            }
+        }
     }
     
     if (!loading_completed) {
         if (cnt >= 1) {
-            buttons_html += "<div class='loading_icon'></div>";
+            categories_html += "<div class='loading_icon'></div>";
         }
     } else if (cnt === 0) {
-        buttons_html = "<div class='no_data'>利用可能なデータがありません</div>";
+        icons_html = "<div class='no_data'>利用可能なデータがありません</div>";
     }
     
-    var popup_inner_elm = document.getElementById("railroad_select_popup_inner");
-    if (popup_inner_elm !== null) {
-        popup_inner_elm.innerHTML = buttons_html;
-    }
-    
-    if (location.pathname === "/") {
-        document.getElementById("splash_screen_buttons").innerHTML = buttons_html;
-    }
+    document.getElementById(area_id).innerHTML = "<ul id='category_area'>" + categories_html + "</ul><div id='icon_area' onscroll='icon_area_onscroll();'>" + icons_html + "</div>";
     
     splash_screen_elm.className = "splash_screen_loaded";
+    
+    icon_area_elm = document.getElementById("icon_area");
+    
+    icon_area_onscroll();
+}
+
+function scroll_to_category (index_val) {
+    icon_area_elm.scrollTop += document.getElementsByClassName("icon_heading")[index_val].getBoundingClientRect().top - icon_area_elm.getBoundingClientRect().top - 5;
+}
+
+function icon_area_onscroll () {
+    var heading_elms = document.getElementsByClassName("icon_heading");
+    var index_elms = document.getElementById("category_area").getElementsByTagName("li");
+    
+    var icon_area_top = icon_area_elm.getBoundingClientRect().top;
+    
+    for (var cnt = 0; cnt < heading_elms.length; cnt++) {
+        if (heading_elms[cnt].getBoundingClientRect().top > icon_area_top) {
+            index_elms[cnt].classList.add("active_index");
+            
+            break;
+        }
+        
+        index_elms[cnt].classList.remove("active_index");
+    }
+    
+    for (cnt++; cnt < heading_elms.length; cnt++) {
+        index_elms[cnt].classList.remove("active_index");
+    }
 }
 
 function show_railroad_list (railroad_list = null) {
     open_popup("railroad_select_popup", "路線系統の切り替え");
     
+    var popup_elm = document.getElementById("railroad_select_popup");
+    
     get_railroad_list(function (railroads, loading_completed) {
-        update_railroad_list(railroads, loading_completed, railroad_list);
+        if (railroad_list === null) {
+            popup_elm.classList.remove("railroad_select_no_categories");
+            
+            update_railroad_list(railroads, "railroad_select_popup_inner", loading_completed);
+        } else {
+            popup_elm.classList.add("railroad_select_no_categories");
+            
+            update_railroad_list(railroads, "railroad_select_popup_inner", loading_completed, [{ category_name : "乗り換え可能な路線系統", category_color : "#333333", railroads : railroad_list }]);
+        }
     });
 }
 
@@ -812,12 +883,15 @@ function on_off_line () {
     menu_not_logged_in_elm.style.display = "none";
     
     if (location.pathname === "/") {
-        splash_screen_login_status_elm.innerHTML = "<b class='off_line_message'>端末がオフラインです</b><br>前回アクセス時のデータを表示します";
-        announcements_overview_elm.innerHTML = "";
+        splash_screen_login_status_elm.innerHTML = "<b class='off_line_message' onclick='show_off_line_message();'>オフラインモード</b>";
     }
 }
 
 window.onoffline = on_off_line;
+
+function show_off_line_message () {
+    alert("端末がオフライン状態のため、前回アクセス時のデータを表示します。\nこの状態では一部の機能がご利用いただけません。");
+}
 
 
 window.onload = function () {
@@ -845,7 +919,9 @@ window.onload = function () {
     } else if (location.pathname.length >= 2) {
         reload_app();
     } else {
-        get_railroad_list(update_railroad_list);
+        get_railroad_list(function (railroads, loading_completed) {
+            update_railroad_list(railroads, "splash_screen_inner", loading_completed);
+        });
     }
     
     if (navigator.onLine) {
@@ -965,12 +1041,12 @@ function check_announcements (show_important_announcements = false) {
         
         if (new_announcement_exists) {
             if (location.pathname === "/") {
-                announcements_overview_elm.innerHTML = "<b class='new_icon'>新しいお知らせがあります</b>";
+                splash_screen_announcement_elm.classList.add("announcement_with_notification");
             }
             menu_announcements_elm.className = "new_icon";
         } else {
             if (location.pathname === "/") {
-                announcements_overview_elm.innerHTML = "新しいお知らせはありません";
+                splash_screen_announcement_elm.classList.remove("announcement_with_notification");
             }
             menu_announcements_elm.className = "";
         }
@@ -1020,9 +1096,9 @@ function update_railroad_announcement (railroad_id, clear_text = false) {
         railroad_announcement_elm.innerText = announcement_text;
         
         if (new_important_announcement_exists) {
-            railroad_announcement_elm.className = "railroad_announcement_with_important_notification";
+            railroad_announcement_elm.className = "announcement_with_important_notification";
         } else if (new_announcement_exists) {
-            railroad_announcement_elm.className = "railroad_announcement_with_notification";
+            railroad_announcement_elm.className = "announcement_with_notification";
         }
     });
 }
@@ -1034,7 +1110,7 @@ function show_announcements (railroad_id = null, important_announcements_exist =
     menu_announcements_elm.className = "";
     
     if (location.pathname === "/") {
-        announcements_overview_elm.innerHTML = "新しいお知らせはありません";
+        splash_screen_announcement_elm.classList.remove("announcement_with_notification");
     }
     
     if (railroad_id === null) {
@@ -1176,6 +1252,7 @@ var blank_article_elm = document.getElementById("blank_article");
 
 function select_railroad (railroad_id, mode_name = "position_mode", mode_option_1 = null, mode_option_2 = null) {
     splash_screen_elm.style.display = "none";
+    splash_screen_elm.innerHTML = "";
     if (popup_history.length >= 1) {
         popup_close();
     }

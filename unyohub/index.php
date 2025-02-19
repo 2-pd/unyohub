@@ -196,7 +196,7 @@ print "        const UNYOHUB_LICENSE_TEXT = \"".UNYOHUB_LICENSE_TEXT."\";\n";
             <a href="/user/sign_up.php" target="_blank" rel="opener">新規登録</a>
         </div>
         <div id="menu_off_line">
-            <b class="off_line_message">端末がオフラインです</b>
+            <b class="off_line_message" onclick="show_off_line_message();">オフラインモード</b>
         </div>
         <hr>
         <a id="menu_announcements" href="javascript:void(0);" onclick="show_announcements();">お知らせ</a>
@@ -213,15 +213,13 @@ print "        const UNYOHUB_LICENSE_TEXT = \"".UNYOHUB_LICENSE_TEXT."\";\n";
 <?php
 if ($path_info_str === "/") {
     $unyohub_app_name = UNYOHUB_APP_NAME;
+    $unyohub_version = UNYOHUB_VERSION;
     print <<<EOM
-            <div id="splash_screen_inner">
-                <div id="splash_screen_login_status">サーバに接続しています...</div>
-                <a id="announcements_overview" href="javascript:void(0);" onclick="show_announcements();"></a>
-                <div id="splash_screen_buttons" class="wait_icon"></div>
-                <div id="splash_screen_bottom">
-                    <a href="javascript:void(0);" onclick="show_about();"><span id="splash_screen_instance_name">{$unyohub_app_name}</span>について</a>　<a href="javascript:void(0);" onclick="show_rules();">ルールとポリシー</a>
-                    <div id="splash_screen_app_version"></div>
-                </div> 
+            <div id="splash_screen_login_status">サーバに接続しています...</div>
+            <div id="splash_screen_inner"></div>
+            <a id="splash_screen_announcement" href="javascript:void(0);" onclick="show_announcements();"></a>
+            <div id="splash_screen_bottom">
+                <a href="javascript:void(0);" onclick="show_about();"><span id="splash_screen_instance_name">{$unyohub_app_name}</span>について</a><a href="javascript:void(0);" onclick="show_rules();">ルールとポリシー</a><span id="splash_screen_app_version">v{$unyohub_version}</span>
             </div>
     EOM."\n";
 }
@@ -275,7 +273,7 @@ if ($path_info_str === "/") {
         <br>
         <div id="operation_table_info" class="informational_text"></div>
     </article>
-    <a href="javascript:void(0);" id="railroad_announcement" onclick="show_railroad_announcements();"></a>
+    <a id="railroad_announcement" href="javascript:void(0);" onclick="show_railroad_announcements();"></a>
     <footer>
         <div>
             <button type="button" id="position_reload_button" class="reload_button" onclick="position_mode('today', null);"></button>
