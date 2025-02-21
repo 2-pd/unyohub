@@ -634,6 +634,12 @@ header {
     z-index: 3;
     
     box-shadow: 0 0 2px 2px rgba(0, 0, 0, 0.1);
+    
+    background-color: #ffffff !important;
+}
+
+.dark_mode .active_index {
+    background-color: #666666 !important;
 }
 
 .category_index {
@@ -651,14 +657,6 @@ header {
     color: #ffffff;
 }
 
-.category_index.active_index {
-    background-color: #ffffff;
-}
-
-.dark_mode .category_index.active_index {
-    background-color: #666666;
-}
-
 .category_index.active_index b {
     color: inherit;
 }
@@ -670,7 +668,7 @@ header {
 .subcategory_index {
     padding: 12px 0 12px 14px;
     
-    background-color: #ffffff;
+    background-color: #f7f7f7;
     
     line-height: 20px;
     font-size: 15px;
@@ -693,7 +691,7 @@ header {
 }
 
 .dark_mode .subcategory_index{
-    background-color: #666666;
+    background-color: #555555;
 }
 
 .subcategory_index.active_index:before {
@@ -1150,6 +1148,7 @@ article {
     background-image: linear-gradient(315deg, #dddddd 10px, transparent 10px);
     background-color: #ffffff;
     
+    line-height: 36px;
     font-size: 20px;
     color: #666666;
     text-align: center;
@@ -2841,9 +2840,9 @@ footer div {
     border: none;
     border-radius: 0;
     
-    background-image: url(data:image/webp;base64,UklGRoQAAABXRUJQVlA4THgAAAAvHcAOEG9gkG2k5vwN3vWnYSBtmzD/Du71NZC2TZh/B/f6KgoAwvETQf+PIDsMCbgRgLuj/78oNB4+pPrbEFz9aqoEm8i26ryeFifLxwcSsBIJMRApERFLeT1dRP+FBAkmr0wo8W9DTbxwR9Lh7ANXYsGXmFDO5AM=) !important;
+    background-image: url(data:image/webp;base64,UklGRqIAAABXRUJQVlA4TJYAAAAvE8AOEG9gkG2k5vwN3vWnYSBtmzD/Du71NZC2TZh/B/f6KgoAwvETQf+PIDsMCbgRgLuj/78oNB4+pPrbEFz9aqoEo9q2dpy5qSbHTw8RVBFBAVGEUMmZMY7ov5Ag0cSVgfdjdEYGDRo0aNCgQYMGDRo0uAb34P0TvFQPgE31AVhVh8+aMGHChAkTJkyYMGHChAkTJgw=) !important;
     background-repeat: no-repeat;
-    background-size: 15px 30px;
+    background-size: 10px 30px;
     background-position: center;
     background-color: transparent !important;
     
@@ -3448,11 +3447,15 @@ a {
     
     background-size: 36px;
     background-position: 50% 10px;
-    background-color: #666666;
+    background-color: #808080;
     
     border-radius: 10px;
     
     color: #ffffff;
+}
+
+.announcements_heading_important {
+    background-color: #ee3333 !important;
 }
 
 #railroad_announcements_heading {
@@ -3571,14 +3574,14 @@ a:has(abbr) {
     width: 300px;
     
     margin: 5px auto;
-    padding: 5px;
+    padding: 6px;
     
     border: 1px solid #999999;
     border-radius: 4px;
     
     background-image: linear-gradient(315deg, #999999 14px, transparent 14px);
     
-    line-height: 36px;
+    line-height: 32px;
     font-size: 18px;
     color: inherit;
     text-align: left;
@@ -3592,13 +3595,13 @@ a:has(abbr:empty) {
 a abbr {
     display: block;
     
-    width: 36px;
+    width: 32px;
     
     margin-right: 10px;
     
-    border-radius: 18px;
+    border-radius: 3px;
     
-    line-height: 36px;
+    line-height: 32px;
     font-size: 16px;
     font-weight: bold;
     color: #ffffff;

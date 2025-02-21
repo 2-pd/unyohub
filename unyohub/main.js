@@ -426,40 +426,40 @@ function convert_font_color_dark_mode (color_hex) {
     return "hsl(" + hsl[0] + "deg " + Math.round(hsl[1] / 2.55) + "% " + Math.round(Math.min(Math.max(255 - hsl[2], 170), 255) / 2.55) + "%)";
 }
 
-function switch_dark_mode () {
+function switch_dark_mode (redraw = false) {
     if (config["dark_mode"]) {
         document.getElementsByTagName("body")[0].classList.add("dark_mode");
     } else {
         document.getElementsByTagName("body")[0].classList.remove("dark_mode");
     }
     
-    switch (mode_val) {
-        case -1:
-            if (document.readyState === "complete") {
+    if (redraw) {
+        switch (mode_val) {
+            case -1:
                 get_railroad_list(function (railroads, loading_completed) {
                     update_railroad_list(railroads, "splash_screen_inner", loading_completed);
                 });
-            }
+                break;
+                
+            case 0:
+                position_change_lines(position_selected_line);
+                break;
             
-            break;
-        case 0:
-            position_change_lines(position_selected_line);
-            break;
-        
-        case 1:
-            update_selected_line(timetable_selected_line, false);
-            if (timetable_selected_station !== null) {
-                timetable_select_station(timetable_selected_station);
-            }
-            break;
-        
-        case 2:
-            operation_data_draw();
-            break;
-        
-        case 4:
-            operation_table_list_number();
-            break;
+            case 1:
+                update_selected_line(timetable_selected_line, false);
+                if (timetable_selected_station !== null) {
+                    timetable_select_station(timetable_selected_station);
+                }
+                break;
+            
+            case 2:
+                operation_data_draw();
+                break;
+            
+            case 4:
+                operation_table_list_number();
+                break;
+        }
     }
 }
 
@@ -699,7 +699,7 @@ function update_user_data (user_data_next = null) {
         menu_not_logged_in_elm.style.display = "block";
         
         if (location.pathname === "/") {
-            splash_screen_login_status_elm.innerHTML = "<b>ログインしていません</b><a id='login_button' href='javascript:void(0);' onclick='show_login_form();'>ログイン</a><a id='sign_up_button' href='/user/sign_up.php' target='_blank' rel='opener'>新規登録</a>";
+            splash_screen_login_status_elm.innerHTML = "<b>ゲストモード</b>です<a id='login_button' href='javascript:void(0);' onclick='show_login_form();'>ログイン</a><a id='sign_up_button' href='/user/sign_up.php' target='_blank' rel='opener'>新規登録</a>";
         }
     }
 }
@@ -1115,9 +1115,9 @@ function show_announcements (railroad_id = null, important_announcements_exist =
     
     if (railroad_id === null) {
         if (important_announcements_exist) {
-            var buf = "<h3 id='announcements_heading' style='color: " + (!config["dark_mode"] ? "#cc0000" : "#ff3333") + ";'>重要なお知らせがあります</h3>";
+            var buf = "<h3 id='announcements_heading' class='announcements_heading_important'>重要なお知らせがあります</h3>";
         } else {
-            var buf = "<h3 id='announcements_heading'>お知らせの一覧</h3>";
+            var buf = "<h3 id='announcements_heading'>お知らせ</h3>";
         }
     } else {
         var buf = "<h3 id='railroad_announcements_heading' style='background-color: " + (config["dark_mode"] ? convert_color_dark_mode(railroad_info["main_color"]) : railroad_info["main_color"]) + ";'>" + escape_html(railroad_info["railroad_name"]) + "のお知らせ</h3>";
@@ -1156,7 +1156,7 @@ function draw_announcements (announcements_data, last_read_timestamp) {
         
         var dt = new Date(announcements_data[cnt]["last_modified_timestamp"] * 1000);
         
-        buf += "<div><div class='announcement'>" + convert_to_html(announcements_data[cnt]["content"]) + "<small>" + escape_html(announcements_data[cnt]["user_name"]) + "　" + dt.getFullYear() + "/" + (dt.getMonth() + 1) + "/" + dt.getDate() + " " + dt.getHours() + ":" + dt.getMinutes() + "</small></div></div>";
+        buf += "<div><div class='announcement'>" + convert_to_html(announcements_data[cnt]["content"]) + "<small>" + escape_html(announcements_data[cnt]["user_name"]) + "　" + dt.getFullYear() + "/" + (dt.getMonth() + 1) + "/" + dt.getDate() + " " + dt.getHours() + ":" + ("0" + dt.getMinutes()).slice(-2) + "</small></div></div>";
     }
     
     if (buf.length === 0) {
@@ -2401,7 +2401,7 @@ function select_lines (lines = null, position_mode = true) {
             buf += "timetable_change_lines(" + line_id_text + ");";
         }
         
-        buf += "'><abbr style='background-color: " + line_color + ";''>" + line_symbol + "</abbr>" + line_name + "</a>";
+        buf += "'><abbr style='background-color: " + line_color + ";'>" + line_symbol + "</abbr>" + line_name + "</a>";
     }
     
     popup_inner_elm.innerHTML = buf;
@@ -5059,7 +5059,7 @@ function operation_data_history (formation_name, operation_number = null) {
             
             var data = JSON.parse(response);
             
-            var ts = get_timestamp() - 2505600;
+            var ts = get_timestamp();
             var day_value = new Date((ts - 10800) * 1000).getDay();
             for (var cnt = 0; cnt < 30; cnt++) {
                 var yyyy_mm_dd = get_date_string(ts);
@@ -5071,8 +5071,8 @@ function operation_data_history (formation_name, operation_number = null) {
                     buf += "<div class='descriptive_text'>情報がありません</div>";
                 }
                 
-                ts += 86400;
-                day_value = (day_value + 1) % 7;
+                ts -= 86400;
+                day_value = (day_value !== 0 ? day_value - 1 : 6);
             }
             
             popup_inner_elm.innerHTML = buf;
@@ -6387,7 +6387,7 @@ function about_railroad_data () {
 function edit_config () {
     var popup_inner_elm = open_popup("config_popup", "アプリの設定");
     
-    var buf = "<input type='checkbox' id='dark_mode_check' class='toggle' onchange='change_config();'" + (config["dark_mode"] ? "checked='checked'" : "") + "><label for='dark_mode_check'>ダークモード</label>";
+    var buf = "<input type='checkbox' id='dark_mode_check' class='toggle' onchange='change_config();'" + (config["dark_mode"] ? "checked='checked'" : "") + "><label for='dark_mode_check'>ダークテーマ</label>";
     buf += "<input type='checkbox' id='colorize_corrected_posts_check' class='toggle' onchange='change_config();'" + (config["colorize_corrected_posts"] ? "checked='checked'" : "") + "><label for='colorize_corrected_posts_check'>訂正された投稿を区別する</label>";
     buf += "<input type='checkbox' id='colorize_beginners_posts_check' class='toggle' onchange='change_config();'" + (config["colorize_beginners_posts"] ? "checked='checked'" : "") + "><label for='colorize_beginners_posts_check'>ビギナーの方の投稿を区別する</label>";
     buf += "<h3>運用情報の自動更新間隔</h3>";
@@ -6422,7 +6422,7 @@ function change_config () {
     }
     config["operation_data_cache_period"] = Number(operation_data_cache_period_elm.value);
     
-    switch_dark_mode();
+    switch_dark_mode(true);
     
     save_config();
 }

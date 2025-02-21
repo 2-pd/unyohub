@@ -132,8 +132,9 @@ foreach ($railroads["categories"] as $category) {
 $uncategorized_railroads = array_diff(array_keys($railroads["railroads"]), $categorized_railroads);
 
 if (!empty($uncategorized_railroads)) {
-    if ($cnt == 0 || $railroads["categories"][$cnt - 1]["category_name"] !== "その他") {
-        $railroad_categories .= ($cnt >= 1 ? "\n" : "")."# その他 : #333333\n";
+    $categories_length = count($railroads["categories"]);
+    if ($categories_length == 0 || $railroads["categories"][$categories_length - 1]["category_name"] !== "その他") {
+        $railroad_categories .= ($categories_length >= 1 ? "\n" : "")."# その他 : #333333\n";
     }
     
     foreach ($uncategorized_railroads as $railroad_id) {
