@@ -17,7 +17,7 @@
  */
 
 define("UNYOHUB_APP_NAME", "鉄道運用Hub");
-define("UNYOHUB_VERSION", "25.01-1");
+define("UNYOHUB_VERSION", "25.02-1");
 define("UNYOHUB_APP_INFO_URL", "https://create.2pd.jp/apps/unyohub/");
 define("UNYOHUB_REPOSITORY_URL", "https://fossil.2pd.jp/unyohub/");
 define("UNYOHUB_LICENSE_TEXT", "このアプリケーションは無権利創作宣言に準拠して著作権放棄されています。");
@@ -40,7 +40,7 @@ if (empty($_SERVER["PATH_INFO"]) || $_SERVER["PATH_INFO"] === "/") {
         $railroad_info = json_decode(file_get_contents($railroad_info_path), TRUE);
         
         if (empty($path_info[2])) {
-            $page_title = $railroad_info["railroad_name"]."の運用情報 | ".UNYOHUB_APP_NAME;
+            $page_title = $railroad_info["railroad_name"]."の車両運用情報 | ".UNYOHUB_APP_NAME;
             $line_names = array();
             foreach ($railroad_info["lines_order"] as $line_id) {
                 $line_names[] = $railroad_info["lines"][$line_id]["line_name"];
@@ -86,8 +86,8 @@ if (empty($_SERVER["PATH_INFO"]) || $_SERVER["PATH_INFO"] === "/") {
                 
                 case "operation_data":
                     $path_info_str .= "operation_data/";
-                    $page_title = $railroad_info["railroad_name"]."の車両運用データ | ".UNYOHUB_APP_NAME;
-                    $page_description = "本日の".$railroad_info["railroad_name"]."の各編成運用状況です。";
+                    $page_title = $railroad_info["railroad_name"]."の運用履歴データ | ".UNYOHUB_APP_NAME;
+                    $page_description = "本日及び過去の".$railroad_info["railroad_name"]."における各編成の運用履歴です。";
                     
                     break;
                 
@@ -113,14 +113,14 @@ if (empty($_SERVER["PATH_INFO"]) || $_SERVER["PATH_INFO"] === "/") {
                         }
                         
                         $path_info_str .= urlencode($path_info[3])."/";
-                        $page_title = $path_info[3]." (".$railroad_info["railroad_name"].") の車両・運用情報 | ".UNYOHUB_APP_NAME;
+                        $page_title = $path_info[3]." (".$railroad_info["railroad_name"].") の編成情報・運用 | ".UNYOHUB_APP_NAME;
                         
                         $car_numbers = array();
                         foreach ($formations["formations"][$path_info[3]]["cars"] as $car) {
                             $car_numbers[] = $car["car_number"];
                         }
                         
-                        $page_description = $railroad_info["railroad_name"]."で運用されている編成 ".$path_info[3]." ( ".implode(" - ", $car_numbers)." ) の編成情報、及び運用状況です。";
+                        $page_description = $railroad_info["railroad_name"]."で運用されている編成 ".$path_info[3]." ( ".implode(" - ", $car_numbers)." ) の車両設備・車歴情報、及び運用状況です。";
                     }
                     
                     break;
@@ -196,7 +196,7 @@ print "        const UNYOHUB_LICENSE_TEXT = \"".UNYOHUB_LICENSE_TEXT."\";\n";
             <a href="/user/sign_up.php" target="_blank" rel="opener">新規登録</a>
         </div>
         <div id="menu_off_line">
-            <b class="off_line_message">端末がオフラインです</b>
+            <b class="off_line_message" onclick="show_off_line_message();">オフラインモード</b>
         </div>
         <hr>
         <a id="menu_announcements" href="javascript:void(0);" onclick="show_announcements();">お知らせ</a>
@@ -213,15 +213,13 @@ print "        const UNYOHUB_LICENSE_TEXT = \"".UNYOHUB_LICENSE_TEXT."\";\n";
 <?php
 if ($path_info_str === "/") {
     $unyohub_app_name = UNYOHUB_APP_NAME;
+    $unyohub_version = UNYOHUB_VERSION;
     print <<<EOM
-            <div id="splash_screen_inner">
-                <div id="splash_screen_login_status">サーバに接続しています...</div>
-                <a id="announcements_overview" href="javascript:void(0);" onclick="show_announcements();"></a>
-                <div id="splash_screen_buttons" class="wait_icon"></div>
-                <div id="splash_screen_bottom">
-                    <a href="javascript:void(0);" onclick="show_about();"><span id="splash_screen_instance_name">{$unyohub_app_name}</span>について</a>　<a href="javascript:void(0);" onclick="show_rules();">ルールとポリシー</a>
-                    <div id="splash_screen_app_version"></div>
-                </div> 
+            <div id="splash_screen_login_status">サーバに接続しています...</div>
+            <div id="splash_screen_inner"></div>
+            <a id="splash_screen_announcement" href="javascript:void(0);" onclick="show_announcements();"></a>
+            <div id="splash_screen_bottom">
+                <a href="javascript:void(0);" onclick="show_about();"><span id="splash_screen_instance_name">{$unyohub_app_name}</span>について</a><a href="javascript:void(0);" onclick="show_rules();">ルールとポリシー</a><span id="splash_screen_app_version">v{$unyohub_version}</span>
             </div>
     EOM."\n";
 }
@@ -275,7 +273,7 @@ if ($path_info_str === "/") {
         <br>
         <div id="operation_table_info" class="informational_text"></div>
     </article>
-    <a href="javascript:void(0);" id="railroad_announcement" onclick="show_railroad_announcements();"></a>
+    <a id="railroad_announcement" href="javascript:void(0);" onclick="show_railroad_announcements();"></a>
     <footer>
         <div>
             <button type="button" id="position_reload_button" class="reload_button" onclick="position_mode('today', null);"></button>

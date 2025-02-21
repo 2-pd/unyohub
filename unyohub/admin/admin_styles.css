@@ -421,6 +421,16 @@ input[type="text"], input[type="number"], input[type="password"], input[type="se
     -webkit-appearance: none;
 }
 
+input[type="number"] {
+    display: inline-block;
+    
+    width: 50px;
+    
+    margin-left: max(20px, 50% - 230px);
+    
+    font-size: 18px;
+}
+
 input[type="datetime-local"] {
     padding: 4px;
     

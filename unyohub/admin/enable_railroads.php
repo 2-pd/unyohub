@@ -18,7 +18,6 @@ if (isset($_POST["enabling_railroad"])) {
         $railroad_info = @json_decode(file_get_contents($railroad_info_path), TRUE);
         if (!empty($railroad_info)) {
             $railroads["railroads"][$_POST["enabling_railroad"]] = array("railroad_name" => $railroad_info["railroad_name"], "main_color" => $railroad_info["main_color"], "railroad_icon" => $railroad_info["railroad_icon"]);
-            $railroads["railroads_order"][] = $_POST["enabling_railroad"];
             
             $wakarana->add_permission("railroads/".$_POST["enabling_railroad"], $railroad_info["railroad_name"]."の編集・管理");
             $wakarana->add_permission("railroads/".$_POST["enabling_railroad"]."/formation", $railroad_info["railroad_name"]."の編成情報編集");
@@ -35,7 +34,24 @@ if (isset($_POST["enabling_railroad"])) {
 } elseif (isset($_POST["disabling_railroad"])) {
     if (isset($_POST["one_time_token"]) && $user->check_one_time_token($_POST["one_time_token"])) {
         unset($railroads["railroads"][$_POST["disabling_railroad"]]);
-        array_splice($railroads["railroads_order"], array_search($_POST["disabling_railroad"], $railroads["railroads_order"]), 1);
+        
+        for ($cnt = 0; isset($railroads["categories"][$cnt]); $cnt++) {
+            if (array_key_exists("subcategories", $railroads["categories"][$cnt])) {
+                for ($cnt_2 = 0; isset($railroads["categories"][$cnt]["subcategories"][$cnt_2]); $cnt_2++) {
+                    $railroad_id_index = array_search($_POST["disabling_railroad"], $railroads["categories"][$cnt]["subcategories"][$cnt_2]["railroads"]);
+                    
+                    if ($railroad_id_index !== FALSE) {
+                        array_splice($railroads["categories"][$cnt]["subcategories"][$cnt_2]["railroads"], $railroad_id_index, 1);
+                    }
+                }
+            } elseif (array_key_exists("railroads", $railroads["categories"][$cnt])) {
+                $railroad_id_index = array_search($_POST["disabling_railroad"], $railroads["categories"][$cnt]["railroads"]);
+                
+                if ($railroad_id_index !== FALSE) {
+                    array_splice($railroads["categories"][$cnt]["railroads"], $railroad_id_index, 1);
+                }
+            }
+        }
         
         $permission = $wakarana->get_permission("railroads/".$_POST["disabling_railroad"]);
         $permission->delete_permission();
@@ -83,10 +99,12 @@ EOM;
 
 print "<h2>路線系統の追加・削除</h2>";
 
+$railroad_list = array_keys($railroads["railroads"]);
+
 print "<h3>有効な路線系統</h3>";
 
 print "<table>";
-foreach ($railroads["railroads_order"] as $railroad_id) {
+foreach ($railroad_list as $railroad_id) {
     print "<tr><td>".htmlspecialchars($railroads["railroads"][$railroad_id]["railroad_name"])." (".$railroad_id.")<button onclick='disable_railroad(\"".$railroad_id."\", \"".addslashes($railroads["railroads"][$railroad_id]["railroad_name"])."\")'>無効化</button></td></tr>";
 }
 print "</table>";
@@ -99,7 +117,7 @@ print "<table>";
 foreach ($dir_list as $dir_path) {
     $railroad_id = basename($dir_path);
     
-    if (in_array($railroad_id, $railroads["railroads_order"])) {
+    if (in_array($railroad_id, $railroad_list)) {
         continue;
     }
     

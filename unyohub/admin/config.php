@@ -11,7 +11,7 @@ print_header();
 
 $config_str = file_get_contents("../config/main.ini");
 
-if (isset($_POST["instance_name"], $_POST["introduction_text"], $_POST["manual_url"], $_POST["administrator_name"], $_POST["administrator_url"], $_POST["administrator_introduction"], $_POST["sender_email_address"])) {
+if (isset($_POST["instance_name"], $_POST["introduction_text"], $_POST["manual_url"], $_POST["administrator_name"], $_POST["administrator_url"], $_POST["administrator_introduction"], $_POST["available_days_ahead"], $_POST["sender_email_address"])) {
     $config_str = "instance_name = \"".addslashes($_POST["instance_name"])."\"\n";
     $config_str .= "\n";
     $config_str .= "introduction_text = \"".str_replace(array("\r\n", "\n", "\r"), "\\n", addslashes($_POST["introduction_text"]))."\"\n";
@@ -20,6 +20,8 @@ if (isset($_POST["instance_name"], $_POST["introduction_text"], $_POST["manual_u
     $config_str .= "administrator_name = \"".addslashes($_POST["administrator_name"])."\"\n";
     $config_str .= "administrator_url = \"".addslashes($_POST["administrator_url"])."\"\n";
     $config_str .= "administrator_introduction = \"".str_replace(array("\r\n", "\n", "\r"), "\\n", addslashes($_POST["administrator_introduction"]))."\"\n";
+    $config_str .= "\n";
+    $config_str .= "available_days_ahead = ".intval($_POST["available_days_ahead"])."\n";
     $config_str .= "\n";
     $config_str .= "require_invite_code = ".(!empty($_POST["require_invite_code"]) ? "true" : "false")."\n";
     $config_str .= "require_email_address = ".(!empty($_POST["require_email_address"]) ? "true" : "false")."\n";
@@ -64,6 +66,11 @@ print "<h4>運営者紹介ページのURL</h4>";
 print "<input type='text' name='administrator_url' value='".addslashes($config["administrator_url"])."'>";
 print "<h4>運営者の紹介文</h4>";
 print "<textarea name='administrator_introduction'>".htmlspecialchars(stripcslashes($config["administrator_introduction"]))."</textarea>";
+
+print "<h3>アプリ動作設定</h3>";
+print "<h4>運用履歴データの表示範囲</h4>";
+print "<div class='informational_text'>1〜30の範囲で設定してください。</div>";
+print "<input type='number' name='available_days_ahead' min='1' max='30' value='".addslashes($config["available_days_ahead"])."'>日先まで表示可能";
 
 print "<h3>ユーザー登録管理</h3>";
 print "<input type='checkbox' name='require_invite_code' id='require_invite_code' class='toggle' value='YES'";

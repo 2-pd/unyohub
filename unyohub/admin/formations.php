@@ -64,7 +64,7 @@ if (empty($_GET["formation_name"])) {
     
     $formation_name = $db_obj->escapeString($_GET["formation_name"]);
     
-    $formation_data = $db_obj->querySingle("SELECT `affiliation`, `caption`, `description`, `unavailable`, `inspection_information` FROM `unyohub_formations` WHERE `formation_name` = '".$formation_name."'", TRUE);
+    $formation_data = $db_obj->querySingle("SELECT `affiliation`, `caption`, `description`, `semifixed_formation`, `unavailable`, `inspection_information` FROM `unyohub_formations` WHERE `formation_name` = '".$formation_name."'", TRUE);
     
     if (!empty($formation_data)) {
         $cars_r = $db_obj->query("SELECT `car_number`, `manufacturer`, `constructed`, `description` FROM `unyohub_cars` WHERE `formation_name` = '".$formation_name."' ORDER BY `car_order` ASC");
@@ -81,40 +81,91 @@ if (empty($_GET["formation_name"])) {
             $histories_data[] = $history_data;
         }
         
-        if (isset($_POST["affiliation"], $_POST["caption"], $_POST["description"], $_POST["inspection_information"])) {
+        $formation_data["semifixed_formation"] = !is_null($formation_data["semifixed_formation"]) ? $formation_data["semifixed_formation"] : $_GET["formation_name"];
+        
+        if (isset($_POST["affiliation"], $_POST["caption"], $_POST["description"], $_POST["semifixed_formation"], $_POST["inspection_information"])) {
             $is_unavailable = !empty($_POST["unavailable"]);
-            $overview_changed = ($_POST["caption"] !== $formation_data["caption"] || $is_unavailable != $formation_data["unavailable"]);
+            $semifixed_formation = empty($_POST["semifixed_formation"]) ? $_GET["formation_name"] : $_POST["semifixed_formation"];
             $updated_datetime = date("Y-m-d H:i:s");
             
-            if (isset($_POST["one_time_token"]) && $user->check_one_time_token($_POST["one_time_token"])) {
-                $db_obj->querySingle("UPDATE `unyohub_formations` SET `affiliation` = '".$db_obj->escapeString($_POST["affiliation"])."', `caption` = '".$db_obj->escapeString($_POST["caption"])."', `description` = '".$db_obj->escapeString($_POST["description"])."', `unavailable` = ".(empty($_POST["unavailable"]) ? "FALSE" : "TRUE").", `inspection_information` = '".$db_obj->escapeString($_POST["inspection_information"])."',".($overview_changed ? " `overview_updated` = '".$updated_datetime."'," : "")." `updated_datetime` = '".$updated_datetime."', `edited_user_id` = '".$user->get_id()."' WHERE `formation_name` = '".$formation_name."'");
-                
-                for ($cnt = 0; isset($cars_data[$cnt], $_POST["car_manufacturer_".$cnt], $_POST["car_constructed_".$cnt], $_POST["car_description_".$cnt]); $cnt++) {
-                    $db_obj->querySingle("UPDATE `unyohub_cars` SET `manufacturer` = '".$db_obj->escapeString($_POST["car_manufacturer_".$cnt])."', `constructed` = '".$db_obj->escapeString($_POST["car_constructed_".$cnt])."', `description` = '".$db_obj->escapeString($_POST["car_description_".$cnt])."' WHERE `formation_name` = '".$formation_name."' AND `car_number` = '".$db_obj->escapeString($cars_data[$cnt]["car_number"])."'");
-                }
-                
-                $db_obj->querySingle("DELETE FROM `unyohub_formation_histories` WHERE `formation_name` = '".$formation_name."'");
-                for ($cnt = 0; isset($_POST["event_year_".$cnt], $_POST["event_type_".$cnt], $_POST["event_content_".$cnt]); $cnt++) {
-                    if (empty($_POST["event_content_".$cnt])) {
-                        continue;
-                    }
-                    
-                    $event_year_month = intval($_POST["event_year_".$cnt]);
-                    if (!empty($_POST["event_month_".$cnt])) {
-                        $event_year_month .= "-".str_pad(intval($_POST["event_month_".$cnt]), 2, "0", STR_PAD_LEFT);
-                    }
-                    
-                    $db_obj->querySingle("INSERT INTO `unyohub_formation_histories`(`formation_name`, `event_year_month`, `event_type`, `event_content`) VALUES ('".$formation_name."', '".$event_year_month."', '".$db_obj->escapeString($_POST["event_type_".$cnt])."', '".$db_obj->escapeString($_POST["event_content_".$cnt])."')");
-                }
-                
-                print "<script> alert('編成情報を保存しました'); </script>";
-            } else {
+            if (!isset($_POST["one_time_token"]) || !$user->check_one_time_token($_POST["one_time_token"])) {
                 print "<script> alert('【!】ワンタイムトークンが無効です。処理はキャンセルされました。'); </script>";
+                
+                goto on_error;
             }
+            
+            if ($semifixed_formation !== $formation_data["semifixed_formation"]) {
+                $semifixed_formation_names = explode("+", $semifixed_formation);
+                
+                if (!in_array($_GET["formation_name"], $semifixed_formation_names)) {
+                    print "<script> alert('【!】半固定編成に編集中の編成自身が含まれていません。処理はキャンセルされました。'); </script>";
+                    
+                    goto on_error;
+                }
+                
+                foreach ($semifixed_formation_names as $semifixed_formation_name) {
+                    if (!array_key_exists($semifixed_formation_name, $formations["formations"])) {
+                        print "<script> alert('【!】存在しない編成が半固定編成に指定されています。処理はキャンセルされました。'); </script>";
+                        
+                        goto on_error;
+                    }
+                }
+                
+                $semifixed_formation_names_old = array_diff(explode("+", $formation_data["semifixed_formation"]), $semifixed_formation_names);
+                $update_target_formations = array_merge($semifixed_formation_names, $semifixed_formation_names_old);
+                $semifixed_formation_names = array_diff($semifixed_formation_names, array($_GET["formation_name"]));
+                
+                foreach ($semifixed_formation_names_old as $semifixed_formation_name) {
+                    $db_obj->querySingle("UPDATE `unyohub_formations` SET `semifixed_formation` = NULL, `overview_updated` = '".$updated_datetime."' WHERE `formation_name` = '".$db_obj->escapeString($semifixed_formation_name)."'");
+                }
+                
+                foreach ($semifixed_formation_names as $semifixed_formation_name) {
+                    $semifixed_formation_name = $db_obj->escapeString($semifixed_formation_name);
+                    
+                    $old_semifixed_formations = $db_obj->querySingle("SELECT `semifixed_formation` FROM `unyohub_formations` WHERE `formation_name` = '".$semifixed_formation_name."'");
+                    
+                    foreach (explode("+", $old_semifixed_formations) as $old_semifixed_formation_name) {
+                        if (!in_array($old_semifixed_formation_name, $update_target_formations)) {
+                            $db_obj->querySingle("UPDATE `unyohub_formations` SET `semifixed_formation` = NULL, `overview_updated` = '".$updated_datetime."' WHERE `formation_name` = '".$old_semifixed_formation_name."'");
+                        }
+                    }
+                    
+                    $db_obj->querySingle("UPDATE `unyohub_formations` SET `semifixed_formation` = '".$db_obj->escapeString($semifixed_formation)."', `overview_updated` = '".$updated_datetime."' WHERE `formation_name` = '".$semifixed_formation_name."'");
+                }
+                
+                $overview_changed = TRUE;
+            } else {
+                $overview_changed = ($_POST["caption"] !== $formation_data["caption"] || $is_unavailable != $formation_data["unavailable"]);
+            }
+            
+            $db_obj->querySingle("UPDATE `unyohub_formations` SET `affiliation` = '".$db_obj->escapeString($_POST["affiliation"])."', `caption` = '".$db_obj->escapeString($_POST["caption"])."', `description` = '".$db_obj->escapeString($_POST["description"])."', `semifixed_formation` = ".($semifixed_formation === $_GET["formation_name"] ? "NULL" : "'".$db_obj->escapeString($semifixed_formation)."'").", `unavailable` = ".(empty($_POST["unavailable"]) ? "FALSE" : "TRUE").", `inspection_information` = '".$db_obj->escapeString($_POST["inspection_information"])."',".($overview_changed ? " `overview_updated` = '".$updated_datetime."'," : "")." `updated_datetime` = '".$updated_datetime."', `edited_user_id` = '".$user->get_id()."' WHERE `formation_name` = '".$formation_name."'");
+            
+            for ($cnt = 0; isset($cars_data[$cnt], $_POST["car_manufacturer_".$cnt], $_POST["car_constructed_".$cnt], $_POST["car_description_".$cnt]); $cnt++) {
+                $db_obj->querySingle("UPDATE `unyohub_cars` SET `manufacturer` = '".$db_obj->escapeString($_POST["car_manufacturer_".$cnt])."', `constructed` = '".$db_obj->escapeString($_POST["car_constructed_".$cnt])."', `description` = '".$db_obj->escapeString($_POST["car_description_".$cnt])."' WHERE `formation_name` = '".$formation_name."' AND `car_number` = '".$db_obj->escapeString($cars_data[$cnt]["car_number"])."'");
+            }
+            
+            $db_obj->querySingle("DELETE FROM `unyohub_formation_histories` WHERE `formation_name` = '".$formation_name."'");
+            for ($cnt = 0; isset($_POST["event_year_".$cnt], $_POST["event_type_".$cnt], $_POST["event_content_".$cnt]); $cnt++) {
+                if (empty($_POST["event_content_".$cnt])) {
+                    continue;
+                }
+                
+                $event_year_month = intval($_POST["event_year_".$cnt]);
+                if (!empty($_POST["event_month_".$cnt])) {
+                    $event_year_month .= "-".str_pad(intval($_POST["event_month_".$cnt]), 2, "0", STR_PAD_LEFT);
+                }
+                
+                $db_obj->querySingle("INSERT INTO `unyohub_formation_histories`(`formation_name`, `event_year_month`, `event_type`, `event_content`) VALUES ('".$formation_name."', '".$event_year_month."', '".$db_obj->escapeString($_POST["event_type_".$cnt])."', '".$db_obj->escapeString($_POST["event_content_".$cnt])."')");
+            }
+            
+            print "<script> alert('編成情報を保存しました'); </script>";
+            
+            on_error:
             
             $formation_data["affiliation"] = $_POST["affiliation"];
             $formation_data["caption"] = $_POST["caption"];
             $formation_data["description"] = $_POST["description"];
+            $formation_data["semifixed_formation"] = $semifixed_formation;
             $formation_data["unavailable"] = $is_unavailable;
             $formation_data["inspection_information"] = $_POST["inspection_information"];
             
@@ -181,6 +232,10 @@ if (empty($_GET["formation_name"])) {
         
         print "<h3>編成の特記事項</h3>";
         print "<textarea name='description'>".htmlspecialchars($formation_data["description"])."</textarea>";
+        
+        print "<h3>半固定編成</h3>";
+        print "<div class='informational_text'>".htmlspecialchars($railroad_info["alias_of_forward_direction"])."から順に「+」で区切って入力</div>";
+        print "<input type='text' name='semifixed_formation' placeholder='".addslashes($_GET["formation_name"])."' value='".addslashes($formation_data["semifixed_formation"])."'>";
         
         print "<h3>検査情報</h3>";
         print "<div class='chip_wrapper'><input type='checkbox' name='unavailable' id='unavailable' class='chip' value='YES'".($formation_data["unavailable"] ? " checked='checked'" : "")."><label for='unavailable'>運用離脱中</label></div>";

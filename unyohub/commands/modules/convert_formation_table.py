@@ -171,7 +171,7 @@ def convert_formation_table (mes, main_dir):
                 
                 car_count = len(car_list)
                 
-                cur.execute("INSERT INTO `unyohub_formations`(`formation_name`, `series_name`, `car_count`, `affiliation`, `caption`, `description`, `unavailable`, `inspection_information`, `overview_updated`, `updated_datetime`, `edited_user_id`) VALUES (:formation_name, :series_name, :car_count, '', '', '', FALSE, '', :overview_updated, :updated_datetime, NULL) ON CONFLICT(`formation_name`) DO UPDATE SET `series_name` = :series_name_2, `car_count` = :car_count_2", {"formation_name" : formation_name, "series_name" : series_name, "car_count" : car_count, "overview_updated" : datetime_now, "updated_datetime" : datetime_now, "series_name_2" : series_name, "car_count_2" : car_count})
+                cur.execute("INSERT INTO `unyohub_formations`(`formation_name`, `series_name`, `car_count`, `affiliation`, `caption`, `description`, `semifixed_formation`, `unavailable`, `inspection_information`, `overview_updated`, `updated_datetime`, `edited_user_id`) VALUES (:formation_name, :series_name, :car_count, '', '', '', NULL, FALSE, '', :overview_updated, :updated_datetime, NULL) ON CONFLICT(`formation_name`) DO UPDATE SET `series_name` = :series_name_2, `car_count` = :car_count_2", {"formation_name" : formation_name, "series_name" : series_name, "car_count" : car_count, "overview_updated" : datetime_now, "updated_datetime" : datetime_now, "series_name_2" : series_name, "car_count_2" : car_count})
                 
                 formation_list.add(formation_name)
                 
@@ -195,12 +195,24 @@ def convert_formation_table (mes, main_dir):
     
     mes("データベースからformations.csvにない編成を削除しています...")
     
-    deleted_formations = list(formation_list_old - formation_list)
+    deleted_formations = formation_list_old - formation_list
     
-    for deleted_formation_name in deleted_formations:
+    uncoupled_formations = set()
+    
+    for deleted_formation_name in list(deleted_formations):
+        mes("　- " + deleted_formation_name + " のデータを削除しています...")
+        
+        for row_data in cur.execute("SELECT `semifixed_formation` FROM `unyohub_formations` WHERE `formation_name` = :formation_name", {"formation_name" : deleted_formation_name}):
+            uncoupled_formations.add(row_data[0])
+        
         cur.execute("DELETE FROM `unyohub_formations` WHERE `formation_name` = :formation_name", {"formation_name" : deleted_formation_name})
         cur.execute("DELETE FROM `unyohub_cars` WHERE `formation_name` = :formation_name", {"formation_name" : deleted_formation_name})
         cur.execute("DELETE FROM `unyohub_formation_histories` WHERE `formation_name` = :formation_name", {"formation_name" : deleted_formation_name})
+    
+    mes("半固定編成の情報を整理しています...")
+    
+    for uncoupled_formation in list(uncoupled_formations):
+        cur.execute("UPDATE `unyohub_formations` SET `semifixed_formation` = NULL, `overview_updated` = :overview_updated WHERE `semifixed_formation` = :semifixed_formation", {"semifixed_formation" : uncoupled_formation, "overview_updated" : datetime_now})
     
     mes("データベースの書き込み処理を完了しています...")
     

@@ -128,7 +128,7 @@ if ($user->check_permission("railroads", "edit_announcement")) {
     print "<option value=''>全体のお知らせ</option>";
 }
 
-foreach ($railroads["railroads_order"] as $railroad) {
+foreach (array_keys($railroads["railroads"]) as $railroad) {
     if (!$user->check_permission("railroads/".$railroad, "edit_announcement")) {
         continue;
     }

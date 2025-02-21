@@ -21,6 +21,7 @@
     "administrator_name" : インスタンス運営者名(未設定なら省略),  
     "administrator_url" : インスタンス運営者紹介ページのURL(未設定なら省略),  
     "administrator_introduction" : インスタンス運営者の紹介文(未設定なら省略),  
+    "available_days_ahead" : 何日先の日付まで運用情報の閲覧と投稿が可能か,  
     "allow_guest_user" : ログインしていないユーザーの投稿を認めるか(BOOL値),  
     "require_comments_on_speculative_posts" : 未出庫の運用への情報投稿時にコメント入力を強制するか(BOOL値)  
 }  
@@ -202,6 +203,7 @@ formations.jsonの内容を返す
 {  
     "編成名" : {  
         "caption" : 1行見出し,  
+        "semifixed_formation" : 編成が組み込まれている半固定編成(「+」区切り、半固定編成を組成していない場合は省略),  
         "unavailable" : 運用離脱中か否か(BOOL値)  
     }...  
 }  
@@ -239,6 +241,7 @@ formations.jsonの内容を返す
     "affiliation" : 所属車両基地,  
     "caption" : 1行見出し,  
     "description" : 補足説明文,  
+    "semifixed_formation" : 編成が組み込まれている半固定編成(「+」区切り、半固定編成を組成していない場合は省略),  
     "unavailable" : 運用離脱中か否か,  
     "inspection_information" : 検査情報,  
     "histories" : [ 車歴情報  
@@ -420,8 +423,8 @@ JSON化された時刻表の内容を返す
 {  
     "運用番号" : [  
         { 投稿された運用情報。充当順の逆順で、同じ充当順の情報は新しい順に  
-            "user_id" : 情報提供者のユーザーID(アクセス者がモデレーターではない場合、この値はログインしていないユーザーならnull),  
-            "user_name" : 情報提供者のハンドルネーム,  
+            "user_id" : 情報提供者のユーザーID,  
+            "user_name" : 情報提供者のハンドルネーム(設定されていない場合はnull),  
             "is_management_member" : ユーザーが運営メンバーか否か(運営メンバーでなければ省略),  
             "is_beginner" : ユーザーがビギナーか否か(ビギナーでなければ省略),  
             "website_url" : ユーザーのwebサイトのURL(なければ省略),  
@@ -520,7 +523,7 @@ JSON化された時刻表の内容を返す
 **$_POST["is_quotation"]** : 引用情報か否か(引用情報の場合は文字列「YES」、引用情報でなければ省略可能)  
 **$_POST["comment"]** : 運用補足情報(コメント)  
 **$_POST["one_time_token"]** : ワンタイムトークン(ログインしている場合)  
-**$_POST["guest_id"]** : 　「*」から始まる仮ユーザーID(ログインしていない場合)  
+**$_POST["guest_id"]** : 「*」から始まる仮ユーザーID(ログインしていない場合)  
 **$_POST["zizai_captcha_id"]** : Zizai CAPTCHAのセッションID(ログインしていない場合)  
 **$_POST["zizai_captcha_characters"]** : Zizai CAPTCHAのユーザー入力文字列(ログインしていない場合)
 

@@ -10,6 +10,9 @@ def convert_time_style (time_data, with_station_initial = True):
     if with_station_initial:
         time_str = time_data[1:]
     else:
+        if time_data == "NA":
+            return "NA"
+        
         time_str = time_data
     
     if len(time_str) == 0:
@@ -235,6 +238,9 @@ def convert_operation_table_1 (mes, main_dir, file_name, json_file_name, digits_
             else:
                 output_data[-1].append(operation[0][1:].strip())
         else:
+            if len(operation[1].strip()) == 0:
+                mes("・両数が指定されていません: " + operation[0])
+            
             if for_printing:
                 if operation[0][0] == "@":
                     operation[0] = operation[0][1:]

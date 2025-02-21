@@ -58,7 +58,7 @@ $db_obj->busyTimeout(5000);
 
 $formation_name = $db_obj->escapeString($_POST["formation_name"]);
 
-$formation_data = $db_obj->querySingle("SELECT `formation_name`, `series_name`, `affiliation`, `caption`, `description`, `unavailable`, `inspection_information`, `updated_datetime`, `edited_user_id` FROM `unyohub_formations` WHERE `formation_name` = '".$formation_name."'", TRUE);
+$formation_data = $db_obj->querySingle("SELECT `formation_name`, `series_name`, `affiliation`, `caption`, `description`, `semifixed_formation`, `unavailable`, `inspection_information`, `updated_datetime`, `edited_user_id` FROM `unyohub_formations` WHERE `formation_name` = '".$formation_name."'", TRUE);
 
 if (empty($formation_data)) {
     print "ERROR: 編成詳細データがありません";
@@ -77,6 +77,10 @@ $histories_r = $db_obj->query("SELECT `event_year_month`, `event_type`, `event_c
 $formation_data["histories"] = array();
 while ($history_data = $histories_r->fetchArray(SQLITE3_ASSOC)) {
     $formation_data["histories"][] = $history_data;
+}
+
+if (empty($formation_data["semifixed_formation"])) {
+    unset($formation_data["semifixed_formation"]);
 }
 
 
