@@ -1,117 +1,14 @@
 --------------------------------------------------------------------------------
 
-  ユーザー投稿型鉄道運用データベース「鉄道運用Hub」設計案    ページ(1)
+  ユーザー投稿型鉄道運用データベース「鉄道運用Hub」設計案    ページ(4)
 
 --------------------------------------------------------------------------------
 
-_/_/_/_/ 構成概要 _/_/_/_/
-
-・サーバサイドをPHP、クライアントサイドを単一ページで完結可能なJavascriptとするシングルページアプリケーション(ユーザー登録画面や管理画面などの一部ページを除く)
-・データベースエンジンにはSQLiteを採用し、路線系統ごとに独立したデータベースファイルを作成する
-・Wakaranaによるユーザー登録機能を実装し、ユーザー投稿データはユーザーIDと紐付けて管理する
-・未登録ユーザーによる投稿を認めることも可能とするが、未登録ユーザーの投稿時にはZizai CAPTCHAによる画像認証を実施する
-・運用表や時刻表などの各種データはクライアント端末のIndexedDBにキャッシュし、通信量を削減する
-
-
-_/_/_/_/ ファイル構成 _/_/_/_/
-
-/
-└ index.php ・・・アプリケーションフロントエンドHTML
-└ main.js ・・・フロントエンド処理本体
-└ assets.css ・・・フロントエンドのスタイルシート
-└ libs/
-   └ wakarana/ ・・・Wakarana一式
-   └ zizai_captcha/ ・・・Zizai CAPTCHA一式
-   └ elem2img.js ・・・HTML要素画像化ライブラリ
-└ libs_data/
-   └ wakarana.db ・・・Wakaranaデータベース
-   └ zizai_captcha.db ・・・Zizai CAPTCHAデータベース
-└ config/
-   └ main.ini ・・・運用観察Hub基本設定ファイル
-   └ railroads.json ・・・路線系統設定ファイル
-   └ rules.txt ・・・ルールとポリシーを記載するテキストファイル
-   └ announcements.json ・・・お知らせデータ
-   └ wakarana_config.ini ・・・Wakarana設定ファイル
-   └ wakarana_custom_fields.json ・・・Wakaranaカスタムフィールド設定ファイル
-   └ zizai_captcha_config.json ・・・Zizai CAPTCHA設定ファイル
-   └ fonts/ ・・・Zizai CAPTCHAが使用するフォントファイル
-   └ moderation.db ・・・モデレーションログを格納するデータベース
-└ data/ ・・・路線系統ごとのデータフォルダ
-   └ ****/
-      └ railroad.db ・・・運用表・時刻表・ユーザー投稿データを格納するデータベース本体
-      └ railroad_info.json ・・・路線系統の設定ファイル
-      └ train_icons.json ・・・列車アイコン画像埋め込み処理後のアイコン設定ファイル
-      └ formations.json ・・・JSONに変換された編成表
-      └ railroad_announcements.json ・・・路線系統別のお知らせデータ
-      └ diagram_revisions.txt ・・・ダイヤ改正識別名(「YYYY-MM-DD」形式)を新しいものから順に1行に1つずつ記載したテキストファイル
-      └ ****/ ・・・フォルダ名は各ダイヤ改正識別名を使用
-         └ diagram_info.json ・・・各改正日のダイヤに属するダイヤの情報
-         └ operation_table_****.json ・・・JSONに変換された各ダイヤの運用表データ
-         └ timetable_****.json ・・・JSONに変換された各ダイヤの時刻表データ
-└ api/
-   └ ****.php ・・・クライアント端末と情報をやり取りするエンドポイント(詳細は別記)
-└ user/ ・・・ユーザー用機能
-   └ user_config_common.php ・・・ユーザー設定画面共通関数等
-   └ send_verification_email.php ・・・メールアドレス確認メールを送信するエンドポイント
-   └ rules.php ・・・ルールとポリシーの表示
-   └ sign_up.php ・・・ユーザーの新規登録
-   └ user_info.php ・・・ユーザー情報の確認、変更
-   └ change_email_address.php ・・・メールアドレスの変更
-   └ change_password.php ・・・パスワードの変更
-   └ send_password_reset_email.php ・・・パスワードリセットメールを送信する
-   └ reset_password.php ・・・ユーザーのパスワードをリセットしてランダムな値を設定する
-   └ user_config_styles.css ・・・ユーザー設定画面用スタイルシート
-└ admin/ ・・・管理画面
-   └ admin_common.php ・・・管理画面共通関数等
-   └ index.php ・・・管理画面トップページ
-   └ config.php ・・・インスタンスの基本設定
-   └ enable_railroads.php ・・・路線系統の有効化・無効化や表示順の並び替え
-   └ categorize_railroads.php ・・・路線系統グループの編集
-   └ user_list.php ・・・ユーザー一覧、ユーザー検索
-   └ user_data.php ・・・ユーザー情報の閲覧、編集
-   └ edit_rules.php ・・・ルールとポリシーの編集
-   └ announcements.php ・・・お知らせの編集
-   └ railroads.php ・・・路線系統別の操作一覧
-   └ manage_files.php ・・・各路線系統データのファイル管理
-   └ formations.php ・・・編成情報の編集
-   └ train_icons.php ・・・管理画面で使用する車両アイコン画像を配信
-   └ admin_styles.css ・・・管理画面用スタイルシート
-└ commands/
-   └ unyohub ・・・コマンドラインやcronから実行可能なPythonファイル(詳細は別記、拡張子なし)
-   └ modules/
-      └ ****.py ・・・unyohubから呼び出される各種処理の本体となるPythonファイル
-└ sitemap.php ・・・XML形式のサイトマップを表示するPHPファイル
-└ robots.txt ・・・検索エンジンのクローラーに対する指示ファイル
-
-※サーバにアップロードする必要のない各種変換処理スクリプト類は上記に含まれない
-
-
 _/_/_/_/ 設定ファイル設定値 _/_/_/_/
 
-███ index.php ███
+███ manifest.json ███
 
-※鉄道運用Hubからフォークして新たなアプリケーションを開発する場合は必要に応じて以下の値を変更
-  UNYOHUB_APP_NAME  アプリケーション名
-  UNYOHUB_VERSION  バージョン文字列
-  UNYOHUB_APP_INFO_URL  アプリ情報のURL
-  UNYOHUB_REPOSITORY_URL  ソースコードリポジトリのURL
-  UNYOHUB_LICENSE_TEXT  ライセンス情報文
-
-
-███ main.js ███
-
-※設定ファイルではないが、編集可能な定数が存在する
-  UNYOHUB_INDEXEDDB_VERSION  IndexedDBのデータベースバージョン数値(IndexedDBのデータベーススキーマに変更を行った場合のみ更新)
-  UNYOHUB_GENERIC_TRAIN_ICON  車両アイコンが登録されていない編成用のアイコン画像バイナリをBASE64エンコードした文字列
-  UNYOHUB_UNKNOWN_TRAIN_ICON  充当編成が不明な列車用のアイコン画像バイナリをBASE64エンコードした文字列
-  UNYOHUB_CANCELED_TRAIN_ICON  運休列車用のアイコン画像バイナリをBASE64エンコードした文字列
-
-
-███ service_worker.js ███
-
-※設定ファイルではないが、編集可能な定数が存在する
-  UNYOHUB_APP_ID  アプリケーション識別名
-  UNYOHUB_VERSION  バージョン文字列(index.phpのUNYOHUB_VERSIONと同じ文字列を指定)
+ウェブアプリマニフェストの仕様に従い、アプリケーション名等を設定可能
 
 
 ███ main.ini ███
