@@ -28,7 +28,7 @@ def generate_operation_table (mes, main_dir, diagram_revision, diagram_id, gener
     
     if not os.path.isfile(file_path):
         mes("ファイル " + file_path + " が見つかりません", True)
-        return
+        return False
     
     with open(file_path, "r", encoding="utf-8") as csv_f:
         csv_reader = csv.reader(csv_f)
@@ -41,7 +41,7 @@ def generate_operation_table (mes, main_dir, diagram_revision, diagram_id, gener
     
     if not os.path.isfile(file_path):
         mes("ファイル " + file_path + " が見つかりません", True)
-        return
+        return False
     
     with open(file_path, "r", encoding="utf-8") as csv_f:
         csv_reader = csv.reader(csv_f)
@@ -293,23 +293,26 @@ def generate_operation_table (mes, main_dir, diagram_revision, diagram_id, gener
     
     mes("データを新しいCSVファイルに書き込んでいます...")
     
-    new_file_path = main_dir + "/" + diagram_revision + "/timetable_" + inbound_file_base_name
+    timetable_file_paths = [
+        main_dir + "/" + diagram_revision + "/timetable_" + inbound_file_base_name,
+        main_dir + "/" + diagram_revision + "/timetable_" + outbound_file_base_name
+    ]
     
-    with open(new_file_path, "w", encoding="utf-8") as csv_f:
+    with open(timetable_file_paths[0], "w", encoding="utf-8") as csv_f:
         csv_writer = csv.writer(csv_f)
         csv_writer.writerows(inbound_timetable)
     
-    new_file_path = main_dir + "/" + diagram_revision + "/timetable_" + outbound_file_base_name
-    
-    with open(new_file_path, "w", encoding="utf-8") as csv_f:
+    with open(timetable_file_paths[1], "w", encoding="utf-8") as csv_f:
         csv_writer = csv.writer(csv_f)
         csv_writer.writerows(outbound_timetable)
     
-    new_file_path = main_dir + "/" + diagram_revision + "/operation_table_" + diagram_id + ".csv"
+    operation_table_file_path = main_dir + "/" + diagram_revision + "/operation_table_" + diagram_id + ".csv"
     
-    with open(new_file_path, "w", encoding="utf-8") as csv_f:
+    with open(operation_table_file_path, "w", encoding="utf-8") as csv_f:
         csv_writer = csv.writer(csv_f)
         csv_writer.writerows(operation_table)
     
     
     mes("処理が完了しました")
+    
+    return timetable_file_paths
