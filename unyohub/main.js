@@ -36,6 +36,12 @@ function convert_to_html (text) {
     return split_text.join("");
 }
 
+function str_to_halfwidth (str) {
+    return str.replace(/[Ａ-Ｚａ-ｚ０-９]/g, function (char) {
+        return String.fromCharCode(char.charCodeAt(0) - 0xFEE0);
+    });
+}
+
 
 function get_timestamp () {
     return Math.floor(Date.now() / 1000);
@@ -100,6 +106,7 @@ function get_default_config () {
         "unyohub_version" : UNYOHUB_VERSION,
         "guest_id" : null,
         "dark_mode" : false,
+        "enlarge_display_size" : false,
         "refresh_interval" : 5,
         "operation_data_cache_period" : 7,
         "show_train_types_in_position_mode" : false,
@@ -426,11 +433,17 @@ function convert_font_color_dark_mode (color_hex) {
     return "hsl(" + hsl[0] + "deg " + Math.round(hsl[1] / 2.55) + "% " + Math.round(Math.min(Math.max(255 - hsl[2], 170), 255) / 2.55) + "%)";
 }
 
-function switch_dark_mode (redraw = false) {
+function update_display_settings (redraw = false) {
     if (config["dark_mode"]) {
         document.getElementsByTagName("body")[0].classList.add("dark_mode");
     } else {
         document.getElementsByTagName("body")[0].classList.remove("dark_mode");
+    }
+    
+    if (config["enlarge_display_size"]) {
+        document.getElementsByTagName("body")[0].classList.add("enlarge");
+    } else {
+        document.getElementsByTagName("body")[0].classList.remove("enlarge");
     }
     
     if (redraw) {
@@ -466,7 +479,7 @@ function switch_dark_mode (redraw = false) {
 
 var splash_screen_elm = document.getElementById("splash_screen");
 
-switch_dark_mode();
+update_display_settings();
 
 if (location.pathname === "/") {
     var splash_screen_login_status_elm = document.getElementById("splash_screen_login_status");
@@ -3618,6 +3631,9 @@ function draw_station_timetable (station_name) {
         
         if (timetable_date === "__today__") {
             var is_today = true;
+            
+            var now_hh_mm = get_hh_mm();
+            var now_hh = now_hh_mm.substring(0, 2);
         } else {
             var is_today = false;
         }
@@ -3627,12 +3643,16 @@ function draw_station_timetable (station_name) {
     }
     
     var bg_color = diagram_info["diagrams"][operation_table["diagram_id"]]["main_color"];
+    var bg_color_hsl = rgb2hsl(bg_color);
     
     if (config["dark_mode"]) {
         bg_color = convert_color_dark_mode(bg_color);
+        var bg_color_past = "hsl(" + bg_color_hsl[0] + "deg " + Math.round(bg_color_hsl[1] / 4 / 2.55) + "% " + Math.round(Math.min(255 - bg_color_hsl[2] + 32, 127) / 2.55) + "%)";
         
         var color_style = "";
     } else {
+        var bg_color_past = "hsl(" + bg_color_hsl[0] + "deg " + Math.round(bg_color_hsl[1] / 2.55) + "% " + Math.round(bg_color_hsl[2] / 1.5 / 2.55 + 33.3) + "%)";
+        
         var color_style = " color: #444444;";
     }
     
@@ -3646,7 +3666,7 @@ function draw_station_timetable (station_name) {
             buf += " checked='checked'";
         }
         
-        buf += " onclick='update_timetable_drop_down_status(this);'><label for='" + checkbox_id + "' style='background-color: " + bg_color + ";" + color_style + "' class='drop_down'>" + Number(keys[cnt]) + "時</label><div>";
+        buf += " onclick='update_timetable_drop_down_status(this);'><label for='" + checkbox_id + "' style='background-color: " + (is_today && keys[cnt] < now_hh ? bg_color_past : bg_color) + ";" + color_style + "' class='drop_down'>" + Number(keys[cnt]) + "時</label><div>";
         
         var keys_2 = Object.keys(train_infos[keys[cnt]]);
         keys_2.sort();
@@ -3655,7 +3675,7 @@ function draw_station_timetable (station_name) {
             for (var cnt_3 = 0; cnt_3 < train_infos[keys[cnt]][keys_2[cnt_2]].length; cnt_3++) {
                 var train_info = train_infos[keys[cnt]][keys_2[cnt_2]][cnt_3];
                 
-                buf += "<a href='javascript:void(0);' onclick='train_detail(\"" + timetable_selected_line + "\", \"" + train_info["train_number"] + "\", \"" + train_info["starting_station"] + "\", \"" + train_direction + "\", " + show_operation_data + ", " + is_today + ");' class='timetable_train'>";
+                buf += "<a href='javascript:void(0);' onclick='train_detail(\"" + timetable_selected_line + "\", \"" + train_info["train_number"] + "\", \"" + train_info["starting_station"] + "\", \"" + train_direction + "\", " + show_operation_data + ", " + is_today + ");' class='timetable_train" + (is_today && keys[cnt] + ":" + keys_2[cnt_2] < now_hh_mm ? " after_operation" : "") + "'>";
                 
                 var train_operations = get_operations(timetable_selected_line, train_info["train_number"], train_info["starting_station"], train_direction);
                 
@@ -4700,6 +4720,8 @@ function draw_formation_table (update_title = true) {
     document.getElementById("formation_screenshot_button").style.display = "none";
     document.getElementById("formation_back_button").style.display = "none";
     
+    var search_keyword = str_to_halfwidth(car_number_search_elm.value).toUpperCase();
+    
     var buf = ""
     for (var cnt = 0; cnt < formations["series_names"].length; cnt++) {
         var buf_2 = "";
@@ -4724,8 +4746,8 @@ function draw_formation_table (update_title = true) {
             for (var cnt_3 = 0; cnt_3 < formations["formations"][formation_name]["cars"].length; cnt_3++) {
                 var car_class = "";
                 
-                if (car_number_search_elm.value.length >= 1) {
-                    if (formations["formations"][formation_name]["cars"][cnt_3]["car_number"].includes(car_number_search_elm.value) || formations["formations"][formation_name]["cars"][cnt_3]["abbr_number"].includes(car_number_search_elm.value)) {
+                if (search_keyword.length >= 1) {
+                    if (formations["formations"][formation_name]["cars"][cnt_3]["car_number"].toUpperCase().includes(search_keyword) || formations["formations"][formation_name]["cars"][cnt_3]["abbr_number"].toUpperCase().includes(search_keyword)) {
                         car_class =  "car_highlight";
                         
                         search_hit_count++;
@@ -4773,7 +4795,7 @@ function draw_formation_table (update_title = true) {
             }
             
             buf += " onclick='update_formation_table_drop_down_status(this);'><label for='" + checkbox_id + "' class='drop_down'>" + escape_html(formations["series_names"][cnt]);
-            if (car_number_search_elm.value.length >= 1) {
+            if (search_keyword >= 1) {
                 buf += " (" + search_hit_formation_count + "編成該当)";
             }
             buf += "</label>";
@@ -5801,7 +5823,7 @@ function switch_identify_method (direct) {
 
 function suggest_formation (formations_text) {
     var formations_splitted = formations_text.split("+");
-    var formation_text = formations_splitted[formations_splitted.length - 1].toUpperCase();
+    var formation_text = str_to_halfwidth(formations_splitted[formations_splitted.length - 1]).toUpperCase();
     
     var buf = "";
     
@@ -6386,6 +6408,7 @@ function edit_config () {
     var popup_inner_elm = open_popup("config_popup", "アプリの設定");
     
     var buf = "<input type='checkbox' id='dark_mode_check' class='toggle' onchange='change_config();'" + (config["dark_mode"] ? "checked='checked'" : "") + "><label for='dark_mode_check'>ダークテーマ</label>";
+    buf += "<input type='checkbox' id='enlarge_display_size_check' class='toggle' onchange='change_config();'" + (config["enlarge_display_size"] ? "checked='checked'" : "") + "><label for='enlarge_display_size_check'>各種表示サイズの拡大</label>";
     buf += "<input type='checkbox' id='colorize_corrected_posts_check' class='toggle' onchange='change_config();'" + (config["colorize_corrected_posts"] ? "checked='checked'" : "") + "><label for='colorize_corrected_posts_check'>訂正された投稿を区別する</label>";
     buf += "<input type='checkbox' id='colorize_beginners_posts_check' class='toggle' onchange='change_config();'" + (config["colorize_beginners_posts"] ? "checked='checked'" : "") + "><label for='colorize_beginners_posts_check'>ビギナーの方の投稿を区別する</label>";
     buf += "<h3>運用情報の自動更新間隔</h3>";
@@ -6401,6 +6424,7 @@ function edit_config () {
 
 function change_config () {
     config["dark_mode"] = document.getElementById("dark_mode_check").checked;
+    config["enlarge_display_size"] = document.getElementById("enlarge_display_size_check").checked;
     config["colorize_corrected_posts"] = document.getElementById("colorize_corrected_posts_check").checked;
     config["colorize_beginners_posts"] = document.getElementById("colorize_beginners_posts_check").checked;
     
@@ -6420,7 +6444,7 @@ function change_config () {
     }
     config["operation_data_cache_period"] = Number(operation_data_cache_period_elm.value);
     
-    switch_dark_mode(true);
+    update_display_settings(true);
     
     save_config();
 }

@@ -281,6 +281,13 @@ header {
     color: #eeeeee;
 }
 
+.enlarge #menu a {
+    height: 50px;
+    
+    line-height: 50px;
+    font-size: 16px;
+}
+
 #menu hr {
     width: 90%;
     height: 2px;
@@ -653,6 +660,10 @@ header {
     font-size: 18px;
 }
 
+.enlarge .category_index {
+    line-height: 32px;
+}
+
 .category_index b, #icon_area h3 b {
     color: #ffffff;
 }
@@ -674,6 +685,14 @@ header {
     font-size: 15px;
 }
 
+.dark_mode .subcategory_index {
+    background-color: #555555;
+}
+
+.enlarge .subcategory_index {
+    line-height: 30px;
+}
+
 .subcategory_index:before {
     content: "";
     
@@ -690,8 +709,8 @@ header {
     background-color: currentColor;
 }
 
-.dark_mode .subcategory_index{
-    background-color: #555555;
+.enlarge .subcategory_index:before {
+    top: 23px;
 }
 
 .subcategory_index.active_index:before {
@@ -704,6 +723,10 @@ header {
     border: 2px solid currentColor;
     
     background-color: transparent;
+}
+
+.enlarge .subcategory_index.active_index:before {
+    top: 22px;
 }
 
 .subcategory_index span, #icon_area h4 span {
@@ -736,12 +759,16 @@ header {
 }
 
 #icon_area h3, .popup h3 {
+    margin: 15px 0 10px 0;
+    
     padding: 5px 10px;
     
     background-color: currentColor;
 }
 
 #icon_area h4, .popup h4 {
+    margin: 10px 0 5px 0;
+    
     padding-left: 6px;
     
     border-left: 4px solid currentColor;
@@ -756,7 +783,7 @@ header {
     width: 80px;
     height: 86px;
     
-    margin-bottom: 14px;
+    margin: 5px 0 9px 0;
     
     font-size: 14px;
     line-height: 16px;
@@ -766,6 +793,16 @@ header {
     text-decoration: none;
     
     overflow: hidden;
+}
+
+.enlarge #icon_area a {
+    width: 90px;
+    height: 100px;
+    
+    margin: 5px 0;
+    
+    font-size: 15px;
+    line-height: 18px;
 }
 
 #icon_area img {
@@ -787,6 +824,10 @@ header {
     border-color: #eeeeee;
     
     background-image: linear-gradient(135deg, transparent, rgba(255, 255, 255, 0.4)), linear-gradient(315deg, #eeeeee 8px, transparent 8px);
+}
+
+.enlarge #icon_area img {
+    width: 40px;
 }
 
 #splash_screen_announcement, #announcements_heading {
@@ -1697,6 +1738,10 @@ tr:has(+ .position_row_junction_T) .position_outbound div {
     text-decoration: none;
 }
 
+.enlarge #timetable_area a {
+    padding: 10px 8px;
+}
+
 #timetable_area a b {
     font-size: 18px;
     color: #333333;
@@ -1706,6 +1751,10 @@ tr:has(+ .position_row_junction_T) .position_outbound div {
 
 .dark_mode #timetable_area a b {
     color: #ffffff;
+}
+
+.enlarge #timetable_area a b {
+    font-size: 20px;
 }
 
 #timetable_area a:not(.timetable_train) small {
@@ -1738,6 +1787,10 @@ input[type="checkbox"] + label.drop_down {
 
 .dark_mode input[type="checkbox"] + label.drop_down {
     background-color: #808080;
+}
+
+.enlarge input[type="checkbox"] + label.drop_down {
+    line-height: 30px;
 }
 
 input[type="checkbox"] + label.drop_down:after {
@@ -1775,7 +1828,7 @@ input[type="checkbox"] + label.drop_down + div {
     
     max-width: 500px;
     
-    margin: 0 auto 10px auto;
+    margin: 5px auto;
     
     overflow: hidden;
 }
@@ -1830,6 +1883,14 @@ input[type="checkbox"]:checked + label.drop_down + div {
     color: #ffffff;
     
     border-color: #555555;
+}
+
+.timetable_train.after_operation {
+    border-color: #dddddd;
+}
+
+.dark_mode .timetable_train.after_operation {
+    border-color: #666666;
 }
 
 .timetable_train:after {
@@ -1931,6 +1992,12 @@ input[type="checkbox"]:checked + label.drop_down + div {
     word-break: keep-all;
 }
 
+.enlarge #operation_data_area th, #operation_data_area td {
+    padding: 10px 0;
+    
+    font-size: 17px;
+}
+
 #operation_data_area th {
     width: 100px;
 }
@@ -1996,6 +2063,10 @@ input[type="checkbox"]:checked + label.drop_down + div {
     color: #cccccc;
 }
 
+.enlarge .formation_table h5 {
+    font-size: 16px;
+}
+
 .formation_table h5 a {
     margin-right: 6px;
     
@@ -2006,6 +2077,10 @@ input[type="checkbox"]:checked + label.drop_down + div {
 
 .dark_mode .formation_table h5 a {
     color: #ffffff;
+}
+
+.enlarge .formation_table h5 a {
+    font-size: 18px;
 }
 
 .formation_table div {
@@ -2026,6 +2101,13 @@ input[type="checkbox"]:checked + label.drop_down + div {
 
 .dark_mode .formation_table div, .dark_mode .formation_table span:before, .dark_mode .formation_table span:after {
     border-color: #808080;
+}
+
+.enlarge .formation_table div {
+    line-height: 28px;
+    font-size: 17px;
+    
+    padding: 1px 5px;
 }
 
 .formation_table .car_C1, .formation_table .car_C {
@@ -4504,13 +4586,17 @@ input[type="checkbox"], input[type="radio"] {
     
     position: relative;
     
-    margin: 20px 0 0 max(20px, 50% - 230px);
+    margin: 20px 0 0 max(20px, calc(50% - 230px));
     
     padding-left: 54px;
     
     line-height: 24px;
     font-size: 18px;
     text-align: left;
+}
+
+.enlarge .toggle + label {
+    padding-bottom: 5px;
 }
 
 .toggle + label:before {

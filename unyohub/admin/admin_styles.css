@@ -474,7 +474,7 @@ input[type="checkbox"] {
     
     position: relative;
     
-    margin: 20px 0 0 max(20px, 50% - 230px);
+    margin: 20px 0 0 max(20px, calc(50% - 230px));
     
     padding-left: 54px;
     
@@ -597,7 +597,7 @@ input[type="checkbox"] + label.drop_down + div {
     
     max-width: 500px;
     
-    margin: 0 auto 10px auto;
+    margin: 5px auto;
     
     overflow: hidden;
 }
