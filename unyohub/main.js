@@ -737,13 +737,13 @@ function get_railroad_list (callback_func) {
     } else {
         railroads = {
             railroads : {},
-            railroads_order : [],
+            categories : [],
             last_modified_timestamp : 0
         };
     }
     
     if (navigator.onLine) {
-        if (railroads["railroads_order"].length >= 1) {
+        if (railroads["categories"].length >= 1) {
             callback_func(railroads, false);
         }
         
@@ -807,9 +807,7 @@ function update_railroad_list (railroads, area_id, loading_completed, categories
     }
     
     if (!loading_completed) {
-        if (cnt >= 1) {
-            categories_html += "<div class='loading_icon'></div>";
-        }
+        categories_html += "<div class='loading_icon'></div>";
     } else if (cnt === 0) {
         icons_html = "<div class='no_data'>利用可能なデータがありません</div>";
     }

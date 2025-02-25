@@ -216,7 +216,7 @@ if ($path_info_str === "/") {
     $unyohub_version = UNYOHUB_VERSION;
     print <<<EOM
             <div id="splash_screen_login_status">サーバに接続しています...</div>
-            <div id="splash_screen_inner"></div>
+            <div id="splash_screen_inner" class="wait_icon"></div>
             <a id="splash_screen_announcement" href="javascript:void(0);" onclick="show_announcements();"></a>
             <div id="splash_screen_bottom">
                 <a href="javascript:void(0);" onclick="show_about();"><span id="splash_screen_instance_name">{$unyohub_app_name}</span>について</a><a href="javascript:void(0);" onclick="show_rules();">ルールとポリシー</a><span id="splash_screen_app_version">v{$unyohub_version}</span>

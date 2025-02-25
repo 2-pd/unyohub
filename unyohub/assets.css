@@ -422,14 +422,14 @@ header {
     z-index: 1;
 }
 
-.dark_mode .splash_screen_loaded #splash_screen_login_status, .dark_mode #railroad_select_popup h2 {
+.splash_screen_loaded #splash_screen_login_status, .splash_screen_loaded #splash_screen_bottom {
+    background-color: #f7f7f7;
+}
+
+.dark_mode .splash_screen_loaded #splash_screen_login_status, .dark_mode .splash_screen_loaded #splash_screen_bottom, .dark_mode #railroad_select_popup h2 {
     background-color: #808080;
     
     color: #ffffff;
-}
-
-.splash_screen_loaded #splash_screen_login_status {
-    background-color: #f7f7f7;
 }
 
 #splash_screen_login_status:has(a) {
@@ -826,6 +826,10 @@ header {
     z-index: 29;
 }
 
+#splash_screen:not(.splash_screen_loaded) #splash_screen_announcement, #splash_screen:not(.splash_screen_loaded) #splash_screen_bottom a {
+    display: none;
+}
+
 .announcement_with_notification:before, .announcement_with_important_notification:before {
     content: "";
     
@@ -843,8 +847,6 @@ header {
 }
 
 #splash_screen_bottom {
-    display: none;
-    
     position: absolute;
     
     bottom: 0;
@@ -854,24 +856,11 @@ header {
     
     padding-right: 100px;
     
-    background-color: #f7f7f7;
-    
     line-height: 40px;
-    color: #999999;
     text-align: left;
     overflow: hidden;
     
     z-index: 1;
-}
-
-.dark_mode #splash_screen_bottom {
-    background-color: #808080;
-    
-    color: #cccccc;
-}
-
-.splash_screen_loaded #splash_screen_bottom {
-    display: block;
 }
 
 #splash_screen_bottom a {
@@ -891,6 +880,12 @@ header {
     
     bottom: 0;
     right: 20px;
+    
+    color: #999999;
+}
+
+.dark_mode #splash_screen_app_version {
+    color: #cccccc;
 }
 
 #blank_article {
