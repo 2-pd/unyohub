@@ -1992,7 +1992,11 @@ input[type="checkbox"]:checked + label.drop_down + div {
     word-break: keep-all;
 }
 
-.enlarge #operation_data_area th, #operation_data_area td {
+#operation_data_area tr td:first-child {
+    width: 100px;
+}
+
+.enlarge #operation_data_area td {
     padding: 10px 0;
     
     font-size: 17px;
@@ -2000,18 +2004,38 @@ input[type="checkbox"]:checked + label.drop_down + div {
 
 #operation_data_area th {
     width: 100px;
+    height: 20px;
+    
+    padding: 8px 0;
+    
+    line-height: 20px;
+}
+
+.enlarge #operation_data_area th {
+    padding: 12px 0;
+    
+    font-size: 17px;
+}
+
+#operation_data_area .operation_data_3_columns th {
+    width: 80px;
 }
 
 .before_operation {
     background-image: repeating-linear-gradient(-45deg, transparent, transparent 8px, rgba(153, 153, 153, 0.1) 8px, rgba(153, 153, 153, 0.1) 12px);
 }
 
-.after_operation {
+.after_operation, .no_operation {
     background-color: #eeeeee;
 }
 
-.dark_mode .after_operation {
+.dark_mode .after_operation, .dark_mode .no_operation {
     background-color: #555555;
+}
+
+.no_operation {
+    font-size: 15px;
+    color: #999999;
 }
 
 #operation_data_area .train_icon, .formation_data_area .train_icon {
