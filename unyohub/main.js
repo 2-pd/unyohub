@@ -470,7 +470,11 @@ function update_display_settings (redraw = false) {
                 break;
             
             case 4:
-                operation_table_list_number();
+                if (diagram_info === null) {
+                    operation_table_mode(null);
+                } else {
+                    operation_table_list_number();
+                }
                 break;
         }
     }
@@ -1571,7 +1575,7 @@ function select_mode (mode_name, mode_option_1, mode_option_2) {
             break;
         
         case "operation_table_mode":
-            operation_table_mode();
+            operation_table_mode(mode_option_1);
             break;
     }
 }
@@ -5247,26 +5251,63 @@ function get_formation_overview (formation_name) {
 
 
 var operation_search_area_elm = document.getElementById("operation_search_area");
+var operation_table_heading_elm = document.getElementById("operation_table_heading");
 var operation_table_area_elm = document.getElementById("operation_table_area");
 var operation_table_info_elm = document.getElementById("operation_table_info");
+var operation_table_footer_inner_elm = document.getElementById("operation_table_footer_inner");
 
-function operation_table_mode (load_data = true, diagram_id = null) {
-    change_title(railroad_info["railroad_name"] + "の運用表 | " + instance_info["instance_name"], "/railroad_" + railroad_info["railroad_id"] + "/operation_table/");
-    
+function operation_table_mode (diagram_revision = "__current__") {
     change_mode(4);
     
+    diagram_info = null;
+    
     operation_search_area_elm.style.display = "none";
+    operation_table_heading_elm.innerHTML = "";
     operation_table_area_elm.innerHTML = "";
     operation_table_info_elm.innerHTML = "";
+    operation_table_footer_inner_elm.style.display = "none";
     
-    if (load_data && diagram_id === null) {
-        get_diagram_id(get_date_string(get_timestamp()), function (diagram_id) {
+    var current_diagram_revision = get_diagram_revision();
+    
+    if (diagram_revision !== null) {
+        if (diagram_revision === current_diagram_revision) {
+            diagram_revision = "__current__";
+        }
+        
+        get_diagram_id(diagram_revision === "__current__" ? get_date_string(get_timestamp()) : diagram_revision, function (diagram_id) {
+            var diagram_revision_year_month = diagram_info["diagram_revision"].substring(0, 4) + "年" + Number(diagram_info["diagram_revision"].substring(5, 7)) + "月改正"
+            
+            change_title(railroad_info["railroad_name"] + " " + diagram_revision_year_month + "ダイヤ運用表 | " + instance_info["instance_name"], "/railroad_" + railroad_info["railroad_id"] + "/operation_table/" + diagram_info["diagram_revision"] + "/");
+            
+            if (diagram_info["diagram_revision"] === current_diagram_revision) {
+                var diagram_revision_info = "(現行ダイヤ)";
+            } else if (diagram_info["diagram_revision"] > current_diagram_revision) {
+                var diagram_revision_info = "<b class='warning_sentence'>(将来のダイヤ)</b>";
+            } else {
+                var diagram_revision_info = "<b class='warning_sentence'>(過去のダイヤ)</b>";
+            }
+            
+            operation_table_heading_elm.innerHTML = diagram_revision_year_month + " " + diagram_revision_info;
+            
             if (diagram_id !== null) {
-                operation_table_load_data(load_data, diagram_id);
+                operation_table_load_data(true, diagram_id);
             }
         });
     } else {
-        operation_table_load_data(load_data, diagram_id);
+        change_title(railroad_info["railroad_name"] + "の運用表一覧 | " + instance_info["instance_name"], "/railroad_" + railroad_info["railroad_id"] + "/operation_table/");
+        
+        operation_table_heading_elm.innerHTML = "改正別の運用表";
+        
+        var buf = "";
+        for (var cnt = 0; cnt < diagram_revisions["diagram_revisions"].length; cnt++) {
+            if (diagram_revisions["diagram_revisions"][cnt] === current_diagram_revision) {
+                buf += "<a href='/railroad_" + railroad_info["railroad_id"] + "/operation_table/" + current_diagram_revision + "/' class='wide_button' onclick='event.preventDefault(); operation_table_mode();'>" + current_diagram_revision.substring(0, 4) + "年" + Number(current_diagram_revision.substring(5, 7)) + "月改正ダイヤ<small>(現行)</small></a>";
+            } else {
+                buf += "<a href='/railroad_" + railroad_info["railroad_id"] + "/operation_table/" + diagram_revisions["diagram_revisions"][cnt] + "/' class='wide_button " + (diagram_revisions["diagram_revisions"][cnt] > current_diagram_revision ? "before_operation" : "after_operation") + "' onclick='event.preventDefault(); operation_table_mode(\"" + diagram_revisions["diagram_revisions"][cnt] + "\");'>" + diagram_revisions["diagram_revisions"][cnt].substring(0, 4) + "年" + Number(diagram_revisions["diagram_revisions"][cnt].substring(5, 7)) + "月改正ダイヤ</a>";
+            }
+        }
+        
+        operation_table_area_elm.innerHTML = buf;
     }
 }
 
@@ -5306,6 +5347,7 @@ function operation_table_load_data (load_data, diagram_id) {
         }, reject, false, get_date_string(get_timestamp()));
     }));
     
+    operation_table_footer_inner_elm.style.display = "block";
     document.getElementById("operation_table_name").innerText = diagram_info["diagrams"][diagram_id]["diagram_name"];
     document.getElementById("train_number_search").value = "";
     operation_table_wrapper_scroll_amount = 0;
@@ -5329,15 +5371,19 @@ function operation_table_list_number () {
     operation_search_area_elm.style.display = "block";
     operation_table_area_elm.innerHTML = "";
     
-    get_diagram_id(get_date_string(get_timestamp()), function (diagram_id) {
-        if (diagram_id !== null) {
-            draw_operation_table(diagram_id === operation_table["diagram_id"]);
-        }
-    });
+    if (diagram_info["diagram_revision"] === get_diagram_revision()) {
+        get_diagram_id(get_date_string(get_timestamp()), function (diagram_id) {
+            if (diagram_id !== null) {
+                draw_operation_table(diagram_id === operation_table["diagram_id"]);
+            }
+        });
+    } else {
+        draw_operation_table(null);
+    }
 }
 
 function draw_operation_table (is_today) {
-    var search_keyword = document.getElementById("train_number_search").value;
+    var search_keyword = str_to_halfwidth(document.getElementById("train_number_search").value).toUpperCase();
     
     var search_filter_count = 0;
     
@@ -5648,7 +5694,7 @@ function operation_table_next () {
 function operation_table_list_tables () {
     var popup_inner_elm = open_square_popup("diagram_list_popup", true);
     
-    var buf = "<h3>" + diagram_info["diagram_revision"] + "改正ダイヤ";
+    var buf = "<h3>" + diagram_info["diagram_revision"] + "改正ダイヤ</h3>";
     for (var cnt = 0; cnt < diagram_info["diagram_order"].length; cnt++) {
         var bg_color = diagram_info["diagrams"][diagram_info["diagram_order"][cnt]]["main_color"];
         
@@ -5660,6 +5706,8 @@ function operation_table_list_tables () {
     }
     
     buf += "<div class='descriptive_text'>ダイヤ情報更新日時: " + get_date_and_time(diagram_info["last_modified_timestamp"]) + "</div>";
+    
+    buf += "<button type='button' class='execute_button' onclick='close_square_popup(); operation_table_mode(null);'>他の改正版のダイヤ</button>";
     
     popup_inner_elm.innerHTML = buf;
 }

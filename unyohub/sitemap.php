@@ -14,7 +14,7 @@ if (empty($_SERVER["PATH_INFO"])) {
     
     $railroads = json_decode(file_get_contents("config/railroads.json"), TRUE);
     
-    foreach ($railroads["railroads_order"] as $railroad_id) {
+    foreach (array_keys($railroads["railroads"]) as $railroad_id) {
         print "    <sitemap>\n";
         print "        <loc>".$root_url."/sitemap.php/railroad_".$railroad_id."/</loc>\n";
         print "    </sitemap>\n";
@@ -81,6 +81,7 @@ if (empty($_SERVER["PATH_INFO"])) {
         
         $railroad_info = json_decode(file_get_contents("data/".$railroad_id."/railroad_info.json"), TRUE);
         $formations = json_decode(file_get_contents("data/".$railroad_id."/formations.json"), TRUE);
+        $diagram_revisions = file("data/".$railroad_id."/diagram_revisions.txt", FILE_IGNORE_NEW_LINES | FILE_SKIP_EMPTY_LINES);
         
         foreach ($railroad_info["lines_order"] as $line_id) {
             print "    <url>\n";
@@ -94,7 +95,7 @@ if (empty($_SERVER["PATH_INFO"])) {
                     print "    <url>\n";
                     print "        <loc>".$railroad_root."/timetable/".$line_id."/".urlencode($station["station_name"])."/</loc>\n";
                     print "        <changefreq>daily</changefreq>\n";
-                    print "        <priority>0.4</priority>\n";
+                    print "        <priority>0.3</priority>\n";
                     print "    </url>\n";
                 }
             }
@@ -106,6 +107,14 @@ if (empty($_SERVER["PATH_INFO"])) {
             print "        <loc>".$railroad_root."/formations/".urlencode($formation_name)."/</loc>\n";
             print "        <changefreq>yearly</changefreq>\n";
             print "        <priority>0.6</priority>\n";
+            print "    </url>\n";
+        }
+        
+        foreach ($diagram_revisions as $diagram_revision) {
+            print "    <url>\n";
+            print "        <loc>".$railroad_root."/operation_table/".$diagram_revision."/</loc>\n";
+            print "        <changefreq>yearly</changefreq>\n";
+            print "        <priority>0.5</priority>\n";
             print "    </url>\n";
         }
     }
