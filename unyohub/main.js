@@ -4300,25 +4300,23 @@ function operation_data_draw () {
         formation_operation_data["不明"] = new Set();
         
         for (cnt = 0; cnt < operation_numbers.length; cnt++) {
-            if (!(operation_numbers[cnt] in operation_data["operations"])) {
+            if (!(operation_numbers[cnt] in operation_data["operations"]) || operation_data["operations"][operation_numbers[cnt]] === null) {
                 formation_operation_data["不明"].add(operation_numbers[cnt]);
                 
                 continue;
-            }
-            
-            if (operation_data["operations"][operation_numbers[cnt]]["formations"].length === 0) {
+            } else if (operation_data["operations"][operation_numbers[cnt]]["formations"].length === 0) {
                 formation_operation_data["運休"].add(operation_numbers[cnt]);
                 
                 continue;
-            }
-            
-            var assigned_formations = operation_data["operations"][operation_numbers[cnt]]["formations"].split("+");
-            
-            for (var cnt_2 = 0; cnt_2 < assigned_formations.length; cnt_2++) {
-                if (assigned_formations[cnt_2] in formations["formations"] || assigned_formations[cnt_2] in formations["series"]) {
-                    formation_operation_data[assigned_formations[cnt_2]].add(operation_numbers[cnt]);
-                } else {
-                    formation_operation_data["不明"].add(operation_numbers[cnt]);
+            } else {
+                var assigned_formations = operation_data["operations"][operation_numbers[cnt]]["formations"].split("+");
+                
+                for (var cnt_2 = 0; cnt_2 < assigned_formations.length; cnt_2++) {
+                    if (assigned_formations[cnt_2] in formations["formations"] || assigned_formations[cnt_2] in formations["series"]) {
+                        formation_operation_data[assigned_formations[cnt_2]].add(operation_numbers[cnt]);
+                    } else {
+                        formation_operation_data["不明"].add(operation_numbers[cnt]);
+                    }
                 }
             }
         }

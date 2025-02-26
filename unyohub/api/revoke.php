@@ -42,17 +42,19 @@ if ($ts === FALSE) {
 
 $data_cache_values = revoke_post($ts, $_POST["operation_number"], $_POST["assign_order"], $_POST["user_id"], $moderator_id);
 
-if (!$data_cache_values["variant_exists"]) {
-    unset($data_cache_values["variant_exists"]);
-}
-if (!$data_cache_values["comment_exists"]) {
-    unset($data_cache_values["comment_exists"]);
-}
-if (!$data_cache_values["from_beginner"]) {
-    unset($data_cache_values["from_beginner"]);
-}
-if (!$data_cache_values["is_quotation"]) {
-    unset($data_cache_values["is_quotation"]);
+if (!empty($data_cache_values)) {
+    if (!$data_cache_values["variant_exists"]) {
+        unset($data_cache_values["variant_exists"]);
+    }
+    if (!$data_cache_values["comment_exists"]) {
+        unset($data_cache_values["comment_exists"]);
+    }
+    if (!$data_cache_values["from_beginner"]) {
+        unset($data_cache_values["from_beginner"]);
+    }
+    if (!$data_cache_values["is_quotation"]) {
+        unset($data_cache_values["is_quotation"]);
+    }
 }
 
 $data = array($_POST["operation_number"] => $data_cache_values);
