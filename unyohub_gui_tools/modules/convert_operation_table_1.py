@@ -6,7 +6,7 @@ import json
 import re
 
 
-def convert_time_style (time_data, with_station_initial = True):
+def convert_time_style (time_data, with_station_initial=True):
     if with_station_initial:
         time_str = time_data[1:]
     else:
@@ -107,7 +107,7 @@ def convert_operation_table_1 (mes, main_dir, file_name, json_file_name, digits_
         
         if max_columns < 6:
             mes("出力する表の列数は6列以上必要です", True)
-            return
+            return False
         
         for_printing = True
         
@@ -198,7 +198,7 @@ def convert_operation_table_1 (mes, main_dir, file_name, json_file_name, digits_
     
     if error_occurred:
         mes("エラー発生のため処理が中断されました")
-        return
+        return False
     
     mes(os.path.basename(file_name) + " を読み込んでいます...")
     with open(file_name, "r", encoding="utf-8") as csv_f:
@@ -207,6 +207,8 @@ def convert_operation_table_1 (mes, main_dir, file_name, json_file_name, digits_
     
     mes("データを変換しています...")
     
+    color_regexp = re.compile("^#[0-9A-Fa-f]{6}$")
+    
     output_data = []
     train_list = []
     for operation in operations:
@@ -214,7 +216,7 @@ def convert_operation_table_1 (mes, main_dir, file_name, json_file_name, digits_
             continue
         
         if operation[0].startswith("# ") or operation[0].startswith("◆"):
-            if re.match("^#[0-9A-Fa-f]{6}$", operation[1]) is not None:
+            if len(operation) >= 2 and color_regexp.match(operation[1]) is not None:
                 color = operation[1]
             else:
                 color = "#ffffff"
@@ -399,7 +401,7 @@ def convert_operation_table_1 (mes, main_dir, file_name, json_file_name, digits_
     
     if error_occurred:
         mes("エラー発生のため処理が中断されました")
-        return
+        return False
     
     if for_printing:
         new_file_name = file_name_for_printing
@@ -429,3 +431,5 @@ def convert_operation_table_1 (mes, main_dir, file_name, json_file_name, digits_
             csv_writer.writerows(output_data)
     
     mes("処理が完了しました")
+    
+    return new_file_name

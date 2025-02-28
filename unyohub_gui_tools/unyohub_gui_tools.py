@@ -15,7 +15,7 @@ import webbrowser
 
 
 UNYOHUB_GUI_TOOLS_APP_NAME = "鉄道運用Hub用データ編集ツール"
-UNYOHUB_GUI_TOOLS_VERSION = "25.02-1"
+UNYOHUB_GUI_TOOLS_VERSION = "25.02-2"
 UNYOHUB_GUI_TOOLS_LICENSE_TEXT = "このアプリケーションは無権利創作宣言に準拠して著作権放棄されています"
 UNYOHUB_GUI_TOOLS_LICENSE_URL = "https://www.2pd.jp/license/"
 UNYOHUB_GUI_TOOLS_REPOSITORY_URL = "https://fossil.2pd.jp/unyohub/"
@@ -332,24 +332,40 @@ def generate_operation_table_exec (diagram_revision, diagram_id, generate_train_
         clear_mes()
         
         generate_operation_table = importlib.import_module("modules.generate_operation_table")
-        generate_operation_table.generate_operation_table(mes, config["main_dir"], diagram_revision, diagram_id, generate_train_number)
+        timetable_file_paths = generate_operation_table.generate_operation_table(mes, config["main_dir"], diagram_revision, diagram_id, generate_train_number)
     except:
         error_mes(traceback.format_exc())
-
-
-def convert_timetable_1 ():
-    global config
+        
+        timetable_file_paths = False
     
-    file_name = filedialog.askopenfilename(title="変換対象の時刻表CSVファイルを選択してください", filetypes=[("CSV形式の表ファイル","*.csv")], initialdir=config["main_dir"])
-    
-    if len(file_name) >= 1:
+    if timetable_file_paths != False and messagebox.askyesno("次の操作", "出力された時刻表を路線別時刻表に変換しますか？"):
         digits_count = simpledialog.askinteger("列車番号の桁数を指定", "所定の桁数に満たない列車番号の前に「0」を付加する場合にはその桁数を入力してください", initialvalue=0)
         
         if digits_count is None:
             return
         
+        for timetable_file_path in timetable_file_paths:
+            convert_timetable_1(timetable_file_path, digits_count)
+
+
+def convert_timetable_1 (input_file_name=None, digits_count=None):
+    global config
+    
+    if input_file_name is None:
+        file_name = filedialog.askopenfilename(title="変換対象の時刻表CSVファイルを選択してください", filetypes=[("CSV形式の表ファイル","*.csv")], initialdir=config["main_dir"])
+    else:
+        file_name = input_file_name
+    
+    if len(file_name) >= 1:
+        if digits_count is None:
+            digits_count = simpledialog.askinteger("列車番号の桁数を指定", "所定の桁数に満たない列車番号の前に「0」を付加する場合にはその桁数を入力してください", initialvalue=0)
+            
+            if digits_count is None:
+                return
+        
         try:
-            clear_mes()
+            if input_file_name is None:
+                clear_mes()
             
             convert_timetable_1 = importlib.import_module("modules.convert_timetable_1")
             convert_timetable_1.convert_timetable_1(mes, file_name, digits_count)
@@ -416,23 +432,32 @@ def convert_operation_table_1 (for_printing):
         clear_mes()
         
         convert_operation_table_1 = importlib.import_module("modules.convert_operation_table_1")
-        convert_operation_table_1.convert_operation_table_1(mes, config["main_dir"], file_name, json_file_name, digits_count, file_name_for_printing, max_columns)
+        new_file_name = convert_operation_table_1.convert_operation_table_1(mes, config["main_dir"], file_name, json_file_name, digits_count, file_name_for_printing, max_columns)
     except:
         error_mes(traceback.format_exc())
+        
+        new_file_name = False
+    
+    if new_file_name != False and messagebox.askyesno("次の操作", "出力された区間組成運用表をJSONファイルに変換しますか？"):
+        convert_operation_table_2(new_file_name)
 
 
-def convert_operation_table_2 ():
+def convert_operation_table_2 (input_file_name=None):
     global config
     
     if not os.path.isfile(config["main_dir"] + "/railroad_info.json"):
         messagebox.showwarning("運用表を変換できません", "現在の作業フォルダには運用表ファイルの変換に必要な railroad_info.json が存在しません")
         return
     
-    file_name = filedialog.askopenfilename(title="変換対象の区間組成運用表CSVファイルを選択してください", filetypes=[("CSV形式の表ファイル","*.csv")], initialdir=config["main_dir"])
+    if input_file_name is None:
+        file_name = filedialog.askopenfilename(title="変換対象の区間組成運用表CSVファイルを選択してください", filetypes=[("CSV形式の表ファイル","*.csv")], initialdir=config["main_dir"])
+    else:
+        file_name = input_file_name
     
     if len(file_name) >= 1:
         try:
-            clear_mes()
+            if input_file_name is None:
+                clear_mes()
             
             convert_operation_table_2 = importlib.import_module("modules.convert_operation_table_2")
             convert_operation_table_2.convert_operation_table_2(mes, config["main_dir"], file_name)

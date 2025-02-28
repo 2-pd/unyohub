@@ -17,7 +17,7 @@
  */
 
 define("UNYOHUB_APP_NAME", "鉄道運用Hub");
-define("UNYOHUB_VERSION", "25.02-1");
+define("UNYOHUB_VERSION", "25.02-2");
 define("UNYOHUB_APP_INFO_URL", "https://create.2pd.jp/apps/unyohub/");
 define("UNYOHUB_REPOSITORY_URL", "https://fossil.2pd.jp/unyohub/");
 define("UNYOHUB_LICENSE_TEXT", "このアプリケーションは無権利創作宣言に準拠して著作権放棄されています。");
@@ -127,8 +127,30 @@ if (empty($_SERVER["PATH_INFO"]) || $_SERVER["PATH_INFO"] === "/") {
                 
                 case "operation_table":
                     $path_info_str .= "operation_table/";
-                    $page_title = $railroad_info["railroad_name"]."の運用表 | ".UNYOHUB_APP_NAME;
-                    $page_description = $railroad_info["railroad_name"]."の各ダイヤの車両運用表です。";
+                    
+                    if (empty($path_info[3])) {
+                        $page_title = $railroad_info["railroad_name"]."の運用表一覧 | ".UNYOHUB_APP_NAME;
+                        $page_description = $railroad_info["railroad_name"]."の現行ダイヤ、及び過去のダイヤの車両運用表です。";
+                    } else {
+                        $diagram_revisions_path = "data/".$railroad_id."/diagram_revisions.txt";
+                        
+                        if (!file_exists($diagram_revisions_path)) {
+                            header("Location: /", TRUE, 302);
+                            exit;
+                        }
+                        
+                        if (!in_array($path_info[3], file($diagram_revisions_path, FILE_IGNORE_NEW_LINES | FILE_SKIP_EMPTY_LINES))) {
+                            header("Location: ".$path_info_str, TRUE, 301);
+                            exit;
+                        }
+                        
+                        $path_info_str .= urlencode($path_info[3])."/";
+                        
+                        $diagram_revision_year_month = substr($path_info[3], 0, 4)."年".intval(substr($path_info[3], 5, 2))."月";
+                        
+                        $page_title = $railroad_info["railroad_name"]." ".$diagram_revision_year_month."改正ダイヤ運用表 | ".UNYOHUB_APP_NAME;
+                        $page_description = $railroad_info["railroad_name"]." ".$diagram_revision_year_month.intval(substr($path_info[3], 8))."日改正版の平日・土休日ダイヤ車両運用表です。";
+                    }
                     
                     break;
                 
@@ -216,7 +238,7 @@ if ($path_info_str === "/") {
     $unyohub_version = UNYOHUB_VERSION;
     print <<<EOM
             <div id="splash_screen_login_status">サーバに接続しています...</div>
-            <div id="splash_screen_inner"></div>
+            <div id="splash_screen_inner" class="wait_icon"></div>
             <a id="splash_screen_announcement" href="javascript:void(0);" onclick="show_announcements();"></a>
             <div id="splash_screen_bottom">
                 <a href="javascript:void(0);" onclick="show_about();"><span id="splash_screen_instance_name">{$unyohub_app_name}</span>について</a><a href="javascript:void(0);" onclick="show_rules();">ルールとポリシー</a><span id="splash_screen_app_version">v{$unyohub_version}</span>
@@ -246,7 +268,7 @@ if ($path_info_str === "/") {
     </article>
     <article>
         <h2 id="operation_data_heading"></h2>
-        <div class="radio_area"><input type="radio" name="operation_data_radio" id="radio_operation_groups" value="operation_groups" checked="checked" onchange="operation_data_draw();"><label for="radio_operation_groups">系統別</label><input type="radio" name="operation_data_radio" id="radio_series" value="series" onchange="operation_data_draw();"><label for="radio_series">形式別</label><input type="radio" name="operation_data_radio" id="radio_starting_location" value="starting_location" onchange="operation_data_draw();"><label for="radio_starting_location">出庫別</label><input type="radio" name="operation_data_radio" id="radio_terminal_location" value="terminal_location" onchange="operation_data_draw();"><label for="radio_terminal_location">入庫別</label></div>
+        <div class="radio_area"><input type="radio" name="operation_data_radio" id="radio_operation_groups" value="operation_groups" checked="checked" onchange="operation_data_draw();"><label for="radio_operation_groups">系統別</label><input type="radio" name="operation_data_radio" id="radio_formations" value="formations" onchange="operation_data_draw();"><label for="radio_formations">編成別</label><input type="radio" name="operation_data_radio" id="radio_starting_location" value="starting_location" onchange="operation_data_draw();"><label for="radio_starting_location">出庫別</label><input type="radio" name="operation_data_radio" id="radio_terminal_location" value="terminal_location" onchange="operation_data_draw();"><label for="radio_terminal_location">入庫別</label></div>
         <div id="operation_data_area" class="wait_icon"></div>
     </article>
     <article onscroll="formation_table_wrapper_onscroll();">
@@ -269,6 +291,7 @@ if ($path_info_str === "/") {
                 <a href="javascript:void(0);" class="additional_setting_link" onclick="reset_operation_narrow_down(false);">絞り込み条件のリセット</a>
             </div>
         </div>
+        <h2 id="operation_table_heading"></h2>
         <div id="operation_table_area" class="wait_icon"></div>
         <br>
         <div id="operation_table_info" class="informational_text"></div>
@@ -292,8 +315,10 @@ if ($path_info_str === "/") {
         <div>
             <button type="button" id="formation_back_button" class="back_button" onclick="draw_formation_table();"></button>
         </div>
-        <div>
-            <button type="button" class="previous_button" onclick="operation_table_previous();"></button><span id="operation_table_name" class="footer_value_wide"></span><button type="button" class="next_button" onclick="operation_table_next();"></button><button type="button" class="list_button" onclick="operation_table_list_tables();"></button>
+        <div id="operation_table_footer_inner">
+            <button type="button" class="back_button" onclick="operation_table_mode(null);"></button>
+            <button type="button" class="previous_button" onclick="operation_table_previous();"></button><span id="operation_table_name" class="footer_value_wide"></span><button type="button" class="next_button" onclick="operation_table_next();"></button>
+            <button type="button" class="list_button" onclick="operation_table_list_tables();"></button>
         </div>
     </footer>
     <div id="popup_background"></div>

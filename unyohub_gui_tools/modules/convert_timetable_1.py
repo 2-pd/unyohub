@@ -22,7 +22,14 @@ def convert_timetable_1 (mes, file_name, digits_count):
     
     new_timetable_t = {}
     
-    line_list = timetable_data_t[1][0].split()
+    line_list_str = timetable_data_t[1][0].strip()
+    if len(line_list_str) == 0:
+        mes("路線識別名列挙欄が未入力です", True)
+        mes("エラー発生のため処理が中断されました")
+        
+        return
+    
+    line_list = line_list_str.split()
     station_list = {}
     line_stations = {}
     rename_list = {}
