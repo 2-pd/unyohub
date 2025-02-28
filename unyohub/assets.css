@@ -3820,6 +3820,10 @@ a abbr {
     vertical-align: top;
 }
 
+.operation_data_detail .warning_sentence {
+    text-align: center;
+}
+
 .formation_data_area {
     margin-top: 5px;
     
