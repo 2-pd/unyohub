@@ -11,6 +11,7 @@ if ($user->check_permission("railroads", "edit_announcement")) {
 }
 
 print "<h3>路線系統別の操作</h3>";
+print "<div id='icon_area'>";
 
 $railroads = json_decode(file_get_contents(RAILROADS_JSON_PATH), TRUE);
 
@@ -23,7 +24,7 @@ foreach ($railroads["categories"] as $category) {
             
             foreach ($subcategory["railroads"] as $railroad) {
                 if ($user->check_permission("railroads/".$railroad)) {
-                    $buf_2 .= "<a href='railroads.php?railroad_id=".$railroad."' class='wide_button'><img src='".addslashes($railroads["railroads"][$railroad]["railroad_icon"])."' alt='' style='background-color: ".addslashes($railroads["railroads"][$railroad]["main_color"]).";'>".htmlspecialchars($railroads["railroads"][$railroad]["railroad_name"])."</a>";
+                    $buf_2 .= "<a href='railroads.php?railroad_id=".$railroad."'><img src='".addslashes($railroads["railroads"][$railroad]["railroad_icon"])."' alt='' style='background-color: ".addslashes($railroads["railroads"][$railroad]["main_color"]).";'>".htmlspecialchars($railroads["railroads"][$railroad]["railroad_name"])."</a>";
                 }
             }
             
@@ -34,7 +35,7 @@ foreach ($railroads["categories"] as $category) {
     } elseif (array_key_exists("railroads", $category)) {
         foreach ($category["railroads"] as $railroad) {
             if ($user->check_permission("railroads/".$railroad)) {
-                $buf .= "<a href='railroads.php?railroad_id=".$railroad."' class='wide_button'><img src='".addslashes($railroads["railroads"][$railroad]["railroad_icon"])."' alt='' style='background-color: ".addslashes($railroads["railroads"][$railroad]["main_color"]).";'>".htmlspecialchars($railroads["railroads"][$railroad]["railroad_name"])."</a>";
+                $buf .= "<a href='railroads.php?railroad_id=".$railroad."'><img src='".addslashes($railroads["railroads"][$railroad]["railroad_icon"])."' alt='' style='background-color: ".addslashes($railroads["railroads"][$railroad]["main_color"]).";'>".htmlspecialchars($railroads["railroads"][$railroad]["railroad_name"])."</a>";
             }
         }
     }
@@ -43,6 +44,8 @@ foreach ($railroads["categories"] as $category) {
         print "<h4>".$category["category_name"]."</h4>".$buf;
     }
 }
+
+print "</div>";
 
 if ($user->check_permission("instance_administrator")) {
     print "<h3>インスタンスの管理</h3>";
