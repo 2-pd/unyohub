@@ -175,7 +175,7 @@ log_ip_address 投稿者のIPアドレスを記録するか(BOOL値)
     "series" : {
         "形式名" : {
             "subseries" : [ 番台等の情報(番台等がない場合は省略可能)
-                {
+                "番台名等" : {
                     "formation_names" : 編成名を配列で,
                     "icon_id" : アイコンのID
                 }...

@@ -22,6 +22,14 @@
 **第1引数** : 路線系統識別名
 
 
+## unyohub clean-formation-db
+データベースから編成表にない編成・車両のデータを削除する  
+処理本体は**clean_formation_db_table.py**
+
+### 引数
+**第1引数** : 路線系統識別名
+
+
 ## unyohub update-operations
 運用表をデータベースに書き込む  
 処理本体は**write_operations_to_db.py**

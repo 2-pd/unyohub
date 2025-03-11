@@ -8,15 +8,10 @@ _/_/_/_/ データベース _/_/_/_/
 
 ███ railroad.db ███
 
-`unyohub_series` 車両形式データ
-  `series_name` TEXT NOT NULL PRIMARY KEY 車両形式
-  `min_car_count` INTEGER NOT NULL その形式の最小の編成両数(unyohub_formationsのデータから算出可能であるが、動作高速化の観点から正規化しない)
-  `max_car_count` INTEGER NOT NULL その形式の最大の編成両数(unyohub_formationsのデータから算出可能であるが、動作高速化の観点から正規化しない)
-
-
 `unyohub_formations` 編成データ
   `formation_name` TEXT NOT NULL PRIMARY KEY 編成名
   `series_name` TEXT NOT NULL 車両形式
+  `subseries_name` TEXT 番台名等(番台等がない場合はNULL)
   `car_count` INTEGER NOT NULL 編成両数(unyohub_carsのデータから算出可能であるが、動作高速化の観点から正規化しない)
   `affiliation` TEXT 所属車両基地
   `caption` TEXT 1行見出し
@@ -28,15 +23,14 @@ _/_/_/_/ データベース _/_/_/_/
   `updated_datetime` TEXT NOT NULL 「YYYY-MM-DD HH:MM:SS」形式の最終編集日時
   `edited_user_id` TEXT 最後に編集したユーザーのID(未編集の場合はNULL)
 
-  INDEX `unyohub_idx_f1`(`series_name`)
+  INDEX `unyohub_idx_f1`(`semifixed_formation`)
   INDEX `unyohub_idx_f2`(`overview_updated`)
-  INDEX `unyohub_idx_f3`(`semifixed_formation`)
 
 
 `unyohub_cars` 車両データ
   `formation_name` TEXT NOT NULL 編成名
   `car_number` TEXT NOT NULL 車番(乗り入れ他社の車両と被る可能性があるため一意制約を設けない)
-  `car_order` INTEGER NOT NULL 編成内での車両の組成位置(前位側の先頭車を1として順に付番)
+  `car_order` INTEGER 編成内での車両の組成位置(前位側の先頭車を1として順に付番。編成から除外済みの車両の場合はNULL)
   `manufacturer` TEXT 製造メーカー名
   `constructed` TEXT 製造年月日
   `description` TEXT 補足説明文
@@ -54,8 +48,14 @@ _/_/_/_/ データベース _/_/_/_/
   INDEX `unyohub_idx_fh1`(`formation_name`, `event_year_month`)
 
 
+`unyohub_series_caches` 車両形式データキャッシュ
+  `series_title` TEXT NOT NULL PRIMARY KEY 車両形式文字列、または、車両形式と番台等を繋げた文字列
+  `min_car_count` INTEGER NOT NULL その形式の最小の編成両数
+  `max_car_count` INTEGER NOT NULL その形式の最大の編成両数
+
+
 `unyohub_coupling_groups` 併結グループ情報
-  `series_or_formation` TEXT NOT NULL 車両形式または編成名
+  `series_or_formation` TEXT NOT NULL 車両形式等または編成名
   `coupling_group` TEXT NOT NULL 併結グループID
 
   PRIMARY KEY(`series_or_formation`, `coupling_group`)
