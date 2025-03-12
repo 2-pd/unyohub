@@ -2067,21 +2067,36 @@ input[type="checkbox"]:checked + label.drop_down + div {
 }
 
 .formation_table {
-    margin: 0 auto;
+    margin: 0 auto 12px auto;
     
-    border-spacing: 0 5px;
+    border-collapse: collapse;
 }
 
 .formation_table th {
-    padding: 0 5px 0 0;
+    padding: 8px 0 0 0;
+    
+    line-height: 28px;
+    font-size: 18px;
+    text-align: left;
+}
+
+.formation_table th:before {
+    content: "";
+    
+    display: inline-block;
+    
+    width: 10px;
+    height: 10px;
+    
+    margin: 9px 8px 9px 0;
+    
+    background-color: #444444;
+    
+    vertical-align: top;
 }
 
 .formation_table td {
-    padding: 0;
-}
-
-.formation_table tr td:last-child {
-    padding-right: 10px;
+    padding: 0 6px 0 0;
 }
 
 .formation_table h5 {
@@ -2973,6 +2988,8 @@ footer div {
     background-position: center;
     background-color: transparent !important;
     
+    overflow: hidden;
+    color: transparent;
     vertical-align: top;
 }
 
