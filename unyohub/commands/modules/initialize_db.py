@@ -33,7 +33,7 @@ def initialize_db (mes, main_dir):
     cur.execute("CREATE INDEX IF NOT EXISTS `unyohub_idx_fh1` ON `unyohub_formation_histories`(`formation_name`, `event_year_month`)")
     
     mes("テーブル「unyohub_series_caches」を作成しています...")
-    cur.execute("CREATE TABLE IF NOT EXISTS `unyohub_series_caches`(`series_title` TEXT NOT NULL PRIMARY KEY, `min_car_count` INTEGER NOT NULL, `max_car_count` INTEGER NOT NULL)")
+    cur.execute("CREATE TABLE IF NOT EXISTS `unyohub_series_caches`(`series_title` TEXT NOT NULL PRIMARY KEY, `series_name` TEXT NOT NULL, `min_car_count` INTEGER NOT NULL, `max_car_count` INTEGER NOT NULL)")
     
     mes("テーブル「unyohub_coupling_groups」を作成しています...")
     cur.execute("CREATE TABLE IF NOT EXISTS `unyohub_coupling_groups`(`series_or_formation` TEXT NOT NULL, `coupling_group` TEXT NOT NULL, PRIMARY KEY(`series_or_formation`, `coupling_group`))")

@@ -20,10 +20,10 @@ def replace_equipment_symbols (equipment_str):
     return equipment_str
 
 
-def insert_series_data (mes, cur, series_title, min_car_count, max_car_count, coupling_group_set):
+def insert_series_data (mes, cur, series_title, series_name, min_car_count, max_car_count, coupling_group_set):
     mes("   " + series_title + " のデータをまとめています...")
     
-    cur.execute("INSERT INTO `unyohub_series_caches`(`series_title`, `min_car_count`, `max_car_count`) VALUES (:series_title, :min_car_count, :max_car_count)", {"series_title" : series_title, "min_car_count" :min_car_count, "max_car_count" : max_car_count})
+    cur.execute("INSERT INTO `unyohub_series_caches`(`series_title`, `series_name`, `min_car_count`, `max_car_count`) VALUES (:series_title, :series_name, :min_car_count, :max_car_count)", {"series_title" : series_title, "series_name" : series_name, "min_car_count" :min_car_count, "max_car_count" : max_car_count})
     
     for coupling_group in list(coupling_group_set):
         cur.execute("INSERT INTO `unyohub_coupling_groups`(`series_or_formation`, `coupling_group`) VALUES (:series_or_formation, :coupling_group)", {"series_or_formation" : series_title, "coupling_group" : coupling_group})
@@ -108,10 +108,10 @@ def convert_formation_table (mes, main_dir):
             cnt += 1
         elif formation_name.startswith("# "):
             if subseries_name is not None:
-                insert_series_data(mes, cur, series_name + subseries_name, subseries_min_car_count, subseries_max_car_count, subseries_coupling_group_set)
+                insert_series_data(mes, cur, series_name + subseries_name, series_name, subseries_min_car_count, subseries_max_car_count, subseries_coupling_group_set)
             
             if series_name is not None:
-                insert_series_data(mes, cur, series_name, min_car_count, max_car_count, coupling_group_set)
+                insert_series_data(mes, cur, series_name, series_name, min_car_count, max_car_count, coupling_group_set)
             
             series_name = formation_name[2:].strip()
             
@@ -128,7 +128,7 @@ def convert_formation_table (mes, main_dir):
             cnt += 2
         elif formation_name.startswith("## "):
             if subseries_name is not None:
-                insert_series_data(mes, cur, series_name + subseries_name, subseries_min_car_count, subseries_max_car_count, subseries_coupling_group_set)
+                insert_series_data(mes, cur, series_name + subseries_name, series_name, subseries_min_car_count, subseries_max_car_count, subseries_coupling_group_set)
             
             subseries_name = formation_name[3:].strip()
             
@@ -234,9 +234,9 @@ def convert_formation_table (mes, main_dir):
             cnt += 4
     
     if subseries_name is not None:
-        insert_series_data(mes, cur, series_name + subseries_name, subseries_min_car_count, subseries_max_car_count, subseries_coupling_group_set)
+        insert_series_data(mes, cur, series_name + subseries_name, series_name, subseries_min_car_count, subseries_max_car_count, subseries_coupling_group_set)
     
-    insert_series_data(mes, cur, series_name, min_car_count, max_car_count, coupling_group_set)
+    insert_series_data(mes, cur, series_name, series_name, min_car_count, max_car_count, coupling_group_set)
     
     mes("編成表から除外された編成を検出しています...")
     

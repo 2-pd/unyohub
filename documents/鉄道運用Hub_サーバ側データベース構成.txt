@@ -50,6 +50,7 @@ _/_/_/_/ データベース _/_/_/_/
 
 `unyohub_series_caches` 車両形式データキャッシュ
   `series_title` TEXT NOT NULL PRIMARY KEY 車両形式文字列、または、車両形式と番台等を繋げた文字列
+  `series_name` TEXT NOT NULL 車両形式
   `min_car_count` INTEGER NOT NULL その形式の最小の編成両数
   `max_car_count` INTEGER NOT NULL その形式の最大の編成両数
 
