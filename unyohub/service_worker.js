@@ -1,5 +1,5 @@
 const UNYOHUB_APP_ID = "unyohub";
-const UNYOHUB_VERSION = "25.02-2";
+const UNYOHUB_VERSION = "25.03-1";
 
 var files_to_cache = [
         "/",

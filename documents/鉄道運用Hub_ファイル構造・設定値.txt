@@ -90,6 +90,7 @@ log_ip_address 投稿者のIPアドレスを記録するか(BOOL値)
             "line_symbol" : 路線記号または路線の略称(2文字以内。省略時は路線名の最初の文字で代用される),
             "affiliated_railroad_id" : 路線が属する路線系統の路線系統識別名(乗り入れ先路線でない場合は省略)
             "inbound_forward_direction" : 上り列車の進行方向と編成の前位側(奇数向き)方向が一致するかどうか(BOOL値),
+            "clockwise_is_inbound" : 上り列車が時計回り運転となるか(BOOL値。環状運転していない路線の場合nullまたは省略)
             "double_station_spacing" : 走行位置モードで駅間を2行で表示させるか(1行で表示させる場合は省略可能。BOOL値),
             "show_final_destinations_in_position_mode" : 走行位置モードで種別の代わりに行き先を表示させるか(種別を表示させる場合は省略可能。BOOL値),
             "stations" : [ 駅一覧

@@ -3150,11 +3150,17 @@ function train_detail (line_id, train_number, starting_station, train_direction,
                 continue;
             }
             
+            if ("clockwise_is_inbound" in railroad_info["lines"][train["line_id"]] && railroad_info["lines"][train["line_id"]]["clockwise_is_inbound"] !== null) {
+                var directions = railroad_info["lines"][train["line_id"]]["clockwise_is_inbound"] ? ["外回り", "内回り"] : ["内回り", "外回り"];
+            } else {
+                var directions = ["上り", "下り"];
+            }
+            
             var stations = [...railroad_info["lines"][train["line_id"]]["stations"]];
             
             var is_deadhead_train = (railroad_info["deadhead_train_number_regexp"].test(train["train_number"]) || train["train_type"]=== "回送") ? true : false;
             
-            buf += "<h4>" + escape_html(railroad_info["lines"][train["line_id"]]["line_name"]) + "　" + (train["is_inbound"] ? "上り" : "下り");
+            buf += "<h4>" + escape_html(railroad_info["lines"][train["line_id"]]["line_name"]) + "　" + (train["is_inbound"] ? directions[0] : directions[1]);
             
             buf += "<span style='color: " + (config["dark_mode"] ? convert_font_color_dark_mode(get_train_color(train["train_number"])) : get_train_color(train["train_number"])) + ";'>" + escape_html(train["train_type"] + "　" + train["train_number"]) + "</span>";
             
@@ -3364,8 +3370,14 @@ function timetable_wrapper_onscroll () {
 
 function timetable_change_lines(line_id, force_station_select_mode = false, draw_station_list = true) {
     if (line_id !== null) {
-        document.getElementById("radio_inbound_label").innerHTML = "上り<small>(" + escape_html(railroad_info["lines"][line_id]["stations"][0]["station_name"]) + "方面)</small>";
-        document.getElementById("radio_outbound_label").innerHTML = "下り<small>(" + escape_html(railroad_info["lines"][line_id]["stations"][railroad_info["lines"][line_id]["stations"].length - 1]["station_name"]) + "方面)</small>";
+        if ("clockwise_is_inbound" in railroad_info["lines"][line_id] && railroad_info["lines"][line_id]["clockwise_is_inbound"] !== null) {
+            var directions = railroad_info["lines"][line_id]["clockwise_is_inbound"] ? ["外回り<small>(右回り)</small>", "内回り<small>(左回り)</small>"] : ["内回り<small>(左回り)</small>", "外回り<small>(右回り)</small>"];
+        } else {
+            var directions = ["上り" + "<small>(" + escape_html(railroad_info["lines"][line_id]["stations"][0]["station_name"]) + "方面)</small>", "下り" + "<small>(" + escape_html(railroad_info["lines"][line_id]["stations"][railroad_info["lines"][line_id]["stations"].length - 1]["station_name"]) + "方面)</small>"];
+        }
+        
+        document.getElementById("radio_inbound_label").innerHTML = directions[0];
+        document.getElementById("radio_outbound_label").innerHTML = directions[1];
     }
     
     update_selected_line(line_id, false);
