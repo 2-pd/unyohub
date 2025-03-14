@@ -224,6 +224,8 @@ if (empty($_GET["formation_name"])) {
         print "<form action='formations.php?railroad_id=".$railroad_id."&formation_name=".urlencode($_GET["formation_name"])."' method='post'>";
         print "<input type='hidden' name='one_time_token' value='".$user->create_one_time_token()."'>";
         
+        print "<button type='submit' class='wide_button'>上書き保存</button>";
+        
         print "<h3>編成の一行見出し</h3>";
         print "<input type='text' name='caption' value='".addslashes($formation_data["caption"])."'>";
         

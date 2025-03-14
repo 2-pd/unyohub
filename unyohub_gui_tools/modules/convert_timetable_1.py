@@ -76,24 +76,34 @@ def convert_timetable_1 (mes, file_name, digits_count):
                             before_departure_time = ""
                         
                         if ":" not in departure_time:
-                            if int(departure_time) >= 300:
-                                departure_time = departure_time[:-2] + ":" + departure_time[-2:]
-                            elif len(departure_time) >= 3:
-                                departure_time = str(int(departure_time[:-2]) + 24) + ":" + departure_time[-2:]
+                            if departure_time.isdecimal() and len(departure_time) <= 4:
+                                if int(departure_time) >= 300:
+                                    departure_time = departure_time[:-2] + ":" + departure_time[-2:]
+                                elif len(departure_time) >= 3:
+                                    departure_time = str(int(departure_time[:-2]) + 24) + ":" + departure_time[-2:]
+                                else:
+                                    departure_time = "24:" + departure_time.zfill(2)
                             else:
-                                departure_time = "24:" + departure_time.zfill(2)
+                                mes("時刻として認識できない値が含まれています: " + train[0], True)
+                                
+                                departure_time = "00:00"
                         else:
                             departure_time_split = departure_time.split(":")
                             
-                            if int(departure_time_split[0]) <= 2:
-                                departure_time_split[0] = str(int(departure_time_split[0]) + 24)
-                            
-                            departure_time = departure_time_split[0] + ":" + departure_time_split[1].zfill(2)
+                            if departure_time_split[0].isdecimal() and departure_time_split[1].isdecimal():
+                                if int(departure_time_split[0]) <= 2:
+                                    departure_time_split[0] = str(int(departure_time_split[0]) + 24)
+                                
+                                departure_time = departure_time_split[0] + ":" + departure_time_split[1].zfill(2)
+                            else:
+                                mes("時刻として認識できない値が含まれています: " + train[0], True)
+                                
+                                departure_time = "00:00"
                         
                         train[cnt_2] = before_departure_time + departure_time.zfill(5)
                 
                 for line_id_2 in line_list:
-                    if new_timetable_t[line_id_2][-1][0] == train[0]:
+                    if new_timetable_t[line_id_2][-1][0] == train[0] and len(new_timetable_t[line_id_2][-1][-6]) == 0:
                         train[2] = line_id_2
                         train[3] = train[0]
                         for cnt_2 in range(8, len(new_timetable_t[line_id_2][-1]) - 6):

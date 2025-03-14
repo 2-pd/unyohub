@@ -147,14 +147,27 @@ function get_formation_info ($formations_str, $validate = FALSE) {
         if ($formation !== "?") {
             $formation_escaped = $db_obj->escapeString($formation);
             
-            $formation_data = $db_obj->querySingle("SELECT `series_name`".($validate ? ", `car_count`" : "")." FROM `unyohub_formations` WHERE `formation_name` = '".$formation_escaped."' OR `series_name` = '".$formation_escaped."' LIMIT 1", TRUE);
+            $formation_data = $db_obj->querySingle("SELECT `series_name`, `subseries_name`".($validate ? ", `car_count`" : "")." FROM `unyohub_formations` WHERE `formation_name` = '".$formation_escaped."'", TRUE);
             
             if (empty($formation_data)) {
-                print "ERROR: 入力された編成名・車両形式に誤りがあります";
-                exit;
+                $formation_data = $db_obj->querySingle("SELECT `series_name`".($validate ? ", `max_car_count`, `min_car_count`" : "")." FROM `unyohub_series_caches` WHERE `series_title` = '".$formation_escaped."'", TRUE);
+                
+                if (empty($formation_data)) {
+                    print "ERROR: 入力された編成名・車両形式に誤りがあります";
+                    exit;
+                }
+                
+                $formation_data["series_title"] = $formation;
+            } else {
+                $formation_data["series_title"] = $formation_data["series_name"].$formation_data["subseries_name"];
+                
+                if ($validate) {
+                    $formation_data["max_car_count"] = $formation_data["car_count"];
+                    $formation_data["min_car_count"] = $formation_data["car_count"];
+                }
+                
+                $formation_list[] = $formation;
             }
-            
-            $series_name = $formation_data["series_name"];
             
             if ($validate) {
                 $coupling_groups_r = $db_obj->query("SELECT `coupling_group` FROM `unyohub_coupling_groups` WHERE `series_or_formation` = '".$formation_escaped."'");
@@ -178,27 +191,16 @@ function get_formation_info ($formations_str, $validate = FALSE) {
                         exit;
                     }
                 }
-            }
-            
-            if ($series_name !== $formation) {
-                $formation_list[] = $formation;
                 
-                if ($validate) {
-                    $min_car_count_range += $formation_data["car_count"];
-                    $max_car_count_range += $formation_data["car_count"];
-                }
-            } elseif ($validate) {
-                $series_data = $db_obj->querySingle("SELECT `min_car_count`, `max_car_count` FROM `unyohub_series` WHERE `series_name` = '".$formation_escaped."'", TRUE);
-                
-                $min_car_count_range += $series_data["min_car_count"];
-                if (empty($coupling_groups)){
-                    $max_car_count_range += $series_data["max_car_count"];
+                $min_car_count_range += $formation_data["min_car_count"];
+                if ($formation !== $formation_data["series_title"] || empty($coupling_groups)) {
+                    $max_car_count_range += $formation_data["max_car_count"];
                 } else {
                     $max_car_count_range += 20;
                 }
             }
         } else {
-            $series_name = "?";
+            $formation_data = array("series_name" => "?", "series_title" => "?");
             
             if ($validate) {
                 if (is_array($coupling_group_intersection) && empty($coupling_group_intersection)) {
@@ -223,9 +225,14 @@ function get_formation_info ($formations_str, $validate = FALSE) {
             $formation_pattern_2[] = $forward_pattern.$formation;
             $formation_pattern_last_2[] = $formation;
             
-            if ($series_name !== $formation) {
-                $formation_pattern_2[] = $forward_pattern.$series_name;
-                $formation_pattern_last_2[] = $series_name;
+            if ($formation_data["series_name"] !== $formation) {
+                $formation_pattern_2[] = $forward_pattern.$formation_data["series_name"];
+                $formation_pattern_last_2[] = $formation_data["series_name"];
+            }
+            
+            if ($formation_data["series_title"] !== $formation_data["series_name"]) {
+                $formation_pattern_2[] = $forward_pattern.$formation_data["series_title"];
+                $formation_pattern_last_2[] = $formation_data["series_title"];
             }
             
             if ($formation !== "?") {
@@ -233,12 +240,9 @@ function get_formation_info ($formations_str, $validate = FALSE) {
                 $formation_pattern_last_2[] = "?";
             }
             
-            if ($formation_pattern_last[$cnt] === $series_name) {
+            if ($formation_pattern_last[$cnt] === $formation_data["series_name"] || $formation_pattern_last[$cnt] === $formation_data["series_title"] ||$formation_pattern_last[$cnt] === "?" ) {
                 $formation_pattern_2[] = $formation_pattern[$cnt];
-                $formation_pattern_last_2[] = $series_name;
-            } elseif ($formation_pattern_last[$cnt] === "?") {
-                $formation_pattern_2[] = $formation_pattern[$cnt];
-                $formation_pattern_last_2[] = "?";
+                $formation_pattern_last_2[] = $formation_pattern_last[$cnt];
             }
         }
         

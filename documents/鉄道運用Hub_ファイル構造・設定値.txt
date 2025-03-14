@@ -82,28 +82,32 @@ log_ip_address 投稿者のIPアドレスを記録するか(BOOL値)
     "railroad_name" : 路線系統表示名,
     "main_color" : 路線系統のテーマカラー,
     "railroad_icon" : BASE64エンコードされた路線系統のアイコンデータ,
+    "through_service_railroads" : 乗り入れ先路線系統の路線系統識別名を配列で列挙(他の路線系統に乗り入れていない場合は省略可能),
     "lines" : { 個々の路線の情報
         "路線識別名" : {
             "line_name" : 路線名,
             "line_color" : 路線のテーマカラー,
             "line_symbol" : 路線記号または路線の略称(2文字以内。省略時は路線名の最初の文字で代用される),
+            "affiliated_railroad_id" : 路線が属する路線系統の路線系統識別名(乗り入れ先路線でない場合は省略)
             "inbound_forward_direction" : 上り列車の進行方向と編成の前位側(奇数向き)方向が一致するかどうか(BOOL値),
+            "clockwise_is_inbound" : 上り列車が時計回り運転となるか(BOOL値。環状運転していない路線の場合nullまたは省略)
             "double_station_spacing" : 走行位置モードで駅間を2行で表示させるか(1行で表示させる場合は省略可能。BOOL値),
             "show_final_destinations_in_position_mode" : 走行位置モードで種別の代わりに行き先を表示させるか(種別を表示させる場合は省略可能。BOOL値),
             "stations" : [ 駅一覧
                 {
                     "station_name" : 駅名,
-                    "station_name_kana" : 駅名のふりがな(ひらがな),
+                    "station_name_kana" : 駅名のふりがな(ひらがなのみ使用可能。乗り入れ先の駅である場合は省略可能),
                     "station_initial" : 駅頭文字(始発・終着列車のない非分岐駅では省略可能。このJSONに記載の他の駅と被る場合は別の文字を使用する),
                     "is_signal_station" : 信号場か否か(信号場でなければ省略可能。BOOL値),
                     "is_major_station" : 主要駅か否か(主要駅でなければ省略可能。BOOL値),
-                    "connecting_lines" : [ 直通路線一覧(分岐駅でなければ省略可能)
+                    "practically_same_stations" : 準同一駅とみなす駅の駅名を配列で列挙,
+                    "connecting_lines" : [ 直通路線一覧(分岐駅でないか、乗り入れ先の駅である場合は省略可能)
                         {
                             "line_id" : 路線識別名,
                             "directions" : 分岐方向(「TL」(左上)、「T」(上)、「TR」(右上)、「L」(左)、「R」(右)、「BL」(左下)、「B」(下)、「BR」(右下))を配列で指定
                         }...
                     ],
-                    "connecting_railroads" : [ 乗り換え可能な路線系統
+                    "connecting_railroads" : [ 乗り換え可能な路線系統(乗り入れ先の駅である場合は省略可能)
                         {
                             "railroad_id" : 路線系統識別名
                         }...
@@ -112,7 +116,8 @@ log_ip_address 投稿者のIPアドレスを記録するか(BOOL値)
             ]
         }...
     },
-    "lines_order" : 路線識別名を表示させたい順に配列で,
+    "lines_order" : この路線系統に属する路線の路線識別名を表示させたい順に配列で,
+    "through_service_lines_order" : 乗り入れ先路線系統に属する路線の路線識別名を表示させたい順に配列で(他の路線系統に乗り入れていない場合は省略可能),
     "train_color_rules" : [ 列車番号の色分け規則(配列で複数指定可能)
         {
             "pattern" : 列車番号の正規表現パターン,
@@ -164,12 +169,20 @@ log_ip_address 投稿者のIPアドレスを記録するか(BOOL値)
                 }...
             ],
             "series_name" : 形式名,
+            "subseries_name" : 番台名等(省略可能),
             "icon_id" : アイコンのID
         }...
     },
     "series" : {
         "形式名" : {
-            "formation_names" : 編成名を配列で,
+            "subseries" : [ 番台等の情報(番台等がない場合は省略可能)
+                "番台名等" : {
+                    "formation_names" : 編成名を配列で,
+                    "icon_id" : アイコンのID
+                }...
+            ],
+            "subseries_names" : 番台名等を配列で(番台等がない場合は省略可能),
+            "formation_names" : 編成名を配列で(番台等を指定した場合は省略),
             "icon_id" : アイコンのID
         }...
     },
