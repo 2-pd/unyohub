@@ -8,7 +8,7 @@ import re
 
 def convert_time_style (time_data, with_station_initial=True):
     if with_station_initial:
-        time_str = time_data[1:]
+        time_str = time_data[1:].strip()
     else:
         if time_data == "NA":
             return "NA"
