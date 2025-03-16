@@ -1180,7 +1180,7 @@ article {
     background-color: rgba(68,68,68,0.9);
 }
 
-.line_select_wrapper a {
+.line_select_wrapper button {
     position: relative;
     
     width: calc(100% - 12px);
@@ -1195,13 +1195,13 @@ article {
     background-image: linear-gradient(315deg, #dddddd 10px, transparent 10px);
     background-color: #ffffff;
     
-    line-height: 36px;
+    line-height: 36px !important;
     font-size: 20px;
     color: #666666;
     text-align: center;
 }
 
-.dark_mode .line_select_wrapper a {
+.dark_mode .line_select_wrapper button {
     background-color: #444444;
     
     background-image: linear-gradient(315deg, #666666 10px, transparent 10px);
@@ -1210,7 +1210,7 @@ article {
     color: #cccccc;
 }
 
-.line_select_wrapper a:has(abbr:empty) {
+.line_select_wrapper button:has(abbr:empty) {
     text-indent: -10px;
 }
 
@@ -1223,7 +1223,6 @@ article {
     width: 28px;
     
     border: 2px solid currentColor;
-    border-radius: 3px;
     
     line-height: 28px;
 }
@@ -2299,7 +2298,7 @@ input[type="checkbox"]:checked + label.drop_down + div {
     color: #666666;
 }
 
-.descriptive_text:empty, .key_and_value:empty, a abbr:empty, #message_area:empty {
+.descriptive_text:empty, .key_and_value:empty, button abbr:empty, #message_area:empty {
     display: none;
 }
 
@@ -2715,7 +2714,7 @@ h5.event_type_rearrange {
     content: "▼";
 }
 
-h2 {
+h2, .heading_wrapper {
     position: relative;
     
     width: calc(100% - 100px);
@@ -2729,6 +2728,10 @@ h2 {
     line-height: 30px;
     font-size: 22px;
     text-align: center;
+}
+
+.heading_wrapper h2 {
+    display: inline;
 }
 
 h2 small {
@@ -2747,7 +2750,7 @@ h2 small {
     color: #dddddd;
 }
 
-h2 .previous_button, h2 .next_button {
+.heading_wrapper .previous_button, .heading_wrapper .next_button {
     position: absolute;
     top: 0;
     
@@ -2756,11 +2759,11 @@ h2 .previous_button, h2 .next_button {
     margin: 0 !important;
 }
 
-h2 .previous_button {
+.heading_wrapper .previous_button {
     left: -50px;
 }
 
-h2 .next_button {
+.heading_wrapper .next_button {
     right: -50px;
 }
 
@@ -3716,10 +3719,12 @@ a {
     border-radius: 0;
 }
 
-a:has(abbr) {
+button:has(abbr) {
     display: block;
     
-    width: 300px;
+    box-sizing: content-box;
+    
+    width: 316px;
     
     margin: 5px auto;
     padding: 6px;
@@ -3729,19 +3734,23 @@ a:has(abbr) {
     
     background-image: linear-gradient(315deg, #999999 14px, transparent 14px);
     
-    line-height: 32px;
+    line-height: 32px !important;
     font-size: 18px;
-    color: inherit;
     text-align: left;
-    text-decoration: none;
 }
 
-a:has(abbr:empty) {
+.dark_mode button:has(abbr) {
+    border-color: #cccccc;
+    
+    background-image: linear-gradient(315deg, #cccccc 14px, transparent 14px);
+}
+
+button:has(abbr:empty) {
     text-indent: 46px;
 }
 
-a abbr {
-    display: block;
+button abbr {
+    display: inline-block;
     
     width: 32px;
     
@@ -3754,8 +3763,6 @@ a abbr {
     font-weight: bold;
     color: #ffffff;
     text-align: center;
-    
-    float: left;
 }
 
 .operation_data_detail {
@@ -3999,7 +4006,7 @@ a abbr {
     text-align: center;
 }
 
-#operation_detail_popup_inner h2 .previous_button, #operation_detail_popup_inner h2 .next_button {
+#operation_detail_popup_inner .heading_wrapper .previous_button, #operation_detail_popup_inner .heading_wrapper .next_button {
     height: 60px;
 }
 
@@ -4542,7 +4549,7 @@ a abbr {
     margin-top: 30px;
 }
 
-input[type="text"], input[type="number"], input[type="password"], input[type="search"], .wide_select, .line_select_wrapper select {
+input[type="text"], input[type="number"], input[type="password"], input[type="search"], .wide_select {
     background-color: #ffffff;
     
     border: none;
