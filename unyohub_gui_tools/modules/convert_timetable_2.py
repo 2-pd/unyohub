@@ -44,8 +44,11 @@ def convert_timetable_2 (mes, main_dir, diagram_revision, diagram_id):
             file_path = main_dir + "/" + diagram_revision + "/" + file_name
             
             if not os.path.isfile(file_path):
-                mes("ファイル " + file_name + " が見つかりません", True)
-                return
+                mes("《注意》ファイル " + file_name + " がありません")
+                
+                line_data[direction + "_trains"] = {}
+                
+                continue
             
             mes(file_name + " を処理しています...")
             with open(file_path, "r", encoding="utf-8") as csv_f:
@@ -56,9 +59,12 @@ def convert_timetable_2 (mes, main_dir, diagram_revision, diagram_id):
                 for cnt in range(len(railroad_info["lines"][line_id]["stations"]) + 14 - len(timetable_data)):
                     timetable_data.append([""] * len(timetable_data[0]))
             
+            if timetable_data[8][0] != "":
+                timetable_data.insert(2, [""] * len(timetable_data[0]))
+            
             timetable_data_t = [list(x) for x in zip(*timetable_data)]
             
-            station_list = timetable_data_t[0][8: -6]
+            station_list = timetable_data_t[0][9: -6]
             trains = timetable_data_t[1:]
             
             direction_data = {}
@@ -80,7 +86,7 @@ def convert_timetable_2 (mes, main_dir, diagram_revision, diagram_id):
                 
                 direction_data[train[0]].append({})
                 
-                departure_times = train[8: -6]
+                departure_times = train[9: -6]
                 
                 last_departure_time = "00:00"
                 for cnt in range(len(departure_times)):
@@ -111,10 +117,13 @@ def convert_timetable_2 (mes, main_dir, diagram_revision, diagram_id):
                 direction_data[train[0]][train_cnt]["next_trains"] = []
                 
                 if train[2] != "":
-                    direction_data[train[0]][train_cnt]["previous_trains"].append({ "line_id" : train[2], "train_number" : train[3], "starting_station" : train[4] })
+                    direction_data[train[0]][train_cnt]["destination"] = train[2]
                 
-                if train[5] != "":
-                    direction_data[train[0]][train_cnt]["previous_trains"].append({ "line_id" : train[5], "train_number" : train[6], "starting_station" : train[7] })
+                if train[3] != "":
+                    direction_data[train[0]][train_cnt]["previous_trains"].append({ "line_id" : train[3], "train_number" : train[4], "starting_station" : train[5] })
+                
+                if train[6] != "":
+                    direction_data[train[0]][train_cnt]["previous_trains"].append({ "line_id" : train[6], "train_number" : train[7], "starting_station" : train[8] })
                 
                 if train[-6] != "":
                     direction_data[train[0]][train_cnt]["next_trains"].append({ "line_id" : train[-6], "train_number" : train[-5], "starting_station" : train[-4] })

@@ -15,7 +15,7 @@ import webbrowser
 
 
 UNYOHUB_GUI_TOOLS_APP_NAME = "鉄道運用Hub用データ編集ツール"
-UNYOHUB_GUI_TOOLS_VERSION = "25.03-1"
+UNYOHUB_GUI_TOOLS_VERSION = "25.03-2"
 UNYOHUB_GUI_TOOLS_LICENSE_TEXT = "このアプリケーションは無権利創作宣言に準拠して著作権放棄されています"
 UNYOHUB_GUI_TOOLS_LICENSE_URL = "https://www.2pd.jp/license/"
 UNYOHUB_GUI_TOOLS_REPOSITORY_URL = "https://fossil.2pd.jp/unyohub/"
@@ -438,7 +438,7 @@ def convert_operation_table_1 (for_printing):
         
         new_file_name = False
     
-    if new_file_name != False and messagebox.askyesno("次の操作", "出力された区間組成運用表をJSONファイルに変換しますか？"):
+    if not for_printing and new_file_name != False and messagebox.askyesno("次の操作", "出力された区間組成運用表をJSONファイルに変換しますか？"):
         convert_operation_table_2(new_file_name)
 
 
