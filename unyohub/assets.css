@@ -2673,6 +2673,26 @@ h5.event_type_rearrange {
     border-left-color: #808080;
 }
 
+.operation_table .operation_overview small.operation_overview_yard_stay {
+    width: fit-content;
+    height: 16px;
+    
+    padding: 0 2px;
+    
+    border: 1px solid #cccccc;
+    
+    line-height: 16px;
+    color: inherit !important;
+}
+
+.dark_mode .operation_table .operation_overview small.operation_overview_yard_stay {
+    border-color: #808080;
+}
+
+.operation_table .operation_overview .operation_overview_yard_stay:not(:last-child):after {
+    right: -5px;
+}
+
 .operation_table .operation_overview span:not(.search_highlight) {
     display: inline-block;
     
@@ -4133,6 +4153,11 @@ button abbr {
 
 .dark_mode .operation_table_train .coupling_info a {
     color: #ffffff;
+}
+
+.operation_table_train .coupling_info small {
+    color: #999999;
+    font-size: 16px;
 }
 
 .suggestion_area {

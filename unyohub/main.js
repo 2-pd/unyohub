@@ -1840,7 +1840,7 @@ function update_operation_table (resolve_func, reject_func, diagram_id, last_mod
                     operations_stopped_trains[operation_number] = [];
                     
                     for_2: for (var cnt_2 = 0; cnt_2 < operation_response["operations"][operation_number]["trains"].length; cnt_2++) {
-                        if (operation_response["operations"][operation_number]["trains"][cnt_2]["train_number"].substring(0, 1) === "_") {
+                        if (operation_response["operations"][operation_number]["trains"][cnt_2]["train_number"].startsWith("_")) {
                             var train = operation_response["operations"][operation_number]["trains"].splice(cnt_2, 1)[0];
                             
                             operations_stopped_trains[operation_number].push(train);
@@ -1867,7 +1867,7 @@ function update_operation_table (resolve_func, reject_func, diagram_id, last_mod
                                 var train_operations = line_operations_data["lines"][train["line_id"]][train_direction][train["train_number"]][cnt_3]["operation_numbers"];
                                 
                                 for_4: for (var cnt_4 = 0; cnt_4 < train_operations.length; cnt_4++) {
-                                    if (train["train_number"].substring(0, 1) !== "_") {
+                                    if (!train["train_number"].startsWith("_")) {
                                         var operation_trains = operation_response["operations"][train_operations[cnt_4]]["trains"];
                                     } else {
                                         var operation_trains = operations_stopped_trains[train_operations[cnt_4]];
@@ -2403,7 +2403,7 @@ function select_lines (lines = null, position_mode = true) {
 }
 
 function convert_train_position_data (train_data) {
-    if (train_data["train_number"].substring(0, 1) === "_") {
+    if (train_data["train_number"].startsWith("_")) {
         train_data["train_title"] = train_data["train_number"].substring(1).split("__")[0];
     } else {
         train_data["train_title"] = train_data["train_number"].split("__")[0];
@@ -2546,7 +2546,7 @@ function get_train_positions (trains, line_id, hh_and_mm, is_inbound) {
             
             var train_type = null;
             
-            if (train_number.substring(0, 1) !== "_" && train_number in timetable["timetable"][line_id][train_direction]) {
+            if (!train_number.startsWith("_") && train_number in timetable["timetable"][line_id][train_direction]) {
                 for_3: for (var timetable_train of timetable["timetable"][line_id][train_direction][train_number]) {
                     if (timetable_train["starting_station"] === train["starting_station"]) {
                         var last_stopped = null;
@@ -2585,7 +2585,7 @@ function get_train_positions (trains, line_id, hh_and_mm, is_inbound) {
             if (train_type === null) {
                 train_type = "＊＊＊";
                 
-                if (train_number.substring(0, 1) === "_") {
+                if (train_number.startsWith("_")) {
                     var train_number = train_number.substring(1).split("__")[0];
                     
                     if (train_number in timetable["timetable"][line_id][train_direction]) {
@@ -2758,7 +2758,7 @@ function get_operations (line_id, train_number, starting_station, train_directio
 }
 
 function get_final_destination (line_id, train_number, starting_station, max_length = 10) {
-    if (train_number.substring(0, 1) !== "_") {
+    if (!train_number.startsWith("_")) {
         var next_trains = [{line_id : line_id, train_number : train_number, starting_station : starting_station}];
     } else {
         if (!(train_number in line_operations["lines"][line_id]["inbound_trains"] || train_number in line_operations["lines"][line_id]["outbound_trains"])) {
@@ -2774,7 +2774,9 @@ function get_final_destination (line_id, train_number, starting_station, max_len
         var train_data = get_train(next_train["line_id"], next_train["train_number"], next_train["starting_station"]);
         
         if (train_data !== null) {
-            if (train_data["next_trains"].length >= 1) {
+            if ("destination" in train_data) {
+                buf += (buf.length >= 1 ? " / " : "") + escape_html(train_data["destination"]);
+            } else if (train_data["next_trains"].length >= 1) {
                 next_trains.push(...train_data["next_trains"]);
             } else {
                 for (var last_stopped_index = train_data["departure_times"].length - 1; last_stopped_index >= 1; last_stopped_index--) {
@@ -2783,17 +2785,13 @@ function get_final_destination (line_id, train_number, starting_station, max_len
                     }
                 }
                 
-                if (buf.length >= 1) {
-                    buf += " / ";
-                }
-                
                 var station_list = [...railroad_info["lines"][next_train["line_id"]]["stations"]];
                 
                 if (train_data["is_inbound"]) {
                     station_list.reverse();
                 }
                 
-                buf += escape_html(station_list[last_stopped_index]["station_name"]);
+                buf += (buf.length >= 1 ? " / " : "") + escape_html(station_list[last_stopped_index]["station_name"]);
             }
         }
     }
@@ -2942,13 +2940,13 @@ function get_operation_data_detail (operation_date, operation_number_or_list, ar
                         } else {
                             train_number_text = train_number_text.split("__")[0];
                             
-                            if (train_number_text.substring(0, 1) === ".") {
+                            if (train_number_text.startsWith(".")) {
                                 train_number_text = train_number_text.substring(1) + "待機";
                             }
                         }
                     }
                     
-                    if (data_item["user_id"] !== null && data_item["user_id"].substring(0, 1) !== "*") {
+                    if (data_item["user_id"] !== null && !data_item["user_id"].startsWith("*")) {
                         var user_name_html = data_item["user_name"] !== null ? escape_html(data_item["user_name"]) : data_item["user_id"];
                         var class_html = "";
                         
@@ -3042,7 +3040,7 @@ function train_detail (line_id, train_number, starting_station, train_direction,
     
     var train_operations = get_operations(line_id, train_number, starting_station, train_direction);
     
-    if (train_number.substring(0, 1) === "_") {
+    if (train_number.startsWith("_")) {
         train_number = train_number.substring(1).split("__")[0];
     }
     
@@ -3217,7 +3215,7 @@ function train_detail (line_id, train_number, starting_station, train_direction,
             buf += "</h4>";
             
             for (var cnt = 0; cnt < train["departure_times"].length; cnt++) {
-                if (train["departure_times"][cnt] !== null && train["departure_times"][cnt].substring(0, 1) !== "|") {
+                if (train["departure_times"][cnt] !== null && !train["departure_times"][cnt].startsWith("|")) {
                     var station_index = train["is_inbound"] ? stations.length - 1 - cnt : cnt;
                     
                     if (is_today && ((previous_departure_time !== null && previous_departure_time < now_str && train["departure_times"][cnt] >= now_str) || train["departure_times"][cnt] === now_str)) {
@@ -3524,7 +3522,7 @@ function draw_station_timetable (station_name) {
         for (var train of timetable["timetable"][timetable_selected_line][train_direction][train_number]) {
             var departure_time = train["departure_times"][station_index];
             
-            if (departure_time !== null && departure_time.substring(0, 1) !== "|") {
+            if (departure_time !== null && !departure_time.startsWith("|")) {
                 var is_deadhead_train = (railroad_info["deadhead_train_number_regexp"].test(train_number) || train["train_type"] === "回送") ? true : false;
                 
                 var is_terminal_station = true;
@@ -4554,7 +4552,7 @@ function draw_operation_trains (operation_number, diagram_id_or_ts, is_today) {
         var starting_station = null;
         var highlight_str = "";
         for (var cnt = 0; cnt < trains.length; cnt++) {
-            if (trains[cnt]["train_number"].substring(0, 1) === ".") {
+            if (trains[cnt]["train_number"].startsWith(".")) {
                 buf += "<div class='" + train_div_class_name + " operation_table_deposited_train'>";
                 buf += "<b>" + trains[cnt]["train_number"].substring(1).split("__")[0] + "<small>待機</small></b>";
                 
@@ -4669,7 +4667,11 @@ function draw_operation_trains (operation_number, diagram_id_or_ts, is_today) {
                 if (!config["simplify_operation_details"] && operations_list.length >= 1) {
                     buf += "<div class='coupling_info'>併結:";
                     for (var coupling_operation of operations_list) {
-                        buf += " <a href='javascript:void(0);' onclick='operation_detail(\"" + coupling_operation + "\", " + diagram_id_or_ts + ");'>" + coupling_operation + "運用</a>";
+                        buf += " <a href='javascript:void(0);' onclick='operation_detail(\"" + coupling_operation + "\", " + diagram_id_or_ts + ");'>" + coupling_operation + "運用";
+                        if (is_today) {
+                            buf += "<small>(" + (coupling_operation in operation_data["operations"] && operation_data["operations"][coupling_operation] !== null ? escape_html(operation_data["operations"][coupling_operation]["formations"]) : "情報なし") + ")</small>";
+                        }
+                        buf += "</a>";
                     }
                     buf += "</div>";
                 }
@@ -5475,10 +5477,6 @@ function draw_operation_table (is_today) {
         var search_hit_count = 0;
         var buf_2 = "";
         for (var cnt_2 = 0; cnt_2 < trains.length; cnt_2++) {
-            if (trains[cnt_2]["train_number"].substring(0, 1) === ".") {
-                continue;
-            }
-            
             if (cnt_2 !== 0 && trains[cnt_2]["train_number"] === trains[cnt_2 - 1]["train_number"]) {
                 continue;
             }
@@ -5486,15 +5484,19 @@ function draw_operation_table (is_today) {
             var train_number = trains[cnt_2]["train_number"].split("__")[0];
             
             if (search_keyword === "") {
-                if (trains[cnt_2]["train_number"] in timetable["timetable"][trains[cnt_2]["line_id"]][trains[cnt_2]["direction"] + "_trains"]) {
-                    var train_type_initial = timetable["timetable"][trains[cnt_2]["line_id"]][trains[cnt_2]["direction"] + "_trains"][trains[cnt_2]["train_number"]][0]["train_type"].substring(0, 1);
-                } else if (railroad_info["deadhead_train_number_regexp"].test(train_number)) {
-                    var train_type_initial = "回";
+                if (train_number.startsWith(".")) {
+                    buf_2 += "<small class='operation_overview_yard_stay'>" + train_number.substring(1) + "</small>";
                 } else {
-                    var train_type_initial = "＊";
+                    if (trains[cnt_2]["train_number"] in timetable["timetable"][trains[cnt_2]["line_id"]][trains[cnt_2]["direction"] + "_trains"]) {
+                        var train_type_initial = timetable["timetable"][trains[cnt_2]["line_id"]][trains[cnt_2]["direction"] + "_trains"][trains[cnt_2]["train_number"]][0]["train_type"].substring(0, 1);
+                    } else if (railroad_info["deadhead_train_number_regexp"].test(train_number)) {
+                        var train_type_initial = "回";
+                    } else {
+                        var train_type_initial = "＊";
+                    }
+                    
+                    buf_2 += "<small style='background-color: " + (config["dark_mode"] ? convert_font_color_dark_mode(get_train_color(train_number, "#333333")) : get_train_color(train_number, "#333333")) + ";'>" + train_type_initial + "</small>";
                 }
-                
-                buf_2 += "<small style='background-color: " + (config["dark_mode"] ? convert_font_color_dark_mode(get_train_color(train_number, "#333333")) : get_train_color(train_number, "#333333")) + ";'>" + train_type_initial + "</small>";
             } else {
                 var train_number_search_index = train_number.toUpperCase().indexOf(search_keyword);
                 
@@ -5864,7 +5866,7 @@ function select_train_number (operation_number, now_hh_mm) {
         
         var train_title = operation_table["operations"][operation_number]["trains"][cnt]["train_number"].split("__")[0];
         
-        if (train_title.substring(0, 1) === ".") {
+        if (train_title.startsWith(".")) {
             train_title = train_title.substring(1) + "待機";
             
             var color = "inherit";
@@ -5903,7 +5905,7 @@ function set_train_number (train_number) {
     } else {
         var train_title = train_number.split("__")[0];
         
-        if (train_title.substring(0, 1) === ".") {
+        if (train_title.startsWith(".")) {
             train_title = train_title.substring(1) + "待機";
         } else {
             color = config["dark_mode"] ? convert_font_color_dark_mode(get_train_color(train_title)) : get_train_color(train_title);
