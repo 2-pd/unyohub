@@ -292,6 +292,7 @@ log_ip_address 投稿者のIPアドレスを記録するか(BOOL値)
                 { 各区間組成の情報
                     "starting_station" : 始発駅,
                     "train_type" : 列車種別,
+                    "destination" : 行き先(データ上の終着駅と同一である場合は省略可能),
                     "previous_trains" : [ 直通元の区間組成
                         {
                             "line_id" : 走行路線の識別名,

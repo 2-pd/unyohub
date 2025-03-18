@@ -17,7 +17,7 @@
  */
 
 define("UNYOHUB_APP_NAME", "鉄道運用Hub");
-define("UNYOHUB_VERSION", "25.03-1");
+define("UNYOHUB_VERSION", "25.03-2");
 define("UNYOHUB_APP_INFO_URL", "https://create.2pd.jp/apps/unyohub/");
 define("UNYOHUB_REPOSITORY_URL", "https://fossil.2pd.jp/unyohub/");
 define("UNYOHUB_LICENSE_TEXT", "このアプリケーションは無権利創作宣言に準拠して著作権放棄されています。");
@@ -250,7 +250,7 @@ if ($path_info_str === "/") {
     <div id="blank_article" class="wait_icon"></div>
     <div id="tab_area"><a href="<?php print $railroad_root; ?>" onclick="event.preventDefault(); position_mode();" id="tab_position_mode">走行位置</a><a href="<?php print $railroad_root; ?>timetable/" onclick="event.preventDefault(); timetable_mode();" id="tab_timetable_mode">時刻表</a><a href="<?php print $railroad_root; ?>operation_data/" onclick="event.preventDefault(); operation_data_mode();" id="tab_operation_data_mode">運用データ</a><a href="<?php print $railroad_root; ?>formations/" onclick="event.preventDefault(); formations_mode();" id="tab_formations_mode">編成表</a><a href="<?php print $railroad_root; ?>operation_table/" onclick="event.preventDefault(); operation_table_mode();" id="tab_operation_table_mode">運用表</a></div>
     <article>
-        <div class='line_select_wrapper'><a id="position_line_select" onclick="select_lines();"></a></div>
+        <div class='line_select_wrapper'><button type="button" id="position_line_select" onclick="select_lines();"></button></div>
         <table id="position_area" class="wait_icon"></table>
         <div id="position_area_supplement" class="radio_area">
             <div><input type="radio" name="show_train_numbers_or_train_types" id="show_train_numbers_radio" onchange="change_show_train_types(!this.checked);"><label for="show_train_numbers_radio">列車番号を表示</label><input type="radio" name="show_train_numbers_or_train_types" id="show_train_types_radio" onchange="change_show_train_types(this.checked);"><label for="show_train_types_radio"><span id="show_train_types_label_train_type">種別</span><span id="show_train_types_label_final_destination">行き先</span>を表示</label></div>
@@ -258,9 +258,9 @@ if ($path_info_str === "/") {
         </div>
     </article>
     <article onscroll="timetable_wrapper_onscroll();">
-        <div class='line_select_wrapper'><a id="timetable_line_select" onclick="select_lines(timetable_selectable_lines, false);"></a></div>
+        <div class='line_select_wrapper'><button type="button" id="timetable_line_select" onclick="select_lines(timetable_selectable_lines, false);"></button></div>
         <div id="direction_radio_area" class="radio_area">
-            <h2><button type="button" class="previous_button" onclick="timetable_select_neighboring_station(-1);"></button><span id="timetable_station_name"></span><button type="button" class="next_button" onclick="timetable_select_neighboring_station(1);"></button></h2>
+        <div class="heading_wrapper"><button type="button" class="previous_button" onclick="timetable_select_neighboring_station(-1);"></button><h2 id="timetable_station_name"></h2><button type="button" class="next_button" onclick="timetable_select_neighboring_station(1);"></button></div>
             <div><input type="radio" name="direction_radio" id="radio_inbound" value="inbound" checked="checked" onchange="timetable_select_station(timetable_selected_station);"><label for="radio_inbound" id="radio_inbound_label">上り</label><input type="radio" name="direction_radio" id="radio_outbound" value="outbound" onchange="timetable_select_station(timetable_selected_station);"><label for="radio_outbound" id="radio_outbound_label">下り</label></div>
             <input type="checkbox" id="show_deadhead_trains_check" class="chip" onchange="change_show_arriving_trains(this.checked);"><label for="show_deadhead_trains_check">回送・着列車を表示</label><input type="checkbox" id="show_starting_trains_only_check" class="chip" onchange="change_show_starting_trains_only(this.checked);"><label for="show_starting_trains_only_check">当駅始発のみ</label>
         </div>
@@ -300,7 +300,7 @@ if ($path_info_str === "/") {
     <footer>
         <div>
             <button type="button" id="position_reload_button" class="reload_button" onclick="position_mode('today', null);"></button>
-            <select id="position_date_select" class="footer_select" onchange="position_mode(this.value, 0);"><option value="today" selected="selected">今日</option><option value="tomorrow">明日</option></select><button type="button" class="previous_button" onclick="position_change_time(-60);"></button><span id="position_hours" class="footer_value"></span><button type="button" class="next_button" onclick="position_change_time(60);"></button><button type="button" class="previous_button" onclick="position_change_time(-5);"></button><span id="position_minutes" class="footer_value"></span><button type="button" class="next_button" onclick="position_change_time(5);"></button>
+            <select id="position_date_select" class="footer_select" onchange="position_mode(this.value, 0);"><option value="today" selected="selected">今日</option><option value="tomorrow">明日</option></select><span ontouchstart="position_time_swipe_start(event);" ontouchmove="position_time_swipe(event);" ontouchend="position_time_swipe_end(event, 600);"><button type="button" class="previous_button" onclick="position_change_time(-60);"></button><span id="position_hours" class="footer_value"></span><button type="button" class="next_button" onclick="position_change_time(60);"></button></span><span ontouchstart="position_time_swipe_start(event);" ontouchmove="position_time_swipe(event);" ontouchend="position_time_swipe_end(event, 10);"><button type="button" class="previous_button" onclick="position_change_time(-1);"></button><span id="position_minutes" class="footer_value"></span><button type="button" class="next_button" onclick="position_change_time(1);"></button></span>
             <input type="time" id="position_time_button" class="time_button" onchange="position_time_button_change();">
         </div>
         <div>

@@ -112,7 +112,7 @@ def convert_operation_table_1 (mes, main_dir, file_name, json_file_name, digits_
         for_printing = True
         
         cell_styles = []
-        group_name_row_indexes = set()
+        merged_cell_row_indexes = set()
     else:
         mes("運用表の変換(ステップ1)", is_heading=True)
         
@@ -170,8 +170,9 @@ def convert_operation_table_1 (mes, main_dir, file_name, json_file_name, digits_
                 if train_number not in train_number_list:
                     train_number_list[train_number] = {}
                 
-                starting_station_index = None
                 for train_data in timetable[line][direction + "_trains"][train_number]:
+                    starting_station_index = None
+                    
                     for cnt in range(len(train_data["departure_times"])):
                         if train_data["departure_times"][cnt] is not None:
                             terminal_station_index = cnt
@@ -180,21 +181,21 @@ def convert_operation_table_1 (mes, main_dir, file_name, json_file_name, digits_
                             if starting_station_index is None:
                                 starting_station_index = cnt
                                 first_departure_time = train_data["departure_times"][cnt]
-                
-                if "station_initial" not in stations[starting_station_index]:
-                    mes("省略表記の登録されていない始発駅が時刻表で検出されました: " + train_number, True)
-                    error_occurred = True
-                    continue
-                
-                if "station_initial" not in stations[terminal_station_index]:
-                    mes("省略表記の登録されていない終着駅が時刻表で検出されました: " + train_number, True)
-                    error_occurred = True
-                    continue
-                
-                train_number_list[train_number][first_departure_time] = [
-                        stations[starting_station_index]["station_initial"] + first_departure_time[-5:],
-                        stations[terminal_station_index]["station_initial"] + final_arrival_time[-5:]
-                    ]
+                    
+                    if "station_initial" not in stations[starting_station_index]:
+                        mes("省略表記の登録されていない始発駅が時刻表で検出されました: " + train_number, True)
+                        error_occurred = True
+                        continue
+                    
+                    if "station_initial" not in stations[terminal_station_index]:
+                        mes("省略表記の登録されていない終着駅が時刻表で検出されました: " + train_number, True)
+                        error_occurred = True
+                        continue
+                    
+                    train_number_list[train_number][first_departure_time] = [
+                            stations[starting_station_index]["station_initial"] + first_departure_time[-5:],
+                            stations[terminal_station_index]["station_initial"] + final_arrival_time[-5:]
+                        ]
     
     if error_occurred:
         mes("エラー発生のため処理が中断されました")
@@ -223,7 +224,7 @@ def convert_operation_table_1 (mes, main_dir, file_name, json_file_name, digits_
             
             if for_printing:
                 output_data.append(["◆" + operation[0][1:].strip()])
-                group_name_row_indexes.add(len(output_data) - 1)
+                merged_cell_row_indexes.add(len(output_data) - 1)
                 
                 output_data.append(["運用番号", "出庫", "入庫", "", "列車"] + [""] * (max_columns - 5))
                 
@@ -233,9 +234,10 @@ def convert_operation_table_1 (mes, main_dir, file_name, json_file_name, digits_
                 output_data.append(["# " + operation[0][1:].strip()])
         elif operation[0].startswith("* ") or operation[0].startswith("※"):
             if for_printing:
-                output_data[-1] = ["※ " + operation[0][1:].strip()] + [""] * (max_columns - 1)
-                output_data.append([""] * max_columns)
+                output_data[-1] = ["※ " + operation[0][1:].strip()]
+                merged_cell_row_indexes.add(len(output_data) - 1)
                 
+                output_data.append([""] * max_columns)
                 cell_styles.append([None] * max_columns)
             else:
                 output_data[-1].append(operation[0][1:].strip())
@@ -293,16 +295,38 @@ def convert_operation_table_1 (mes, main_dir, file_name, json_file_name, digits_
                             error_occurred = True
                             continue
                         
-                        train_rows = train_time[1].split("-")
+                        train_rows = train_time[1][:-1].split("-")
                         
-                        train_rows[1] = train_rows[1][:-1]
-                        
-                        if for_printing and train_name[0] == "?":
-                            train_name = train_name[1:]
-                        
-                        output_row_1.append(train_name + car_count)
-                        output_row_2.append(convert_time_style(train_rows[0]))
-                        output_row_3.append(convert_time_style(train_rows[1]))
+                        if len(train_rows[0]) == 1 and len(train_rows[1]) == 1:
+                            if train_name not in train_number_list:
+                                mes("列車番号が時刻表にありません: " + train_name, True)
+                                error_occurred = True
+                                continue
+                            
+                            first_departure_times = list(train_number_list[train_name].keys())
+                            first_departure_times.sort()
+                            
+                            within_segment = False
+                            for first_departure_time in first_departure_times:
+                                if train_number_list[train_name][first_departure_time][0][0] == train_rows[0] or within_segment:
+                                    if not for_printing or not within_segment:
+                                        output_row_1.append(train_name + car_count)
+                                        output_row_2.append(train_number_list[train_name][first_departure_time][0])
+                                        output_row_3.append(train_number_list[train_name][first_departure_time][1])
+                                    else:
+                                        output_row_3[-1] = train_number_list[train_name][first_departure_time][1]
+                                    
+                                    if train_number_list[train_name][first_departure_time][1][0] == train_rows[1]:
+                                        break
+                                    
+                                    within_segment = True
+                        else:
+                            if for_printing and train_name[0] == "?":
+                                train_name = train_name[1:]
+                            
+                            output_row_1.append(train_name + car_count)
+                            output_row_2.append(convert_time_style(train_rows[0]))
+                            output_row_3.append(convert_time_style(train_rows[1]))
                         
                         if for_printing:
                             output_cell_styles_1.append(get_train_style(train_name))
@@ -417,7 +441,7 @@ def convert_operation_table_1 (mes, main_dir, file_name, json_file_name, digits_
             for cnt in range(len(output_data)):
                 csv_f.write("<tr>")
                 
-                if cnt in group_name_row_indexes:
+                if cnt in merged_cell_row_indexes:
                     csv_f.write(get_cell_html(output_data[cnt][0], cell_styles[cnt][0], max_columns))
                 else:
                     for cnt_2 in range(max_columns):
