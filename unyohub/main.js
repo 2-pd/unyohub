@@ -2809,6 +2809,9 @@ function get_final_destination (line_id, train_number, starting_station, max_len
 
 var position_time;
 
+var position_time_touch_start_y;
+var position_time_touch_end_y;
+
 function position_change_time (position_time_additions = null, draw_train_position_now = true) {
     if (position_time_additions === null) {
         position_time = Date.now() / 60000;
@@ -2843,6 +2846,29 @@ function position_change_time (position_time_additions = null, draw_train_positi
     
     if (draw_train_position_now) {
         draw_train_position(hh_and_mm);
+    }
+}
+
+function position_time_swipe_start (event) {
+    position_time_touch_start_y = event.touches[0].screenY;
+    position_time_touch_end_y = position_time_touch_start_y;
+}
+
+function position_time_swipe (event) {
+    position_time_touch_end_y = event.touches[0].screenY;
+    
+    if (Math.abs(position_time_touch_end_y - position_time_touch_start_y) >= 10) {
+        event.currentTarget.style.opacity = "0.25";
+    }
+}
+
+function position_time_swipe_end (event, step) {
+    event.currentTarget.style.opacity = "";
+    
+    if (position_time_touch_end_y >= position_time_touch_start_y + 10) {
+        position_change_time(-step);
+    } else if (position_time_touch_end_y <= position_time_touch_start_y - 10) {
+        position_change_time(step);
     }
 }
 

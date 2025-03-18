@@ -3020,6 +3020,11 @@ footer .previous_button, footer .next_button {
 
 .footer_value {
     width: 55px;
+    
+    background-image: url(data:image/webp;base64,UklGRqYAAABXRUJQVlA4TJoAAAAvJ0AWED9AIECR/wuMpRsEAhT5v8BYIhCgyP8FxhKRAIRmgI/eukHyIQC0tSqVSfK/26YebGtra/JXMACHCXQB/TYw9VS2cYC8f0H6DrVFRP+Jpm1aP7n+IMU9rdNZlhroVIa5AQDzJZlaBFZHagMJnY43knYq3MhoPr+RMDcRI4FZfpYW+3GyAVQrqKZQ7WEaRbWMah7XxtIK);
+    background-repeat: no-repeat;
+    background-size: 20px 45px;
+    background-position: center;
 }
 
 .footer_value_wide {
