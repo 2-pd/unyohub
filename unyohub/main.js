@@ -3145,7 +3145,7 @@ function train_detail (line_id, train_number, starting_station, train_direction,
             train_data.unshift(get_train(previous_train["line_id"], previous_train["train_number"], previous_train["starting_station"]));
             
             if (train_data[0] !== null && train_data[0]["previous_trains"].length >= 1) {
-                previous_trains.push(...train_data[0]["previous_trains"][0]);
+                previous_trains.push(...train_data[0]["previous_trains"]);
             }
         }
         

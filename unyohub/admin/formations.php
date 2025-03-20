@@ -45,8 +45,18 @@ if (empty($_GET["formation_name"])) {
         
         print "<input type='checkbox' id='".$checkbox_id."'><label for='".$checkbox_id."' class='drop_down'>".htmlspecialchars($formations["series_names"][$cnt])."</label><div><table>";
         
-        foreach ($formations["series"][$formations["series_names"][$cnt]]["formation_names"] as $formation_name) {
-            print "<tr><td><a href='formations.php?railroad_id=".$railroad_id."&formation_name=".urlencode($formation_name)."'><img src='train_icons.php/".$railroad_id."/".addslashes($formations["formations"][$formation_name]["icon_id"])."' alt='' class='train_icon'>".htmlspecialchars($formation_name)."</a></td></tr>";
+        if (empty($formations["series"][$formations["series_names"][$cnt]]["subseries_names"])) {
+            foreach ($formations["series"][$formations["series_names"][$cnt]]["formation_names"] as $formation_name) {
+                print "<tr><td><a href='formations.php?railroad_id=".$railroad_id."&formation_name=".urlencode($formation_name)."'><img src='train_icons.php/".$railroad_id."/".addslashes($formations["formations"][$formation_name]["icon_id"])."' alt='' class='train_icon'>".htmlspecialchars($formation_name)."</a></td></tr>";
+            }
+        } else {
+            foreach ($formations["series"][$formations["series_names"][$cnt]]["subseries_names"] as $subseries_name) {
+                print "<tr><th>".htmlspecialchars($subseries_name)."</th></tr>";
+                
+                foreach ($formations["series"][$formations["series_names"][$cnt]]["subseries"][$subseries_name]["formation_names"] as $formation_name) {
+                    print "<tr><td><a href='formations.php?railroad_id=".$railroad_id."&formation_name=".urlencode($formation_name)."'><img src='train_icons.php/".$railroad_id."/".addslashes($formations["formations"][$formation_name]["icon_id"])."' alt='' class='train_icon'>".htmlspecialchars($formation_name)."</a></td></tr>";
+                }
+            }
         }
         
         print "</table></div>";
