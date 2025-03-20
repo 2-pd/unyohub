@@ -11,7 +11,11 @@ $zizai_captcha_config_path = "../../config/zizai_captcha_config.json";
 print "\n_/_/_/_/ 依存ライブラリのセットアップ _/_/_/_/\n\n";
 
 
-$admin_user_id = $argv[1];
+if (!empty($argv[1])) {
+    $admin_user_id = $argv[1];
+} else {
+    $admin_user_id = "unyohub_admin";
+}
 
 if (!wakarana::check_id_string($admin_user_id)) {
     print "【エラー】管理者ユーザーIDとして使用できない文字列が指定されました\n";

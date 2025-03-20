@@ -8,7 +8,7 @@ import subprocess
 
 
 UNYOHUB_COMMANDS_APP_NAME = "鉄道運用Hub コマンドラインツール"
-UNYOHUB_COMMANDS_VERSION = "25.03-1"
+UNYOHUB_COMMANDS_VERSION = "25.03-2"
 
 UNYOHUB_DATA_DIR = "../data"
 
@@ -37,6 +37,24 @@ def print_usage ():
     print("\x1b[93mupdate-operations\x1b[0m \x1b[90m<路線系統識別名> <ダイヤ改正識別名> <ダイヤ識別名>\x1b[0m")
     print("  運用表をデータベースに書き込む\n")
     
+    print("\x1b[93mcreate-role\x1b[0m \x1b[90m<ロール識別名> <ロール表示名>\x1b[0m")
+    print("  ロールを新規作成する\n")
+    
+    print("\x1b[93mdelete-role\x1b[0m \x1b[90m<ロール識別名>\x1b[0m")
+    print("  ロールを削除する\n")
+    
+    print("\x1b[93madd-permission\x1b[0m \x1b[90m<ロール識別名> <権限対象識別名> <動作識別名>\x1b[0m")
+    print("  ロールに権限を割り当てる\n")
+    
+    print("\x1b[93mremove-permission\x1b[0m \x1b[90m<ロール識別名> <権限対象識別名> <動作識別名>\x1b[0m")
+    print("  ロールから権限を剥奪する\n")
+    
+    print("\x1b[93massign-role\x1b[0m \x1b[90m<ユーザー識別名> <ロール識別名>\x1b[0m")
+    print("  ユーザーにロールを割り当てる\n")
+    
+    print("\x1b[93mremove-role\x1b[0m \x1b[90m<ユーザー識別名> <ロール識別名>\x1b[0m")
+    print("  ユーザーからロールを剥奪する\n")
+    
     print("\x1b[93minit-db\x1b[0m \x1b[90m<路線系統識別名>\x1b[0m")
     print("  各路線系統用データベースファイルを生成する\n")
     
@@ -56,8 +74,10 @@ if len(args) >= 2:
         case "setup-libs":
             if len(args) == 3:
                 subprocess.run(["php", "modules/libs_setup.php", args[2]])
+            elif len(args) == 2:
+                subprocess.run(["php", "modules/libs_setup.php"])
             else:
-                subprocess.run(["php", "modules/libs_setup.php", "unyohub_admin"])
+                print("\x1b[31m引数の数が異常です\x1b[0m")
         case "conv-formations":
             if len(args) == 3:
                 convert_formation_table = importlib.import_module("modules.convert_formation_table")
@@ -76,6 +96,36 @@ if len(args) >= 2:
             if len(args) == 5:
                 write_operations_to_db = importlib.import_module("modules.write_operations_to_db")
                 write_operations_to_db.write_operations_to_db(mes, data_dir + "/" + os.path.basename(args[2]), os.path.basename(args[3]), os.path.basename(args[4]))
+            else:
+                print("\x1b[31m引数の数が異常です\x1b[0m")
+        case "create-role":
+            if len(args) == 4:
+                subprocess.run(["php", "modules/create_role.php", args[2], args[3]])
+            else:
+                print("\x1b[31m引数の数が異常です\x1b[0m")
+        case "delete-role":
+            if len(args) == 3:
+                subprocess.run(["php", "modules/delete_role.php", args[2]])
+            else:
+                print("\x1b[31m引数の数が異常です\x1b[0m")
+        case "add-permission":
+            if len(args) == 5 or len(args) == 4:
+                subprocess.run(["php", "modules/add_permission.php", *args[2:]])
+            else:
+                print("\x1b[31m引数の数が異常です\x1b[0m")
+        case "remove-permission":
+            if len(args) == 5 or len(args) == 4:
+                subprocess.run(["php", "modules/remove_permission.php", *args[2:]])
+            else:
+                print("\x1b[31m引数の数が異常です\x1b[0m")
+        case "assign-role":
+            if len(args) == 4:
+                subprocess.run(["php", "modules/assign_role.php", args[2], args[3]])
+            else:
+                print("\x1b[31m引数の数が異常です\x1b[0m")
+        case "remove-role":
+            if len(args) == 4:
+                subprocess.run(["php", "modules/remove_role.php", args[2], args[3]])
             else:
                 print("\x1b[31m引数の数が異常です\x1b[0m")
         case "init-db":
