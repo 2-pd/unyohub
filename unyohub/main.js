@@ -2586,7 +2586,7 @@ function get_train_positions (trains, line_id, hh_and_mm, is_inbound) {
                 train_type = "＊＊＊";
                 
                 if (train_number.startsWith("_")) {
-                    var train_number = train_number.substring(1).split("__")[0];
+                    train_number = train_number.substring(1, train_number.lastIndexOf("__"));
                     
                     if (train_number in timetable["timetable"][line_id][train_direction]) {
                         train_type = timetable["timetable"][line_id][train_direction][train_number][0]["train_type"];
@@ -2765,7 +2765,7 @@ function get_final_destination (line_id, train_number, starting_station, max_len
             return "＊＊＊";
         }
         
-        var next_trains = [{line_id : line_id, train_number : train_number.substring(1).split("__")[0], starting_station : starting_station}];
+        var next_trains = [{line_id : line_id, train_number : train_number.substring(1, train_number.lastIndexOf("__")), starting_station : starting_station}];
     }
     
     var buf = "";
@@ -2780,7 +2780,7 @@ function get_final_destination (line_id, train_number, starting_station, max_len
                 next_trains.push(...train_data["next_trains"]);
             } else {
                 for (var last_stopped_index = train_data["departure_times"].length - 1; last_stopped_index >= 1; last_stopped_index--) {
-                    if (train_data["departure_times"][last_stopped_index] !== null) {
+                    if (train_data["departure_times"][last_stopped_index] !== null && !train_data["departure_times"][last_stopped_index].startsWith("|")) {
                         break;
                     }
                 }
@@ -3040,10 +3040,6 @@ function train_detail (line_id, train_number, starting_station, train_direction,
     
     var train_operations = get_operations(line_id, train_number, starting_station, train_direction);
     
-    if (train_number.startsWith("_")) {
-        train_number = train_number.substring(1).split("__")[0];
-    }
-    
     var train_data = [get_train(line_id, train_number, starting_station)];
     
     var buf = "<span class='train_detail_day' style='background-color: " + (config["dark_mode"] ? convert_color_dark_mode(diagram_info["diagrams"][operation_table["diagram_id"]]["main_color"]) : diagram_info["diagrams"][operation_table["diagram_id"]]["main_color"]) + ";'>";
@@ -3171,6 +3167,8 @@ function train_detail (line_id, train_number, starting_station, train_direction,
                 continue;
             }
             
+            var timetable_train_number = train["train_number"].split("__")[0];
+            
             if ("clockwise_is_inbound" in railroad_info["lines"][train["line_id"]] && railroad_info["lines"][train["line_id"]]["clockwise_is_inbound"] !== null) {
                 var directions = railroad_info["lines"][train["line_id"]]["clockwise_is_inbound"] ? ["外回り", "内回り"] : ["内回り", "外回り"];
             } else {
@@ -3179,11 +3177,11 @@ function train_detail (line_id, train_number, starting_station, train_direction,
             
             var stations = [...railroad_info["lines"][train["line_id"]]["stations"]];
             
-            var is_deadhead_train = (railroad_info["deadhead_train_number_regexp"].test(train["train_number"]) || train["train_type"]=== "回送") ? true : false;
+            var is_deadhead_train = (railroad_info["deadhead_train_number_regexp"].test(timetable_train_number) || train["train_type"]=== "回送") ? true : false;
             
             buf += "<h4>" + escape_html(railroad_info["lines"][train["line_id"]]["line_name"]) + "　" + (train["is_inbound"] ? directions[0] : directions[1]);
             
-            buf += "<span style='color: " + (config["dark_mode"] ? convert_font_color_dark_mode(get_train_color(train["train_number"])) : get_train_color(train["train_number"])) + ";'>" + escape_html(train["train_type"] + "　" + train["train_number"]) + "</span>";
+            buf += "<span style='color: " + (config["dark_mode"] ? convert_font_color_dark_mode(get_train_color(timetable_train_number)) : get_train_color(timetable_train_number)) + ";'>" + escape_html(train["train_type"] + "　" + timetable_train_number) + "</span>";
             
             if (train_operations !== null) {
                 var train_operations_2 = get_operations(train["line_id"], train["train_number"], train["starting_station"], train["is_inbound"] ? "inbound_trains" : "outbound_trains");

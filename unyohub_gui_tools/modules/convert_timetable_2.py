@@ -55,12 +55,12 @@ def convert_timetable_2 (mes, main_dir, diagram_revision, diagram_id):
                 csv_reader = csv.reader(csv_f)
                 timetable_data = [data_row for data_row in csv_reader]
             
-            if len(timetable_data) != len(railroad_info["lines"][line_id]["stations"]) + 14:
-                for cnt in range(len(railroad_info["lines"][line_id]["stations"]) + 14 - len(timetable_data)):
-                    timetable_data.append([""] * len(timetable_data[0]))
-            
             if timetable_data[8][0] != "":
                 timetable_data.insert(2, [""] * len(timetable_data[0]))
+            
+            if len(timetable_data) != len(railroad_info["lines"][line_id]["stations"]) + 15:
+                for cnt in range(len(railroad_info["lines"][line_id]["stations"]) + 15 - len(timetable_data)):
+                    timetable_data.append([""] * len(timetable_data[0]))
             
             timetable_data_t = [list(x) for x in zip(*timetable_data)]
             
