@@ -2,6 +2,8 @@
 
 import os
 import csv
+import hashlib
+import base64
 
 
 def shape_time_string (time_string):
@@ -14,6 +16,10 @@ def shape_time_string (time_string):
             time_string = "24:" + time_string.zfill(2)
     
     return time_string.zfill(5)
+
+
+def get_hashed_id (id_str) :
+    return base64.b32encode(hashlib.md5(id_str.encode()).digest()).decode()[:4]
 
 
 def generate_operation_table (mes, main_dir, diagram_revision, diagram_id, generate_train_number = False):
@@ -121,6 +127,7 @@ def generate_operation_table (mes, main_dir, diagram_revision, diagram_id, gener
     mes("列車情報を抽出しています...")
     
     operation_data = {}
+    operation_number_hashes = {}
     
     train_cnt = 2
     for cnt in range(2, len(inbound_timetable_t)):
@@ -144,6 +151,11 @@ def generate_operation_table (mes, main_dir, diagram_revision, diagram_id, gener
                         inbound_timetable_t[cnt][0] += "__"
                     
                     inbound_timetable_t[cnt][0] += symbol_data["symbol"]
+        elif inbound_timetable_t[cnt][0][0] == "?":
+            if operation_number not in operation_number_hashes:
+                operation_number_hashes[operation_number] = get_hashed_id(operation_number)
+            
+            inbound_timetable_t[cnt][0] = inbound_timetable_t[cnt][0][1:] + "__" + operation_number_hashes[operation_number] + "__" + str(train_cnt)
         
         operation_data[operation_number][shape_time_string(next((item for item in inbound_timetable_t[cnt][2:] if item.isdecimal()), "99:99"))] = inbound_timetable_t[cnt][0]
         
@@ -171,6 +183,11 @@ def generate_operation_table (mes, main_dir, diagram_revision, diagram_id, gener
                         outbound_timetable_t[cnt][0] += "__"
                     
                     outbound_timetable_t[cnt][0] += symbol_data["symbol"]
+        elif outbound_timetable_t[cnt][0][0] == "?":
+            if operation_number not in operation_number_hashes:
+                operation_number_hashes[operation_number] = get_hashed_id(operation_number)
+            
+            outbound_timetable_t[cnt][0] = outbound_timetable_t[cnt][0][1:] + "__" + operation_number_hashes[operation_number] + "__" + str(train_cnt)
         
         operation_data[operation_number][shape_time_string(next((item for item in outbound_timetable_t[cnt][2:] if item.isdecimal()), "99:99"))] = outbound_timetable_t[cnt][0]
         
@@ -242,8 +259,33 @@ def generate_operation_table (mes, main_dir, diagram_revision, diagram_id, gener
                     
                     last_train_number_is_even = False
         
-        inbound_timetable[0] = inbound_timetable[0][:2] + [inbound_train_numbers[item] for item in inbound_timetable[0][2:]]
-        outbound_timetable[0] = outbound_timetable[0][:2] + [outbound_train_numbers[item] for item in outbound_timetable[0][2:]]
+        for cnt in range(2, len(inbound_timetable[0])):
+            inbound_timetable[0][cnt] = inbound_train_numbers[inbound_timetable[0][cnt]]
+        for cnt in range(2, len(outbound_timetable[0])):
+            outbound_timetable[0][cnt] = outbound_train_numbers[outbound_timetable[0][cnt]]
+    else:
+        train_numbers = {}
+        
+        for cnt in range(1, len(operation_table)):
+            train_cnt = 1
+            
+            for cnt_2 in range(6, len(operation_table[cnt])):
+                if "__" in operation_table[cnt][cnt_2]:
+                    tmp_number_split = operation_table[cnt][cnt_2].split("__")
+                    
+                    train_number = tmp_number_split[0] + "__" + tmp_number_split[1] + "-" + str(train_cnt)
+                    
+                    train_numbers[operation_table[cnt][cnt_2]] = train_number
+                    operation_table[cnt][cnt_2] = train_number
+                    
+                    train_cnt += 1
+        
+        for cnt in range(2, len(inbound_timetable[0])):
+            if inbound_timetable[0][cnt] in train_numbers:
+                inbound_timetable[0][cnt] = train_numbers[inbound_timetable[0][cnt]]
+        for cnt in range(2, len(outbound_timetable[0])):
+            if outbound_timetable[0][cnt] in train_numbers:
+                outbound_timetable[0][cnt] = train_numbers[outbound_timetable[0][cnt]]
     
     
     mes("出入庫情報をまとめています...")
