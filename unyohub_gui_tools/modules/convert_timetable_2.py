@@ -55,12 +55,12 @@ def convert_timetable_2 (mes, main_dir, diagram_revision, diagram_id):
                 csv_reader = csv.reader(csv_f)
                 timetable_data = [data_row for data_row in csv_reader]
             
-            if len(timetable_data) != len(railroad_info["lines"][line_id]["stations"]) + 14:
-                for cnt in range(len(railroad_info["lines"][line_id]["stations"]) + 14 - len(timetable_data)):
-                    timetable_data.append([""] * len(timetable_data[0]))
-            
             if timetable_data[8][0] != "":
                 timetable_data.insert(2, [""] * len(timetable_data[0]))
+            
+            if len(timetable_data) != len(railroad_info["lines"][line_id]["stations"]) + 15:
+                for cnt in range(len(railroad_info["lines"][line_id]["stations"]) + 15 - len(timetable_data)):
+                    timetable_data.append([""] * len(timetable_data[0]))
             
             timetable_data_t = [list(x) for x in zip(*timetable_data)]
             
@@ -89,6 +89,7 @@ def convert_timetable_2 (mes, main_dir, diagram_revision, diagram_id):
                 departure_times = train[9: -6]
                 
                 last_departure_time = "00:00"
+                last_stopped_station_index = 0
                 for cnt in range(len(departure_times)):
                     if departure_times[cnt] != "":
                         if departure_times[cnt][0] == "|":
@@ -104,12 +105,28 @@ def convert_timetable_2 (mes, main_dir, diagram_revision, diagram_id):
                             mes("《注意》異常な時刻値が検出されました: " + line_id + " - " + train[0])
                         
                         last_departure_time = departure_time
+                        last_stopped_station_index = cnt
                         
                         departure_times[cnt] = before_departure_time + departure_time
+                
+                if direction == "inbound":
+                    last_stopped_station_index = len(railroad_info["lines"][line_id]["stations"]) - last_stopped_station_index - 1
+                
+                if "station_initial" not in railroad_info["lines"][line_id]["stations"][last_stopped_station_index]:
+                    mes("《注意》終着駅に省略表記が登録されていません: " + line_id + " - " + train[0] + " " + railroad_info["lines"][line_id]["stations"][last_stopped_station_index]["station_name"])
                 
                 for cnt in range(len(departure_times)):
                     if departure_times[cnt] != "":
                         direction_data[train[0]][train_cnt]["starting_station"] = station_list[cnt]
+                        
+                        if direction == "inbound":
+                            starting_station_index = len(railroad_info["lines"][line_id]["stations"]) - cnt - 1
+                        else:
+                            starting_station_index = cnt
+                        
+                        if "station_initial" not in railroad_info["lines"][line_id]["stations"][starting_station_index]:
+                            mes("《注意》始発駅に省略表記が登録されていません: " + line_id + " - " + train[0] + " " + railroad_info["lines"][line_id]["stations"][starting_station_index]["station_name"])
+                        
                         break
                 
                 direction_data[train[0]][train_cnt]["train_type"] = train[1]

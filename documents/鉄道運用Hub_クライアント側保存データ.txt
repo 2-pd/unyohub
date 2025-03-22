@@ -23,6 +23,7 @@ _/_/_/_/ クライアント側ローカルストレージ _/_/_/_/
     "enlarge_display_size" : 文字や各種アイコンを大きめのサイズで表示するか(BOOL値),
     "refresh_interval" : 運用データを自動で再取得する間隔(分単位の整数値),
     "operation_data_cache_period" : 運用データのキャッシュ保管日数(整数値),
+    "position_mode_minute_step" : 走行位置モードにおける表示時刻調節の変化量(分単位の整数値),
     "show_train_types_in_position_mode" : 走行位置モードで列車番号の代わりに種別(または行き先)を表示させるか(BOOL値),
     "show_deadhead_trains_on_timetable" : 時刻表閲覧時に回送と当駅止まりを表示するか(BOOL値),
     "show_starting_trains_only_on_timetable" : 時刻表閲覧時に当駅始発のみを表示するか(BOOL値),

@@ -4903,7 +4903,7 @@ input[type="radio"] + label small, .chip + label small {
     font-size: 14px;
 }
 
-#about_popup h5 {
+.popup h5 {
     margin: 20px 0 0 0;
     
     font-size: 16px;

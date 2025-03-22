@@ -109,6 +109,7 @@ function get_default_config () {
         "enlarge_display_size" : false,
         "refresh_interval" : 5,
         "operation_data_cache_period" : 7,
+        "position_mode_minute_step" : 1,
         "show_train_types_in_position_mode" : false,
         "show_deadhead_trains_on_timetable" : true,
         "show_starting_trains_only_on_timetable" : false,
@@ -2207,7 +2208,7 @@ function position_mode (date_str = "today", position_time_additions = null) {
             document.getElementById("show_train_numbers_radio").checked = true;
         }
         
-        position_change_time(position_time_additions, false);
+        position_change_time(position_time_additions, false, false);
         
         Promise.all([promise_1, promise_2, promise_3]).then(function () {
             all_resolved = true;
@@ -2586,7 +2587,7 @@ function get_train_positions (trains, line_id, hh_and_mm, is_inbound) {
                 train_type = "＊＊＊";
                 
                 if (train_number.startsWith("_")) {
-                    var train_number = train_number.substring(1).split("__")[0];
+                    train_number = train_number.substring(1, train_number.lastIndexOf("__"));
                     
                     if (train_number in timetable["timetable"][line_id][train_direction]) {
                         train_type = timetable["timetable"][line_id][train_direction][train_number][0]["train_type"];
@@ -2765,7 +2766,7 @@ function get_final_destination (line_id, train_number, starting_station, max_len
             return "＊＊＊";
         }
         
-        var next_trains = [{line_id : line_id, train_number : train_number.substring(1).split("__")[0], starting_station : starting_station}];
+        var next_trains = [{line_id : line_id, train_number : train_number.substring(1, train_number.lastIndexOf("__")), starting_station : starting_station}];
     }
     
     var buf = "";
@@ -2780,7 +2781,7 @@ function get_final_destination (line_id, train_number, starting_station, max_len
                 next_trains.push(...train_data["next_trains"]);
             } else {
                 for (var last_stopped_index = train_data["departure_times"].length - 1; last_stopped_index >= 1; last_stopped_index--) {
-                    if (train_data["departure_times"][last_stopped_index] !== null) {
+                    if (train_data["departure_times"][last_stopped_index] !== null && !train_data["departure_times"][last_stopped_index].startsWith("|")) {
                         break;
                     }
                 }
@@ -2810,11 +2811,11 @@ var position_time;
 var position_time_touch_start_y;
 var position_time_touch_end_y;
 
-function position_change_time (position_time_additions = null, draw_train_position_now = true) {
+function position_change_time (position_time_additions = null, multiply_step_value = false, draw_train_position_now = true) {
     if (position_time_additions === null) {
         position_time = Date.now() / 60000;
     } else if (position_time_additions !== 0) {
-        position_time += position_time_additions;
+        position_time += multiply_step_value ? position_time_additions * config["position_mode_minute_step"] : position_time_additions;
         
         position_last_updated = null;
         position_reload_button_elm.style.display = "block";
@@ -3040,10 +3041,6 @@ function train_detail (line_id, train_number, starting_station, train_direction,
     
     var train_operations = get_operations(line_id, train_number, starting_station, train_direction);
     
-    if (train_number.startsWith("_")) {
-        train_number = train_number.substring(1).split("__")[0];
-    }
-    
     var train_data = [get_train(line_id, train_number, starting_station)];
     
     var buf = "<span class='train_detail_day' style='background-color: " + (config["dark_mode"] ? convert_color_dark_mode(diagram_info["diagrams"][operation_table["diagram_id"]]["main_color"]) : diagram_info["diagrams"][operation_table["diagram_id"]]["main_color"]) + ";'>";
@@ -3145,7 +3142,7 @@ function train_detail (line_id, train_number, starting_station, train_direction,
             train_data.unshift(get_train(previous_train["line_id"], previous_train["train_number"], previous_train["starting_station"]));
             
             if (train_data[0] !== null && train_data[0]["previous_trains"].length >= 1) {
-                previous_trains.push(...train_data[0]["previous_trains"][0]);
+                previous_trains.push(...train_data[0]["previous_trains"]);
             }
         }
         
@@ -3171,6 +3168,8 @@ function train_detail (line_id, train_number, starting_station, train_direction,
                 continue;
             }
             
+            var timetable_train_number = train["train_number"].split("__")[0];
+            
             if ("clockwise_is_inbound" in railroad_info["lines"][train["line_id"]] && railroad_info["lines"][train["line_id"]]["clockwise_is_inbound"] !== null) {
                 var directions = railroad_info["lines"][train["line_id"]]["clockwise_is_inbound"] ? ["外回り", "内回り"] : ["内回り", "外回り"];
             } else {
@@ -3179,11 +3178,11 @@ function train_detail (line_id, train_number, starting_station, train_direction,
             
             var stations = [...railroad_info["lines"][train["line_id"]]["stations"]];
             
-            var is_deadhead_train = (railroad_info["deadhead_train_number_regexp"].test(train["train_number"]) || train["train_type"]=== "回送") ? true : false;
+            var is_deadhead_train = (railroad_info["deadhead_train_number_regexp"].test(timetable_train_number) || train["train_type"]=== "回送") ? true : false;
             
             buf += "<h4>" + escape_html(railroad_info["lines"][train["line_id"]]["line_name"]) + "　" + (train["is_inbound"] ? directions[0] : directions[1]);
             
-            buf += "<span style='color: " + (config["dark_mode"] ? convert_font_color_dark_mode(get_train_color(train["train_number"])) : get_train_color(train["train_number"])) + ";'>" + escape_html(train["train_type"] + "　" + train["train_number"]) + "</span>";
+            buf += "<span style='color: " + (config["dark_mode"] ? convert_font_color_dark_mode(get_train_color(timetable_train_number)) : get_train_color(timetable_train_number)) + ";'>" + escape_html(train["train_type"] + "　" + timetable_train_number) + "</span>";
             
             if (train_operations !== null) {
                 var train_operations_2 = get_operations(train["line_id"], train["train_number"], train["starting_station"], train["is_inbound"] ? "inbound_trains" : "outbound_trains");
@@ -3492,7 +3491,10 @@ function draw_station_timetable (station_name) {
         }
     }
     
-    document.getElementById("timetable_station_name").innerText = railroad_info["lines"][timetable_selected_line]["stations"][station_index]["station_name"];
+    var previous_station = timetable_get_neighboring_station(timetable_selected_line, station_name, -1);
+    var next_station = timetable_get_neighboring_station(timetable_selected_line, station_name, 1);
+    
+    document.getElementById("timetable_station_name").innerHTML = "<a href='/railroad_" + railroad_info["railroad_id"] + "/timetable/" + timetable_selected_line + "/" + encodeURIComponent(previous_station) + "/' class='previous_button' onclick='event.preventDefault(); timetable_select_station(\"" + previous_station + "\");'>" + escape_html(previous_station) + "</a><h2>" + escape_html(railroad_info["lines"][timetable_selected_line]["stations"][station_index]["station_name"]) + "</h2><a href='/railroad_" + railroad_info["railroad_id"] + "/timetable/" + timetable_selected_line + "/" + encodeURIComponent(next_station) + "/' class='next_button' onclick='event.preventDefault(); timetable_select_station(\"" + next_station + "\");'>" + escape_html(next_station) + "</a>";
     
     if ("connecting_lines" in railroad_info["lines"][timetable_selected_line]["stations"][station_index]) {
         timetable_selectable_lines = [timetable_selected_line];
@@ -3717,11 +3719,11 @@ function draw_station_timetable (station_name) {
     article_elms[1].scrollTop = timetable_wrapper_scroll_amount;
 }
 
-function timetable_select_neighboring_station (move_count) {
-    var station_list = railroad_info["lines"][timetable_selected_line]["stations"];
+function timetable_get_neighboring_station (line_id, station_name, move_count) {
+    var station_list = railroad_info["lines"][line_id]["stations"];
     
     for (var cnt = 0; cnt < station_list.length; cnt++) {
-        if (station_list[cnt]["station_name"] === timetable_selected_station) {
+        if (station_list[cnt]["station_name"] === station_name) {
             break;
         }
     }
@@ -3746,7 +3748,7 @@ function timetable_select_neighboring_station (move_count) {
         }
     }
     
-    timetable_select_station(station_list[station_index]["station_name"]);
+    return station_list[station_index]["station_name"];
 }
 
 function change_show_arriving_trains (bool_val) {
@@ -3899,6 +3901,8 @@ function update_timetable_drop_down_status (elm) {
     timetable_drop_down_status[elm.id] = elm.checked;
 }
 
+
+var operation_number_order = null;
 
 var operation_data_heading_elm = document.getElementById("operation_data_heading");
 var operation_data_area_elm = document.getElementById("operation_data_area");
@@ -4157,6 +4161,8 @@ function operation_data_draw () {
         }
     }
     
+    operation_number_order = [];
+    
     var buf = "";
     
     if (!document.getElementById("radio_formations").checked) {
@@ -4217,7 +4223,7 @@ function operation_data_draw () {
             
             buf += "<table>";
             for (var operation_number of group["operation_numbers"]) {
-                buf += "<tr onclick='operation_detail(\"" + operation_number + "\", " + operation_data_date + ", " + show_write_operation_data_button + ");'><th style='background-color: " + (config["dark_mode"] ? convert_color_dark_mode(operation_table["operations"][operation_number]["main_color"]) : operation_table["operations"][operation_number]["main_color"]) + ";'>";
+                buf += "<tr onclick='operation_detail(" + operation_number_order.length + ", " + operation_data_date + ", " + show_write_operation_data_button + ");'><th style='background-color: " + (config["dark_mode"] ? convert_color_dark_mode(operation_table["operations"][operation_number]["main_color"]) : operation_table["operations"][operation_number]["main_color"]) + ";'>";
                 if (sorting_criteria === "starting_location" && operation_table["operations"][operation_number]["starting_track"] !== null) {
                     buf += "<small>" + operation_table["operations"][operation_number]["starting_track"] + "停泊</small><br>";
                 } else if (sorting_criteria === "terminal_location" && operation_table["operations"][operation_number]["terminal_track"] !== null) {
@@ -4234,6 +4240,8 @@ function operation_data_draw () {
                 buf += get_operation_data_cell_html(operation_number, days_before, now_str, null, (sorting_criteria === "terminal_location" && reoperated_operation_numbers.has(operation_number) ? "(再出庫有)" : null));
                 
                 buf += "</tr>";
+                
+                operation_number_order.push(operation_number);
             }
             buf += "</table>";
         }
@@ -4320,7 +4328,7 @@ function operation_data_draw () {
                     if (operation_numbers.length >= 1) {
                         var operation_number = operation_numbers[cnt];
                         
-                        buf += "<tr onclick='operation_detail(\"" + operation_number + "\", " + operation_data_date + ", " + show_write_operation_data_button + ");'>";
+                        buf += "<tr onclick='operation_detail(" + operation_number_order.length + ", " + operation_data_date + ", " + show_write_operation_data_button + ");'>";
                     } else {
                         buf += "<tr>";
                     }
@@ -4343,6 +4351,8 @@ function operation_data_draw () {
                         buf += "<th style='background-color: " + (config["dark_mode"] ? convert_color_dark_mode(operation_table["operations"][operation_number]["main_color"]) : operation_table["operations"][operation_number]["main_color"]) + ";'><u>" + operation_number + "</u></th>";
                         
                         buf += get_operation_data_cell_html(operation_number, days_before, now_str, formation_name);
+                        
+                        operation_number_order.push(operation_number);
                     } else {
                         buf += "<td colspan='2' class='no_operation'>(情報がありません)</td>";
                     }
@@ -4361,7 +4371,7 @@ function operation_data_draw () {
 
 var operation_detail_write_button_enabled = false;
 
-function operation_detail (operation_number, operation_data_date_ts_or_diagram_id, show_write_operation_data_button = null, formation_text = null) {
+function operation_detail (operation_number_or_index, operation_data_date_ts_or_diagram_id, show_write_operation_data_button = null, formation_text = null) {
     var popup_inner_elm = open_popup("operation_detail_popup", null, true);
     
     popup_inner_elm.className = "wait_icon";
@@ -4396,26 +4406,28 @@ function operation_detail (operation_number, operation_data_date_ts_or_diagram_i
                             promise_2_resolved = true;
                             resolve();
                         } else if (promise_1_resolved) {
-                            draw_operation_detail(operation_number, diagram_id, operation_data_date_ts_or_diagram_id, formation_text);
+                            draw_operation_detail(operation_number_or_index, diagram_id, operation_data_date_ts_or_diagram_id, formation_text);
                         }
                     }, function () {}, diagram_info["diagrams"][diagram_id]["timetable_id"]);
                 });
                 
                 Promise.all([promise_1, promise_2]).then(function () {
-                    draw_operation_detail(operation_number, diagram_id, operation_data_date_ts_or_diagram_id, formation_text);
+                    draw_operation_detail(operation_number_or_index, diagram_id, operation_data_date_ts_or_diagram_id, formation_text);
                 });
                 
                 return;
             }
             
-            draw_operation_detail(operation_number, diagram_id, operation_data_date_ts_or_diagram_id, formation_text);
+            draw_operation_detail(operation_number_or_index, diagram_id, operation_data_date_ts_or_diagram_id, formation_text);
         });
     } else {
-        draw_operation_detail(operation_number, operation_data_date_ts_or_diagram_id, null, formation_text);
+        draw_operation_detail(operation_number_or_index, operation_data_date_ts_or_diagram_id, null, formation_text);
     }
 }
 
-function draw_operation_detail (operation_number, diagram_id, operation_data_date_ts, formation_text) {
+function draw_operation_detail (operation_number_or_index, diagram_id, operation_data_date_ts, formation_text) {
+    var operation_number = typeof operation_number_or_index === "string" ? operation_number_or_index : operation_number_order[operation_number_or_index];
+    
     if (operation_data_date_ts === null) {
         var operation_data_date_str = null;
         var is_today = false;
@@ -4448,7 +4460,7 @@ function draw_operation_detail (operation_number, diagram_id, operation_data_dat
     }
     
     if (operation_number in operation_table["operations"]) {
-        var buf = "<div class='heading_wrapper' style='background-color: " + bg_color + ";" + color_style + "'><button type='button' class='previous_button' onclick='previous_operation_number(\"" + operation_number + "\", " + diagram_id_or_ts + ");'></button><h2>" + operation_number + "運用<small>" + operation_table["operations"][operation_number]["operation_group_name"] + " (" + operation_table["operations"][operation_number]["car_count"] + "両)</small></h2><button type='button' class='next_button' onclick='next_operation_number(\"" + operation_number + "\", " + diagram_id_or_ts + ");'></button></div>";
+        var buf = "<div class='heading_wrapper' style='background-color: " + bg_color + ";" + color_style + "'><button type='button' class='previous_button' onclick='previous_operation_number(" + (typeof operation_number_or_index === "string" ? "\"" + operation_number + "\"" : operation_number_or_index) + ", " + diagram_id_or_ts + ");'></button><h2>" + operation_number + "運用<small>" + operation_table["operations"][operation_number]["operation_group_name"] + " (" + operation_table["operations"][operation_number]["car_count"] + "両)</small></h2><button type='button' class='next_button' onclick='next_operation_number(" + (typeof operation_number_or_index === "string" ? "\"" + operation_number + "\"" : operation_number_or_index) + ", " + diagram_id_or_ts + ");'></button></div>";
     } else {
         var buf = "<h2 style='background-color: " + bg_color + ";" + color_style + "'>" + operation_number + "運用</h2>";
     }
@@ -4708,25 +4720,57 @@ function change_simplify_operation_details (bool_val, operation_number, operatio
     draw_operation_trains(operation_number, operation_table_name_or_ts, is_today);
 }
 
-function previous_operation_number (operation_number, operation_data_date_ts_or_operation_name) {
-    var operation_numbers = Object.keys(operation_table["operations"]).toSorted();
-    
-    var operation_number_index = operation_numbers.indexOf(operation_number);
-    if (operation_number_index >= 1) {
-        operation_detail(operation_numbers[operation_number_index - 1], operation_data_date_ts_or_operation_name);
+function previous_operation_number (operation_number_or_index, operation_data_date_ts_or_operation_name) {
+    if (typeof operation_number_or_index === "string") {
+        for (var group_index = 0; group_index < operation_table["operation_groups"].length; group_index++) {
+            if (operation_table["operation_groups"][group_index]["operation_group_name"] === operation_table["operations"][operation_number_or_index]["operation_group_name"]) {
+                break;
+            }
+        }
+        
+        var operation_numbers = operation_table["operation_groups"][group_index]["operation_numbers"];
+        var operation_number_index = operation_numbers.indexOf(operation_number_or_index);
+        
+        if (operation_number_index >= 1) {
+            operation_detail(operation_numbers[operation_number_index - 1], operation_data_date_ts_or_operation_name);
+        } else {
+            group_index = group_index >= 1 ? group_index - 1 : operation_table["operation_groups"].length - 1;
+            
+            operation_detail(operation_table["operation_groups"][group_index]["operation_numbers"][operation_table["operation_groups"][group_index]["operation_numbers"].length - 1], operation_data_date_ts_or_operation_name);
+        }
     } else {
-        operation_detail(operation_numbers[operation_numbers.length - 1], operation_data_date_ts_or_operation_name);
+        if (operation_number_or_index >= 1) {
+            operation_detail(operation_number_or_index - 1, operation_data_date_ts_or_operation_name);
+        } else {
+            operation_detail(operation_number_order.length - 1, operation_data_date_ts_or_operation_name);
+        }
     }
 }
 
-function next_operation_number (operation_number, operation_data_date_ts_or_operation_name) {
-    var operation_numbers = Object.keys(operation_table["operations"]).toSorted();
-    
-    var operation_number_index = operation_numbers.indexOf(operation_number);
-    if (operation_number_index < operation_numbers.length - 1) {
-        operation_detail(operation_numbers[operation_number_index + 1], operation_data_date_ts_or_operation_name);
+function next_operation_number (operation_number_or_index, operation_data_date_ts_or_operation_name) {
+    if (typeof operation_number_or_index === "string") {
+        for (var group_index = 0; group_index < operation_table["operation_groups"].length; group_index++) {
+            if (operation_table["operation_groups"][group_index]["operation_group_name"] === operation_table["operations"][operation_number_or_index]["operation_group_name"]) {
+                break;
+            }
+        }
+        
+        var operation_numbers = operation_table["operation_groups"][group_index]["operation_numbers"];
+        var operation_number_index = operation_numbers.indexOf(operation_number_or_index);
+        
+        if (operation_number_index < operation_numbers.length - 1) {
+            operation_detail(operation_numbers[operation_number_index + 1], operation_data_date_ts_or_operation_name);
+        } else {
+            group_index = group_index < operation_table["operation_groups"].length - 1 ? group_index + 1 : 0;
+            
+            operation_detail(operation_table["operation_groups"][group_index]["operation_numbers"][0], operation_data_date_ts_or_operation_name);
+        }
     } else {
-        operation_detail(operation_numbers[0], operation_data_date_ts_or_operation_name);
+        if (operation_number_or_index < operation_number_order.length - 1) {
+            operation_detail(operation_number_or_index + 1, operation_data_date_ts_or_operation_name);
+        } else {
+            operation_detail(0, operation_data_date_ts_or_operation_name);
+        }
     }
 }
 
@@ -5457,6 +5501,8 @@ function draw_operation_table (is_today) {
         var is_today_str = "false";
     }
     
+    operation_number_order = [];
+    
     var buf = "";
     for (var operation_number of operation_numbers) {
         if (!search_car_count_list.includes(operation_table["operations"][operation_number]["car_count"])) {
@@ -5519,14 +5565,16 @@ function draw_operation_table (is_today) {
         }
         
         if (search_keyword === "" || search_hit_count >= 1) {
-            buf += "<tr onclick='operation_detail(\"" + operation_number + "\", " + operation_table_name_or_ts + ", " + is_today_str + ");'>";
+            buf += "<tr onclick='operation_detail(" + operation_number_order.length + ", " + operation_table_name_or_ts + ", " + is_today_str + ");'>";
             buf += "<th rowspan='2' style='background-color: " + (config["dark_mode"] ? convert_color_dark_mode(operation_table["operations"][operation_number]["main_color"]) : operation_table["operations"][operation_number]["main_color"]) + "'><b>" + operation_number + "</b>" + operation_table["operations"][operation_number]["operation_group_name"] + "<br>(" + operation_table["operations"][operation_number]["car_count"] + "両)</th>";
             buf += "<td>" + operation_table["operations"][operation_number]["starting_location"] + (operation_table["operations"][operation_number]["starting_track"] !== null ? "<small>(" + operation_table["operations"][operation_number]["starting_track"] + ")</small>" : "") + "<time" + (operation_table["operations"][operation_number]["starting_time"] !== null ? ">" + operation_table["operations"][operation_number]["starting_time"] : " datetime='PT24H'>N/A") + "</time></td>";
             buf += "<td>" + operation_table["operations"][operation_number]["terminal_location"] + (operation_table["operations"][operation_number]["terminal_track"] !== null ? "<small>(" + operation_table["operations"][operation_number]["terminal_track"] + ")</small>" : "") + "<time" + (operation_table["operations"][operation_number]["ending_time"] !== null ? ">" + operation_table["operations"][operation_number]["ending_time"] : " datetime='PT24H'>N/A") + "</time></td>";
             buf += "</tr>";
-            buf += "<tr onclick='operation_detail(\"" + operation_number + "\", " + operation_table_name_or_ts + ", " + is_today_str + ");'><td colspan='2' class='operation_overview'>";
+            buf += "<tr onclick='operation_detail(" + operation_number_order.length + ", " + operation_table_name_or_ts + ", " + is_today_str + ");'><td colspan='2' class='operation_overview'>";
             buf += buf_2;
             buf += "</td></tr>";
+            
+            operation_number_order.push(operation_number);
         }
     }
     
@@ -6518,10 +6566,12 @@ function edit_config () {
     buf += "<input type='checkbox' id='enlarge_display_size_check' class='toggle' onchange='change_config();'" + (config["enlarge_display_size"] ? "checked='checked'" : "") + "><label for='enlarge_display_size_check'>各種表示サイズの拡大</label>";
     buf += "<input type='checkbox' id='colorize_corrected_posts_check' class='toggle' onchange='change_config();'" + (config["colorize_corrected_posts"] ? "checked='checked'" : "") + "><label for='colorize_corrected_posts_check'>訂正された投稿を区別する</label>";
     buf += "<input type='checkbox' id='colorize_beginners_posts_check' class='toggle' onchange='change_config();'" + (config["colorize_beginners_posts"] ? "checked='checked'" : "") + "><label for='colorize_beginners_posts_check'>ビギナーの方の投稿を区別する</label>";
-    buf += "<h3>運用情報の自動更新間隔</h3>";
-    buf += "<input type='number' id='refresh_interval' min='1' max='60' onchange='change_config();' value='" + config["refresh_interval"] + "'>分ごと<br>";
-    buf += "<h3>運用情報のキャッシュ保管日数</h3>";
-    buf += "<input type='number' id='operation_data_cache_period' min='1' max='30' onchange='change_config();' value='" + config["operation_data_cache_period"] + "'>日前以降のキャッシュを保管<br>";
+    buf += "<h5>運用情報の自動更新間隔</h5>";
+    buf += "<input type='number' id='refresh_interval' min='1' max='60' onchange='change_config();' value='" + config["refresh_interval"] + "'>分ごと";
+    buf += "<h5>運用情報のキャッシュ保管日数</h5>";
+    buf += "<input type='number' id='operation_data_cache_period' min='1' max='30' onchange='change_config();' value='" + config["operation_data_cache_period"] + "'>日前以降のキャッシュを保管";
+    buf += "<h5>走行位置表示時刻調節ボタンの動作</h5>";
+    buf += "<input type='number' id='position_mode_minute_step' min='1' max='10' onchange='change_config();' value='" + config["position_mode_minute_step"] + "'>分単位で増減";
     buf += "<a href='javascript:void(0);' class='execute_link' onclick='reset_config_value();'>デフォルト値に戻す</a>";
     buf += "<a href='javascript:void(0);' class='execute_link' onclick='reset_cache_db();'>キャッシュデータベースの初期化</a>";
     buf += "<div class='informational_text'>変更内容は自動で保存されます</div>";
@@ -6551,6 +6601,14 @@ function change_config () {
     }
     config["operation_data_cache_period"] = Number(operation_data_cache_period_elm.value);
     
+    var position_mode_minute_step_elm = document.getElementById("position_mode_minute_step");
+    if (Number(position_mode_minute_step_elm.value) > 10) {
+        position_mode_minute_step_elm.value = 10;
+    } else if (Number(position_mode_minute_step_elm.value) < 1) {
+        position_mode_minute_step_elm.value = 1;
+    }
+    config["position_mode_minute_step"] = Number(position_mode_minute_step_elm.value);
+    
     update_display_settings(true);
     
     save_config();
@@ -6565,6 +6623,7 @@ function reset_config_value () {
         document.getElementById("colorize_beginners_posts_check").checked = dafault_config["colorize_beginners_posts"];
         document.getElementById("refresh_interval").value = dafault_config["refresh_interval"];
         document.getElementById("operation_data_cache_period").value = dafault_config["operation_data_cache_period"];
+        document.getElementById("position_mode_minute_step").value = dafault_config["position_mode_minute_step"];
         
         change_config();
     }
