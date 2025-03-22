@@ -17,7 +17,7 @@
  */
 
 define("UNYOHUB_APP_NAME", "鉄道運用Hub");
-define("UNYOHUB_VERSION", "25.03-2");
+define("UNYOHUB_VERSION", "25.03-3");
 define("UNYOHUB_APP_INFO_URL", "https://create.2pd.jp/apps/unyohub/");
 define("UNYOHUB_REPOSITORY_URL", "https://fossil.2pd.jp/unyohub/");
 define("UNYOHUB_LICENSE_TEXT", "このアプリケーションは無権利創作宣言に準拠して著作権放棄されています。");
@@ -300,7 +300,7 @@ if ($path_info_str === "/") {
     <footer>
         <div>
             <button type="button" id="position_reload_button" class="reload_button" onclick="position_mode('today', null);"></button>
-            <select id="position_date_select" class="footer_select" onchange="position_mode(this.value, 0);"><option value="today" selected="selected">今日</option><option value="tomorrow">明日</option></select><span ontouchstart="position_time_swipe_start(event);" ontouchmove="position_time_swipe(event);" ontouchend="position_time_swipe_end(event, 360);"><button type="button" class="previous_button" onclick="position_change_time(-60);"></button><span id="position_hours" class="footer_value"></span><button type="button" class="next_button" onclick="position_change_time(60);"></button></span><span ontouchstart="position_time_swipe_start(event);" ontouchmove="position_time_swipe(event);" ontouchend="position_time_swipe_end(event, 10);"><button type="button" class="previous_button" onclick="position_change_time(-1);"></button><span id="position_minutes" class="footer_value"></span><button type="button" class="next_button" onclick="position_change_time(1);"></button></span>
+            <select id="position_date_select" class="footer_select" onchange="position_mode(this.value, 0);"><option value="today" selected="selected">今日</option><option value="tomorrow">明日</option></select><span ontouchstart="position_time_swipe_start(event);" ontouchmove="position_time_swipe(event);" ontouchend="position_time_swipe_end(event, 360);"><button type="button" class="previous_button" onclick="position_change_time(-60);"></button><span id="position_hours" class="footer_value"></span><button type="button" class="next_button" onclick="position_change_time(60);"></button></span><span ontouchstart="position_time_swipe_start(event);" ontouchmove="position_time_swipe(event);" ontouchend="position_time_swipe_end(event, 10);"><button type="button" class="previous_button" onclick="position_change_time(-1, true);"></button><span id="position_minutes" class="footer_value"></span><button type="button" class="next_button" onclick="position_change_time(1, true);"></button></span>
             <input type="time" id="position_time_button" class="time_button" onchange="position_time_button_change();">
         </div>
         <div>

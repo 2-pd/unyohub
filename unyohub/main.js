@@ -109,6 +109,7 @@ function get_default_config () {
         "enlarge_display_size" : false,
         "refresh_interval" : 5,
         "operation_data_cache_period" : 7,
+        "position_mode_minute_step" : 1,
         "show_train_types_in_position_mode" : false,
         "show_deadhead_trains_on_timetable" : true,
         "show_starting_trains_only_on_timetable" : false,
@@ -2207,7 +2208,7 @@ function position_mode (date_str = "today", position_time_additions = null) {
             document.getElementById("show_train_numbers_radio").checked = true;
         }
         
-        position_change_time(position_time_additions, false);
+        position_change_time(position_time_additions, false, false);
         
         Promise.all([promise_1, promise_2, promise_3]).then(function () {
             all_resolved = true;
@@ -2810,11 +2811,11 @@ var position_time;
 var position_time_touch_start_y;
 var position_time_touch_end_y;
 
-function position_change_time (position_time_additions = null, draw_train_position_now = true) {
+function position_change_time (position_time_additions = null, multiply_step_value = false, draw_train_position_now = true) {
     if (position_time_additions === null) {
         position_time = Date.now() / 60000;
     } else if (position_time_additions !== 0) {
-        position_time += position_time_additions;
+        position_time += multiply_step_value ? position_time_additions * config["position_mode_minute_step"] : position_time_additions;
         
         position_last_updated = null;
         position_reload_button_elm.style.display = "block";
@@ -6565,10 +6566,12 @@ function edit_config () {
     buf += "<input type='checkbox' id='enlarge_display_size_check' class='toggle' onchange='change_config();'" + (config["enlarge_display_size"] ? "checked='checked'" : "") + "><label for='enlarge_display_size_check'>各種表示サイズの拡大</label>";
     buf += "<input type='checkbox' id='colorize_corrected_posts_check' class='toggle' onchange='change_config();'" + (config["colorize_corrected_posts"] ? "checked='checked'" : "") + "><label for='colorize_corrected_posts_check'>訂正された投稿を区別する</label>";
     buf += "<input type='checkbox' id='colorize_beginners_posts_check' class='toggle' onchange='change_config();'" + (config["colorize_beginners_posts"] ? "checked='checked'" : "") + "><label for='colorize_beginners_posts_check'>ビギナーの方の投稿を区別する</label>";
-    buf += "<h3>運用情報の自動更新間隔</h3>";
-    buf += "<input type='number' id='refresh_interval' min='1' max='60' onchange='change_config();' value='" + config["refresh_interval"] + "'>分ごと<br>";
-    buf += "<h3>運用情報のキャッシュ保管日数</h3>";
-    buf += "<input type='number' id='operation_data_cache_period' min='1' max='30' onchange='change_config();' value='" + config["operation_data_cache_period"] + "'>日前以降のキャッシュを保管<br>";
+    buf += "<h5>運用情報の自動更新間隔</h5>";
+    buf += "<input type='number' id='refresh_interval' min='1' max='60' onchange='change_config();' value='" + config["refresh_interval"] + "'>分ごと";
+    buf += "<h5>運用情報のキャッシュ保管日数</h5>";
+    buf += "<input type='number' id='operation_data_cache_period' min='1' max='30' onchange='change_config();' value='" + config["operation_data_cache_period"] + "'>日前以降のキャッシュを保管";
+    buf += "<h5>走行位置表示時刻調節ボタンの動作</h5>";
+    buf += "<input type='number' id='position_mode_minute_step' min='1' max='10' onchange='change_config();' value='" + config["position_mode_minute_step"] + "'>分単位で増減";
     buf += "<a href='javascript:void(0);' class='execute_link' onclick='reset_config_value();'>デフォルト値に戻す</a>";
     buf += "<a href='javascript:void(0);' class='execute_link' onclick='reset_cache_db();'>キャッシュデータベースの初期化</a>";
     buf += "<div class='informational_text'>変更内容は自動で保存されます</div>";
@@ -6598,6 +6601,14 @@ function change_config () {
     }
     config["operation_data_cache_period"] = Number(operation_data_cache_period_elm.value);
     
+    var position_mode_minute_step_elm = document.getElementById("position_mode_minute_step");
+    if (Number(position_mode_minute_step_elm.value) > 10) {
+        position_mode_minute_step_elm.value = 10;
+    } else if (Number(position_mode_minute_step_elm.value) < 1) {
+        position_mode_minute_step_elm.value = 1;
+    }
+    config["position_mode_minute_step"] = Number(position_mode_minute_step_elm.value);
+    
     update_display_settings(true);
     
     save_config();
@@ -6612,6 +6623,7 @@ function reset_config_value () {
         document.getElementById("colorize_beginners_posts_check").checked = dafault_config["colorize_beginners_posts"];
         document.getElementById("refresh_interval").value = dafault_config["refresh_interval"];
         document.getElementById("operation_data_cache_period").value = dafault_config["operation_data_cache_period"];
+        document.getElementById("position_mode_minute_step").value = dafault_config["position_mode_minute_step"];
         
         change_config();
     }
