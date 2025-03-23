@@ -3976,6 +3976,10 @@ button abbr {
     margin-bottom: 60px;
 }
 
+.train_detail_departure_time span {
+    float: right;
+}
+
 .deadhead_train_departure_time span:before {
     content: "(";
     
