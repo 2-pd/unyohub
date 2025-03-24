@@ -1834,6 +1834,8 @@ input[type="checkbox"]:checked + label.drop_down:after {
 input[type="checkbox"] + label.drop_down + div {
     display: none;
     
+    position: relative;
+    
     width: 100%;
     
     max-width: 500px;
@@ -2065,10 +2067,39 @@ input[type="checkbox"]:checked + label.drop_down + div {
     opacity: 0.5;
 }
 
+#formation_table_area .screenshot_button {
+    position: absolute;
+    
+    top: 6px;
+    right: 0;
+}
+
+.formation_table_series_name {
+    display: none;
+    
+    margin : 0;
+    
+    line-height: 36px;
+    font-size: 24px;
+    text-align: center;
+}
+
 .formation_table {
     margin: 0 auto 12px auto;
     
     border-collapse: collapse;
+}
+
+.formation_table tr:first-child td {
+    padding: 0;
+    
+    line-height: 32px;
+    font-size: 15px;
+    color: #666666;
+}
+
+.dark_mode .formation_table tr:first-child td {
+    color: #cccccc;
 }
 
 .formation_table th {
@@ -4581,6 +4612,10 @@ button abbr {
 
 .screenshot_area .train_detail_day+h3 {
     margin-top: 30px;
+}
+
+.screenshot_area .formation_table_series_name {
+    display: block;
 }
 
 input[type="text"], input[type="number"], input[type="password"], input[type="search"], .wide_select {

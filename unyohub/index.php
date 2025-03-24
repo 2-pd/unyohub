@@ -113,14 +113,14 @@ if (empty($_SERVER["PATH_INFO"]) || $_SERVER["PATH_INFO"] === "/") {
                         }
                         
                         $path_info_str .= urlencode($path_info[3])."/";
-                        $page_title = $path_info[3]." (".$railroad_info["railroad_name"].") の編成情報・運用 | ".UNYOHUB_APP_NAME;
+                        $page_title = $formations["formations"][$path_info[3]]["series_name"]." ".$path_info[3]." (".$railroad_info["railroad_name"].") の編成情報・運用 | ".UNYOHUB_APP_NAME;
                         
                         $car_numbers = array();
                         foreach ($formations["formations"][$path_info[3]]["cars"] as $car) {
                             $car_numbers[] = $car["car_number"];
                         }
                         
-                        $page_description = $railroad_info["railroad_name"]."で運用されている編成 ".$path_info[3]." ( ".implode(" - ", $car_numbers)." ) の車両設備・車歴情報、及び運用状況です。";
+                        $page_description = $railroad_info["railroad_name"]."で運用されている".$formations["formations"][$path_info[3]]["series_name"]."の編成 ".$path_info[3]." ( ".implode(" - ", $car_numbers)." ) の車両設備・車歴情報、及び運用状況です。";
                     }
                     
                     break;

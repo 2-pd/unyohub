@@ -2389,7 +2389,7 @@ function select_lines (lines = null, position_mode = true) {
             var line_name = "全ての路線";
         }
         
-        buf += "<button onclick='close_square_popup(); ";
+        buf += "<button type='button' onclick='close_square_popup(); ";
         
         if (position_mode) {
             buf += "position_change_lines(" + line_id_text + ");";
@@ -4820,12 +4820,15 @@ function formation_table_wrapper_onscroll () {
 function get_formation_table_html (formation_names, search_keyword) {
     var buf = "";
     var search_hit_formation_count = 0;
+    var search_hit_formations_car_count = 0;
     for (var formation_name of formation_names) {
         var overview = get_formation_overview(formation_name);
         
         var buf_2 = "<tr onclick='formation_detail(\"" + add_slashes(formation_name) + "\");'><td><img src='" + get_icon(formation_name) + "' alt='' class='train_icon'" + (overview["unavailable"] ? " style='opacity: 0.5;'" : "") + "></td>";
         
-        buf_2 += "<td><h5><a href='/railroad_" + railroad_info["railroad_id"] + "/formations/" + add_slashes(encodeURIComponent(formation_name)) + "/' onclick='event.preventDefault();'>" + escape_html(formation_name) + "</a>";
+        var formation_name_search_hit = search_keyword.length >= 1 && formation_name.includes(search_keyword);
+        
+        buf_2 += "<td><h5><a href='/railroad_" + railroad_info["railroad_id"] + "/formations/" + add_slashes(encodeURIComponent(formation_name)) + "/' onclick='event.preventDefault();'" + (formation_name_search_hit ? " class='search_highlight'" : "") + ">" + escape_html(formation_name) + "</a>";
         
         if (overview["unavailable"]) {
             buf_2 += "<b class='warning_sentence'>運用離脱中</b>";
@@ -4844,9 +4847,11 @@ function get_formation_table_html (formation_names, search_keyword) {
                     car_class =  "car_highlight";
                     
                     search_hit_count++;
+                } else if (formation_name_search_hit) {
+                    search_hit_count++;
                 }
             } else {
-                search_hit_count = 1;
+                search_hit_count++;
             }
             
             if ("equipment" in car) {
@@ -4867,10 +4872,11 @@ function get_formation_table_html (formation_names, search_keyword) {
         if (search_hit_count >= 1) {
             buf += buf_2;
             search_hit_formation_count++;
+            search_hit_formations_car_count += search_hit_count;
         }
     }
     
-    return [buf, search_hit_formation_count];
+    return [buf, search_hit_formation_count, search_hit_formations_car_count];
 }
 
 function draw_formation_table (update_title = true) {
@@ -4888,34 +4894,27 @@ function draw_formation_table (update_title = true) {
         if ("subseries_names" in formations["series"][series_name]) {
             var buf_2 = "";
             var search_hit_formation_count = 0;
+            var search_hit_formations_car_count = 0;
             
             for (var subseries_name of formations["series"][series_name]["subseries_names"]) {
-                var [buf_3, subseries_search_hit_formation_count] = get_formation_table_html(formations["series"][series_name]["subseries"][subseries_name]["formation_names"], search_keyword);
+                var [buf_3, subseries_search_hit_formation_count, subseries_search_hit_formations_car_count] = get_formation_table_html(formations["series"][series_name]["subseries"][subseries_name]["formation_names"], search_keyword);
                 
                 if (subseries_search_hit_formation_count >= 1) {
                     buf_2 += "<tr><th colspan='2'>" + escape_html(subseries_name) + "</th></tr>" + buf_3;
                     search_hit_formation_count += subseries_search_hit_formation_count;
+                    search_hit_formations_car_count += subseries_search_hit_formations_car_count;
                 }
             }
         } else {
-            var [buf_2, search_hit_formation_count] = get_formation_table_html(formations["series"][series_name]["formation_names"], search_keyword);
+            var [buf_2, search_hit_formation_count, search_hit_formations_car_count] = get_formation_table_html(formations["series"][series_name]["formation_names"], search_keyword);
         }
         
         if (search_hit_formation_count >= 1) {
             var checkbox_id = "series_" + series_name;
             
-            buf += "<input type='checkbox' id='" + checkbox_id + "'";
-            
-            if (checkbox_id in formation_table_drop_down_status && formation_table_drop_down_status[checkbox_id]) {
-                buf += " checked='checked'";
-            }
-            
-            buf += " onclick='update_formation_table_drop_down_status(this);'><label for='" + checkbox_id + "' class='drop_down'>" + escape_html(series_name);
-            if (search_keyword >= 1) {
-                buf += " (" + search_hit_formation_count + "編成該当)";
-            }
-            buf += "</label>";
-            buf += "<div><table class='formation_table'>" + buf_2 + "</table></div>";
+            buf += "<input type='checkbox' id='" + checkbox_id + "'" + (checkbox_id in formation_table_drop_down_status && formation_table_drop_down_status[checkbox_id] ? " checked='checked'" : "") + " onclick='update_formation_table_drop_down_status(this);'>";
+            buf += "<label for='" + checkbox_id + "' class='drop_down'>" + escape_html(series_name) + (search_keyword.length >= 1 ? " (" + search_hit_formation_count + "編成該当)" : "") + "</label>";
+            buf += "<div id='formation_table_" + checkbox_id + "'><h3 class='formation_table_series_name'>" + escape_html(series_name) + "</h3><button type='button' class='screenshot_button' onclick='take_screenshot(\"formation_table_" + checkbox_id + "\");'></button></button><table class='formation_table'><tr><td colspan='2'>" + search_hit_formation_count + "編成 " + search_hit_formations_car_count + "両 " + (search_keyword.length >= 1 ? "該当" : "在籍中") + "" + buf_2 + "</td></tr></table></div>";
         }
     }
     
@@ -4995,7 +4994,9 @@ function get_last_formation_of_series (series_name) {
 }
 
 function formation_detail (formation_name) {
-    change_title(formation_name + " (" + railroad_info["railroad_name"] + ") の編成情報・運用 | " + instance_info["instance_name"], "/railroad_" + railroad_info["railroad_id"] + "/formations/" + encodeURIComponent(formation_name) + "/");
+    var series_name = formations["formations"][formation_name]["series_name"];
+    
+    change_title(series_name + " " + formation_name + " (" + railroad_info["railroad_name"] + ") の編成情報・運用 | " + instance_info["instance_name"], "/railroad_" + railroad_info["railroad_id"] + "/formations/" + encodeURIComponent(formation_name) + "/");
     
     document.getElementById("formation_search_area").style.display = "none";
     formation_table_area_elm.innerHTML = "";
@@ -5005,7 +5006,6 @@ function formation_detail (formation_name) {
     document.getElementById("formation_screenshot_button").style.display = "block";
     document.getElementById("formation_back_button").style.display = "block";
     
-    var series_name = formations["formations"][formation_name]["series_name"];
     var formation_list = "subseries_name" in formations["formations"][formation_name] ? formations["series"][series_name]["subseries"][formations["formations"][formation_name]["subseries_name"]]["formation_names"] : formations["series"][series_name]["formation_names"];
     
     var formation_index = formation_list.indexOf(formation_name);
@@ -5847,7 +5847,7 @@ function write_operation_data (yyyy_mm_dd, operation_number, train_number = null
         
         buf += "<div id='train_number_data'>";
         buf += "<h4>目撃時の列車</h4>";
-        buf += "<b id='operation_data_train_number'></b><button onclick='select_train_number(\"" + add_slashes(operation_number) + "\", \"" + now_hh_mm + "\");'>変更</button>";
+        buf += "<b id='operation_data_train_number'></b><button type='button' onclick='select_train_number(\"" + add_slashes(operation_number) + "\", \"" + now_hh_mm + "\");'>変更</button>";
         buf += "</div>";
         
         buf += "<h4>運用補足情報</h4>";
