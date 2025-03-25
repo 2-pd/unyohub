@@ -4150,7 +4150,7 @@ button abbr {
     display: inline;
 }
 
-.train_overview span, .train_overview time {
+.train_overview span:not(.search_highlight), .train_overview time {
     display: inline-block;
     
     width: 26%;
@@ -4164,7 +4164,7 @@ button abbr {
     margin-left: 16px;
 }
 
-.operation_table_train span {
+.operation_table_train span:not(.search_highlight) {
     display: inline-block;
     
     width: 45%;

@@ -274,14 +274,14 @@ if ($path_info_str === "/") {
     <article onscroll="formation_table_wrapper_onscroll();">
         <button type="button" id="formation_screenshot_button" class="screenshot_button" onclick="take_screenshot('formation_table_area');"></button>
         <div id="formation_search_area">
-            <div class='search_wrapper'><label for="car_number_search" class="search_icon">車両番号で検索</label><input type="search" id="car_number_search" onkeyup="draw_formation_table();" onsearch="draw_formation_table();" placeholder="車両番号で検索" autocomplete="off"></div>
+            <div class='search_wrapper'><label for="car_number_search" class="search_icon">編成名・車両番号で検索</label><input type="search" id="car_number_search" onkeyup="draw_formation_table();" onsearch="draw_formation_table();" placeholder="編成名・車両番号で検索" autocomplete="off"></div>
             <div id ="colorize_formation_table_radio_area" class="radio_area"><input type="radio" name="colorize_formation_table_radio" id="colorize_formation_table" onchange="change_colorize_formation_table(this.checked);"><label for="colorize_formation_table">車体色を表示</label><input type="radio" name="colorize_formation_table_radio" id="not_colorize_formation_table" onchange="change_colorize_formation_table(!this.checked);"><label for="not_colorize_formation_table">白黒で表示</label></div>
         </div>
         <div id="formation_table_area" class="wait_icon"></div>
     </article>
     <article>
         <div id="operation_search_area">
-            <div class='search_wrapper'><label for="train_number_search" class="search_icon">列車番号で検索</label><input type="search" id="train_number_search" onkeyup="operation_table_list_number();" onsearch="operation_table_list_number();" placeholder="列車番号で検索" autocomplete="off"></div>
+            <div class='search_wrapper'><label for="train_number_search" class="search_icon">運用・列車番号で検索</label><input type="search" id="train_number_search" onkeyup="operation_table_list_number();" onsearch="operation_table_list_number();" placeholder="運用・列車番号で検索" autocomplete="off"></div>
             <input type="checkbox" id="operation_search_menu"><label for="operation_search_menu" class="drop_down">絞り込み条件 <span id="operation_search_filter_count"></span></label>
             <div>
                 <select class="wide_select" id="operation_search_group_name" onchange="operation_table_list_number();"><option value="" selected="selected"></option></select>
