@@ -70,6 +70,7 @@ def convert_timetable_1 (mes, file_name, digits_count):
             
             if sum([i != "" and i != "||" for i in train]) > 1:
                 train = [timetable_column[0].strip().zfill(digits_count), timetable_column[1].strip(), timetable_column[2].strip(), "", "", "", "", "", ""] + train + ["", "", "", "", "", ""]
+                starting_station = None
                 
                 for cnt in range(9, len(train) - 6):
                     train[cnt] = train[cnt].strip()
@@ -78,6 +79,9 @@ def convert_timetable_1 (mes, file_name, digits_count):
                         train[cnt] = ""
                     
                     if train[cnt] != "":
+                        if starting_station is None:
+                            starting_station = station_list[line_id][cnt - 9]
+                        
                         if train[cnt][0] == "|":
                             departure_time = train[cnt][1:].strip()
                             before_departure_time = "|"
@@ -129,8 +133,8 @@ def convert_timetable_1 (mes, file_name, digits_count):
                         if train[cnt] != "":
                             new_timetable_t[previous_line_id][-1][-4] = station_list[line_id][cnt - 9]
                             break
-                elif train[0] in previous_trains:
-                    previous_train_data = previous_trains.pop(train[0])
+                elif train[0] + "@" + starting_station in previous_trains:
+                    previous_train_data = previous_trains.pop(train[0] + "@" + starting_station)
                     
                     for cnt in range(len(previous_train_data)):
                         previous_line_id = previous_train_data[cnt]["line_id"]
@@ -168,16 +172,16 @@ def convert_timetable_1 (mes, file_name, digits_count):
                 previous_line_id = line_id
         
         if previous_line_id is not None and timetable_column[-1].strip() != "":
-            for cnt in range(9, len(new_timetable_t[previous_line_id][-1]) - 6):
+            for cnt in reversed(range(9, len(new_timetable_t[previous_line_id][-1]) - 6)):
                 if new_timetable_t[previous_line_id][-1][cnt] != "":
-                    starting_station = station_list[previous_line_id][cnt - 9]
+                    terminal_station = station_list[previous_line_id][cnt - 9]
                     break
             
             for train_number in timetable_column[-1].strip().split():
-                if train_number not in previous_trains:
-                    previous_trains[train_number] = []
+                if train_number + "@" + terminal_station not in previous_trains:
+                    previous_trains[train_number + "@" + terminal_station] = []
                 
-                previous_trains[train_number].append({"line_id" : previous_line_id, "train_number" : new_timetable_t[previous_line_id][-1][0], "starting_station" : starting_station})
+                previous_trains[train_number + "@" + terminal_station].append({"line_id" : previous_line_id, "train_number" : new_timetable_t[previous_line_id][-1][0], "starting_station" : starting_station})
     
     
     mes("データを新しいCSVファイルに書き込んでいます...")
