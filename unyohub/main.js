@@ -2248,7 +2248,7 @@ function update_selected_line (line_id, position_mode) {
     }
 }
 
-function position_change_lines (line_id, position_scroll_amount = -1) {
+function position_change_lines (line_id, scroll_target = -1) {
     if (!config["dark_mode"]) {
         var line_color = railroad_info["lines"][line_id]["line_color"];
         
@@ -2287,7 +2287,7 @@ function position_change_lines (line_id, position_scroll_amount = -1) {
                             junction_class_list.push("B");
                         }
                         
-                        connecting_lines_html += "<a href='javascript:void(0);' class='connecting_line_" + line_direction + "' onclick='position_change_lines(\"" + connecting_line["line_id"] + "\")' style='color: " + (config["dark_mode"] ? convert_color_dark_mode(railroad_info["lines"][connecting_line["line_id"]]["line_color"]) : railroad_info["lines"][connecting_line["line_id"]]["line_color"]) + ";'><div>" + escape_html(railroad_info["lines"][connecting_line["line_id"]]["line_name"]) + "</div></a>";
+                        connecting_lines_html += "<a href='javascript:void(0);' class='connecting_line_" + line_direction + "' onclick='position_change_lines(\"" + connecting_line["line_id"] + "\", \"" + add_slashes(railroad_info["lines"][line_id]["stations"][cnt - 1]["station_name"]) + "\")' style='color: " + (config["dark_mode"] ? convert_color_dark_mode(railroad_info["lines"][connecting_line["line_id"]]["line_color"]) : railroad_info["lines"][connecting_line["line_id"]]["line_color"]) + ";'><div>" + escape_html(railroad_info["lines"][connecting_line["line_id"]]["line_name"]) + "</div></a>";
                     }
                 }
                 
@@ -2301,12 +2301,12 @@ function position_change_lines (line_id, position_scroll_amount = -1) {
             buf += "><th><a";
             
             if ("is_signal_station" in railroad_info["lines"][line_id]["stations"][cnt - 1] && railroad_info["lines"][line_id]["stations"][cnt - 1]["is_signal_station"]) {
-                buf += " href='javascript:void(0);' class='position_signal_station'";
+                buf += " href='javascript:void(0);' class='position_station position_signal_station'";
                 
                 border_style = " style='border-top-color: transparent;'";
                 position_station_class = " position_line_signal_station";
             } else {
-                buf += " href='/railroad_" + railroad_info["railroad_id"] + "/timetable/" + line_id + "/" + encodeURIComponent(railroad_info["lines"][line_id]["stations"][cnt - 1]["station_name"]) + "/' onclick='event.preventDefault(); show_station_timetable(\"" + line_id + "\", \"" + railroad_info["lines"][line_id]["stations"][cnt - 1]["station_name"] + "\");'";
+                buf += " href='/railroad_" + railroad_info["railroad_id"] + "/timetable/" + line_id + "/" + encodeURIComponent(railroad_info["lines"][line_id]["stations"][cnt - 1]["station_name"]) + "/' onclick='event.preventDefault(); show_station_timetable(\"" + line_id + "\", \"" + railroad_info["lines"][line_id]["stations"][cnt - 1]["station_name"] + "\");' class='position_station'";
                 
                 if ("is_major_station" in railroad_info["lines"][line_id]["stations"][cnt - 1] && railroad_info["lines"][line_id]["stations"][cnt - 1]["is_major_station"]) {
                     buf += " style='background-color: " + station_color + ";'";
@@ -2349,8 +2349,19 @@ function position_change_lines (line_id, position_scroll_amount = -1) {
     
     position_area_elm.innerHTML = buf;
     
-    if (position_scroll_amount >= 0) {
-        article_elms[0].scrollTop = position_scroll_amount;
+    if (typeof scroll_target === "string") {
+        for (cnt = 0; cnt < railroad_info["lines"][line_id]["stations"].length; cnt++) {
+            if (railroad_info["lines"][line_id]["stations"][cnt]["station_name"] === scroll_target) {
+                var article_rect = article_elms[0].getBoundingClientRect();
+                var station_rect = position_area_elm.getElementsByClassName("position_station")[cnt].getBoundingClientRect();
+                
+                article_elms[0].scrollTop += station_rect.top - article_rect.top - (article_rect.height / 2) + (station_rect.height / 2);
+                
+                break;
+            }
+        }
+    } else if (scroll_target >= 0) {
+        article_elms[0].scrollTop = scroll_target;
     }
     
     var label_train_type_elm = document.getElementById("show_train_types_label_train_type");
@@ -2391,7 +2402,7 @@ function select_lines (lines = null, position_mode = true) {
         buf += "<button type='button' onclick='close_square_popup(); ";
         
         if (position_mode) {
-            buf += "position_change_lines(" + line_id_text + ");";
+            buf += "position_change_lines(" + line_id_text + ", 0);";
         } else {
             buf += "timetable_change_lines(" + line_id_text + ");";
         }
@@ -2857,6 +2868,8 @@ function position_time_swipe (event) {
     
     if (Math.abs(position_time_touch_end_y - position_time_touch_start_y) >= 10) {
         event.currentTarget.style.opacity = "0.25";
+    } else {
+        event.currentTarget.style.opacity = "";
     }
 }
 
