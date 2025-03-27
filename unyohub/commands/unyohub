@@ -31,6 +31,9 @@ def print_usage ():
     print("\x1b[93mconv-formations\x1b[0m \x1b[90m<路線系統識別名>\x1b[0m")
     print("  編成表データを変換する\n")
     
+    print("\x1b[93mcopy-formation-info\x1b[0m \x1b[90m<コピー元路線系統識別名> <コピー元編成名> <コピー先路線系統識別名> <コピー先編成名>\x1b[0m")
+    print("  データベース上で編成データをコピーする\n")
+    
     print("\x1b[93mclean-formation-db\x1b[0m \x1b[90m<路線系統識別名>\x1b[0m")
     print("  データベースから編成表にない編成・車両のデータを削除する\n")
     
@@ -68,68 +71,77 @@ os.chdir(os.path.dirname(os.path.abspath(__file__)))
 data_dir = (os.path.abspath(UNYOHUB_DATA_DIR))
 
 args = sys.argv
+arg_count = len(args)
 
-if len(args) >= 2:
+if arg_count >= 2:
     match args[1]:
         case "setup-libs":
-            if len(args) == 3:
+            if arg_count == 3:
                 subprocess.run(["php", "modules/libs_setup.php", args[2]])
-            elif len(args) == 2:
+            elif arg_count == 2:
                 subprocess.run(["php", "modules/libs_setup.php"])
             else:
                 print("\x1b[31m引数の数が異常です\x1b[0m")
         case "conv-formations":
-            if len(args) == 3:
+            if arg_count == 3:
                 convert_formation_table = importlib.import_module("modules.convert_formation_table")
                 convert_formation_table.convert_formation_table(mes, data_dir + "/" + os.path.basename(args[2]))
                 
                 print("\n生成された編成表データに問題がなければ \x1b[93munyohub clean-formation-db\x1b[0m \x1b[90m<路線系統識別名>\x1b[0m を実行することで不要なデータを削除できます")
             else:
                 print("\x1b[31m引数の数が異常です\x1b[0m")
+        case "copy-formation-info":
+            copy_formation_info = importlib.import_module("modules.copy_formation_info")
+            if arg_count == 6:
+                copy_formation_info.copy_formation_info(mes, data_dir + "/" + os.path.basename(args[2]), args[3], data_dir + "/" + os.path.basename(args[4]), args[5])
+            elif arg_count == 5:
+                copy_formation_info.copy_formation_info(mes, data_dir + "/" + os.path.basename(args[2]), args[3], data_dir + "/" + os.path.basename(args[4]), None)
+            else:
+                print("\x1b[31m引数の数が異常です\x1b[0m")
         case "clean-formation-db":
-            if len(args) == 3:
+            if arg_count == 3:
                 clean_formation_db_table = importlib.import_module("modules.clean_formation_db_table")
                 clean_formation_db_table.clean_formation_db_table(mes, data_dir + "/" + os.path.basename(args[2]))
             else:
                 print("\x1b[31m引数の数が異常です\x1b[0m")
         case "update-operations":
-            if len(args) == 5:
+            if arg_count == 5:
                 write_operations_to_db = importlib.import_module("modules.write_operations_to_db")
                 write_operations_to_db.write_operations_to_db(mes, data_dir + "/" + os.path.basename(args[2]), os.path.basename(args[3]), os.path.basename(args[4]))
             else:
                 print("\x1b[31m引数の数が異常です\x1b[0m")
         case "create-role":
-            if len(args) == 4:
+            if arg_count == 4:
                 subprocess.run(["php", "modules/create_role.php", args[2], args[3]])
             else:
                 print("\x1b[31m引数の数が異常です\x1b[0m")
         case "delete-role":
-            if len(args) == 3:
+            if arg_count == 3:
                 subprocess.run(["php", "modules/delete_role.php", args[2]])
             else:
                 print("\x1b[31m引数の数が異常です\x1b[0m")
         case "add-permission":
-            if len(args) == 5 or len(args) == 4:
+            if arg_count == 5 or arg_count == 4:
                 subprocess.run(["php", "modules/add_permission.php", *args[2:]])
             else:
                 print("\x1b[31m引数の数が異常です\x1b[0m")
         case "remove-permission":
-            if len(args) == 5 or len(args) == 4:
+            if arg_count == 5 or arg_count == 4:
                 subprocess.run(["php", "modules/remove_permission.php", *args[2:]])
             else:
                 print("\x1b[31m引数の数が異常です\x1b[0m")
         case "assign-role":
-            if len(args) == 4:
+            if arg_count == 4:
                 subprocess.run(["php", "modules/assign_role.php", args[2], args[3]])
             else:
                 print("\x1b[31m引数の数が異常です\x1b[0m")
         case "remove-role":
-            if len(args) == 4:
+            if arg_count == 4:
                 subprocess.run(["php", "modules/remove_role.php", args[2], args[3]])
             else:
                 print("\x1b[31m引数の数が異常です\x1b[0m")
         case "init-db":
-            if len(args) == 3:
+            if arg_count == 3:
                 initialize_db = importlib.import_module("modules.initialize_db")
                 initialize_db.initialize_db(mes, data_dir + "/" + os.path.basename(args[2]))
             else:
