@@ -40,6 +40,10 @@ if ($user->check_permission("railroads/".$railroad_id."/formation", "edit_data")
     print "<a href='formations.php?railroad_id=".$railroad_id."' class='wide_button'><img src='data:image/webp;base64,UklGRpQBAABXRUJQVlA4TIcBAAAvNUANEK/BoJEkRbUn4wWeitf6eQfMtDYYNJKkqPa0nJLX/xo+74CZlkEjSYpqz8D7F/NSyAEzLdta2158cuhypoqdWQxiOwNYwD+ANlNSpjdAVYPaDtR1rTgMw4sXPy5kmVkjL6UAKtLMNMDDhZ6ZXynle9+3zczzPM97WRZpnufnOI7q//8/M0fcAIAPPb6IAKTv+5rMpIhI5nmeMpP6vg/+/+ewYgPAIgJg//8DQ0SgbequqRUZXEmSpCoLPFfc3d25/+FWnj/gryei/4zctnEknabtassr2Be03SBkUGWbGsgWSLPKMbQWNHIEUquq+RqCnniOk1JVp67pHgPgGlrTEkilKlS8K5u0UCR+VVZkNchoSzYXyvrvqv4cvgFIVwJSihD4ANKVAKQT8YdRMCs/hvS1ZOdTBl4YrllwY7hnwYPhuRtRV1NJI9qriZX1YjisR9RX0ifaqImVdWTAmASn6gRJJMlaiSyVCRJIlDWYcWZbZYIEkmVtFxPMh+oEScTO+mICAA==' alt=''>編成情報の編集</a>";
 }
 
+if ($user->check_permission("railroads/".$railroad_id, "edit_data")) {
+    print "<a href='manage_files.php?railroad_id=".$railroad_id."' class='wide_button'><img src='data:image/webp;base64,UklGRnYAAABXRUJQVlA4TGoAAAAvO8AOEBcwzMM8zAKBJOsVxg74CI4j2WqjkTchECJRKBSO1EsT87R+jxH9nwCApDLSrGlw1tYIkIMTHQ3O6gQn1upZGpzxhkvVAUg9qxNaJ0CKjgZndYITHQ3O6pyPgOu/k/VUlB9MzacA' alt=''>データファイルの管理</a>";
+}
+
 print "</article>";
 
 
