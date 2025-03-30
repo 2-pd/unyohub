@@ -19,8 +19,13 @@ print "ロール ".$role_id." を作成しています...\n";
 
 $wakarana = new wakarana(__DIR__."/../../".$wakarana_base_dir);
 
-if (is_object($wakarana->add_role($role_id, $role_name))) {
-    print "ロールを作成が完了しました\n";
-} else {
+$role = $wakarana->add_role($role_id, $role_name);
+if (!is_object($role)) {
     print "ロールの作成に失敗しました\n";
 }
+
+print "作成したロールにコントロールパネル表示権限を割り当てています...\n";
+
+$role->add_permission("control_panel_user");
+
+print "ロールの作成が完了しました\n";

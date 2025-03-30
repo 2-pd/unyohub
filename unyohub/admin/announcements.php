@@ -66,6 +66,8 @@ if (isset($_POST["title"], $_POST["content"], $_POST["expiration_datetime"])) {
             
             file_put_contents($json_path, json_encode($announcements, JSON_UNESCAPED_UNICODE));
             
+            chmod($json_path, 0o766);
+            
             print "<script> alert('お知らせを追加しました'); </script>";
         } else {
             $error_mes = "有効期限が不十分です";

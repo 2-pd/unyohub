@@ -1553,7 +1553,7 @@ function select_mode (mode_name, mode_option_1, mode_option_2) {
             
             if (mode_option_2 !== null) {
                 timetable_select_station(mode_option_2, mode_option_1);
-            } else if (mode_option_1 !== null) {
+            } else {
                 timetable_change_lines(mode_option_1);
             }
             
@@ -1756,7 +1756,6 @@ function load_operation_table (resolve_func, reject_func, diagram_id, update_lin
     }
     
     idb_start_transaction(tables, false, function (transaction) {
-        
         var last_modified_timestamp = 0;
         
         var operation_tables = transaction.objectStore("operation_tables");
@@ -2249,7 +2248,7 @@ function update_selected_line (line_id, position_mode) {
     }
 }
 
-function position_change_lines (line_id, position_scroll_amount = -1) {
+function position_change_lines (line_id, scroll_target = -1) {
     if (!config["dark_mode"]) {
         var line_color = railroad_info["lines"][line_id]["line_color"];
         
@@ -2288,7 +2287,7 @@ function position_change_lines (line_id, position_scroll_amount = -1) {
                             junction_class_list.push("B");
                         }
                         
-                        connecting_lines_html += "<a href='javascript:void(0);' class='connecting_line_" + line_direction + "' onclick='position_change_lines(\"" + connecting_line["line_id"] + "\")' style='color: " + (config["dark_mode"] ? convert_color_dark_mode(railroad_info["lines"][connecting_line["line_id"]]["line_color"]) : railroad_info["lines"][connecting_line["line_id"]]["line_color"]) + ";'><div>" + escape_html(railroad_info["lines"][connecting_line["line_id"]]["line_name"]) + "</div></a>";
+                        connecting_lines_html += "<a href='javascript:void(0);' class='connecting_line_" + line_direction + "' onclick='position_change_lines(\"" + connecting_line["line_id"] + "\", \"" + add_slashes(railroad_info["lines"][line_id]["stations"][cnt - 1]["station_name"]) + "\")' style='color: " + (config["dark_mode"] ? convert_color_dark_mode(railroad_info["lines"][connecting_line["line_id"]]["line_color"]) : railroad_info["lines"][connecting_line["line_id"]]["line_color"]) + ";'><div>" + escape_html(railroad_info["lines"][connecting_line["line_id"]]["line_name"]) + "</div></a>";
                     }
                 }
                 
@@ -2302,12 +2301,12 @@ function position_change_lines (line_id, position_scroll_amount = -1) {
             buf += "><th><a";
             
             if ("is_signal_station" in railroad_info["lines"][line_id]["stations"][cnt - 1] && railroad_info["lines"][line_id]["stations"][cnt - 1]["is_signal_station"]) {
-                buf += " href='javascript:void(0);' class='position_signal_station'";
+                buf += " href='javascript:void(0);' class='position_station position_signal_station'";
                 
                 border_style = " style='border-top-color: transparent;'";
                 position_station_class = " position_line_signal_station";
             } else {
-                buf += " href='/railroad_" + railroad_info["railroad_id"] + "/timetable/" + line_id + "/" + encodeURIComponent(railroad_info["lines"][line_id]["stations"][cnt - 1]["station_name"]) + "/' onclick='event.preventDefault(); show_station_timetable(\"" + line_id + "\", \"" + railroad_info["lines"][line_id]["stations"][cnt - 1]["station_name"] + "\");'";
+                buf += " href='/railroad_" + railroad_info["railroad_id"] + "/timetable/" + line_id + "/" + encodeURIComponent(railroad_info["lines"][line_id]["stations"][cnt - 1]["station_name"]) + "/' onclick='event.preventDefault(); show_station_timetable(\"" + line_id + "\", \"" + railroad_info["lines"][line_id]["stations"][cnt - 1]["station_name"] + "\");' class='position_station'";
                 
                 if ("is_major_station" in railroad_info["lines"][line_id]["stations"][cnt - 1] && railroad_info["lines"][line_id]["stations"][cnt - 1]["is_major_station"]) {
                     buf += " style='background-color: " + station_color + ";'";
@@ -2350,8 +2349,19 @@ function position_change_lines (line_id, position_scroll_amount = -1) {
     
     position_area_elm.innerHTML = buf;
     
-    if (position_scroll_amount >= 0) {
-        article_elms[0].scrollTop = position_scroll_amount;
+    if (typeof scroll_target === "string") {
+        for (cnt = 0; cnt < railroad_info["lines"][line_id]["stations"].length; cnt++) {
+            if (railroad_info["lines"][line_id]["stations"][cnt]["station_name"] === scroll_target) {
+                var article_rect = article_elms[0].getBoundingClientRect();
+                var station_rect = position_area_elm.getElementsByClassName("position_station")[cnt].getBoundingClientRect();
+                
+                article_elms[0].scrollTop += station_rect.top - article_rect.top - (article_rect.height / 2) + (station_rect.height / 2);
+                
+                break;
+            }
+        }
+    } else if (scroll_target >= 0) {
+        article_elms[0].scrollTop = scroll_target;
     }
     
     var label_train_type_elm = document.getElementById("show_train_types_label_train_type");
@@ -2389,10 +2399,10 @@ function select_lines (lines = null, position_mode = true) {
             var line_name = "全ての路線";
         }
         
-        buf += "<button onclick='close_square_popup(); ";
+        buf += "<button type='button' onclick='close_square_popup(); ";
         
         if (position_mode) {
-            buf += "position_change_lines(" + line_id_text + ");";
+            buf += "position_change_lines(" + line_id_text + ", 0);";
         } else {
             buf += "timetable_change_lines(" + line_id_text + ");";
         }
@@ -2858,6 +2868,8 @@ function position_time_swipe (event) {
     
     if (Math.abs(position_time_touch_end_y - position_time_touch_start_y) >= 10) {
         event.currentTarget.style.opacity = "0.25";
+    } else {
+        event.currentTarget.style.opacity = "";
     }
 }
 
@@ -3088,7 +3100,7 @@ function train_detail (line_id, train_number, starting_station, train_direction,
     buf += "<h3>" + buf_2 + "</h3>";
     
     if (show_operation_data) {
-        buf_2 = "";
+        var buf_2 = "";
         var heading_str = "";
         for (var train_operation of train_operations) {
             if (buf_2.length >= 1) {
@@ -3100,11 +3112,11 @@ function train_detail (line_id, train_number, starting_station, train_direction,
                     var buf_3 = "";
                     for (var formation_name of operation_data["operations"][train_operation]["formations"].split("+")) {
                         if (buf_3.length >= 1) {
-                            buf_2 += " +";
+                            buf_3 += " +";
                         }
                         
                         if (formation_name in formations["formations"]) {
-                            buf_2 += "<a href='javascript:void(0);' onclick='close_square_popup(); formations_mode(\"" + add_slashes(formation_name) + "\");'><img src='" + get_icon(formation_name) + "' alt='' class='train_icon'>" + escape_html(formation_name) + "</a>";
+                            buf_3 += "<a href='javascript:void(0);' onclick='close_square_popup(); formations_mode(\"" + add_slashes(formation_name) + "\");'><img src='" + get_icon(formation_name) + "' alt='' class='train_icon'>" + escape_html(formation_name) + "</a>";
                             
                             var overview = get_formation_overview(formation_name);
                             if (overview["caption"].length >= 1) {
@@ -3115,18 +3127,18 @@ function train_detail (line_id, train_number, starting_station, train_direction,
                                 heading_str += escape_html(formation_name + " : " + overview["caption"]);
                             }
                         } else if (formation_name === "?") {
-                            buf_2 += "<img src='" + UNYOHUB_UNKNOWN_TRAIN_ICON + "' alt='' class='train_icon'>" + "?";
+                            buf_3 += "<img src='" + UNYOHUB_UNKNOWN_TRAIN_ICON + "' alt='' class='train_icon'>?";
                         } else {
-                            buf_2 += "<img src='" + get_icon(formation_name) + "' alt='' class='train_icon'>" + escape_html(formation_name);
+                            buf_3 += "<img src='" + get_icon(formation_name) + "' alt='' class='train_icon'>" + escape_html(formation_name);
                         }
                     }
                     
                     buf_2 += buf_3;
                 } else {
-                    buf_2 += "<img src='" + UNYOHUB_CANCELED_TRAIN_ICON + "' alt='' class='train_icon'>" + "運休";
+                    buf_2 += "<img src='" + UNYOHUB_CANCELED_TRAIN_ICON + "' alt='' class='train_icon'>運休";
                 }
             } else {
-                buf_2 += "<img src='" + UNYOHUB_UNKNOWN_TRAIN_ICON + "' alt='' class='train_icon'>" + "?";
+                buf_2 += "<img src='" + UNYOHUB_UNKNOWN_TRAIN_ICON + "' alt='' class='train_icon'>?";
             }
         }
         
@@ -3223,7 +3235,7 @@ function train_detail (line_id, train_number, starting_station, train_direction,
                         var highlight_str = "";
                     }
                     
-                    buf += "<div class='train_detail_departure_time" + (is_deadhead_train ? " deadhead_train_departure_time" : "") + highlight_str + "' style='border-color: " + (config["dark_mode"] ? convert_color_dark_mode(railroad_info["lines"][train["line_id"]]["line_color"]) : railroad_info["lines"][train["line_id"]]["line_color"]) + ";'><u onclick='show_station_timetable(\"" + train["line_id"] + "\", \"" + stations[station_index]["station_name"] + "\", " + train["is_inbound"] + ");' >" + escape_html(stations[station_index]["station_name"]) + "</u><span style='float: right;'>" + train["departure_times"][cnt] + "</span></div>";
+                    buf += "<div class='train_detail_departure_time" + (is_deadhead_train ? " deadhead_train_departure_time" : "") + highlight_str + "' style='border-color: " + (config["dark_mode"] ? convert_color_dark_mode(railroad_info["lines"][train["line_id"]]["line_color"]) : railroad_info["lines"][train["line_id"]]["line_color"]) + ";'>" + (!("is_signal_station" in stations[station_index]) || !stations[station_index]["is_signal_station"] ? "<u onclick='show_station_timetable(\"" + train["line_id"] + "\", \"" + stations[station_index]["station_name"] + "\", " + train["is_inbound"] + ");' >" + escape_html(stations[station_index]["station_name"]) + "</u>" : escape_html(stations[station_index]["station_name"])) + "<span>" + train["departure_times"][cnt] + "</span></div>";
                     
                     previous_departure_time = train["departure_times"][cnt];
                 }
@@ -3346,7 +3358,9 @@ function timetable_mode (load_data = true, draw_station_list = true) {
             });
         });
         
-        timetable_change_lines(null, true, draw_station_list);
+        if (draw_station_list) {
+            timetable_change_lines(null, true);
+        }
     } else {
         timetable_promise = new Promise(function (resolve) { resolve(); });
         
@@ -3388,12 +3402,12 @@ function timetable_wrapper_onscroll () {
     }
 }
 
-function timetable_change_lines(line_id, force_station_select_mode = false, draw_station_list = true) {
+function timetable_change_lines(line_id, force_station_select_mode = false) {
     if (line_id !== null) {
         if ("clockwise_is_inbound" in railroad_info["lines"][line_id] && railroad_info["lines"][line_id]["clockwise_is_inbound"] !== null) {
             var directions = railroad_info["lines"][line_id]["clockwise_is_inbound"] ? ["外回り<small>(右回り)</small>", "内回り<small>(左回り)</small>"] : ["内回り<small>(左回り)</small>", "外回り<small>(右回り)</small>"];
         } else {
-            var directions = ["上り" + "<small>(" + escape_html(railroad_info["lines"][line_id]["stations"][0]["station_name"]) + "方面)</small>", "下り" + "<small>(" + escape_html(railroad_info["lines"][line_id]["stations"][railroad_info["lines"][line_id]["stations"].length - 1]["station_name"]) + "方面)</small>"];
+            var directions = ["上り<small>(" + escape_html(railroad_info["lines"][line_id]["stations"][0]["station_name"]) + "方面)</small>", "下り<small>(" + escape_html(railroad_info["lines"][line_id]["stations"][railroad_info["lines"][line_id]["stations"].length - 1]["station_name"]) + "方面)</small>"];
         }
         
         document.getElementById("radio_inbound_label").innerHTML = directions[0];
@@ -3402,7 +3416,7 @@ function timetable_change_lines(line_id, force_station_select_mode = false, draw
     
     update_selected_line(line_id, false);
     
-    if (force_station_select_mode || ((line_id === null || timetable_selected_station === null) && draw_station_list)) {
+    if (force_station_select_mode || timetable_selected_station === null) {
         const KANA_ROWS_REGEXP = [/^[あ-お]/, /^[か-こが-ご]/, /^[さ-そざ-ぞ]/, /^[た-とだ-ど]/, /^[な-の]/, /^[は-ほば-ぼぱ-ぽ]/, /^[ま-も]/, /^[や-よ]/, /^[ら-ろ]/, /^[わ-を]/, /.*/];
         const KANA_ROWS = ["あ 行", "か 行", "さ 行", "た 行", "な 行", "は 行", "ま 行", "や 行", "ら 行", "わ 行", "その他"];
         
@@ -3447,7 +3461,7 @@ function timetable_change_lines(line_id, force_station_select_mode = false, draw
             }
             
             var station_name = railroad_info["lines"][station_indexes[station_name_kana]["line_id"]]["stations"][station_indexes[station_name_kana]["index"]]["station_name"];
-            buf += "<a href='/railroad_" + railroad_info["railroad_id"] + "/timetable/" + station_indexes[station_name_kana]["line_id"] + "/" + encodeURIComponent(station_name) + "/' onclick='event.preventDefault(); timetable_select_station(\"" + station_name + "\", \"" + station_indexes[station_name_kana]["line_id"] + "\");'><b>" + escape_html(station_name) + "</b> <small>(" + station_name_kana + ")" + "</small></a>";
+            buf += "<a href='/railroad_" + railroad_info["railroad_id"] + "/timetable/" + station_indexes[station_name_kana]["line_id"] + "/" + encodeURIComponent(station_name) + "/' onclick='event.preventDefault(); timetable_select_station(\"" + station_name + "\", \"" + station_indexes[station_name_kana]["line_id"] + "\");'><b>" + escape_html(station_name) + "</b> <small>(" + station_name_kana + ")</small></a>";
         }
         buf += "</div>";
         
@@ -4371,7 +4385,7 @@ function operation_data_draw () {
 
 var operation_detail_write_button_enabled = false;
 
-function operation_detail (operation_number_or_index, operation_data_date_ts_or_diagram_id, show_write_operation_data_button = null, formation_text = null) {
+function operation_detail (operation_number_or_index, operation_data_date_ts_or_diagram_id, show_write_operation_data_button = null, search_keyword = null, formation_text = null) {
     var popup_inner_elm = open_popup("operation_detail_popup", null, true);
     
     popup_inner_elm.className = "wait_icon";
@@ -4388,7 +4402,7 @@ function operation_detail (operation_number_or_index, operation_data_date_ts_or_
                 return;
             }
             
-            if (operation_table === null || diagram_id !== operation_table["diagram_id"] || line_operations === null || diagram_id !== line_operations["diagram_id"] || timetable === null || diagram_info["diagrams"][diagram_id]["timetable_id"] !== timetable["timetable_id"]) {
+            if (operation_table === null || diagram_info["diagram_revision"] !== operation_table["diagram_revision"] || diagram_id !== operation_table["diagram_id"] || line_operations === null || diagram_id !== line_operations["diagram_id"] || timetable === null || diagram_info["diagrams"][diagram_id]["timetable_id"] !== timetable["timetable_id"]) {
                 var promise_1_resolved = false;
                 var promise_1 = new Promise(function (resolve, reject) {
                     load_operation_table(function () {
@@ -4406,26 +4420,26 @@ function operation_detail (operation_number_or_index, operation_data_date_ts_or_
                             promise_2_resolved = true;
                             resolve();
                         } else if (promise_1_resolved) {
-                            draw_operation_detail(operation_number_or_index, diagram_id, operation_data_date_ts_or_diagram_id, formation_text);
+                            draw_operation_detail(operation_number_or_index, diagram_id, operation_data_date_ts_or_diagram_id, search_keyword, formation_text);
                         }
                     }, function () {}, diagram_info["diagrams"][diagram_id]["timetable_id"]);
                 });
                 
                 Promise.all([promise_1, promise_2]).then(function () {
-                    draw_operation_detail(operation_number_or_index, diagram_id, operation_data_date_ts_or_diagram_id, formation_text);
+                    draw_operation_detail(operation_number_or_index, diagram_id, operation_data_date_ts_or_diagram_id, search_keyword, formation_text);
                 });
                 
                 return;
             }
             
-            draw_operation_detail(operation_number_or_index, diagram_id, operation_data_date_ts_or_diagram_id, formation_text);
+            draw_operation_detail(operation_number_or_index, diagram_id, operation_data_date_ts_or_diagram_id, search_keyword, formation_text);
         });
     } else {
-        draw_operation_detail(operation_number_or_index, operation_data_date_ts_or_diagram_id, null, formation_text);
+        draw_operation_detail(operation_number_or_index, operation_data_date_ts_or_diagram_id, null, search_keyword, formation_text);
     }
 }
 
-function draw_operation_detail (operation_number_or_index, diagram_id, operation_data_date_ts, formation_text) {
+function draw_operation_detail (operation_number_or_index, diagram_id, operation_data_date_ts, search_keyword, formation_text) {
     var operation_number = typeof operation_number_or_index === "string" ? operation_number_or_index : operation_number_order[operation_number_or_index];
     
     if (operation_data_date_ts === null) {
@@ -4493,7 +4507,7 @@ function draw_operation_detail (operation_number_or_index, diagram_id, operation
                             heading_str += escape_html(formation_name + " : " + overview["caption"]);
                         }
                     } else if (formation_name === "?") {
-                        buf_2 += "<img src='" + UNYOHUB_UNKNOWN_TRAIN_ICON + "' alt='' class='train_icon'>" + "?";
+                        buf_2 += "<img src='" + UNYOHUB_UNKNOWN_TRAIN_ICON + "' alt='' class='train_icon'>?";
                     } else {
                         buf_2 += "<img src='" + get_icon(formation_name) + "' alt='' class='train_icon'>" + escape_html(formation_name);
                     }
@@ -4501,10 +4515,10 @@ function draw_operation_detail (operation_number_or_index, diagram_id, operation
                 
                 buf += buf_2;
             } else {
-                buf += "<img src='" + UNYOHUB_CANCELED_TRAIN_ICON + "' alt='' class='train_icon'>" + "運休";
+                buf += "<img src='" + UNYOHUB_CANCELED_TRAIN_ICON + "' alt='' class='train_icon'>運休";
             }
         } else {
-            buf += "<img src='" + UNYOHUB_UNKNOWN_TRAIN_ICON + "' alt='' class='train_icon'>" + "?";
+            buf += "<img src='" + UNYOHUB_UNKNOWN_TRAIN_ICON + "' alt='' class='train_icon'>?";
         }
         
         buf += "</div><div class='descriptive_text'>" + heading_str + "</div><div id='operation_data_detail_area'></div>";
@@ -4533,7 +4547,7 @@ function draw_operation_detail (operation_number_or_index, diagram_id, operation
     document.getElementById("operation_detail_popup_inner").innerHTML = buf;
     
     if (operation_number in operation_table["operations"]) {
-        draw_operation_trains(operation_number, diagram_id_or_ts, is_today);
+        draw_operation_trains(operation_number, diagram_id_or_ts, is_today, search_keyword);
     }
     
     if (navigator.onLine && (formation_text !== null || operation_data_date_ts !== null)) {
@@ -4541,7 +4555,7 @@ function draw_operation_detail (operation_number_or_index, diagram_id, operation
     }
 }
 
-function draw_operation_trains (operation_number, diagram_id_or_ts, is_today) {
+function draw_operation_trains (operation_number, diagram_id_or_ts, is_today, search_keyword = null) {
     if (config["simplify_operation_details"]) {
         var train_div_class_name = "train_overview";
     } else {
@@ -4600,7 +4614,7 @@ function draw_operation_trains (operation_number, diagram_id_or_ts, is_today) {
                     
                     var first_departure_time = trains[cnt]["first_departure_time"];
                     
-                    if (is_today && first_departure_time <= now_str) {
+                    if (is_today && search_keyword === null && first_departure_time <= now_str) {
                         highlight_str = " class='search_highlight'";
                     }
                 }
@@ -4646,7 +4660,13 @@ function draw_operation_trains (operation_number, diagram_id_or_ts, is_today) {
                     }
                 }
                 
-                buf += trains[cnt]["train_number"].split("__")[0];
+                var train_number_text = trains[cnt]["train_number"].split("__")[0];
+                if (search_keyword !== null && train_number_text.toUpperCase().includes(search_keyword)) {
+                    var search_keyword_index = train_number_text.toUpperCase().indexOf(search_keyword);
+                    buf += escape_html(train_number_text.substring(0, search_keyword_index)) + "<span class='search_highlight'>" + escape_html(train_number_text.substring(search_keyword_index, search_keyword_index + search_keyword.length)) + "</span>" + escape_html(train_number_text.substring(search_keyword_index + search_keyword.length));
+                } else {
+                    buf += escape_html(train_number_text);
+                }
                 
                 buf += "</u><small>(";
                 if (trains[cnt]["position_forward"] !== trains[cnt]["position_rear"]) {
@@ -4693,7 +4713,7 @@ function draw_operation_trains (operation_number, diagram_id_or_ts, is_today) {
                 starting_station = null;
             }
             
-            if (is_today && trains[cnt]["final_arrival_time"] < now_str) {
+            if (is_today && search_keyword === null && trains[cnt]["final_arrival_time"] < now_str) {
                 highlight_str = " class='search_highlight'";
             } else {
                 highlight_str = "";
@@ -4820,12 +4840,23 @@ function formation_table_wrapper_onscroll () {
 function get_formation_table_html (formation_names, search_keyword) {
     var buf = "";
     var search_hit_formation_count = 0;
+    var search_hit_formations_car_count = 0;
     for (var formation_name of formation_names) {
         var overview = get_formation_overview(formation_name);
         
         var buf_2 = "<tr onclick='formation_detail(\"" + add_slashes(formation_name) + "\");'><td><img src='" + get_icon(formation_name) + "' alt='' class='train_icon'" + (overview["unavailable"] ? " style='opacity: 0.5;'" : "") + "></td>";
         
-        buf_2 += "<td><h5><a href='/railroad_" + railroad_info["railroad_id"] + "/formations/" + add_slashes(encodeURIComponent(formation_name)) + "/' onclick='event.preventDefault();'>" + escape_html(formation_name) + "</a>";
+        if (search_keyword.length >= 1 && formation_name.includes(search_keyword)) {
+            var search_keyword_index = formation_name.indexOf(search_keyword);
+            var formation_name_html = escape_html(formation_name.substring(0, search_keyword_index)) + "<span class='search_highlight'>" + escape_html(formation_name.substring(search_keyword_index, search_keyword_index + search_keyword.length)) + "</span>" + escape_html(formation_name.substring(search_keyword_index + search_keyword.length));
+            
+            var formation_name_search_hit = true;
+        } else {
+            var formation_name_html = escape_html(formation_name);
+            var formation_name_search_hit = false;
+        }
+        
+        buf_2 += "<td><h5><a href='/railroad_" + railroad_info["railroad_id"] + "/formations/" + add_slashes(encodeURIComponent(formation_name)) + "/' onclick='event.preventDefault();'>" + formation_name_html + "</a>";
         
         if (overview["unavailable"]) {
             buf_2 += "<b class='warning_sentence'>運用離脱中</b>";
@@ -4844,9 +4875,11 @@ function get_formation_table_html (formation_names, search_keyword) {
                     car_class =  "car_highlight";
                     
                     search_hit_count++;
+                } else if (formation_name_search_hit) {
+                    search_hit_count++;
                 }
             } else {
-                search_hit_count = 1;
+                search_hit_count++;
             }
             
             if ("equipment" in car) {
@@ -4867,10 +4900,11 @@ function get_formation_table_html (formation_names, search_keyword) {
         if (search_hit_count >= 1) {
             buf += buf_2;
             search_hit_formation_count++;
+            search_hit_formations_car_count += search_hit_count;
         }
     }
     
-    return [buf, search_hit_formation_count];
+    return [buf, search_hit_formation_count, search_hit_formations_car_count];
 }
 
 function draw_formation_table (update_title = true) {
@@ -4888,34 +4922,27 @@ function draw_formation_table (update_title = true) {
         if ("subseries_names" in formations["series"][series_name]) {
             var buf_2 = "";
             var search_hit_formation_count = 0;
+            var search_hit_formations_car_count = 0;
             
             for (var subseries_name of formations["series"][series_name]["subseries_names"]) {
-                var [buf_3, subseries_search_hit_formation_count] = get_formation_table_html(formations["series"][series_name]["subseries"][subseries_name]["formation_names"], search_keyword);
+                var [buf_3, subseries_search_hit_formation_count, subseries_search_hit_formations_car_count] = get_formation_table_html(formations["series"][series_name]["subseries"][subseries_name]["formation_names"], search_keyword);
                 
                 if (subseries_search_hit_formation_count >= 1) {
                     buf_2 += "<tr><th colspan='2'>" + escape_html(subseries_name) + "</th></tr>" + buf_3;
                     search_hit_formation_count += subseries_search_hit_formation_count;
+                    search_hit_formations_car_count += subseries_search_hit_formations_car_count;
                 }
             }
         } else {
-            var [buf_2, search_hit_formation_count] = get_formation_table_html(formations["series"][series_name]["formation_names"], search_keyword);
+            var [buf_2, search_hit_formation_count, search_hit_formations_car_count] = get_formation_table_html(formations["series"][series_name]["formation_names"], search_keyword);
         }
         
         if (search_hit_formation_count >= 1) {
             var checkbox_id = "series_" + series_name;
             
-            buf += "<input type='checkbox' id='" + checkbox_id + "'";
-            
-            if (checkbox_id in formation_table_drop_down_status && formation_table_drop_down_status[checkbox_id]) {
-                buf += " checked='checked'";
-            }
-            
-            buf += " onclick='update_formation_table_drop_down_status(this);'><label for='" + checkbox_id + "' class='drop_down'>" + escape_html(series_name);
-            if (search_keyword >= 1) {
-                buf += " (" + search_hit_formation_count + "編成該当)";
-            }
-            buf += "</label>";
-            buf += "<div><table class='formation_table'>" + buf_2 + "</table></div>";
+            buf += "<input type='checkbox' id='" + checkbox_id + "'" + (checkbox_id in formation_table_drop_down_status && formation_table_drop_down_status[checkbox_id] ? " checked='checked'" : "") + " onclick='update_formation_table_drop_down_status(this);'>";
+            buf += "<label for='" + checkbox_id + "' class='drop_down'>" + escape_html(series_name) + (search_keyword.length >= 1 ? " (" + search_hit_formation_count + "編成該当)" : "") + "</label>";
+            buf += "<div id='formation_table_" + checkbox_id + "'><h3 class='formation_table_series_name'>" + escape_html(series_name) + "</h3><button type='button' class='screenshot_button' onclick='take_screenshot(\"formation_table_" + checkbox_id + "\");'></button></button><table class='formation_table'><tr><td colspan='2'>" + search_hit_formation_count + "編成 " + search_hit_formations_car_count + "両 " + (search_keyword.length >= 1 ? "該当" : "在籍中") + "" + buf_2 + "</td></tr></table></div>";
         }
     }
     
@@ -4954,7 +4981,7 @@ function get_operation_data_html (data, ts, clickable = true, no_data_text = "�
         buf = "";
         for (var data_item of data) {
             if (clickable) {
-                buf += "<div class='key_and_value' onclick='operation_detail(\"" + add_slashes(data_item["operation_number"]) + "\", " + ts + ", false, \"" + add_slashes(data_item["formations"]) + "\");'><u>" + escape_html(data_item["operation_number"]) + "</u>";
+                buf += "<div class='key_and_value' onclick='operation_detail(\"" + add_slashes(data_item["operation_number"]) + "\", " + ts + ", false, null, \"" + add_slashes(data_item["formations"]) + "\");'><u>" + escape_html(data_item["operation_number"]) + "</u>";
             } else {
                 buf += "<div class='key_and_value'><b>" + escape_html(data_item["operation_number"]) + "</b>";
             }
@@ -4995,7 +5022,9 @@ function get_last_formation_of_series (series_name) {
 }
 
 function formation_detail (formation_name) {
-    change_title(formation_name + " (" + railroad_info["railroad_name"] + ") の編成情報・運用 | " + instance_info["instance_name"], "/railroad_" + railroad_info["railroad_id"] + "/formations/" + encodeURIComponent(formation_name) + "/");
+    var series_name = formations["formations"][formation_name]["series_name"];
+    
+    change_title(series_name + " " + formation_name + " (" + railroad_info["railroad_name"] + ") の編成情報・運用 | " + instance_info["instance_name"], "/railroad_" + railroad_info["railroad_id"] + "/formations/" + encodeURIComponent(formation_name) + "/");
     
     document.getElementById("formation_search_area").style.display = "none";
     formation_table_area_elm.innerHTML = "";
@@ -5005,7 +5034,6 @@ function formation_detail (formation_name) {
     document.getElementById("formation_screenshot_button").style.display = "block";
     document.getElementById("formation_back_button").style.display = "block";
     
-    var series_name = formations["formations"][formation_name]["series_name"];
     var formation_list = "subseries_name" in formations["formations"][formation_name] ? formations["series"][series_name]["subseries"][formations["formations"][formation_name]["subseries_name"]]["formation_names"] : formations["series"][series_name]["formation_names"];
     
     var formation_index = formation_list.indexOf(formation_name);
@@ -5505,6 +5533,19 @@ function draw_operation_table (is_today) {
     
     var buf = "";
     for (var operation_number of operation_numbers) {
+        var operation_number_html = escape_html(operation_number);
+        if (search_keyword !== "") {
+            var search_keyword_index = operation_number.toUpperCase().indexOf(search_keyword);
+            
+            if (search_keyword_index >= 0) {
+                var operation_number_search_hit = true;
+                
+                operation_number_html = escape_html(operation_number.substring(0, search_keyword_index)) + "<span class='search_highlight'>" + escape_html(operation_number.substring(search_keyword_index, search_keyword_index + search_keyword.length)) + "</span>" + escape_html(operation_number.substring(search_keyword_index + search_keyword.length));
+            } else {
+                var operation_number_search_hit = false;
+            }
+        }
+        
         if (!search_car_count_list.includes(operation_table["operations"][operation_number]["car_count"])) {
             search_car_count_list.push(operation_table["operations"][operation_number]["car_count"]);
         }
@@ -5561,16 +5602,16 @@ function draw_operation_table (is_today) {
         }
         
         if (buf_2 === "") {
-            buf_2 = "(運行なし)";
+            buf_2 = search_keyword === "" ? "(運行なし)" : "(該当なし)";
         }
         
-        if (search_keyword === "" || search_hit_count >= 1) {
-            buf += "<tr onclick='operation_detail(" + operation_number_order.length + ", " + operation_table_name_or_ts + ", " + is_today_str + ");'>";
-            buf += "<th rowspan='2' style='background-color: " + (config["dark_mode"] ? convert_color_dark_mode(operation_table["operations"][operation_number]["main_color"]) : operation_table["operations"][operation_number]["main_color"]) + "'><b>" + operation_number + "</b>" + operation_table["operations"][operation_number]["operation_group_name"] + "<br>(" + operation_table["operations"][operation_number]["car_count"] + "両)</th>";
+        if (search_keyword === "" || operation_number_search_hit || search_hit_count >= 1) {
+            buf += "<tr onclick='operation_detail(" + operation_number_order.length + ", " + operation_table_name_or_ts + ", " + is_today_str + (search_keyword === "" ? "" : ", \"" + add_slashes(search_keyword) + "\"") + ");'>";
+            buf += "<th rowspan='2' style='background-color: " + (config["dark_mode"] ? convert_color_dark_mode(operation_table["operations"][operation_number]["main_color"]) : operation_table["operations"][operation_number]["main_color"]) + "'><b>" + operation_number_html + "</b>" + operation_table["operations"][operation_number]["operation_group_name"] + "<br>(" + operation_table["operations"][operation_number]["car_count"] + "両)</th>";
             buf += "<td>" + operation_table["operations"][operation_number]["starting_location"] + (operation_table["operations"][operation_number]["starting_track"] !== null ? "<small>(" + operation_table["operations"][operation_number]["starting_track"] + ")</small>" : "") + "<time" + (operation_table["operations"][operation_number]["starting_time"] !== null ? ">" + operation_table["operations"][operation_number]["starting_time"] : " datetime='PT24H'>N/A") + "</time></td>";
             buf += "<td>" + operation_table["operations"][operation_number]["terminal_location"] + (operation_table["operations"][operation_number]["terminal_track"] !== null ? "<small>(" + operation_table["operations"][operation_number]["terminal_track"] + ")</small>" : "") + "<time" + (operation_table["operations"][operation_number]["ending_time"] !== null ? ">" + operation_table["operations"][operation_number]["ending_time"] : " datetime='PT24H'>N/A") + "</time></td>";
             buf += "</tr>";
-            buf += "<tr onclick='operation_detail(" + operation_number_order.length + ", " + operation_table_name_or_ts + ", " + is_today_str + ");'><td colspan='2' class='operation_overview'>";
+            buf += "<tr onclick='operation_detail(" + operation_number_order.length + ", " + operation_table_name_or_ts + ", " + is_today_str + (search_keyword === "" ? "" : ", \"" + add_slashes(search_keyword) + "\"") + ");'><td colspan='2' class='operation_overview'>";
             buf += buf_2;
             buf += "</td></tr>";
             
@@ -5847,7 +5888,7 @@ function write_operation_data (yyyy_mm_dd, operation_number, train_number = null
         
         buf += "<div id='train_number_data'>";
         buf += "<h4>目撃時の列車</h4>";
-        buf += "<b id='operation_data_train_number'></b><button onclick='select_train_number(\"" + add_slashes(operation_number) + "\", \"" + now_hh_mm + "\");'>変更</button>";
+        buf += "<b id='operation_data_train_number'></b><button type='button' onclick='select_train_number(\"" + add_slashes(operation_number) + "\", \"" + now_hh_mm + "\");'>変更</button>";
         buf += "</div>";
         
         buf += "<h4>運用補足情報</h4>";
