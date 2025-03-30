@@ -23,6 +23,10 @@ if (!wakarana::check_resource_id_string($resource_id)) {
     print "【エラー】権限対象IDとして有効でない文字列が指定されました\n";
     exit;
 }
+if ($resource_id === "instance_administrator") {
+    print "【エラー】ロールへの割り当てが制限されている権限です\n";
+    exit;
+}
 if (!wakarana::check_id_string($action)) {
     print "【エラー】動作IDとして有効でない文字列が指定されました\n";
     exit;
@@ -34,12 +38,26 @@ $wakarana = new wakarana(__DIR__."/../../".$wakarana_base_dir);
 
 $role = $wakarana->get_role($role_id);
 
-if (is_object($role)) {
-    if ($role->add_permission($resource_id, $action)) {
-        print "ロールに権限を割り当てました\n";
-    } else {
-        print "ロールへの権限割り当てに失敗しました\n";
-    }
-} else {
+if (!is_object($role)) {
     print "指定されたロールは存在しません\n";
+    exit;
 }
+
+if (!$role->add_permission($resource_id, $action)) {
+    print "ロールへの権限割り当てに失敗しました\n";
+    exit;
+}
+
+$resource_id_exploded = explode("/", $resource_id);
+if ($resource_id_exploded[0] === "railroads") {
+    $railroad_resource_id = count($resource_id_exploded) == 1 ? $resource_id_exploded[0] : $resource_id_exploded[0]."/".$resource_id_exploded[1];
+    
+    if (!$role->check_permission($railroad_resource_id)) {
+        if (!$role->add_permission($railroad_resource_id)) {
+            print "ロールへの権限割り当てに失敗しました\n";
+            exit;
+        }
+    }
+}
+
+print "ロールに権限を割り当てました\n";

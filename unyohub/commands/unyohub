@@ -8,7 +8,7 @@ import subprocess
 
 
 UNYOHUB_COMMANDS_APP_NAME = "鉄道運用Hub コマンドラインツール"
-UNYOHUB_COMMANDS_VERSION = "25.03-2"
+UNYOHUB_COMMANDS_VERSION = "25.03-3"
 
 UNYOHUB_DATA_DIR = "../data"
 
@@ -39,6 +39,9 @@ def print_usage ():
     
     print("\x1b[93mupdate-operations\x1b[0m \x1b[90m<路線系統識別名> <ダイヤ改正識別名> <ダイヤ識別名>\x1b[0m")
     print("  運用表をデータベースに書き込む\n")
+    
+    print("\x1b[93mrole-info\x1b[0m \x1b[90m<ロール識別名>\x1b[0m")
+    print("  ロールの情報を表示する\n")
     
     print("\x1b[93mcreate-role\x1b[0m \x1b[90m<ロール識別名> <ロール表示名>\x1b[0m")
     print("  ロールを新規作成する\n")
@@ -108,6 +111,13 @@ if arg_count >= 2:
             if arg_count == 5:
                 write_operations_to_db = importlib.import_module("modules.write_operations_to_db")
                 write_operations_to_db.write_operations_to_db(mes, data_dir + "/" + os.path.basename(args[2]), os.path.basename(args[3]), os.path.basename(args[4]))
+            else:
+                print("\x1b[31m引数の数が異常です\x1b[0m")
+        case "role-info":
+            if arg_count == 3:
+                subprocess.run(["php", "modules/role_info.php", args[2]])
+            elif arg_count == 2:
+                subprocess.run(["php", "modules/role_info.php"])
             else:
                 print("\x1b[31m引数の数が異常です\x1b[0m")
         case "create-role":
