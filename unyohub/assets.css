@@ -2996,21 +2996,19 @@ footer div {
 }
 
 .footer_select {
-    display: inline-block;
-    
     box-sizing: content-box;
     
     width: 60px;
     height: 45px;
     
-    padding-right: 15px;
+    padding: 0 0 0 15px;
     
     border: none;
     
-    background-image: url(data:image/webp;base64,UklGRq4AAABXRUJQVlA4TKIAAAAvD8AOEG9gkG2k5vwN3vWnYSBtmzD/Du71NZC2TZh/B/f6KgoAwvETQf+PIDsMCbgRgLuj/78oNB4+pPrbEFz9aqqEo0aSQquTd9wrQn4yh/WBBKwgAQNI+BIQgaOdIwIi+j8BwA5sby6X2VKULrWS0gK2JAX00iDLYstGdy3d4vk/2e9dPD9l53D3uCDLhFEunBJAShNgSLccKQo5seO6fwA=);
+    background-image: url(data:image/webp;base64,UklGRjoAAABXRUJQVlA4TC0AAAAvD8AOEA8wmZM5mfMf8FDQRpJyTk7K+XfE8PwSIvo/AYw/4Htdk+/qGr4z/gAA);
     background-repeat: no-repeat;
     background-size: 8px 30px;
-    background-position: calc(100% - 7px) 50%;
+    background-position: 5px 50%;
     background-color: #f7f7f7;
     
     line-height: 45px;
@@ -3018,13 +3016,23 @@ footer div {
     color: #333333;
     text-align: center;
     vertical-align: top;
-    
-    appearance: none;
-    -webkit-appearance: none;
 }
 
-.dark_mode .footer_select {
-    background-color: #555555;
+.footer_select small {
+    display: inline-block;
+    
+    width: 65px;
+    height: 40px;
+    
+    margin: 3.5px 0;
+    
+    line-height: 18px;
+    font-size: 14px;
+    text-align: left;
+    vertical-align: top;
+    word-break: break-all;
+    
+    overflow: hidden;
 }
 
 .previous_button, .next_button, .reload_button, .back_button, .list_button, .date_button, .time_button {
@@ -4156,7 +4164,7 @@ button abbr {
     width: 26%;
 }
 
-.train_overview span:nth-of-type(2), .operation_table_train span:nth-of-type(2) {
+.train_overview span:nth-of-type(2), .operation_table_train div:not(.coupling_info) span:nth-child(2) {
     width: 10%;
 }
 
