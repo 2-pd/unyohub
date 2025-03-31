@@ -4529,7 +4529,7 @@ function draw_operation_detail (operation_number_or_index, diagram_id, operation
             buf += "<button type='button' class='execute_button' onclick='operation_data_history(null, \"" + add_slashes(operation_number) + "\");'>過去30日間の充当編成</button>";
         }
         
-        buf += "<div><input type='radio' name='switch_simplify_operation_details' id='simplify_operation_details' onchange='change_simplify_operation_details(!this.checked, \"" + add_slashes(operation_number) + "\", " + diagram_id_or_ts + ", " + is_today + ");'" + (config["simplify_operation_details"] ? "" : " checked='checked'") + "><label for='simplify_operation_details'>詳細表示</label><input type='radio'  name='switch_simplify_operation_details' id='not_simplify_operation_details' onchange='change_simplify_operation_details(this.checked, \"" + add_slashes(operation_number) + "\", " + diagram_id_or_ts + ", " + is_today + ");'" + (config["simplify_operation_details"] ? " checked='checked'" : "") + "><label for='not_simplify_operation_details'>簡略表示</label></div>";
+        buf += "<div><input type='radio' name='switch_simplify_operation_details' id='simplify_operation_details' onchange='change_simplify_operation_details(!this.checked, \"" + add_slashes(operation_number) + "\", " + diagram_id_or_ts + ", " + is_today + ", " + (search_keyword === null ? "null" : "\"" + add_slashes(search_keyword) + "\"") + ");'" + (config["simplify_operation_details"] ? "" : " checked='checked'") + "><label for='simplify_operation_details'>詳細表示</label><input type='radio'  name='switch_simplify_operation_details' id='not_simplify_operation_details' onchange='change_simplify_operation_details(this.checked, \"" + add_slashes(operation_number) + "\", " + diagram_id_or_ts + ", " + is_today + ", " + (search_keyword === null ? "null" : "\"" + add_slashes(search_keyword) + "\"") + ");'" + (config["simplify_operation_details"] ? " checked='checked'" : "") + "><label for='not_simplify_operation_details'>簡略表示</label></div>";
         
         if (operation_table["operations"][operation_number]["comment"] !== null) {
             buf += "<div class='descriptive_text'>" + escape_html(operation_table["operations"][operation_number]["comment"]) + "</div>";
@@ -4732,12 +4732,12 @@ function draw_operation_trains (operation_number, diagram_id_or_ts, is_today, se
     document.getElementById("operation_trains_area").innerHTML = buf;
 }
 
-function change_simplify_operation_details (bool_val, operation_number, operation_table_name_or_ts, is_today) {
+function change_simplify_operation_details (bool_val, operation_number, operation_table_name_or_ts, is_today, search_keyword) {
     config["simplify_operation_details"] = bool_val;
     
     save_config();
     
-    draw_operation_trains(operation_number, operation_table_name_or_ts, is_today);
+    draw_operation_trains(operation_number, operation_table_name_or_ts, is_today, search_keyword);
 }
 
 function previous_operation_number (operation_number_or_index, operation_data_date_ts_or_operation_name) {

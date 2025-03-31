@@ -4156,7 +4156,7 @@ button abbr {
     width: 26%;
 }
 
-.train_overview span:nth-of-type(2), .operation_table_train span:nth-of-type(2) {
+.train_overview span:nth-of-type(2), .operation_table_train div:not(.coupling_info) span:nth-child(2) {
     width: 10%;
 }
 
