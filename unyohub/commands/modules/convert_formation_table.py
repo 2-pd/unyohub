@@ -260,8 +260,12 @@ def convert_formation_table (mes, main_dir):
     conn.close()
     
     mes("formations.jsonを作成しています...")
-    
-    with open(main_dir + "/formations.json", "w", encoding="utf-8") as json_f:
-        json.dump(json_data, json_f, ensure_ascii=False, separators=(',', ':'))
-    
-    mes("処理が完了しました")
+    try:
+        with open(main_dir + "/formations.json", "w", encoding="utf-8") as json_f:
+            json.dump(json_data, json_f, ensure_ascii=False, separators=(',', ':'))
+    except PermissionError:
+        mes("formations.jsonの書き込み権限がありません", True)
+    except:
+        mes("formations.jsonの作成に失敗しました", True)
+    else:
+        mes("処理が完了しました")

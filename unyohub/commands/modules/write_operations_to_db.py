@@ -37,7 +37,7 @@ def write_operations_to_db (mes, main_dir, diagram_revision, diagram_id):
             if first_departure_time is None:
                 first_departure_time = operation["trains"][cnt]["first_departure_time"]
             
-            if cnt + 1 < train_count and (operation["trains"][cnt + 1]["train_number"] == operation["trains"][cnt]["train_number"] or (operation["trains"][cnt + 1]["train_number"][0] == "_" and operation["trains"][cnt + 1]["train_number"][1:].split("__")[0] == operation["trains"][cnt]["train_number"])):
+            if cnt + 1 < train_count and (operation["trains"][cnt + 1]["train_number"] == operation["trains"][cnt]["train_number"] or (operation["trains"][cnt + 1]["train_number"][0] == "_" and operation["trains"][cnt + 1]["train_number"][1:operation["trains"][cnt + 1]["train_number"].rfind("__")] == operation["trains"][cnt]["train_number"])):
                 continue
             
             cur.execute("INSERT INTO `unyohub_trains` (`diagram_revision`, `diagram_id`, `operation_number`, `train_number`, `first_departure_time`, `final_arrival_time`) VALUES (:diagram_revision, :diagram_id, :operation_number, :train_number, :first_departure_time, :final_arrival_time)", {"diagram_revision" : diagram_revision, "diagram_id" : diagram_id, "operation_number" : operation_number, "train_number" : operation["trains"][cnt]["train_number"], "first_departure_time" : first_departure_time, "final_arrival_time" : operation["trains"][cnt]["final_arrival_time"]})
