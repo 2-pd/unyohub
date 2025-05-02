@@ -311,9 +311,9 @@ def generate_operation_table (mes, main_dir, diagram_revision, diagram_id, gener
                         
                         last_train_number_is_even = False
             
-            for cnt in range(3, len(inbound_timetable[0]) - 1):
+            for cnt in range(2, len(inbound_timetable[0])):
                 inbound_timetable[0][cnt] = inbound_train_numbers[inbound_timetable[0][cnt]]
-            for cnt in range(3, len(outbound_timetable[0]) - 1):
+            for cnt in range(2, len(outbound_timetable[0])):
                 outbound_timetable[0][cnt] = outbound_train_numbers[outbound_timetable[0][cnt]]
         else:
             train_numbers = {}
@@ -332,10 +332,10 @@ def generate_operation_table (mes, main_dir, diagram_revision, diagram_id, gener
                         
                         train_cnt += 1
             
-            for cnt in range(3, len(inbound_timetable[0]) - 1):
+            for cnt in range(2, len(inbound_timetable[0])):
                 if inbound_timetable[0][cnt] in train_numbers:
                     inbound_timetable[0][cnt] = train_numbers[inbound_timetable[0][cnt]]
-            for cnt in range(3, len(outbound_timetable[0]) - 1):
+            for cnt in range(2, len(outbound_timetable[0])):
                 if outbound_timetable[0][cnt] in train_numbers:
                     outbound_timetable[0][cnt] = train_numbers[outbound_timetable[0][cnt]]
         
