@@ -91,6 +91,7 @@ def convert_timetable_1 (mes, file_name, digits_count):
                         
                         if departure_time[-1] == "?":
                             departure_time = departure_time[:-1]
+                            before_departure_time = "|"
                         
                         if ":" not in departure_time:
                             if departure_time.isdecimal() and len(departure_time) <= 4:

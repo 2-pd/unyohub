@@ -192,6 +192,9 @@ def convert_operation_table_1 (mes, main_dir, file_name, json_file_name, digits_
                         error_occurred = True
                         continue
                     
+                    if first_departure_time.startswith("|"):
+                        first_departure_time = first_departure_time[1:]
+                    
                     train_number_list[train_number][first_departure_time] = [
                             stations[starting_station_index]["station_initial"] + first_departure_time[-5:],
                             stations[terminal_station_index]["station_initial"] + final_arrival_time[-5:]
@@ -261,10 +264,16 @@ def convert_operation_table_1 (mes, main_dir, file_name, json_file_name, digits_
                 output_row_2 = [operation[1], convert_time_style(operation[3], False), convert_time_style(operation[5], False)]
                 output_row_3 = [color, "", ""]
             
+            previous_train_name = None
+            
             for train_cell in operation[6:]:
                 train_cell = train_cell.strip()
                 
-                if train_cell[0:1] == ".":
+                if train_cell.startswith("."):
+                    if previous_train_name is None or previous_train_name.startswith("."):
+                        mes("《注意》無効な留置指定「" + train_cell + "」をスキップします")
+                        continue
+                    
                     output_row_1.append(train_cell)
                     output_row_2.append("")
                     output_row_3.append("")
@@ -275,6 +284,8 @@ def convert_operation_table_1 (mes, main_dir, file_name, json_file_name, digits_
                         output_cell_styles_1.append({"text-align" : "center", "font-style" : "italic"})
                         output_cell_styles_2.append(None)
                         output_cell_styles_3.append(None)
+                    
+                    previous_train_name = train_cell
                 elif train_cell != "" and train_cell != "○" and train_cell != "△":
                     train_time = train_cell.split("[")
                     
@@ -299,8 +310,7 @@ def convert_operation_table_1 (mes, main_dir, file_name, json_file_name, digits_
                         
                         if len(train_rows[0]) == 1 and len(train_rows[1]) == 1:
                             if train_name not in train_number_list:
-                                mes("列車番号が時刻表にありません: " + train_name, True)
-                                error_occurred = True
+                                mes("《注意》時刻表にない列車 " + train_name + " をスキップします")
                                 continue
                             
                             first_departure_times = list(train_number_list[train_name].keys())
@@ -334,8 +344,7 @@ def convert_operation_table_1 (mes, main_dir, file_name, json_file_name, digits_
                             output_cell_styles_3.append(None)
                     else:
                         if train_name not in train_number_list:
-                            mes("列車番号が時刻表にありません: " + train_name, True)
-                            error_occurred = True
+                            mes("《注意》時刻表にない列車 " + train_name + " をスキップします")
                             continue
                         
                         first_departure_times = list(train_number_list[train_name].keys())
@@ -363,6 +372,15 @@ def convert_operation_table_1 (mes, main_dir, file_name, json_file_name, digits_
                             error_occurred = True
                         else:
                             train_list.append(train_name + car_count)
+                    
+                    previous_train_name = train_name
+            
+            if output_row_1[-1].startswith("."):
+                mes("《注意》無効な留置指定「" + output_row_1[-1] + "」を除外します")
+                
+                del output_row_1[-1]
+                del output_row_2[-1]
+                del output_row_3[-1]
             
             if len(output_row_2[1]) == 0:
                 if for_printing:

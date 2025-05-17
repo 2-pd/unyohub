@@ -169,11 +169,17 @@ def generate_operation_table (mes, main_dir, diagram_revision, diagram_id, gener
                         inbound_timetable_t[cnt][0] += "__"
                     
                     inbound_timetable_t[cnt][0] += symbol_data["symbol"]
-        elif inbound_timetable_t[cnt][0][0] == "?":
-            if operation_number not in operation_number_hashes:
-                operation_number_hashes[operation_number] = get_hashed_id(operation_number)
+        else:
+            train_number = inbound_timetable_t[cnt][0].strip()
             
-            inbound_timetable_t[cnt][0] = inbound_timetable_t[cnt][0][1:] + "__" + operation_number_hashes[operation_number] + "__" + str(train_cnt)
+            if train_number == "":
+                continue
+            
+            if train_number[0] == "?":
+                if operation_number not in operation_number_hashes:
+                    operation_number_hashes[operation_number] = get_hashed_id(operation_number)
+                
+                inbound_timetable_t[cnt][0] = train_number + "__" + operation_number_hashes[operation_number] + "__" + str(train_cnt)
         
         if operation_number != "":
             operation_data[operation_number][shape_time_string(next((item for item in inbound_timetable_t[cnt][2:-1] if item.isdecimal()), "99:99"))] = inbound_timetable_t[cnt][0]
@@ -206,11 +212,17 @@ def generate_operation_table (mes, main_dir, diagram_revision, diagram_id, gener
                         outbound_timetable_t[cnt][0] += "__"
                     
                     outbound_timetable_t[cnt][0] += symbol_data["symbol"]
-        elif outbound_timetable_t[cnt][0][0] == "?":
-            if operation_number not in operation_number_hashes:
-                operation_number_hashes[operation_number] = get_hashed_id(operation_number)
+        else:
+            train_number = outbound_timetable_t[cnt][0].strip()
             
-            outbound_timetable_t[cnt][0] = outbound_timetable_t[cnt][0][1:] + "__" + operation_number_hashes[operation_number] + "__" + str(train_cnt)
+            if train_number == "":
+                continue
+            
+            if train_number[0] == "?":
+                if operation_number not in operation_number_hashes:
+                    operation_number_hashes[operation_number] = get_hashed_id(operation_number)
+                
+                outbound_timetable_t[cnt][0] = train_number + "__" + operation_number_hashes[operation_number] + "__" + str(train_cnt)
         
         if operation_number != "":
             operation_data[operation_number][shape_time_string(next((item for item in outbound_timetable_t[cnt][2:-1] if item.isdecimal()), "99:99"))] = outbound_timetable_t[cnt][0]
@@ -299,9 +311,9 @@ def generate_operation_table (mes, main_dir, diagram_revision, diagram_id, gener
                         
                         last_train_number_is_even = False
             
-            for cnt in range(3, len(inbound_timetable[0]) - 1):
+            for cnt in range(2, len(inbound_timetable[0])):
                 inbound_timetable[0][cnt] = inbound_train_numbers[inbound_timetable[0][cnt]]
-            for cnt in range(3, len(outbound_timetable[0]) - 1):
+            for cnt in range(2, len(outbound_timetable[0])):
                 outbound_timetable[0][cnt] = outbound_train_numbers[outbound_timetable[0][cnt]]
         else:
             train_numbers = {}
@@ -310,8 +322,8 @@ def generate_operation_table (mes, main_dir, diagram_revision, diagram_id, gener
                 train_cnt = 1
                 
                 for cnt_2 in range(6, len(operation_table[cnt])):
-                    if "__" in operation_table[cnt][cnt_2]:
-                        tmp_number_split = operation_table[cnt][cnt_2].split("__")
+                    if len(operation_table[cnt][cnt_2]) >= 1 and operation_table[cnt][cnt_2][0] == "?":
+                        tmp_number_split = operation_table[cnt][cnt_2][1:].split("__")
                         
                         train_number = tmp_number_split[0] + "__" + tmp_number_split[1] + "-" + str(train_cnt)
                         
@@ -320,10 +332,10 @@ def generate_operation_table (mes, main_dir, diagram_revision, diagram_id, gener
                         
                         train_cnt += 1
             
-            for cnt in range(3, len(inbound_timetable[0]) - 1):
+            for cnt in range(2, len(inbound_timetable[0])):
                 if inbound_timetable[0][cnt] in train_numbers:
                     inbound_timetable[0][cnt] = train_numbers[inbound_timetable[0][cnt]]
-            for cnt in range(3, len(outbound_timetable[0]) - 1):
+            for cnt in range(2, len(outbound_timetable[0])):
                 if outbound_timetable[0][cnt] in train_numbers:
                     outbound_timetable[0][cnt] = train_numbers[outbound_timetable[0][cnt]]
         
