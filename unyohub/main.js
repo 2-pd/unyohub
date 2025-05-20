@@ -2430,11 +2430,7 @@ function select_lines (lines = null, position_mode = true) {
 }
 
 function convert_train_position_data (train_data) {
-    if (train_data["train_number"].startsWith("_")) {
-        train_data["train_title"] = train_data["train_number"].substring(1).split("__")[0];
-    } else {
-        train_data["train_title"] = train_data["train_number"].split("__")[0];
-    }
+    train_data["train_title"] = train_data["train_number"].startsWith("_") ? train_data["train_number"].substring(1).split("__")[0] : train_data["train_number"].split("__")[0];
     
     train_data["formation_html"] = escape_html(train_data["formation_text"]).replace(/\+/g, "<wbr>+");
     
@@ -5620,30 +5616,30 @@ function draw_operation_table (is_today) {
                 continue;
             }
             
-            var train_number = trains[cnt_2]["train_number"].split("__")[0];
+            var train_title = trains[cnt_2]["train_number"].split("__")[0];
             
             if (search_keyword === "") {
-                if (train_number.startsWith(".")) {
-                    buf_2 += "<small class='operation_overview_yard_stay'>" + train_number.substring(1) + "</small>";
+                if (train_title.startsWith(".")) {
+                    buf_2 += "<small class='operation_overview_yard_stay'>" + train_title.substring(1) + "</small>";
                 } else {
                     if (trains[cnt_2]["train_number"] in timetable["timetable"][trains[cnt_2]["line_id"]][trains[cnt_2]["direction"] + "_trains"]) {
                         var train_type_initial = timetable["timetable"][trains[cnt_2]["line_id"]][trains[cnt_2]["direction"] + "_trains"][trains[cnt_2]["train_number"]][0]["train_type"].substring(0, 1);
-                    } else if (railroad_info["deadhead_train_number_regexp"].test(train_number)) {
+                    } else if (railroad_info["deadhead_train_number_regexp"].test(train_title)) {
                         var train_type_initial = "回";
                     } else {
                         var train_type_initial = "＊";
                     }
                     
-                    buf_2 += "<small style='background-color: " + (config["dark_mode"] ? convert_font_color_dark_mode(get_train_color(train_number, "#333333")) : get_train_color(train_number, "#333333")) + ";'>" + train_type_initial + "</small>";
+                    buf_2 += "<small style='background-color: " + (config["dark_mode"] ? convert_font_color_dark_mode(get_train_color(train_title, "#333333")) : get_train_color(train_title, "#333333")) + ";'>" + train_type_initial + "</small>";
                 }
             } else {
-                var train_number_search_index = train_number.toUpperCase().indexOf(search_keyword);
+                var train_title_search_index = train_title.toUpperCase().indexOf(search_keyword);
                 
-                if (train_number_search_index !== -1) {
+                if (train_title_search_index !== -1) {
                     if (search_hit_count < 4) {
-                        var train_number_search_index_end = train_number_search_index + search_keyword.length;
+                        var train_title_search_index_end = train_title_search_index + search_keyword.length;
                         
-                        buf_2 += "<span>" + train_number.substring(0, train_number_search_index) + "<span class='search_highlight'>" + train_number.substring(train_number_search_index, train_number_search_index_end) + "</span>" + train_number.substring(train_number_search_index_end) + "</span>";
+                        buf_2 += "<span>" + train_title.substring(0, train_title_search_index) + "<span class='search_highlight'>" + train_title.substring(train_title_search_index, train_title_search_index_end) + "</span>" + train_title.substring(train_title_search_index_end) + "</span>";
                     } else if (search_hit_count === 4) {
                         buf_2 += "<span>他</span>";
                     }
