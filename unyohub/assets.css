@@ -3005,11 +3005,11 @@ footer div {
     
     border: none;
     
-    background-image: url(data:image/webp;base64,UklGRjoAAABXRUJQVlA4TC0AAAAvD8AOEA8wmZM5mfMf8FDQRpJyTk7K+XfE8PwSIvo/AYw/4Htdk+/qGr4z/gAA);
+    background-image: url(data:image/webp;base64,UklGRjoAAABXRUJQVlA4TC0AAAAvD8AOEA8wmZM5mfMf8FDQRpJyTk7K+XfE8PwSIvo/AYw/4Htdk+/qGr4z/gAA) !important;
     background-repeat: no-repeat;
     background-size: 8px 30px;
     background-position: 5px 50%;
-    background-color: #f7f7f7;
+    background-color: transparent !important;
     
     line-height: 45px;
     font-size: 21px;
@@ -3051,7 +3051,7 @@ footer div {
     background-color: transparent !important;
     
     overflow: hidden;
-    color: transparent;
+    color: transparent !important;
     vertical-align: top;
 }
 
