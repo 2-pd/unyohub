@@ -6353,7 +6353,7 @@ function show_moderation_info (user_id, ip_address) {
                 is_suspicious_user_elm.innerText = "【!】要注意ユーザー";
                 is_suspicious_user_elm.className = "warning_text";
             } else {
-                is_suspicious_user_elm.innerHTML = "<button type='button' onclick='mark_user_suspect(\"" + add_slashes(user_id) + "\");'>要注意ユーザーに指定</button>";
+                is_suspicious_user_elm.innerHTML = "<button type='button' onclick='time_out_setting(\"" + add_slashes(user_id) + "\");'>タイムアウトを設定</button>";
             }
         }
         
@@ -6365,7 +6365,7 @@ function show_moderation_info (user_id, ip_address) {
                 is_suspicious_ip_address_elm.innerText = "【!】要注意IPアドレス";
                 is_suspicious_ip_address_elm.className = "warning_text";
             } else {
-                is_suspicious_ip_address_elm.innerHTML = "<button type='button' onclick='mark_ip_address_suspect(\"" + add_slashes(ip_address) + "\");'>要注意IPアドレスに指定</button>";
+                is_suspicious_ip_address_elm.innerHTML = "<button type='button' onclick='time_out_setting(\"" + add_slashes(ip_address) + "\");'>タイムアウトを設定</button>";
             }
         }
     });
@@ -6467,56 +6467,74 @@ function revoke_users_all_operation_data (user_id) {
     }
 }
 
-function mark_user_suspect (user_id) {
-    if (confirm("このユーザーを要注意ユーザーに指定しますか？")) {
-        open_wait_screen();
-        
-        if (one_time_token === null) {
-            close_wait_screen();
-            
-            mes("内部処理が完了していないため、数秒待ってから再送信してください", true);
-            
-            return;
-        }
-        
-        ajax_post("mark_user_suspect.php", "railroad_id=" + escape_form_data(railroad_info["railroad_id"]) + "&user_id=" + escape_form_data(user_id) + "&one_time_token=" + escape_form_data(one_time_token), function (response) {
-            close_wait_screen();
-            
-            if (response === "SUCCEEDED") {
-                mes("ユーザーを要注意に指定しました");
-                
-                show_moderation_info(user_id, null);
-            }
-            
-            get_one_time_token();
-        });
+function time_out_setting (user_id_or_ip_address) {
+    var popup_inner_elm = open_square_popup("time_out_popup");
+    
+    if (!user_id_or_ip_address.includes(".") && !user_id_or_ip_address.includes(":")) {
+        var target_is_user_id = true;
+    } else {
+        var target_is_user_id = false;
     }
+    
+    var buf = "<h4>タイムアウト対象の" + (target_is_user_id ? "ユーザーID" : "IPアドレス") + "</h4>";
+    buf += "<b>" + user_id_or_ip_address + "</b>";
+    buf += "<h4>タイムアウト期間</h4>";
+    buf += "<input type='number' id='timed_out_days' min='1' max='90' value='7'>日間<br>";
+    buf += "<br><br><button type='button' class='wide_button' onclick='time_out_" + (target_is_user_id ? "user" : "ip_address") + "(\"" + add_slashes(user_id_or_ip_address) + "\");'>タイムアウトを設定</button>";
+    
+    popup_inner_elm.innerHTML = buf;
 }
 
-function mark_ip_address_suspect (ip_address) {
-    if (confirm("このIPアドレスを要注意IPアドレスに指定しますか？")) {
-        open_wait_screen();
+function time_out_user (user_id) {
+    open_wait_screen();
+    
+    if (one_time_token === null) {
+        close_wait_screen();
         
-        if (one_time_token === null) {
-            close_wait_screen();
+        mes("内部処理が完了していないため、数秒待ってから再送信してください", true);
+        
+        return;
+    }
+    
+    ajax_post("time_out_user.php", "railroad_id=" + escape_form_data(railroad_info["railroad_id"]) + "&user_id=" + escape_form_data(user_id) + "&timed_out_days=" + escape_form_data(document.getElementById("timed_out_days").value) + "&one_time_token=" + escape_form_data(one_time_token), function (response) {
+        close_wait_screen();
+        
+        if (response === "SUCCEEDED") {
+            mes("ユーザーをタイムアウトしました");
             
-            mes("内部処理が完了していないため、数秒待ってから再送信してください", true);
+            close_square_popup();
             
-            return;
+            show_moderation_info(user_id, null);
         }
         
-        ajax_post("mark_ip_address_suspect.php", "railroad_id=" + escape_form_data(railroad_info["railroad_id"]) + "&ip_address=" + escape_form_data(ip_address) + "&one_time_token=" + escape_form_data(one_time_token), function (response) {
-            close_wait_screen();
-            
-            if (response === "SUCCEEDED") {
-                mes("IPアドレスを要注意に指定しました");
-                
-                show_moderation_info(null, ip_address);
-            }
-            
-            get_one_time_token();
-        });
+        get_one_time_token();
+    });
+}
+
+function time_out_ip_address (ip_address) {
+    open_wait_screen();
+    
+    if (one_time_token === null) {
+        close_wait_screen();
+        
+        mes("内部処理が完了していないため、数秒待ってから再送信してください", true);
+        
+        return;
     }
+    
+    ajax_post("time_out_ip_address.php", "railroad_id=" + escape_form_data(railroad_info["railroad_id"]) + "&ip_address=" + escape_form_data(ip_address) + "&timed_out_days=" + escape_form_data(document.getElementById("timed_out_days").value) + "&one_time_token=" + escape_form_data(one_time_token), function (response) {
+        close_wait_screen();
+        
+        if (response === "SUCCEEDED") {
+            mes("IPアドレスをタイムアウトしました");
+            
+            close_square_popup();
+            
+            show_moderation_info(null, ip_address);
+        }
+        
+        get_one_time_token();
+    });
 }
 
 

@@ -3331,7 +3331,7 @@ a {
     font-size: 18px;
 }
 
-.popup input[type="number"] {
+.popup input[type="number"], .square_popup input[type="number"] {
     display: inline-block;
     
     width: 50px;
