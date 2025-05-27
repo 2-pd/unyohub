@@ -6306,17 +6306,21 @@ function edit_operation_data (yyyy_mm_dd, operation_number, assign_order, user_i
     buf += "<div class='key_and_value'><b>編成名</b>" + escape_html(formation_text) + "</div>";
     
     if (user_id !== user_data["user_id"]) {
-        buf += "<h3>投稿者情報</h3>";
-        buf += "<div class='key_and_value'><b>ユーザーID</b>" + escape_html(user_id) + "<div id='edit_operation_data_is_suspicious_user'></div></div>";
+        buf += "<input type='checkbox' id='edit_operation_data_moderation_info'><label for='edit_operation_data_moderation_info' class='drop_down'>投稿者情報</label><div>";
+        buf += "<div class='key_and_value'><b>ユーザーID</b>" + escape_html(user_id) + "<div id='edit_operation_data_is_timed_out_user'></div></div>";
+        buf += "<div id='edit_operation_data_user_info' class='loading_icon'></div>";
         if (ip_address !== null) {
-            buf += "<div class='key_and_value'><b>IPアドレス</b>" + escape_html(ip_address) + "<div id='edit_operation_data_is_suspicious_ip_address'></div></div>";
-            buf += "<div class='key_and_value'><b>ホスト名</b><div id='edit_operation_data_host_name'></div></div>";
+            buf += "<div class='key_and_value'><b>IPアドレス</b>" + escape_html(ip_address) + "<div id='edit_operation_data_is_timed_out_ip_address'></div></div>";
+            buf += "<div id='edit_operation_data_ip_address_info' class='loading_icon'></div>";
         }
-    } else {
-        buf += "<br>";
+        buf += "<div id='edit_operation_data_user_timed_out_logs'></div>";
+        if (ip_address !== null) {
+            buf += "<div id='edit_operation_data_ip_address_timed_out_logs'></div>";
+        }
+        buf += "</div>";
     }
     
-    buf += "<br><button type='button' class='wide_button' onclick='revoke_operation_data(\"" + yyyy_mm_dd + "\", \"" + add_slashes(operation_number) + "\", " + assign_order + ",\"" + add_slashes(user_id) + "\");'>取り消す</button>";
+    buf += "<br><br><button type='button' class='wide_button' onclick='revoke_operation_data(\"" + yyyy_mm_dd + "\", \"" + add_slashes(operation_number) + "\", " + assign_order + ",\"" + add_slashes(user_id) + "\");'>投稿を取り消す</button>";
     
     if (user_id !== user_data["user_id"]) {
         buf += "<button type='button' class='wide_button' onclick='revoke_users_all_operation_data(\"" + add_slashes(user_id) + "\");'>ユーザーの投稿を全て取り消す</button>";
@@ -6347,26 +6351,44 @@ function show_moderation_info (user_id, ip_address) {
         
         var moderation_info = JSON.parse(response);
         
-        if (moderation_info["is_suspicious_user"] !== null) {
-            var is_suspicious_user_elm = document.getElementById("edit_operation_data_is_suspicious_user");
-            if (moderation_info["is_suspicious_user"]) {
-                is_suspicious_user_elm.innerText = "【!】要注意ユーザー";
-                is_suspicious_user_elm.className = "warning_text";
-            } else {
-                is_suspicious_user_elm.innerHTML = "<button type='button' onclick='time_out_setting(\"" + add_slashes(user_id) + "\");'>タイムアウトを設定</button>";
+        if (moderation_info["is_timed_out_user"] !== null) {
+            if (moderation_info["user_name"] !== null) {
+                document.getElementById("edit_operation_data_user_info").innerHTML = "<div class='key_and_value'><b>ハンドルネーム</b>" + escape_html(moderation_info["user_name"]) + "</div><div class='key_and_value'><b>登録日時</b>" + escape_html(moderation_info["user_created"]) + "</div>";
             }
+            
+            var is_timed_out_user_elm = document.getElementById("edit_operation_data_is_timed_out_user");
+            if (moderation_info["is_timed_out_user"]) {
+                is_timed_out_user_elm.innerText = "【!】タイムアウト中";
+                is_timed_out_user_elm.className = "warning_text";
+            } else {
+                is_timed_out_user_elm.innerHTML = "<button type='button' onclick='time_out_setting(\"" + add_slashes(user_id) + "\");'>タイムアウトを設定</button>";
+            }
+            
+            var buf = "";
+            for (var log_data of moderation_info["user_timed_out_logs"]) {
+                buf += log_data["timed_out_datetime"] + " から " + log_data["timed_out_days"] + "日間 (モデレーター: " + escape_html(log_data["moderator_name"]) + ")<br>";
+            }
+            
+            document.getElementById("edit_operation_data_user_timed_out_logs").innerHTML = "<h5>ユーザーのタイムアウト履歴</h5><div class='descriptive_text'>" + (buf.length >= 1 ? buf : "ユーザーにタイムアウトの履歴はありません") + "</div>";
         }
         
-        if (moderation_info["host_name"] !== null && moderation_info["is_suspicious_ip_address"] !== null) {
-            document.getElementById("edit_operation_data_host_name").innerText = moderation_info["host_name"];
+        if (moderation_info["is_timed_out_ip_address"] !== null) {
+            document.getElementById("edit_operation_data_ip_address_info").innerHTML = "<div class='key_and_value'><b>ホスト名</b>" + escape_html(moderation_info["host_name"]) + "</div>";
             
-            var is_suspicious_ip_address_elm = document.getElementById("edit_operation_data_is_suspicious_ip_address");
-            if (moderation_info["is_suspicious_ip_address"]) {
-                is_suspicious_ip_address_elm.innerText = "【!】要注意IPアドレス";
-                is_suspicious_ip_address_elm.className = "warning_text";
+            var is_timed_out_ip_address_elm = document.getElementById("edit_operation_data_is_timed_out_ip_address");
+            if (moderation_info["is_timed_out_ip_address"]) {
+                is_timed_out_ip_address_elm.innerText = "【!】タイムアウト中";
+                is_timed_out_ip_address_elm.className = "warning_text";
             } else {
-                is_suspicious_ip_address_elm.innerHTML = "<button type='button' onclick='time_out_setting(\"" + add_slashes(ip_address) + "\");'>タイムアウトを設定</button>";
+                is_timed_out_ip_address_elm.innerHTML = "<button type='button' onclick='time_out_setting(\"" + add_slashes(ip_address) + "\");'>タイムアウトを設定</button>";
             }
+            
+            var buf = "";
+            for (var log_data of moderation_info["ip_address_timed_out_logs"]) {
+                buf += log_data["timed_out_datetime"] + " から " + log_data["timed_out_days"] + "日間 (モデレーター: " + escape_html(log_data["moderator_name"]) + ")<br>";
+            }
+            
+            document.getElementById("edit_operation_data_ip_address_timed_out_logs").innerHTML = "<h5>IPアドレスのタイムアウト履歴</h5><div class='descriptive_text'>" + (buf.length >= 1 ? buf : "IPアドレスにタイムアウトの履歴はありません") + "</div>";
         }
     });
 }
