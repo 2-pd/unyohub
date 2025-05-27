@@ -484,8 +484,8 @@ JSON化された時刻表の内容を返す
 ### 応答
 **正常時** :  
 {  
-    "user_name" : ユーザーIDに対応するユーザー名(ユーザーIDが空の場合はNULL),  
-    "user_created" : ユーザーIDに対応するアカウントが作成されたYYYY-MM-DD HH:MM:SS形式の日時(ユーザーIDが空の場合はNULL),  
+    "user_name" : ユーザーIDに対応するユーザー名(ユーザーIDが空の場合やゲストユーザーの場合はNULL),  
+    "user_created" : ユーザーIDに対応するアカウントが作成されたYYYY-MM-DD HH:MM:SS形式の日時(ユーザーIDが空の場合やゲストユーザーの場合はNULL),  
     "is_timed_out_user" : タイムアウト中のユーザーIDか否か(BOOL値。ユーザーIDが空の場合はNULL),  
     "user_timed_out_logs" : [ ユーザーIDのタイムアウト指定履歴(直近5件を新しい順に。ユーザーIDが空の場合はNULL)  
         {  
