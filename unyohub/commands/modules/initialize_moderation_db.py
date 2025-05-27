@@ -27,15 +27,23 @@ def initialize_moderation_db (mes, db_file_path):
     cur.execute("CREATE INDEX IF NOT EXISTS `unyohub_moderation_idx_d4` ON `unyohub_moderation_deleted_data`(`railroad_id`, `operation_date`, `operation_number`, `posted_datetime`)")
     cur.execute("CREATE INDEX IF NOT EXISTS `unyohub_moderation_idx_d5` ON `unyohub_moderation_deleted_data`(`ip_address`, `posted_datetime`)")
     
-    mes("テーブル「unyohub_moderation_suspicious_users」を作成しています...")
-    cur.execute("CREATE TABLE IF NOT EXISTS `unyohub_moderation_suspicious_users`(`user_id` TEXT NOT NULL PRIMARY KEY, `moderator_id` TEXT NOT NULL, `marked_datetime` TEXT NOT NULL)")
-    cur.execute("CREATE INDEX IF NOT EXISTS `unyohub_moderation_idx_su1` ON `unyohub_moderation_suspicious_users`(`moderator_id`, `marked_datetime`)")
-    cur.execute("CREATE INDEX IF NOT EXISTS `unyohub_moderation_idx_su2` ON `unyohub_moderation_suspicious_users`(`marked_datetime`)")
+    mes("テーブル「unyohub_moderation_timed_out_users」を作成しています...")
+    cur.execute("CREATE TABLE IF NOT EXISTS `unyohub_moderation_timed_out_users`(`user_id` TEXT NOT NULL PRIMARY KEY, `expiration_datetime` TEXT NOT NULL)")
+    cur.execute("CREATE INDEX IF NOT EXISTS `unyohub_moderation_idx_tu1` ON `unyohub_moderation_timed_out_users`(`expiration_datetime`)")
     
-    mes("テーブル「unyohub_moderation_suspicious_ip_addresses」を作成しています...")
-    cur.execute("CREATE TABLE IF NOT EXISTS `unyohub_moderation_suspicious_ip_addresses`(`ip_address` TEXT NOT NULL PRIMARY KEY, `moderator_id` TEXT NOT NULL, `marked_datetime` TEXT NOT NULL)")
-    cur.execute("CREATE INDEX IF NOT EXISTS `unyohub_moderation_idx_si1` ON `unyohub_moderation_suspicious_ip_addresses`(`moderator_id`, `marked_datetime`)")
-    cur.execute("CREATE INDEX IF NOT EXISTS `unyohub_moderation_idx_si2` ON `unyohub_moderation_suspicious_ip_addresses`(`marked_datetime`)")
+    mes("テーブル「unyohub_moderation_user_timed_out_logs」を作成しています...")
+    cur.execute("CREATE TABLE IF NOT EXISTS `unyohub_moderation_user_timed_out_logs`(`user_id` TEXT NOT NULL, `timed_out_datetime` TEXT NOT NULL, `moderator_id` TEXT NOT NULL, `timed_out_days` INTEGER NOT NULL, PRIMARY KEY(`user_id`, `timed_out_datetime`))")
+    cur.execute("CREATE INDEX IF NOT EXISTS `unyohub_moderation_idx_ul1` ON `unyohub_moderation_user_timed_out_logs`(`timed_out_datetime`)")
+    cur.execute("CREATE INDEX IF NOT EXISTS `unyohub_moderation_idx_ul2` ON `unyohub_moderation_user_timed_out_logs`(`moderator_id`, `timed_out_datetime`)")
+    
+    mes("テーブル「unyohub_moderation_timed_out_ip_addresses」を作成しています...")
+    cur.execute("CREATE TABLE IF NOT EXISTS `unyohub_moderation_timed_out_ip_addresses`(`ip_address` TEXT NOT NULL PRIMARY KEY, `expiration_datetime` TEXT NOT NULL)")
+    cur.execute("CREATE INDEX IF NOT EXISTS `unyohub_moderation_idx_ti1` ON `unyohub_moderation_timed_out_ip_addresses`(`expiration_datetime`)")
+    
+    mes("テーブル「unyohub_moderation_ip_address_timed_out_logs」を作成しています...")
+    cur.execute("CREATE TABLE IF NOT EXISTS `unyohub_moderation_ip_address_timed_out_logs`(`ip_address` TEXT NOT NULL, `timed_out_datetime` TEXT NOT NULL, `moderator_id` TEXT NOT NULL, `timed_out_days` INTEGER NOT NULL, PRIMARY KEY(`ip_address`, `timed_out_datetime`))")
+    cur.execute("CREATE INDEX IF NOT EXISTS `unyohub_moderation_idx_il1` ON `unyohub_moderation_ip_address_timed_out_logs`(`timed_out_datetime`)")
+    cur.execute("CREATE INDEX IF NOT EXISTS `unyohub_moderation_idx_il2` ON `unyohub_moderation_ip_address_timed_out_logs`(`moderator_id`, `timed_out_datetime`)")
     
     mes("変更を保存しています...")
     conn.commit()
