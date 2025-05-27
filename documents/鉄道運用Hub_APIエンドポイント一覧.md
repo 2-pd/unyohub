@@ -484,9 +484,27 @@ JSON化された時刻表の内容を返す
 ### 応答
 **正常時** :  
 {  
-    "is_suspicious_user" : ユーザーIDが要注意ユーザーに指定済みか否か(ユーザーIDが空の場合はNULL),  
+    "user_name" : ユーザーIDに対応するユーザー名(ユーザーIDが空の場合はNULL),  
+    "user_created" : ユーザーIDに対応するアカウントが作成されたYYYY-MM-DD HH:MM:SS形式の日時(ユーザーIDが空の場合はNULL),  
+    "is_timed_out_user" : タイムアウト中のユーザーIDか否か(BOOL値。ユーザーIDが空の場合はNULL),  
+    "user_timed_out_logs" : [ ユーザーIDのタイムアウト指定履歴(直近5件を新しい順に。ユーザーIDが空の場合はNULL)  
+        {  
+            "timed_out_datetime" : YYYY-MM-DD HH:MM:SS形式のタイムアウト設定日時,  
+            "moderator_id" : タイムアウトを設定したモデレーターのユーザーID,  
+            "moderator_name" : タイムアウトを設定したモデレーターのハンドルネーム,  
+            "timed_out_days" : タイムアウトされた日数  
+        }...  
+    ],  
     "host_name" : IPアドレスに対応するホスト名(IPアドレスが空の場合はNULL),  
-    "is_suspicious_ip_address" : IPアドレスが要注意IPアドレスに指定済みか否か(IPアドレスが空の場合はNULL)  
+    "is_timed_out_ip_address" : タイムアウト中のIPアドレスか否か(BOOL値。IPアドレスが空の場合はNULL),  
+    "ip_address_timed_out_logs" : [ IPアドレスのタイムアウト指定履歴(直近5件を新しい順に。IPアドレスが空の場合はNULL)  
+        {  
+            "timed_out_datetime" : YYYY-MM-DD HH:MM:SS形式のタイムアウト設定日時,  
+            "moderator_id" : タイムアウトを設定したモデレーターのユーザーID,  
+            "moderator_name" : タイムアウトを設定したモデレーターのハンドルネーム,  
+            "timed_out_days" : タイムアウトされた日数  
+        }...  
+    ],  
 }  
   
 **エラーの場合** :  
@@ -595,14 +613,15 @@ JSON化された時刻表の内容を返す
 文字列「ERROR: 」とそれに続くエラー内容文
 
 
-## mark_user_suspect.php
-ユーザーを要注意として標識する
+## time_out_user.php
+ユーザーをタイムアウトさせる
 
 ### 引数
 **$_COOKIE["unyohub_login_token"]** : モデレーターユーザーのWakaranaのログイントークン  
   
 **$_POST["railroad_id"]** : 路線系統識別名  
-**$_POST["user_id"]** :モデレーション対象のユーザーID
+**$_POST["user_id"]** :タイムアウト対象のユーザーID  
+**$_POST["timed_out_days"]** : タイムアウト日数
 
 ### 応答
 **標識に成功した場合** :  
@@ -612,14 +631,15 @@ JSON化された時刻表の内容を返す
 文字列「ERROR: 」とそれに続くエラー内容文
 
 
-## mark_ip_address_suspect.php
-IPアドレスを要注意として標識する
+## time_out_ip_address.php
+IPアドレスをタイムアウトさせる
 
 ### 引数
 **$_COOKIE["unyohub_login_token"]** : モデレーターユーザーのWakaranaのログイントークン  
   
 **$_POST["railroad_id"]** : 路線系統識別名  
-**$_POST["ip_address"]** : モデレーション対象のIPアドレス
+**$_POST["ip_address"]** : タイムアウト対象のIPアドレス  
+**$_POST["timed_out_days"]** : タイムアウト日数
 
 ### 応答
 **標識に成功した場合** :  
