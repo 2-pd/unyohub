@@ -621,7 +621,8 @@ JSON化された時刻表の内容を返す
   
 **$_POST["railroad_id"]** : 路線系統識別名  
 **$_POST["user_id"]** :タイムアウト対象のユーザーID  
-**$_POST["timed_out_days"]** : タイムアウト日数
+**$_POST["timed_out_days"]** : タイムアウト日数  
+**$_POST["one_time_token"]** : ワンタイムトークン
 
 ### 応答
 **標識に成功した場合** :  
@@ -639,7 +640,8 @@ IPアドレスをタイムアウトさせる
   
 **$_POST["railroad_id"]** : 路線系統識別名  
 **$_POST["ip_address"]** : タイムアウト対象のIPアドレス  
-**$_POST["timed_out_days"]** : タイムアウト日数
+**$_POST["timed_out_days"]** : タイムアウト日数  
+**$_POST["one_time_token"]** : ワンタイムトークン
 
 ### 応答
 **標識に成功した場合** :  
