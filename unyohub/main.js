@@ -3723,6 +3723,14 @@ function draw_station_timetable (station_name) {
                 
                 buf += get_final_destination(timetable_selected_line, train_info["train_number"], train_info["starting_station"]);
                 
+                if (railroad_info["lines"][timetable_selected_line]["inbound_forward_direction"] === is_inbound) {
+                    var direction_sign_left = "<span class='direction_sign'>◀</span> ";
+                    var direction_sign_right = "";
+                } else {
+                    var direction_sign_left = "";
+                    var direction_sign_right = " <span class='direction_sign'>▶</span>";
+                }
+                
                 if (show_operation_data) {
                     buf += "　<small>";
                     if (train_operations !== null) {
@@ -3742,6 +3750,7 @@ function draw_station_timetable (station_name) {
                             formation_data["formation_text"] += "*";
                         }
                         
+                        buf += direction_sign_left;
                         if (formation_data["posts_count"] === 0) {
                             buf += "<span style='color: " + (!config["dark_mode"] ? "#0099cc" : "#33ccff") + ";'>" + escape_html(formation_data["formation_text"]) + "</span>";
                         } else if (formation_data["reassigned"]) {
@@ -3755,17 +3764,20 @@ function draw_station_timetable (station_name) {
                         } else {
                             buf += escape_html(formation_data["formation_text"]);
                         }
+                        buf += direction_sign_right;
                     }
                 } else if (train_operations !== null) {
                     buf += "<br>";
                     
-                    if (railroad_info["lines"][timetable_selected_line]["inbound_forward_direction"] !== (train_direction === "inbound_trains")) {
+                    if (railroad_info["lines"][timetable_selected_line]["inbound_forward_direction"] !== is_inbound) {
                         train_operations.reverse();
                     }
                     
+                    buf += direction_sign_left;
                     for (var cnt = 0; cnt < train_operations.length; cnt++) {
                         buf += (cnt >= 1 ? "+" : "") + train_operations[cnt] + "運用<small>(" + operation_table["operations"][train_operations[cnt]]["operation_group_name"] + " " + operation_table["operations"][train_operations[cnt]]["car_count"] + "両)</small>";
                     }
+                    buf += direction_sign_right;
                 } else {
                     buf += "<br>不明な運用";
                 }

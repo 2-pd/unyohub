@@ -23,7 +23,7 @@ function print_header () {
         <link rel="shortcut icon" href="../favicon.ico">
     </head>
     <body>
-        <header onclick="location.href = 'index.php';"><div id="railroad_icon"></div>鉄道運用Hub 管理画面</header>
+        <header onclick="location.href = 'index.php';"><div id="railroad_icon"></div>鉄道運用Hub 管理画面<button type="button" id="control_panel_close_button" onclick="event.stopPropagation(); window.close();"></button></header>
     EOM;
 }
 
