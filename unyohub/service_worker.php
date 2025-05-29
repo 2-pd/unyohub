@@ -7,8 +7,8 @@ header("Content-Type: text/javascript");
 ?>
 var files_to_cache = [
         "/",
-        "/main.js",
-        "/assets.css",
+        "/main.js?v=<?php print UNYOHUB_VERSION ?>",
+        "/assets.css?v=<?php print UNYOHUB_VERSION ?>",
         "/libs/zizai_captcha/captcha.js",
         "/libs/elem2img.js",
         "/apple-touch-icon.webp",
