@@ -9,13 +9,6 @@ if (!isset($_POST["railroad_id"], $_POST["date"], $_POST["operation_number"], $_
 
 $config = parse_ini_file("../config/main.ini", FALSE, INI_SCANNER_TYPED);
 
-connect_moderation_db();
-
-if ($moderation_db_obj->querySingle("SELECT COUNT(`ip_address`) FROM `unyohub_moderation_suspicious_ip_addresses` WHERE `ip_address` = '".$moderation_db_obj->escapeString($_SERVER["REMOTE_ADDR"])."' AND `marked_datetime` > '".date("Y-m-d H:i:s", time() - 2592000)."'")) {
-    print "ERROR: ご利用のIPアドレスは投稿制限に達しました";
-    exit;
-}
-
 $user = $wakarana->check();
 if (is_object($user)) {
     if (isset($_POST["one_time_token"]) && $user->check_one_time_token($_POST["one_time_token"])) {
@@ -49,11 +42,20 @@ if (is_object($user)) {
 }
 
 
-load_railroad_data($_POST["railroad_id"]);
-
-
 $ts_now = time();
 $posted_date = date("Y-m-d", $ts_now);
+$posted_datetime = $posted_date." ".date("H:i:s", $ts_now);
+
+
+connect_moderation_db();
+
+if ($moderation_db_obj->querySingle("SELECT COUNT(`user_id`) FROM `unyohub_moderation_timed_out_users` WHERE `user_id` = '".$moderation_db_obj->escapeString($user_id)."' AND `expiration_datetime` > '".$posted_datetime."'") || $moderation_db_obj->querySingle("SELECT COUNT(`ip_address`) FROM `unyohub_moderation_timed_out_ip_addresses` WHERE `ip_address` = '".$moderation_db_obj->escapeString($_SERVER["REMOTE_ADDR"])."' AND `expiration_datetime` > '".$posted_datetime."'")) {
+    print "ERROR: 投稿制限措置が実施されているため、現在は投稿機能をご利用いただくことができません";
+    exit;
+}
+
+
+load_railroad_data($_POST["railroad_id"]);
 
 
 $ts = strtotime($_POST["date"]);
@@ -171,8 +173,6 @@ if ($config["log_ip_address"]) {
     $ip_address_q = "NULL";
 }
 
-
-$posted_datetime = $posted_date." ".date("H:i:s", $ts_now);
 
 $db_obj->query("INSERT OR REPLACE INTO `unyohub_data` (`operation_date`, `operation_number`, `assign_order`, `user_id`, `train_number`, `formations`, `is_quotation`, `posted_datetime`, `comment`, `ip_address`) VALUES ('".$operation_date."', '".$operation_number."', ".$assign_order.", '".$db_obj->escapeString($user_id)."', ".$train_number_q.", '".$db_obj->escapeString($formations)."', ".intval($is_quotation).", '".$posted_datetime."', '".$db_obj->escapeString($comment)."', ".$ip_address_q.")");
 

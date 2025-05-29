@@ -2430,11 +2430,7 @@ function select_lines (lines = null, position_mode = true) {
 }
 
 function convert_train_position_data (train_data) {
-    if (train_data["train_number"].startsWith("_")) {
-        train_data["train_title"] = train_data["train_number"].substring(1).split("__")[0];
-    } else {
-        train_data["train_title"] = train_data["train_number"].split("__")[0];
-    }
+    train_data["train_title"] = train_data["train_number"].startsWith("_") ? train_data["train_number"].substring(1).split("__")[0] : train_data["train_number"].split("__")[0];
     
     train_data["formation_html"] = escape_html(train_data["formation_text"]).replace(/\+/g, "<wbr>+");
     
@@ -3727,6 +3723,14 @@ function draw_station_timetable (station_name) {
                 
                 buf += get_final_destination(timetable_selected_line, train_info["train_number"], train_info["starting_station"]);
                 
+                if (railroad_info["lines"][timetable_selected_line]["inbound_forward_direction"] === is_inbound) {
+                    var direction_sign_left = "<span class='direction_sign'>◀</span> ";
+                    var direction_sign_right = "";
+                } else {
+                    var direction_sign_left = "";
+                    var direction_sign_right = " <span class='direction_sign'>▶</span>";
+                }
+                
                 if (show_operation_data) {
                     buf += "　<small>";
                     if (train_operations !== null) {
@@ -3746,6 +3750,7 @@ function draw_station_timetable (station_name) {
                             formation_data["formation_text"] += "*";
                         }
                         
+                        buf += direction_sign_left;
                         if (formation_data["posts_count"] === 0) {
                             buf += "<span style='color: " + (!config["dark_mode"] ? "#0099cc" : "#33ccff") + ";'>" + escape_html(formation_data["formation_text"]) + "</span>";
                         } else if (formation_data["reassigned"]) {
@@ -3759,17 +3764,20 @@ function draw_station_timetable (station_name) {
                         } else {
                             buf += escape_html(formation_data["formation_text"]);
                         }
+                        buf += direction_sign_right;
                     }
                 } else if (train_operations !== null) {
                     buf += "<br>";
                     
-                    if (railroad_info["lines"][timetable_selected_line]["inbound_forward_direction"] !== (train_direction === "inbound_trains")) {
+                    if (railroad_info["lines"][timetable_selected_line]["inbound_forward_direction"] !== is_inbound) {
                         train_operations.reverse();
                     }
                     
+                    buf += direction_sign_left;
                     for (var cnt = 0; cnt < train_operations.length; cnt++) {
                         buf += (cnt >= 1 ? "+" : "") + train_operations[cnt] + "運用<small>(" + operation_table["operations"][train_operations[cnt]]["operation_group_name"] + " " + operation_table["operations"][train_operations[cnt]]["car_count"] + "両)</small>";
                     }
+                    buf += direction_sign_right;
                 } else {
                     buf += "<br>不明な運用";
                 }
@@ -5620,30 +5628,30 @@ function draw_operation_table (is_today) {
                 continue;
             }
             
-            var train_number = trains[cnt_2]["train_number"].split("__")[0];
+            var train_title = trains[cnt_2]["train_number"].split("__")[0];
             
             if (search_keyword === "") {
-                if (train_number.startsWith(".")) {
-                    buf_2 += "<small class='operation_overview_yard_stay'>" + train_number.substring(1) + "</small>";
+                if (train_title.startsWith(".")) {
+                    buf_2 += "<small class='operation_overview_yard_stay'>" + train_title.substring(1) + "</small>";
                 } else {
                     if (trains[cnt_2]["train_number"] in timetable["timetable"][trains[cnt_2]["line_id"]][trains[cnt_2]["direction"] + "_trains"]) {
                         var train_type_initial = timetable["timetable"][trains[cnt_2]["line_id"]][trains[cnt_2]["direction"] + "_trains"][trains[cnt_2]["train_number"]][0]["train_type"].substring(0, 1);
-                    } else if (railroad_info["deadhead_train_number_regexp"].test(train_number)) {
+                    } else if (railroad_info["deadhead_train_number_regexp"].test(train_title)) {
                         var train_type_initial = "回";
                     } else {
                         var train_type_initial = "＊";
                     }
                     
-                    buf_2 += "<small style='background-color: " + (config["dark_mode"] ? convert_font_color_dark_mode(get_train_color(train_number, "#333333")) : get_train_color(train_number, "#333333")) + ";'>" + train_type_initial + "</small>";
+                    buf_2 += "<small style='background-color: " + (config["dark_mode"] ? convert_font_color_dark_mode(get_train_color(train_title, "#333333")) : get_train_color(train_title, "#333333")) + ";'>" + train_type_initial + "</small>";
                 }
             } else {
-                var train_number_search_index = train_number.toUpperCase().indexOf(search_keyword);
+                var train_title_search_index = train_title.toUpperCase().indexOf(search_keyword);
                 
-                if (train_number_search_index !== -1) {
+                if (train_title_search_index !== -1) {
                     if (search_hit_count < 4) {
-                        var train_number_search_index_end = train_number_search_index + search_keyword.length;
+                        var train_title_search_index_end = train_title_search_index + search_keyword.length;
                         
-                        buf_2 += "<span>" + train_number.substring(0, train_number_search_index) + "<span class='search_highlight'>" + train_number.substring(train_number_search_index, train_number_search_index_end) + "</span>" + train_number.substring(train_number_search_index_end) + "</span>";
+                        buf_2 += "<span>" + train_title.substring(0, train_title_search_index) + "<span class='search_highlight'>" + train_title.substring(train_title_search_index, train_title_search_index_end) + "</span>" + train_title.substring(train_title_search_index_end) + "</span>";
                     } else if (search_hit_count === 4) {
                         buf_2 += "<span>他</span>";
                     }
@@ -6310,17 +6318,21 @@ function edit_operation_data (yyyy_mm_dd, operation_number, assign_order, user_i
     buf += "<div class='key_and_value'><b>編成名</b>" + escape_html(formation_text) + "</div>";
     
     if (user_id !== user_data["user_id"]) {
-        buf += "<h3>投稿者情報</h3>";
-        buf += "<div class='key_and_value'><b>ユーザーID</b>" + escape_html(user_id) + "<div id='edit_operation_data_is_suspicious_user'></div></div>";
+        buf += "<input type='checkbox' id='edit_operation_data_moderation_info'><label for='edit_operation_data_moderation_info' class='drop_down'>投稿者情報</label><div>";
+        buf += "<div class='key_and_value'><b>ユーザーID</b>" + escape_html(user_id) + "<div id='edit_operation_data_is_timed_out_user'></div></div>";
+        buf += "<div id='edit_operation_data_user_info' class='loading_icon'></div>";
         if (ip_address !== null) {
-            buf += "<div class='key_and_value'><b>IPアドレス</b>" + escape_html(ip_address) + "<div id='edit_operation_data_is_suspicious_ip_address'></div></div>";
-            buf += "<div class='key_and_value'><b>ホスト名</b><div id='edit_operation_data_host_name'></div></div>";
+            buf += "<div class='key_and_value'><b>IPアドレス</b>" + escape_html(ip_address) + "<div id='edit_operation_data_is_timed_out_ip_address'></div></div>";
+            buf += "<div id='edit_operation_data_ip_address_info' class='loading_icon'></div>";
         }
-    } else {
-        buf += "<br>";
+        buf += "<div id='edit_operation_data_user_timed_out_logs'></div>";
+        if (ip_address !== null) {
+            buf += "<div id='edit_operation_data_ip_address_timed_out_logs'></div>";
+        }
+        buf += "</div>";
     }
     
-    buf += "<br><button type='button' class='wide_button' onclick='revoke_operation_data(\"" + yyyy_mm_dd + "\", \"" + add_slashes(operation_number) + "\", " + assign_order + ",\"" + add_slashes(user_id) + "\");'>取り消す</button>";
+    buf += "<br><br><button type='button' class='wide_button' onclick='revoke_operation_data(\"" + yyyy_mm_dd + "\", \"" + add_slashes(operation_number) + "\", " + assign_order + ",\"" + add_slashes(user_id) + "\");'>投稿を取り消す</button>";
     
     if (user_id !== user_data["user_id"]) {
         buf += "<button type='button' class='wide_button' onclick='revoke_users_all_operation_data(\"" + add_slashes(user_id) + "\");'>ユーザーの投稿を全て取り消す</button>";
@@ -6351,26 +6363,44 @@ function show_moderation_info (user_id, ip_address) {
         
         var moderation_info = JSON.parse(response);
         
-        if (moderation_info["is_suspicious_user"] !== null) {
-            var is_suspicious_user_elm = document.getElementById("edit_operation_data_is_suspicious_user");
-            if (moderation_info["is_suspicious_user"]) {
-                is_suspicious_user_elm.innerText = "【!】要注意ユーザー";
-                is_suspicious_user_elm.className = "warning_text";
-            } else {
-                is_suspicious_user_elm.innerHTML = "<button type='button' onclick='mark_user_suspect(\"" + add_slashes(user_id) + "\");'>要注意ユーザーに指定</button>";
+        if (moderation_info["is_timed_out_user"] !== null) {
+            if (moderation_info["user_name"] !== null) {
+                document.getElementById("edit_operation_data_user_info").innerHTML = "<div class='key_and_value'><b>ハンドルネーム</b>" + escape_html(moderation_info["user_name"]) + "</div><div class='key_and_value'><b>登録日時</b>" + escape_html(moderation_info["user_created"]) + "</div>";
             }
+            
+            var is_timed_out_user_elm = document.getElementById("edit_operation_data_is_timed_out_user");
+            if (moderation_info["is_timed_out_user"]) {
+                is_timed_out_user_elm.innerText = "【!】タイムアウト中";
+                is_timed_out_user_elm.className = "warning_text";
+            } else {
+                is_timed_out_user_elm.innerHTML = "<button type='button' onclick='time_out_setting(\"" + add_slashes(user_id) + "\");'>タイムアウトを設定</button>";
+            }
+            
+            var buf = "";
+            for (var log_data of moderation_info["user_timed_out_logs"]) {
+                buf += log_data["timed_out_datetime"] + " から " + log_data["timed_out_days"] + "日間 (モデレーター: " + escape_html(log_data["moderator_name"]) + ")<br>";
+            }
+            
+            document.getElementById("edit_operation_data_user_timed_out_logs").innerHTML = "<h5>ユーザーのタイムアウト履歴</h5><div class='descriptive_text'>" + (buf.length >= 1 ? buf : "ユーザーにタイムアウトの履歴はありません") + "</div>";
         }
         
-        if (moderation_info["host_name"] !== null && moderation_info["is_suspicious_ip_address"] !== null) {
-            document.getElementById("edit_operation_data_host_name").innerText = moderation_info["host_name"];
+        if (moderation_info["is_timed_out_ip_address"] !== null) {
+            document.getElementById("edit_operation_data_ip_address_info").innerHTML = "<div class='key_and_value'><b>ホスト名</b>" + escape_html(moderation_info["host_name"]) + "</div>";
             
-            var is_suspicious_ip_address_elm = document.getElementById("edit_operation_data_is_suspicious_ip_address");
-            if (moderation_info["is_suspicious_ip_address"]) {
-                is_suspicious_ip_address_elm.innerText = "【!】要注意IPアドレス";
-                is_suspicious_ip_address_elm.className = "warning_text";
+            var is_timed_out_ip_address_elm = document.getElementById("edit_operation_data_is_timed_out_ip_address");
+            if (moderation_info["is_timed_out_ip_address"]) {
+                is_timed_out_ip_address_elm.innerText = "【!】タイムアウト中";
+                is_timed_out_ip_address_elm.className = "warning_text";
             } else {
-                is_suspicious_ip_address_elm.innerHTML = "<button type='button' onclick='mark_ip_address_suspect(\"" + add_slashes(ip_address) + "\");'>要注意IPアドレスに指定</button>";
+                is_timed_out_ip_address_elm.innerHTML = "<button type='button' onclick='time_out_setting(\"" + add_slashes(ip_address) + "\");'>タイムアウトを設定</button>";
             }
+            
+            var buf = "";
+            for (var log_data of moderation_info["ip_address_timed_out_logs"]) {
+                buf += log_data["timed_out_datetime"] + " から " + log_data["timed_out_days"] + "日間 (モデレーター: " + escape_html(log_data["moderator_name"]) + ")<br>";
+            }
+            
+            document.getElementById("edit_operation_data_ip_address_timed_out_logs").innerHTML = "<h5>IPアドレスのタイムアウト履歴</h5><div class='descriptive_text'>" + (buf.length >= 1 ? buf : "IPアドレスにタイムアウトの履歴はありません") + "</div>";
         }
     });
 }
@@ -6471,56 +6501,74 @@ function revoke_users_all_operation_data (user_id) {
     }
 }
 
-function mark_user_suspect (user_id) {
-    if (confirm("このユーザーを要注意ユーザーに指定しますか？")) {
-        open_wait_screen();
-        
-        if (one_time_token === null) {
-            close_wait_screen();
-            
-            mes("内部処理が完了していないため、数秒待ってから再送信してください", true);
-            
-            return;
-        }
-        
-        ajax_post("mark_user_suspect.php", "railroad_id=" + escape_form_data(railroad_info["railroad_id"]) + "&user_id=" + escape_form_data(user_id) + "&one_time_token=" + escape_form_data(one_time_token), function (response) {
-            close_wait_screen();
-            
-            if (response === "SUCCEEDED") {
-                mes("ユーザーを要注意に指定しました");
-                
-                show_moderation_info(user_id, null);
-            }
-            
-            get_one_time_token();
-        });
+function time_out_setting (user_id_or_ip_address) {
+    var popup_inner_elm = open_square_popup("time_out_popup");
+    
+    if (!user_id_or_ip_address.includes(".") && !user_id_or_ip_address.includes(":")) {
+        var target_is_user_id = true;
+    } else {
+        var target_is_user_id = false;
     }
+    
+    var buf = "<h4>タイムアウト対象の" + (target_is_user_id ? "ユーザーID" : "IPアドレス") + "</h4>";
+    buf += "<b>" + user_id_or_ip_address + "</b>";
+    buf += "<h4>タイムアウト期間</h4>";
+    buf += "<input type='number' id='timed_out_days' min='1' max='90' value='7'>日間<br>";
+    buf += "<br><br><button type='button' class='wide_button' onclick='time_out_" + (target_is_user_id ? "user" : "ip_address") + "(\"" + add_slashes(user_id_or_ip_address) + "\");'>タイムアウトを設定</button>";
+    
+    popup_inner_elm.innerHTML = buf;
 }
 
-function mark_ip_address_suspect (ip_address) {
-    if (confirm("このIPアドレスを要注意IPアドレスに指定しますか？")) {
-        open_wait_screen();
+function time_out_user (user_id) {
+    open_wait_screen();
+    
+    if (one_time_token === null) {
+        close_wait_screen();
         
-        if (one_time_token === null) {
-            close_wait_screen();
+        mes("内部処理が完了していないため、数秒待ってから再送信してください", true);
+        
+        return;
+    }
+    
+    ajax_post("time_out_user.php", "railroad_id=" + escape_form_data(railroad_info["railroad_id"]) + "&user_id=" + escape_form_data(user_id) + "&timed_out_days=" + escape_form_data(document.getElementById("timed_out_days").value) + "&one_time_token=" + escape_form_data(one_time_token), function (response) {
+        close_wait_screen();
+        
+        if (response === "SUCCEEDED") {
+            mes("ユーザーをタイムアウトしました");
             
-            mes("内部処理が完了していないため、数秒待ってから再送信してください", true);
+            close_square_popup();
             
-            return;
+            show_moderation_info(user_id, null);
         }
         
-        ajax_post("mark_ip_address_suspect.php", "railroad_id=" + escape_form_data(railroad_info["railroad_id"]) + "&ip_address=" + escape_form_data(ip_address) + "&one_time_token=" + escape_form_data(one_time_token), function (response) {
-            close_wait_screen();
-            
-            if (response === "SUCCEEDED") {
-                mes("IPアドレスを要注意に指定しました");
-                
-                show_moderation_info(null, ip_address);
-            }
-            
-            get_one_time_token();
-        });
+        get_one_time_token();
+    });
+}
+
+function time_out_ip_address (ip_address) {
+    open_wait_screen();
+    
+    if (one_time_token === null) {
+        close_wait_screen();
+        
+        mes("内部処理が完了していないため、数秒待ってから再送信してください", true);
+        
+        return;
     }
+    
+    ajax_post("time_out_ip_address.php", "railroad_id=" + escape_form_data(railroad_info["railroad_id"]) + "&ip_address=" + escape_form_data(ip_address) + "&timed_out_days=" + escape_form_data(document.getElementById("timed_out_days").value) + "&one_time_token=" + escape_form_data(one_time_token), function (response) {
+        close_wait_screen();
+        
+        if (response === "SUCCEEDED") {
+            mes("IPアドレスをタイムアウトしました");
+            
+            close_square_popup();
+            
+            show_moderation_info(null, ip_address);
+        }
+        
+        get_one_time_token();
+    });
 }
 
 
@@ -6842,5 +6890,5 @@ window.onpopstate = function () {
 
 
 if ("serviceWorker" in navigator) {
-    navigator.serviceWorker.register("/service_worker.js");
+    navigator.serviceWorker.register("/service_worker.php");
 }

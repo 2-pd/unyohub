@@ -172,22 +172,40 @@ _/_/_/_/ データベース _/_/_/_/
   INDEX `unyohub_moderation_idx_d5`(`ip_address`, `posted_datetime`)
 
 
-`unyohub_moderation_suspicious_users` 要注意ユーザーのリスト
-  `user_id` TEXT NOT NULL PRIMARY KEY 要注意ユーザーのID(未登録ユーザーの場合、クライアント端末が生成する12桁の乱数値の頭に「*」を付加した文字列を記録する)
+`unyohub_moderation_timed_out_users` タイムアウト中ユーザーのリスト
+  `user_id` TEXT NOT NULL PRIMARY KEY タイムアウト中ユーザーのID(未登録ユーザーの場合、クライアント端末が生成する12桁の乱数値の頭に「*」を付加した文字列)
+  `expiration_datetime` TEXT NOT NULL 「YYYY-MM-DD HH:MM:SS」形式のタイムアウト期間満了日時
+
+  INDEX `unyohub_moderation_idx_tu1`(`expiration_datetime`)
+
+
+`unyohub_moderation_user_timed_out_logs` ユーザーに対するタイムアウト設定の履歴
+  `user_id` TEXT NOT NULL タイムアウトされたユーザーのID(未登録ユーザーの場合、クライアント端末が生成する12桁の乱数値の頭に「*」を付加した文字列)
+  `timed_out_datetime` TEXT NOT NULL 「YYYY-MM-DD HH:MM:SS」形式のタイムアウトが設定された日時
   `moderator_id` TEXT NOT NULL モデレート作業を行ったモデレーターのユーザーID
-  `marked_datetime` TEXT NOT NULL 「YYYY-MM-DD HH:MM:SS」形式の要注意と指定された日時
+  `timed_out_days` INTEGER NOT NULL タイムアウト日数
+  
+  PRIMARY KEY(`user_id`, `timed_out_datetime`)
+  INDEX `unyohub_moderation_idx_ul1`(`timed_out_datetime`)
+  INDEX `unyohub_moderation_idx_ul2`(`moderator_id`, `timed_out_datetime`)
 
-  INDEX `unyohub_moderation_idx_su1`(`moderator_id`, `marked_datetime`)
-  INDEX `unyohub_moderation_idx_su2`(`marked_datetime`)
+
+`unyohub_moderation_timed_out_ip_addresses` タイムアウト中IPアドレスのリスト
+  `ip_address` TEXT NOT NULL PRIMARY KEY タイムアウト中IPアドレス
+  `expiration_datetime` TEXT NOT NULL 「YYYY-MM-DD HH:MM:SS」形式のタイムアウト期間満了日時
+
+  INDEX `unyohub_moderation_idx_ti1`(`expiration_datetime`)
 
 
-`unyohub_moderation_suspicious_ip_addresses` 要注意IPアドレスのリスト
-  `ip_address` TEXT NOT NULL PRIMARY KEY 要注意IPアドレス
+`unyohub_moderation_ip_address_timed_out_logs` IPアドレスに対するタイムアウト設定の履歴
+  `ip_address` TEXT NOT NULL タイムアウトされたIPアドレス
+  `timed_out_datetime` TEXT NOT NULL 「YYYY-MM-DD HH:MM:SS」形式のタイムアウトが設定された日時
   `moderator_id` TEXT NOT NULL モデレート作業を行ったモデレーターのユーザーID
-  `marked_datetime` TEXT NOT NULL 「YYYY-MM-DD HH:MM:SS」形式の要注意と指定された日時
-
-  INDEX `unyohub_moderation_idx_si1`(`moderator_id`, `marked_datetime`)
-  INDEX `unyohub_moderation_idx_si2`(`marked_datetime`)
+  `timed_out_days` INTEGER NOT NULL タイムアウト日数
+  
+  PRIMARY KEY(`ip_address`, `timed_out_datetime`)
+  INDEX `unyohub_moderation_idx_il1`(`timed_out_datetime`)
+  INDEX `unyohub_moderation_idx_il2`(`moderator_id`, `timed_out_datetime`)
 
 
 _/_/_/_/ Wakarana カスタムフィールド _/_/_/_/

@@ -77,7 +77,7 @@ if (empty($_GET["formation_name"])) {
     $formation_data = $db_obj->querySingle("SELECT `affiliation`, `caption`, `description`, `semifixed_formation`, `unavailable`, `inspection_information` FROM `unyohub_formations` WHERE `formation_name` = '".$formation_name."'", TRUE);
     
     if (!empty($formation_data)) {
-        $cars_r = $db_obj->query("SELECT `car_number`, `manufacturer`, `constructed`, `description` FROM `unyohub_cars` WHERE `formation_name` = '".$formation_name."' ORDER BY `car_order` ASC");
+        $cars_r = $db_obj->query("SELECT `car_number`, `manufacturer`, `constructed`, `description` FROM `unyohub_cars` WHERE `formation_name` = '".$formation_name."' AND `car_order` IS NOT NULL ORDER BY `car_order` ASC");
         
         $cars_data = array();
         while ($car_data = $cars_r->fetchArray(SQLITE3_ASSOC)) {

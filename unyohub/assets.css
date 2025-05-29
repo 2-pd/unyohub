@@ -1943,6 +1943,21 @@ input[type="checkbox"]:checked + label.drop_down + div {
     color: #cccccc;
 }
 
+.direction_sign {
+    display: inline-block;
+    
+    padding: 4px 0;
+    
+    line-height: 10px;
+    font-size: 10px;
+    color: #cccccc;
+    vertical-align: top;
+}
+
+.dark_mode .direction_sign {
+    color: #666666;
+}
+
 #diagram_list_popup .wide_button {
     background-image: linear-gradient(315deg, #ffffff 14px, transparent 14px) !important;
 }
@@ -3005,11 +3020,11 @@ footer div {
     
     border: none;
     
-    background-image: url(data:image/webp;base64,UklGRjoAAABXRUJQVlA4TC0AAAAvD8AOEA8wmZM5mfMf8FDQRpJyTk7K+XfE8PwSIvo/AYw/4Htdk+/qGr4z/gAA);
+    background-image: url(data:image/webp;base64,UklGRjoAAABXRUJQVlA4TC0AAAAvD8AOEA8wmZM5mfMf8FDQRpJyTk7K+XfE8PwSIvo/AYw/4Htdk+/qGr4z/gAA) !important;
     background-repeat: no-repeat;
     background-size: 8px 30px;
     background-position: 5px 50%;
-    background-color: #f7f7f7;
+    background-color: transparent !important;
     
     line-height: 45px;
     font-size: 21px;
@@ -3051,7 +3066,7 @@ footer div {
     background-color: transparent !important;
     
     overflow: hidden;
-    color: transparent;
+    color: transparent !important;
     vertical-align: top;
 }
 
@@ -3331,7 +3346,7 @@ a {
     font-size: 18px;
 }
 
-.popup input[type="number"] {
+.popup input[type="number"], .square_popup input[type="number"] {
     display: inline-block;
     
     width: 50px;

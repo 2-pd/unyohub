@@ -108,6 +108,27 @@ header {
     left: 49px;
 }
 
+#control_panel_close_button {
+    position: absolute;
+    
+    top: 0;
+    right: 0;
+    
+    width: 50px;
+    height: 40px;
+    
+    border: none;
+    border-radius: 0;
+    
+    background-image: url(data:image/webp;base64,UklGRhwBAABXRUJQVlA4TA8BAAAvO8AOEJegEJIkp+v8SU7sCXLUUNC2kWMdfyRH7BHsqaBtI8c6/kiO2CPYU1HbSM52/lo8+1xO1+cClJlRa5W11kABAD4A/P8ZAoVEBGP9/xuzlJIOR24kKdLAMu/+/7VNlZm9pznxVET/HbmRJEXVDokTzNrwhmYoWz/yRZHzfXTMtLcPV+/Hjcl95YqYAqYUHmM8p+MnyLZ6Omf0ZMvV80P82ON3yKNSINKAUwHTgVIC0jJTM1I73IvpFZOyE7NSu+Tz1Dcvaz6vTd/NC+u4VahMnqVGzzeP2tiWK4vcE4v0GdSZtAGUQXSBVME0Ef7xHvrltphlcidv/PnuhMrCpRsbY+WfkRhr3WezgWzNAA==) !important;
+    background-repeat: no-repeat;
+    background-position: center;
+    background-size: 30px;
+    background-color: #efefef;
+    
+    z-index: 6;
+}
+
 article {
     position: relative;
     
