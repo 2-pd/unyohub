@@ -1,10 +1,14 @@
-const UNYOHUB_APP_ID = "unyohub";
-const UNYOHUB_VERSION = "25.03-5";
+<?php
+include "./version.php";
 
+define("UNYOHUB_APP_ID", "unyohub");
+
+header("Content-Type: text/javascript");
+?>
 var files_to_cache = [
         "/",
-        "/main.js",
-        "/assets.css",
+        "/main.js?v=<?php print UNYOHUB_VERSION ?>",
+        "/assets.css?v=<?php print UNYOHUB_VERSION ?>",
         "/libs/zizai_captcha/captcha.js",
         "/libs/elem2img.js",
         "/apple-touch-icon.webp",
@@ -14,7 +18,7 @@ var files_to_cache = [
         "/splash_screen_image.webp"
     ];
 
-var new_cache_name = UNYOHUB_APP_ID + "_v" + UNYOHUB_VERSION;
+var new_cache_name = "<?php print UNYOHUB_APP_ID."_v".UNYOHUB_VERSION ?>";
 
 self.addEventListener("install", function (evt) {
     evt.waitUntil(

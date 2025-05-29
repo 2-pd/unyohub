@@ -82,8 +82,9 @@ _/_/_/_/ ファイル構成 _/_/_/_/
    └ unyohub ・・・コマンドラインやcronから実行可能なPythonファイル(詳細は別記、拡張子なし)
    └ modules/
       └ ****.py ・・・unyohubから呼び出される各種処理の本体となるPythonファイル
-└ service_worker.js ・・・サービスワーカースクリプト
+└ service_worker.php ・・・サービスワーカースクリプトを出力するPHPファイル
 └ manifest.json ・・・PWAマニフェスト
+└ version.php ・・・アプリ本体のバージョン番号等を記載するPHPファイル
 └ sitemap.php ・・・XML形式のサイトマップを表示するPHPファイル
 └ robots.txt ・・・検索エンジンのクローラーに対する指示ファイル
 

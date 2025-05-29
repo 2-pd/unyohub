@@ -17,11 +17,11 @@
  */
 
 define("UNYOHUB_APP_NAME", "鉄道運用Hub");
-define("UNYOHUB_VERSION", "25.03-5");
 define("UNYOHUB_APP_INFO_URL", "https://create.2pd.jp/apps/unyohub/");
 define("UNYOHUB_REPOSITORY_URL", "https://fossil.2pd.jp/unyohub/");
 define("UNYOHUB_LICENSE_TEXT", "このアプリケーションは無権利創作宣言に準拠して著作権放棄されています。");
 
+include "./version.php";
 
 if (empty($_SERVER["PATH_INFO"]) || $_SERVER["PATH_INFO"] === "/") {
     $path_info_str = "/";
@@ -186,8 +186,8 @@ print "    <meta property=\"og:description\" content=\"".$page_description."\">\
 print "    <meta property=\"twitter:card\" content=\"summary\">\n";
 print "    <meta name=\"description\" content=\"".$page_description."\">\n";
 print "    <link rel=\"canonical\" href=\"".$root_url.$path_info_str."\">\n";
+print "    <link rel=\"styleSheet\" href=\"/assets.css?v=".UNYOHUB_VERSION."\">\n";
 ?>
-    <link rel="styleSheet" href="/assets.css">
     <link rel="apple-touch-icon" href="/apple-touch-icon.webp">
     <link rel="shortcut icon" href="/favicon.ico">
     <link rel="manifest" href="/manifest.json">
@@ -328,7 +328,9 @@ if ($path_info_str === "/") {
     <div id="wait_screen"></div>
     <div id="message_area"></div>
     
-    <script src="/main.js"></script>
+<?php
+print "    <script src=\"/main.js?v=".UNYOHUB_VERSION."\"></script>\n";
+?>
     <script src="/libs/zizai_captcha/captcha.js"></script>
     <script src="/libs/elem2img.js"></script>
 </body>
