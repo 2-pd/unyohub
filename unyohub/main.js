@@ -270,7 +270,10 @@ function update_instance_info () {
         var last_modified_timestamp_q = "last_modified_timestamp=" + instance_info["last_modified_timestamp"];
     } else {
         instance_info = {
-            instance_name : UNYOHUB_APP_NAME
+            instance_name : UNYOHUB_APP_NAME,
+            available_days_ahead : 1,
+            allow_guest_user : false,
+            require_comments_on_speculative_posts : false
         };
         
         var last_modified_timestamp_q = null;
@@ -278,18 +281,20 @@ function update_instance_info () {
     
     update_instance_info();
     
-    ajax_post("instance_info.php", last_modified_timestamp_q, function (response, last_modified) {
-        if (response !== false && response !== "NO_UPDATES_AVAILABLE") {
-            instance_info = JSON.parse(response);
-            
-            var last_modified_date = new Date(last_modified);
-            instance_info["last_modified_timestamp"] = Math.floor(last_modified_date.getTime() / 1000);
-            
-            localStorage.setItem("unyohub_instance_info", JSON.stringify(instance_info));
-            
-            update_instance_info();
-        }
-    });
+    if (navigator.onLine) {
+        ajax_post("instance_info.php", last_modified_timestamp_q, function (response, last_modified) {
+            if (response !== false && response !== "NO_UPDATES_AVAILABLE") {
+                instance_info = JSON.parse(response);
+                
+                var last_modified_date = new Date(last_modified);
+                instance_info["last_modified_timestamp"] = Math.floor(last_modified_date.getTime() / 1000);
+                
+                localStorage.setItem("unyohub_instance_info", JSON.stringify(instance_info));
+                
+                update_instance_info();
+            }
+        });
+    }
 }());
 
 
