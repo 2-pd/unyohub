@@ -1274,6 +1274,8 @@ function select_railroad (railroad_id, mode_name = "position_mode", mode_option_
     
     header_elm.className = "";
     
+    timetable_selected_line = null;
+    
     var promise_1 = new Promise(function (resolve, reject) {
         var resolved = false;
         
