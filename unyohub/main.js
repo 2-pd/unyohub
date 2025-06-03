@@ -270,7 +270,10 @@ function update_instance_info () {
         var last_modified_timestamp_q = "last_modified_timestamp=" + instance_info["last_modified_timestamp"];
     } else {
         instance_info = {
-            instance_name : UNYOHUB_APP_NAME
+            instance_name : UNYOHUB_APP_NAME,
+            available_days_ahead : 1,
+            allow_guest_user : false,
+            require_comments_on_speculative_posts : false
         };
         
         var last_modified_timestamp_q = null;
@@ -278,18 +281,20 @@ function update_instance_info () {
     
     update_instance_info();
     
-    ajax_post("instance_info.php", last_modified_timestamp_q, function (response, last_modified) {
-        if (response !== false && response !== "NO_UPDATES_AVAILABLE") {
-            instance_info = JSON.parse(response);
-            
-            var last_modified_date = new Date(last_modified);
-            instance_info["last_modified_timestamp"] = Math.floor(last_modified_date.getTime() / 1000);
-            
-            localStorage.setItem("unyohub_instance_info", JSON.stringify(instance_info));
-            
-            update_instance_info();
-        }
-    });
+    if (navigator.onLine) {
+        ajax_post("instance_info.php", last_modified_timestamp_q, function (response, last_modified) {
+            if (response !== false && response !== "NO_UPDATES_AVAILABLE") {
+                instance_info = JSON.parse(response);
+                
+                var last_modified_date = new Date(last_modified);
+                instance_info["last_modified_timestamp"] = Math.floor(last_modified_date.getTime() / 1000);
+                
+                localStorage.setItem("unyohub_instance_info", JSON.stringify(instance_info));
+                
+                update_instance_info();
+            }
+        });
+    }
 }());
 
 
@@ -1268,6 +1273,8 @@ function select_railroad (railroad_id, mode_name = "position_mode", mode_option_
     change_mode(-1);
     
     header_elm.className = "";
+    
+    timetable_selected_line = null;
     
     var promise_1 = new Promise(function (resolve, reject) {
         var resolved = false;
@@ -5897,6 +5904,15 @@ var post_train_number;
 function write_operation_data (yyyy_mm_dd, operation_number, train_number = null) {
     var popup_inner_elm = open_popup("write_operation_data_popup", "運用情報の投稿");
     
+    if (!instance_info["allow_guest_user"] && user_data === null) {
+        var buf = "<div class='warning_text'>情報投稿にはログインが必要です。<br>ユーザーアカウントをまだ作成されていない場合は新規登録してください。</div>";
+        buf += "<div class='link_block'><a href='javascript:void(0);' onclick='show_login_form();'>ログイン</a>　<a href='/user/sign_up.php' target='_blank' rel='opener'>新規登録</a></div>";
+        
+        popup_inner_elm.innerHTML = buf;
+        
+        return;
+    }
+    
     var yyyy_mm_dd_today = get_date_string(get_timestamp());
     
     if (yyyy_mm_dd === null) {
@@ -5909,69 +5925,64 @@ function write_operation_data (yyyy_mm_dd, operation_number, train_number = null
     
     var alias_of_forward_direction = escape_html(railroad_info["alias_of_forward_direction"]);
     
-    if (instance_info["allow_guest_user"] || user_data !== null) {
-        var buf = "<div id='write_operation_data_area'>";
-        buf += "<h3>" + escape_html(operation_number) + "運用</h3>";
+    var buf = "<div id='write_operation_data_area'>";
+    buf += "<h3>" + escape_html(operation_number) + "運用</h3>";
+    
+    if (post_yyyy_mm_dd > yyyy_mm_dd_today || (post_yyyy_mm_dd === yyyy_mm_dd_today && operation_table["operations"][operation_number]["starting_time"] > get_hh_mm())) {
+        var speculative_post = true;
         
-        if (post_yyyy_mm_dd > yyyy_mm_dd_today || (post_yyyy_mm_dd === yyyy_mm_dd_today && operation_table["operations"][operation_number]["starting_time"] > get_hh_mm())) {
-            var speculative_post = true;
-            
-            buf += "<div class='warning_text'>【!】出庫前の運用に情報を投稿しようとしています</div>";
-        } else {
-            var speculative_post = false;
-        }
-        
-        buf += "<h4>確認方法</h4>";
-        buf += "<div class='radio_area'><input type='radio' name='identify_method' id='identify_method_direct' checked='checked'><label for='identify_method_direct' onclick='switch_identify_method(true);'>直接確認</label><input type='radio' name='identify_method' id='identify_method_quote'><label for='identify_method_quote' onclick='switch_identify_method(false);'>引用情報</label></div>";
-        
-        buf += "<h4>編成名または車両形式</h4>";
-        buf += "<div class='informational_text'><b>◀ " + alias_of_forward_direction + "</b></div>";
-        buf += "<input type='text' id='operation_data_formation' autocomplete='off' oninput='suggest_formation(this.value);' onblur='clear_formation_suggestion();'><div class='suggestion_area'><div id='formation_suggestion'></div></div>";
-        buf += "<div class='informational_text'>複数の編成が連結している場合は、" + alias_of_forward_direction + "の編成から順に「+」で区切って入力してください。<br>不明な編成には「不明」、運休情報は「運休」を入力可能です。</div>";
-        
-        buf += "<input type='checkbox' id='operation_data_details'";
-        if (speculative_post && instance_info["require_comments_on_speculative_posts"]) {
-            buf += " checked='checked'";
-        }
-        buf += "><label for='operation_data_details' class='drop_down'>詳細情報</label><div>";
-        
-        buf += "<h4>情報の種類</h4>";
-        buf += "<div class='radio_area'><input type='radio' name='operation_data_type' id='operation_data_type_normal' checked='checked'><label for='operation_data_type_normal'>通常・訂正の情報</label><input type='radio' name='operation_data_type' id='operation_data_type_reassign'><label for='operation_data_type_reassign'>新しい差し替え情報</label></div>";
-        
-        if (post_yyyy_mm_dd === yyyy_mm_dd_today) {
-            var now_hh_mm = get_hh_mm();
-        } else {
-            var now_hh_mm = "99:99";
-        }
-        
-        buf += "<div id='train_number_data'>";
-        buf += "<h4>目撃時の列車</h4>";
-        buf += "<b id='operation_data_train_number'></b><button type='button' onclick='select_train_number(\"" + add_slashes(operation_number) + "\", \"" + now_hh_mm + "\");'>変更</button>";
-        buf += "</div>";
-        
-        buf += "<h4>運用補足情報</h4>";
-        buf += "<textarea id='operation_data_comment'></textarea>";
-        
-        if (speculative_post && instance_info["require_comments_on_speculative_posts"]) {
-            buf += "<div class='warning_text' id='comment_guide'>お手数ですが、この運用に充当される編成を確認した方法を補足情報にご入力ください。</div>";
-        } else {
-            buf += "<div class='informational_text' id='comment_guide'>差し替え等の特記事項がない場合は省略可能です。</div>";
-        }
-        
-        buf += "<div class='warning_text' id='quote_guide' style='display: none;'>情報の出典を補足情報にご入力ください。<br><br>また、お手数ですが、投稿前に<a href='javascript:void(0);' onclick='show_rules();'>ルールとポリシー</a>をご覧いただき、引用元が投稿ルールに反しない情報ソースであることをご確認願います。</div>";
-        
-        buf += "</div><br>";
-        
-        buf += "<button type='button' class='wide_button' onclick='check_post_operation_data();'>投稿する</button>";
-        
-        buf += "</div>";
-        
-        if (user_data !== null) {
-            get_one_time_token();
-        }
+        buf += "<div class='warning_text'>【!】出庫前の運用に情報を投稿しようとしています</div>";
     } else {
-        var buf = "<div class='warning_text'>情報投稿にはログインが必要です。<br>ユーザーアカウントをまだ作成されていない場合は新規登録してください。</div>";
-        buf += "<div class='link_block'><a href='javascript:void(0);' onclick='show_login_form();'>ログイン</a>　<a href='/user/sign_up.php' target='_blank' rel='opener'>新規登録</a></div>";
+        var speculative_post = false;
+    }
+    
+    buf += "<h4>確認方法</h4>";
+    buf += "<div class='radio_area'><input type='radio' name='identify_method' id='identify_method_direct' checked='checked'><label for='identify_method_direct' onclick='switch_identify_method(true);'>直接確認</label><input type='radio' name='identify_method' id='identify_method_quote'><label for='identify_method_quote' onclick='switch_identify_method(false);'>引用情報</label></div>";
+    
+    buf += "<h4>編成名または車両形式</h4>";
+    buf += "<div class='informational_text'><b>◀ " + alias_of_forward_direction + "</b></div>";
+    buf += "<input type='text' id='operation_data_formation' autocomplete='off' oninput='suggest_formation(this.value);' onblur='clear_formation_suggestion();'><div class='suggestion_area'><div id='formation_suggestion'></div></div>";
+    buf += "<div class='informational_text'>複数の編成が連結している場合は、" + alias_of_forward_direction + "の編成から順に「+」で区切って入力してください。<br>不明な編成には「不明」、運休情報は「運休」を入力可能です。</div>";
+    
+    buf += "<input type='checkbox' id='operation_data_details'";
+    if (speculative_post && instance_info["require_comments_on_speculative_posts"]) {
+        buf += " checked='checked'";
+    }
+    buf += "><label for='operation_data_details' class='drop_down'>詳細情報</label><div>";
+    
+    buf += "<h4>情報の種類</h4>";
+    buf += "<div class='radio_area'><input type='radio' name='operation_data_type' id='operation_data_type_normal' checked='checked'><label for='operation_data_type_normal'>通常・訂正の情報</label><input type='radio' name='operation_data_type' id='operation_data_type_reassign'><label for='operation_data_type_reassign'>新しい差し替え情報</label></div>";
+    
+    if (post_yyyy_mm_dd === yyyy_mm_dd_today) {
+        var now_hh_mm = get_hh_mm();
+    } else {
+        var now_hh_mm = "99:99";
+    }
+    
+    buf += "<div id='train_number_data'>";
+    buf += "<h4>目撃時の列車</h4>";
+    buf += "<b id='operation_data_train_number'></b><button type='button' onclick='select_train_number(\"" + add_slashes(operation_number) + "\", \"" + now_hh_mm + "\");'>変更</button>";
+    buf += "</div>";
+    
+    buf += "<h4>運用補足情報</h4>";
+    buf += "<textarea id='operation_data_comment'></textarea>";
+    
+    if (speculative_post && instance_info["require_comments_on_speculative_posts"]) {
+        buf += "<div class='warning_text' id='comment_guide'>お手数ですが、この運用に充当される編成を確認した方法を補足情報にご入力ください。</div>";
+    } else {
+        buf += "<div class='informational_text' id='comment_guide'>差し替え等の特記事項がない場合は省略可能です。</div>";
+    }
+    
+    buf += "<div class='warning_text' id='quote_guide' style='display: none;'>情報の出典を補足情報にご入力ください。<br><br>また、お手数ですが、投稿前に<a href='javascript:void(0);' onclick='show_rules();'>ルールとポリシー</a>をご覧いただき、引用元が投稿ルールに反しない情報ソースであることをご確認願います。</div>";
+    
+    buf += "</div><br>";
+    
+    buf += "<button type='button' class='wide_button' onclick='check_post_operation_data();'>投稿する</button>";
+    
+    buf += "</div>";
+    
+    if (user_data !== null) {
+        get_one_time_token();
     }
     
     popup_inner_elm.innerHTML = buf;
