@@ -111,10 +111,14 @@ _/_/_/_/ アプリケーション情報定数 _/_/_/_/
 
 ※鉄道運用Hubからフォークして新たなアプリケーションを開発する場合は必要に応じて以下の値を変更
   UNYOHUB_APP_NAME  アプリケーション名
-  UNYOHUB_VERSION  バージョン文字列
   UNYOHUB_APP_INFO_URL  アプリ情報のURL
   UNYOHUB_REPOSITORY_URL  ソースコードリポジトリのURL
   UNYOHUB_LICENSE_TEXT  ライセンス情報文
+
+
+███ version.php ███
+
+  UNYOHUB_VERSION  バージョン文字列
 
 
 ███ main.js ███
@@ -125,7 +129,6 @@ _/_/_/_/ アプリケーション情報定数 _/_/_/_/
   UNYOHUB_CANCELED_TRAIN_ICON  運休列車用のアイコン画像バイナリをBASE64エンコードした文字列
 
 
-███ service_worker.js ███
+███ service_worker.php ███
 
   UNYOHUB_APP_ID  アプリケーション識別名
-  UNYOHUB_VERSION  バージョン文字列(index.phpのUNYOHUB_VERSIONと同じ文字列を指定)
