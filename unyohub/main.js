@@ -369,7 +369,11 @@ function update_instance_info () {
 
 var railroad_info = null;
 var train_icons = null;
+var joined_railroad_train_icons = {};
 var formations = null;
+var joined_railroad_formations = {};
+var formation_overviews = null;
+var joined_railroad_formation_overviews = {};
 var diagram_revisions = null;
 var diagram_info = null;
 
@@ -1188,7 +1192,9 @@ function show_railroad_announcements () {
 }
 
 
-function update_railroad_info () {
+function update_railroad_info (data) {
+    railroad_info = data
+    
     var railroad_name_splitted = escape_html(railroad_info["railroad_name"]).split(" ");
     railroad_name_splitted[0] += "<small>";
     
@@ -1261,269 +1267,346 @@ function update_formation_styles () {
 }
 
 
-var blank_article_elm = document.getElementById("blank_article");
-
-function select_railroad (railroad_id, mode_name = "position_mode", mode_option_1 = null, mode_option_2 = null) {
-    splash_screen_elm.style.display = "none";
-    splash_screen_elm.innerHTML = "";
-    if (popup_history.length >= 1) {
-        popup_close();
+function load_railroad_data (railroad_id, is_main_railroad, resolve_func_1, resolve_func_2, reject_func) {
+    var joined_railroads = [];
+    var added_railroads = [];
+    
+    var promise_list_1 = [];
+    var promise_list_2 = [];
+    
+    if (is_main_railroad) {
+        promise_list_1.push(new Promise(function (resolve_1, reject_1) {
+            promise_list_2.push(new Promise(function (resolve_2, reject_2) {
+                idb_start_transaction("railroads", false, function (transaction) {
+                    var railroads_store = transaction.objectStore("railroads");
+                    var get_request = railroads_store.get(railroad_id);
+                    
+                    get_request.onsuccess = function (evt) {
+                        if (evt.target.result !== undefined) {
+                            var railroad_info_data = evt.target.result;
+                            
+                            update_railroad_info(railroad_info_data);
+                            
+                            joined_railroads = "joined_railroads" in railroad_info ? railroad_info["joined_railroads"] : [];
+                            
+                            var last_modified_timestamp = railroad_info_data["last_modified_timestamp"];
+                            
+                            resolve_1();
+                        } else {
+                            var last_modified_timestamp = 0;
+                            reject_1();
+                        }
+                        
+                        if (navigator.onLine) {
+                            ajax_post("railroad_info.php", "railroad_id=" + escape_form_data(railroad_id) + "&last_modified_timestamp=" + last_modified_timestamp, function (response, last_modified) {
+                                if (response !== false && response !== "NO_UPDATES_AVAILABLE") {
+                                    var railroad_info_data = JSON.parse(response);
+                                    
+                                    railroad_info_data["railroad_id"] = railroad_id;
+                                    
+                                    var last_modified_date = new Date(last_modified);
+                                    railroad_info_data["last_modified_timestamp"] = Math.floor(last_modified_date.getTime() / 1000);
+                                    
+                                    update_railroad_info(railroad_info_data);
+                                    
+                                    idb_start_transaction("railroads", true, function (transaction) {
+                                        var railroads_store = transaction.objectStore("railroads");
+                                        railroads_store.put(railroad_info_data);
+                                    });
+                                    
+                                    added_railroads = [...new Set("joined_railroads" in railroad_info ? railroad_info["joined_railroads"] : []).difference(new Set(joined_railroads))];
+                                    
+                                    resolve_2(true);
+                                } else {
+                                    if (last_modified_timestamp > 0) {
+                                        resolve_2(false);
+                                    } else {
+                                        reject_2(null);
+                                    }
+                                }
+                            });
+                        } else {
+                            if (last_modified_timestamp > 0) {
+                                resolve_2(false);
+                            } else {
+                                reject_2(null);
+                            }
+                        }
+                    };
+                });
+            }));
+        }));
     }
     
-    change_mode(-1);
-    
-    header_elm.className = "";
-    
-    timetable_selected_line = null;
-    
-    var promise_1 = new Promise(function (resolve, reject) {
-        var resolved = false;
-        
-        idb_start_transaction("railroads", false, function (transaction) {
-            var railroads_store = transaction.objectStore("railroads");
-            var get_request = railroads_store.get(railroad_id);
-            
-            get_request.onsuccess = function (evt) {
-                if (evt.target.result !== undefined) {
-                    railroad_info = evt.target.result;
-                    
-                    update_railroad_info();
-                    
-                    var last_modified_timestamp = railroad_info["last_modified_timestamp"];
-                    
-                    resolve();
-                    resolved = true;
-                } else {
-                    var last_modified_timestamp = 0;
-                }
+    promise_list_1.push(new Promise(function (resolve_1, reject_1) {
+        promise_list_2.push(new Promise(function (resolve_2, reject_2) {
+            idb_start_transaction("train_icons", false, function (transaction) {
+                var railroads_store = transaction.objectStore("train_icons");
+                var get_request = railroads_store.get(railroad_id);
                 
-                if (navigator.onLine) {
-                    ajax_post("railroad_info.php", "railroad_id=" + escape_form_data(railroad_id) + "&last_modified_timestamp=" + last_modified_timestamp, function (response, last_modified) {
-                        if (response !== false && response !== "NO_UPDATES_AVAILABLE") {
-                            railroad_info = JSON.parse(response);
-                            
-                            railroad_info["railroad_id"] = railroad_id;
-                            
-                            var last_modified_date = new Date(last_modified);
-                            railroad_info["last_modified_timestamp"] = Math.floor(last_modified_date.getTime() / 1000);
-                            
-                            var railroad_info_new = {...railroad_info};
-                            
-                            update_railroad_info();
-                            
-                            idb_start_transaction("railroads", true, function (transaction) {
-                                var railroads_store = transaction.objectStore("railroads");
-                                railroads_store.put(railroad_info_new);
-                            });
-                            
-                            if (!resolved) {
-                                resolve();
-                            }
-                        } else if (!resolved) {
-                            reject();
+                get_request.onsuccess = function (evt) {
+                    if (evt.target.result !== undefined) {
+                        var train_icons_data = evt.target.result;
+                        last_modified_timestamp = train_icons_data["last_modified_timestamp"];
+                        
+                        if (is_main_railroad) {
+                            train_icons = train_icons_data;
+                        } else {
+                            joined_railroad_train_icons[railroad_id] = train_icons_data;
                         }
-                    });
-                } else if (!resolved) {
-                    reject();
-                }
-            };
-        });
-    });
-    
-    var promise_2 = new Promise(function (resolve, reject) {
-        var resolved = false;
-        
-        idb_start_transaction("train_icons", false, function (transaction) {
-            var railroads_store = transaction.objectStore("train_icons");
-            var get_request = railroads_store.get(railroad_id);
-            
-            get_request.onsuccess = function (evt) {
-                if (evt.target.result !== undefined) {
-                    train_icons = evt.target.result;
-                    var last_modified_timestamp = train_icons["last_modified_timestamp"];
-                    
-                    resolve();
-                    resolved = true;
-                } else {
-                    train_icons = {railroad_id : null};
-                    var last_modified_timestamp = 0;
-                }
-                
-                if (navigator.onLine) {
-                    ajax_post("train_icons.php", "railroad_id=" + escape_form_data(railroad_id) + "&last_modified_timestamp=" + last_modified_timestamp, function (response, last_modified) {
-                        if (response !== false && response !== "NO_UPDATES_AVAILABLE") {
-                            train_icons = {icons : JSON.parse(response)};
-                            
-                            train_icons["railroad_id"] = railroad_id;
-                            
-                            var last_modified_date = new Date(last_modified);
-                            train_icons["last_modified_timestamp"] = Math.floor(last_modified_date.getTime() / 1000);
-                            
-                            idb_start_transaction("train_icons", true, function (transaction) {
-                                var icons_store = transaction.objectStore("train_icons");
-                                icons_store.put(train_icons);
-                            });
-                            
-                            if (!resolved) {
-                                resolve();
-                            }
-                        } else if (!resolved) {
-                            reject();
+                        
+                        resolve_1();
+                    } else {
+                        if (is_main_railroad) {
+                            train_icons = {railroad_id : null};
                         }
-                    });
-                } else if (!resolved) {
-                    reject();
-                }
-            };
-        });
-    });
-    
-    var promise_3 = new Promise(function (resolve, reject) {
-        var resolved = false;
-        
-        idb_start_transaction("formations", false, function (transaction) {
-            var formations_store = transaction.objectStore("formations");
-            var get_request = formations_store.get(railroad_id);
-            
-            get_request.onsuccess = function (evt) {
-                if (evt.target.result !== undefined) {
-                    formations = evt.target.result;
-                    var last_modified_timestamp = formations["last_modified_timestamp"];
+                        var last_modified_timestamp = 0;
+                        
+                        reject_1();
+                    }
                     
-                    resolve();
-                    resolved = true;
-                } else {
-                    var last_modified_timestamp = 0;
-                }
-                
-                if (navigator.onLine) {
-                    ajax_post("formations.php", "railroad_id=" + escape_form_data(railroad_id) + "&last_modified_timestamp=" + last_modified_timestamp, function (response, last_modified) {
-                        if (response !== false && response !== "NO_UPDATES_AVAILABLE") {
-                            formations = JSON.parse(response);
-                            
-                            formations["railroad_id"] = railroad_id;
-                            
-                            var last_modified_date = new Date(last_modified);
-                            formations["last_modified_timestamp"] = Math.floor(last_modified_date.getTime() / 1000);
-                            
-                            idb_start_transaction("formations", true, function (transaction) {
-                                var formations_store = transaction.objectStore("formations");
-                                formations_store.put(formations);
-                            });
-                            
-                            if (!resolved) {
-                                resolve();
+                    if (navigator.onLine) {
+                        ajax_post("train_icons.php", "railroad_id=" + escape_form_data(railroad_id) + "&last_modified_timestamp=" + last_modified_timestamp, function (response, last_modified) {
+                            if (response !== false && response !== "NO_UPDATES_AVAILABLE") {
+                                var train_icons_data = {icons : JSON.parse(response)};
+                                
+                                train_icons_data["railroad_id"] = railroad_id;
+                                
+                                var last_modified_date = new Date(last_modified);
+                                train_icons_data["last_modified_timestamp"] = Math.floor(last_modified_date.getTime() / 1000);
+                                
+                                idb_start_transaction("train_icons", true, function (transaction) {
+                                    var icons_store = transaction.objectStore("train_icons");
+                                    icons_store.put(train_icons_data);
+                                });
+                                
+                                if (is_main_railroad) {
+                                    train_icons = train_icons_data;
+                                } else {
+                                    joined_railroad_train_icons[railroad_id] = train_icons_data;
+                                }
+                                
+                                resolve_2(true);
                             } else {
+                                if (last_modified_timestamp > 0) {
+                                    resolve_2(false);
+                                } else {
+                                    reject_2(null);
+                                }
+                            }
+                        });
+                    } else {
+                        if (last_modified_timestamp > 0) {
+                            resolve_2(false);
+                        } else {
+                            reject_2(null);
+                        }
+                    }
+                };
+            });
+        }));
+    }));
+    
+    promise_list_1.push(new Promise(function (resolve_1, reject_1) {
+        promise_list_2.push(new Promise(function (resolve_2, reject_2) {
+            idb_start_transaction("formations", false, function (transaction) {
+                var formations_store = transaction.objectStore("formations");
+                var get_request = formations_store.get(railroad_id);
+                
+                get_request.onsuccess = function (evt) {
+                    if (evt.target.result !== undefined) {
+                        var formations_data = evt.target.result;
+                        var last_modified_timestamp = formations_data["last_modified_timestamp"];
+                        
+                        if (is_main_railroad) {
+                            formations = formations_data;
+                        } else {
+                            joined_railroad_formations[railroad_id] = formations_data;
+                        }
+                        
+                        resolve_1();
+                    } else {
+                        var last_modified_timestamp = 0;
+                        
+                        reject_1();
+                    }
+                    
+                    if (navigator.onLine) {
+                        ajax_post("formations.php", "railroad_id=" + escape_form_data(railroad_id) + "&last_modified_timestamp=" + last_modified_timestamp, function (response, last_modified) {
+                            if (response !== false && response !== "NO_UPDATES_AVAILABLE") {
+                                var formations_data = JSON.parse(response);
+                                
+                                formations_data["railroad_id"] = railroad_id;
+                                
+                                var last_modified_date = new Date(last_modified);
+                                formations_data["last_modified_timestamp"] = Math.floor(last_modified_date.getTime() / 1000);
+                                
+                                idb_start_transaction("formations", true, function (transaction) {
+                                    var formations_store = transaction.objectStore("formations");
+                                    formations_store.put(formations_data);
+                                });
+                                
+                                if (is_main_railroad) {
+                                    formations = formations_data;
+                                } else {
+                                    joined_railroad_formations[railroad_id] = formations_data;
+                                }
+                                
                                 update_formation_styles();
+                                
+                                resolve_2(true);
+                            } else {
+                                if (last_modified_timestamp > 0) {
+                                    resolve_2(false);
+                                } else {
+                                    reject_2(null);
+                                }
                             }
-                        } else if (!resolved) {
-                            reject();
+                        });
+                    } else {
+                        if (last_modified_timestamp > 0) {
+                            resolve_2(false);
+                        } else {
+                            reject_2(null);
                         }
-                    });
-                } else if (!resolved) {
-                    reject();
-                }
-            };
-        });
-    });
+                    }
+                };
+            });
+        }));
+    }));
     
-    var promise_4 = new Promise(function (resolve, reject) {
-        var resolved = false;
-        
-        idb_start_transaction("formation_overviews", false, function (transaction) {
-            var formation_overviews_store = transaction.objectStore("formation_overviews");
-            var get_request = formation_overviews_store.get(railroad_id);
-            
-            get_request.onsuccess = function (evt) {
-                if (evt.target.result !== undefined) {
-                    formation_overviews = evt.target.result;
-                    var last_modified_timestamp = formation_overviews["last_modified_timestamp"];
-                    
-                    resolve();
-                    resolved = true;
-                } else {
-                    var last_modified_timestamp = 0;
-                }
+    promise_list_1.push(new Promise(function (resolve_1, reject_1) {
+        promise_list_2.push(new Promise(function (resolve_2, reject_2) {
+            idb_start_transaction("formation_overviews", false, function (transaction) {
+                var formation_overviews_store = transaction.objectStore("formation_overviews");
+                var get_request = formation_overviews_store.get(railroad_id);
                 
-                if (navigator.onLine) {
-                    ajax_post("formation_overviews.php", "railroad_id=" + escape_form_data(railroad_id) + "&last_modified_timestamp=" + last_modified_timestamp, function (response, last_modified) {
-                        if (response !== false && response !== "NO_UPDATES_AVAILABLE") {
-                            formation_overviews = {formations : JSON.parse(response)};
-                            
-                            formation_overviews["railroad_id"] = railroad_id;
-                            
-                            var last_modified_date = new Date(last_modified);
-                            formation_overviews["last_modified_timestamp"] = Math.floor(last_modified_date.getTime() / 1000);
-                            
-                            idb_start_transaction("formation_overviews", true, function (transaction) {
-                                var formation_overviews_store = transaction.objectStore("formation_overviews");
-                                formation_overviews_store.put(formation_overviews);
-                            });
-                            
-                            if (!resolved) {
-                                resolve();
-                            } else if (mode_name === "formations_mode") {
-                                formations_mode(mode_option_1);
-                            }
-                        } else if (!resolved) {
-                            reject();
+                get_request.onsuccess = function (evt) {
+                    if (evt.target.result !== undefined) {
+                        var formation_overviews_data = evt.target.result;
+                        var last_modified_timestamp = formation_overviews_data["last_modified_timestamp"];
+                        
+                        if (is_main_railroad) {
+                            formation_overviews = formation_overviews_data;
+                        } else {
+                            joined_railroad_formation_overviews[railroad_id] = formation_overviews_data;
                         }
-                    });
-                } else if (!resolved) {
-                    reject();
-                }
-            };
-        });
-    });
+                        
+                        resolve_1();
+                    } else {
+                        var last_modified_timestamp = 0;
+                        
+                        reject_1();
+                    }
+                    
+                    if (navigator.onLine) {
+                        ajax_post("formation_overviews.php", "railroad_id=" + escape_form_data(railroad_id) + "&last_modified_timestamp=" + last_modified_timestamp, function (response, last_modified) {
+                            if (response !== false && response !== "NO_UPDATES_AVAILABLE") {
+                                var formation_overviews_data = {formations : JSON.parse(response)};
+                                
+                                formation_overviews_data["railroad_id"] = railroad_id;
+                                
+                                var last_modified_date = new Date(last_modified);
+                                formation_overviews_data["last_modified_timestamp"] = Math.floor(last_modified_date.getTime() / 1000);
+                                
+                                idb_start_transaction("formation_overviews", true, function (transaction) {
+                                    var formation_overviews_store = transaction.objectStore("formation_overviews");
+                                    formation_overviews_store.put(formation_overviews_data);
+                                });
+                                
+                                if (is_main_railroad) {
+                                    formation_overviews = formation_overviews_data;
+                                } else {
+                                    joined_railroad_formation_overviews[railroad_id] = formation_overviews_data;
+                                }
+                                
+                                if (last_modified_timestamp > 0 && mode_name === "formations_mode") {
+                                    formations_mode(mode_option_1);
+                                }
+                                
+                                resolve_2(true);
+                            } else {
+                                if (last_modified_timestamp > 0) {
+                                    resolve_2(false);
+                                } else {
+                                    reject_2(null);
+                                }
+                            }
+                        });
+                    } else {
+                        if (last_modified_timestamp > 0) {
+                            resolve_2(false);
+                        } else {
+                            reject_2(null);
+                        }
+                    }
+                };
+            });
+        }));
+    }));
     
-    var promise_5 = new Promise(function (resolve, reject) {
-        var tmp_diagram_revision = null;
-        
-        idb_start_transaction("diagram_revisions", false, function (transaction) {
-            var diagram_revisions_store = transaction.objectStore("diagram_revisions");
-            var get_request = diagram_revisions_store.get(railroad_id);
-            
-            get_request.onsuccess = function (evt) {
-                if (evt.target.result !== undefined) {
-                    diagram_revisions = evt.target.result;
-                    var last_modified_timestamp = diagram_revisions["last_modified_timestamp"];
-                    
-                    resolve();
-                    tmp_diagram_revision = get_diagram_revision();
-                } else {
-                    var last_modified_timestamp = 0;
-                }
+    if (is_main_railroad) {
+        promise_list_1.push(new Promise(function (resolve_1, reject_1) {
+            promise_list_2.push(new Promise(function (resolve_2, reject_2) {
+                var tmp_diagram_revision = null;
                 
-                if (navigator.onLine) {
-                    ajax_post("diagram_revisions.php", "railroad_id=" + escape_form_data(railroad_id) + "&last_modified_timestamp=" + last_modified_timestamp, function (response, last_modified) {
-                        if (response !== false && response !== "NO_UPDATES_AVAILABLE") {
-                            diagram_revisions = {diagram_revisions : JSON.parse(response)};
+                idb_start_transaction("diagram_revisions", false, function (transaction) {
+                    var diagram_revisions_store = transaction.objectStore("diagram_revisions");
+                    var get_request = diagram_revisions_store.get(railroad_id);
+                    
+                    get_request.onsuccess = function (evt) {
+                        if (evt.target.result !== undefined) {
+                            diagram_revisions = evt.target.result;
+                            var last_modified_timestamp = diagram_revisions["last_modified_timestamp"];
                             
-                            diagram_revisions["railroad_id"] = railroad_id;
+                            resolve_1();
+                            tmp_diagram_revision = get_diagram_revision();
+                        } else {
+                            var last_modified_timestamp = 0;
                             
-                            var last_modified_date = new Date(last_modified);
-                            diagram_revisions["last_modified_timestamp"] = Math.floor(last_modified_date.getTime() / 1000);
-                            
-                            idb_start_transaction("diagram_revisions", true, function (transaction) {
-                                var diagram_revisions_store = transaction.objectStore("diagram_revisions");
-                                diagram_revisions_store.put(diagram_revisions);
-                            });
-                            
-                            if (tmp_diagram_revision === null) {
-                                resolve();
-                            } else if (tmp_diagram_revision !== get_diagram_revision()) {
-                                select_mode(mode_name, mode_option_1, mode_option_2);
-                            }
-                        } else if (tmp_diagram_revision === null) {
-                            reject();
+                            reject_1();
                         }
-                    });
-                } else if (tmp_diagram_revision === null) {
-                    reject();
-                }
-            };
-        });
-    });
+                        
+                        if (navigator.onLine) {
+                            ajax_post("diagram_revisions.php", "railroad_id=" + escape_form_data(railroad_id) + "&last_modified_timestamp=" + last_modified_timestamp, function (response, last_modified) {
+                                if (response !== false && response !== "NO_UPDATES_AVAILABLE") {
+                                    diagram_revisions = {diagram_revisions : JSON.parse(response)};
+                                    
+                                    diagram_revisions["railroad_id"] = railroad_id;
+                                    
+                                    var last_modified_date = new Date(last_modified);
+                                    diagram_revisions["last_modified_timestamp"] = Math.floor(last_modified_date.getTime() / 1000);
+                                    
+                                    idb_start_transaction("diagram_revisions", true, function (transaction) {
+                                        var diagram_revisions_store = transaction.objectStore("diagram_revisions");
+                                        diagram_revisions_store.put(diagram_revisions);
+                                    });
+                                    
+                                    if (tmp_diagram_revision !== null && tmp_diagram_revision !== get_diagram_revision()) {
+                                        select_mode(mode_name, mode_option_1, mode_option_2);
+                                    }
+                                    
+                                    resolve_2(true);
+                                } else {
+                                    if (tmp_diagram_revision !== null) {
+                                        resolve_2(false);
+                                    } else {
+                                        reject_2(null);
+                                    }
+                                }
+                            });
+                        } else {
+                            if (tmp_diagram_revision !== null) {
+                                resolve_2(false);
+                            } else {
+                                reject_2(null);
+                            }
+                        }
+                    };
+                });
+            }));
+        }));
+    }
     
     if (!location.pathname.startsWith("/railroad_" + railroad_id + "/")) {
         document.getElementById("tab_position_mode").setAttribute("href", "/railroad_" + railroad_id + "/");
@@ -1535,17 +1618,49 @@ function select_railroad (railroad_id, mode_name = "position_mode", mode_option_
     
     update_railroad_announcement(railroad_id, true);
     
-    Promise.all([promise_1, promise_2, promise_3, promise_4, promise_5]).then(function () {
-        update_formation_styles();
-        
-        position_selected_line = railroad_info["lines_order"][0];
-        
-        select_mode(mode_name, mode_option_1, mode_option_2);
-    }, function () {
-        mes("選択された路線系統はデータが利用できません", true);
-        
-        show_railroad_list();
-        blank_article_elm.innerHTML = "<div class='no_data'><a href='javascript:void(0);' onclick='show_railroad_list();'>路線系統を選択</a>してください</div>";
+    Promise.all(promise_list_1).then(function () {
+        if (joined_railroads.length >= 1) {
+            var joined_railroads_promise_list = [];
+            
+            for (let joined_railroad_id of joined_railroads) {
+                joined_railroads_promise_list.push(new Promise(function (resolve, reject) {
+                    load_railroad_data(joined_railroad_id, false, resolve, resolve, reject);
+                }));
+            }
+            
+            Promise.all(joined_railroads_promise_list).then(function () {
+                resolve_func_1();
+            }, function () {
+                reject_func();
+            });
+        } else {
+            resolve_func_1();
+        }
+    }, function () {});
+    Promise.allSettled(promise_list_1).then(function () {
+        Promise.all(promise_list_2).then(function (update_exists_list) {
+            if (update_exists_list.includes(true)) {
+                if (added_railroads.length >= 1) {
+                    var joined_railroads_promise_list = [];
+                    
+                    for (let joined_railroad_id of added_railroads) {
+                        joined_railroads_promise_list.push(new Promise(function (resolve, reject) {
+                            load_railroad_data(joined_railroad_id, false, resolve, resolve, reject);
+                        }));
+                    }
+                    
+                    Promise.all(joined_railroads_promise_list).then(function () {
+                        resolve_func_2();
+                    }, function () {
+                        reject_func();
+                    });
+                } else {
+                    resolve_func_2();
+                }
+            }
+        }, function () {
+            reject_func();
+        });
     });
 }
 
@@ -1578,6 +1693,43 @@ function select_mode (mode_name, mode_option_1, mode_option_2) {
             operation_table_mode(mode_option_1);
             break;
     }
+}
+
+var blank_article_elm = document.getElementById("blank_article");
+
+function select_railroad (railroad_id, mode_name = "position_mode", mode_option_1 = null, mode_option_2 = null) {
+    splash_screen_elm.style.display = "none";
+    splash_screen_elm.innerHTML = "";
+    if (popup_history.length >= 1) {
+        popup_close();
+    }
+    
+    change_mode(-1);
+    
+    header_elm.className = "";
+    
+    joined_railroad_train_icons = {};
+    joined_railroad_formations = {};
+    joined_railroad_formation_overviews = {};
+    
+    timetable_selected_line = null;
+    
+    load_railroad_data(railroad_id, true, function () {
+        update_formation_styles();
+        
+        position_selected_line = railroad_info["lines_order"][0];
+        
+        select_mode(mode_name, mode_option_1, mode_option_2);
+    }, function () {
+        position_selected_line = railroad_info["lines_order"][0];
+        
+        select_mode(mode_name, mode_option_1, mode_option_2);
+    }, function () {
+        mes("選択された路線系統はデータが利用できません", true);
+        
+        show_railroad_list();
+        blank_article_elm.innerHTML = "<div class='no_data'><a href='javascript:void(0);' onclick='show_railroad_list();'>路線系統を選択</a>してください</div>";
+    });
 }
 
 
@@ -1855,7 +2007,7 @@ function load_operation_table (resolve_func, reject_func, diagram_id, joined_rai
             }
         }, function () {
             reject_func();
-        },);
+        });
     });
 }
 
@@ -2178,7 +2330,7 @@ function update_operation_data (resolve_func, reject_func, joined_railroads = nu
             }
         }, function () {
             reject_func();
-        },);
+        });
     });
 }
 
