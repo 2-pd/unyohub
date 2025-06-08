@@ -275,7 +275,7 @@ if ($path_info_str === "/") {
         </div>
     </article>
     <article onscroll="timetable_wrapper_onscroll();">
-        <div class='line_select_wrapper'><button type="button" id="timetable_line_select" onclick="select_lines(timetable_selectable_lines, false);"></button></div>
+        <div class='line_select_wrapper'><button type="button" id="timetable_line_select" onclick="select_lines(timetable_selectable_lines, timetable_selectable_joined_lines, false);"></button></div>
         <div id="direction_radio_area" class="radio_area">
             <div id="timetable_station_name" class="heading_wrapper"></div>
             <div><input type="radio" name="direction_radio" id="radio_inbound" value="inbound" checked="checked" onchange="timetable_select_station(timetable_selected_station);"><label for="radio_inbound" id="radio_inbound_label">上り</label><input type="radio" name="direction_radio" id="radio_outbound" value="outbound" onchange="timetable_select_station(timetable_selected_station);"><label for="radio_outbound" id="radio_outbound_label">下り</label></div>
