@@ -60,6 +60,23 @@ if (empty($_SERVER["PATH_INFO"]) || $_SERVER["PATH_INFO"] === "/") {
                             exit;
                         }
                         
+                        if (!empty($railroad_info["lines"][$path_info[3]]["affiliated_railroad_id"])) {
+                            $path_info_str = "/railroad_".$railroad_info["lines"][$path_info[3]]["affiliated_railroad_id"]."/timetable/".$path_info[3]."/";
+                            
+                            if (!empty($path_info[4])) {
+                                foreach ($railroad_info["lines"][$path_info[3]]["stations"] as $station) {
+                                    if ($station["station_name"] === $path_info[4] && empty($station["is_signal_station"])) {
+                                        $path_info_str .= urlencode($station["station_name"])."/";
+                                        break;
+                                    }
+                                }
+                            }
+                            
+                            header("Location: ".$path_info_str, TRUE, 301);
+                            
+                            exit;
+                        }
+                        
                         $path_info_str .= $path_info[3]."/";
                         
                         if (empty($path_info[4])) {
