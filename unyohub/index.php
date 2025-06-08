@@ -316,7 +316,7 @@ if ($path_info_str === "/") {
     <a id="railroad_announcement" href="javascript:void(0);" onclick="show_railroad_announcements();"></a>
     <footer>
         <div>
-            <button type="button" id="position_reload_button" class="reload_button" onclick="position_mode('__today__', null);"></button>
+            <button type="button" id="position_reload_button" class="reload_button" onclick="position_mode(null, '__today__', null);"></button>
             <button type="button" id="position_diagram" class="footer_select" onclick="position_list_diagrams();"></button><span ontouchstart="position_time_swipe_start(event);" ontouchmove="position_time_swipe(event);" ontouchend="position_time_swipe_end(event, 360);"><button type="button" class="previous_button" onclick="position_change_time(-60);"></button><span id="position_hours" class="footer_value"></span><button type="button" class="next_button" onclick="position_change_time(60);"></button></span><span ontouchstart="position_time_swipe_start(event);" ontouchmove="position_time_swipe(event);" ontouchend="position_time_swipe_end(event, 10);"><button type="button" class="previous_button" onclick="position_change_time(-1, true);"></button><span id="position_minutes" class="footer_value"></span><button type="button" class="next_button" onclick="position_change_time(1, true);"></button></span>
             <input type="time" id="position_time_button" class="time_button" onchange="position_time_button_change();">
         </div>

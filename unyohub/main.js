@@ -1543,10 +1543,6 @@ function load_railroad_data (railroad_id, is_main_railroad, resolve_func_1, reso
                                     joined_railroad_formation_overviews[railroad_id] = formation_overviews_data;
                                 }
                                 
-                                if (last_modified_timestamp > 0 && mode_name === "formations_mode") {
-                                    formations_mode(mode_option_1);
-                                }
-                                
                                 resolve_2(true);
                             } else {
                                 if (last_modified_timestamp > 0) {
@@ -1604,10 +1600,6 @@ function load_railroad_data (railroad_id, is_main_railroad, resolve_func_1, reso
                                         var diagram_revisions_store = transaction.objectStore("diagram_revisions");
                                         diagram_revisions_store.put(diagram_revisions);
                                     });
-                                    
-                                    if (tmp_diagram_revision !== null && tmp_diagram_revision !== get_diagram_revision()) {
-                                        select_mode(mode_name, mode_option_1, mode_option_2);
-                                    }
                                     
                                     resolve_2(true);
                                 } else {
@@ -1690,7 +1682,7 @@ function load_railroad_data (railroad_id, is_main_railroad, resolve_func_1, reso
 function select_mode (mode_name, mode_option_1, mode_option_2) {
     switch (mode_name) {
         case "position_mode":
-            position_mode();
+            position_mode(mode_option_1);
             break;
         
         case "timetable_mode":
@@ -2435,10 +2427,14 @@ var position_area_elm = document.getElementById("position_area");
 var position_reload_button_elm = document.getElementById("position_reload_button");
 var position_time_button_elm = document.getElementById("position_time_button");
 
-function position_mode (date_str = "__today__", position_time_additions = null) {
+function position_mode (line_id = null, date_str = "__today__", position_time_additions = null) {
     change_title(railroad_info["railroad_name"] + "の車両運用情報 | " + instance_info["instance_name"], "/railroad_" + railroad_info["railroad_id"] + "/");
     
     change_mode(0);
+    
+    if (line_id !== null) {
+        position_selected_line = line_id;
+    }
     
     var position_scroll_amount = article_elms[0].scrollTop;
     
@@ -2744,7 +2740,7 @@ function select_lines (lines = null, joined_lines = null, position_mode = true) 
         buf += "<button type='button' onclick='close_square_popup(); ";
         
         if (position_mode) {
-            buf += "select_railroad(\"" + railroad_info["lines"][line_id]["affiliated_railroad_id"] + "\");";
+            buf += "select_railroad(\"" + railroad_info["lines"][line_id]["affiliated_railroad_id"] + "\", \"position_mode\", \"" + line_id + "\");";
         } else {
             buf += "select_railroad(\"" + railroad_info["lines"][line_id]["affiliated_railroad_id"] + "\", \"timetable_mode\", \"" + line_id + "\"" + (timetable_selected_station === null ? "" : ", \"" + add_slashes(timetable_selected_station) + "\"") + ");";
         }
@@ -3216,7 +3212,7 @@ function position_list_diagrams () {
                     bg_color = convert_color_dark_mode(bg_color);
                 }
                 
-                buf += "<button type='button' class='wide_button' onclick='close_square_popup(); position_mode(\"" + diagram_id + "\", 0);' style='background-color: " + bg_color + "; border-color: " + bg_color + ";'>" + diagram_name + "</button>";
+                buf += "<button type='button' class='wide_button' onclick='close_square_popup(); position_mode(null, \"" + diagram_id + "\", 0);' style='background-color: " + bg_color + "; border-color: " + bg_color + ";'>" + diagram_name + "</button>";
             }
             
             popup_inner_elm.innerHTML = buf;
