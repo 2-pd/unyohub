@@ -82,7 +82,7 @@ log_ip_address 投稿者のIPアドレスを記録するか(BOOL値)
     "railroad_name" : 路線系統表示名,
     "main_color" : 路線系統のテーマカラー,
     "railroad_icon" : BASE64エンコードされた路線系統のアイコンデータ,
-    "joined_railroads" : 直通する路線系統の路線系統識別名を配列で列挙(他の路線系統と直通していない場合は省略可能),
+    "joined_railroads" : 直通する路線系統の路線系統識別名を配列で列挙(他の路線系統に属する運用が乗り入れしていない場合は省略可能),
     "lines" : { 個々の路線の情報
         "路線識別名" : {
             "line_name" : 路線名,
