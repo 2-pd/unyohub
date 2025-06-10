@@ -5052,7 +5052,7 @@ function draw_operation_detail (operation_number_or_index, diagram_id, operation
         buf += "<div id='operation_trains_area'></div>";
         
         if (navigator.onLine && operation_detail_write_button_enabled) {
-            buf += "<button type='button' class='write_button' onclick='write_operation_data(\"" + operation_data_date_str + "\", \"" + operation_number + "\");'>運用情報を投稿</button>";
+            buf += "<button type='button' class='write_button' onclick='write_operation_data(null, \"" + operation_data_date_str + "\", \"" + operation_number + "\");'>運用情報を投稿</button>";
         }
     } else {
         buf += "<div class='no_data'>運用表に登録されていない運用です</div>";
@@ -6360,11 +6360,12 @@ function get_one_time_token () {
     });
 }
 
+var post_railroad_id;
 var post_yyyy_mm_dd;
 var post_operation_number;
 var post_train_number;
 
-function write_operation_data (yyyy_mm_dd, operation_number, train_number = null) {
+function write_operation_data (railroad_id, yyyy_mm_dd, operation_number, train_number = null) {
     var popup_inner_elm = open_popup("write_operation_data_popup", "運用情報の投稿");
     
     if (!instance_info["allow_guest_user"] && user_data === null) {
@@ -6384,14 +6385,17 @@ function write_operation_data (yyyy_mm_dd, operation_number, train_number = null
         post_yyyy_mm_dd = yyyy_mm_dd;
     }
     
+    post_railroad_id = railroad_id === null ? railroad_info["railroad_id"] : railroad_id;
     post_operation_number = operation_number;
+    
+    var operation_info = post_railroad_id === railroad_info["railroad_id"] ? operation_table["operations"][operation_number] : joined_operation_tables[post_railroad_id]["operations"][operation_number];
     
     var alias_of_forward_direction = escape_html(railroad_info["alias_of_forward_direction"]);
     
     var buf = "<div id='write_operation_data_area'>";
     buf += "<h3>" + escape_html(operation_number) + "運用</h3>";
     
-    if (post_yyyy_mm_dd > yyyy_mm_dd_today || (post_yyyy_mm_dd === yyyy_mm_dd_today && operation_table["operations"][operation_number]["starting_time"] > get_hh_mm())) {
+    if (post_yyyy_mm_dd > yyyy_mm_dd_today || (post_yyyy_mm_dd === yyyy_mm_dd_today && operation_info["starting_time"] > get_hh_mm())) {
         var speculative_post = true;
         
         buf += "<div class='warning_text'>【!】出庫前の運用に情報を投稿しようとしています</div>";
@@ -6404,7 +6408,7 @@ function write_operation_data (yyyy_mm_dd, operation_number, train_number = null
     
     buf += "<h4>編成名または車両形式</h4>";
     buf += "<div class='informational_text'><b>◀ " + alias_of_forward_direction + "</b></div>";
-    buf += "<input type='text' id='operation_data_formation' autocomplete='off' oninput='suggest_formation(this.value);' onblur='clear_formation_suggestion();'><div class='suggestion_area'><div id='formation_suggestion'></div></div>";
+    buf += "<input type='text' id='operation_data_formation' autocomplete='off' oninput='suggest_formation(" + (post_railroad_id === railroad_info["railroad_id"] ? "null" : "\"" +  post_railroad_id + "\"") + ", this.value);' onblur='clear_formation_suggestion();'><div class='suggestion_area'><div id='formation_suggestion'></div></div>";
     buf += "<div class='informational_text'>複数の編成が連結している場合は、" + alias_of_forward_direction + "の編成から順に「+」で区切って入力してください。<br>不明な編成には「不明」、運休情報は「運休」を入力可能です。</div>";
     
     buf += "<input type='checkbox' id='operation_data_details'";
@@ -6424,7 +6428,7 @@ function write_operation_data (yyyy_mm_dd, operation_number, train_number = null
     
     buf += "<div id='train_number_data'>";
     buf += "<h4>目撃時の列車</h4>";
-    buf += "<b id='operation_data_train_number'></b><button type='button' onclick='select_train_number(\"" + add_slashes(operation_number) + "\", \"" + now_hh_mm + "\");'>変更</button>";
+    buf += "<b id='operation_data_train_number'></b><button type='button' onclick='select_train_number(\"" + post_railroad_id + "\", \"" + add_slashes(operation_number) + "\", \"" + now_hh_mm + "\");'>変更</button>";
     buf += "</div>";
     
     buf += "<h4>運用補足情報</h4>";
@@ -6451,8 +6455,8 @@ function write_operation_data (yyyy_mm_dd, operation_number, train_number = null
     popup_inner_elm.innerHTML = buf;
     
     if (!speculative_post) {
-        for (var cnt = 0; cnt < operation_table["operations"][operation_number]["trains"].length; cnt++) {
-            if (operation_table["operations"][operation_number]["trains"][cnt]["final_arrival_time"] > now_hh_mm) {
+        for (var cnt = 0; cnt < operation_info["trains"].length; cnt++) {
+            if (operation_info["trains"][cnt]["final_arrival_time"] > now_hh_mm) {
                 break;
             }
         }
@@ -6460,10 +6464,10 @@ function write_operation_data (yyyy_mm_dd, operation_number, train_number = null
         if (train_number !== null) {
             set_train_number(train_number);
         } else {
-            if (cnt === operation_table["operations"][operation_number]["trains"].length) {
+            if (cnt === operation_info["trains"].length) {
                 set_train_number("△");
             } else {
-                set_train_number(operation_table["operations"][operation_number]["trains"][cnt]["train_number"]);
+                set_train_number(operation_info["trains"][cnt]["train_number"]);
             }
         }
     } else {
@@ -6471,21 +6475,23 @@ function write_operation_data (yyyy_mm_dd, operation_number, train_number = null
     }
 }
 
-function select_train_number (operation_number, now_hh_mm) {
+function select_train_number (railroad_id, operation_number, now_hh_mm) {
     var popup_inner_elm = open_square_popup("train_number_popup", true, "列車の選択");
+    
+    var trains = railroad_id === railroad_info["railroad_id"] ? operation_table["operations"][operation_number]["trains"] : joined_operation_tables[post_railroad_id]["operations"][operation_number]["trains"];
     
     var buf = "<a href='javascript:void(0);' onclick='set_train_number(\"○\")'>○ 出庫時</a>";
     
-    for (var cnt = 0; cnt < operation_table["operations"][operation_number]["trains"].length; cnt++) {
-        if (cnt == 0 || operation_table["operations"][operation_number]["trains"][cnt]["train_number"] !== operation_table["operations"][operation_number]["trains"][cnt - 1]["train_number"]) {
-            var first_departure_time = operation_table["operations"][operation_number]["trains"][cnt]["first_departure_time"];
+    for (var cnt = 0; cnt < trains.length; cnt++) {
+        if (cnt == 0 || trains[cnt]["train_number"] !== trains[cnt - 1]["train_number"]) {
+            var first_departure_time = trains[cnt]["first_departure_time"];
         }
         
-        if (cnt + 1 < operation_table["operations"][operation_number]["trains"].length && operation_table["operations"][operation_number]["trains"][cnt]["train_number"] === operation_table["operations"][operation_number]["trains"][cnt + 1]["train_number"]) {
+        if (cnt + 1 < trains.length && trains[cnt]["train_number"] === trains[cnt + 1]["train_number"]) {
             continue;
         }
         
-        var train_title = operation_table["operations"][operation_number]["trains"][cnt]["train_number"].split("__")[0];
+        var train_title = trains[cnt]["train_number"].split("__")[0];
         
         if (train_title.startsWith(".")) {
             train_title = train_title.substring(1) + "待機";
@@ -6495,14 +6501,14 @@ function select_train_number (operation_number, now_hh_mm) {
             var color = config["dark_mode"] ? convert_font_color_dark_mode(get_train_color(train_title)) : get_train_color(train_title);
         }
         
-        buf += "<a href='javascript:void(0);' onclick='set_train_number(\"" + add_slashes(operation_table["operations"][operation_number]["trains"][cnt]["train_number"]) + "\")' style='color: " + color + ";'>" + escape_html(train_title) + "<small>" + first_departure_time + " 〜 " + operation_table["operations"][operation_number]["trains"][cnt]["final_arrival_time"] + "</small></a>";
+        buf += "<a href='javascript:void(0);' onclick='set_train_number(\"" + add_slashes(trains[cnt]["train_number"]) + "\")' style='color: " + color + ";'>" + escape_html(train_title) + "<small>" + first_departure_time + " 〜 " + trains[cnt]["final_arrival_time"] + "</small></a>";
         
-        if (operation_table["operations"][operation_number]["trains"][cnt]["final_arrival_time"] > now_hh_mm) {
+        if (trains[cnt]["final_arrival_time"] > now_hh_mm) {
             break;
         }
     }
     
-    if (cnt === operation_table["operations"][operation_number]["trains"].length) {
+    if (cnt === trains.length) {
         buf += "<a href='javascript:void(0);' onclick='set_train_number(\"△\")'>△ 入庫時</a>";
     }
     
@@ -6556,21 +6562,25 @@ function switch_identify_method (direct) {
     }
 }
 
-function suggest_formation (formations_text) {
+function suggest_formation (railroad_id, formations_text) {
+    if (railroad_id === railroad_info["railroad_id"]) {
+        railroad_id = null;
+    }
+    
     var formations_splitted = formations_text.split("+");
     var formation_text = str_to_halfwidth(formations_splitted[formations_splitted.length - 1]).toUpperCase();
     
     var buf = "";
     
     if (formation_text.length >= 1) {
-        var formation_names = Object.keys(series_icon_ids).concat(Object.keys(formations["formations"]).toSorted());
+        var formation_names = Object.keys(railroad_id === null ? series_icon_ids : joined_railroad_series_icon_ids[railroad_id]).concat(Object.keys(railroad_id === null ? formations["formations"] : joined_railroad_formations[railroad_id]["formations"]).toSorted());
         
         var suggestion_list = formation_names.filter(function (formation_name) {
             return formation_name.toUpperCase().startsWith(formation_text);
         });
         
         for (var suggestion of suggestion_list) {
-            var overview = get_formation_overview(suggestion);
+            var overview = get_formation_overview(suggestion, railroad_id);
             
             buf += "<a href='javascript:void(0);' ";
             
@@ -6579,7 +6589,7 @@ function suggest_formation (formations_text) {
                 
                 var suggestion_formations = overview["semifixed_formation"].split("+");
                 for (var cnt = 0; cnt < suggestion_formations.length; cnt++) {
-                    buf += (cnt >= 1 ? " + " : "") + "<img src='" + get_icon(suggestion_formations[cnt]) + "' alt='' class='train_icon'" + (overview["unavailable"] ? " style='opacity: 0.5;'" : "") + ">" + (suggestion_formations[cnt] === suggestion ? "<b>" : "") + add_slashes(suggestion_formations[cnt]) + (suggestion_formations[cnt] === suggestion ? "</b>" : "");
+                    buf += (cnt >= 1 ? " + " : "") + "<img src='" + get_icon(suggestion_formations[cnt], railroad_id) + "' alt='' class='train_icon'" + (overview["unavailable"] ? " style='opacity: 0.5;'" : "") + ">" + (suggestion_formations[cnt] === suggestion ? "<b>" : "") + add_slashes(suggestion_formations[cnt]) + (suggestion_formations[cnt] === suggestion ? "</b>" : "");
                 }
                 
                 if (overview["unavailable"]) {
@@ -6591,9 +6601,9 @@ function suggest_formation (formations_text) {
                 buf += "onclick='complete_formation(\"" + add_slashes(suggestion) + "\");'>";
                 
                 if (overview["unavailable"]) {
-                    buf += "<img src='" + get_icon(suggestion) + "' alt='' class='train_icon' style='opacity: 0.5;'>" + add_slashes(suggestion) + "<small class='warning_sentence'>(運用離脱中)</small>";
+                    buf += "<img src='" + get_icon(suggestion, railroad_id) + "' alt='' class='train_icon' style='opacity: 0.5;'>" + add_slashes(suggestion) + "<small class='warning_sentence'>(運用離脱中)</small>";
                 } else {
-                    buf += "<img src='" + get_icon(suggestion) + "' alt='' class='train_icon'><b>" + add_slashes(suggestion) + "</b>";
+                    buf += "<img src='" + get_icon(suggestion, railroad_id) + "' alt='' class='train_icon'><b>" + add_slashes(suggestion) + "</b>";
                     if (overview["caption"].length >= 1) {
                         buf += "<small>(" + overview["caption"] + ")</small>";
                     }
@@ -6638,7 +6648,15 @@ function select_operation_to_write_data (line_id, train_number, starting_station
     var train_operations = get_operations(line_id, train_number, starting_station, train_direction);
     
     if (train_operations.length === 1) {
-        write_operation_data(null, train_operations[0], train_number);
+        var at_pos = train_operations[0].indexOf("@");
+        if (at_pos === -1) {
+            var railroad_id = null;
+        } else {
+            var railroad_id = train_operations[0].substring(at_pos + 1);
+            train_operations[0] = train_operations[0].substring(0, at_pos);
+        }
+        
+        write_operation_data(railroad_id, null, train_operations[0], train_number);
         
         return;
     }
@@ -6647,9 +6665,18 @@ function select_operation_to_write_data (line_id, train_number, starting_station
     
     var position_operations = {};
     for (var train_operation of train_operations) {
-        for (var train of operation_table["operations"][train_operation]["trains"]) {
+        var at_pos = train_operation.indexOf("@");
+        if (at_pos === -1) {
+            var railroad_id = null;
+        } else {
+            var railroad_id = train_operation.substring(at_pos + 1);
+            train_operation = train_operation.substring(0, at_pos);
+        }
+        
+        for (var train of (railroad_id === null ? operation_table["operations"][train_operation]["trains"] : joined_operation_tables[railroad_id]["operations"][train_operation]["trains"])) {
             if (train["train_number"] === train_number && train["starting_station"] === starting_station) {
                 position_operations[("0" + train["position_forward"]).slice(-2)] = {
+                    railroad_id : railroad_id,
                     operation_number : train_operation,
                     position_forward : train["position_forward"],
                     position_rear : train["position_rear"]
@@ -6678,7 +6705,7 @@ function select_operation_to_write_data (line_id, train_number, starting_station
             buf += "<td rowspan='" + position_keys.length + "'><span>進行方向</span></td>";
         }
         
-        buf += "<td onclick='write_operation_data(null, \"" + add_slashes(position_operations[position_keys[cnt]]["operation_number"]) + "\", \"" + add_slashes(train_number) + "\");'><div><b>" + position_operations[position_keys[cnt]]["position_forward"];
+        buf += "<td onclick='write_operation_data(\"" + position_operations[position_keys[cnt]]["railroad_id"] + "\", null, \"" + add_slashes(position_operations[position_keys[cnt]]["operation_number"]) + "\", \"" + add_slashes(train_number) + "\");'><div><b>" + position_operations[position_keys[cnt]]["position_forward"];
         
         if (position_operations[position_keys[cnt]]["position_forward"] !== position_operations[position_keys[cnt]]["position_rear"]) {
             buf += "-" + position_operations[position_keys[cnt]]["position_rear"];
@@ -6733,7 +6760,7 @@ function post_operation_data () {
         }
     }
     
-    var send_data = "railroad_id=" + escape_form_data(railroad_info["railroad_id"]) + "&date=" + escape_form_data(post_yyyy_mm_dd) + "&operation_number=" + escape_form_data(post_operation_number) + "&assign_order=" + assign_order + "&formations=" + escape_form_data(document.getElementById("operation_data_formation").value) + "&comment=" + escape_form_data(document.getElementById("operation_data_comment").value);
+    var send_data = "railroad_id=" + escape_form_data(post_railroad_id) + "&date=" + escape_form_data(post_yyyy_mm_dd) + "&operation_number=" + escape_form_data(post_operation_number) + "&assign_order=" + assign_order + "&formations=" + escape_form_data(document.getElementById("operation_data_formation").value) + "&comment=" + escape_form_data(document.getElementById("operation_data_comment").value);
     
     if (document.getElementById("identify_method_quote").checked) {
         send_data += "&is_quotation=YES";
@@ -6758,7 +6785,11 @@ function post_operation_data () {
             }
             popup_close(true);
             
-            Object.assign(operation_data["operations"], JSON.parse(response));
+            if (post_railroad_id === railroad_info["railroad_id"]) {
+                Object.assign(operation_data["operations"], JSON.parse(response));
+            } else {
+                Object.assign(joined_operation_data[post_railroad_id]["operations"], JSON.parse(response));
+            }
             
             switch (mode_val) {
                 case 0:
