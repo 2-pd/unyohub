@@ -134,6 +134,9 @@ def convert_operation_table_1 (mes, main_dir, file_name, json_file_name, digits_
     
     lines = railroad_info["lines_order"]
     
+    if "joined_lines_order" in railroad_info:
+        lines += railroad_info["joined_lines_order"]
+    
     station_list = {}
     station_list_r = {}
     for line in lines:

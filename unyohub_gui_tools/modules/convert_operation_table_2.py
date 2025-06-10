@@ -9,7 +9,12 @@ import re
 def get_lines_and_station(mes, railroad_info, station_initial, cnt, cnt_2):
     line_list = []
     
-    for line in railroad_info["lines_order"]:
+    if "joined_lines_order" in railroad_info:
+        lines = railroad_info["lines_order"] + railroad_info["joined_lines_order"]
+    else:
+        lines = railroad_info["lines_order"]
+    
+    for line in lines:
         for station in railroad_info["lines"][line]["stations"]:
             if "station_initial" in station and station["station_initial"] == station_initial:
                 line_list.append(line)
@@ -39,8 +44,13 @@ def convert_operation_table_2 (mes, main_dir, file_name):
     with open(main_dir + "/railroad_info.json", "r", encoding="utf-8") as json_f:
         railroad_info = json.load(json_f)
     
+    lines = railroad_info["lines_order"]
+    
+    if "joined_lines_order" in railroad_info:
+        lines += railroad_info["joined_lines_order"]
+    
     station_list = {}
-    for line in railroad_info["lines_order"]:
+    for line in lines:
         station_list[line] = []
         
         for station in railroad_info["lines"][line]["stations"]:
