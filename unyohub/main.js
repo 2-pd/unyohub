@@ -2157,7 +2157,7 @@ function update_operation_table (resolve_func, reject_func, railroad_id_or_null,
             }
             
             set_operation_table(railroad_id_or_null, operation_response);
-            set_line_operations(railroad_id_or_null, line_operations_data);
+            set_line_operations(railroad_id_or_null, structuredClone(line_operations_data));
             
             idb_start_transaction(["operation_tables", "line_operations"], true, function (transaction) {
                 var operation_tables_store = transaction.objectStore("operation_tables");
@@ -3445,7 +3445,7 @@ function get_operation_data_detail (operation_date, operation_number_or_list, ar
                     }
                     
                     if (user_data !== null && (data_item["user_id"] === user_data["user_id"] || "ip_address" in data_item)) {
-                        user_name_html += "<button type='button' onclick='edit_operation_data(\"" + operation_date + "\", \"" + add_slashes(operation_number) + "\", " + data_item["assign_order"] + ", \"" + add_slashes(data_item["user_id"]) + "\", \"" + add_slashes(formation_text) + "\"" + ip_address_str + ");'>";
+                        user_name_html += "<button type='button' onclick='edit_operation_data(\"" + railroad_id + "\", \"" + operation_date + "\", \"" + add_slashes(operation_number) + "\", " + data_item["assign_order"] + ", \"" + add_slashes(data_item["user_id"]) + "\", \"" + add_slashes(formation_text) + "\"" + ip_address_str + ");'>";
                         
                         if (data_item["user_id"] === user_data["user_id"]) {
                             user_name_html += "取り消し";
@@ -6814,7 +6814,7 @@ function post_operation_data () {
     });
 }
 
-function edit_operation_data (yyyy_mm_dd, operation_number, assign_order, user_id, formation_text, ip_address = null) {
+function edit_operation_data (railroad_id, yyyy_mm_dd, operation_number, assign_order, user_id, formation_text, ip_address = null) {
     var popup_inner_elm = open_popup("edit_operation_data_popup", "運用情報の取り消し");
     
     buf = "<h3>投稿内容</h3>";
@@ -6837,10 +6837,10 @@ function edit_operation_data (yyyy_mm_dd, operation_number, assign_order, user_i
         buf += "</div>";
     }
     
-    buf += "<br><br><button type='button' class='wide_button' onclick='revoke_operation_data(\"" + yyyy_mm_dd + "\", \"" + add_slashes(operation_number) + "\", " + assign_order + ",\"" + add_slashes(user_id) + "\");'>投稿を取り消す</button>";
+    buf += "<br><br><button type='button' class='wide_button' onclick='revoke_operation_data(\"" + railroad_id + "\", \"" + yyyy_mm_dd + "\", \"" + add_slashes(operation_number) + "\", " + assign_order + ",\"" + add_slashes(user_id) + "\");'>投稿を取り消す</button>";
     
     if (user_id !== user_data["user_id"]) {
-        buf += "<button type='button' class='wide_button' onclick='revoke_users_all_operation_data(\"" + add_slashes(user_id) + "\");'>ユーザーの投稿を全て取り消す</button>";
+        buf += "<button type='button' class='wide_button' onclick='revoke_users_all_operation_data(\"" + railroad_id + "\", \"" + add_slashes(user_id) + "\");'>ユーザーの投稿を全て取り消す</button>";
     }
     
     popup_inner_elm.innerHTML = buf;
@@ -6848,11 +6848,11 @@ function edit_operation_data (yyyy_mm_dd, operation_number, assign_order, user_i
     get_one_time_token();
     
     if (user_id !== user_data["user_id"]) {
-        show_moderation_info(user_id, ip_address);
+        show_moderation_info(railroad_id, user_id, ip_address);
     }
 }
 
-function show_moderation_info (user_id, ip_address) {
+function show_moderation_info (railroad_id, user_id, ip_address) {
     if (user_id === null) {
         user_id = "";
     }
@@ -6861,16 +6861,19 @@ function show_moderation_info (user_id, ip_address) {
         ip_address = "";
     }
     
-    ajax_post("moderation_info.php", "railroad_id=" + escape_form_data(railroad_info["railroad_id"]) + "&user_id=" + escape_form_data(user_id) + "&ip_address=" + escape_form_data(ip_address), function (response) {
+    ajax_post("moderation_info.php", "railroad_id=" + escape_form_data(railroad_id) + "&user_id=" + escape_form_data(user_id) + "&ip_address=" + escape_form_data(ip_address), function (response) {
         if (response === false) {
             return;
         }
         
         var moderation_info = JSON.parse(response);
         
+        var user_info_elm = document.getElementById("edit_operation_data_user_info");
         if (moderation_info["is_timed_out_user"] !== null) {
             if (moderation_info["user_name"] !== null) {
-                document.getElementById("edit_operation_data_user_info").innerHTML = "<div class='key_and_value'><b>ハンドルネーム</b>" + escape_html(moderation_info["user_name"]) + "</div><div class='key_and_value'><b>登録日時</b>" + escape_html(moderation_info["user_created"]) + "</div>";
+                user_info_elm.innerHTML = "<div class='key_and_value'><b>ハンドルネーム</b>" + escape_html(moderation_info["user_name"]) + "</div><div class='key_and_value'><b>登録日時</b>" + escape_html(moderation_info["user_created"]) + "</div>";
+            } else {
+                user_info_elm.classList.remove("loading_icon");
             }
             
             var is_timed_out_user_elm = document.getElementById("edit_operation_data_is_timed_out_user");
@@ -6878,7 +6881,7 @@ function show_moderation_info (user_id, ip_address) {
                 is_timed_out_user_elm.innerText = "【!】タイムアウト中";
                 is_timed_out_user_elm.className = "warning_text";
             } else {
-                is_timed_out_user_elm.innerHTML = "<button type='button' onclick='time_out_setting(\"" + add_slashes(user_id) + "\");'>タイムアウトを設定</button>";
+                is_timed_out_user_elm.innerHTML = "<button type='button' onclick='time_out_setting(\"" + add_slashes(user_id) + "\", \"" + railroad_id + "\");'>タイムアウトを設定</button>";
             }
             
             var buf = "";
@@ -6887,17 +6890,20 @@ function show_moderation_info (user_id, ip_address) {
             }
             
             document.getElementById("edit_operation_data_user_timed_out_logs").innerHTML = "<h5>ユーザーのタイムアウト履歴</h5><div class='descriptive_text'>" + (buf.length >= 1 ? buf : "ユーザーにタイムアウトの履歴はありません") + "</div>";
+        } else {
+            user_info_elm.classList.remove("loading_icon");
         }
         
+        var ip_address_info_elm = document.getElementById("edit_operation_data_ip_address_info");
         if (moderation_info["is_timed_out_ip_address"] !== null) {
-            document.getElementById("edit_operation_data_ip_address_info").innerHTML = "<div class='key_and_value'><b>ホスト名</b>" + escape_html(moderation_info["host_name"]) + "</div>";
+            ip_address_info_elm.innerHTML = "<div class='key_and_value'><b>ホスト名</b>" + escape_html(moderation_info["host_name"]) + "</div>";
             
             var is_timed_out_ip_address_elm = document.getElementById("edit_operation_data_is_timed_out_ip_address");
             if (moderation_info["is_timed_out_ip_address"]) {
                 is_timed_out_ip_address_elm.innerText = "【!】タイムアウト中";
                 is_timed_out_ip_address_elm.className = "warning_text";
             } else {
-                is_timed_out_ip_address_elm.innerHTML = "<button type='button' onclick='time_out_setting(\"" + add_slashes(ip_address) + "\");'>タイムアウトを設定</button>";
+                is_timed_out_ip_address_elm.innerHTML = "<button type='button' onclick='time_out_setting(\"" + add_slashes(ip_address) + "\", \"" + railroad_id + "\");'>タイムアウトを設定</button>";
             }
             
             var buf = "";
@@ -6906,11 +6912,13 @@ function show_moderation_info (user_id, ip_address) {
             }
             
             document.getElementById("edit_operation_data_ip_address_timed_out_logs").innerHTML = "<h5>IPアドレスのタイムアウト履歴</h5><div class='descriptive_text'>" + (buf.length >= 1 ? buf : "IPアドレスにタイムアウトの履歴はありません") + "</div>";
+        } else {
+            ip_address_info_elm.classList.remove("loading_icon");
         }
     });
 }
 
-function revoke_operation_data (yyyy_mm_dd, operation_number, assign_order, user_id) {
+function revoke_operation_data (railroad_id, yyyy_mm_dd, operation_number, assign_order, user_id) {
     open_wait_screen();
     
     if (one_time_token === null) {
@@ -6921,7 +6929,7 @@ function revoke_operation_data (yyyy_mm_dd, operation_number, assign_order, user
         return;
     }
     
-    ajax_post("revoke.php", "railroad_id=" + escape_form_data(railroad_info["railroad_id"]) + "&date=" + escape_form_data(yyyy_mm_dd) + "&operation_number=" + escape_form_data(operation_number) + "&assign_order=" + assign_order + "&user_id=" + escape_form_data(user_id) + "&one_time_token=" + escape_form_data(one_time_token), function (response) {
+    ajax_post("revoke.php", "railroad_id=" + escape_form_data(railroad_id) + "&date=" + escape_form_data(yyyy_mm_dd) + "&operation_number=" + escape_form_data(operation_number) + "&assign_order=" + assign_order + "&user_id=" + escape_form_data(user_id) + "&one_time_token=" + escape_form_data(one_time_token), function (response) {
         close_wait_screen();
         
         if (response !== false) {
@@ -6932,7 +6940,11 @@ function revoke_operation_data (yyyy_mm_dd, operation_number, assign_order, user
             }
             popup_close(true);
             
-            Object.assign(operation_data["operations"], JSON.parse(response));
+            if (railroad_id === railroad_info["railroad_id"]) {
+                Object.assign(operation_data["operations"], JSON.parse(response));
+            } else {
+                Object.assign(joined_operation_data[railroad_id]["operations"], JSON.parse(response));
+            }
             
             switch (mode_val) {
                 case 0:
@@ -6957,7 +6969,7 @@ function revoke_operation_data (yyyy_mm_dd, operation_number, assign_order, user
     });
 }
 
-function revoke_users_all_operation_data (user_id) {
+function revoke_users_all_operation_data (railroad_id, user_id) {
     if (confirm("このユーザーの過去24時間の投稿を全て取り消しますか？")) {
         open_wait_screen();
         
@@ -6969,7 +6981,7 @@ function revoke_users_all_operation_data (user_id) {
             return;
         }
         
-        ajax_post("revoke_users_all.php", "railroad_id=" + escape_form_data(railroad_info["railroad_id"]) + "&user_id=" + escape_form_data(user_id) + "&one_time_token=" + escape_form_data(one_time_token), function (response) {
+        ajax_post("revoke_users_all.php", "railroad_id=" + escape_form_data(railroad_id) + "&user_id=" + escape_form_data(user_id) + "&one_time_token=" + escape_form_data(one_time_token), function (response) {
             close_wait_screen();
             
             if (response === "SUCCESSFULLY_REVOKED") {
@@ -7006,7 +7018,7 @@ function revoke_users_all_operation_data (user_id) {
     }
 }
 
-function time_out_setting (user_id_or_ip_address) {
+function time_out_setting (user_id_or_ip_address, railroad_id) {
     var popup_inner_elm = open_square_popup("time_out_popup");
     
     if (!user_id_or_ip_address.includes(".") && !user_id_or_ip_address.includes(":")) {
@@ -7019,12 +7031,12 @@ function time_out_setting (user_id_or_ip_address) {
     buf += "<b>" + user_id_or_ip_address + "</b>";
     buf += "<h4>タイムアウト期間</h4>";
     buf += "<input type='number' id='timed_out_days' min='1' max='90' value='7'>日間<br>";
-    buf += "<br><br><button type='button' class='wide_button' onclick='time_out_" + (target_is_user_id ? "user" : "ip_address") + "(\"" + add_slashes(user_id_or_ip_address) + "\");'>タイムアウトを設定</button>";
+    buf += "<br><br><button type='button' class='wide_button' onclick='time_out_" + (target_is_user_id ? "user" : "ip_address") + "(\"" + add_slashes(user_id_or_ip_address) + "\", \"" + railroad_id + "\");'>タイムアウトを設定</button>";
     
     popup_inner_elm.innerHTML = buf;
 }
 
-function time_out_user (user_id) {
+function time_out_user (user_id, railroad_id) {
     open_wait_screen();
     
     if (one_time_token === null) {
@@ -7035,7 +7047,7 @@ function time_out_user (user_id) {
         return;
     }
     
-    ajax_post("time_out_user.php", "railroad_id=" + escape_form_data(railroad_info["railroad_id"]) + "&user_id=" + escape_form_data(user_id) + "&timed_out_days=" + escape_form_data(document.getElementById("timed_out_days").value) + "&one_time_token=" + escape_form_data(one_time_token), function (response) {
+    ajax_post("time_out_user.php", "railroad_id=" + escape_form_data(railroad_id) + "&user_id=" + escape_form_data(user_id) + "&timed_out_days=" + escape_form_data(document.getElementById("timed_out_days").value) + "&one_time_token=" + escape_form_data(one_time_token), function (response) {
         close_wait_screen();
         
         if (response === "SUCCEEDED") {
@@ -7043,14 +7055,14 @@ function time_out_user (user_id) {
             
             close_square_popup();
             
-            show_moderation_info(user_id, null);
+            show_moderation_info(railroad_id, user_id, null);
         }
         
         get_one_time_token();
     });
 }
 
-function time_out_ip_address (ip_address) {
+function time_out_ip_address (ip_address, railroad_id) {
     open_wait_screen();
     
     if (one_time_token === null) {
@@ -7061,7 +7073,7 @@ function time_out_ip_address (ip_address) {
         return;
     }
     
-    ajax_post("time_out_ip_address.php", "railroad_id=" + escape_form_data(railroad_info["railroad_id"]) + "&ip_address=" + escape_form_data(ip_address) + "&timed_out_days=" + escape_form_data(document.getElementById("timed_out_days").value) + "&one_time_token=" + escape_form_data(one_time_token), function (response) {
+    ajax_post("time_out_ip_address.php", "railroad_id=" + escape_form_data(railroad_id) + "&ip_address=" + escape_form_data(ip_address) + "&timed_out_days=" + escape_form_data(document.getElementById("timed_out_days").value) + "&one_time_token=" + escape_form_data(one_time_token), function (response) {
         close_wait_screen();
         
         if (response === "SUCCEEDED") {
@@ -7069,7 +7081,7 @@ function time_out_ip_address (ip_address) {
             
             close_square_popup();
             
-            show_moderation_info(null, ip_address);
+            show_moderation_info(railroad_id, null, ip_address);
         }
         
         get_one_time_token();
