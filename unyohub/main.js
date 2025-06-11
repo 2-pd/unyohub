@@ -6408,7 +6408,8 @@ function write_operation_data (railroad_id, yyyy_mm_dd, operation_number, train_
     
     buf += "<h4>編成名または車両形式</h4>";
     buf += "<div class='informational_text'><b>◀ " + alias_of_forward_direction + "</b></div>";
-    buf += "<input type='text' id='operation_data_formation' autocomplete='off' oninput='suggest_formation(" + (post_railroad_id === railroad_info["railroad_id"] ? "null" : "\"" +  post_railroad_id + "\"") + ", this.value);' onblur='clear_formation_suggestion();'><button type='button' id='car_number_suggest_mode_button'></button><div class='suggestion_area'><div id='formation_suggestion'></div></div>";
+    buf += "<input type='text' id='operation_data_formation' autocomplete='off' oninput='suggest_formation(" + (post_railroad_id === railroad_info["railroad_id"] ? "null" : "\"" +  post_railroad_id + "\"") + ", this.value);' onblur='clear_formation_suggestion();'><button type='button' id='car_number_suggest_mode_button' onclick='switch_car_number_suggest_mode(!car_number_suggest_mode);'></button><div class='suggestion_area'><div id='formation_suggestion'></div></div>";
+    buf += "<div id='car_number_suggest_mode_info'>車番から編成名をサジェストします</div>";
     buf += "<div class='informational_text'>複数の編成が連結している場合は、" + alias_of_forward_direction + "の編成から順に「+」で区切って入力してください。<br>不明な編成には「不明」、運休情報は「運休」を入力可能です。</div>";
     
     buf += "<input type='checkbox' id='operation_data_details'";
@@ -6473,6 +6474,8 @@ function write_operation_data (railroad_id, yyyy_mm_dd, operation_number, train_
     } else {
         set_train_number("○");
     }
+    
+    switch_car_number_suggest_mode();
 }
 
 function select_train_number (railroad_id, operation_number, now_hh_mm) {
@@ -6562,6 +6565,33 @@ function switch_identify_method (direct) {
     }
 }
 
+var car_number_suggest_mode = false;
+var car_list = [];
+
+function switch_car_number_suggest_mode (enable = null) {
+    if (enable !== null) {
+        car_number_suggest_mode = enable;
+    }
+    
+    car_list = [];
+    
+    var mode_info_elm = document.getElementById("car_number_suggest_mode_info");
+    
+    if (car_number_suggest_mode) {
+        mode_info_elm.style.display = "block";
+        
+        var formation_data = post_railroad_id === railroad_info["railroad_id"] ? formations["formations"] : joined_railroad_formations[post_railroad_id]["formations"];
+        
+        for (var formation_name of Object.keys(formation_data).toSorted()) {
+            for (var car_data of formation_data[formation_name]["cars"]) {
+                car_list.push({ car_number : car_data["car_number"].toUpperCase(), formation_name : formation_name });
+            }
+        }
+    } else {
+        mode_info_elm.style.display = "none";
+    }
+}
+
 function suggest_formation (railroad_id, formations_text) {
     if (railroad_id === railroad_info["railroad_id"]) {
         railroad_id = null;
@@ -6575,39 +6605,51 @@ function suggest_formation (railroad_id, formations_text) {
     if (formation_text.length >= 1) {
         var formation_names = Object.keys(railroad_id === null ? series_icon_ids : joined_railroad_series_icon_ids[railroad_id]).concat(Object.keys(railroad_id === null ? formations["formations"] : joined_railroad_formations[railroad_id]["formations"]).toSorted());
         
-        var suggestion_list = formation_names.filter(function (formation_name) {
-            return formation_name.toUpperCase().startsWith(formation_text);
-        });
+        if (!car_number_suggest_mode) {
+            var suggestion_list = formation_names.filter(function (formation_name) {
+                return formation_name.toUpperCase().startsWith(formation_text);
+            });
+        } else {
+            var suggestion_list = car_list.filter(function (car_data) {
+                return car_data["car_number"].includes(formation_text);
+            });
+        }
         
         for (var suggestion of suggestion_list) {
-            var overview = get_formation_overview(suggestion, railroad_id);
+            buf += "<a href='javascript:void(0);' onclick='complete_formation(\"";
             
-            buf += "<a href='javascript:void(0);' ";
-            
-            if (overview["semifixed_formation"] !== null) {
-                buf += "onclick='complete_formation(\"" + add_slashes(overview["semifixed_formation"]) + "\");'>";
+            if (!car_number_suggest_mode) {
+                var overview = get_formation_overview(suggestion, railroad_id);
                 
-                var suggestion_formations = overview["semifixed_formation"].split("+");
-                for (var cnt = 0; cnt < suggestion_formations.length; cnt++) {
-                    buf += (cnt >= 1 ? " + " : "") + "<img src='" + get_icon(suggestion_formations[cnt], railroad_id) + "' alt='' class='train_icon'" + (overview["unavailable"] ? " style='opacity: 0.5;'" : "") + ">" + (suggestion_formations[cnt] === suggestion ? "<b>" : "") + add_slashes(suggestion_formations[cnt]) + (suggestion_formations[cnt] === suggestion ? "</b>" : "");
-                }
-                
-                if (overview["unavailable"]) {
-                    buf += "<small class='warning_sentence'>(離脱中)</small>";
+                if (!car_number_suggest_mode && overview["semifixed_formation"] !== null) {
+                    buf += add_slashes(overview["semifixed_formation"]) + "\");'>";
+                    
+                    var suggestion_formations = overview["semifixed_formation"].split("+");
+                    for (var cnt = 0; cnt < suggestion_formations.length; cnt++) {
+                        buf += (cnt >= 1 ? " + " : "") + "<img src='" + get_icon(suggestion_formations[cnt], railroad_id) + "' alt='' class='train_icon'" + (overview["unavailable"] ? " style='opacity: 0.5;'" : "") + ">" + (suggestion_formations[cnt] === suggestion ? "<b>" : "") + escape_html(suggestion_formations[cnt]) + (suggestion_formations[cnt] === suggestion ? "</b>" : "");
+                    }
+                    
+                    if (overview["unavailable"]) {
+                        buf += "<small class='warning_sentence'>(離脱中)</small>";
+                    } else {
+                        buf += "<small>(半固定)</small>";
+                    }
                 } else {
-                    buf += "<small>(半固定)</small>";
-                }
-            } else {
-                buf += "onclick='complete_formation(\"" + add_slashes(suggestion) + "\");'>";
-                
-                if (overview["unavailable"]) {
-                    buf += "<img src='" + get_icon(suggestion, railroad_id) + "' alt='' class='train_icon' style='opacity: 0.5;'>" + add_slashes(suggestion) + "<small class='warning_sentence'>(運用離脱中)</small>";
-                } else {
-                    buf += "<img src='" + get_icon(suggestion, railroad_id) + "' alt='' class='train_icon'><b>" + add_slashes(suggestion) + "</b>";
-                    if (overview["caption"].length >= 1) {
-                        buf += "<small>(" + overview["caption"] + ")</small>";
+                    buf += add_slashes(suggestion) + "\");'>";
+                    
+                    if (overview["unavailable"]) {
+                        buf += "<img src='" + get_icon(suggestion, railroad_id) + "' alt='' class='train_icon' style='opacity: 0.5;'>" + escape_html(suggestion) + "<small class='warning_sentence'>(運用離脱中)</small>";
+                    } else {
+                        buf += "<img src='" + get_icon(suggestion, railroad_id) + "' alt='' class='train_icon'><b>" + escape_html(suggestion) + "</b>";
+                        if (overview["caption"].length >= 1) {
+                            buf += "<small>(" + escape_html(overview["caption"]) + ")</small>";
+                        }
                     }
                 }
+            } else {
+                buf += add_slashes(suggestion["formation_name"]) + "\");'>";
+                buf += "<img src='" + get_icon(suggestion["formation_name"], railroad_id) + "' alt='' class='train_icon'><b>" + escape_html(suggestion["car_number"]) + "</b>";
+                buf += "<small>(" + escape_html(suggestion["formation_name"]) + ")</small>";
             }
             
             buf += "</a>";

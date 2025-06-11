@@ -4243,6 +4243,17 @@ button abbr {
     background-size: 36px;
 }
 
+#car_number_suggest_mode_info {
+    width: calc(100% - 40px);
+    
+    margin: -5px auto 10px auto;
+    
+    line-height: 20px;
+    font-size: 14px;
+    color: #ff9900;
+    font-weight: bold;
+}
+
 .suggestion_area {
     position: relative;
     
