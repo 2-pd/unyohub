@@ -4218,12 +4218,37 @@ button abbr {
     font-size: 16px;
 }
 
+#operation_data_formation {
+    width: calc(100% - 90px);
+    
+    margin: 10px auto 0 auto;
+    
+    padding: 8px 55px 0 5px;
+    
+    line-height: 28px;
+}
+
+#car_number_suggest_mode_button {
+    display: block;
+    
+    width: 36px;
+    height: 36px;
+    
+    margin: -38px 0 0 calc(100% - 51px);
+    
+    border: none;
+    
+    background-image: url(data:image/webp;base64,UklGRiQCAABXRUJQVlA4TBcCAAAvR8ARENXIkiRZtRst/a1AkvnUHD0vQJs03DlzjuBXEWNmdpuZmRkjoAAAQLCZbW+3bdu2bds2km1FG8nJSrZt+xOQW8/OICW4NBSLTaHylBn+xZ9pbQJFjxtJ4syK9yhusBmoxPKtJrtkV/YuU6Dc8nZxRHaSLcBCq+Q4dFhRmB/r36MWMzHeJW6vtl5wIT2ldBAU2tV9wkxClEgS15XeIFlTMoYUTc7l81Virf+pJ6ZCLE9EZMOinBtVbsA+4Hf5vBbTzD0yrA7YTeTXoaAB34uJmB3wVT5HyGZmEuaRH3krF4dGUuMIs74rzx1G7+bUmpxvVSRy3eFtjm3tYvDsMNGX91/zLy6Le7pV94RDWwZXwb8cmjNoFc5ThPvSBEkw50VkupXnGP/TE88ixVguspEq5+jagCCc7MulOaM24jCdYTYdFtegsrMrl73tuIhJP3WwjtHoPD09bM5iS+4NU10ARK9reiHj5uuoeI7axcGG/GsZXeE/4XzqqHIeBYPM6Il8Ws6EqNf0Z3bOsU+d0jpkJ5lKfuXTuArO6K17k3uVpyc5dQgZcIs47uXzUWIzXlQ0Ne/sZmzC4a2uvVSyuVLzqkln5xz7S+K3pGf/fb6kk0Uq4zNIsS+9t9V8UQpvZfcKqfgR9CFHXiLMAg5np6WozR89COdGtqYGT9RXydzYd7iTeGPRas0SVG74W7t5/+8D5tasAA==);
+    background-repeat: no-repeat;
+    background-size: 36px;
+}
+
 .suggestion_area {
     position: relative;
     
-    width: 90%;
+    width: calc(100% - 30px);
     
-    margin: -10px auto 10px auto;
+    margin: 0 auto 10px auto;
 }
 
 .suggestion_area div {
