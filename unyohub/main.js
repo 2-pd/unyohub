@@ -6575,9 +6575,11 @@ function switch_car_number_suggest_mode (enable = null) {
     
     car_list = [];
     
+    var button_elm = document.getElementById("car_number_suggest_mode_button");
     var mode_info_elm = document.getElementById("car_number_suggest_mode_info");
     
     if (car_number_suggest_mode) {
+        button_elm.classList.add("car_number_suggest_mode");
         mode_info_elm.style.display = "block";
         
         var formation_data = post_railroad_id === railroad_info["railroad_id"] ? formations["formations"] : joined_railroad_formations[post_railroad_id]["formations"];
@@ -6588,6 +6590,7 @@ function switch_car_number_suggest_mode (enable = null) {
             }
         }
     } else {
+        button_elm.classList.remove("car_number_suggest_mode");
         mode_info_elm.style.display = "none";
     }
 }
@@ -6648,7 +6651,11 @@ function suggest_formation (railroad_id, formations_text) {
                 }
             } else {
                 buf += add_slashes(suggestion["formation_name"]) + "\");'>";
-                buf += "<img src='" + get_icon(suggestion["formation_name"], railroad_id) + "' alt='' class='train_icon'><b>" + escape_html(suggestion["car_number"]) + "</b>";
+                
+                var start_pos = suggestion["car_number"].indexOf(formation_text);
+                var end_pos = start_pos + formation_text.length;
+                
+                buf += "<img src='" + get_icon(suggestion["formation_name"], railroad_id) + "' alt='' class='train_icon'>" + escape_html(suggestion["car_number"].substring(0, start_pos)) + "<b>" + escape_html(suggestion["car_number"].substring(start_pos, end_pos)) + "</b>" + escape_html(suggestion["car_number"].substring(end_pos));
                 buf += "<small>(" + escape_html(suggestion["formation_name"]) + ")</small>";
             }
             

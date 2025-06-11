@@ -4243,6 +4243,10 @@ button abbr {
     background-size: 36px;
 }
 
+#car_number_suggest_mode_button.car_number_suggest_mode {
+    background-image: url(data:image/webp;base64,UklGRkYCAABXRUJQVlA4TDkCAAAvR8ARECY51ba9f2I9Cnp7n/eXREBMUr73e78vZc05bySgoHnIYc+KABT8Z07mGIgENmYMIIG1PQJoG3HwWxEAKydzJuKEg4C0CQV/EbS5m8BAddHrjAWm/gcUAAAINrPt7bZt27Zt20ayrWgjOVnJtm1/AmL+2R6IBEuDWMwJDY/M4J/4U605QPRwQ5I40+IxxVnWA5JYfDOLXWQ37EWqgHLNG+HwDJM1QEMbyXrQwQrd+NH+MTWfiuGdxO2FXBcX5BZKK4GCdhZ31MSFEpLEdUPPIJkpMqqIJs5p42vx9JZFTLmwnBCRGY0y1hq5CvuA/2jjVUwjxmSwWmGUiF8DBRnwdRNitsJn2jiCbEQEwizke57ThEMmUGMQZmXnHxoYvRupNhl/GxHPTQNvE9jcCAPPBibKYuMZiUtxD7PR7RhoC+cUeMFAczi1wtiCcFmoIBLUuRcZ5u+TTDt7HjGmedSzbPBKBSc4sU/zcHh1xMB0uLFpYHEaVs7QxN4gzqPSWwasfWg0tlaqTbCwRXNNVcN7g+nZ8KuvQfGsNcKBDdpXwjvO3zE+FSxbhyqp0X3aaFl1oZ7p/yjc3DKktcoSKv/SvvczvO16sv67JHBqIKRCizjc08bHYvhFhal6RzHGEhy2RZPUB7hi9sKbKNxcIP9KepRv4Is8JVLhfyf20nuL2a4UtlE8ThI/BL2NmudO/FiKQk1hfgs9ezGb72TwdLyRjNl9G3fks0daq5ZAxaxvR3mPrcb8rAA=);
+}
+
 #car_number_suggest_mode_info {
     width: calc(100% - 40px);
     
