@@ -48,7 +48,12 @@ if (empty($_SERVER["PATH_INFO"])) {
         print "    <url>\n";
         print "        <loc>".$root_url."/user/rules.php</loc>\n";
         print "        <changefreq>yearly</changefreq>\n";
-        print "        <priority>0.1</priority>\n";
+        print "        <priority>0.2</priority>\n";
+        print "    </url>\n";
+        print "    <url>\n";
+        print "        <loc>".$root_url."/user/clear_caches.php</loc>\n";
+        print "        <changefreq>never</changefreq>\n";
+        print "        <priority>0.2</priority>\n";
         print "    </url>\n";
     } else {
         $railroad_root = $root_url."/railroad_".$railroad_id;
@@ -110,11 +115,16 @@ if (empty($_SERVER["PATH_INFO"])) {
             print "    </url>\n";
         }
         
-        foreach ($diagram_revisions as $diagram_revision) {
+        for ($cnt = 0; isset($diagram_revisions[$cnt]); $cnt++) {
             print "    <url>\n";
-            print "        <loc>".$railroad_root."/operation_table/".$diagram_revision."/</loc>\n";
-            print "        <changefreq>yearly</changefreq>\n";
-            print "        <priority>0.5</priority>\n";
+            print "        <loc>".$railroad_root."/operation_table/".$diagram_revisions[$cnt]."/</loc>\n";
+            if ($cnt === 0) {
+                print "        <changefreq>yearly</changefreq>\n";
+                print "        <priority>0.5</priority>\n";
+            } else {
+                print "        <changefreq>never</changefreq>\n";
+                print "        <priority>0.1</priority>\n";
+            }
             print "    </url>\n";
         }
     }
