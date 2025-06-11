@@ -7229,7 +7229,7 @@ function edit_config () {
     buf += "<h5>走行位置表示時刻調節ボタンの動作</h5>";
     buf += "<input type='number' id='position_mode_minute_step' min='1' max='10' onchange='change_config();' value='" + config["position_mode_minute_step"] + "'>分単位で増減";
     buf += "<a href='javascript:void(0);' class='execute_link' onclick='reset_config_value();'>デフォルト値に戻す</a>";
-    buf += "<a href='javascript:void(0);' class='execute_link' onclick='reset_cache_db();'>キャッシュデータベースの初期化</a>";
+    buf += "<a href='/user/clear_caches.php' class='execute_link' target='_blank' rel='opener'>設定・キャッシュデータの削除</a>";
     buf += "<div class='informational_text'>変更内容は自動で保存されます</div>";
     
     popup_inner_elm.innerHTML = buf;
@@ -7282,19 +7282,6 @@ function reset_config_value () {
         document.getElementById("position_mode_minute_step").value = dafault_config["position_mode_minute_step"];
         
         change_config();
-    }
-}
-
-function reset_cache_db () {
-    if (confirm("キャッシュデータの削除により運用表や時刻表のデータが再ダウンロードされるため、多くの通信容量を消費する場合があります。\n\nよろしいですか？")) {
-        localStorage.removeItem("unyohub_instance_info");
-        localStorage.removeItem("unyohub_railroads_caches");
-        
-        var delete_request = indexedDB.deleteDatabase("unyohub_caches");
-        
-        delete_request.onsuccess = function () {
-            reload_app();
-        };
     }
 }
 
