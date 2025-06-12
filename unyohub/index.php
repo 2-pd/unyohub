@@ -60,6 +60,23 @@ if (empty($_SERVER["PATH_INFO"]) || $_SERVER["PATH_INFO"] === "/") {
                             exit;
                         }
                         
+                        if (!empty($railroad_info["lines"][$path_info[3]]["affiliated_railroad_id"])) {
+                            $path_info_str = "/railroad_".$railroad_info["lines"][$path_info[3]]["affiliated_railroad_id"]."/timetable/".$path_info[3]."/";
+                            
+                            if (!empty($path_info[4])) {
+                                foreach ($railroad_info["lines"][$path_info[3]]["stations"] as $station) {
+                                    if ($station["station_name"] === $path_info[4] && empty($station["is_signal_station"])) {
+                                        $path_info_str .= urlencode($station["station_name"])."/";
+                                        break;
+                                    }
+                                }
+                            }
+                            
+                            header("Location: ".$path_info_str, TRUE, 301);
+                            
+                            exit;
+                        }
+                        
                         $path_info_str .= $path_info[3]."/";
                         
                         if (empty($path_info[4])) {
@@ -258,7 +275,7 @@ if ($path_info_str === "/") {
         </div>
     </article>
     <article onscroll="timetable_wrapper_onscroll();">
-        <div class='line_select_wrapper'><button type="button" id="timetable_line_select" onclick="select_lines(timetable_selectable_lines, false);"></button></div>
+        <div class='line_select_wrapper'><button type="button" id="timetable_line_select" onclick="select_lines(timetable_selected_line, timetable_selected_station, false);"></button></div>
         <div id="direction_radio_area" class="radio_area">
             <div id="timetable_station_name" class="heading_wrapper"></div>
             <div><input type="radio" name="direction_radio" id="radio_inbound" value="inbound" checked="checked" onchange="timetable_select_station(timetable_selected_station);"><label for="radio_inbound" id="radio_inbound_label">上り</label><input type="radio" name="direction_radio" id="radio_outbound" value="outbound" onchange="timetable_select_station(timetable_selected_station);"><label for="radio_outbound" id="radio_outbound_label">下り</label></div>
@@ -299,7 +316,7 @@ if ($path_info_str === "/") {
     <a id="railroad_announcement" href="javascript:void(0);" onclick="show_railroad_announcements();"></a>
     <footer>
         <div>
-            <button type="button" id="position_reload_button" class="reload_button" onclick="position_mode('__today__', null);"></button>
+            <button type="button" id="position_reload_button" class="reload_button" onclick="position_mode(null, '__today__');"></button>
             <button type="button" id="position_diagram" class="footer_select" onclick="position_list_diagrams();"></button><span ontouchstart="position_time_swipe_start(event);" ontouchmove="position_time_swipe(event);" ontouchend="position_time_swipe_end(event, 360);"><button type="button" class="previous_button" onclick="position_change_time(-60);"></button><span id="position_hours" class="footer_value"></span><button type="button" class="next_button" onclick="position_change_time(60);"></button></span><span ontouchstart="position_time_swipe_start(event);" ontouchmove="position_time_swipe(event);" ontouchend="position_time_swipe_end(event, 10);"><button type="button" class="previous_button" onclick="position_change_time(-1, true);"></button><span id="position_minutes" class="footer_value"></span><button type="button" class="next_button" onclick="position_change_time(1, true);"></button></span>
             <input type="time" id="position_time_button" class="time_button" onchange="position_time_button_change();">
         </div>

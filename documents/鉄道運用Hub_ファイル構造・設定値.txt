@@ -82,7 +82,7 @@ log_ip_address 投稿者のIPアドレスを記録するか(BOOL値)
     "railroad_name" : 路線系統表示名,
     "main_color" : 路線系統のテーマカラー,
     "railroad_icon" : BASE64エンコードされた路線系統のアイコンデータ,
-    "through_service_railroads" : 乗り入れ先路線系統の路線系統識別名を配列で列挙(他の路線系統に乗り入れていない場合は省略可能),
+    "joined_railroads" : 直通する路線系統の路線系統識別名を配列で列挙(他の路線系統に属する運用が乗り入れしていない場合は省略可能),
     "lines" : { 個々の路線の情報
         "路線識別名" : {
             "line_name" : 路線名,
@@ -91,8 +91,8 @@ log_ip_address 投稿者のIPアドレスを記録するか(BOOL値)
             "affiliated_railroad_id" : 路線が属する路線系統の路線系統識別名(乗り入れ先路線でない場合は省略)
             "inbound_forward_direction" : 上り列車の進行方向と編成の前位側(奇数向き)方向が一致するかどうか(BOOL値),
             "clockwise_is_inbound" : 上り列車が時計回り運転となるか(BOOL値。環状運転していない路線の場合nullまたは省略)
-            "double_station_spacing" : 走行位置モードで駅間を2行で表示させるか(1行で表示させる場合は省略可能。BOOL値),
-            "show_final_destinations_in_position_mode" : 走行位置モードで種別の代わりに行き先を表示させるか(種別を表示させる場合は省略可能。BOOL値),
+            "double_station_spacing" : 走行位置モードで駅間を2行で表示させるか(1行で表示させる場合や乗り入れ先路線の場合は省略可能。BOOL値),
+            "show_final_destinations_in_position_mode" : 走行位置モードで種別の代わりに行き先を表示させるか(種別を表示させる場合や乗り入れ先路線の場合は省略可能。BOOL値),
             "stations" : [ 駅一覧
                 {
                     "station_name" : 駅名,
@@ -109,7 +109,14 @@ log_ip_address 投稿者のIPアドレスを記録するか(BOOL値)
                     ],
                     "connecting_railroads" : [ 乗り換え可能な路線系統(乗り入れ先の駅である場合は省略可能)
                         {
-                            "railroad_id" : 路線系統識別名
+                            "railroad_id" : 路線系統識別名,
+                            "lines" : [ 乗り換え可能な路線の情報(省略可能)
+                                {
+                                    "line_id" : 路線識別名,
+                                    "line_name" : 路線名,
+                                    "station_name" : 駅名(このファイルの路線系統の駅名と同一である場合は省略可能)
+                                }...
+                            ]
                         }...
                     ]
                 }...
@@ -117,7 +124,7 @@ log_ip_address 投稿者のIPアドレスを記録するか(BOOL値)
         }...
     },
     "lines_order" : この路線系統に属する路線の路線識別名を表示させたい順に配列で,
-    "through_service_lines_order" : 乗り入れ先路線系統に属する路線の路線識別名を表示させたい順に配列で(他の路線系統に乗り入れていない場合は省略可能),
+    "joined_lines_order" : 乗り入れ先路線系統に属する路線の路線識別名を表示させたい順に配列で(他の路線系統に乗り入れていない場合は省略可能),
     "train_color_rules" : [ 列車番号の色分け規則(配列で複数指定可能)
         {
             "pattern" : 列車番号の正規表現パターン,

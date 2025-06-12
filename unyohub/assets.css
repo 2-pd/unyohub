@@ -1958,6 +1958,58 @@ input[type="checkbox"]:checked + label.drop_down + div {
     color: #666666;
 }
 
+#line_select_popup h4 {
+    margin: 20px auto 15px auto;
+}
+
+.connecting_railroad_link {
+    display: block;
+    
+    width: 300px;
+    
+    margin: 5px auto;
+    padding: 10px 8px 10px 16px;
+    
+    border-left: 6px solid #999999;
+    
+    color: inherit;
+    text-align: left;
+}
+
+div.connecting_railroad_link h5 {
+    margin: -5px 0 10px 0;
+    
+    color: #999999;
+    font-size: 16px;
+}
+
+a.connecting_railroad_link h5, .connecting_railroad_link a {
+    margin: 0;
+    
+    color: inherit !important;
+    font-size: 18px;
+}
+
+.connecting_railroad_link a {
+    display: block;
+    
+    padding-left: 10px;
+    
+    line-height: 36px;
+    color: inherit;
+}
+
+.connecting_railroad_link small {
+    margin-left: 5px;
+    
+    color: #666666;
+    font-size: 14px;
+}
+
+.dark_mode .connecting_railroad_link small {
+    color: #cccccc;
+}
+
 #diagram_list_popup .wide_button {
     background-image: linear-gradient(315deg, #ffffff 14px, transparent 14px) !important;
 }
@@ -3590,12 +3642,6 @@ a {
     transition:none;
 }
 
-#railroad_select_popup.railroad_select_no_categories:after {
-    left: 0;
-    
-    width: 100%;
-}
-
 #railroad_select_popup h2 {
     width: 100%;
     height: 40px;
@@ -3613,14 +3659,6 @@ a {
 
 #railroad_select_popup_inner {
     height: calc(100% - 100px);
-}
-
-.railroad_select_no_categories #category_area {
-    display: none;
-}
-
-.railroad_select_no_categories #icon_area {
-    width: calc(100% - 10px);
 }
 
 .link_block {
@@ -4218,12 +4256,52 @@ button abbr {
     font-size: 16px;
 }
 
+#operation_data_formation {
+    width: calc(100% - 90px);
+    
+    margin: 10px auto 0 auto;
+    
+    padding: 8px 55px 0 5px;
+    
+    line-height: 28px;
+}
+
+#car_number_suggest_mode_button {
+    display: block;
+    
+    width: 36px;
+    height: 36px;
+    
+    margin: -38px 0 0 calc(100% - 51px);
+    
+    border: none;
+    
+    background-image: url(data:image/webp;base64,UklGRiQCAABXRUJQVlA4TBcCAAAvR8ARENXIkiRZtRst/a1AkvnUHD0vQJs03DlzjuBXEWNmdpuZmRkjoAAAQLCZbW+3bdu2bds2km1FG8nJSrZt+xOQW8/OICW4NBSLTaHylBn+xZ9pbQJFjxtJ4syK9yhusBmoxPKtJrtkV/YuU6Dc8nZxRHaSLcBCq+Q4dFhRmB/r36MWMzHeJW6vtl5wIT2ldBAU2tV9wkxClEgS15XeIFlTMoYUTc7l81Virf+pJ6ZCLE9EZMOinBtVbsA+4Hf5vBbTzD0yrA7YTeTXoaAB34uJmB3wVT5HyGZmEuaRH3krF4dGUuMIs74rzx1G7+bUmpxvVSRy3eFtjm3tYvDsMNGX91/zLy6Le7pV94RDWwZXwb8cmjNoFc5ThPvSBEkw50VkupXnGP/TE88ixVguspEq5+jagCCc7MulOaM24jCdYTYdFtegsrMrl73tuIhJP3WwjtHoPD09bM5iS+4NU10ARK9reiHj5uuoeI7axcGG/GsZXeE/4XzqqHIeBYPM6Il8Ws6EqNf0Z3bOsU+d0jpkJ5lKfuXTuArO6K17k3uVpyc5dQgZcIs47uXzUWIzXlQ0Ne/sZmzC4a2uvVSyuVLzqkln5xz7S+K3pGf/fb6kk0Uq4zNIsS+9t9V8UQpvZfcKqfgR9CFHXiLMAg5np6WozR89COdGtqYGT9RXydzYd7iTeGPRas0SVG74W7t5/+8D5tasAA==);
+    background-repeat: no-repeat;
+    background-size: 36px;
+}
+
+#car_number_suggest_mode_button.car_number_suggest_mode {
+    background-image: url(data:image/webp;base64,UklGRkYCAABXRUJQVlA4TDkCAAAvR8ARECY51ba9f2I9Cnp7n/eXREBMUr73e78vZc05bySgoHnIYc+KABT8Z07mGIgENmYMIIG1PQJoG3HwWxEAKydzJuKEg4C0CQV/EbS5m8BAddHrjAWm/gcUAAAINrPt7bZt27Zt20ayrWgjOVnJtm1/AmL+2R6IBEuDWMwJDY/M4J/4U605QPRwQ5I40+IxxVnWA5JYfDOLXWQ37EWqgHLNG+HwDJM1QEMbyXrQwQrd+NH+MTWfiuGdxO2FXBcX5BZKK4GCdhZ31MSFEpLEdUPPIJkpMqqIJs5p42vx9JZFTLmwnBCRGY0y1hq5CvuA/2jjVUwjxmSwWmGUiF8DBRnwdRNitsJn2jiCbEQEwizke57ThEMmUGMQZmXnHxoYvRupNhl/GxHPTQNvE9jcCAPPBibKYuMZiUtxD7PR7RhoC+cUeMFAczi1wtiCcFmoIBLUuRcZ5u+TTDt7HjGmedSzbPBKBSc4sU/zcHh1xMB0uLFpYHEaVs7QxN4gzqPSWwasfWg0tlaqTbCwRXNNVcN7g+nZ8KuvQfGsNcKBDdpXwjvO3zE+FSxbhyqp0X3aaFl1oZ7p/yjc3DKktcoSKv/SvvczvO16sv67JHBqIKRCizjc08bHYvhFhal6RzHGEhy2RZPUB7hi9sKbKNxcIP9KepRv4Is8JVLhfyf20nuL2a4UtlE8ThI/BL2NmudO/FiKQk1hfgs9ezGb72TwdLyRjNl9G3fks0daq5ZAxaxvR3mPrcb8rAA=);
+}
+
+#car_number_suggest_mode_info {
+    width: calc(100% - 40px);
+    
+    margin: -5px auto 10px auto;
+    
+    line-height: 20px;
+    font-size: 14px;
+    color: #ff9900;
+    font-weight: bold;
+}
+
 .suggestion_area {
     position: relative;
     
-    width: 90%;
+    width: calc(100% - 30px);
     
-    margin: -10px auto 10px auto;
+    margin: 0 auto 10px auto;
 }
 
 .suggestion_area div {

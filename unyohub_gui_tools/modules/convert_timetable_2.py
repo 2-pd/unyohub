@@ -36,7 +36,12 @@ def convert_timetable_2 (mes, main_dir, diagram_revision, diagram_id):
     
     output_data = {}
     
-    for line_id in railroad_info["lines_order"]:
+    lines = railroad_info["lines_order"]
+    
+    if "joined_lines_order" in railroad_info:
+        lines += railroad_info["joined_lines_order"]
+    
+    for line_id in lines:
         line_data = {}
         
         for direction in ["inbound", "outbound"]:
