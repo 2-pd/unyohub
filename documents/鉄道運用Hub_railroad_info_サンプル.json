@@ -16,10 +16,23 @@
                     "is_major_station" : true,
                     "connecting_railroads" : [
                         {
-                            "railroad_id" : "koya"
+                            "railroad_id" : "koya",
+                            "lines" : [
+                                {
+                                    "line_id" : "koyasen",
+                                    "line_name" : "高野線"
+                                }
+                            ]
                         },
                         {
-                            "railroad_id" : "midosuji"
+                            "railroad_id" : "midosuji",
+                            "lines" : [
+                                {
+                                    "line_id" : "midosujisen",
+                                    "line_name" : "御堂筋線",
+                                    "station_name" : "なんば"
+                                }
+                            ]
                         }
                     ]
                 },
@@ -29,13 +42,33 @@
                     "is_major_station" : true,
                     "connecting_railroads" : [
                         {
-                            "railroad_id" : "koya"
+                            "railroad_id" : "koya",
+                            "lines" : [
+                                {
+                                    "line_id" : "koyasen",
+                                    "line_name" : "高野線"
+                                }
+                            ]
                         },
                         {
-                            "railroad_id" : "hankai"
+                            "railroad_id" : "hankai",
+                            "lines" : [
+                                {
+                                    "line_id" : "hankai",
+                                    "line_name" : "阪堺系統",
+                                    "station_name" : "新今宮駅前"
+                                }
+                            ]
                         },
                         {
-                            "railroad_id" : "midosuji"
+                            "railroad_id" : "midosuji",
+                            "lines" : [
+                                {
+                                    "line_id" : "midosujisen",
+                                    "line_name" : "御堂筋線",
+                                    "station_name" : "動物園前"
+                                }
+                            ]
                         }
                     ]
                 },
@@ -45,7 +78,13 @@
                     "is_major_station" : true,
                     "connecting_railroads" : [
                         {
-                            "railroad_id" : "koya"
+                            "railroad_id" : "koya",
+                            "lines" : [
+                                {
+                                    "line_id" : "koyasen",
+                                    "line_name" : "高野線"
+                                }
+                            ]
                         }
                     ]
                 },
@@ -61,7 +100,13 @@
                     ],
                     "connecting_railroads" : [
                         {
-                            "railroad_id" : "koya"
+                            "railroad_id" : "koya",
+                            "lines" : [
+                                {
+                                    "line_id" : "koyasen",
+                                    "line_name" : "高野線(極楽橋方面)"
+                                }
+                            ]
                         }
                     ]
                 },
@@ -70,7 +115,14 @@
                     "station_name_kana" : "こはま",
                     "connecting_railroads" : [
                         {
-                            "railroad_id" : "hankai"
+                            "railroad_id" : "hankai",
+                            "lines" : [
+                                {
+                                    "line_id" : "hankai",
+                                    "line_name" : "阪堺系統",
+                                    "station_name" : "東粉浜"
+                                }
+                            ]
                         }
                     ]
                 },
@@ -79,7 +131,14 @@
                     "station_name_kana" : "すみよしたいしゃ",
                     "connecting_railroads" : [
                         {
-                            "railroad_id" : "hankai"
+                            "railroad_id" : "hankai",
+                            "lines" : [
+                                {
+                                    "line_id" : "uemachi",
+                                    "line_name" : "上町系統",
+                                    "station_name" : "住吉鳥居前"
+                                }
+                            ]
                         }
                     ]
                 },
@@ -115,7 +174,14 @@
                     "station_name_kana" : "はまでらこうえん",
                     "connecting_railroads" : [
                         {
-                            "railroad_id" : "hankai"
+                            "railroad_id" : "hankai",
+                            "lines" : [
+                                {
+                                    "line_id" : "uemachi",
+                                    "line_name" : "上町系統",
+                                    "station_name" : "浜寺駅前"
+                                }
+                            ]
                         }
                     ]
                 },
@@ -128,6 +194,18 @@
                         {
                             "line_id" : "takashinohamasen",
                             "directions" : ["BL"]
+                        }
+                    ],
+                    "connecting_railroads" : [
+                        {
+                            "railroad_id" : "hanwa",
+                            "lines" : [
+                                {
+                                    "line_id" : "hagoromosen",
+                                    "line_name" : "羽衣線",
+                                    "station_name" : "東羽衣"
+                                }
+                            ]
                         }
                     ]
                 },
@@ -176,7 +254,18 @@
                     "station_name" : "貝塚",
                     "station_name_kana" : "かいづか",
                     "station_initial" : "貝",
-                    "is_major_station" : true
+                    "is_major_station" : true,
+                    "connecting_railroads" : [
+                        {
+                            "railroad_id" : "mizuma",
+                            "lines" : [
+                                {
+                                    "line_id" : "mizumasen",
+                                    "line_name" : "水間線"
+                                }
+                            ]
+                        }
+                    ]
                 },
                 {
                     "station_name" : "二色浜",
@@ -282,7 +371,13 @@
                     ],
                     "connecting_railroads" : [
                         {
-                            "railroad_id" : "wakayama"
+                            "railroad_id" : "wakayama",
+                            "lines" : [
+                                {
+                                    "line_id" : "kiwasen",
+                                    "line_name" : "紀勢本線(紀和線)"
+                                }
+                            ]
                         }
                     ]
                 }
@@ -310,13 +405,35 @@
                 {
                     "station_name" : "りんくうタウン",
                     "station_name_kana" : "りんくうたうん",
-                    "is_major_station" : true
+                    "is_major_station" : true,
+                    "connecting_railroads" : [
+                        {
+                            "railroad_id" : "hanwa",
+                            "lines" : [
+                                {
+                                    "line_id" : "kankusen",
+                                    "line_name" : "関西空港線"
+                                }
+                            ]
+                        }
+                    ]
                 },
                 {
                     "station_name" : "関西空港",
                     "station_name_kana" : "かんさいくうこう",
                     "station_initial" : "空",
-                    "is_major_station" : true
+                    "is_major_station" : true,
+                    "connecting_railroads" : [
+                        {
+                            "railroad_id" : "hanwa",
+                            "lines" : [
+                                {
+                                    "line_id" : "kankusen",
+                                    "line_name" : "関西空港線"
+                                }
+                            ]
+                        }
+                    ]
                 }
             ]
         },
@@ -361,7 +478,13 @@
                     ],
                     "connecting_railroads" : [
                         {
-                            "railroad_id" : "koya"
+                            "railroad_id" : "koya",
+                            "lines" : [
+                                {
+                                    "line_id" : "koyasen",
+                                    "line_name" : "高野線(極楽橋方面)"
+                                }
+                            ]
                         }
                     ]
                 }
@@ -383,6 +506,18 @@
                         {
                             "line_id" : "honsen",
                             "directions" : ["TL", "BR"]
+                        }
+                    ],
+                    "connecting_railroads" : [
+                        {
+                            "railroad_id" : "hanwa",
+                            "lines" : [
+                                {
+                                    "line_id" : "hagoromosen",
+                                    "line_name" : "羽衣線",
+                                    "station_name" : "東羽衣"
+                                }
+                            ]
                         }
                     ]
                 },
@@ -507,7 +642,13 @@
                     ],
                     "connecting_railroads" : [
                         {
-                            "railroad_id" : "wakayama"
+                            "railroad_id" : "wakayama",
+                            "lines" : [
+                                {
+                                    "line_id" : "kiwasen",
+                                    "line_name" : "紀勢本線(紀和線)"
+                                }
+                            ]
                         }
                     ]
                 },
