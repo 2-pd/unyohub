@@ -6429,7 +6429,7 @@ function write_operation_data (railroad_id, yyyy_mm_dd, operation_number, train_
     buf += "<h4>編成名または車両形式</h4>";
     buf += "<div class='informational_text'><b>◀ " + alias_of_forward_direction + "</b></div>";
     buf += "<input type='text' id='operation_data_formation' autocomplete='off' oninput='suggest_formation(" + (post_railroad_id === railroad_info["railroad_id"] ? "null" : "\"" +  post_railroad_id + "\"") + ", this.value);' onblur='clear_formation_suggestion();'><button type='button' id='car_number_suggest_mode_button' onclick='switch_car_number_suggest_mode(!car_number_suggest_mode);'></button><div class='suggestion_area'><div id='formation_suggestion'></div></div>";
-    buf += "<div id='car_number_suggest_mode_info'>車番から編成名をサジェストします</div>";
+    buf += "<div id='car_number_suggest_mode_info'>車両番号から編成名をサジェストします</div>";
     buf += "<div class='informational_text'>複数の編成が連結している場合は、" + alias_of_forward_direction + "の編成から順に「+」で区切って入力してください。<br>不明な編成には「不明」、運休情報は「運休」を入力可能です。</div>";
     
     buf += "<input type='checkbox' id='operation_data_details'";
