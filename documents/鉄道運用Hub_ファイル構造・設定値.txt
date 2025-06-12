@@ -109,7 +109,14 @@ log_ip_address 投稿者のIPアドレスを記録するか(BOOL値)
                     ],
                     "connecting_railroads" : [ 乗り換え可能な路線系統(乗り入れ先の駅である場合は省略可能)
                         {
-                            "railroad_id" : 路線系統識別名
+                            "railroad_id" : 路線系統識別名,
+                            "lines" : [ 乗り換え可能な路線の情報(省略可能)
+                                {
+                                    "line_id" : 路線識別名,
+                                    "line_name" : 路線名,
+                                    "station_name" : 駅名(このファイルの路線系統の駅名と同一である場合は省略可能)
+                                }...
+                            ]
                         }...
                     ]
                 }...
