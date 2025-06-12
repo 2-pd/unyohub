@@ -1986,6 +1986,7 @@ div.connecting_railroad_link h5 {
 a.connecting_railroad_link h5, .connecting_railroad_link a {
     margin: 0;
     
+    color: inherit !important;
     font-size: 18px;
 }
 
@@ -1996,6 +1997,17 @@ a.connecting_railroad_link h5, .connecting_railroad_link a {
     
     line-height: 36px;
     color: inherit;
+}
+
+.connecting_railroad_link small {
+    margin-left: 5px;
+    
+    color: #666666;
+    font-size: 14px;
+}
+
+.dark_mode .connecting_railroad_link small {
+    color: #cccccc;
 }
 
 #diagram_list_popup .wide_button {
@@ -3630,12 +3642,6 @@ a {
     transition:none;
 }
 
-#railroad_select_popup.railroad_select_no_categories:after {
-    left: 0;
-    
-    width: 100%;
-}
-
 #railroad_select_popup h2 {
     width: 100%;
     height: 40px;
@@ -3653,14 +3659,6 @@ a {
 
 #railroad_select_popup_inner {
     height: calc(100% - 100px);
-}
-
-.railroad_select_no_categories #category_area {
-    display: none;
-}
-
-.railroad_select_no_categories #icon_area {
-    width: calc(100% - 10px);
 }
 
 .link_block {

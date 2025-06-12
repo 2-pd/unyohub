@@ -460,7 +460,7 @@ function update_display_settings (redraw = false) {
         switch (mode_val) {
             case -1:
                 get_railroad_list(function (railroads, loading_completed) {
-                    update_railroad_list(railroads, "splash_screen_inner", loading_completed);
+                    update_railroad_list(railroads, document.getElementById("splash_screen_inner"), loading_completed);
                 });
                 break;
                 
@@ -791,17 +791,13 @@ function get_railroad_list (callback_func) {
     }
 }
 
-function update_railroad_list (railroads, area_id, loading_completed, categories = null) {
-    if (categories === null) {
-        categories = railroads["categories"];
-    }
-    
+function update_railroad_list (railroads, area_elm, loading_completed) {
     var categories_html = "";
     var icons_html = "";
     
     var heading_cnt = 0;
     
-    for (var category of categories) {
+    for (var category of railroads["categories"]) {
         var category_html = " style='color: " + (config["dark_mode"] ? convert_color_dark_mode(category["category_color"]) : category["category_color"]) + ";'><b>" + escape_html(category["category_name"]) + "</b></";
         categories_html += "<li class='category_index' onclick='scroll_to_category(" + heading_cnt + ");'" + category_html + "li>";
         icons_html += "<h3 class='icon_heading'" + category_html + "h3>";
@@ -829,11 +825,11 @@ function update_railroad_list (railroads, area_id, loading_completed, categories
     
     if (!loading_completed) {
         categories_html += "<div class='loading_icon'></div>";
-    } else if (categories.length === 0) {
+    } else if (railroads["categories"].length === 0) {
         icons_html = "<div class='no_data'>利用可能なデータがありません</div>";
     }
     
-    document.getElementById(area_id).innerHTML = "<ul id='category_area'>" + categories_html + "</ul><div id='icon_area' onscroll='icon_area_onscroll();'>" + icons_html + "</div>";
+    area_elm.innerHTML = "<ul id='category_area'>" + categories_html + "</ul><div id='icon_area' onscroll='icon_area_onscroll();'>" + icons_html + "</div>";
     
     splash_screen_elm.className = "splash_screen_loaded";
     
@@ -867,21 +863,11 @@ function icon_area_onscroll () {
     }
 }
 
-function show_railroad_list (railroad_list = null) {
-    open_popup("railroad_select_popup", "路線系統の切り替え");
-    
-    var popup_elm = document.getElementById("railroad_select_popup");
+function show_railroad_list () {
+    var popup_inner_elm = open_popup("railroad_select_popup", "路線系統の切り替え");
     
     get_railroad_list(function (railroads, loading_completed) {
-        if (railroad_list === null) {
-            popup_elm.classList.remove("railroad_select_no_categories");
-            
-            update_railroad_list(railroads, "railroad_select_popup_inner", loading_completed);
-        } else {
-            popup_elm.classList.add("railroad_select_no_categories");
-            
-            update_railroad_list(railroads, "railroad_select_popup_inner", loading_completed, [{ category_name : "乗り換え可能な路線系統", category_color : "#333333", railroads : railroad_list }]);
-        }
+        update_railroad_list(railroads, popup_inner_elm, loading_completed);
     });
 }
 
@@ -939,7 +925,7 @@ window.onload = function () {
         reload_app();
     } else {
         get_railroad_list(function (railroads, loading_completed) {
-            update_railroad_list(railroads, "splash_screen_inner", loading_completed);
+            update_railroad_list(railroads, document.getElementById("splash_screen_inner"), loading_completed);
         });
     }
     
@@ -1682,7 +1668,7 @@ function load_railroad_data (railroad_id, is_main_railroad, resolve_func_1, reso
 function select_mode (mode_name, mode_option_1, mode_option_2, mode_option_3) {
     switch (mode_name) {
         case "position_mode":
-            position_mode(mode_option_1);
+            position_mode(mode_option_1, "__today__", mode_option_2);
             break;
         
         case "timetable_mode":
@@ -1691,7 +1677,7 @@ function select_mode (mode_name, mode_option_1, mode_option_2, mode_option_3) {
             if (mode_option_2 !== null) {
                 show_station_timetable(mode_option_1, mode_option_2, mode_option_3);
             } else {
-                timetable_change_lines(mode_option_1);
+                timetable_change_lines(mode_option_1, true);
             }
             
             break;
@@ -2450,7 +2436,7 @@ var position_area_elm = document.getElementById("position_area");
 var position_reload_button_elm = document.getElementById("position_reload_button");
 var position_time_button_elm = document.getElementById("position_time_button");
 
-function position_mode (line_id = null, date_str = "__today__", position_time_additions = null) {
+function position_mode (line_id = null, date_str = "__today__", scroll_target_station = null, position_time_additions = null) {
     change_title(railroad_info["railroad_name"] + "の車両運用情報 | " + instance_info["instance_name"], "/railroad_" + railroad_info["railroad_id"] + "/");
     
     change_mode(0);
@@ -2554,7 +2540,7 @@ function position_mode (line_id = null, date_str = "__today__", position_time_ad
             all_resolved = true;
             
             position_line_select_elm.style.display = "block";
-            position_change_lines(position_selected_line, position_scroll_amount);
+            position_change_lines(position_selected_line, scroll_target_station !== null ? scroll_target_station : position_scroll_amount);
         }, function () {
             position_area_elm.innerHTML = "<div class='no_data'>表示に必要なデータが利用できません</div>";
             position_line_select_elm.style.display = "none";
@@ -2671,15 +2657,8 @@ function position_change_lines (line_id, scroll_target = -1) {
             
             buf += "</a>";
             
-            if ("connecting_railroads" in railroad_info["lines"][line_id]["stations"][cnt - 1]) {
-                var connecting_railroad_list = [];
-                for (var connecting_railroad of railroad_info["lines"][line_id]["stations"][cnt - 1]["connecting_railroads"]) {
-                    connecting_railroad_list.push("\"" + connecting_railroad["railroad_id"] + "\"");
-                }
-                
-                if (connecting_railroad_list.length >= 1) {
-                    buf += "<button type='button' class='connecting_railroads_button' onclick='show_railroad_list([" + connecting_railroad_list.join(",") + "]);'></button>";
-                }
+            if (connecting_lines_html.length >= 1 || ("connecting_railroads" in railroad_info["lines"][line_id]["stations"][cnt - 1] && railroad_info["lines"][line_id]["stations"][cnt - 1]["connecting_railroads"].length >= 1)) {
+                buf += "<button type='button' class='connecting_railroads_button' onclick='select_lines(\"" + line_id + "\", \"" + add_slashes(railroad_info["lines"][line_id]["stations"][cnt - 1]["station_name"]) + "\");'></button>";
             }
         } else {
             buf += "<tr><th>";
@@ -2774,7 +2753,7 @@ function select_lines (line_id = null, station_name = null, position_mode = true
         buf += "<button type='button' onclick='close_square_popup(); ";
         
         if (position_mode) {
-            buf += "position_change_lines(" + line_id_text + ", 0);";
+            buf += "position_change_lines(" + line_id_text + ", " + (station_name === null ? "0" : "\"" + add_slashes(station_name) + "\"") + ");";
         } else {
             buf += "timetable_change_lines(" + line_id_text + ");";
         }
@@ -2789,7 +2768,7 @@ function select_lines (line_id = null, station_name = null, position_mode = true
             buf += "<button type='button' onclick='close_square_popup(); ";
             
             if (position_mode) {
-                buf += "select_railroad(\"" + railroad_info["lines"][line_id]["affiliated_railroad_id"] + "\", \"position_mode\", \"" + line_id + "\");";
+                buf += "select_railroad(\"" + railroad_info["lines"][line_id]["affiliated_railroad_id"] + "\", \"position_mode\", \"" + line_id + "\"" + (station_name === null ? "" : ", \"" + add_slashes(station_name) + "\"") + ");";
             } else {
                 buf += "select_railroad(\"" + railroad_info["lines"][line_id]["affiliated_railroad_id"] + "\", \"timetable_mode\", \"" + line_id + "\"" + (timetable_selected_station === null ? "" : ", \"" + add_slashes(timetable_selected_station) + "\"") + ");";
             }
@@ -2817,7 +2796,11 @@ function select_lines (line_id = null, station_name = null, position_mode = true
                     buf += "<div class='connecting_railroad_link' style='border-color: " + railroad_color + ";'><h5>" + escape_html(railroads["railroads"][connecting_railroad["railroad_id"]]["railroad_name"]) + "</h5>";
                     
                     for (var line of connecting_railroad["lines"]) {
-                        buf += "<a href='javascript:void(0);' onclick='close_square_popup(); select_railroad(\"" + connecting_railroad["railroad_id"] + "\", \"" + (position_mode ? "position" : "timetable") + "_mode\", \"" + line["line_id"] + "\", \"" + add_slashes("station_name" in line ? line["station_name"] : station_name) + "\");'>" + escape_html(line["line_name"]) + "</a>";
+                        buf += "<a href='javascript:void(0);' onclick='close_square_popup(); select_railroad(\"" + connecting_railroad["railroad_id"] + "\", \"" + (position_mode ? "position" : "timetable") + "_mode\", \"" + line["line_id"] + "\", \"" + add_slashes("station_name" in line ? line["station_name"] : station_name) + "\");'>" + escape_html(line["line_name"]);
+                        if ("station_name" in line && line["station_name"] !== station_name) {
+                            buf += "<small>(" + escape_html(line["station_name"]) + "駅)</small>";
+                        }
+                        buf += "</a>";
                     }
                     
                     buf += "</div>";
@@ -3313,7 +3296,7 @@ function position_list_diagrams () {
                     bg_color = convert_color_dark_mode(bg_color);
                 }
                 
-                buf += "<button type='button' class='wide_button' onclick='close_square_popup(); position_mode(null, \"" + diagram_id + "\", 0);' style='background-color: " + bg_color + "; border-color: " + bg_color + ";'>" + diagram_name + "</button>";
+                buf += "<button type='button' class='wide_button' onclick='close_square_popup(); position_mode(null, \"" + diagram_id + "\", null, 0);' style='background-color: " + bg_color + "; border-color: " + bg_color + ";'>" + diagram_name + "</button>";
             }
             
             popup_inner_elm.innerHTML = buf;
