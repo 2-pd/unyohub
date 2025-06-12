@@ -2723,15 +2723,38 @@ function position_change_lines (line_id, scroll_target = -1) {
     position_change_time(0);
 }
 
-function select_lines (lines = null, joined_lines = null, position_mode = true) {
+function select_lines (line_id = null, station_name = null, position_mode = true) {
     var popup_inner_elm = open_square_popup("line_select_popup", true, "路線の選択");
     
-    if (lines === null) {
-        lines = railroad_info["lines_order"];
-    }
-    
-    if (joined_lines === null) {
-        joined_lines = "joined_lines_order" in railroad_info ? railroad_info["joined_lines_order"] : [];
+    if (line_id === null || station_name === null) {
+        var lines = [...railroad_info["lines_order"]];
+        var joined_lines = "joined_lines_order" in railroad_info ? [...railroad_info["joined_lines_order"]] : [];
+        var connecting_railroads = [];
+        
+        if (!position_mode) {
+            lines.unshift(null);
+        }
+    } else {
+        var lines = position_mode ? [] : [line_id];
+        var joined_lines = [];
+        
+        for (var station_data of railroad_info["lines"][line_id]["stations"]) {
+            if (station_data["station_name"] === station_name) {
+                if ("connecting_lines" in station_data) {
+                    for (var connecting_line of station_data["connecting_lines"]) {
+                        if (!("affiliated_railroad_id" in railroad_info["lines"][connecting_line["line_id"]])) {
+                            lines.push(connecting_line["line_id"]);
+                        } else {
+                            joined_lines.push(connecting_line["line_id"]);
+                        }
+                    }
+                }
+                
+                var connecting_railroads = "connecting_railroads" in station_data ? station_data["connecting_railroads"] : [];
+                
+                break;
+            }
+        }
     }
     
     var buf = "";
@@ -2761,21 +2784,55 @@ function select_lines (lines = null, joined_lines = null, position_mode = true) 
     
     if (joined_lines.length >= 1) {
         buf += "<h4>乗り入れ先の路線</h4>";
+        
+        for (var line_id of joined_lines) {
+            buf += "<button type='button' onclick='close_square_popup(); ";
+            
+            if (position_mode) {
+                buf += "select_railroad(\"" + railroad_info["lines"][line_id]["affiliated_railroad_id"] + "\", \"position_mode\", \"" + line_id + "\");";
+            } else {
+                buf += "select_railroad(\"" + railroad_info["lines"][line_id]["affiliated_railroad_id"] + "\", \"timetable_mode\", \"" + line_id + "\"" + (timetable_selected_station === null ? "" : ", \"" + add_slashes(timetable_selected_station) + "\"") + ");";
+            }
+            
+            buf += "'><abbr style='background-color: " + (config["dark_mode"] ? convert_color_dark_mode(railroad_info["lines"][line_id]["line_color"]) : railroad_info["lines"][line_id]["line_color"]) + ";'>" + ("line_symbol" in railroad_info["lines"][line_id] ? railroad_info["lines"][line_id]["line_symbol"] : railroad_info["lines"][line_id]["line_name"].substring(0, 1)) + "</abbr>" + escape_html(railroad_info["lines"][line_id]["line_name"]) + "</button>";
+        }
     }
     
-    for (var line_id of joined_lines) {
-        buf += "<button type='button' onclick='close_square_popup(); ";
-        
-        if (position_mode) {
-            buf += "select_railroad(\"" + railroad_info["lines"][line_id]["affiliated_railroad_id"] + "\", \"position_mode\", \"" + line_id + "\");";
-        } else {
-            buf += "select_railroad(\"" + railroad_info["lines"][line_id]["affiliated_railroad_id"] + "\", \"timetable_mode\", \"" + line_id + "\"" + (timetable_selected_station === null ? "" : ", \"" + add_slashes(timetable_selected_station) + "\"") + ");";
-        }
-        
-        buf += "'><abbr style='background-color: " + (config["dark_mode"] ? convert_color_dark_mode(railroad_info["lines"][line_id]["line_color"]) : railroad_info["lines"][line_id]["line_color"]) + ";'>" + ("line_symbol" in railroad_info["lines"][line_id] ? railroad_info["lines"][line_id]["line_symbol"] : railroad_info["lines"][line_id]["line_name"].substring(0, 1)) + "</abbr>" + escape_html(railroad_info["lines"][line_id]["line_name"]) + "</button>";
-    }
+    buf += "<div id='line_select_connecting_railroads'></div>";
     
     popup_inner_elm.innerHTML = buf;
+    
+    if (connecting_railroads.length >= 1) {
+        get_railroad_list(function (railroads, loading_completed) {
+            var buf = "<h4>乗り換え可能な路線系統</h4>";
+            
+            for (var connecting_railroad of connecting_railroads) {
+                if (!(connecting_railroad["railroad_id"] in railroads["railroads"])) {
+                    continue;
+                }
+                
+                var railroad_color = !config["dark_mode"] ? railroads["railroads"][connecting_railroad["railroad_id"]]["main_color"] : convert_color_dark_mode(railroads["railroads"][connecting_railroad["railroad_id"]]["main_color"]);
+                
+                if ("lines" in connecting_railroad) {
+                    buf += "<div class='connecting_railroad_link' style='border-color: " + railroad_color + ";'><h5>" + escape_html(railroads["railroads"][connecting_railroad["railroad_id"]]["railroad_name"]) + "</h5>";
+                    
+                    for (var line of connecting_railroad["lines"]) {
+                        buf += "<a href='javascript:void(0);' onclick='close_square_popup(); select_railroad(\"" + connecting_railroad["railroad_id"] + "\", \"" + (position_mode ? "position" : "timetable") + "_mode\", \"" + line["line_id"] + "\", \"" + add_slashes("station_name" in line ? line["station_name"] : station_name) + "\");'>" + escape_html(line["line_name"]) + "</a>";
+                    }
+                    
+                    buf += "</div>";
+                } else {
+                    buf += "<a href='javascript:void(0);' class='connecting_railroad_link' onclick='close_square_popup(); select_railroad(\"" + connecting_railroad["railroad_id"] + "\", \"" + (position_mode ? "position" : "timetable") + "_mode\");' style='border-color: " + railroad_color + ";'><h5>" + escape_html(railroads["railroads"][connecting_railroad["railroad_id"]]["railroad_name"]) + "</h5></a>";
+                }
+            }
+            
+            if (!loading_completed) {
+                buf += "<div class='loading_icon'></div>";
+            }
+            
+            document.getElementById("line_select_connecting_railroads").innerHTML = buf;
+        })
+    }
 }
 
 function convert_train_position_data (train_data) {
@@ -3787,8 +3844,6 @@ function show_station_timetable (line_id, station_name, is_inbound = null) {
 
 var timetable_selected_line = null;
 var timetable_promise;
-var timetable_selectable_lines = [];
-var timetable_selectable_joined_lines = null;
 
 var timetable_area_elm = document.getElementById("timetable_area");
 
@@ -3919,9 +3974,6 @@ function timetable_change_lines(line_id, force_station_select_mode = false) {
             var lines = [line_id];
         }
         
-        timetable_selectable_lines = [null, ...railroad_info["lines_order"]];
-        timetable_selectable_joined_lines = null;
-        
         timetable_selected_station = null;
         document.getElementById("timetable_back_button").style.display = "none";
         document.getElementById("direction_radio_area").style.display = "none";
@@ -3997,21 +4049,6 @@ function draw_station_timetable (station_name) {
     var next_station = timetable_get_neighboring_station(timetable_selected_line, station_name, 1);
     
     document.getElementById("timetable_station_name").innerHTML = "<a href='/railroad_" + railroad_info["railroad_id"] + "/timetable/" + timetable_selected_line + "/" + encodeURIComponent(previous_station) + "/' class='previous_button' onclick='event.preventDefault(); timetable_select_station(\"" + previous_station + "\");'>" + escape_html(previous_station) + "</a><h2>" + escape_html(railroad_info["lines"][timetable_selected_line]["stations"][station_index]["station_name"]) + "</h2><a href='/railroad_" + railroad_info["railroad_id"] + "/timetable/" + timetable_selected_line + "/" + encodeURIComponent(next_station) + "/' class='next_button' onclick='event.preventDefault(); timetable_select_station(\"" + next_station + "\");'>" + escape_html(next_station) + "</a>";
-    
-    timetable_selectable_joined_lines = [];
-    if ("connecting_lines" in railroad_info["lines"][timetable_selected_line]["stations"][station_index]) {
-        timetable_selectable_lines = [timetable_selected_line];
-        
-        for (var connecting_line of railroad_info["lines"][timetable_selected_line]["stations"][station_index]["connecting_lines"]) {
-            if (!("affiliated_railroad_id" in railroad_info["lines"][connecting_line["line_id"]])) {
-                timetable_selectable_lines.push(connecting_line["line_id"]);
-            } else {
-                timetable_selectable_joined_lines.push(connecting_line["line_id"]);
-            }
-        }
-    } else {
-        timetable_selectable_lines = [timetable_selected_line];
-    }
     
     if (document.getElementById("radio_inbound").checked) {
         var train_direction = "inbound_trains";
