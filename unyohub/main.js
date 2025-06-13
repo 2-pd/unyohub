@@ -1714,6 +1714,9 @@ function select_railroad (railroad_id, mode_name = "position_mode", mode_option_
     joined_railroad_formation_overviews = {};
     joined_railroad_series_icon_ids = {};
     
+    operation_table = null;
+    timetable = null;
+    operation_data = null;
     timetable_selected_line = null;
     
     load_railroad_data(railroad_id, true, function () {
@@ -5234,7 +5237,7 @@ function draw_operation_trains (operation_number, diagram_id_or_ts, is_today, se
                     buf += "<div class='coupling_info'>併結:";
                     for (var coupling_operation of operations_list) {
                         buf += " <a href='javascript:void(0);' onclick='operation_detail(\"" + coupling_operation + "\", " + diagram_id_or_ts + ");'>" + coupling_operation + "運用";
-                        if (is_today) {
+                        if (is_today && operation_data !== null) { //v25.06-2 暫定
                             buf += "<small>(" + (coupling_operation in operation_data["operations"] && operation_data["operations"][coupling_operation] !== null ? escape_html(operation_data["operations"][coupling_operation]["formations"]) : "情報なし") + ")</small>";
                         }
                         buf += "</a>";
