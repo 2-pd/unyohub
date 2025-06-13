@@ -2893,7 +2893,7 @@ function draw_train_position (hh_and_mm) {
                 for (var line_train of line_positions[direction_cnt][cnt]) {
                     var train = convert_train_position_data(line_train);
                     
-                    buf += "<span class='train_icon_wrapper' onclick='train_detail(\"" + position_selected_line + "\", \"" + train["train_number"] + "\", \"" + train["starting_station"] + "\", \"" + directions[direction_cnt] + "_trains\", " + (operation_data !== null ? "true" : "false") + ");' style='color: " + (config["dark_mode"] ? convert_font_color_dark_mode(get_train_color(train["train_title"], "#333333")) : get_train_color(train["train_title"], "#333333")) + ";'><img src='" + (operation_data !== null ? get_icon(train["first_formation"]) : UNYOHUB_GENERIC_TRAIN_ICON) + "' alt='' class='train_icon'";
+                    buf += "<span class='train_icon_wrapper' onclick='train_detail(\"" + position_selected_line + "\", \"" + train["train_number"] + "\", \"" + train["starting_station"] + "\", \"" + directions[direction_cnt] + "_trains\", " + (operation_data !== null ? "true" : "false") + ");' style='color: " + (config["dark_mode"] ? convert_font_color_dark_mode(get_train_color(train["train_title"], "#333333")) : get_train_color(train["train_title"], "#333333")) + ";'><img src='" + (operation_data !== null ? get_icon(train["first_formation"], train["railroad_id"]) : UNYOHUB_GENERIC_TRAIN_ICON) + "' alt='' class='train_icon'";
                     
                     if (railroad_info["deadhead_train_number_regexp"].test(train["train_title"])) {
                         buf += " style='opacity: 0.5;'"
