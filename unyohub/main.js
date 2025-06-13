@@ -3877,6 +3877,8 @@ function timetable_mode (load_data = true, draw_station_list = true) {
                             if (!promise_3_resolved) {
                                 promise_3_resolved = true;
                                 resolve();
+                            } else if (timetable_selected_station !== null && promise_1_resolved && promise_2_resolved) {
+                                timetable_select_station(timetable_selected_station);
                             }
                         }, reject, "joined_railroads" in railroad_info ? railroad_info["joined_railroads"] : null, false, date_string);
                     })
@@ -3890,7 +3892,7 @@ function timetable_mode (load_data = true, draw_station_list = true) {
             timetable_change_lines(null, true);
         }
     } else {
-        timetable_promise = new Promise(function (resolve) { resolve(); });
+        timetable_promise = Promise.resolve();
         
         update_timetable_date(operation_table["diagram_id"], operation_data !== null ? operation_data["operation_date"]: null);
     }
