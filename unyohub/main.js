@@ -6736,13 +6736,13 @@ function select_operation_to_write_data (line_id, train_number, starting_station
     for (var train_operation of train_operations) {
         var at_pos = train_operation.indexOf("@");
         if (at_pos === -1) {
-            var railroad_id = null;
+            var railroad_id = railroad_info["railroad_id"];
         } else {
             var railroad_id = train_operation.substring(at_pos + 1);
             train_operation = train_operation.substring(0, at_pos);
         }
         
-        for (var train of (railroad_id === null ? operation_table["operations"][train_operation]["trains"] : joined_operation_tables[railroad_id]["operations"][train_operation]["trains"])) {
+        for (var train of (railroad_id === railroad_info["railroad_id"] ? operation_table["operations"][train_operation]["trains"] : joined_operation_tables[railroad_id]["operations"][train_operation]["trains"])) {
             if (train["train_number"] === train_number && train["starting_station"] === starting_station) {
                 position_operations[("0" + train["position_forward"]).slice(-2)] = {
                     railroad_id : railroad_id,
