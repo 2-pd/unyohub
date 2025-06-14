@@ -1,6 +1,6 @@
 /*_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/
  *
- *  elem2img.js 24.10-1
+ *  elem2img.js 25.06-1
  *
  *_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/
  *
@@ -22,12 +22,11 @@ class Elem2Img {
         var css_code = "";
         for (var cnt = 0; cnt < css_list.length; cnt++) {
             try {
-                var css_rules = css_list[cnt].cssRules;
-                for (var cnt_2 = 0; cnt_2 < css_rules.length; cnt_2++) {
-                    if (css_rules[cnt_2].constructor.name === "CSSImportRule") {
-                        css_list.push(css_rules[cnt_2].styleSheet);
+                for (var css_rule of css_list[cnt].cssRules) {
+                    if (css_rule.constructor.name === "CSSImportRule") {
+                        css_list.push(css_rule.styleSheet);
                     } else {
-                        css_code += css_rules[cnt_2].cssText + "\n";
+                        css_code += css_rule.cssText + "\n";
                     }
                 }
             } catch (err) {
@@ -41,8 +40,8 @@ class Elem2Img {
             
             e2i.constructor_executed = true;
             
-            for (cnt = 0; cnt < e2i.func_queue.length; cnt++) {
-                e2i.func_queue[cnt]();
+            for (var func of e2i.func_queue) {
+                func();
             }
         }, css_code);
         
@@ -116,8 +115,7 @@ class Elem2Img {
     static embed_images (elem) {
         var promise_list = [];
         
-        var img_elems = [...elem.getElementsByTagName("img")];
-        img_elems.forEach (function (img_elem) {
+        for (let img_elem of elem.getElementsByTagName("img")) {
             if (img_elem.src.substring(0, 5) !== "data:") {
                 promise_list.push(new Promise(function (resolve) {
                     Elem2Img.encode_external_data(img_elem.src).then(function (base64_data) {
@@ -126,17 +124,16 @@ class Elem2Img {
                     });
                 }));
             }
-        });
+        }
         
-        var styled_elems = [elem, ...elem.querySelectorAll("*[style]")];
-        styled_elems.forEach (function (styled_elem) {
+        for (let styled_elem of [elem, ...elem.querySelectorAll("*[style]")]) {
             promise_list.push(new Promise(function (resolve) {
                 Elem2Img.css_embed_external_files(function (css_code) {
                     styled_elem.style.cssText = css_code;
                     resolve();
                 }, styled_elem.style.cssText);
             }));
-        });
+        }
         
         return Promise.all(promise_list);
     }
@@ -177,15 +174,16 @@ class Elem2Img {
     get_image (callback_func, elem, mime_type, scale, quality = 100) {
         var elem_2 = elem.cloneNode(true);
         
-        var canv_width = Math.round(elem.offsetWidth * scale);
-        var canv_height = Math.round(elem.offsetHeight * scale);
+        var rect = elem.getBoundingClientRect();
+        var canv_width = Math.round(rect.width * scale);
+        var canv_height = Math.round(rect.height * scale);
         
-        elem_2.style.transform = "translate(" + ((canv_width - elem.offsetWidth) / 2) + "px, " + ((canv_height - elem.offsetHeight) / 2) + "px) scale(" + scale + ")";
+        elem_2.style.transform = "translate(" + ((canv_width - rect.width) / 2) + "px, " + ((canv_height - rect.height) / 2) + "px) scale(" + scale + ")";
         elem_2.style.boxSizing = "border-box";
-        elem_2.style.width = elem.offsetWidth + "px";
-        elem_2.style.height = elem.offsetHeight + "px";
-        elem_2.style.maxWidth = elem.offsetWidth + "px";
-        elem_2.style.maxHeight = elem.offsetHeight + "px";
+        elem_2.style.width = rect.width + "px";
+        elem_2.style.height = rect.height + "px";
+        elem_2.style.maxWidth = rect.width + "px";
+        elem_2.style.maxHeight = rect.height + "px";
         elem_2.style.setProperty("margin" ,"0", "important");
         elem_2.style.position = "static";
         
