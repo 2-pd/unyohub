@@ -3649,8 +3649,11 @@ function train_detail (line_id, train_number, starting_station, train_direction,
             
             var diagram_id_or_ts = get_timestamp() + 86400;
         }
+        
+        var diagram_is_current_revision = true;
     } else {
         var diagram_id_or_ts = "\"" + operation_table["diagram_id"] + "\"";
+        var diagram_is_current_revision = (get_diagram_revision() === operation_table["diagram_revision"]);
     }
     
     buf += "</span>";
@@ -3842,7 +3845,7 @@ function train_detail (line_id, train_number, starting_station, train_direction,
                     var highlight_str = is_today && ((previous_departure_time !== null && previous_departure_time < now_str && train["departure_times"][cnt] >= now_str) || train["departure_times"][cnt] === now_str) ? " train_detail_departure_time_highlight" : "";
                     var onclick_func = "affiliated_railroad_id" in railroad_info["lines"][train["line_id"]] ? "close_square_popup(); select_railroad(\"" + railroad_info["lines"][train["line_id"]]["affiliated_railroad_id"] + "\", \"timetable_mode\", \"" + train["line_id"] + "\", \"" + add_slashes(stations[station_index]["station_name"]) + "\", " + train["is_inbound"] + ");" : "show_station_timetable(\"" + train["line_id"] + "\", \"" + stations[station_index]["station_name"] + "\", " + train["is_inbound"] + ");";
                     
-                    buf += "<div class='train_detail_departure_time" + (is_deadhead_train ? " deadhead_train_departure_time" : "") + highlight_str + "' style='border-color: " + (config["dark_mode"] ? convert_color_dark_mode(railroad_info["lines"][train["line_id"]]["line_color"]) : railroad_info["lines"][train["line_id"]]["line_color"]) + ";'>" + (!("is_signal_station" in stations[station_index]) || !stations[station_index]["is_signal_station"] ? "<u onclick='" + onclick_func + "' >" + escape_html(stations[station_index]["station_name"]) + "</u>" : escape_html(stations[station_index]["station_name"])) + "<span>" + train["departure_times"][cnt] + "</span></div>";
+                    buf += "<div class='train_detail_departure_time" + (is_deadhead_train ? " deadhead_train_departure_time" : "") + highlight_str + "' style='border-color: " + (config["dark_mode"] ? convert_color_dark_mode(railroad_info["lines"][train["line_id"]]["line_color"]) : railroad_info["lines"][train["line_id"]]["line_color"]) + ";'>" + (diagram_is_current_revision && (!("is_signal_station" in stations[station_index]) || !stations[station_index]["is_signal_station"]) ? "<u onclick='" + onclick_func + "'>" + escape_html(stations[station_index]["station_name"]) + "</u>" : escape_html(stations[station_index]["station_name"])) + "<span>" + train["departure_times"][cnt] + "</span></div>";
                     
                     previous_departure_time = train["departure_times"][cnt];
                 }
