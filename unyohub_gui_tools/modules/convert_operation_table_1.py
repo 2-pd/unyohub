@@ -208,7 +208,7 @@ def convert_operation_table_1 (mes, main_dir, file_name, json_file_name, digits_
         return False
     
     mes(os.path.basename(file_name) + " を読み込んでいます...")
-    with open(file_name, "r", encoding="utf-8") as csv_f:
+    with open(file_name, "r", encoding="utf-8-sig") as csv_f:
         csv_reader = csv.reader(csv_f)
         operations = [data_row for data_row in csv_reader]
     
@@ -455,7 +455,7 @@ def convert_operation_table_1 (mes, main_dir, file_name, json_file_name, digits_
     
     mes("データを " + os.path.basename(new_file_name) + " に書き込んでいます...")
     
-    with open(new_file_name, "w", encoding="utf-8") as csv_f:
+    with open(new_file_name, "w", encoding="utf-8-sig") as csv_f:
         if for_printing:
             csv_f.write("<table style=\"border-collapse: collapse;\">\n")
             
@@ -472,7 +472,7 @@ def convert_operation_table_1 (mes, main_dir, file_name, json_file_name, digits_
                 
             csv_f.write("</table>\n")
         else:
-            csv_writer = csv.writer(csv_f)
+            csv_writer = csv.writer(csv_f, lineterminator="\n")
             csv_writer.writerows(output_data)
     
     mes("処理が完了しました")

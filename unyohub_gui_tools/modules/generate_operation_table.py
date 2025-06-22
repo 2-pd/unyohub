@@ -38,7 +38,7 @@ def generate_operation_table (mes, main_dir, diagram_revision, diagram_id, gener
         mes("ファイル " + file_path + " が見つかりません", True)
         return False
     
-    with open(file_path, "r", encoding="utf-8") as csv_f:
+    with open(file_path, "r", encoding="utf-8-sig") as csv_f:
         csv_reader = csv.reader(csv_f)
         inbound_timetable = [data_row for data_row in csv_reader]
     
@@ -58,7 +58,7 @@ def generate_operation_table (mes, main_dir, diagram_revision, diagram_id, gener
         mes("ファイル " + file_path + " が見つかりません", True)
         return False
     
-    with open(file_path, "r", encoding="utf-8") as csv_f:
+    with open(file_path, "r", encoding="utf-8-sig") as csv_f:
         csv_reader = csv.reader(csv_f)
         outbound_timetable = [data_row for data_row in csv_reader]
     
@@ -394,19 +394,19 @@ def generate_operation_table (mes, main_dir, diagram_revision, diagram_id, gener
         main_dir + "/" + diagram_revision + "/timetable_" + outbound_file_base_name
     ]
     
-    with open(timetable_file_paths[0], "w", encoding="utf-8") as csv_f:
-        csv_writer = csv.writer(csv_f)
+    with open(timetable_file_paths[0], "w", encoding="utf-8-sig") as csv_f:
+        csv_writer = csv.writer(csv_f, lineterminator="\n")
         csv_writer.writerows(inbound_timetable)
     
-    with open(timetable_file_paths[1], "w", encoding="utf-8") as csv_f:
-        csv_writer = csv.writer(csv_f)
+    with open(timetable_file_paths[1], "w", encoding="utf-8-sig") as csv_f:
+        csv_writer = csv.writer(csv_f, lineterminator="\n")
         csv_writer.writerows(outbound_timetable)
     
     if operation_table is not None:
         operation_table_file_path = main_dir + "/" + diagram_revision + "/operation_table_" + diagram_id + ".csv"
         
-        with open(operation_table_file_path, "w", encoding="utf-8") as csv_f:
-            csv_writer = csv.writer(csv_f)
+        with open(operation_table_file_path, "w", encoding="utf-8-sig") as csv_f:
+            csv_writer = csv.writer(csv_f, lineterminator="\n")
             csv_writer.writerows(operation_table)
     
     
