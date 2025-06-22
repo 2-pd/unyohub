@@ -25,7 +25,7 @@ def get_hashed_id (id_str) :
         return "0000"
 
 
-def generate_operation_table (mes, main_dir, diagram_revision, diagram_id, generate_train_number = False):
+def generate_operation_table (mes, main_dir, diagram_revision, diagram_id, save_operation_table=True, generate_train_number=False):
     mes("運用情報付き時刻表から運用表と変換用時刻表を生成", is_heading=True)
     
     
@@ -234,7 +234,7 @@ def generate_operation_table (mes, main_dir, diagram_revision, diagram_id, gener
     if excluded_train_cnt >= 1:
         if generate_train_number:
             mes("《注意》運用番号のない列車を " + str(excluded_train_cnt) + "件 時刻表から除外しました")
-        else:
+        elif save_operation_table:
             mes("《注意》運用番号のない列車 " + str(excluded_train_cnt) + "件 が運用表に含まれません")
     
     
@@ -340,50 +340,51 @@ def generate_operation_table (mes, main_dir, diagram_revision, diagram_id, gener
                     outbound_timetable[0][cnt] = train_numbers[outbound_timetable[0][cnt]]
         
         
-        mes("出入庫情報をまとめています...")
-        
-        for cnt in range(1, len(operation_table)):
-            first_train_number = operation_table[cnt][6]
-            last_train_number = next((train_number for train_number in reversed(operation_table[cnt][6:]) if train_number != ""), None)
+        if save_operation_table:
+            mes("出入庫情報をまとめています...")
             
-            if first_train_number in inbound_timetable[0]:
-                first_train_index = inbound_timetable[0].index(first_train_number)
+            for cnt in range(1, len(operation_table)):
+                first_train_number = operation_table[cnt][6]
+                last_train_number = next((train_number for train_number in reversed(operation_table[cnt][6:]) if train_number != ""), None)
                 
-                for cnt_2 in range(4, len(inbound_timetable_t[first_train_index]) - 1):
-                    if inbound_timetable_t[first_train_index][cnt_2] == "":
-                        continue
+                if first_train_number in inbound_timetable[0]:
+                    first_train_index = inbound_timetable[0].index(first_train_number)
                     
-                    operation_table[cnt][2] = inbound_timetable_t[0][cnt_2]
-                    break
-            else:
-                first_train_index = outbound_timetable[0].index(first_train_number)
+                    for cnt_2 in range(4, len(inbound_timetable_t[first_train_index]) - 1):
+                        if inbound_timetable_t[first_train_index][cnt_2] == "":
+                            continue
+                        
+                        operation_table[cnt][2] = inbound_timetable_t[0][cnt_2]
+                        break
+                else:
+                    first_train_index = outbound_timetable[0].index(first_train_number)
+                    
+                    for cnt_2 in range(4, len(outbound_timetable_t[first_train_index]) - 1):
+                        if outbound_timetable_t[first_train_index][cnt_2] == "":
+                            continue
+                        
+                        operation_table[cnt][2] = outbound_timetable_t[0][cnt_2]
+                        break
                 
-                for cnt_2 in range(4, len(outbound_timetable_t[first_train_index]) - 1):
-                    if outbound_timetable_t[first_train_index][cnt_2] == "":
-                        continue
+                if last_train_number in inbound_timetable[0]:
+                    last_train_index = inbound_timetable[0].index(last_train_number)
                     
-                    operation_table[cnt][2] = outbound_timetable_t[0][cnt_2]
-                    break
-            
-            if last_train_number in inbound_timetable[0]:
-                last_train_index = inbound_timetable[0].index(last_train_number)
-                
-                for cnt_2 in reversed(range(4, len(inbound_timetable_t[last_train_index]) - 1)):
-                    if inbound_timetable_t[last_train_index][cnt_2] == "":
-                        continue
+                    for cnt_2 in reversed(range(4, len(inbound_timetable_t[last_train_index]) - 1)):
+                        if inbound_timetable_t[last_train_index][cnt_2] == "":
+                            continue
+                        
+                        operation_table[cnt][4] = inbound_timetable_t[0][cnt_2]
+                        break
+                else:
+                    last_train_index = outbound_timetable[0].index(last_train_number)
                     
-                    operation_table[cnt][4] = inbound_timetable_t[0][cnt_2]
-                    break
-            else:
-                last_train_index = outbound_timetable[0].index(last_train_number)
-                
-                for cnt_2 in reversed(range(4, len(outbound_timetable_t[last_train_index]) - 1)):
-                    if outbound_timetable_t[last_train_index][cnt_2] == "":
-                        continue
-                    
-                    operation_table[cnt][4] = outbound_timetable_t[0][cnt_2]
-                    break
-    else:
+                    for cnt_2 in reversed(range(4, len(outbound_timetable_t[last_train_index]) - 1)):
+                        if outbound_timetable_t[last_train_index][cnt_2] == "":
+                            continue
+                        
+                        operation_table[cnt][4] = outbound_timetable_t[0][cnt_2]
+                        break
+    elif save_operation_table:
         mes("《注意》運用表として出力すべきデータがありません")
     
     
@@ -402,12 +403,14 @@ def generate_operation_table (mes, main_dir, diagram_revision, diagram_id, gener
         csv_writer = csv.writer(csv_f, lineterminator="\n")
         csv_writer.writerows(outbound_timetable)
     
-    if operation_table is not None:
+    if save_operation_table and operation_table is not None:
         operation_table_file_path = main_dir + "/" + diagram_revision + "/operation_table_" + diagram_id + ".csv"
         
         with open(operation_table_file_path, "w", encoding="utf-8-sig") as csv_f:
             csv_writer = csv.writer(csv_f, lineterminator="\n")
             csv_writer.writerows(operation_table)
+    else:
+        mes("時刻表のみがCSVファイルに保存されました")
     
     
     mes("処理が完了しました")

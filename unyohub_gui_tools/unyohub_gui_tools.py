@@ -189,13 +189,14 @@ def console_copy ():
     main_win.clipboard_append(console_area.get("0.0", tk.END).strip())
 
 
-def select_diagram (callback_func, enable_generate_number_check=False):
+def select_diagram (callback_func, enable_save_operation_table_check=False):
     global config
     global main_win
     global select_diagram_win
     global select_diagram_callback
     global diagram_revision_list
     global diagram_id_entry
+    global save_operation_table_value
     global generate_number_value
     
     select_diagram_callback = callback_func
@@ -245,11 +246,18 @@ def select_diagram (callback_func, enable_generate_number_check=False):
     diagram_id_entry = tk.Entry(select_diagram_win, bg="#333333", fg="#ffffff", relief=tk.FLAT)
     diagram_id_entry.place(x=240, y=40, width=200)
     
-    if enable_generate_number_check:
+    if enable_save_operation_table_check:
+        save_operation_table_value = tk.BooleanVar()
+        save_operation_table_value.set(True)
+        save_operation_table_check = tk.Checkbutton(select_diagram_win, variable=save_operation_table_value, text="運用表を生成する", font=list_font, bg="#333333", fg="#999999", activebackground="#666666", activeforeground="#ffffff")
+        save_operation_table_check.place(x=240, y=80, width=200)
+        
         generate_number_value = tk.BooleanVar()
+        generate_number_value.set(False)
         generate_number_check = tk.Checkbutton(select_diagram_win, variable=generate_number_value, text="仮の列車番号を生成する", font=list_font, bg="#333333", fg="#999999", activebackground="#666666", activeforeground="#ffffff")
-        generate_number_check.place(x=240, y=80, width=200)
+        generate_number_check.place(x=240, y=110, width=200)
     else:
+        save_operation_table_value = None
         generate_number_value = None
     
     button_ok = tk.Button(select_diagram_win, text="OK", font=button_font, command=select_diagram_ok, bg="#666666", fg="#ffffff", relief=tk.FLAT, highlightbackground="#666666")
@@ -260,6 +268,7 @@ def select_diagram_ok ():
     global select_diagram_callback
     global diagram_revision_list
     global diagram_id_entry
+    global save_operation_table_value
     global generate_number_value
     
     diagram_revision = diagram_revision_list.get(diagram_revision_list.curselection())
@@ -271,8 +280,8 @@ def select_diagram_ok ():
     
     close_select_diagram_win()
     
-    if generate_number_value != None:
-        select_diagram_callback(diagram_revision, diagram_id, generate_number_value.get())
+    if save_operation_table_value != None:
+        select_diagram_callback(diagram_revision, diagram_id, save_operation_table_value.get(), generate_number_value.get())
     else:
         select_diagram_callback(diagram_revision, diagram_id)
 
@@ -339,12 +348,12 @@ def generate_operation_table ():
     select_diagram(generate_operation_table_exec, True)
 
 
-def generate_operation_table_exec (diagram_revision, diagram_id, generate_train_number):
+def generate_operation_table_exec (diagram_revision, diagram_id, save_operation_table, generate_train_number):
     try:
         clear_mes()
         
         generate_operation_table = importlib.import_module("modules.generate_operation_table")
-        timetable_file_paths = generate_operation_table.generate_operation_table(mes, config["main_dir"], diagram_revision, diagram_id, generate_train_number)
+        timetable_file_paths = generate_operation_table.generate_operation_table(mes, config["main_dir"], diagram_revision, diagram_id, save_operation_table, generate_train_number)
     except:
         error_mes(traceback.format_exc())
         
