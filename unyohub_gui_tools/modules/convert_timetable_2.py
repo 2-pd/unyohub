@@ -56,7 +56,7 @@ def convert_timetable_2 (mes, main_dir, diagram_revision, diagram_id):
                 continue
             
             mes(file_name + " を処理しています...")
-            with open(file_path, "r", encoding="utf-8") as csv_f:
+            with open(file_path, "r", encoding="utf-8-sig") as csv_f:
                 csv_reader = csv.reader(csv_f)
                 timetable_data = [data_row for data_row in csv_reader]
             

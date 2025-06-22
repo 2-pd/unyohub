@@ -57,7 +57,7 @@ def convert_operation_table_2 (mes, main_dir, file_name):
             station_list[line].append(station["station_name"])
     
     mes(os.path.basename(file_name) + " を読み込んでいます...")
-    with open(file_name, "r", encoding="utf-8") as csv_f:
+    with open(file_name, "r", encoding="utf-8-sig") as csv_f:
         csv_reader = csv.reader(csv_f)
         operation_data = [data_row for data_row in csv_reader]
     
