@@ -116,7 +116,9 @@ function get_default_config () {
         "colorize_corrected_posts" : false,
         "colorize_beginners_posts" : false,
         "colorize_formation_table" : true,
-        "simplify_operation_details" : false
+        "simplify_operation_details" : false,
+        "favorite_railroads" : [],
+        "favorite_stations" : []
     };
 }
 
@@ -793,12 +795,39 @@ function get_railroad_list (callback_func) {
     }
 }
 
-function update_railroad_list (railroads, area_elm, loading_completed) {
-    var categories_html = "";
-    var icons_html = "";
+var railroad_list_area;
+
+function update_railroad_list (railroads, area_elm = null, loading_completed = true) {
+    if (area_elm !== null) {
+        railroad_list_area = area_elm;
+    } else {
+        area_elm = railroad_list_area;
+    }
     
-    var heading_cnt = 0;
+    var favorite_heading_style = " style='color: #" + (config["dark_mode"] ? "808080" : "333333") + ";'";
     
+    var categories_html = "<li class='category_index' onclick='scroll_to_category(0);'" + favorite_heading_style + "><b>お気に入り</b></li>";
+    var icons_html = "<h3 class='icon_heading'" + favorite_heading_style + "><b>お気に入り</b></h3>";
+    
+    categories_html += "<li class='subcategory_index' onclick='scroll_to_category(1);'" + favorite_heading_style + "><span>路線系統</span></li>";
+    icons_html += "<h4 class='icon_heading'" + favorite_heading_style + "><span>お気に入り路線系統</span></h4>";
+    if (config["favorite_railroads"].length >= 1) {
+        for (var railroad_id of config["favorite_railroads"]) {
+            icons_html += "<a href='/railroad_" + railroad_id + "/' onclick='event.preventDefault(); select_railroad(\"" + railroad_id + "\");' oncontextmenu='event.preventDefault(); railroad_icon_context_menu(\"" + railroad_id + "\");'><img src='" + railroads["railroads"][railroad_id]["railroad_icon"] + "' alt='' style='background-color: " + railroads["railroads"][railroad_id]["main_color"] + ";'>" + escape_html(railroads["railroads"][railroad_id]["railroad_name"]) + "</a>";
+        }
+    } else {
+        icons_html += "<div class='informational_text'>アイコンを長押し/右クリックすると路線系統をお気に入りに追加できます</div>";
+    }
+    
+    categories_html += "<li class='subcategory_index' onclick='scroll_to_category(2);'" + favorite_heading_style + "><span>駅</span></li>";
+    icons_html += "<h4 class='icon_heading'" + favorite_heading_style + "><span>お気に入り駅</span></h4>";
+    if (config["favorite_stations"].length >= 1) {
+        
+    } else {
+        icons_html += "<div class='informational_text'>各駅の時刻表からその駅をお気に入りに追加できます</div>";
+    }
+    
+    var heading_cnt = 3;
     for (var category of railroads["categories"]) {
         var category_html = " style='color: " + (config["dark_mode"] ? convert_color_dark_mode(category["category_color"]) : category["category_color"]) + ";'><b>" + escape_html(category["category_name"]) + "</b></";
         categories_html += "<li class='category_index' onclick='scroll_to_category(" + heading_cnt + ");'" + category_html + "li>";
@@ -810,17 +839,17 @@ function update_railroad_list (railroads, area_elm, loading_completed) {
             for (var subcategory of category["subcategories"]) {
                 var subcategory_html = " style='color: " + (config["dark_mode"] ? convert_color_dark_mode(subcategory["subcategory_color"]) : subcategory["subcategory_color"]) + ";'><span>" + escape_html(subcategory["subcategory_name"]) + "</span></";
                 categories_html += "<li class='subcategory_index' onclick='scroll_to_category(" + heading_cnt + ");'" + subcategory_html + "li>";
-                icons_html += "<h4 class='icon_heading'" + subcategory_html + "h3>";
+                icons_html += "<h4 class='icon_heading'" + subcategory_html + "h4>";
                 
                 heading_cnt++;
                 
                 for (var railroad_id of subcategory["railroads"]) {
-                    icons_html += "<a href='/railroad_" + railroad_id + "/' onclick='event.preventDefault(); select_railroad(\"" + railroad_id + "\");'><img src='" + railroads["railroads"][railroad_id]["railroad_icon"] + "' alt='' style='background-color: " + railroads["railroads"][railroad_id]["main_color"] + ";'>" + escape_html(railroads["railroads"][railroad_id]["railroad_name"]) + "</a>";
+                    icons_html += "<a href='/railroad_" + railroad_id + "/' onclick='event.preventDefault(); select_railroad(\"" + railroad_id + "\");' oncontextmenu='event.preventDefault(); railroad_icon_context_menu(\"" + railroad_id + "\");'><img src='" + railroads["railroads"][railroad_id]["railroad_icon"] + "' alt='' style='background-color: " + railroads["railroads"][railroad_id]["main_color"] + ";'>" + escape_html(railroads["railroads"][railroad_id]["railroad_name"]) + "</a>";
                 }
             }
         } else if ("railroads" in category) {
             for (var railroad_id of category["railroads"]) {
-                icons_html += "<a href='/railroad_" + railroad_id + "/' onclick='event.preventDefault(); select_railroad(\"" + railroad_id + "\");'><img src='" + railroads["railroads"][railroad_id]["railroad_icon"] + "' alt='' style='background-color: " + railroads["railroads"][railroad_id]["main_color"] + ";'>" + escape_html(railroads["railroads"][railroad_id]["railroad_name"]) + "</a>";
+                icons_html += "<a href='/railroad_" + railroad_id + "/' onclick='event.preventDefault(); select_railroad(\"" + railroad_id + "\");' oncontextmenu='event.preventDefault(); railroad_icon_context_menu(\"" + railroad_id + "\");'><img src='" + railroads["railroads"][railroad_id]["railroad_icon"] + "' alt='' style='background-color: " + railroads["railroads"][railroad_id]["main_color"] + ";'>" + escape_html(railroads["railroads"][railroad_id]["railroad_name"]) + "</a>";
             }
         }
     }
@@ -862,6 +891,28 @@ function icon_area_onscroll () {
     
     for (cnt++; cnt < heading_elms.length; cnt++) {
         index_elms[cnt].classList.remove("active_index");
+    }
+}
+
+function railroad_icon_context_menu (railroad_id) {
+    for (var cnt = 0; cnt < config["favorite_railroads"].length; cnt++) {
+        if (config["favorite_railroads"][cnt] === railroad_id) {
+            if (confirm(railroads["railroads"][railroad_id]["railroad_name"] + " をお気に入りから削除しますか？")) {
+                config["favorite_railroads"].splice(cnt, 1);
+                save_config();
+                
+                update_railroad_list(railroads);
+            }
+            
+            return;
+        }
+    }
+    
+    if (confirm(railroads["railroads"][railroad_id]["railroad_name"] + " をお気に入りに追加しますか？")) {
+        config["favorite_railroads"].push(railroad_id);
+        save_config();
+        
+        update_railroad_list(railroads);
     }
 }
 
