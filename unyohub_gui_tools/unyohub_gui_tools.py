@@ -296,6 +296,10 @@ def change_main_dir ():
 def initialize_db ():
     global config
     
+    if not os.path.isfile("modules/initialize_db.py"):
+        messagebox.showinfo("処理モジュールがありません", "initialize_db.py が本ツールの modules フォルダに存在しないためこの機能は使用できません")
+        return
+    
     if messagebox.askokcancel("データベースのセットアップ", "現在の作業フォルダにデータベースファイルをセットアップしますか？"):
         try:
             clear_mes()
@@ -308,6 +312,10 @@ def initialize_db ():
 
 def embed_train_icon ():
     global config
+    
+    if not os.path.isfile("modules/embed_train_icon.py"):
+        messagebox.showinfo("処理モジュールがありません", "embed_train_icon.py が本ツールの modules フォルダに存在しないためこの機能は使用できません")
+        return
     
     dir_path = filedialog.askdirectory(title="アイコン画像のあるフォルダを選択してください", initialdir=config["main_dir"])
     
@@ -323,6 +331,10 @@ def embed_train_icon ():
 
 def generate_operation_table ():
     global config
+    
+    if not os.path.isfile("modules/generate_operation_table.py"):
+        messagebox.showinfo("処理モジュールがありません", "generate_operation_table.py が本ツールの modules フォルダに存在しないためこの機能は使用できません")
+        return
     
     select_diagram(generate_operation_table_exec, True)
 
@@ -351,6 +363,10 @@ def generate_operation_table_exec (diagram_revision, diagram_id, generate_train_
 def convert_timetable_1 (input_file_name=None, digits_count=None):
     global config
     
+    if not os.path.isfile("modules/convert_timetable_1.py"):
+        messagebox.showinfo("処理モジュールがありません", "convert_timetable_1.py が本ツールの modules フォルダに存在しないためこの機能は使用できません")
+        return
+    
     if input_file_name is None:
         file_name = filedialog.askopenfilename(title="変換対象の時刻表CSVファイルを選択してください", filetypes=[("CSV形式の表ファイル","*.csv")], initialdir=config["main_dir"])
     else:
@@ -376,6 +392,10 @@ def convert_timetable_1 (input_file_name=None, digits_count=None):
 def convert_timetable_2 ():
     global config
     
+    if not os.path.isfile("modules/convert_timetable_2.py"):
+        messagebox.showinfo("処理モジュールがありません", "convert_timetable_2.py が本ツールの modules フォルダに存在しないためこの機能は使用できません")
+        return
+    
     if not os.path.isfile(config["main_dir"] + "/railroad_info.json"):
         messagebox.showwarning("路線別時刻表を変換できません", "現在の作業フォルダには路線別時刻表ファイルの変換に必要な railroad_info.json が存在しません")
         return
@@ -396,6 +416,10 @@ def convert_timetable_2_exec (diagram_revision, diagram_id):
 
 def convert_operation_table_1 (for_printing):
     global config
+    
+    if not os.path.isfile("modules/convert_operation_table_1.py"):
+        messagebox.showinfo("処理モジュールがありません", "convert_operation_table_1.py が本ツールの modules フォルダに存在しないためこの機能は使用できません")
+        return
     
     if not os.path.isfile(config["main_dir"] + "/railroad_info.json"):
         messagebox.showwarning("運用表を変換できません", "現在の作業フォルダには運用表ファイルの変換に必要な railroad_info.json が存在しません")
@@ -445,6 +469,10 @@ def convert_operation_table_1 (for_printing):
 def convert_operation_table_2 (input_file_name=None):
     global config
     
+    if not os.path.isfile("modules/convert_operation_table_2.py"):
+        messagebox.showinfo("処理モジュールがありません", "convert_operation_table_2.py が本ツールの modules フォルダに存在しないためこの機能は使用できません")
+        return
+    
     if not os.path.isfile(config["main_dir"] + "/railroad_info.json"):
         messagebox.showwarning("運用表を変換できません", "現在の作業フォルダには運用表ファイルの変換に必要な railroad_info.json が存在しません")
         return
@@ -467,6 +495,10 @@ def convert_operation_table_2 (input_file_name=None):
 
 def initialize_moderation_db ():
     global config
+    
+    if not os.path.isfile("modules/initialize_moderation_db.py"):
+        messagebox.showinfo("処理モジュールがありません", "initialize_moderation_db.py が本ツールの modules フォルダに存在しないためこの機能は使用できません")
+        return
     
     db_file_path = filedialog.asksaveasfilename(title="モデレーション用データベースの保存先を選択してください", filetypes=[("SQLite3 データベースファイル","*.db")], initialdir=config["main_dir"], initialfile="moderation.db", defaultextension="db")
     if len(db_file_path) >= 1:
