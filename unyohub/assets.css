@@ -830,6 +830,35 @@ header {
     width: 40px;
 }
 
+#icon_area .wide_button {
+    position: relative;
+    
+    width: calc(100% - 10px) !important;
+    
+    padding: 10px 5px 10px 15px;
+    
+    border-color: #999999 !important;
+    
+    background-image: linear-gradient(315deg, #999999 12px, transparent 12px) !important;
+    
+    font-size: 16px;
+}
+
+.wide_button img {
+    position: absolute;
+    top: -1px;
+    left: -1px;
+    
+    width: 20px !important;
+    
+    padding: 14px 8px 14px 9px !important;
+    
+    border: none !important;
+    border-radius: 0 !important;
+    
+    background-image: linear-gradient(135deg, transparent, rgba(255, 255, 255, 0.4)) !important;
+}
+
 #splash_screen_announcement, #announcements_heading {
     background-image: url(data:image/webp;base64,UklGRp4BAABXRUJQVlA4TJEBAAAvR8AREDXIbSRJkqTWX2mjbjvT6z6yOgKubW3HnG+tse2JnfTJDZiVb8Co7dJ25d4q7VTDLivd2J7vmYC7LE+fUz9cEvfz40Sv3Ieci6HDMwo/RD1fjENUs8JrFpUn4FqFUYf4OSqfMOyDKvaxwPilSuH5hEXvuCV7sGorpOpbVpPBYN1iwqjohHWtFc97HiPy0D1UdkM/BHU1nBYcN/wWfDW4ChwN8YJYAguSt0DaICnIaDAWVDSUF7Q1tBQMN27BWcNpgbnBFCCRakiT7mn6ohr2zFfuHmuFfU3Zl1W6ZaJjfMtPx/eSbLSD3h0zEDa9guGv5B9jQzOkNW24aDlfkCPVunLmbELcxhi1SE2Udsoc5M0OkfL0LumMue9AsyOUAicIUk9YgSOtDCiWOENS2TvXcKiHd/8/4dj/d3+/gjDM32ObYum5mXLVMzCltydDakaSsXcdzNi5BzIITPDTnXDVSb2T1vSQMw1Jv7kGH3KqZoGf8Wt8yLlUViV/Je2Q7iFHM+p3zSL4XVf6GB+yDQA=);
     background-repeat: no-repeat;
@@ -4958,7 +4987,7 @@ button {
     color: #eeeeee;
 }
 
-input[type="radio"] + label, .chip + label {
+input[type="radio"] + label, .chip + label, .chip_ellipsis {
     display: inline-block;
     
     position: relative;
@@ -4975,7 +5004,7 @@ input[type="radio"] + label, .chip + label {
     color: #666666;
 }
 
-.dark_mode input[type="radio"] + label, .dark_mode .chip + label {
+.dark_mode input[type="radio"] + label, .dark_mode .chip + label, .dark_mode .chip_ellipsis {
     border-color: #808080;
     
     background-image: none;
@@ -5039,8 +5068,14 @@ input[type="radio"]:checked + label {
     background-image: url(data:image/webp;base64,UklGRoYAAABXRUJQVlA4THoAAAAvH8AHEC8w//M//0ICguax+wE+ggiDVWRbbS5FQEzwn6qAQUDK8+/lAfelCYjov9q2bRhn4JZ2Br6tbGWUaOSUYikGp6ZYSrIUf8fMbUYx21GWIrG3H0W77FJpbybjtsYA9NCXDH080ELsIHISQOhkNFIaOYbAGPCbAg==);
 }
 
-input[type="radio"] + label small, .chip + label small {
+input[type="radio"] + label small {
     font-size: 14px;
+}
+
+.chip_ellipsis {
+    padding: 4px 6px;
+    
+    font-size: 16px;
 }
 
 .popup h5 {
