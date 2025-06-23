@@ -26,6 +26,8 @@
     "require_comments_on_speculative_posts" : 未出庫の運用への情報投稿時にコメント入力を強制するか(BOOL値)  
 }  
   
+※上記の他、**Last-Modified**レスポンスヘッダーにインスタンス情報の最終更新日時が出力される  
+  
 **main.iniの変更日時がタイムスタンプ以前だった場合** :  
 文字列「NO_UPDATES_AVAILABLE」
 
@@ -113,7 +115,9 @@
         "last_modified_timestamp" : お知らせが更新されたタイムスタンプ(UTC、秒単位)  
     }...  
 ]  
-▲クライアント端末からAccept-Encodingヘッダーが送信されていた場合、このデータは自動的にgzip圧縮される
+▲クライアント端末からAccept-Encodingヘッダーが送信されていた場合、このデータは自動的にgzip圧縮される  
+  
+※上記の他、**Last-Modified**レスポンスヘッダーにお知らせの最終更新日時が出力される
 
 
 ## railroads.php
@@ -126,6 +130,8 @@ railroads.jsonを取得する
 **railroads.jsonの変更日時がタイムスタンプより新しかった場合** :  
 railroads.jsonの内容を返す  
 ▲クライアント端末からAccept-Encodingヘッダーが送信されていた場合、このデータは自動的にgzip圧縮される  
+  
+※上記の他、**Last-Modified**レスポンスヘッダーにrailroads.jsonの最終更新日時が出力される  
   
 **railroads.jsonの変更日時がタイムスタンプ以前だった場合** :  
 文字列「NO_UPDATES_AVAILABLE」  
@@ -146,6 +152,8 @@ railroads.jsonの内容を返す
 railroad_info.jsonの内容を返す  
 ▲クライアント端末からAccept-Encodingヘッダーが送信されていた場合、このデータは自動的にgzip圧縮される  
   
+※上記の他、**Last-Modified**レスポンスヘッダーにrailroad_info.jsonの最終更新日時が出力される  
+  
 **railroad_info.jsonの変更日時がタイムスタンプ以前だった場合** :  
 文字列「NO_UPDATES_AVAILABLE」  
   
@@ -165,6 +173,8 @@ railroad_info.jsonの内容を返す
 train_icons.jsonの内容を返す  
 ▲クライアント端末からAccept-Encodingヘッダーが送信されていた場合、このデータは自動的にgzip圧縮される  
   
+※上記の他、**Last-Modified**レスポンスヘッダーにtrain_icons.jsonの最終更新日時が出力される  
+  
 **train_icons.jsonの変更日時がタイムスタンプ以前だった場合** :  
 文字列「NO_UPDATES_AVAILABLE」  
   
@@ -183,6 +193,8 @@ train_icons.jsonの内容を返す
 **formations.jsonの変更日時がタイムスタンプより新しかった場合** :  
 formations.jsonの内容を返す  
 ▲クライアント端末からAccept-Encodingヘッダーが送信されていた場合、このデータは自動的にgzip圧縮される  
+  
+※上記の他、**Last-Modified**レスポンスヘッダーにformations.jsonの最終更新日時が出力される  
   
 **formations.jsonの変更日時がタイムスタンプ以前だった場合** :  
 文字列「NO_UPDATES_AVAILABLE」  
@@ -208,6 +220,8 @@ formations.jsonの内容を返す
     }...  
 }  
 ▲クライアント端末からAccept-Encodingヘッダーが送信されていた場合、このデータは自動的にgzip圧縮される  
+  
+※上記の他、**Last-Modified**レスポンスヘッダーに編成情報概要の最終更新日時が出力される  
   
 **タイムスタンプの時刻より後に概要情報が更新された編成がない場合** :  
 文字列「NO_UPDATES_AVAILABLE」  
@@ -310,6 +324,8 @@ formations.jsonの内容を返す
 diagram_revisions.txtの各行の文字列を要素とする配列をJSON化した文字列を返す  
 ▲クライアント端末からAccept-Encodingヘッダーが送信されていた場合、このデータは自動的にgzip圧縮される  
   
+※上記の他、**Last-Modified**レスポンスヘッダーにdiagram_revisions.txtの最終更新日時が出力される  
+  
 **diagram_revisions.txtの変更日時がタイムスタンプ以前だった場合** :  
 文字列「NO_UPDATES_AVAILABLE」  
   
@@ -329,6 +345,8 @@ diagram_revisions.txtの各行の文字列を要素とする配列をJSON化し�
 **diagram_info.jsonの変更日時がタイムスタンプより新しかった場合** :  
 diagram_info.jsonの内容を返す  
 ▲クライアント端末からAccept-Encodingヘッダーが送信されていた場合、このデータは自動的にgzip圧縮される  
+  
+※上記の他、**Last-Modified**レスポンスヘッダーにdiagram_info.jsonの最終更新日時が出力される  
   
 **diagram_info.jsonの変更日時がタイムスタンプ以前だった場合** :  
 文字列「NO_UPDATES_AVAILABLE」  
@@ -351,6 +369,8 @@ diagram_info.jsonの内容を返す
 JSON化された運用表の内容を返す  
 ▲クライアント端末からAccept-Encodingヘッダーが送信されていた場合、このデータは自動的にgzip圧縮される  
   
+※上記の他、**Last-Modified**レスポンスヘッダーに運用表JSONファイルの最終更新日時が出力される  
+  
 **JSON化された運用表の変更日時がタイムスタンプ以前だった場合** :  
 文字列「NO_UPDATES_AVAILABLE」  
   
@@ -371,6 +391,8 @@ JSON化された運用表の内容を返す
 **JSON化された時刻表の変更日時がタイムスタンプより新しかった場合** :  
 JSON化された時刻表の内容を返す  
 ▲クライアント端末からAccept-Encodingヘッダーが送信されていた場合、このデータは自動的にgzip圧縮される  
+  
+※上記の他、**Last-Modified**レスポンスヘッダーに時刻表JSONファイルの最終更新日時が出力される  
   
 **JSON化された時刻表の変更日時がタイムスタンプ以前だった場合** :  
 文字列「NO_UPDATES_AVAILABLE」  
@@ -401,6 +423,8 @@ JSON化された時刻表の内容を返す
     }...  
 }  
 ▲クライアント端末からAccept-Encodingヘッダーが送信されていた場合、このデータは自動的にgzip圧縮される  
+  
+※上記の他、**Last-Modified**レスポンスヘッダーに当該日の運用情報の最終更新日時が出力される  
   
 **タイムスタンプの時刻より後に運用情報が投稿されていない場合** :  
 文字列「NO_UPDATES_AVAILABLE」  

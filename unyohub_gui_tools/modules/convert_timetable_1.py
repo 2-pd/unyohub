@@ -12,7 +12,7 @@ def convert_timetable_1 (mes, file_name, digits_count):
     dir_path = os.path.dirname(file_name) + "/"
     
     mes(file_base_name + " を読み込んでいます...")
-    with open(file_name, "r", encoding="utf-8") as csv_f:
+    with open(file_name, "r", encoding="utf-8-sig") as csv_f:
         csv_reader = csv.reader(csv_f)
         timetable_data = [data_row for data_row in csv_reader]
     
@@ -196,8 +196,8 @@ def convert_timetable_1 (mes, file_name, digits_count):
         if line_id in rename_list:
             new_file_name = new_file_name[:new_file_name.rfind(".") + 1] + rename_list[line_id]
         
-        with open(dir_path + new_file_name + ".csv", "w", encoding="utf-8") as csv_f:
-            csv_writer = csv.writer(csv_f)
+        with open(dir_path + new_file_name + ".csv", "w", encoding="utf-8-sig") as csv_f:
+            csv_writer = csv.writer(csv_f, lineterminator="\n")
             csv_writer.writerows([list(x) for x in zip(*new_timetable_t[line_id])])
     
     mes("処理が完了しました")

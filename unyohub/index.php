@@ -279,7 +279,7 @@ if ($path_info_str === "/") {
         <div id="direction_radio_area" class="radio_area">
             <div id="timetable_station_name" class="heading_wrapper"></div>
             <div><input type="radio" name="direction_radio" id="radio_inbound" value="inbound" checked="checked" onchange="timetable_select_station(timetable_selected_station);"><label for="radio_inbound" id="radio_inbound_label">上り</label><input type="radio" name="direction_radio" id="radio_outbound" value="outbound" onchange="timetable_select_station(timetable_selected_station);"><label for="radio_outbound" id="radio_outbound_label">下り</label></div>
-            <input type="checkbox" id="show_deadhead_trains_check" class="chip" onchange="change_show_arriving_trains(this.checked);"><label for="show_deadhead_trains_check">回送・着列車を表示</label><input type="checkbox" id="show_starting_trains_only_check" class="chip" onchange="change_show_starting_trains_only(this.checked);"><label for="show_starting_trains_only_check">当駅始発のみ</label>
+            <input type="checkbox" id="show_deadhead_trains_check" class="chip" onchange="change_show_arriving_trains(this.checked);"><label for="show_deadhead_trains_check">回送・着列車</label><input type="checkbox" id="show_starting_trains_only_check" class="chip" onchange="change_show_starting_trains_only(this.checked);"><label for="show_starting_trains_only_check">当駅始発のみ</label><button type="button" class="chip_ellipsis" onclick="timetable_station_menu();">…</button>
         </div>
         <div id="timetable_area" class="wait_icon"></div>
     </article>

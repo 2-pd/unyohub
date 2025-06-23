@@ -48,6 +48,8 @@ _/_/_/_/ ファイル構成 _/_/_/_/
          └ diagram_info.json ・・・各改正日のダイヤに属するダイヤの情報
          └ operation_table_****.json ・・・JSONに変換された各ダイヤの運用表データ
          └ timetable_****.json ・・・JSONに変換された各ダイヤの時刻表データ
+      └ trash/ ・・・路線系統ごとのゴミ箱フォルダ
+         └ ****__****.bak ・・・置き換えられた古いファイル(ファイル名は「元のファイル名__そのファイルの更新日時」)
 └ api/
    └ ****.php ・・・クライアント端末と情報をやり取りするエンドポイント(詳細は別記)
 └ user/ ・・・ユーザー用機能
@@ -60,6 +62,7 @@ _/_/_/_/ ファイル構成 _/_/_/_/
    └ change_password.php ・・・パスワードの変更
    └ send_password_reset_email.php ・・・パスワードリセットメールを送信する
    └ reset_password.php ・・・ユーザーのパスワードをリセットしてランダムな値を設定する
+   └ clear_caches.php ・・・クライアント端末に保存されているアプリ設定やIndexedDBキャッシュを削除する機能をJavascriptで記述したPHPファイル
    └ user_config_styles.css ・・・ユーザー設定画面用スタイルシート
 └ admin/ ・・・管理画面
    └ admin_common.php ・・・管理画面共通関数等
@@ -80,8 +83,9 @@ _/_/_/_/ ファイル構成 _/_/_/_/
    └ unyohub ・・・コマンドラインやcronから実行可能なPythonファイル(詳細は別記、拡張子なし)
    └ modules/
       └ ****.py ・・・unyohubから呼び出される各種処理の本体となるPythonファイル
-└ service_worker.js ・・・サービスワーカースクリプト
+└ service_worker.php ・・・サービスワーカースクリプトを出力するPHPファイル
 └ manifest.json ・・・PWAマニフェスト
+└ version.php ・・・アプリ本体のバージョン番号等を記載するPHPファイル
 └ sitemap.php ・・・XML形式のサイトマップを表示するPHPファイル
 └ robots.txt ・・・検索エンジンのクローラーに対する指示ファイル
 
@@ -108,10 +112,14 @@ _/_/_/_/ アプリケーション情報定数 _/_/_/_/
 
 ※鉄道運用Hubからフォークして新たなアプリケーションを開発する場合は必要に応じて以下の値を変更
   UNYOHUB_APP_NAME  アプリケーション名
-  UNYOHUB_VERSION  バージョン文字列
   UNYOHUB_APP_INFO_URL  アプリ情報のURL
   UNYOHUB_REPOSITORY_URL  ソースコードリポジトリのURL
   UNYOHUB_LICENSE_TEXT  ライセンス情報文
+
+
+███ version.php ███
+
+  UNYOHUB_VERSION  バージョン文字列
 
 
 ███ main.js ███
@@ -122,7 +130,6 @@ _/_/_/_/ アプリケーション情報定数 _/_/_/_/
   UNYOHUB_CANCELED_TRAIN_ICON  運休列車用のアイコン画像バイナリをBASE64エンコードした文字列
 
 
-███ service_worker.js ███
+███ service_worker.php ███
 
   UNYOHUB_APP_ID  アプリケーション識別名
-  UNYOHUB_VERSION  バージョン文字列(index.phpのUNYOHUB_VERSIONと同じ文字列を指定)
