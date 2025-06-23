@@ -766,6 +766,14 @@ header {
     background-color: currentColor;
 }
 
+#icon_area h3 {
+    background-image: linear-gradient(225deg, rgba(255, 255, 255, 0.6), rgba(255, 255, 255, 0.6) 40px, transparent 41px, transparent), linear-gradient(300deg, rgba(255, 255, 255, 0.4), rgba(255, 255, 255, 0.4) 80px, transparent 81px, transparent);
+}
+
+.dark_mode #icon_area h3 {
+    background-image: linear-gradient(225deg, rgba(255, 255, 255, 0.4), rgba(255, 255, 255, 0.4) 40px, transparent 41px, transparent), linear-gradient(300deg, rgba(255, 255, 255, 0.2), rgba(255, 255, 255, 0.2) 80px, transparent 81px, transparent);
+}
+
 #icon_area h4, .popup h4 {
     margin: 10px 0 5px 0;
     
@@ -830,33 +838,54 @@ header {
     width: 40px;
 }
 
-#icon_area .wide_button {
+.railroad_link {
     position: relative;
     
-    width: calc(100% - 10px) !important;
+    width: calc(100% - 50px) !important;
+    height: 30px !important;
     
-    padding: 10px 5px 10px 15px;
+    margin: 10px 5px !important;
     
-    border-color: #999999 !important;
+    padding: 0 0 0 40px !important;
     
-    background-image: linear-gradient(315deg, #999999 12px, transparent 12px) !important;
+    border-radius: 4px;
     
-    font-size: 16px;
+    background-image: linear-gradient(315deg, #dddddd 8px, transparent 8px);
+    background-color: #f7f7f7;
+    
+    line-height: 30px !important;
+    font-size: 18px !important;
+    text-align: left !important;
 }
 
-.wide_button img {
+.dark_mode .railroad_link {
+    background-image: linear-gradient(315deg, #888888 8px, transparent 8px);
+    background-color: #777777;
+}
+
+.enlarge .railroad_link {
+    width: calc(100% - 60px) !important;
+    
+    padding: 5px 0 5px 50px !important;
+}
+
+.railroad_link img {
     position: absolute;
-    top: -1px;
-    left: -1px;
+    
+    top: 0;
+    left: 0;
     
     width: 20px !important;
     
-    padding: 14px 8px 14px 9px !important;
+    padding: 5px !important;
     
     border: none !important;
-    border-radius: 0 !important;
     
     background-image: linear-gradient(135deg, transparent, rgba(255, 255, 255, 0.4)) !important;
+}
+
+.enlarge .railroad_link img {
+    width: 30px !important;
 }
 
 #splash_screen_announcement, #announcements_heading {
@@ -3679,15 +3708,15 @@ a {
     
     margin: 0;
     
-    padding: 60px 0 0 0;
+    padding: 50px 0 0 0;
     
     background-size: 60px;
-    background-position: 50% 10px;
+    background-position: 50% 0;
     background-color: #f7f7f7;
 }
 
 #railroad_select_popup_inner {
-    height: calc(100% - 100px);
+    height: calc(100% - 90px);
 }
 
 .link_block {
