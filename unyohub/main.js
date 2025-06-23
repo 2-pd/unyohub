@@ -965,7 +965,9 @@ function on_off_line () {
 window.onoffline = on_off_line;
 
 function show_off_line_message () {
-    alert("端末がオフライン状態のため、前回アクセス時のデータを表示します。\nこの状態では一部の機能がご利用いただけません。");
+    var popup_inner_elm = open_square_popup("off_line_message_popup", true, "オフラインモード");
+    
+    popup_inner_elm.innerHTML = "<div class='informational_text'>端末がオフライン状態のため、前回のアクセス時に取得したデータを表示します。<br><br>この状態ではダウンロードされていないデータや一部の機能がご利用いただけません。</div>";
 }
 
 

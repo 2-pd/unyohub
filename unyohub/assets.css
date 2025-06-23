@@ -321,8 +321,8 @@ header {
     vertical-align: top;
 }
 
-.off_line_message {
-    background-image: url(data:image/webp;base64,UklGRoQCAABXRUJQVlA4THgCAAAvL8ALELfDOLJtGU3+8VkpCcws/8cfg2AQSZKTJuMH/05wgIM4bCNJctJP/vFhUSSgwXy1jhtJUqTt7cnWio6ZbD3b7nlaX45xSG3aBgxenXIHilQEMp8b4a4Z9n2DVMDr/yeYpwKu8KnMUAMMYRigwRoA1BiCVCIMDgIwhEEBFCUUghLSeQ0oBAqFg3QnYAA1DgA16lQUAgeBg2EKAMAQAAxRYz2Oyz+VHgEJEQkeAQEJERkhlRNu3zde/z/9/08fn/ZZryNPxxqSFEniO3RNkpGv+T0v+94/0++jdk9DKlzSkGqoHCXQrm0z3GxYt0FtpLa5qW3btvv/TzM77ztbfpymb42J6L8Dt5EUqZKSFg7q4BXas4uw7uGkrMKahsZgUXbyYm+IYKLj35t0gBbfbAw6ttgpiSR3bQeT0NUyXYDqNycYz4suiFq3crOVIU1gepOTzn/dFGr7DRlqlmYxZyGij1loTPnElzvc6afPt7+vjwpoUwpp1AN8nYkdGoArUUkuXo1ohJPSQYeGwKF+OPlilqywaZzZ0ZC0ftWzmSciYg/3j/I22BGW9vfUnJrDk6Avbdll+LH/8w3HRvdv1DmzoG2pIDBp/0YdyVuKFyKZOTvp/NKFuuWSyJFQJw01KOsTtwPL9sahMv6V6MbylFV9WgBElTrmFFCO7QK5UpxhQNWBNDDpx4usjMNfUvu8ElTwEMFZ12sF599khtdE5I+tZI9xwmWIygwcY0WVyN5LZIanvrqv39EIEuRCKegP0pT4IlpYOSBYhN+CBRUvQpN6zXufS3NKxNWcCgsM+0XsEPQXs0PMX8wOMX/hHaJ/2iBixxMFAQ==);
+.off_line_message, #off_line_message_popup h3 {
+    background-image: url(data:image/webp;base64,UklGRmIDAABXRUJQVlA4TFUDAAAvR8AREO/kNpIkRcrz38OL01Fm6qN/GxxEkiRFyY8X/LvBAQq+u3IbSZIi5fnv4cXpKPNDOY5kW1W+4u5k81kSIwGRBVt3efLPvfdkKkVanVO5Pi+P36+bKvE///95qsYIJUqUKQIAHNbookCKAg0MMUSJEiWGGGKGEsMUQQCEgFAABgUhIAgBEWDwIAJqADUCCEGNNwAHBwAAgCMAoAb/w8AXAgVBGAgDIVAoCANTCgBwAN5wcHgDAO4gBIQAAAgAOKUKdHBItVMA4M//v4Bf7oeQ/tq5H18p9zGJkkj34ZsbWCrZx++7n/f9PNzbYT529TwfM9TCM0OtoqFCVQzDxiBt2/YCb2x3rjnXttuntubVtm2b26sfq+TJk0/bpySi/xDctpEk2RIw93hmd2v/YPkP2uPtl9nJY0O93Y0N3b8HYpLClksrJdxXkhPVBIjWDkwXHhHmZPVjEwi0LmGxkialaV0g3ObPG07CKfkARB1cOhXKejQQtq/gDJ2g90Dc4R3kr8ZsM5C3JsIdEd8+kNKvz7h51QSSWpPuyozbJ5DYGE9GvAZBar/4O8T7ByBTO5I6X7S151at3PRW0XzqSC0g27FpF/8eQOVb+LqbhVu39XANqDau2PIGEGmaCkH/cp+FpDQCoqF2m3K4aU/ftwj1YLYTqVKz7NTPEJxIOqOenVnbIP7F8XILSSuiuJfZFy+uoSmPfRC5Br9Ojevtubrt/hUbMVfswZzklNvIuszjwqTvylhLKhfetYJSdnuuwdaGuNwD1q6APkd5XJis/eOYwKkWUI46olT9ZAnrAyagVE8mzcJnsgZYslEqPthxqksiUgaHM/XAlE/N1K7DWOfnKBmU/AS2GFT3C4t9hdT6hiMSFe6Ki9nE6QVSrc+ZvD3E8Zc39BrpJbA7WkUDgSrTomigkOYpWl9wvUCJvyjUx+XU77yTRRIG28lZHMlUEBHt6zfiqDCiKnWWVWsnAViZXWu2SgJOTveUksT9RH+bVpH5+xbqGnl5YPwzTvTERfDPAHu6tBcRK0JtKalChJKKRIZo6BWAWiHkaeD+IfyRplJ8pIlBkpIwa06e0B/LTH26GET20GIQ2UOLQWQPLQaRPbQYRPbQYhDYQ3wGa4E9/6BVAA==);
     background-repeat: no-repeat;
     background-size: 24px;
     background-color: #444444 !important;
@@ -330,11 +330,11 @@ header {
     color: #ffffff;
 }
 
-.dark_mode .off_line_message {
+.dark_mode .off_line_message, .dark_mode #off_line_message_popup h3 {
     background-color: #808080 !important;
 }
 
-#menu .off_line_message {
+#menu .off_line_message, #off_line_message_popup h3 {
     background-position: 50% 4px;
     
     padding-top: 28px;
@@ -3763,7 +3763,7 @@ a {
     color: #ff9999;
 }
 
-#announcements_heading, #railroad_announcements_heading {
+#announcements_heading, #railroad_announcements_heading, #off_line_message_popup h3 {
     width: calc(100% - 40px);
     height: 32px;
     
