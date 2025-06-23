@@ -897,19 +897,23 @@ function icon_area_onscroll () {
     }
 }
 
-function railroad_icon_context_menu (railroad_id) {
+function railroad_icon_context_menu (railroad_id, redraw_railroad_list = true) {
     for (var cnt = 0; cnt < config["favorite_railroads"].length; cnt++) {
         if (config["favorite_railroads"][cnt] === railroad_id) {
             if (confirm(railroads["railroads"][railroad_id]["railroad_name"] + " をお気に入りから削除しますか？")) {
                 config["favorite_railroads"].splice(cnt, 1);
                 save_config();
                 
-                update_railroad_list(railroads);
+                if (redraw_railroad_list) {
+                    update_railroad_list(railroads);
+                }
                 
                 mes("路線系統をお気に入りから削除しました");
+                
+                return true;
             }
             
-            return;
+            return false;
         }
     }
     
@@ -917,10 +921,16 @@ function railroad_icon_context_menu (railroad_id) {
         config["favorite_railroads"].push(railroad_id);
         save_config();
         
-        update_railroad_list(railroads);
+        if (redraw_railroad_list) {
+            update_railroad_list(railroads);
+        }
         
         mes("路線系統をお気に入りに追加しました");
+        
+        return true;
     }
+    
+    return false;
 }
 
 function show_railroad_list () {
@@ -4585,9 +4595,13 @@ function remove_favorite_station (railroad_id, line_id, station_name, redraw_rai
                 if (redraw_railroad_list) {
                     update_railroad_list(railroads);
                 }
+                
+                return true;
             }
         }
     }
+    
+    return false;
 }
 
 
@@ -7342,7 +7356,14 @@ function about_railroad_data () {
 function edit_config () {
     var popup_inner_elm = open_popup("config_popup", "アプリの設定");
     
-    var buf = "<input type='checkbox' id='dark_mode_check' class='toggle' onchange='change_config();'" + (config["dark_mode"] ? "checked='checked'" : "") + "><label for='dark_mode_check'>ダークテーマ</label>";
+    var buf = "<h4>お気に入り路線系統</h4>";
+    buf += "<ul id='config_favorite_railroads' class='rearrangeable_list'></ul>";
+    
+    buf += "<h4>お気に入り駅</h4>";
+    buf += "<ul id='config_favorite_stations' class='rearrangeable_list'></ul>";
+    
+    buf += "<h4>各種設定</h4>";
+    buf += "<input type='checkbox' id='dark_mode_check' class='toggle' onchange='change_config();'" + (config["dark_mode"] ? "checked='checked'" : "") + "><label for='dark_mode_check'>ダークテーマ</label>";
     buf += "<input type='checkbox' id='enlarge_display_size_check' class='toggle' onchange='change_config();'" + (config["enlarge_display_size"] ? "checked='checked'" : "") + "><label for='enlarge_display_size_check'>各種表示サイズの拡大</label>";
     buf += "<input type='checkbox' id='colorize_corrected_posts_check' class='toggle' onchange='change_config();'" + (config["colorize_corrected_posts"] ? "checked='checked'" : "") + "><label for='colorize_corrected_posts_check'>訂正された投稿を区別する</label>";
     buf += "<input type='checkbox' id='colorize_beginners_posts_check' class='toggle' onchange='change_config();'" + (config["colorize_beginners_posts"] ? "checked='checked'" : "") + "><label for='colorize_beginners_posts_check'>ビギナーの方の投稿を区別する</label>";
@@ -7357,6 +7378,9 @@ function edit_config () {
     buf += "<div class='informational_text'>変更内容は自動で保存されます</div>";
     
     popup_inner_elm.innerHTML = buf;
+    
+    config_draw_favorite_railroads();
+    config_draw_favorite_stations();
 }
 
 function change_config () {
@@ -7392,6 +7416,178 @@ function change_config () {
     update_display_settings(true);
     
     save_config();
+}
+
+function config_draw_favorite_railroads () {
+    var buf = "";
+    for (var cnt = 0; cnt < config["favorite_railroads"].length; cnt++) {
+        buf += "<li ontouchstart='rearrangeable_list_touch_start(event, \"config_favorite_railroads\", " + cnt + ");' ontouchmove='rearrangeable_list_touch_move(event, \"config_favorite_railroads\", " + cnt + ");' ontouchend='rearrange_favorite_railroads(" + cnt + ", rearrangeable_list_drag_end(\"config_favorite_railroads\"));' onmousedown='rearrangeable_list_mouse_down(event, \"config_favorite_railroads\", " + cnt + ");' onmousemove='rearrangeable_list_mouse_move(event, \"config_favorite_railroads\", " + cnt + ");' onmouseup='rearrange_favorite_railroads(" + cnt + ", rearrangeable_list_drag_end(\"config_favorite_railroads\"));'>" + escape_html(railroads["railroads"][config["favorite_railroads"][cnt]]["railroad_name"]) + "<button type='button' onclick='railroad_icon_context_menu(\"" + config["favorite_railroads"][cnt] + "\");'></button></li>";
+    }
+    
+    document.getElementById("config_favorite_railroads").innerHTML = buf;
+}
+
+function config_remove_favorite_railroad (railroad_id) {
+    if (railroad_icon_context_menu(railroad_id)) {
+        config_draw_favorite_railroads();
+    }
+}
+
+function config_draw_favorite_stations () {
+    var buf = "";
+    for (var cnt = 0; cnt < config["favorite_stations"].length; cnt++) {
+        buf += "<li ontouchstart='rearrangeable_list_touch_start(event, \"config_favorite_stations\", " + cnt + ");' ontouchmove='rearrangeable_list_touch_move(event, \"config_favorite_stations\", " + cnt + ");' ontouchend='rearrange_favorite_stations(" + cnt + ", rearrangeable_list_drag_end(\"config_favorite_stations\"));' onmousedown='rearrangeable_list_mouse_down(event, \"config_favorite_stations\", " + cnt + ");' onmousemove='rearrangeable_list_mouse_move(event, \"config_favorite_stations\", " + cnt + ");' onmouseup='rearrange_favorite_stations(" + cnt + ", rearrangeable_list_drag_end(\"config_favorite_stations\"));'>" + escape_html(config["favorite_stations"][cnt]["station_name"]) + "<small>(" + escape_html(railroads["railroads"][config["favorite_stations"][cnt]["railroad_id"]]["railroad_name"]) + ")</small><button type='button' onclick='config_remove_favorite_station(\"" + config["favorite_stations"][cnt]["railroad_id"] + "\", \"" + config["favorite_stations"][cnt]["line_id"] + "\", \"" + config["favorite_stations"][cnt]["station_name"] + "\");'></button></li>";
+    }
+    
+    document.getElementById("config_favorite_stations").innerHTML = buf;
+}
+
+function config_remove_favorite_station (railroad_id, line_id, station_name) {
+    if (remove_favorite_station(railroad_id, line_id, station_name)) {
+        config_draw_favorite_stations();
+    }
+}
+
+var rearrangeable_list_drag_start_y = null;
+var rearrangeable_list_item_new_index = 0;
+
+function rearrangeable_list_drag_start (page_y, list_id, item_index) {
+    var list_elm = document.getElementById(list_id);
+    
+    rearrangeable_list_drag_start_y = page_y - list_elm.getBoundingClientRect().top;
+    rearrangeable_list_item_new_index = item_index;
+    
+    var items = list_elm.getElementsByTagName("li");
+    
+    list_elm.style.height = items.length * 48 + "px";
+    
+    for (var cnt = 0; cnt < items.length; cnt++) {
+        items[cnt].style.position = "absolute";
+        items[cnt].style.top = cnt * 48 + "px";
+        if (cnt === item_index) {
+            items[cnt].style.zIndex = "2";
+        } else {
+            items[cnt].style.zIndex = "1";
+        }
+    }
+}
+
+function rearrangeable_list_touch_start (event, list_id, item_index) {
+    rearrangeable_list_drag_start(event.touches[0].pageY, list_id, item_index);
+}
+
+function rearrangeable_list_mouse_down (event, list_id, item_index) {
+    rearrangeable_list_drag_start(event.pageY, list_id, item_index);
+}
+
+function rearrangeable_list_drag_move (page_y, list_id, item_index) {
+    var list_elm = document.getElementById(list_id);
+    
+    var touch_y = page_y - list_elm.getBoundingClientRect().top;
+    
+    var items = list_elm.getElementsByTagName("li");
+    
+    if (touch_y < 0) {
+        touch_y = 0;
+    } else if (touch_y > items.length * 48) {
+        touch_y = items.length * 48;
+    }
+    
+    var move_amount = touch_y - rearrangeable_list_drag_start_y;
+    rearrangeable_list_item_new_index = item_index + Math.round(move_amount / 48);
+    
+    if (rearrangeable_list_item_new_index < 0) {
+        rearrangeable_list_item_new_index = 0;
+    } else if (rearrangeable_list_item_new_index >= items.length) {
+        rearrangeable_list_item_new_index = items.length - 1;
+    }
+    
+    for (var cnt = 0; cnt < items.length; cnt++) {
+        if (cnt === item_index) {
+            items[cnt].style.top = 48 * cnt + move_amount + "px";
+        } else if (cnt < item_index && cnt >= rearrangeable_list_item_new_index) {
+            items[cnt].style.top = 48 * (cnt + 1) + "px";
+            items[cnt].classList.add("rearrangeable_list_item_moving");
+        } else if (cnt > item_index && cnt <= rearrangeable_list_item_new_index) {
+            items[cnt].style.top = 48 * (cnt - 1) + "px";
+            items[cnt].classList.add("rearrangeable_list_item_moving");
+        } else {
+            items[cnt].style.top = 48 * cnt + "px";
+        }
+    }
+}
+
+function rearrangeable_list_touch_move (event, list_id, item_index) {
+    event.preventDefault();
+    
+    rearrangeable_list_drag_move(event.touches[0].pageY, list_id, item_index);
+}
+
+function rearrangeable_list_mouse_move (event, list_id, item_index) {
+    if (rearrangeable_list_drag_start_y !== null) {
+        rearrangeable_list_drag_move(event.pageY, list_id, item_index);
+    }
+}
+
+function rearrangeable_list_drag_end (list_id) {
+    rearrangeable_list_drag_start_y === null;
+    
+    for (var list_item of document.getElementById(list_id).getElementsByTagName("li")) {
+        list_item.style.position = "static";
+        list_item.classList.remove("rearrangeable_list_item_moving");
+    }
+    
+    return rearrangeable_list_item_new_index;
+}
+
+function rearrange_favorite_railroads (old_index, new_index) {
+    if (new_index === old_index) {
+        return;
+    }
+    
+    var new_favorite_railroads = [];
+    var moving_item_data = config["favorite_railroads"].splice(old_index, 1)[0];
+    for (var cnt = 0; cnt <= config["favorite_railroads"].length; cnt++) {
+        if (cnt === new_index) {
+            new_favorite_railroads.push(moving_item_data);
+        }
+        
+        if (cnt < config["favorite_railroads"].length) {
+            new_favorite_railroads.push(config["favorite_railroads"][cnt]);
+        }
+    }
+    
+    config["favorite_railroads"] = new_favorite_railroads;
+    
+    save_config();
+    
+    config_draw_favorite_railroads();
+    update_display_settings(true);
+}
+
+function rearrange_favorite_stations (old_index, new_index) {
+    if (new_index === old_index) {
+        return;
+    }
+    
+    var new_favorite_stations = [];
+    var moving_item_data = config["favorite_stations"].splice(old_index, 1)[0];
+    for (var cnt = 0; cnt <= config["favorite_stations"].length; cnt++) {
+        if (cnt === new_index) {
+            new_favorite_stations.push(moving_item_data);
+        }
+        
+        if (cnt < config["favorite_stations"].length) {
+            new_favorite_stations.push(config["favorite_stations"][cnt]);
+        }
+    }
+    
+    config["favorite_stations"] = new_favorite_stations;
+    
+    save_config();
+    
+    config_draw_favorite_stations();
+    update_display_settings(true);
 }
 
 function reset_config_value () {

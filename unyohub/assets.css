@@ -4950,7 +4950,7 @@ input[type="checkbox"], input[type="radio"] {
     background-color: #ffffff;
 }
 
-.wide_select{
+.wide_select {
     display: block;
     
     width: 300px;
@@ -5082,6 +5082,83 @@ input[type="radio"] + label small {
     margin: 20px 0 0 0;
     
     font-size: 16px;
+}
+
+.rearrangeable_list {
+    position: relative;
+    
+    width: calc(100% - 20px);
+    
+    margin: 10px;
+    
+    padding: 0;
+    
+    background-color: #eeeeee;
+}
+
+.dark_mode .rearrangeable_list {
+    background-color: #555555;
+}
+
+.rearrangeable_list li {
+    width: calc(100% - 100px);
+    height: 24px;
+    
+    padding: 12px 50px 11px 50px;
+    
+    border-bottom: 1px solid #cccccc;
+    
+    background-image: url(data:image/webp;base64,UklGRjgAAABXRUJQVlA4TCwAAAAvX8AXEA8wmZM5mWMW8FAUgAykgf4tNRDAzl9E/wUEhR6YgZMy5WyPeXhRAA==);
+    background-repeat: no-repeat;
+    background-size: 48px;
+    background-position: left top;
+    background-color: #ffffff;
+    
+    font-size: 18px;
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+    
+    list-style: none;
+}
+
+.dark_mode .rearrangeable_list li {
+    border-color: #666666;
+    
+    background-color: #444444;
+}
+
+.rearrangeable_list li:last-child {
+    padding-bottom: 12px;
+    
+    border-bottom: none;
+}
+
+.rearrangeable_list_item_moving {
+    transition-duration: 0.2s;
+    transition-property: top;
+}
+
+.rearrangeable_list small {
+    margin-left: 5px;
+    
+    font-size: 14px;
+    color: #999999;
+}
+
+.rearrangeable_list button {
+    width: 48px;
+    height: 48px;
+    
+    margin: -12px -50px 0 0;
+    
+    border: none;
+    
+    background-image: url(data:image/webp;base64,UklGRn4BAABXRUJQVlA4THEBAAAvX8AXEAehpm0kycOfyWLbcqt7aahpG0ny8Gey2Lbc6l41bSNJHv5MFtuWW93LOJKkNngzT97kH5fLwSNVVJWemfTe4/8PAP9/YGEB+P9LAA0PIAE8dJI/Sb/3NgxcXAyMJAUjSV5r7e7uCgiybadtwsxmtva/y8TS+/JTmZQqov8O3EZSJHf14jH0/kH9pldtpNW/q4664O7asHJ27dwqGq3eQV7h+jje7TqGwL1xMoYT1163Xg1JXseOK9PfhvLDSF7HhqvUZOoe0D7XLLnmkTmy9oFrGoGI2tdc/Q1F0vFEcesSoeD2Z0V2iEyVP+77RO0DWxp5tAnbb9mKCETQfsVWoWnxsAIWbDPYgnRsDew8g2kUu654GKEERZfAYQRz4tujWYez48vArBNkw1eaR6kkS7758I2Y/s7odQS+Wpt5hmmBXkfN198iScGrAvvKYOesHHCwE1yQ2tm6oLCzckFlZ+GCmZ3OBY2dp/r1rjwA);
+    background-repeat: no-repeat;
+    background-size: 48px;
+    
+    float: right;
 }
 
 #unyohub_icon {
