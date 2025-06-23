@@ -6481,6 +6481,9 @@ function write_operation_data (railroad_id, yyyy_mm_dd, operation_number, train_
     
     var operation_info = post_railroad_id === railroad_info["railroad_id"] ? operation_table["operations"][operation_number] : joined_operation_tables[post_railroad_id]["operations"][operation_number];
     
+    var existing_operation_data = post_railroad_id === railroad_info["railroad_id"] ? operation_data["operations"] : joined_operation_data[post_railroad_id]["operations"];
+    var existing_posts_count = operation_number in existing_operation_data ? existing_operation_data[operation_number]["posts_count"] : 0;
+    
     var alias_of_forward_direction = escape_html(railroad_info["alias_of_forward_direction"]);
     
     var buf = "<div id='write_operation_data_area'>";
@@ -6504,13 +6507,17 @@ function write_operation_data (railroad_id, yyyy_mm_dd, operation_number, train_
     buf += "<div class='informational_text'>複数の編成が連結している場合は、" + alias_of_forward_direction + "の編成から順に「+」で区切って入力してください。<br>不明な編成には「不明」、運休情報は「運休」を入力可能です。</div>";
     
     buf += "<input type='checkbox' id='operation_data_details'";
-    if (speculative_post && instance_info["require_comments_on_speculative_posts"]) {
+    if ((speculative_post && instance_info["require_comments_on_speculative_posts"]) || existing_posts_count >= 1) {
         buf += " checked='checked'";
     }
     buf += "><label for='operation_data_details' class='drop_down'>詳細情報</label><div>";
     
     buf += "<h4>情報の種類</h4>";
     buf += "<div class='radio_area'><input type='radio' name='operation_data_type' id='operation_data_type_normal' checked='checked'><label for='operation_data_type_normal'>通常・訂正の情報</label><input type='radio' name='operation_data_type' id='operation_data_type_reassign'><label for='operation_data_type_reassign'>新しい差し替え情報</label></div>";
+    
+    if (existing_posts_count >= 1) {
+        buf += "<div class='informational_text'>既にこの運用に対して投稿されている情報と同じ編成を投稿する場合や、既に投稿されている運用情報が見間違いであると思われる場合に正しい編成の情報で上書きをする場合は「通常・訂正の情報」を、<br>既に投稿されている編成がダイヤ乱れや車両トラブルにより別の編成に取り替えられたことを最初に報告する場合は「新しい差し替え情報」を選択してください。</div>";
+    }
     
     if (post_yyyy_mm_dd === yyyy_mm_dd_today) {
         var now_hh_mm = get_hh_mm();
