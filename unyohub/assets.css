@@ -801,6 +801,8 @@ header {
     text-decoration: none;
     
     overflow: hidden;
+    
+    -webkit-touch-callout: none;
 }
 
 .enlarge #icon_area a {
@@ -836,6 +838,10 @@ header {
 
 .enlarge #icon_area img {
     width: 40px;
+}
+
+#icon_area .informational_text {
+    font-size: 14px;
 }
 
 .railroad_link {
@@ -4896,7 +4902,7 @@ input[type="checkbox"], input[type="radio"] {
     
     position: relative;
     
-    margin: 20px 0 0 max(20px, calc(50% - 230px));
+    margin: 10px 0 20px max(20px, calc(50% - 230px));
     
     padding-left: 54px;
     

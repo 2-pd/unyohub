@@ -31,6 +31,8 @@ _/_/_/_/ クライアント側ローカルストレージ _/_/_/_/
     "colorize_beginners_posts" : ビギナーユーザーから投稿された情報を色で区別して表示するか(BOOL値),
     "colorize_formation_table" : 編成表の表示に実際の車体色を反映するか(BOOL値),
     "simplify_operation_details" : 運用表の各運用詳細情報閲覧時に列車情報を簡略表示するか(BOOL値),
+    "show_favorite_railroads" : 路線系統選択画面にお気に入り路線系統を表示するか(BOOL値),
+    "show_favorite_stations" : 路線系統選択画面にお気に入り駅を表示するか(BOOL値),
     "favorite_railroads" : お気に入り路線系統の路線系統識別名を表示する順に配列で,
     "favorite_stations" : [ お気に入り駅の情報を表示する順に配列で
         {
