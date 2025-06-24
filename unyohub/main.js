@@ -6482,7 +6482,7 @@ function write_operation_data (railroad_id, yyyy_mm_dd, operation_number, train_
     var operation_info = post_railroad_id === railroad_info["railroad_id"] ? operation_table["operations"][operation_number] : joined_operation_tables[post_railroad_id]["operations"][operation_number];
     
     var existing_operation_data = post_railroad_id === railroad_info["railroad_id"] ? operation_data["operations"] : joined_operation_data[post_railroad_id]["operations"];
-    var existing_posts_count = operation_number in existing_operation_data ? existing_operation_data[operation_number]["posts_count"] : 0;
+    var existing_posts_count = (operation_number in existing_operation_data && existing_operation_data[operation_number] !== null) ? existing_operation_data[operation_number]["posts_count"] : 0;
     
     var alias_of_forward_direction = escape_html(railroad_info["alias_of_forward_direction"]);
     
