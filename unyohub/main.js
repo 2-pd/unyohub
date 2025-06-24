@@ -117,6 +117,8 @@ function get_default_config () {
         "colorize_beginners_posts" : false,
         "colorize_formation_table" : true,
         "simplify_operation_details" : false,
+        "show_favorite_railroads" : true,
+        "show_favorite_stations" : true,
         "favorite_railroads" : [],
         "favorite_stations" : []
     };
@@ -807,30 +809,49 @@ function update_railroad_list (railroads, area_elm = null, loading_completed = t
     var favorite_category_style = " style='color: #" + (!config["dark_mode"] ? "333333" : "999999") + ";'";
     var favorite_subcategory_style = " style='color: #808080;'";
     
-    var categories_html = "<li class='category_index' onclick='scroll_to_category(0);'" + favorite_category_style + "><b>お気に入り</b></li>";
-    var icons_html = "<h3 class='icon_heading'" + favorite_category_style + "><b>お気に入り</b></h3>";
-    
-    categories_html += "<li class='subcategory_index' onclick='scroll_to_category(1);'" + favorite_subcategory_style + "><span>路線系統</span></li>";
-    icons_html += "<h4 class='icon_heading'" + favorite_subcategory_style + "><span>お気に入り路線系統</span></h4>";
-    if (config["favorite_railroads"].length >= 1) {
-        for (var railroad_id of config["favorite_railroads"]) {
-            icons_html += "<a href='/railroad_" + railroad_id + "/' onclick='event.preventDefault(); select_railroad(\"" + railroad_id + "\");' oncontextmenu='event.preventDefault(); railroad_icon_context_menu(\"" + railroad_id + "\");' ontouchstart='railroad_icon_touch_start(event);' ontouchmove='railroad_icon_touch_move(event);' ontouchend='railroad_icon_touch_end(\"" + railroad_id + "\");'><img src='" + railroads["railroads"][railroad_id]["railroad_icon"] + "' alt='' style='background-color: " + railroads["railroads"][railroad_id]["main_color"] + ";'>" + escape_html(railroads["railroads"][railroad_id]["railroad_name"]) + "</a>";
+    if (config["show_favorite_railroads"] || config["show_favorite_stations"]) {
+        var categories_html = "<li class='category_index' onclick='scroll_to_category(0);'" + favorite_category_style + "><b>お気に入り</b></li>";
+        var icons_html = "<h3 class='icon_heading'" + favorite_category_style + "><b>お気に入り</b></h3>";
+        
+        var heading_cnt = 1;
+        
+        if (config["show_favorite_railroads"]) {
+            if (config["show_favorite_stations"]) {
+                categories_html += "<li class='subcategory_index' onclick='scroll_to_category(1);'" + favorite_subcategory_style + "><span>路線系統</span></li>";
+                icons_html += "<h4 class='icon_heading'" + favorite_subcategory_style + "><span>お気に入り路線系統</span></h4>";
+                
+                heading_cnt = 3;
+            }
+            
+            if (config["favorite_railroads"].length >= 1) {
+                for (var railroad_id of config["favorite_railroads"]) {
+                    icons_html += "<a href='/railroad_" + railroad_id + "/' onclick='event.preventDefault(); select_railroad(\"" + railroad_id + "\");' oncontextmenu='event.preventDefault(); railroad_icon_context_menu(\"" + railroad_id + "\");' ontouchstart='railroad_icon_touch_start(event);' ontouchmove='railroad_icon_touch_move(event);' ontouchend='railroad_icon_touch_end(\"" + railroad_id + "\");'><img src='" + railroads["railroads"][railroad_id]["railroad_icon"] + "' alt='' style='background-color: " + railroads["railroads"][railroad_id]["main_color"] + ";'>" + escape_html(railroads["railroads"][railroad_id]["railroad_name"]) + "</a>";
+                }
+            } else {
+                icons_html += "<div class='informational_text'>アイコンを長押し/右クリックすると路線系統をお気に入りに追加できます</div>";
+            }
+        }
+        
+        if (config["show_favorite_stations"]) {
+            if (config["show_favorite_railroads"]) {
+                categories_html += "<li class='subcategory_index' onclick='scroll_to_category(2);'" + favorite_subcategory_style + "><span>駅</span></li>";
+                icons_html += "<h4 class='icon_heading'" + favorite_subcategory_style + "><span>お気に入り駅</span></h4>";
+            }
+            
+            if (config["favorite_stations"].length >= 1) {
+                for (var station_data of config["favorite_stations"]) {
+                    icons_html += "<a href='javascript:void(0);' class='railroad_link' onclick='select_railroad(\"" + station_data["railroad_id"] + "\", \"timetable_mode\", \"" + station_data["line_id"] + "\", \"" + station_data["station_name"] + "\");' oncontextmenu='event.preventDefault(); remove_favorite_station(\"" + station_data["railroad_id"] + "\", \"" + station_data["line_id"] + "\", \"" + station_data["station_name"] + "\", true);'><img src='" + railroads["railroads"][station_data["railroad_id"]]["railroad_icon"] + "' alt='' style='background-color: " + railroads["railroads"][station_data["railroad_id"]]["main_color"] + ";'>" + escape_html(station_data["station_name"]) + "</a>";
+                }
+            } else {
+                icons_html += "<div class='informational_text'>各駅の時刻表からその駅をお気に入りに追加できます</div>";
+            }
         }
     } else {
-        icons_html += "<div class='informational_text'>アイコンを長押し/右クリックすると路線系統をお気に入りに追加できます</div>";
+        var categories_html = "";
+        var icons_html = "";
+        var heading_cnt = 0;
     }
     
-    categories_html += "<li class='subcategory_index' onclick='scroll_to_category(2);'" + favorite_subcategory_style + "><span>駅</span></li>";
-    icons_html += "<h4 class='icon_heading'" + favorite_subcategory_style + "><span>お気に入り駅</span></h4>";
-    if (config["favorite_stations"].length >= 1) {
-        for (var station_data of config["favorite_stations"]) {
-            icons_html += "<a href='javascript:void(0);' class='railroad_link' onclick='select_railroad(\"" + station_data["railroad_id"] + "\", \"timetable_mode\", \"" + station_data["line_id"] + "\", \"" + station_data["station_name"] + "\");' oncontextmenu='event.preventDefault(); remove_favorite_station(\"" + station_data["railroad_id"] + "\", \"" + station_data["line_id"] + "\", \"" + station_data["station_name"] + "\", true);'><img src='" + railroads["railroads"][station_data["railroad_id"]]["railroad_icon"] + "' alt='' style='background-color: " + railroads["railroads"][station_data["railroad_id"]]["main_color"] + ";'>" + escape_html(station_data["station_name"]) + "</a>";
-        }
-    } else {
-        icons_html += "<div class='informational_text'>各駅の時刻表からその駅をお気に入りに追加できます</div>";
-    }
-    
-    var heading_cnt = 3;
     for (var category of railroads["categories"]) {
         var category_html = " style='color: " + (config["dark_mode"] ? convert_color_dark_mode(category["category_color"]) : category["category_color"]) + ";'><b>" + escape_html(category["category_name"]) + "</b></";
         categories_html += "<li class='category_index' onclick='scroll_to_category(" + heading_cnt + ");'" + category_html + "li>";
@@ -7391,15 +7412,17 @@ function edit_config () {
     
     var buf = "<h4>お気に入り路線系統</h4>";
     buf += "<ul id='config_favorite_railroads' class='rearrangeable_list'></ul>";
+    buf += "<input type='checkbox' id='show_favorite_railroads_check' class='toggle' onchange='change_config();'" + (config["show_favorite_railroads"] ? " checked='checked'" : "") + "><label for='show_favorite_railroads_check'>お気に入り路線系統を表示</label>";
     
     buf += "<h4>お気に入り駅</h4>";
     buf += "<ul id='config_favorite_stations' class='rearrangeable_list'></ul>";
+    buf += "<input type='checkbox' id='show_favorite_stations_check' class='toggle' onchange='change_config();'" + (config["show_favorite_stations"] ? " checked='checked'" : "") + "><label for='show_favorite_stations_check'>お気に入り駅を表示</label>";
     
     buf += "<h4>各種設定</h4>";
-    buf += "<input type='checkbox' id='dark_mode_check' class='toggle' onchange='change_config();'" + (config["dark_mode"] ? "checked='checked'" : "") + "><label for='dark_mode_check'>ダークテーマ</label>";
-    buf += "<input type='checkbox' id='enlarge_display_size_check' class='toggle' onchange='change_config();'" + (config["enlarge_display_size"] ? "checked='checked'" : "") + "><label for='enlarge_display_size_check'>各種表示サイズの拡大</label>";
-    buf += "<input type='checkbox' id='colorize_corrected_posts_check' class='toggle' onchange='change_config();'" + (config["colorize_corrected_posts"] ? "checked='checked'" : "") + "><label for='colorize_corrected_posts_check'>訂正された投稿を区別する</label>";
-    buf += "<input type='checkbox' id='colorize_beginners_posts_check' class='toggle' onchange='change_config();'" + (config["colorize_beginners_posts"] ? "checked='checked'" : "") + "><label for='colorize_beginners_posts_check'>ビギナーの方の投稿を区別する</label>";
+    buf += "<input type='checkbox' id='dark_mode_check' class='toggle' onchange='change_config();'" + (config["dark_mode"] ? " checked='checked'" : "") + "><label for='dark_mode_check'>ダークテーマ</label>";
+    buf += "<input type='checkbox' id='enlarge_display_size_check' class='toggle' onchange='change_config();'" + (config["enlarge_display_size"] ? " checked='checked'" : "") + "><label for='enlarge_display_size_check'>各種表示サイズの拡大</label>";
+    buf += "<input type='checkbox' id='colorize_corrected_posts_check' class='toggle' onchange='change_config();'" + (config["colorize_corrected_posts"] ? " checked='checked'" : "") + "><label for='colorize_corrected_posts_check'>訂正された投稿を区別する</label>";
+    buf += "<input type='checkbox' id='colorize_beginners_posts_check' class='toggle' onchange='change_config();'" + (config["colorize_beginners_posts"] ? " checked='checked'" : "") + "><label for='colorize_beginners_posts_check'>ビギナーの方の投稿を区別する</label>";
     buf += "<h5>運用情報の自動更新間隔</h5>";
     buf += "<input type='number' id='refresh_interval' min='1' max='60' onchange='change_config();' value='" + config["refresh_interval"] + "'>分ごと";
     buf += "<h5>運用情報のキャッシュ保管日数</h5>";
@@ -7419,6 +7442,8 @@ function edit_config () {
 }
 
 function change_config () {
+    config["show_favorite_railroads"] = document.getElementById("show_favorite_railroads_check").checked;
+    config["show_favorite_stations"] = document.getElementById("show_favorite_stations_check").checked;
     config["dark_mode"] = document.getElementById("dark_mode_check").checked;
     config["enlarge_display_size"] = document.getElementById("enlarge_display_size_check").checked;
     config["colorize_corrected_posts"] = document.getElementById("colorize_corrected_posts_check").checked;

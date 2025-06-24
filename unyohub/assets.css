@@ -4902,7 +4902,7 @@ input[type="checkbox"], input[type="radio"] {
     
     position: relative;
     
-    margin: 20px 0 0 max(20px, calc(50% - 230px));
+    margin: 10px 0 20px max(20px, calc(50% - 230px));
     
     padding-left: 54px;
     
