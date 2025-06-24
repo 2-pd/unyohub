@@ -814,7 +814,7 @@ function update_railroad_list (railroads, area_elm = null, loading_completed = t
     icons_html += "<h4 class='icon_heading'" + favorite_subcategory_style + "><span>お気に入り路線系統</span></h4>";
     if (config["favorite_railroads"].length >= 1) {
         for (var railroad_id of config["favorite_railroads"]) {
-            icons_html += "<a href='/railroad_" + railroad_id + "/' onclick='event.preventDefault(); select_railroad(\"" + railroad_id + "\");' oncontextmenu='event.preventDefault(); railroad_icon_context_menu(\"" + railroad_id + "\");'><img src='" + railroads["railroads"][railroad_id]["railroad_icon"] + "' alt='' style='background-color: " + railroads["railroads"][railroad_id]["main_color"] + ";'>" + escape_html(railroads["railroads"][railroad_id]["railroad_name"]) + "</a>";
+            icons_html += "<a href='/railroad_" + railroad_id + "/' onclick='event.preventDefault(); select_railroad(\"" + railroad_id + "\");' oncontextmenu='event.preventDefault(); railroad_icon_context_menu(\"" + railroad_id + "\");' ontouchstart='railroad_icon_touch_start(event);' ontouchmove='railroad_icon_touch_move(event);' ontouchend='railroad_icon_touch_end(\"" + railroad_id + "\");'><img src='" + railroads["railroads"][railroad_id]["railroad_icon"] + "' alt='' style='background-color: " + railroads["railroads"][railroad_id]["main_color"] + ";'>" + escape_html(railroads["railroads"][railroad_id]["railroad_name"]) + "</a>";
         }
     } else {
         icons_html += "<div class='informational_text'>アイコンを長押し/右クリックすると路線系統をお気に入りに追加できます</div>";
@@ -847,12 +847,12 @@ function update_railroad_list (railroads, area_elm = null, loading_completed = t
                 heading_cnt++;
                 
                 for (var railroad_id of subcategory["railroads"]) {
-                    icons_html += "<a href='/railroad_" + railroad_id + "/' onclick='event.preventDefault(); select_railroad(\"" + railroad_id + "\");' oncontextmenu='event.preventDefault(); railroad_icon_context_menu(\"" + railroad_id + "\");'><img src='" + railroads["railroads"][railroad_id]["railroad_icon"] + "' alt='' style='background-color: " + railroads["railroads"][railroad_id]["main_color"] + ";'>" + escape_html(railroads["railroads"][railroad_id]["railroad_name"]) + "</a>";
+                    icons_html += "<a href='/railroad_" + railroad_id + "/' onclick='event.preventDefault(); select_railroad(\"" + railroad_id + "\");' oncontextmenu='event.preventDefault(); railroad_icon_context_menu(\"" + railroad_id + "\");' ontouchstart='railroad_icon_touch_start(event);' ontouchmove='railroad_icon_touch_move(event);' ontouchend='railroad_icon_touch_end(\"" + railroad_id + "\");'><img src='" + railroads["railroads"][railroad_id]["railroad_icon"] + "' alt='' style='background-color: " + railroads["railroads"][railroad_id]["main_color"] + ";'>" + escape_html(railroads["railroads"][railroad_id]["railroad_name"]) + "</a>";
                 }
             }
         } else if ("railroads" in category) {
             for (var railroad_id of category["railroads"]) {
-                icons_html += "<a href='/railroad_" + railroad_id + "/' onclick='event.preventDefault(); select_railroad(\"" + railroad_id + "\");' oncontextmenu='event.preventDefault(); railroad_icon_context_menu(\"" + railroad_id + "\");'><img src='" + railroads["railroads"][railroad_id]["railroad_icon"] + "' alt='' style='background-color: " + railroads["railroads"][railroad_id]["main_color"] + ";'>" + escape_html(railroads["railroads"][railroad_id]["railroad_name"]) + "</a>";
+                icons_html += "<a href='/railroad_" + railroad_id + "/' onclick='event.preventDefault(); select_railroad(\"" + railroad_id + "\");' oncontextmenu='event.preventDefault(); railroad_icon_context_menu(\"" + railroad_id + "\");' ontouchstart='railroad_icon_touch_start(event);' ontouchmove='railroad_icon_touch_move(event);' ontouchend='railroad_icon_touch_end(\"" + railroad_id + "\");'><img src='" + railroads["railroads"][railroad_id]["railroad_icon"] + "' alt='' style='background-color: " + railroads["railroads"][railroad_id]["main_color"] + ";'>" + escape_html(railroads["railroads"][railroad_id]["railroad_name"]) + "</a>";
             }
         }
     }
@@ -897,7 +897,12 @@ function icon_area_onscroll () {
     }
 }
 
+var railroad_icon_touch_start_time = null;
+var railroad_icon_touch_start_y = 0;
+
 function railroad_icon_context_menu (railroad_id, redraw_railroad_list = true) {
+    railroad_icon_touch_start_time = null;
+    
     for (var cnt = 0; cnt < config["favorite_railroads"].length; cnt++) {
         if (config["favorite_railroads"][cnt] === railroad_id) {
             if (confirm(railroads["railroads"][railroad_id]["railroad_name"] + " をお気に入りから削除しますか？")) {
@@ -931,6 +936,25 @@ function railroad_icon_context_menu (railroad_id, redraw_railroad_list = true) {
     }
     
     return false;
+}
+
+function railroad_icon_touch_start (event) {
+    railroad_icon_touch_start_time = Date.now();
+    railroad_icon_touch_start_y = event.touches[0].screenY;
+}
+
+function railroad_icon_touch_move (event) {
+    if (Math.abs(railroad_icon_touch_start_y - event.touches[0].screenY) > 10) {
+        railroad_icon_touch_start_time = null;
+    }
+}
+
+function railroad_icon_touch_end (railroad_id) {
+    if (railroad_icon_touch_start_time !== null && Date.now() - railroad_icon_touch_start_time > 1000) {
+        railroad_icon_context_menu(railroad_id);
+    } else {
+        railroad_icon_touch_start_time = null;
+    }
 }
 
 function show_railroad_list () {

@@ -801,6 +801,8 @@ header {
     text-decoration: none;
     
     overflow: hidden;
+    
+    -webkit-touch-callout: none;
 }
 
 .enlarge #icon_area a {
@@ -836,6 +838,10 @@ header {
 
 .enlarge #icon_area img {
     width: 40px;
+}
+
+#icon_area .informational_text {
+    font-size: 14px;
 }
 
 .railroad_link {
