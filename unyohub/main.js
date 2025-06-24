@@ -1681,17 +1681,17 @@ function load_railroad_data (railroad_id, is_main_railroad, resolve_func_1, reso
                 });
             }));
         }));
+        
+        if (!location.pathname.startsWith("/railroad_" + railroad_id + "/")) {
+            document.getElementById("tab_position_mode").setAttribute("href", "/railroad_" + railroad_id + "/");
+            document.getElementById("tab_timetable_mode").setAttribute("href", "/railroad_" + railroad_id + "/timetable/");
+            document.getElementById("tab_operation_data_mode").setAttribute("href", "/railroad_" + railroad_id + "/operation_data/");
+            document.getElementById("tab_formations_mode").setAttribute("href", "/railroad_" + railroad_id + "/formations/");
+            document.getElementById("tab_operation_table_mode").setAttribute("href", "/railroad_" + railroad_id + "/operation_table/");
+        }
+        
+        update_railroad_announcement(railroad_id, true);
     }
-    
-    if (!location.pathname.startsWith("/railroad_" + railroad_id + "/")) {
-        document.getElementById("tab_position_mode").setAttribute("href", "/railroad_" + railroad_id + "/");
-        document.getElementById("tab_timetable_mode").setAttribute("href", "/railroad_" + railroad_id + "/timetable/");
-        document.getElementById("tab_operation_data_mode").setAttribute("href", "/railroad_" + railroad_id + "/operation_data/");
-        document.getElementById("tab_formations_mode").setAttribute("href", "/railroad_" + railroad_id + "/formations/");
-        document.getElementById("tab_operation_table_mode").setAttribute("href", "/railroad_" + railroad_id + "/operation_table/");
-    }
-    
-    update_railroad_announcement(railroad_id, true);
     
     Promise.all(promise_list_1).then(function () {
         if (joined_railroads.length >= 1) {
