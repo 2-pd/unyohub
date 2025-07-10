@@ -20,9 +20,10 @@ def initialize_db (mes, main_dir):
     cur = conn.cursor()
     
     mes("テーブル「unyohub_formations」を作成しています...")
-    cur.execute("CREATE TABLE IF NOT EXISTS `unyohub_formations`(`formation_name` TEXT NOT NULL PRIMARY KEY, `series_name` TEXT NOT NULL, `subseries_name` TEXT, `car_count` INTEGER NOT NULL, `affiliation` TEXT, `caption` TEXT, `description` TEXT, `semifixed_formation` TEXT, `unavailable` INTEGER NOT NULL, `inspection_information` TEXT, `overview_updated` TEXT NOT NULL, `updated_datetime` TEXT NOT NULL, `edited_user_id` TEXT)")
-    cur.execute("CREATE INDEX IF NOT EXISTS `unyohub_idx_f1` ON `unyohub_formations`(`semifixed_formation`)")
+    cur.execute("CREATE TABLE IF NOT EXISTS `unyohub_formations`(`formation_name` TEXT NOT NULL PRIMARY KEY, `currently_registered` INTEGER NOT NULL, `series_name` TEXT NOT NULL, `subseries_name` TEXT, `car_count` INTEGER NOT NULL, `affiliation` TEXT, `caption` TEXT, `description` TEXT, `semifixed_formation` TEXT, `unavailable` INTEGER NOT NULL, `inspection_information` TEXT, `overview_updated` TEXT NOT NULL, `updated_datetime` TEXT NOT NULL, `edited_user_id` TEXT)")
+    cur.execute("CREATE INDEX IF NOT EXISTS `unyohub_idx_f1` ON `unyohub_formations`(`currently_registered`, `formation_name`)")
     cur.execute("CREATE INDEX IF NOT EXISTS `unyohub_idx_f2` ON `unyohub_formations`(`overview_updated`)")
+    cur.execute("CREATE INDEX IF NOT EXISTS `unyohub_idx_f3` ON `unyohub_formations`(`semifixed_formation`)")
     
     mes("テーブル「unyohub_cars」を作成しています...")
     cur.execute("CREATE TABLE IF NOT EXISTS `unyohub_cars`(`formation_name` TEXT NOT NULL, `car_number` TEXT NOT NULL, `car_order` INTEGER, `manufacturer` TEXT, `constructed` TEXT, `description` TEXT, PRIMARY KEY(`formation_name`, `car_number`))")
