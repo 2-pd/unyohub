@@ -34,7 +34,7 @@ def convert_formation_table (mes, main_dir):
     
     mes("formations.csvを読み込んでいます...")
     
-    with open(main_dir + "/formations.csv", "r", encoding="utf-8") as csv_f:
+    with open(main_dir + "/formations.csv", "r", encoding="utf-8-sig") as csv_f:
         csv_reader = csv.reader(csv_f)
         formation_data = [data_row for data_row in csv_reader]
     
@@ -96,6 +96,7 @@ def convert_formation_table (mes, main_dir):
         json_data["body_colorings"] = body_colorings
     
     formation_list = set()
+    unregistered_formation_list = set()
     car_numbers = set()
     abbr_numbers = set()
     
@@ -107,18 +108,22 @@ def convert_formation_table (mes, main_dir):
         if len(formation_name) == 0:
             cnt += 1
         elif formation_name.startswith("# "):
-            if subseries_name is not None:
+            if subseries_name is not None and subseries_max_car_count >= 1:
                 insert_series_data(mes, cur, series_name + subseries_name, series_name, subseries_min_car_count, subseries_max_car_count, subseries_coupling_group_set)
             
-            if series_name is not None:
+            if series_name is not None and max_car_count >= 1:
                 insert_series_data(mes, cur, series_name, series_name, min_car_count, max_car_count, coupling_group_set)
             
             series_name = formation_name[2:].strip()
             
             mes("・" + series_name + " のデータ処理を開始します...")
             
-            json_data["series"][series_name] = {"icon_id" : formation_data[cnt + 1][0]}
+            json_data["series"][series_name] = {}
             json_data["series_names"].append(series_name)
+            
+            icon_id = formation_data[cnt + 1][0].strip()
+            if len(icon_id) >= 1:
+                json_data["series"][series_name]["icon_id"] = icon_id
             
             subseries_name = None
             coupling_group_set = set()
@@ -127,7 +132,7 @@ def convert_formation_table (mes, main_dir):
             
             cnt += 2
         elif formation_name.startswith("## "):
-            if subseries_name is not None:
+            if subseries_name is not None and subseries_max_car_count >= 1:
                 insert_series_data(mes, cur, series_name + subseries_name, series_name, subseries_min_car_count, subseries_max_car_count, subseries_coupling_group_set)
             
             subseries_name = formation_name[3:].strip()
@@ -138,8 +143,12 @@ def convert_formation_table (mes, main_dir):
                 json_data["series"][series_name]["subseries"] = {}
                 json_data["series"][series_name]["subseries_names"] = []
             
-            json_data["series"][series_name]["subseries"][subseries_name] = {"formation_names" : [], "icon_id" : formation_data[cnt + 1][0]}
+            json_data["series"][series_name]["subseries"][subseries_name] = {"formation_names" : []}
             json_data["series"][series_name]["subseries_names"].append(subseries_name)
+            
+            icon_id = formation_data[cnt + 1][0].strip()
+            if len(icon_id) >= 1:
+                json_data["series"][series_name]["subseries"][subseries_name]["icon_id"] = icon_id
             
             subseries_coupling_group_set = set()
             subseries_min_car_count = None
@@ -147,12 +156,39 @@ def convert_formation_table (mes, main_dir):
             
             cnt += 2
         else:
+            if formation_name.startswith("†"):
+                formation_name = formation_name[1:].strip()
+                
+                currently_registered = False
+                new_formation_name = None
+            elif formation_data[cnt][1].startswith(">"):
+                currently_registered = False
+                
+                new_formation_name_and_railroad_id = formation_data[cnt][1][1:].split("@")
+                new_formation_name = new_formation_name_and_railroad_id[0].strip()
+                
+                if len(new_formation_name_and_railroad_id) == 1:
+                    new_railroad_id = None
+                else:
+                    new_railroad_id = new_formation_name_and_railroad_id[1].strip()
+            else: 
+                currently_registered = True
+                new_formation_name = None
+            
             mes("  - " + formation_name + " のデータを処理しています...")
             
             if formation_name in formation_list:
                 mes("同一の編成名が複数の編成に設定されています: " + formation_name, True)
             else:
-                json_data["formations"][formation_name] = {"cars" : [], "series_name" : series_name, "icon_id" : formation_data[cnt + 1][0]}
+                json_data["formations"][formation_name] = {}
+                
+                if currently_registered:
+                    json_data["formations"][formation_name]["cars"] = []
+                    json_data["formations"][formation_name]["series_name"] = series_name
+                    json_data["formations"][formation_name]["icon_id"] = formation_data[cnt + 1][0].strip()
+                elif new_formation_name is not None:
+                    json_data["formations"][formation_name]["new_railroad_id"] = new_railroad_id
+                    json_data["formations"][formation_name]["new_formation_name"] = new_formation_name
                 
                 car_list_old = set()
                 for row_data in cur.execute("SELECT `car_number` FROM `unyohub_cars` WHERE `formation_name` = :formation_name", {"formation_name" : formation_name}):
@@ -160,33 +196,34 @@ def convert_formation_table (mes, main_dir):
                 
                 car_list = set()
                 
-                for cnt_2 in range(1, len(formation_data[cnt])):
-                    if formation_data[cnt][cnt_2] != "":
-                        car_number = formation_data[cnt][cnt_2].strip()
-                        abbr_number = formation_data[cnt + 1][cnt_2].strip()
-                        
-                        if car_number in car_numbers:
-                            mes("《注意》同一の車両番号が複数の車両に設定されています: " + car_number)
-                        else:
-                            car_numbers.add(car_number)
-                        
-                        if abbr_number in abbr_numbers:
-                            mes("《注意》同一の車両番号省略表記が複数の車両に設定されています: " + abbr_number)
-                        else:
-                            abbr_numbers.add(abbr_number)
-                        
-                        json_data["formations"][formation_name]["cars"].append({"car_number" : car_number, "abbr_number" : abbr_number})
-                        
-                        if len(formation_data[cnt + 2][cnt_2]) >= 1:
-                            json_data["formations"][formation_name]["cars"][-1]["coloring_id"] = formation_data[cnt + 2][cnt_2]
-                        
-                        equipment = replace_equipment_symbols(formation_data[cnt + 3][cnt_2].upper()).split()
-                        if len(equipment) >= 1:
-                            json_data["formations"][formation_name]["cars"][-1]["equipment"] = equipment
-                        
-                        cur.execute("INSERT INTO `unyohub_cars`(`formation_name`, `car_number`, `car_order`, `manufacturer`, `constructed`, `description`) VALUES (:formation_name, :car_number, :car_order, '', '', '') ON CONFLICT(`formation_name`, `car_number`) DO UPDATE SET `car_order` = :car_order_2", {"formation_name" : formation_name, "car_number" : car_number, "car_order" : cnt_2, "car_order_2" : cnt_2})
-                        
-                        car_list.add(car_number)
+                if new_formation_name is None:
+                    for cnt_2 in range(1, len(formation_data[cnt])):
+                        if formation_data[cnt][cnt_2] != "":
+                            car_number = formation_data[cnt][cnt_2].strip()
+                            if car_number in car_numbers:
+                                mes("《注意》同一の車両番号が複数の車両に設定されています: " + car_number)
+                            else:
+                                car_numbers.add(car_number)
+                            
+                            if currently_registered:
+                                abbr_number = formation_data[cnt + 1][cnt_2].strip()
+                                if abbr_number in abbr_numbers:
+                                    mes("《注意》同一の車両番号省略表記が複数の車両に設定されています: " + abbr_number)
+                                else:
+                                    abbr_numbers.add(abbr_number)
+                                
+                                json_data["formations"][formation_name]["cars"].append({"car_number" : car_number, "abbr_number" : abbr_number})
+                            
+                                if len(formation_data[cnt + 2][cnt_2]) >= 1:
+                                    json_data["formations"][formation_name]["cars"][-1]["coloring_id"] = formation_data[cnt + 2][cnt_2].strip()
+                                
+                                equipment = replace_equipment_symbols(formation_data[cnt + 3][cnt_2].upper()).split()
+                                if len(equipment) >= 1:
+                                    json_data["formations"][formation_name]["cars"][-1]["equipment"] = equipment
+                            
+                            cur.execute("INSERT INTO `unyohub_cars`(`formation_name`, `car_number`, `car_order`, `manufacturer`, `constructed`, `description`) VALUES (:formation_name, :car_number, :car_order, '', '', '') ON CONFLICT(`formation_name`, `car_number`) DO UPDATE SET `car_order` = :car_order_2", {"formation_name" : formation_name, "car_number" : car_number, "car_order" : cnt_2, "car_order_2" : cnt_2})
+                            
+                            car_list.add(car_number)
                 
                 deleted_cars = list(car_list_old - car_list)
                 
@@ -196,14 +233,14 @@ def convert_formation_table (mes, main_dir):
                 
                 car_count = len(car_list)
                 
-                cur.execute("INSERT INTO `unyohub_formations`(`formation_name`, `series_name`, `subseries_name`, `car_count`, `affiliation`, `caption`, `description`, `semifixed_formation`, `unavailable`, `inspection_information`, `overview_updated`, `updated_datetime`, `edited_user_id`) VALUES (:formation_name, :series_name, :subseries_name, :car_count, '', '', '', NULL, FALSE, '', :overview_updated, :updated_datetime, NULL) ON CONFLICT(`formation_name`) DO UPDATE SET `series_name` = :series_name_2, `subseries_name` = :subseries_name_2, `car_count` = :car_count_2", {"formation_name" : formation_name, "series_name" : series_name, "subseries_name" : subseries_name, "car_count" : car_count, "overview_updated" : datetime_now, "updated_datetime" : datetime_now, "series_name_2" : series_name, "subseries_name_2" : subseries_name, "car_count_2" : car_count})
+                cur.execute("INSERT INTO `unyohub_formations`(`formation_name`, `currently_registered`, `series_name`, `subseries_name`, `car_count`, `affiliation`, `caption`, `description`, `semifixed_formation`, `unavailable`, `inspection_information`, `overview_updated`, `updated_datetime`, `edited_user_id`) VALUES (:formation_name, :currently_registered, :series_name, :subseries_name, :car_count, '', '', '', NULL, FALSE, '', :overview_updated, :updated_datetime, NULL) ON CONFLICT(`formation_name`) DO UPDATE SET `currently_registered` = :currently_registered_2, `series_name` = :series_name_2, `subseries_name` = :subseries_name_2, `car_count` = :car_count_2", {"formation_name" : formation_name, "currently_registered" : currently_registered, "series_name" : series_name, "subseries_name" : subseries_name, "car_count" : car_count, "overview_updated" : datetime_now, "updated_datetime" : datetime_now, "currently_registered_2" : currently_registered, "series_name_2" : series_name, "subseries_name_2" : subseries_name, "car_count_2" : car_count})
                 
                 formation_list.add(formation_name)
                 
                 if car_count > max_car_count:
                     max_car_count = car_count
                 
-                if min_car_count is None or car_count < min_car_count:
+                if car_count >= 1 and (min_car_count is None or car_count < min_car_count):
                     min_car_count = car_count
                 
                 if subseries_name is None:
@@ -218,33 +255,41 @@ def convert_formation_table (mes, main_dir):
                     if car_count > subseries_max_car_count:
                         subseries_max_car_count = car_count
                     
-                    if subseries_min_car_count is None or car_count < subseries_min_car_count:
+                    if car_count >= 1 and (subseries_min_car_count is None or car_count < subseries_min_car_count):
                         subseries_min_car_count = car_count
                 
-                coupling_groups = formation_data[cnt + 2][0].split()
-                for coupling_group in coupling_groups:
-                    if len(coupling_group) >= 1:
-                        cur.execute("INSERT INTO `unyohub_coupling_groups`(`series_or_formation`, `coupling_group`) VALUES (:series_or_formation, :coupling_group)", {"series_or_formation" : formation_name, "coupling_group" : coupling_group})
-                        
-                        coupling_group_set.add(coupling_group)
-                        
-                        if subseries_name is not None:
-                            subseries_coupling_group_set.add(coupling_group)
+                if currently_registered:
+                    coupling_groups = formation_data[cnt + 2][0].split()
+                    for coupling_group in coupling_groups:
+                        if len(coupling_group) >= 1:
+                            cur.execute("INSERT INTO `unyohub_coupling_groups`(`series_or_formation`, `coupling_group`) VALUES (:series_or_formation, :coupling_group)", {"series_or_formation" : formation_name, "coupling_group" : coupling_group})
+                            
+                            coupling_group_set.add(coupling_group)
+                            
+                            if subseries_name is not None:
+                                subseries_coupling_group_set.add(coupling_group)
+                else:
+                    unregistered_formation_list.add(formation_name)
             
-            cnt += 4
+            if currently_registered:
+                cnt += 4
+            else:
+                cnt += 1
     
-    if subseries_name is not None:
+    if subseries_name is not None and subseries_max_car_count >= 1:
         insert_series_data(mes, cur, series_name + subseries_name, series_name, subseries_min_car_count, subseries_max_car_count, subseries_coupling_group_set)
     
-    insert_series_data(mes, cur, series_name, series_name, min_car_count, max_car_count, coupling_group_set)
+    if max_car_count >= 1:
+        insert_series_data(mes, cur, series_name, series_name, min_car_count, max_car_count, coupling_group_set)
     
     mes("編成表から除外された編成を検出しています...")
     
     deleted_formations = formation_list_old - formation_list
     uncoupled_formations = set()
     
-    for deleted_formation_name in list(deleted_formations):
-        mes("  - " + deleted_formation_name + " が編成表から除外されました")
+    for deleted_formation_name in list(deleted_formations | unregistered_formation_list):
+        if deleted_formation_name in deleted_formations:
+            mes("  - " + deleted_formation_name + " が編成表から除外されました")
         
         for row_data in cur.execute("SELECT `semifixed_formation` FROM `unyohub_formations` WHERE `formation_name` = :formation_name", {"formation_name" : deleted_formation_name}):
             uncoupled_formations.add(row_data[0])
