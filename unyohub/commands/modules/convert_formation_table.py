@@ -233,7 +233,14 @@ def convert_formation_table (mes, main_dir):
                 
                 car_count = len(car_list)
                 
-                cur.execute("INSERT INTO `unyohub_formations`(`formation_name`, `currently_registered`, `series_name`, `subseries_name`, `car_count`, `affiliation`, `caption`, `description`, `semifixed_formation`, `unavailable`, `inspection_information`, `overview_updated`, `updated_datetime`, `edited_user_id`) VALUES (:formation_name, :currently_registered, :series_name, :subseries_name, :car_count, '', '', '', NULL, FALSE, '', :overview_updated, :updated_datetime, NULL) ON CONFLICT(`formation_name`) DO UPDATE SET `currently_registered` = :currently_registered_2, `series_name` = :series_name_2, `subseries_name` = :subseries_name_2, `car_count` = :car_count_2", {"formation_name" : formation_name, "currently_registered" : currently_registered, "series_name" : series_name, "subseries_name" : subseries_name, "car_count" : car_count, "overview_updated" : datetime_now, "updated_datetime" : datetime_now, "currently_registered_2" : currently_registered, "series_name_2" : series_name, "subseries_name_2" : subseries_name, "car_count_2" : car_count})
+                if currently_registered:
+                    unavailable_value = False
+                    unavailable_q = ""
+                else:
+                    unavailable_value = None
+                    unavailable_q = ", `unavailable` = NULL"
+                
+                cur.execute("INSERT INTO `unyohub_formations`(`formation_name`, `currently_registered`, `series_name`, `subseries_name`, `car_count`, `affiliation`, `caption`, `description`, `semifixed_formation`, `unavailable`, `inspection_information`, `overview_updated`, `updated_datetime`, `edited_user_id`) VALUES (:formation_name, :currently_registered, :series_name, :subseries_name, :car_count, '', '', '', NULL, :unavailable, '', :overview_updated, :updated_datetime, NULL) ON CONFLICT(`formation_name`) DO UPDATE SET `currently_registered` = :currently_registered_2, `series_name` = :series_name_2, `subseries_name` = :subseries_name_2, `car_count` = :car_count_2" + unavailable_q, {"formation_name" : formation_name, "currently_registered" : currently_registered, "series_name" : series_name, "subseries_name" : subseries_name, "car_count" : car_count, "unavailable" : unavailable_value, "overview_updated" : datetime_now, "updated_datetime" : datetime_now, "currently_registered_2" : currently_registered, "series_name_2" : series_name, "subseries_name_2" : subseries_name, "car_count_2" : car_count})
                 
                 formation_list.add(formation_name)
                 
