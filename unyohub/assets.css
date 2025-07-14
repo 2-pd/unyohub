@@ -2241,6 +2241,12 @@ a.connecting_railroad_link h5, .connecting_railroad_link a {
     text-align: left;
 }
 
+.renamed_formation, .unregistered_formation {
+    line-height: 20px;
+    font-size: 14px;
+    color: #999999;
+}
+
 .formation_table th:before {
     content: "";
     
@@ -2260,6 +2266,14 @@ a.connecting_railroad_link h5, .connecting_railroad_link a {
     padding: 0 6px 0 0;
 }
 
+.renamed_formation .train_icon, .unregistered_formation .train_icon {
+    opacity: 0.5;
+}
+
+.renamed_formation td:last-child, .unregistered_formation td:last-child {
+    padding: 5px 6px 5px 10px !important;
+}
+
 .formation_table h5 {
     display: block;
     
@@ -2272,6 +2286,10 @@ a.connecting_railroad_link h5, .connecting_railroad_link a {
 
 .dark_mode .formation_table h5 {
     color: #cccccc;
+}
+
+.renamed_formation h5, .unregistered_formation h5 {
+    margin: 0 0 0 -10px;
 }
 
 .enlarge .formation_table h5 {
@@ -3753,11 +3771,11 @@ a {
     color: #999999;
 }
 
-.warning_text, .warning_sentence {
+.warning_text, .warning_sentence, .unregistered_formation {
     color: #ee3333 !important;
 }
 
-.dark_mode .warning_text, .dark_mode .warning_sentence {
+.dark_mode .warning_text, .dark_mode .warning_sentence, .dark_mode .unregistered_formation {
     color: #ff6666 !important;
 }
 

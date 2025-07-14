@@ -115,6 +115,7 @@ function get_default_config () {
         "show_starting_trains_only_on_timetable" : false,
         "colorize_corrected_posts" : false,
         "colorize_beginners_posts" : false,
+        "show_unregistered_formations_on_formation_table" : true,
         "colorize_formation_table" : true,
         "simplify_operation_details" : false,
         "show_favorite_railroads" : true,
@@ -5501,18 +5502,16 @@ function formations_mode (formation_name = null) {
     formation_table_drop_down_status = {};
     formation_table_wrapper_scroll_amount = 0;
     
-    var colorize_radio_area_elm = document.getElementById("colorize_formation_table_radio_area");
+    var label_elm = document.getElementById("colorize_formation_table_label");
     if (formation_styles_available) {
-        colorize_radio_area_elm.style.display = "block";
+        label_elm.style.display = "inline-block";
         
-        if (config["colorize_formation_table"]) {
-            document.getElementById("colorize_formation_table").checked = true;
-        } else {
-            document.getElementById("not_colorize_formation_table").checked = true;
-        }
+        document.getElementById("colorize_formation_table").checked = config["colorize_formation_table"];
     } else {
-        colorize_radio_area_elm.style.display = "none";
+        label_elm.style.display = "none";
     }
+    
+    document.getElementById("show_unregistered_formations").checked = config["show_unregistered_formations_on_formation_table"];
     
     if (formation_name === null) {
         draw_formation_table();
@@ -5532,10 +5531,6 @@ function get_formation_table_html (formation_names, search_keyword) {
     var search_hit_formation_count = 0;
     var search_hit_formations_car_count = 0;
     for (var formation_name of formation_names) {
-        var overview = get_formation_overview(formation_name);
-        
-        var buf_2 = "<tr onclick='formation_detail(\"" + add_slashes(formation_name) + "\");'><td><img src='" + get_icon(formation_name) + "' alt='' class='train_icon'" + (overview["unavailable"] ? " style='opacity: 0.5;'" : "") + "></td>";
-        
         if (search_keyword.length >= 1 && formation_name.includes(search_keyword)) {
             var search_keyword_index = formation_name.indexOf(search_keyword);
             var formation_name_html = escape_html(formation_name.substring(0, search_keyword_index)) + "<span class='search_highlight'>" + escape_html(formation_name.substring(search_keyword_index, search_keyword_index + search_keyword.length)) + "</span>" + escape_html(formation_name.substring(search_keyword_index + search_keyword.length));
@@ -5546,51 +5541,69 @@ function get_formation_table_html (formation_names, search_keyword) {
             var formation_name_search_hit = false;
         }
         
-        buf_2 += "<td><h5><a href='/railroad_" + railroad_info["railroad_id"] + "/formations/" + add_slashes(encodeURIComponent(formation_name)) + "/' onclick='event.preventDefault();'>" + formation_name_html + "</a>";
-        
-        if (overview["unavailable"]) {
-            buf_2 += "<b class='warning_sentence'>運用離脱中</b>";
-        } else if (overview["caption"].length >= 1) {
-            buf_2 += escape_html(overview["caption"]);
-        }
-        
-        buf_2 += "</h5>";
-        
-        var search_hit_count = 0;
-        for (var car of formations["formations"][formation_name]["cars"]) {
-            var car_class = "";
+        if ("cars" in formations["formations"][formation_name]) {
+            var overview = get_formation_overview(formation_name);
             
-            if (search_keyword.length >= 1) {
-                if (car["car_number"].toUpperCase().includes(search_keyword) || car["abbr_number"].toUpperCase().includes(search_keyword)) {
-                    car_class =  "car_highlight";
-                    
-                    search_hit_count++;
-                } else if (formation_name_search_hit) {
+            var buf_2 = "<tr onclick='formation_detail(\"" + add_slashes(formation_name) + "\");'><td><img src='" + get_icon(formation_name) + "' alt='' class='train_icon'" + (overview["unavailable"] ? " style='opacity: 0.5;'" : "") + "></td>";
+            
+            buf_2 += "<td><h5><a href='/railroad_" + railroad_info["railroad_id"] + "/formations/" + add_slashes(encodeURIComponent(formation_name)) + "/' onclick='event.preventDefault();'>" + formation_name_html + "</a>";
+            
+            if (overview["unavailable"]) {
+                buf_2 += "<b class='warning_sentence'>運用離脱中</b>";
+            } else if (overview["caption"].length >= 1) {
+                buf_2 += escape_html(overview["caption"]);
+            }
+            
+            buf_2 += "</h5>";
+            
+            var search_hit_count = 0;
+            for (var car of formations["formations"][formation_name]["cars"]) {
+                var car_class = "";
+                
+                if (search_keyword.length >= 1) {
+                    if (car["car_number"].toUpperCase().includes(search_keyword) || car["abbr_number"].toUpperCase().includes(search_keyword)) {
+                        car_class =  "car_highlight";
+                        
+                        search_hit_count++;
+                    } else if (formation_name_search_hit) {
+                        search_hit_count++;
+                    }
+                } else {
                     search_hit_count++;
                 }
-            } else {
-                search_hit_count++;
+                
+                if ("equipment" in car) {
+                    for (var equipment of car["equipment"]) {
+                        car_class += (car_class.length >= 1 ? " " : "") + "car_" + equipment;
+                    }
+                }
+                
+                if (formation_styles_available && config["colorize_formation_table"] && "coloring_id" in car) {
+                    car_class += (car_class.length >= 1 ? " " : "") + "car_coloring_" + car["coloring_id"];
+                }
+                
+                buf_2 += "<div class='" + car_class + "'>" + escape_html(car["abbr_number"]) + "<span></span><span></span></div>";
             }
             
-            if ("equipment" in car) {
-                for (var equipment of car["equipment"]) {
-                    car_class += (car_class.length >= 1 ? " " : "") + "car_" + equipment;
+            buf_2 += "</td></tr>";
+            
+            if (search_hit_count >= 1) {
+                buf += buf_2;
+                search_hit_formation_count++;
+                search_hit_formations_car_count += search_hit_count;
+            }
+        } else if (config["show_unregistered_formations_on_formation_table"]) {
+            if (search_keyword.length == 0 || formation_name.includes(search_keyword)) {
+                if ("new_formation_name" in formations["formations"][formation_name]) {
+                buf += "<tr onclick='formation_detail(\"" + add_slashes(formation_name) + "\");' class='renamed_formation'><td><img src='" + UNYOHUB_GENERIC_TRAIN_ICON + "' alt='' class='train_icon'></td><td><h5><a href='/railroad_" + (formations["formations"][formation_name]["new_railroad_id"] === null ? railroad_info["railroad_id"] : formations["formations"][formation_name]["new_railroad_id"]) + "/formations/" + add_slashes(encodeURIComponent(formations["formations"][formation_name]["new_formation_name"])) + "/' onclick='event.preventDefault();'>" + formation_name_html + "</a></h5>" + (formations["formations"][formation_name]["new_railroad_id"] === null ? escape_html(formations["formations"][formation_name]["new_formation_name"]) + " に改番" : "転出済み") + "</td>";
+                } else {
+                    buf += "<tr onclick='formation_detail(\"" + add_slashes(formation_name) + "\");' class='unregistered_formation'><td><img src='" + UNYOHUB_GENERIC_TRAIN_ICON + "' alt='' class='train_icon'></td><td><h5><a href='/railroad_" + railroad_info["railroad_id"] + "/formations/" + add_slashes(encodeURIComponent(formation_name)) + "/' onclick='event.preventDefault();'>" + formation_name_html + "</a></h5>除籍済み</td>";
+                }
+                
+                if (search_keyword.length >= 1) {
+                    search_hit_formation_count++;
                 }
             }
-            
-            if (formation_styles_available && config["colorize_formation_table"] && "coloring_id" in car) {
-                car_class += (car_class.length >= 1 ? " " : "") + "car_coloring_" + car["coloring_id"];
-            }
-            
-            buf_2 += "<div class='" + car_class + "'>" + escape_html(car["abbr_number"]) + "<span></span><span></span></div>";
-        }
-        
-        buf_2 += "</td></tr>";
-        
-        if (search_hit_count >= 1) {
-            buf += buf_2;
-            search_hit_formation_count++;
-            search_hit_formations_car_count += search_hit_count;
         }
     }
     
@@ -5617,7 +5630,7 @@ function draw_formation_table (update_title = true) {
             for (var subseries_name of formations["series"][series_name]["subseries_names"]) {
                 var [buf_3, subseries_search_hit_formation_count, subseries_search_hit_formations_car_count] = get_formation_table_html(formations["series"][series_name]["subseries"][subseries_name]["formation_names"], search_keyword);
                 
-                if (subseries_search_hit_formation_count >= 1) {
+                if (buf_3.length >= 1) {
                     buf_2 += "<tr><th colspan='2'>" + escape_html(subseries_name) + "</th></tr>" + buf_3;
                     search_hit_formation_count += subseries_search_hit_formation_count;
                     search_hit_formations_car_count += subseries_search_hit_formations_car_count;
@@ -5627,7 +5640,7 @@ function draw_formation_table (update_title = true) {
             var [buf_2, search_hit_formation_count, search_hit_formations_car_count] = get_formation_table_html(formations["series"][series_name]["formation_names"], search_keyword);
         }
         
-        if (search_hit_formation_count >= 1) {
+        if (buf_2.length >= 1) {
             var checkbox_id = "series_" + series_name;
             
             buf += "<input type='checkbox' id='" + checkbox_id + "'" + (checkbox_id in formation_table_drop_down_status && formation_table_drop_down_status[checkbox_id] ? " checked='checked'" : "") + " onclick='update_formation_table_drop_down_status(this);'>";
@@ -5645,7 +5658,7 @@ function draw_formation_table (update_title = true) {
         
         formation_table_area_elm.innerHTML = buf;
     } else {
-        formation_table_area_elm.innerHTML = "<div class='no_data'>検索キーワードを含む車両が見つかりません</div>";
+        formation_table_area_elm.innerHTML = "<div class='no_data'>検索キーワードを含む車両が見つかりません。" + (config["show_unregistered_formations_on_formation_table"] ? "<br>除籍・転出済みの車両は編成名でのみ検索可能です。" : "") + "</div>";
     }
     
     document.getElementById("formation_search_area").style.display = "block";
@@ -5656,6 +5669,14 @@ function draw_formation_table (update_title = true) {
 
 function change_colorize_formation_table (bool_val) {
     config["colorize_formation_table"] = bool_val;
+    
+    save_config();
+    
+    draw_formation_table(false);
+}
+
+function change_show_unregistered_formations (bool_val) {
+    config["show_unregistered_formations_on_formation_table"] = bool_val;
     
     save_config();
     
@@ -5712,6 +5733,16 @@ function get_last_formation_of_series (series_name) {
 }
 
 function formation_detail (formation_name) {
+    if ("new_formation_name" in formations["formations"][formation_name]) {
+        if (formations["formations"][formation_name]["new_railroad_id"] === null) {
+            formation_detail(formations["formations"][formation_name]["new_formation_name"]);
+        } else {
+            select_railroad(formations["formations"][formation_name]["new_railroad_id"], "formations_mode", formations["formations"][formation_name]["new_formation_name"]);
+        }
+        
+        return;
+    }
+    
     var series_name = formations["formations"][formation_name]["series_name"];
     
     change_title(series_name + " " + formation_name + " (" + railroad_info["railroad_name"] + ") の編成情報・運用 | " + instance_info["instance_name"], "/railroad_" + railroad_info["railroad_id"] + "/formations/" + encodeURIComponent(formation_name) + "/");
