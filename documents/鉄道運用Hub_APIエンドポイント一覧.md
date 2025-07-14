@@ -204,7 +204,7 @@ formations.jsonの内容を返す
 
 
 ## formation_overviews.php
-指定した路線系統の編成情報概要を取得する
+指定した路線系統に在籍中の編成の概要一覧を取得する
 
 ### 引数
 **$_POST["railroad_id"]** : 路線系統識別名  
@@ -243,7 +243,7 @@ formations.jsonの内容を返す
 **正常時** :  
 {  
     "formation_name" : 編成名,  
-    "cars" : [ 各車両の情報  
+    "cars" : [ 各車両の情報(転籍・改番済みの編成では省略)  
         {  
             "car_number" : 車番,  
             "manufacturer" : 製造メーカー名,  
@@ -257,7 +257,7 @@ formations.jsonの内容を返す
     "caption" : 1行見出し,  
     "description" : 補足説明文,  
     "semifixed_formation" : 編成が組み込まれている半固定編成(「+」区切り、半固定編成を組成していない場合は省略),  
-    "unavailable" : 運用離脱中か否か,  
+    "unavailable" : 運用離脱中か否か(除籍・転籍・改番済みの編成では省略),  
     "inspection_information" : 検査情報,  
     "histories" : [ 車歴情報  
         {  
