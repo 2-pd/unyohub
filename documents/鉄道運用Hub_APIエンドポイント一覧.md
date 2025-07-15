@@ -243,7 +243,7 @@ formations.jsonの内容を返す
 **正常時** :  
 {  
     "formation_name" : 編成名,  
-    "cars" : [ 各車両の情報(転籍・改番済みの編成では省略)  
+    "cars" : [ 各車両の情報(転出・改番済みの編成では省略)  
         {  
             "car_number" : 車番,  
             "manufacturer" : 製造メーカー名,  
@@ -257,12 +257,12 @@ formations.jsonの内容を返す
     "caption" : 1行見出し,  
     "description" : 補足説明文,  
     "semifixed_formation" : 編成が組み込まれている半固定編成(「+」区切り、半固定編成を組成していない場合は省略),  
-    "unavailable" : 運用離脱中か否か(除籍・転籍・改番済みの編成では省略),  
+    "unavailable" : 運用離脱中か否か(除籍・転出・改番済みの編成では省略),  
     "inspection_information" : 検査情報,  
     "histories" : [ 車歴情報  
         {  
             "event_year_month" : 「YYYY-MM」形式の年月、または「YYYY」形式の年,  
-            "event_type" : 変更の種類(「construct」、「modify」、「repaint」、「renewal」、「transfer」、「rearrange」、「other」のいずれか),  
+            "event_type" : 変更の種類(「construct」、「modify」、「repaint」、「renewal」、「transfer」、「rearrange」、「unregister」、「other」のいずれか),  
             "event_content" : 変更内容説明文  
         }...  
     ],  

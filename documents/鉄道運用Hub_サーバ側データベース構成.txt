@@ -44,7 +44,7 @@ _/_/_/_/ データベース _/_/_/_/
 `unyohub_formation_histories` 車歴データ
   `formation_name` TEXT NOT NULL 編成名
   `event_year_month` TEXT NOT NULL 「YYYY-MM」形式の年月、または「YYYY」形式の年
-  `event_type` TEXT NOT NULL 変更の種類(「construct」(新製)、「modify」(改修)、「repaint」(塗装変更)、「renewal」(更新)、「transfer」(転属)、「rearrange」(組換)、「other」(その他)のいずれか)
+  `event_type` TEXT NOT NULL 変更の種類(「construct」(新製)、「modify」(改修)、「repaint」(塗装変更)、「renewal」(更新)、「transfer」(転属)、「rearrange」(組換)、「unregister」(廃車)、「other」(その他)のいずれか)
   `event_content` TEXT 変更内容説明文
 
   INDEX `unyohub_idx_fh1`(`formation_name`, `event_year_month`)
