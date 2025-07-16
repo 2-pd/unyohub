@@ -147,17 +147,21 @@ function get_formation_info ($formations_str, $validate = FALSE) {
         if ($formation !== "?") {
             $formation_escaped = $db_obj->escapeString($formation);
             
-            $formation_data = $db_obj->querySingle("SELECT `series_name`, `subseries_name`".($validate ? ", `car_count`" : "")." FROM `unyohub_formations` WHERE `formation_name` = '".$formation_escaped."'", TRUE);
+            $formation_data = $db_obj->querySingle("SELECT `series_name`, `subseries_name`".($validate ? ", `car_count`" : "")." FROM `unyohub_formations` WHERE `formation_name` = '".$formation_escaped."' AND `currently_registered` = 1", TRUE);
             
             if (empty($formation_data)) {
                 $formation_data = $db_obj->querySingle("SELECT `series_name`".($validate ? ", `max_car_count`, `min_car_count`" : "")." FROM `unyohub_series_caches` WHERE `series_title` = '".$formation_escaped."'", TRUE);
                 
-                if (empty($formation_data)) {
-                    print "ERROR: 入力された編成名・車両形式に誤りがあります";
-                    exit;
+                if (!empty($formation_data)) {
+                    $formation_data["series_title"] = $formation;
+                } else {
+                    if ($validate) {
+                        print "ERROR: 入力された編成名・車両形式に誤りがあります";
+                        exit;
+                    }
+                    
+                    $formation_data = array("series_name" => "?", "series_title" => "?");
                 }
-                
-                $formation_data["series_title"] = $formation;
             } else {
                 $formation_data["series_title"] = $formation_data["series_name"].$formation_data["subseries_name"];
                 

@@ -129,15 +129,31 @@ if (empty($_SERVER["PATH_INFO"]) || $_SERVER["PATH_INFO"] === "/") {
                             exit;
                         }
                         
-                        $path_info_str .= urlencode($path_info[3])."/";
-                        $page_title = $formations["formations"][$path_info[3]]["series_name"]." ".$path_info[3]." (".$railroad_info["railroad_name"].") の編成情報・運用 | ".UNYOHUB_APP_NAME;
-                        
-                        $car_numbers = array();
-                        foreach ($formations["formations"][$path_info[3]]["cars"] as $car) {
-                            $car_numbers[] = $car["car_number"];
+                        if (empty($formations["formations"][$path_info[3]]["new_formation_name"])) {
+                            $path_info_str .= urlencode($path_info[3])."/";
+                            
+                            if (!empty($formations["formations"][$path_info[3]]["cars"])) {
+                                $page_title = $formations["formations"][$path_info[3]]["series_name"]." ".$path_info[3]." (".$railroad_info["railroad_name"].") の編成情報・運用 | ".UNYOHUB_APP_NAME;
+                                
+                                $car_numbers = array();
+                                foreach ($formations["formations"][$path_info[3]]["cars"] as $car) {
+                                    $car_numbers[] = $car["car_number"];
+                                }
+                                
+                                $page_description = $railroad_info["railroad_name"]."で運用されている".$formations["formations"][$path_info[3]]["series_name"]."の編成 ".$path_info[3]." ( ".implode(" - ", $car_numbers)." ) の車両設備・車歴情報、及び運用状況です。";
+                            } else {
+                                $page_title = $path_info[3]." (".$railroad_info["railroad_name"].") の編成情報 | ".UNYOHUB_APP_NAME;
+                                $page_description = "過去に".$railroad_info["railroad_name"]."で運用されていた編成 ".$path_info[3]." の車両設備・車歴情報です。";
+                            }
+                        } else {
+                            if (!empty($formations["formations"][$path_info[3]]["new_railroad_id"])) {
+                                header("Location: /railroad_".$formations["formations"][$path_info[3]]["new_railroad_id"]."/formations/".urlencode($formations["formations"][$path_info[3]]["new_formation_name"])."/", TRUE, 301);
+                            } else {
+                                header("Location: ".$path_info_str.urlencode($formations["formations"][$path_info[3]]["new_formation_name"])."/", TRUE, 301);
+                            }
+                            
+                            exit;
                         }
-                        
-                        $page_description = $railroad_info["railroad_name"]."で運用されている".$formations["formations"][$path_info[3]]["series_name"]."の編成 ".$path_info[3]." ( ".implode(" - ", $car_numbers)." ) の車両設備・車歴情報、及び運用状況です。";
                     }
                     
                     break;
@@ -292,7 +308,7 @@ if ($path_info_str === "/") {
         <button type="button" id="formation_screenshot_button" class="screenshot_button" onclick="take_screenshot('formation_table_area');"></button>
         <div id="formation_search_area">
             <div class='search_wrapper'><label for="car_number_search" class="search_icon">編成名・車両番号で検索</label><input type="search" id="car_number_search" onkeyup="draw_formation_table();" onsearch="draw_formation_table();" placeholder="編成名・車両番号で検索" autocomplete="off"></div>
-            <div id ="colorize_formation_table_radio_area" class="radio_area"><input type="radio" name="colorize_formation_table_radio" id="colorize_formation_table" onchange="change_colorize_formation_table(this.checked);"><label for="colorize_formation_table">車体色を表示</label><input type="radio" name="colorize_formation_table_radio" id="not_colorize_formation_table" onchange="change_colorize_formation_table(!this.checked);"><label for="not_colorize_formation_table">白黒で表示</label></div>
+            <div class="radio_area"><input type="checkbox" id="colorize_formation_table" class="chip" onchange="change_colorize_formation_table(this.checked);"><label for="colorize_formation_table" id="colorize_formation_table_label">車体色を表示</label><input type="checkbox" id="show_unregistered_formations" class="chip" onchange="change_show_unregistered_formations(this.checked);"><label for="show_unregistered_formations">除籍済みの編成を表示</label></div>
         </div>
         <div id="formation_table_area" class="wait_icon"></div>
     </article>

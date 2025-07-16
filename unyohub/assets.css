@@ -2241,6 +2241,12 @@ a.connecting_railroad_link h5, .connecting_railroad_link a {
     text-align: left;
 }
 
+.renamed_formation, .unregistered_formation {
+    line-height: 20px;
+    font-size: 14px;
+    color: #999999;
+}
+
 .formation_table th:before {
     content: "";
     
@@ -2260,6 +2266,14 @@ a.connecting_railroad_link h5, .connecting_railroad_link a {
     padding: 0 6px 0 0;
 }
 
+.renamed_formation .train_icon, .unregistered_formation .train_icon {
+    opacity: 0.5;
+}
+
+.renamed_formation td:last-child, .unregistered_formation td:last-child {
+    padding: 5px 6px 5px 10px !important;
+}
+
 .formation_table h5 {
     display: block;
     
@@ -2272,6 +2286,10 @@ a.connecting_railroad_link h5, .connecting_railroad_link a {
 
 .dark_mode .formation_table h5 {
     color: #cccccc;
+}
+
+.renamed_formation h5, .unregistered_formation h5 {
+    margin: 0 0 0 -10px;
 }
 
 .enlarge .formation_table h5 {
@@ -2468,7 +2486,7 @@ a.connecting_railroad_link h5, .connecting_railroad_link a {
     color: #cccccc;
 }
 
-.car_info {
+#car_info_table {
     width: min(100%, 500px);
     
     margin: 0 auto;
@@ -2476,15 +2494,15 @@ a.connecting_railroad_link h5, .connecting_railroad_link a {
     border-spacing: 0 2px;
 }
 
-.car_info tr {
+#car_info_table tr {
     height: 80px;
 }
 
-.car_info td {
+#car_info_table td {
     padding: 0;
 }
 
-.car_info tr:first-child td:first-child {
+#car_info_table tr:first-child td:first-child {
     width: 25px;
     
     max-width: 25px;
@@ -2498,14 +2516,14 @@ a.connecting_railroad_link h5, .connecting_railroad_link a {
     letter-spacing: 0.1em;
 }
 
-.car_info tr:first-child td:first-child span {
+#car_info_table tr:first-child td:first-child span {
     display: inline-block;
     
     writing-mode: vertical-rl;
     white-space: nowrap;
 }
 
-.car_info tr td:nth-last-child(2) {
+#car_info_table tr td:nth-last-child(2) {
     position: relative;
     
     width: 30px;
@@ -2515,7 +2533,7 @@ a.connecting_railroad_link h5, .connecting_railroad_link a {
     border: 1px solid #999999;
 }
 
-.dark_mode .car_info tr td:nth-last-child(2) {
+.dark_mode #car_info_table tr td:nth-last-child(2) {
     border-color: #cccccc;
 }
 
@@ -2564,17 +2582,17 @@ a.connecting_railroad_link h5, .connecting_railroad_link a {
     background-position: center;
 }
 
-.car_info tr td:last-child {
+#car_info_table tr td:last-child {
     padding: 0 10px;
     
     vertical-align: top;
 }
 
-.car_info b {
+#car_info_table b {
     font-size: 18px;
 }
 
-.car_info tr td:last-child span {
+#car_info_table tr td:last-child span {
     display: block;
     
     width: fit-content;
@@ -2582,7 +2600,7 @@ a.connecting_railroad_link h5, .connecting_railroad_link a {
     float: right;
 }
 
-.car_info .descriptive_text {
+#car_info_table .descriptive_text {
     padding: 0;
     
     clear: both;
@@ -2665,6 +2683,10 @@ h5.event_type_transfer {
 
 h5.event_type_rearrange {
     background-color: #2266cc;
+}
+
+h5.event_type_unregister {
+    background-color: #662211;
 }
 
 .search_highlight {
@@ -3753,11 +3775,11 @@ a {
     color: #999999;
 }
 
-.warning_text, .warning_sentence {
+.warning_text, .warning_sentence, .unregistered_formation {
     color: #ee3333 !important;
 }
 
-.dark_mode .warning_text, .dark_mode .warning_sentence {
+.dark_mode .warning_text, .dark_mode .warning_sentence, .dark_mode .unregistered_formation {
     color: #ff6666 !important;
 }
 

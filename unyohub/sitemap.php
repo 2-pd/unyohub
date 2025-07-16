@@ -48,12 +48,12 @@ if (empty($_SERVER["PATH_INFO"])) {
         print "    <url>\n";
         print "        <loc>".$root_url."/user/rules.php</loc>\n";
         print "        <changefreq>yearly</changefreq>\n";
-        print "        <priority>0.2</priority>\n";
+        print "        <priority>0.3</priority>\n";
         print "    </url>\n";
         print "    <url>\n";
         print "        <loc>".$root_url."/user/clear_caches.php</loc>\n";
         print "        <changefreq>never</changefreq>\n";
-        print "        <priority>0.2</priority>\n";
+        print "        <priority>0.3</priority>\n";
         print "    </url>\n";
     } else {
         $railroad_root = $root_url."/railroad_".$railroad_id;
@@ -100,7 +100,7 @@ if (empty($_SERVER["PATH_INFO"])) {
                     print "    <url>\n";
                     print "        <loc>".$railroad_root."/timetable/".$line_id."/".urlencode($station["station_name"])."/</loc>\n";
                     print "        <changefreq>daily</changefreq>\n";
-                    print "        <priority>0.3</priority>\n";
+                    print "        <priority>0.4</priority>\n";
                     print "    </url>\n";
                 }
             }
@@ -108,10 +108,19 @@ if (empty($_SERVER["PATH_INFO"])) {
         
         $formation_names = array_keys($formations["formations"]);
         foreach ($formation_names as $formation_name) {
+            if (!empty($formations["formations"][$formation_name]["new_formation_name"])) {
+                continue;
+            }
+            
             print "    <url>\n";
             print "        <loc>".$railroad_root."/formations/".urlencode($formation_name)."/</loc>\n";
-            print "        <changefreq>yearly</changefreq>\n";
-            print "        <priority>0.6</priority>\n";
+            if (!empty($formations["formations"][$formation_name]["cars"])) {
+                print "        <changefreq>yearly</changefreq>\n";
+                print "        <priority>0.6</priority>\n";
+            } else {
+                print "        <changefreq>never</changefreq>\n";
+                print "        <priority>0.2</priority>\n";
+            }
             print "    </url>\n";
         }
         

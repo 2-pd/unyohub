@@ -167,7 +167,7 @@ log_ip_address 投稿者のIPアドレスを記録するか(BOOL値)
 {
     "formations" : {
         "編成名": { 各編成の情報
-            "cars" : [ 各車両の情報
+            "cars" : [ 各車両の情報(除籍・転出・改番済みの編成では省略)
                 {
                     "car_number" : 車番,
                     "abbr_number" : 車番の省略表記,
@@ -175,9 +175,11 @@ log_ip_address 投稿者のIPアドレスを記録するか(BOOL値)
                     "coloring_id" : 車体塗装ID(省略可能)
                 }...
             ],
-            "series_name" : 形式名,
-            "subseries_name" : 番台名等(省略可能),
-            "icon_id" : アイコンのID
+            "series_name" : 形式名(除籍・転出・改番済みの編成では省略),
+            "subseries_name" : 番台名等(省略可能。除籍・転出・改番済みの編成では常に省略),
+            "icon_id" : アイコンのID(除籍・転出・改番済みの編成では省略),
+            "new_railroad_id" : 転出先路線系統の識別名(転出・改番済みの編成以外では省略。転属を伴わない改番の場合はnull),
+            "new_formation_name" : 転出先での編成名(転出・改番済みの編成以外では省略)
         }...
     },
     "series" : {
@@ -185,12 +187,14 @@ log_ip_address 投稿者のIPアドレスを記録するか(BOOL値)
             "subseries" : [ 番台等の情報(番台等がない場合は省略可能)
                 "番台名等" : {
                     "formation_names" : 編成名を配列で,
-                    "icon_id" : アイコンのID
+                    "icon_id" : アイコンのID(現時点で在籍中の編成が存在しない場合は省略),
+                    "unregistered" : 在籍中の編成が存在しないか否か(現時点で在籍中の編成が存在する場合は省略)
                 }...
             ],
             "subseries_names" : 番台名等を配列で(番台等がない場合は省略可能),
             "formation_names" : 編成名を配列で(番台等を指定した場合は省略),
-            "icon_id" : アイコンのID
+            "icon_id" : アイコンのID(現時点で在籍中の編成が存在しない場合は省略),
+            "unregistered" : 在籍中の編成が存在しないか否か(現時点で在籍中の編成が存在する場合は省略)
         }...
     },
     "series_names" : 形式名を配列で,

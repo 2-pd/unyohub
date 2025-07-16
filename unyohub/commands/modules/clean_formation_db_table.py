@@ -41,15 +41,25 @@ def clean_formation_db_table (mes, main_dir):
     mes("編成表にない車両をデータベースから削除しています...")
     
     for formation_name in formation_list:
-        car_list = set()
-        for car_data in formation_data["formations"][formation_name]["cars"]:
-            car_list.add(car_data["car_number"])
-        
-        db_car_list = set()
-        for row_data in cur.execute("SELECT `car_number` FROM `unyohub_cars` WHERE `formation_name` = :formation_name", {"formation_name" : formation_name}):
-            db_car_list.add(row_data[0])
-        
-        excluded_cars = list(db_car_list - car_list)
+        if "new_formation_name" not in formation_data["formations"][formation_name]:
+            if "cars" in formation_data["formations"][formation_name]:
+                car_list = set()
+                for car_data in formation_data["formations"][formation_name]["cars"]:
+                    car_list.add(car_data["car_number"])
+                
+                db_car_list = set()
+                for row_data in cur.execute("SELECT `car_number` FROM `unyohub_cars` WHERE `formation_name` = :formation_name", {"formation_name" : formation_name}):
+                    db_car_list.add(row_data[0])
+                
+                excluded_cars = list(db_car_list - car_list)
+            else:
+                excluded_cars = []
+                for row_data in cur.execute("SELECT `car_number` FROM `unyohub_cars` WHERE `formation_name` = :formation_name AND `car_order` IS NULL", {"formation_name" : formation_name}):
+                    excluded_cars.append(row_data[0])
+        else:
+            excluded_cars = []
+            for row_data in cur.execute("SELECT `car_number` FROM `unyohub_cars` WHERE `formation_name` = :formation_name", {"formation_name" : formation_name}):
+                excluded_cars.append(row_data[0])
         
         for car_number in excluded_cars:
             mes("  - " + formation_name + " から " + car_number + " のデータを削除しています...")
