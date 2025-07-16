@@ -2685,6 +2685,10 @@ h5.event_type_rearrange {
     background-color: #2266cc;
 }
 
+h5.event_type_unregister {
+    background-color: #662211;
+}
+
 .search_highlight {
     background-color: #ffff33;
 }

@@ -5969,7 +5969,7 @@ function formation_detail (formation_name) {
                         buf += "<tr>";
                         
                         if (cnt === 0) {
-                            buf += "<td rowspan='" + data["cars"].length + "'><span>▲" + railroad_info["alias_of_forward_direction"] + "</span></td>";
+                            buf += "<td rowspan='" + data["cars"].length + "'><span>▲" + escape_html(railroad_info["alias_of_forward_direction"]) + "</span></td>";
                             
                             var car_class = "car_info_car_C1";
                         } else if (cnt === data["cars"].length - 1) {
@@ -6010,7 +6010,7 @@ function formation_detail (formation_name) {
                 
                 formation_operations_area_elm.innerHTML = buf;
                 
-                var event_type_ja = { construct : "新製", modify : "改修", repaint : "塗装変更", renewal : "更新", transfer : "転属", rearrange : "組換", other : "その他" };
+                var event_type_ja = { construct : "新製", modify : "改修", repaint : "塗装変更", renewal : "更新", transfer : "転属", rearrange : "組換", unregister : "廃車", other : "その他" };
                 
                 var buf = "";
                 for (var history of data["histories"]) {
