@@ -6859,6 +6859,10 @@ function switch_car_number_suggest_mode (enable = null) {
         var formation_data = post_railroad_id === railroad_info["railroad_id"] ? formations["formations"] : joined_railroad_formations[post_railroad_id]["formations"];
         
         for (var formation_name of Object.keys(formation_data).toSorted()) {
+            if (!("cars" in formation_data[formation_name])) {
+                continue;
+            }
+            
             for (var car_data of formation_data[formation_name]["cars"]) {
                 car_list.push({ car_number : car_data["car_number"].toUpperCase(), formation_name : formation_name });
             }
@@ -6880,11 +6884,19 @@ function suggest_formation (railroad_id, formations_text) {
     var buf = "";
     
     if (formation_text.length >= 1) {
-        var formation_names = Object.keys(railroad_id === null ? series_icon_ids : joined_railroad_series_icon_ids[railroad_id]).concat(Object.keys(railroad_id === null ? formations["formations"] : joined_railroad_formations[railroad_id]["formations"]).toSorted());
+        if (railroad_id === null) {
+            var formation_data = formations["formations"];
+            var icon_ids = series_icon_ids;
+        } else {
+            var formation_data = joined_railroad_formations[railroad_id]["formations"];
+            var icon_ids = joined_railroad_series_icon_ids[railroad_id];
+        }
+        
+        var formation_names = Object.keys(icon_ids).concat(Object.keys(formation_data).toSorted());
         
         if (!car_number_suggest_mode) {
             var suggestion_list = formation_names.filter(function (formation_name) {
-                return formation_name.toUpperCase().startsWith(formation_text);
+                return formation_name.toUpperCase().startsWith(formation_text) && (formation_name in icon_ids || "cars" in formation_data[formation_name]);
             });
         } else {
             var suggestion_list = car_list.filter(function (car_data) {
