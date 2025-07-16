@@ -7920,6 +7920,21 @@ window.onpopstate = function () {
 };
 
 
+(function () {
+    var body_elm = document.getElementsByTagName("body")[0];
+    
+    var captcha_script_elm = document.createElement("script");
+    captcha_script_elm.src = "/libs/zizai_captcha/captcha.js";
+    captcha_script_elm.async = true;
+    body_elm.appendChild(captcha_script_elm);
+    
+    var elem2img_script_elm = document.createElement("script");
+    elem2img_script_elm.src = "/libs/elem2img.js";
+    elem2img_script_elm.async = true;
+    body_elm.appendChild(elem2img_script_elm);
+} ());
+
+
 if ("serviceWorker" in navigator) {
     navigator.serviceWorker.register("/service_worker.php");
 }

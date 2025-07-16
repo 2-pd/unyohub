@@ -225,15 +225,16 @@ print "    <link rel=\"styleSheet\" href=\"/assets.css?v=".UNYOHUB_VERSION."\">\
     <link rel="shortcut icon" href="/favicon.ico">
     <link rel="manifest" href="/manifest.json">
     <style id="formation_styles"></style>
-    <script>
 <?php
+print "    <script>\n";
 print "        const UNYOHUB_APP_NAME = \"".UNYOHUB_APP_NAME."\";\n";
 print "        const UNYOHUB_VERSION = \"".UNYOHUB_VERSION."\";\n";
 print "        const UNYOHUB_APP_INFO_URL = \"".UNYOHUB_APP_INFO_URL."\";\n";
 print "        const UNYOHUB_REPOSITORY_URL = \"".UNYOHUB_REPOSITORY_URL."\";\n";
 print "        const UNYOHUB_LICENSE_TEXT = \"".UNYOHUB_LICENSE_TEXT."\";\n";
+print "    </script>";
+print "    <script src=\"/main.js?v=".UNYOHUB_VERSION."\" defer=\"defer\"></script>\n";
 ?>
-    </script>
 </head>
 <body>
     <header><a id="railroad_icon" href="javascript:void(0);" onclick="about_railroad_data();"></a><span id="instance_name"></span><a id="railroad_name" href="javascript:void(0);" onclick="show_railroad_list();"></a><a id="menu_button" href="javascript:void(0);" onclick="menu_click();"></a></header>
@@ -360,11 +361,5 @@ if ($path_info_str === "/") {
     </div>
     <div id="wait_screen"></div>
     <div id="message_area"></div>
-    
-<?php
-print "    <script src=\"/main.js?v=".UNYOHUB_VERSION."\"></script>\n";
-?>
-    <script src="/libs/zizai_captcha/captcha.js"></script>
-    <script src="/libs/elem2img.js"></script>
 </body>
 </html>
