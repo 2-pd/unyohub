@@ -1335,11 +1335,17 @@ function update_formation_styles (railroad_id = null) {
     var icon_ids_data = {};
     
     for (var series_name of series_names) {
+        if ("unregistered" in series_data[series_name] && series_data[series_name]["unregistered"]) {
+            continue;
+        }
+        
         icon_ids_data[series_name] = series_data[series_name]["icon_id"];
         
         if ("subseries_names" in series_data[series_name]) {
             for (var subseries_name of series_data[series_name]["subseries_names"]) {
-                icon_ids_data[series_name + subseries_name] = series_data[series_name]["subseries"][subseries_name]["icon_id"];
+                if (!("unregistered" in series_data[series_name]["subseries"][subseries_name] && series_data[series_name]["subseries"][subseries_name]["unregistered"])) {
+                    icon_ids_data[series_name + subseries_name] = series_data[series_name]["subseries"][subseries_name]["icon_id"];
+                }
             }
         }
     }
@@ -4977,24 +4983,33 @@ function operation_data_draw () {
     } else {
         var formation_list = Object.keys(formations["formations"]);
         
-        var series_list = [...formations["series_names"]];
+        var series_list = [];
         var series_titles = {};
         var series_formation_list = {};
         var formation_operation_data = {};
         
-        for (var series_name of series_list) {
+        for (var series_name of formations["series_names"]) {
+            if ("unregistered" in formations["series"][series_name] && formations["series"][series_name]["unregistered"]) {
+                continue;
+            }
+            
+            series_list.push(series_name);
             series_titles[series_name] = series_name;
             formation_operation_data[series_name] = new Set();
             
             if ("subseries_names" in formations["series"][series_name]) {
                 for (var subseries_name of formations["series"][series_name]["subseries_names"]) {
-                    series_titles[series_name + subseries_name] = series_name;
+                    if (!("unregistered" in formations["series"][series_name]["subseries_names"][subseries_name] && formations["series"][series_name]["subseries_names"][subseries_name]["unregistered"])) {
+                        series_titles[series_name + subseries_name] = series_name;
+                    }
                 }
             }
         }
         
         for (var formation_name of formation_list) {
-            formation_operation_data[formation_name] = new Set();
+            if ("cars" in formations["formations"][formation_name]) {
+                formation_operation_data[formation_name] = new Set();
+            }
         }
         
         formation_operation_data["運休"] = new Set();
@@ -5011,7 +5026,7 @@ function operation_data_draw () {
                 continue;
             } else {
                 for (var assigned_formation of operation_data["operations"][operation_number]["formations"].split("+")) {
-                    if (assigned_formation in formations["formations"]) {
+                    if (assigned_formation in formations["formations"] && "cars" in formations["formations"][assigned_formation]) {
                         formation_operation_data[assigned_formation].add(operation_number);
                     } else if (assigned_formation in series_titles) {
                         formation_operation_data[series_titles[assigned_formation]].add(operation_number);
@@ -5027,7 +5042,9 @@ function operation_data_draw () {
                 series_formation_list[series_name] = [];
                 
                 for (subseries_name of formations["series"][series_name]["subseries_names"]) {
-                    series_formation_list[series_name].push(...formations["series"][series_name]["subseries"][subseries_name]["formation_names"]);
+                    if (!("unregistered" in formations["series"][series_name]["subseries_names"][subseries_name] && formations["series"][series_name]["subseries_names"][subseries_name]["unregistered"])) {
+                        series_formation_list[series_name].push(...formations["series"][series_name]["subseries"][subseries_name]["formation_names"]);
+                    }
                 }
             } else {
                 series_formation_list[series_name] = [...formations["series"][series_name]["formation_names"]];
@@ -5052,6 +5069,10 @@ function operation_data_draw () {
             
             buf += "<table class='operation_data_3_columns'>";
             for (var formation_name of series_formation_list[series_name]) {
+                if (!(formation_name in formation_operation_data)) {
+                    continue;
+                }
+                
                 var operation_numbers = Array.from(formation_operation_data[formation_name]);
                 for (var cnt = 0; cnt < operation_numbers.length || cnt === 0; cnt++) {
                     if (operation_numbers.length >= 1) {
@@ -6101,7 +6122,7 @@ function get_icon (formation_name, railroad_id = null) {
     
     if (railroad_id === null) {
         if (formation_name in formations["formations"]) {
-            if (formations["formations"][formation_name]["icon_id"] in train_icons["icons"]) {
+            if ("icon_id" in formations["formations"][formation_name] && formations["formations"][formation_name]["icon_id"] in train_icons["icons"]) {
                 return train_icons["icons"][formations["formations"][formation_name]["icon_id"]];
             }
         } else if (formation_name in series_icon_ids) {
@@ -6111,7 +6132,7 @@ function get_icon (formation_name, railroad_id = null) {
         }
     } else {
         if (formation_name in joined_railroad_formations[railroad_id]["formations"]) {
-            if (joined_railroad_formations[railroad_id]["formations"][formation_name]["icon_id"] in joined_railroad_train_icons[railroad_id]["icons"]) {
+            if ("icon_id" in joined_railroad_formations[railroad_id]["formations"][formation_name] && joined_railroad_formations[railroad_id]["formations"][formation_name]["icon_id"] in joined_railroad_train_icons[railroad_id]["icons"]) {
                 return joined_railroad_train_icons[railroad_id]["icons"][joined_railroad_formations[railroad_id]["formations"][formation_name]["icon_id"]];
             }
         } else if (formation_name in joined_railroad_series_icon_ids[railroad_id]) {
