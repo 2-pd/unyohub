@@ -4119,7 +4119,7 @@ function timetable_wrapper_onscroll () {
     }
 }
 
-function timetable_change_lines(line_id, force_station_select_mode = false) {
+function timetable_change_lines (line_id, force_station_select_mode = false) {
     if (line_id !== null) {
         if ("clockwise_is_inbound" in railroad_info["lines"][line_id] && railroad_info["lines"][line_id]["clockwise_is_inbound"] !== null) {
             var directions = railroad_info["lines"][line_id]["clockwise_is_inbound"] ? ["外回り<small>(右回り)</small>", "内回り<small>(左回り)</small>"] : ["内回り<small>(左回り)</small>", "外回り<small>(右回り)</small>"];
@@ -4199,9 +4199,13 @@ function timetable_select_station (station_name, line_id = null) {
         return;
     }
     
-    timetable_area_elm.innerHTML = "";
+    change_title(station_name + "駅(" + railroad_info["lines"][timetable_selected_line]["line_name"] + ")発着列車の充当車両 | " + instance_info["instance_name"], "/railroad_" + railroad_info["railroad_id"] + "/timetable/" + timetable_selected_line + "/" + encodeURIComponent(station_name) + "/");
+    
+    document.getElementById("timetable_back_button").style.display = "block";
+    document.getElementById("direction_radio_area").style.display = "block";
     
     document.getElementById("timetable_station_name").innerHTML = "<h2>" + escape_html(station_name) + "</h2>";
+    timetable_area_elm.innerHTML = "";
     
     timetable_promise.then(function () {
         draw_station_timetable(station_name);
@@ -4211,11 +4215,6 @@ function timetable_select_station (station_name, line_id = null) {
 }
 
 function draw_station_timetable (station_name) {
-    change_title(station_name + "駅(" + railroad_info["lines"][timetable_selected_line]["line_name"] + ")発着列車の充当車両 | " + instance_info["instance_name"], "/railroad_" + railroad_info["railroad_id"] + "/timetable/" + timetable_selected_line + "/" + encodeURIComponent(station_name) + "/");
-    
-    document.getElementById("timetable_back_button").style.display = "block";
-    document.getElementById("direction_radio_area").style.display = "block";
-    
     for (var station_index = 0; station_index < railroad_info["lines"][timetable_selected_line]["stations"].length; station_index++) {
         if (railroad_info["lines"][timetable_selected_line]["stations"][station_index]["station_name"] === station_name) {
             break;
