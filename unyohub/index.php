@@ -238,7 +238,7 @@ print "    <meta property=\"twitter:card\" content=\"summary\">\n";
     <style id="formation_styles"></style>
 </head>
 <body>
-    <header><button type="button" id="railroad_icon" onclick="about_railroad_data();"></button><span id="instance_name"></span><button type="button" id="railroad_name" onclick="show_railroad_list();"></button><button type="button" id="menu_button" onclick="menu_click();"></button></header>
+    <header><button type="button" id="railroad_icon" onclick="about_railroad_data();" aria-label="この路線系統について"></button><span id="instance_name"></span><button type="button" id="railroad_name" onclick="show_railroad_list();"></button><button type="button" id="menu_button" onclick="menu_click();" aria-label="メニュー"></button></header>
     <nav id="menu">
         <div id="menu_logged_in">
             <b id="menu_user_name"></b>
@@ -274,7 +274,7 @@ if ($path_info_str === "/") {
     print <<<EOM
             <div id="splash_screen_login_status">サーバに接続しています...</div>
             <div id="splash_screen_inner" class="wait_icon"></div>
-            <button type="button" id="splash_screen_announcement" onclick="show_announcements();"></button>
+            <button type="button" id="splash_screen_announcement" onclick="show_announcements();" aria-label="お知らせ"></button>
             <div id="splash_screen_bottom">
                 <u onclick="show_about();"><span id="splash_screen_instance_name">{$unyohub_app_name}</span>について</u><a href="/user/rules.php" onclick="event.preventDefault(); show_rules();">ルールとポリシー</a><span id="splash_screen_app_version">v{$unyohub_version}</span>
             </div>
@@ -307,7 +307,7 @@ if ($path_info_str === "/") {
         <div id="operation_data_area" class="wait_icon"></div>
     </article>
     <article onscroll="formation_table_wrapper_onscroll();">
-        <button type="button" id="formation_screenshot_button" class="screenshot_button" onclick="take_screenshot('formation_table_area');"></button>
+        <button type="button" id="formation_screenshot_button" class="screenshot_button" onclick="take_screenshot('formation_table_area');" aria-label="スクリーンショット"></button>
         <div id="formation_search_area">
             <div class='search_wrapper'><label for="car_number_search" class="search_icon">編成名・車両番号で検索</label><input type="search" id="car_number_search" onkeyup="draw_formation_table();" onsearch="draw_formation_table();" placeholder="編成名・車両番号で検索" autocomplete="off"></div>
             <div class="radio_area"><input type="checkbox" id="colorize_formation_table" class="chip" onchange="change_colorize_formation_table(this.checked);"><label for="colorize_formation_table" id="colorize_formation_table_label">車体色を表示</label><input type="checkbox" id="show_unregistered_formations" class="chip" onchange="change_show_unregistered_formations(this.checked);"><label for="show_unregistered_formations">除籍済みの編成を表示</label></div>
@@ -331,29 +331,29 @@ if ($path_info_str === "/") {
         <br>
         <div id="operation_table_info" class="informational_text"></div>
     </article>
-    <button type="button" id="railroad_announcement" onclick="show_railroad_announcements();"></button>
+    <button type="button" id="railroad_announcement" onclick="show_railroad_announcements();" aria-label="お知らせ"></button>
     <footer>
         <div>
-            <button type="button" id="position_reload_button" class="reload_button" onclick="position_mode(null, '__today__');"></button>
-            <button type="button" id="position_diagram" class="footer_select" onclick="position_list_diagrams();"></button><span ontouchstart="position_time_swipe_start(event);" ontouchmove="position_time_swipe(event);" ontouchend="position_time_swipe_end(event, 360);"><button type="button" class="previous_button" onclick="position_change_time(-60);"></button><span id="position_hours" class="footer_value"></span><button type="button" class="next_button" onclick="position_change_time(60);"></button></span><span ontouchstart="position_time_swipe_start(event);" ontouchmove="position_time_swipe(event);" ontouchend="position_time_swipe_end(event, 10);"><button type="button" class="previous_button" onclick="position_change_time(-1, true);"></button><span id="position_minutes" class="footer_value"></span><button type="button" class="next_button" onclick="position_change_time(1, true);"></button></span>
-            <input type="time" id="position_time_button" class="time_button" onchange="position_time_button_change();">
+            <button type="button" id="position_reload_button" class="reload_button" onclick="position_mode(null, '__today__');" aria-label="再読み込み"></button>
+            <button type="button" id="position_diagram" class="footer_select" onclick="position_list_diagrams();" aria-label="ダイヤ選択"></button><span ontouchstart="position_time_swipe_start(event);" ontouchmove="position_time_swipe(event);" ontouchend="position_time_swipe_end(event, 360);"><button type="button" class="previous_button" onclick="position_change_time(-60);" aria-label="時を戻す"></button><span id="position_hours" class="footer_value"></span><button type="button" class="next_button" onclick="position_change_time(60);" aria-label="時を進める"></button></span><span ontouchstart="position_time_swipe_start(event);" ontouchmove="position_time_swipe(event);" ontouchend="position_time_swipe_end(event, 10);"><button type="button" class="previous_button" onclick="position_change_time(-1, true);" aria-label="分を戻す"></button><span id="position_minutes" class="footer_value"></span><button type="button" class="next_button" onclick="position_change_time(1, true);" aria-label="分を進める"></button></span>
+            <input type="time" id="position_time_button" class="time_button" onchange="position_time_button_change();" aria-label="時刻選択">
         </div>
         <div>
-            <button type="button" id="timetable_back_button" class="back_button" onclick="timetable_change_lines(timetable_selected_line, true);"></button>
-            <button type="button" class="previous_button" onclick="timetable_diagram_previous();"></button><span id="timetable_operation_name" class="footer_value_wide"></span><button type="button" class="next_button" onclick="timetable_diagram_next();"></button><button type="button" class="list_button" onclick="timetable_list_diagrams();"></button>
+            <button type="button" id="timetable_back_button" class="back_button" onclick="timetable_change_lines(timetable_selected_line, true);" aria-label="戻る"></button>
+            <button type="button" class="previous_button" onclick="timetable_diagram_previous();" aria-label="前のダイヤ"></button><span id="timetable_operation_name" class="footer_value_wide"></span><button type="button" class="next_button" onclick="timetable_diagram_next();" aria-label="次のダイヤ"></button><button type="button" class="list_button" onclick="timetable_list_diagrams();" aria-label="ダイヤ一覧"></button>
         </div>
         <div>
-            <button type="button" class="reload_button" onclick="operation_data_change_date(null);"></button>
-            <button type="button" class="previous_button" onclick="operation_data_change_date(-1);"></button><span id="operation_data_date" class="footer_value_wide"></span><button type="button" class="next_button" onclick="operation_data_change_date(1);"></button>
-            <input type="date" id="operation_date_button" class="date_button" onchange="operation_date_button_change();">
+            <button type="button" class="reload_button" onclick="operation_data_change_date(null);" aria-label="再読み込み"></button>
+            <button type="button" class="previous_button" onclick="operation_data_change_date(-1);" aria-label="前日"></button><span id="operation_data_date" class="footer_value_wide"></span><button type="button" class="next_button" onclick="operation_data_change_date(1);" aria-label="翌日"></button>
+            <input type="date" id="operation_date_button" class="date_button" onchange="operation_date_button_change();" aria-label="日付選択">
         </div>
         <div>
-            <button type="button" id="formation_back_button" class="back_button" onclick="draw_formation_table();"></button>
+            <button type="button" id="formation_back_button" class="back_button" onclick="draw_formation_table();" aria-label="戻る"></button>
         </div>
         <div id="operation_table_footer_inner">
-            <button type="button" class="back_button" onclick="operation_table_mode(null);"></button>
-            <button type="button" class="previous_button" onclick="operation_table_previous();"></button><span id="operation_table_name" class="footer_value_wide"></span><button type="button" class="next_button" onclick="operation_table_next();"></button>
-            <button type="button" class="list_button" onclick="operation_table_list_tables();"></button>
+            <button type="button" class="back_button" onclick="operation_table_mode(null);" aria-label="戻る"></button>
+            <button type="button" class="previous_button" onclick="operation_table_previous();" aria-label="前のダイヤ"></button><span id="operation_table_name" class="footer_value_wide"></span><button type="button" class="next_button" onclick="operation_table_next();" aria-label="次のダイヤ"></button>
+            <button type="button" class="list_button" onclick="operation_table_list_tables();" aria-label="ダイヤ一覧"></button>
         </div>
     </footer>
     <div id="popup_background"></div>
