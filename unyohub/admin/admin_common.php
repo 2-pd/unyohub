@@ -15,12 +15,12 @@ if (!is_object($user) || !$user->check_permission("control_panel_user")) {
 function print_header () {
     print <<< EOM
     <html>
-    <head>
+    <head lang="ja">
         <meta charset="utf-8">
         <meta name="viewport" content="width=device-width,initial-scale=1,interactive-widget=resizes-content">
         <title>鉄道運用Hub 管理画面</title>
         <link rel="stylesheet" href="admin_styles.css">
-        <link rel="shortcut icon" href="../favicon.ico">
+        <link rel="shortcut icon" href="/favicon.ico">
     </head>
     <body>
         <header onclick="location.href = 'index.php';"><div id="railroad_icon"></div>鉄道運用Hub 管理画面<button type="button" id="control_panel_close_button" onclick="event.stopPropagation(); window.close();"></button></header>
