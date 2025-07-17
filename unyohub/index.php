@@ -238,30 +238,30 @@ print "    <meta property=\"twitter:card\" content=\"summary\">\n";
     <style id="formation_styles"></style>
 </head>
 <body>
-    <header><a id="railroad_icon" href="javascript:void(0);" onclick="about_railroad_data();"></a><span id="instance_name"></span><a id="railroad_name" href="javascript:void(0);" onclick="show_railroad_list();"></a><a id="menu_button" href="javascript:void(0);" onclick="menu_click();"></a></header>
+    <header><button type="button" id="railroad_icon" onclick="about_railroad_data();"></button><span id="instance_name"></span><button type="button" id="railroad_name" onclick="show_railroad_list();"></button><button type="button" id="menu_button" onclick="menu_click();"></button></header>
     <nav id="menu">
         <div id="menu_logged_in">
             <b id="menu_user_name"></b>
-            <a href="/user/user_info.php" target="_blank" rel="opener">ユーザー情報</a>
-            <a href="javascript:void(0);" onclick="user_logout();">ログアウト</a>
+            <button type="button" onclick="window.open('/user/user_info.php');">ユーザー情報</button>
+            <button type="button" onclick="user_logout();">ログアウト</button>
         </div>
         <div id="menu_admin">
-            <a href="/admin/index.php" target="_blank" rel="opener">管理画面を開く</a>
+            <button type="button" onclick="window.open('/admin/index.php');">管理画面を開く</button>
         </div>
         <div id="menu_not_logged_in">
-            <a href="javascript:void(0);" onclick="show_login_form();">ログイン</a>
-            <a href="/user/sign_up.php" target="_blank" rel="opener">新規登録</a>
+            <button type="button" onclick="show_login_form();">ログイン</button>
+            <button type="button" onclick="window.open('/user/sign_up.php');">新規登録</button>
         </div>
         <div id="menu_off_line">
             <b class="off_line_message" onclick="show_off_line_message();">オフラインモード</b>
         </div>
         <hr>
-        <a id="menu_announcements" href="javascript:void(0);" onclick="show_announcements();">お知らせ</a>
+        <button type="button" id="menu_announcements" onclick="show_announcements();">お知らせ</button>
         <hr>
-        <a href="javascript:void(0);" onclick="edit_config();">アプリの設定</a>
+        <button type="button" onclick="edit_config();">アプリの設定</button>
         <hr>
-        <a href="javascript:void(0);" onclick="show_about();"><span id="menu_instance_name"><?php print UNYOHUB_APP_NAME; ?></span>について</a>
-        <a href="javascript:void(0);" onclick="show_rules();">ルールとポリシー</a>
+        <button type="button" onclick="show_about();"><span id="menu_instance_name"><?php print UNYOHUB_APP_NAME; ?></span>について</button>
+        <button type="button" onclick="show_rules();">ルールとポリシー</button>
         <a id="menu_manual_button" href="#" target="_blank">このアプリの使い方</a>
         <hr>
         <a id="menu_reload_button" href="/" onclick="event.preventDefault(); reload_app();"><?php print UNYOHUB_APP_NAME; ?></a>
@@ -274,9 +274,9 @@ if ($path_info_str === "/") {
     print <<<EOM
             <div id="splash_screen_login_status">サーバに接続しています...</div>
             <div id="splash_screen_inner" class="wait_icon"></div>
-            <a id="splash_screen_announcement" href="javascript:void(0);" onclick="show_announcements();"></a>
+            <button type="button" id="splash_screen_announcement" onclick="show_announcements();"></button>
             <div id="splash_screen_bottom">
-                <a href="javascript:void(0);" onclick="show_about();"><span id="splash_screen_instance_name">{$unyohub_app_name}</span>について</a><a href="javascript:void(0);" onclick="show_rules();">ルールとポリシー</a><span id="splash_screen_app_version">v{$unyohub_version}</span>
+                <u onclick="show_about();"><span id="splash_screen_instance_name">{$unyohub_app_name}</span>について</u><a href="/user/rules.php" onclick="event.preventDefault(); show_rules();">ルールとポリシー</a><span id="splash_screen_app_version">v{$unyohub_version}</span>
             </div>
     EOM."\n";
 }
@@ -323,7 +323,7 @@ if ($path_info_str === "/") {
                 <select class="wide_select" id="operation_search_car_count" onchange="operation_table_list_number();"><option value="" selected="selected"></option></select>
                 <select class="wide_select" id="operation_search_starting_location" onchange="operation_table_list_number();"><option value="" selected="selected"></option></select>
                 <select class="wide_select" id="operation_search_terminal_location" onchange="operation_table_list_number();"><option value="" selected="selected"></option></select>
-                <a href="javascript:void(0);" class="additional_setting_link" onclick="reset_operation_narrow_down(false);">絞り込み条件のリセット</a>
+                <button type='button' class='execute_button' class="additional_setting_link" onclick="reset_operation_narrow_down(false);">絞り込み条件のリセット</button>
             </div>
         </div>
         <h2 id="operation_table_heading"></h2>
@@ -331,7 +331,7 @@ if ($path_info_str === "/") {
         <br>
         <div id="operation_table_info" class="informational_text"></div>
     </article>
-    <a id="railroad_announcement" href="javascript:void(0);" onclick="show_railroad_announcements();"></a>
+    <button type="button" id="railroad_announcement" onclick="show_railroad_announcements();"></button>
     <footer>
         <div>
             <button type="button" id="position_reload_button" class="reload_button" onclick="position_mode(null, '__today__');"></button>

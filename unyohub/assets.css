@@ -47,6 +47,18 @@ input, textarea {
     cursor: text;
 }
 
+button {
+    box-sizing: content-box;
+    
+    padding: 0;
+    
+    border: none;
+    
+    background-color: transparent;
+    
+    text-align: inherit;
+}
+
 header {
     position: relative;
     
@@ -146,13 +158,11 @@ header {
     
     background-size: 40px;
     background-position: calc(100vw - 165px) 0;
-    background-color: transparent;
     
     line-height: 40px;
     font-size: 22px;
     color: #ffffff;
     text-indent: 10px;
-    text-decoration: none;
 }
 
 #railroad_name small {
@@ -175,7 +185,6 @@ header {
     
     background-image: url(data:image/webp;base64,UklGRjYAAABXRUJQVlA4TCoAAAAvY8ATEA8wzMM8zPMf8DAUwMyaqa7ZFcC+Ef2fgHupQQleaVCCVxqU4Kc=);
     background-size: 50px 40px;
-    background-color: transparent;
 }
 
 .menu_button_active {
@@ -264,7 +273,7 @@ header {
     background-color: #777777;
 }
 
-#menu a {
+#menu button, #menu a {
     display: block;
     
     width: 100%;
@@ -964,7 +973,7 @@ header {
     z-index: 1;
 }
 
-#splash_screen_bottom a {
+#splash_screen_bottom a, #splash_screen_bottom u {
     display: inline-block;
     
     margin-left: 20px;
@@ -972,7 +981,7 @@ header {
     color: #666666;
 }
 
-.dark_mode #splash_screen_bottom a {
+.dark_mode #splash_screen_bottom a, .dark_mode #splash_screen_bottom u {
     color: #dddddd;
 }
 
@@ -1025,10 +1034,6 @@ header {
 
 #tab_area a, #splash_screen_login_status a {
     display: inline-block;
-    
-    position: relative;
-    
-    box-sizing: content-box;
     
     width: 80px;
     height: 18px;
@@ -1163,6 +1168,8 @@ article {
     
     max-width: 450px;
     
+    padding: 5px 10px;
+    
     z-index: 2;
 }
 
@@ -1199,7 +1206,7 @@ article {
 .execute_button {
     display: block;
     
-    width: min(calc(75% - 5px), 370px) !important;
+    width: min(calc(75% - 35px), 340px) !important;
     
     margin: 10px 0 10px max(25%, calc(50% - 125px)) !important;
     padding: 5px 30px 5px 0 !important;
@@ -1386,8 +1393,8 @@ article {
     top: 20px;
     left: 0;
     
-    width: 36px;
-    height: 36px;
+    width: 32px;
+    height: 32px;
     
     border: 2px solid #cccccc;
     border-radius: 3px;
@@ -3054,14 +3061,7 @@ h2 small {
 }
 
 .key_and_value button {
-    display: inline-block !important;
-    
-    margin: 0 0 0 10px !important;
-    
-    padding: 4px 10px !important;
-    
-    line-height: 18px;
-    vertical-align: top;
+    padding: 2px 10px !important;
 }
 
 .formation_operation_data, .formation_operation_data_last_seen {
@@ -3145,8 +3145,6 @@ footer div {
 }
 
 .footer_select {
-    box-sizing: content-box;
-    
     width: 60px;
     height: 45px;
     
@@ -3162,7 +3160,7 @@ footer div {
     
     line-height: 45px;
     font-size: 21px;
-    color: #333333;
+    color: inherit;
     text-align: center;
     vertical-align: top;
 }
@@ -3379,8 +3377,6 @@ footer small {
     background-repeat: no-repeat;
     background-position: center;
     
-    border: none;
-    
     z-index: 10;
 }
 
@@ -3392,7 +3388,10 @@ footer small {
     width: 40px;
     height: 40px;
     
+    border-radius: 4px;
+    
     background-size: 30px;
+    background-color: rgba(255,255,255,0.9);
 }
 
 .screenshot_button {
@@ -3407,7 +3406,13 @@ article .screenshot_button {
 }
 
 .popup .popup_close_button, .popup .screenshot_button {
+    top: 10px;
+    
     animation: popup_up 0.05s ease-out;
+}
+
+.dark_mode .popup_close_button, .dark_mode .screenshot_button {
+    background-color: rgba(68,68,68,0.85);
 }
 
 .popup h3 {
@@ -3488,13 +3493,6 @@ a {
     margin-left: 20px;
     
     font-size: 18px;
-}
-
-.popup button {
-    display: block;
-    
-    margin: 10px auto;
-    padding: 5px 10px;
 }
 
 .execute_link {
@@ -3667,7 +3665,7 @@ a {
     line-height: 22px;
 }
 
-.dark_mode #splash_screen .wide_button, .dark_mode .dark_mode #railroad_select_popup .popup_close_button, .dark_mode .square_popup button, .dark_mode .preview_popup button {
+.dark_mode #splash_screen .wide_button, .dark_mode .dark_mode .popup_close_button, .dark_mode .square_popup button, .dark_mode .preview_popup button {
     background-color: rgba(102,102,102,0.85);
 }
 
@@ -3911,8 +3909,6 @@ a {
 button:has(abbr) {
     display: block;
     
-    box-sizing: content-box;
-    
     width: 316px;
     
     margin: 5px auto;
@@ -4022,14 +4018,14 @@ button abbr {
     padding: 0 5px;
 }
 
-.operation_data_detail button {
+.operation_data_detail button, .key_and_value button {
     display: inline-block;
-    
-    height: 24px;
     
     margin: 0 0 0 10px;
     padding: 0 6px;
     
+    line-height: 22px;
+    font-size: 14px;
     vertical-align: top;
 }
 
@@ -5006,7 +5002,7 @@ input[type="checkbox"], input[type="radio"] {
     text-align: center;
 }
 
-button, a.wide_button, input[type="radio"] + label, .chip + label {
+.write_button, .wide_button, input[type="radio"] + label, .chip + label, .chip_ellipsis, .operation_data_detail button, .key_and_value button {
     background-color: rgba(255,255,255,0.9);
     background-image: linear-gradient(315deg, #666666 8px, transparent 8px);
     
@@ -5017,11 +5013,7 @@ button, a.wide_button, input[type="radio"] + label, .chip + label {
     text-decoration: none;
 }
 
-button {
-    font-size: 14px;
-}
-
-.dark_mode button, .dark_mode a.wide_button, .dark_mode input[type="radio"] + label, .dark_mode .chip + label {
+.dark_mode .write_button, .dark_mode .wide_button, .dark_mode input[type="radio"] + label, .dark_mode .chip + label, .dark_mode .chip_ellipsis, .dark_mode .operation_data_detail button, .dark_mode .key_and_value button {
     background-color: rgba(68,68,68,0.85);
     background-image: linear-gradient(315deg, #cccccc 8px, transparent 8px);
     
