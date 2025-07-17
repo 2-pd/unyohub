@@ -383,31 +383,27 @@ header {
     display: block;
     
     position: absolute;
-    top: 0;
-    left: 0;
+    top: 90px;
+    left: max(calc(50% - 130px), 120px);
     
-    width: 100%;
-    height: 100%;
+    width: min(calc(50% + 130px), calc(100% - 120px));
+    height: calc(100% - 90px);
     
     background-image: url("/splash_screen_image.webp");
     background-size: contain;
     background-repeat: no-repeat;
     background-position: right bottom;
-    
-    transition-duration: 1s;
-    transition-property: top, left, width, height, opacity;
 }
 
-.splash_screen_loaded:after, #railroad_select_popup:after {
+#splash_screen.splash_screen_loaded:after, #railroad_select_popup:after {
     opacity: 0.25;
 }
 
 #splash_screen.splash_screen_loaded:after {
-    top: 90px;
-    left: max(calc(50% - 130px), 120px);
+    background-position: right 0 bottom 40px;
     
-    width: min(calc(50% + 130px), calc(100% - 120px));
-    height: calc(100% - 130px);
+    transition-duration: 3s, 0.5s;
+    transition-property: opacity, background-position;
 }
 
 #splash_screen_login_status {
@@ -3716,16 +3712,6 @@ a {
     100% {
         top: 20px;
     }
-}
-
-#railroad_select_popup:after {
-    top: 100px;
-    left: max(calc(50% - 130px), 120px);
-    
-    width: min(calc(50% + 130px), calc(100% - 120px));
-    height: calc(100% - 100px);
-    
-    transition:none;
 }
 
 #railroad_select_popup h2 {

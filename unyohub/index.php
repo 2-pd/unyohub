@@ -211,30 +211,31 @@ print "    <title>".htmlspecialchars($page_title)."</title>\n";
 $root_url = "http".(empty($_SERVER["HTTPS"]) ? "" : "s")."://".$_SERVER["HTTP_HOST"];
 $page_description = addslashes($page_description);
 
-print "    <meta property=\"og:title\" content=\"".addslashes($page_title)."\">\n";
-print "    <meta property=\"og:type\" content=\"website\">\n";
-print "    <meta property=\"og:image\" content=\"".$root_url."/apple-touch-icon.webp\">\n";
-print "    <meta property=\"og:url\" content=\"".$root_url.$path_info_str."\">\n";
-print "    <meta property=\"og:description\" content=\"".$page_description."\">\n";
-print "    <meta property=\"twitter:card\" content=\"summary\">\n";
-print "    <meta name=\"description\" content=\"".$page_description."\">\n";
-print "    <link rel=\"canonical\" href=\"".$root_url.$path_info_str."\">\n";
 print "    <link rel=\"styleSheet\" href=\"/assets.css?v=".UNYOHUB_VERSION."\">\n";
-?>
-    <link rel="apple-touch-icon" href="/apple-touch-icon.webp">
-    <link rel="shortcut icon" href="/favicon.ico">
-    <link rel="manifest" href="/manifest.json">
-    <style id="formation_styles"></style>
-<?php
 print "    <script>\n";
 print "        const UNYOHUB_APP_NAME = \"".UNYOHUB_APP_NAME."\";\n";
 print "        const UNYOHUB_VERSION = \"".UNYOHUB_VERSION."\";\n";
 print "        const UNYOHUB_APP_INFO_URL = \"".UNYOHUB_APP_INFO_URL."\";\n";
 print "        const UNYOHUB_REPOSITORY_URL = \"".UNYOHUB_REPOSITORY_URL."\";\n";
 print "        const UNYOHUB_LICENSE_TEXT = \"".UNYOHUB_LICENSE_TEXT."\";\n";
-print "    </script>";
+print "    </script>\n";
 print "    <script src=\"/main.js?v=".UNYOHUB_VERSION."\" defer=\"defer\"></script>\n";
 ?>
+    <link rel="shortcut icon" href="/favicon.ico">
+    <link rel="apple-touch-icon" href="/apple-touch-icon.webp">
+    <link rel="preload" href="/splash_screen_image.webp" as="image">
+    <link rel="manifest" href="/manifest.json">
+<?php
+print "    <link rel=\"canonical\" href=\"".$root_url.$path_info_str."\">\n";
+print "    <meta name=\"description\" content=\"".$page_description."\">\n";
+print "    <meta property=\"og:title\" content=\"".addslashes($page_title)."\">\n";
+print "    <meta property=\"og:type\" content=\"website\">\n";
+print "    <meta property=\"og:image\" content=\"".$root_url."/apple-touch-icon.webp\">\n";
+print "    <meta property=\"og:url\" content=\"".$root_url.$path_info_str."\">\n";
+print "    <meta property=\"og:description\" content=\"".$page_description."\">\n";
+print "    <meta property=\"twitter:card\" content=\"summary\">\n";
+?>
+    <style id="formation_styles"></style>
 </head>
 <body>
     <header><a id="railroad_icon" href="javascript:void(0);" onclick="about_railroad_data();"></a><span id="instance_name"></span><a id="railroad_name" href="javascript:void(0);" onclick="show_railroad_list();"></a><a id="menu_button" href="javascript:void(0);" onclick="menu_click();"></a></header>
