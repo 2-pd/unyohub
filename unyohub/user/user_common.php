@@ -17,7 +17,7 @@ function print_header ($title = "", $noindex = TRUE, $load_captcha_js = FALSE, $
     
     print <<< EOM
     <html>
-    <head>
+    <head lang="ja">
         <meta charset="utf-8">
         <meta name="viewport" content="width=device-width,initial-scale=1,interactive-widget=resizes-content">
     
