@@ -134,7 +134,12 @@ if (strlen($comment) === 0) {
 
 $operation_number = $db_obj->escapeString($_POST["operation_number"]);
 
-$formations = preg_replace("/不明/u", "?", mb_convert_kana($_POST["formations"], "KVa"));
+$formations = preg_replace(array("/\s+/u", "/不明/u"), array("", "?"), mb_convert_kana($_POST["formations"], "KVa"));
+
+if (empty($formations)) {
+    print "ERROR: 投稿内容が未入力です";
+    exit;
+}
 
 if ($formations !== "運休" && $formations !== "ウヤ" && $formations !== "トケ") {
     $formation_info = get_formation_info($formations, TRUE);
