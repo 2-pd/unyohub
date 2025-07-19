@@ -1040,12 +1040,16 @@ window.onload = function () {
             } else {
                 select_railroad(path_info[1].substring(9));
             }
+            
+            check_announcements();
         } else if (location.pathname.length >= 2) {
             reload_app();
         } else {
             get_railroad_list(function (railroads, loading_completed) {
                 update_railroad_list(railroads, document.getElementById("splash_screen_inner"), loading_completed);
             });
+            
+            check_announcements(true);
         }
         
         if (navigator.onLine) {
@@ -1053,8 +1057,6 @@ window.onload = function () {
         } else {
             on_off_line();
         }
-        
-        check_announcements(true);
     });
 };
 
