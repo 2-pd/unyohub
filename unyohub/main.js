@@ -7444,7 +7444,7 @@ function show_captcha (callback_func) {
         captcha_submit_button_elm.style.display = "block";
         
         captcha_submit_button_elm.onclick = callback_func;
-    }, config["dark_mode"] ? "#777777" : "#eeeeee");
+    }, config["dark_mode"] ? "#777777 !important" : "#eeeeee");
 }
 
 
