@@ -6718,8 +6718,10 @@ function write_operation_data (railroad_id, yyyy_mm_dd, operation_number, train_
         buf += "<div class='informational_text' id='comment_guide'>差し替え等の特記事項がない場合は省略可能です。</div>";
     }
     
-    buf += "<div class='warning_text' id='quote_guide' style='display: none;'>情報の出典を補足情報にご入力ください。<br><br>また、お手数ですが、投稿前に<a href='javascript:void(0);' onclick='show_rules();'>ルールとポリシー</a>をご覧いただき、引用元が投稿ルールに反しない情報ソースであることをご確認願います。</div>";
-    
+    buf += "<div class='warning_text' id='quote_guide' style='display: none;'>情報の出典を補足情報にご入力ください。";
+    if ("quotation_guidelines" in instance_info) {
+        buf += "<br><br>" + convert_to_html(instance_info["quotation_guidelines"]) + "</div>";
+    }
     buf += "</div><br>";
     
     buf += "<button type='button' class='wide_button' onclick='check_post_operation_data();'>投稿する</button>";
@@ -6731,6 +6733,8 @@ function write_operation_data (railroad_id, yyyy_mm_dd, operation_number, train_
     }
     
     popup_inner_elm.innerHTML = buf;
+    
+    document.getElementById("write_operation_data_popup").scrollTop = 0;
     
     if (!speculative_post) {
         for (var cnt = 0; cnt < operation_info["trains"].length; cnt++) {
