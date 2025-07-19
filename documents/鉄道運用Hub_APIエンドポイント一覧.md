@@ -23,7 +23,8 @@
     "administrator_introduction" : インスタンス運営者の紹介文(未設定なら省略),  
     "available_days_ahead" : 何日先の日付まで運用情報の閲覧と投稿が可能か,  
     "allow_guest_user" : ログインしていないユーザーの投稿を認めるか(BOOL値),  
-    "require_comments_on_speculative_posts" : 未出庫の運用への情報投稿時にコメント入力を強制するか(BOOL値)  
+    "require_comments_on_speculative_posts" : 未出庫の運用への情報投稿時にコメント入力を強制するか(BOOL値),  
+    "quotation_guidelines" : 引用情報を投稿する際に表示される案内文(未設定なら省略)  
 }  
   
 ※上記の他、**Last-Modified**レスポンスヘッダーにインスタンス情報の最終更新日時が出力される  
