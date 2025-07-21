@@ -230,10 +230,10 @@ print "    <link rel=\"canonical\" href=\"".$root_url.$path_info_str."\">\n";
 print "    <meta name=\"description\" content=\"".$page_description."\">\n";
 print "    <meta property=\"og:title\" content=\"".addslashes($page_title)."\">\n";
 print "    <meta property=\"og:type\" content=\"website\">\n";
-print "    <meta property=\"og:image\" content=\"".$root_url."/apple-touch-icon.webp\">\n";
+print "    <meta property=\"og:image\" content=\"".$root_url."/large_image.webp\">\n";
 print "    <meta property=\"og:url\" content=\"".$root_url.$path_info_str."\">\n";
 print "    <meta property=\"og:description\" content=\"".$page_description."\">\n";
-print "    <meta property=\"twitter:card\" content=\"summary\">\n";
+print "    <meta property=\"twitter:card\" content=\"summary_large_image\">\n";
 ?>
     <style id="formation_styles"></style>
 </head>
