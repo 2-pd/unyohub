@@ -1040,12 +1040,14 @@ window.onload = function () {
             } else {
                 select_railroad(path_info[1].substring(9));
             }
-        } else if (location.pathname.length >= 2) {
-            reload_app();
+            
+            check_announcements();
         } else {
             get_railroad_list(function (railroads, loading_completed) {
                 update_railroad_list(railroads, document.getElementById("splash_screen_inner"), loading_completed);
             });
+            
+            check_announcements(true);
         }
         
         if (navigator.onLine) {
@@ -1053,8 +1055,6 @@ window.onload = function () {
         } else {
             on_off_line();
         }
-        
-        check_announcements(true);
     });
 };
 
@@ -6718,8 +6718,10 @@ function write_operation_data (railroad_id, yyyy_mm_dd, operation_number, train_
         buf += "<div class='informational_text' id='comment_guide'>差し替え等の特記事項がない場合は省略可能です。</div>";
     }
     
-    buf += "<div class='warning_text' id='quote_guide' style='display: none;'>情報の出典を補足情報にご入力ください。<br><br>また、お手数ですが、投稿前に<a href='javascript:void(0);' onclick='show_rules();'>ルールとポリシー</a>をご覧いただき、引用元が投稿ルールに反しない情報ソースであることをご確認願います。</div>";
-    
+    buf += "<div class='warning_text' id='quote_guide' style='display: none;'>情報の出典を補足情報にご入力ください。";
+    if ("quotation_guidelines" in instance_info) {
+        buf += "<br><br>" + convert_to_html(instance_info["quotation_guidelines"]) + "</div>";
+    }
     buf += "</div><br>";
     
     buf += "<button type='button' class='wide_button' onclick='check_post_operation_data();'>投稿する</button>";
@@ -6731,6 +6733,8 @@ function write_operation_data (railroad_id, yyyy_mm_dd, operation_number, train_
     }
     
     popup_inner_elm.innerHTML = buf;
+    
+    document.getElementById("write_operation_data_popup").scrollTop = 0;
     
     if (!speculative_post) {
         for (var cnt = 0; cnt < operation_info["trains"].length; cnt++) {
@@ -7900,25 +7904,56 @@ window.onpopstate = function () {
     } else if (popup_history.length >= 1) {
         popup_close(false, false);
     } else {
+        if (location.pathname === "/") {
+            reload_app();
+            return;
+        }
+        
+        var path_info = location.pathname.split("/");
+        
+        var railroad_id = path_info[1].substring(9);
+        var mode_name = path_info.length >= 3 && path_info[2].length >= 1 ? path_info[2] : "position";
+        var mode_option_1 = path_info.length >= 4 && path_info[3].length >= 1 ? decodeURIComponent(path_info[3]) : null;
+        var mode_option_2 = path_info.length >= 5 && path_info[4].length >= 1 ? decodeURIComponent(path_info[4]) : null;
+        
+        if (railroad_id !== railroad_info["railroad_id"]) {
+            select_railroad(railroad_id, mode_name + "_mode", mode_option_1, mode_option_2);
+            return;
+        }
+        
         switch (mode_val) {
             case 1:
-                if (timetable_selected_station !== null) {
-                    timetable_change_lines(timetable_selected_line, true);
+                if (mode_name === "timetable") {
+                    if (mode_option_2 === null) {
+                        timetable_change_lines(mode_option_1, true);
+                    } else {
+                        timetable_select_station(mode_option_2, mode_option_1);
+                    }
                 }
+                
                 break;
             
             case 3:
-                if (selected_formation_name !== null) {
-                    draw_formation_table();
+                if (mode_name === "formations") {
+                    if (mode_option_1 === null) {
+                        draw_formation_table();
+                    } else {
+                        formation_detail(mode_option_1);
+                    }
+                    return;
                 }
+                
                 break;
             
             case 4:
-                if (operation_table !== null) {
-                    operation_table_mode(null);
+                if (mode_name === "operation_table") {
+                    operation_table_mode(mode_option_1);
+                    return;
                 }
                 break;
         }
+        
+        select_mode(mode_name + "_mode", mode_option_1, mode_option_2);
     }
 };
 
