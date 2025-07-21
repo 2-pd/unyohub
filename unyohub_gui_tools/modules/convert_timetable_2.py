@@ -72,6 +72,12 @@ def convert_timetable_2 (mes, main_dir, diagram_revision, diagram_id):
             station_list = timetable_data_t[0][9: -6]
             trains = timetable_data_t[1:]
             
+            if len(station_list) != len(railroad_info["lines"][line_id]["stations"]):
+                mes("時刻表の駅数が路線情報と整合しません: " + line_id + " - " + direction, True)
+                mes("エラー発生のため処理が中断されました")
+                
+                return
+            
             direction_data = {}
             previous_train_number = ""
             for train in trains:

@@ -248,7 +248,7 @@ def select_diagram (callback_func, enable_save_operation_table_check=False):
     
     if enable_save_operation_table_check:
         save_operation_table_value = tk.BooleanVar()
-        save_operation_table_value.set(True)
+        save_operation_table_value.set(False)
         save_operation_table_check = tk.Checkbutton(select_diagram_win, variable=save_operation_table_value, text="運用表を生成する", font=list_font, bg="#333333", fg="#999999", activebackground="#666666", activeforeground="#ffffff")
         save_operation_table_check.place(x=240, y=80, width=200)
         
