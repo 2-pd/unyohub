@@ -1042,8 +1042,6 @@ window.onload = function () {
             }
             
             check_announcements();
-        } else if (location.pathname.length >= 2) {
-            reload_app();
         } else {
             get_railroad_list(function (railroads, loading_completed) {
                 update_railroad_list(railroads, document.getElementById("splash_screen_inner"), loading_completed);
@@ -7906,25 +7904,56 @@ window.onpopstate = function () {
     } else if (popup_history.length >= 1) {
         popup_close(false, false);
     } else {
+        if (location.pathname === "/") {
+            reload_app();
+            return;
+        }
+        
+        var path_info = location.pathname.split("/");
+        
+        var railroad_id = path_info[1].substring(9);
+        var mode_name = path_info.length >= 3 && path_info[2].length >= 1 ? path_info[2] : "position";
+        var mode_option_1 = path_info.length >= 4 && path_info[3].length >= 1 ? decodeURIComponent(path_info[3]) : null;
+        var mode_option_2 = path_info.length >= 5 && path_info[4].length >= 1 ? decodeURIComponent(path_info[4]) : null;
+        
+        if (railroad_id !== railroad_info["railroad_id"]) {
+            select_railroad(railroad_id, mode_name + "_mode", mode_option_1, mode_option_2);
+            return;
+        }
+        
         switch (mode_val) {
             case 1:
-                if (timetable_selected_station !== null) {
-                    timetable_change_lines(timetable_selected_line, true);
+                if (mode_name === "timetable") {
+                    if (mode_option_2 === null) {
+                        timetable_change_lines(mode_option_1, true);
+                    } else {
+                        timetable_select_station(mode_option_2, mode_option_1);
+                    }
                 }
+                
                 break;
             
             case 3:
-                if (selected_formation_name !== null) {
-                    draw_formation_table();
+                if (mode_name === "formations") {
+                    if (mode_option_1 === null) {
+                        draw_formation_table();
+                    } else {
+                        formation_detail(mode_option_1);
+                    }
+                    return;
                 }
+                
                 break;
             
             case 4:
-                if (operation_table !== null) {
-                    operation_table_mode(null);
+                if (mode_name === "operation_table") {
+                    operation_table_mode(mode_option_1);
+                    return;
                 }
                 break;
         }
+        
+        select_mode(mode_name + "_mode", mode_option_1, mode_option_2);
     }
 };
 
