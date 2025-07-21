@@ -9,9 +9,7 @@ if (!$user->check_permission("instance_administrator")) {
 print_header();
 
 
-$config_str = file_get_contents("../config/main.ini");
-
-if (isset($_POST["instance_name"], $_POST["introduction_text"], $_POST["manual_url"], $_POST["administrator_name"], $_POST["administrator_url"], $_POST["administrator_introduction"], $_POST["available_days_ahead"], $_POST["sender_email_address"])) {
+if (isset($_POST["instance_name"], $_POST["introduction_text"], $_POST["manual_url"], $_POST["administrator_name"], $_POST["administrator_url"], $_POST["administrator_introduction"], $_POST["available_days_ahead"], $_POST["quotation_guidelines"], $_POST["sender_email_address"])) {
     $config_str = "instance_name = \"".addslashes($_POST["instance_name"])."\"\n";
     $config_str .= "\n";
     $config_str .= "introduction_text = \"".str_replace(array("\r\n", "\n", "\r"), "\\n", addslashes($_POST["introduction_text"]))."\"\n";
@@ -28,6 +26,8 @@ if (isset($_POST["instance_name"], $_POST["introduction_text"], $_POST["manual_u
     $config_str .= "allow_guest_user = ".(!empty($_POST["allow_guest_user"]) ? "true" : "false")."\n";
     $config_str .= "require_comments_on_speculative_posts = ".(!empty($_POST["require_comments_on_speculative_posts"]) ? "true" : "false")."\n";
     $config_str .= "\n";
+    $config_str .= "quotation_guidelines = \"".str_replace(array("\r\n", "\n", "\r"), "\\n", addslashes($_POST["quotation_guidelines"]))."\"\n";
+    $config_str .= "\n";
     $config_str .= "sender_email_address = \"".addslashes($_POST["sender_email_address"])."\"\n";
     $config_str .= "\n";
     $config_str .= "log_ip_address = ".(!empty($_POST["log_ip_address"]) ? "true" : "false")."\n";
@@ -39,6 +39,8 @@ if (isset($_POST["instance_name"], $_POST["introduction_text"], $_POST["manual_u
     } else {
         print "<script> alert('【!】ワンタイムトークンが無効です。処理はキャンセルされました。'); </script>";
     }
+} else {
+    $config_str = file_get_contents("../config/main.ini");
 }
 
 $config = parse_ini_string($config_str);
@@ -95,6 +97,9 @@ if ($config["require_comments_on_speculative_posts"]) {
     print " checked='checked'";
 }
 print "><label for='require_comments_on_speculative_posts'>未出庫運用への情報投稿時にコメント入力を強制</label>";
+
+print "<h3>引用投稿のガイドライン</h3>";
+print "<textarea name='quotation_guidelines'>".htmlspecialchars(stripcslashes($config["quotation_guidelines"]))."</textarea>";
 
 print "<h3>メール送信用アドレス</h3>";
 print "<div class='informational_text'>このインスタンスのサーバに割り当てられているドメインであれば、存在しないメールアドレスでも設定可能です。</div>";

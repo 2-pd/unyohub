@@ -9,7 +9,7 @@ $db_obj = new SQLite3("../data/".basename($_POST["railroad_id"])."/railroad.db")
 $db_obj->busyTimeout(5000);
 
 
-$updated_datetime = $db_obj->querySingle("SELECT `overview_updated` FROM `unyohub_formations` WHERE `overview_updated` > '".date("Y-m-d H:i:s", intval($_POST["last_modified_timestamp"]))."' ORDER BY `overview_updated` DESC LIMIT 1");
+$updated_datetime = $db_obj->querySingle("SELECT `overview_updated` FROM `unyohub_formations` WHERE `currently_registered` = 1 AND `overview_updated` > '".date("Y-m-d H:i:s", intval($_POST["last_modified_timestamp"]))."' ORDER BY `overview_updated` DESC LIMIT 1");
 
 if (empty($updated_datetime)) {
     print "NO_UPDATES_AVAILABLE";
@@ -17,7 +17,7 @@ if (empty($updated_datetime)) {
 }
 
 
-$overviews_r = $db_obj->query("SELECT `formation_name`, `caption`, `semifixed_formation`, `unavailable` FROM `unyohub_formations`");
+$overviews_r = $db_obj->query("SELECT `formation_name`, `caption`, `semifixed_formation`, `unavailable` FROM `unyohub_formations` WHERE `currently_registered` = 1");
 
 $formation_overviews = array();
 while ($formation_overview = $overviews_r->fetchArray(SQLITE3_ASSOC)) {

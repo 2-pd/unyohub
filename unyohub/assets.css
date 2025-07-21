@@ -47,6 +47,18 @@ input, textarea {
     cursor: text;
 }
 
+button {
+    box-sizing: content-box;
+    
+    padding: 0;
+    
+    border: none;
+    
+    background-color: transparent;
+    
+    text-align: inherit;
+}
+
 header {
     position: relative;
     
@@ -146,13 +158,11 @@ header {
     
     background-size: 40px;
     background-position: calc(100vw - 165px) 0;
-    background-color: transparent;
     
     line-height: 40px;
     font-size: 22px;
     color: #ffffff;
     text-indent: 10px;
-    text-decoration: none;
 }
 
 #railroad_name small {
@@ -175,7 +185,6 @@ header {
     
     background-image: url(data:image/webp;base64,UklGRjYAAABXRUJQVlA4TCoAAAAvY8ATEA8wzMM8zPMf8DAUwMyaqa7ZFcC+Ef2fgHupQQleaVCCVxqU4Kc=);
     background-size: 50px 40px;
-    background-color: transparent;
 }
 
 .menu_button_active {
@@ -264,7 +273,7 @@ header {
     background-color: #777777;
 }
 
-#menu a {
+#menu button, #menu a {
     display: block;
     
     width: 100%;
@@ -277,11 +286,11 @@ header {
     text-decoration: none;
 }
 
-.dark_mode #menu a {
+.dark_mode #menu button, .dark_mode #menu a {
     color: #eeeeee;
 }
 
-.enlarge #menu a {
+.enlarge #menu button, .enlarge #menu a {
     height: 50px;
     
     line-height: 50px;
@@ -383,31 +392,27 @@ header {
     display: block;
     
     position: absolute;
-    top: 0;
-    left: 0;
+    top: 90px;
+    left: max(calc(50% - 130px), 120px);
     
-    width: 100%;
-    height: 100%;
+    width: min(calc(50% + 130px), calc(100% - 120px));
+    height: calc(100% - 90px);
     
     background-image: url("/splash_screen_image.webp");
     background-size: contain;
     background-repeat: no-repeat;
     background-position: right bottom;
-    
-    transition-duration: 1s;
-    transition-property: top, left, width, height, opacity;
 }
 
-.splash_screen_loaded:after, #railroad_select_popup:after {
+#splash_screen.splash_screen_loaded:after, #railroad_select_popup:after {
     opacity: 0.25;
 }
 
 #splash_screen.splash_screen_loaded:after {
-    top: 90px;
-    left: max(calc(50% - 130px), 120px);
+    background-position: right 0 bottom 40px;
     
-    width: min(calc(50% + 130px), calc(100% - 120px));
-    height: calc(100% - 130px);
+    transition-duration: 3s, 0.5s;
+    transition-property: opacity, background-position;
 }
 
 #splash_screen_login_status {
@@ -439,7 +444,7 @@ header {
     color: #ffffff;
 }
 
-#splash_screen_login_status:has(a) {
+#splash_screen_login_status:has(button) {
     width: calc(100% - 160px);
     
     max-width: 340px;
@@ -469,15 +474,15 @@ header {
     line-height: 30px;
 }
 
-#splash_screen_login_status a {
-    position: absolute !important;
+#splash_screen_login_status button {
+    position: absolute;
 }
 
-#splash_screen_login_status a:first-of-type {
+#splash_screen_login_status button:first-of-type {
     left: min(calc(50% + 90px), calc(100% - 160px));
 }
 
-#splash_screen_login_status a:last-of-type {
+#splash_screen_login_status button:last-of-type {
     left: min(calc(50% + 170px), calc(100% - 80px));
 }
 
@@ -861,6 +866,7 @@ header {
     
     line-height: 30px !important;
     font-size: 18px !important;
+    color: inherit;
     text-align: left !important;
 }
 
@@ -968,7 +974,7 @@ header {
     z-index: 1;
 }
 
-#splash_screen_bottom a {
+#splash_screen_bottom a, #splash_screen_bottom u {
     display: inline-block;
     
     margin-left: 20px;
@@ -976,7 +982,7 @@ header {
     color: #666666;
 }
 
-.dark_mode #splash_screen_bottom a {
+.dark_mode #splash_screen_bottom a, .dark_mode #splash_screen_bottom u {
     color: #dddddd;
 }
 
@@ -1027,12 +1033,8 @@ header {
     background-color: #222222;
 }
 
-#tab_area a, #splash_screen_login_status a {
+#tab_area a, #splash_screen_login_status button {
     display: inline-block;
-    
-    position: relative;
-    
-    box-sizing: content-box;
     
     width: 80px;
     height: 18px;
@@ -1057,7 +1059,7 @@ header {
     text-overflow: ellipsis;
 }
 
-.dark_mode #tab_area a, .dark_mode #splash_screen_login_status a {
+.dark_mode #tab_area a, .dark_mode #splash_screen_login_status button {
     color: #eeeeee;
 }
 
@@ -1167,6 +1169,8 @@ article {
     
     max-width: 450px;
     
+    padding: 5px 10px;
+    
     z-index: 2;
 }
 
@@ -1203,7 +1207,7 @@ article {
 .execute_button {
     display: block;
     
-    width: min(calc(75% - 5px), 370px) !important;
+    width: min(calc(75% - 35px), 340px) !important;
     
     margin: 10px 0 10px max(25%, calc(50% - 125px)) !important;
     padding: 5px 30px 5px 0 !important;
@@ -1330,7 +1334,7 @@ article {
     text-align: left;
 }
 
-#position_area th a {
+#position_area th a, #position_area th div {
     position: absolute;
     top: -13px;
     left: -5px;
@@ -1348,7 +1352,6 @@ article {
     line-height: 28px;
     font-size: 15px;
     color: inherit;
-    text-decoration: underline;
     
     filter: drop-shadow(0 1px 2px rgba(0,0,0,0.25));
     
@@ -1371,7 +1374,6 @@ article {
     
     line-height: 26px;
     color: #999999;
-    text-decoration: none;
     
     filter: none;
     
@@ -1390,8 +1392,8 @@ article {
     top: 20px;
     left: 0;
     
-    width: 36px;
-    height: 36px;
+    width: 32px;
+    height: 32px;
     
     border: 2px solid #cccccc;
     border-radius: 3px;
@@ -1803,7 +1805,7 @@ tr:has(+ .position_row_junction_T) .position_outbound div {
     margin: 0 auto;
 }
 
-#timetable_area a {
+#timetable_area a, .timetable_train {
     display: block;
     
     margin: 0 12px;
@@ -1812,11 +1814,11 @@ tr:has(+ .position_row_junction_T) .position_outbound div {
     text-decoration: none;
 }
 
-.enlarge #timetable_area a {
+.enlarge #timetable_area a, .enlarge .timetable_train {
     padding: 10px 8px;
 }
 
-#timetable_area a b {
+#timetable_area a b, .timetable_train b {
     font-size: 18px;
     color: #333333;
     text-decoration: underline;
@@ -1831,7 +1833,7 @@ tr:has(+ .position_row_junction_T) .position_outbound div {
     font-size: 20px;
 }
 
-#timetable_area a:not(.timetable_train) small {
+#timetable_area a small {
     font-size: 16px;
     text-decoration: underline;
 }
@@ -2241,6 +2243,12 @@ a.connecting_railroad_link h5, .connecting_railroad_link a {
     text-align: left;
 }
 
+.renamed_formation, .unregistered_formation {
+    line-height: 20px;
+    font-size: 14px;
+    color: #999999;
+}
+
 .formation_table th:before {
     content: "";
     
@@ -2260,6 +2268,14 @@ a.connecting_railroad_link h5, .connecting_railroad_link a {
     padding: 0 6px 0 0;
 }
 
+.renamed_formation .train_icon, .unregistered_formation .train_icon {
+    opacity: 0.5;
+}
+
+.renamed_formation td:last-child, .unregistered_formation td:last-child {
+    padding: 5px 6px 5px 10px !important;
+}
+
 .formation_table h5 {
     display: block;
     
@@ -2272,6 +2288,10 @@ a.connecting_railroad_link h5, .connecting_railroad_link a {
 
 .dark_mode .formation_table h5 {
     color: #cccccc;
+}
+
+.renamed_formation h5, .unregistered_formation h5 {
+    margin: 0 0 0 -10px;
 }
 
 .enlarge .formation_table h5 {
@@ -2468,7 +2488,7 @@ a.connecting_railroad_link h5, .connecting_railroad_link a {
     color: #cccccc;
 }
 
-.car_info {
+#car_info_table {
     width: min(100%, 500px);
     
     margin: 0 auto;
@@ -2476,15 +2496,15 @@ a.connecting_railroad_link h5, .connecting_railroad_link a {
     border-spacing: 0 2px;
 }
 
-.car_info tr {
+#car_info_table tr {
     height: 80px;
 }
 
-.car_info td {
+#car_info_table td {
     padding: 0;
 }
 
-.car_info tr:first-child td:first-child {
+#car_info_table tr:first-child td:first-child {
     width: 25px;
     
     max-width: 25px;
@@ -2498,14 +2518,14 @@ a.connecting_railroad_link h5, .connecting_railroad_link a {
     letter-spacing: 0.1em;
 }
 
-.car_info tr:first-child td:first-child span {
+#car_info_table tr:first-child td:first-child span {
     display: inline-block;
     
     writing-mode: vertical-rl;
     white-space: nowrap;
 }
 
-.car_info tr td:nth-last-child(2) {
+#car_info_table tr td:nth-last-child(2) {
     position: relative;
     
     width: 30px;
@@ -2515,7 +2535,7 @@ a.connecting_railroad_link h5, .connecting_railroad_link a {
     border: 1px solid #999999;
 }
 
-.dark_mode .car_info tr td:nth-last-child(2) {
+.dark_mode #car_info_table tr td:nth-last-child(2) {
     border-color: #cccccc;
 }
 
@@ -2564,17 +2584,17 @@ a.connecting_railroad_link h5, .connecting_railroad_link a {
     background-position: center;
 }
 
-.car_info tr td:last-child {
+#car_info_table tr td:last-child {
     padding: 0 10px;
     
     vertical-align: top;
 }
 
-.car_info b {
+#car_info_table b {
     font-size: 18px;
 }
 
-.car_info tr td:last-child span {
+#car_info_table tr td:last-child span {
     display: block;
     
     width: fit-content;
@@ -2582,7 +2602,7 @@ a.connecting_railroad_link h5, .connecting_railroad_link a {
     float: right;
 }
 
-.car_info .descriptive_text {
+#car_info_table .descriptive_text {
     padding: 0;
     
     clear: both;
@@ -2665,6 +2685,10 @@ h5.event_type_transfer {
 
 h5.event_type_rearrange {
     background-color: #2266cc;
+}
+
+h5.event_type_unregister {
+    background-color: #662211;
 }
 
 .search_highlight {
@@ -3036,14 +3060,7 @@ h2 small {
 }
 
 .key_and_value button {
-    display: inline-block !important;
-    
-    margin: 0 0 0 10px !important;
-    
-    padding: 4px 10px !important;
-    
-    line-height: 18px;
-    vertical-align: top;
+    padding: 2px 10px !important;
 }
 
 .formation_operation_data, .formation_operation_data_last_seen {
@@ -3127,8 +3144,6 @@ footer div {
 }
 
 .footer_select {
-    box-sizing: content-box;
-    
     width: 60px;
     height: 45px;
     
@@ -3144,7 +3159,7 @@ footer div {
     
     line-height: 45px;
     font-size: 21px;
-    color: #333333;
+    color: inherit;
     text-align: center;
     vertical-align: top;
 }
@@ -3361,8 +3376,6 @@ footer small {
     background-repeat: no-repeat;
     background-position: center;
     
-    border: none;
-    
     z-index: 10;
 }
 
@@ -3374,7 +3387,10 @@ footer small {
     width: 40px;
     height: 40px;
     
+    border-radius: 4px;
+    
     background-size: 30px;
+    background-color: rgba(255,255,255,0.9);
 }
 
 .screenshot_button {
@@ -3389,7 +3405,13 @@ article .screenshot_button {
 }
 
 .popup .popup_close_button, .popup .screenshot_button {
+    top: 10px;
+    
     animation: popup_up 0.05s ease-out;
+}
+
+.dark_mode .popup_close_button, .dark_mode .screenshot_button {
+    background-color: rgba(68,68,68,0.85);
 }
 
 .popup h3 {
@@ -3402,8 +3424,8 @@ article .screenshot_button {
     background-color: #808080;
 }
 
-h3 a, .descriptive_text a {
-    color: inherit !important;
+.descriptive_text a {
+    color: inherit;
 }
 
 h4 {
@@ -3470,13 +3492,6 @@ a {
     margin-left: 20px;
     
     font-size: 18px;
-}
-
-.popup button {
-    display: block;
-    
-    margin: 10px auto;
-    padding: 5px 10px;
 }
 
 .execute_link {
@@ -3649,8 +3664,10 @@ a {
     line-height: 22px;
 }
 
-.dark_mode #splash_screen .wide_button, .dark_mode .dark_mode #railroad_select_popup .popup_close_button, .dark_mode .square_popup button, .dark_mode .preview_popup button {
-    background-color: rgba(102,102,102,0.85);
+.dark_mode #railroad_select_popup .popup_close_button, .dark_mode .square_popup button, .dark_mode .preview_popup button {
+    background-color: rgba(102,102,102,0.85) !important;
+    
+    color: #ffffff;
 }
 
 .square_popup .popup_close_button {
@@ -3694,16 +3711,6 @@ a {
     100% {
         top: 20px;
     }
-}
-
-#railroad_select_popup:after {
-    top: 100px;
-    left: max(calc(50% - 130px), 120px);
-    
-    width: min(calc(50% + 130px), calc(100% - 120px));
-    height: calc(100% - 100px);
-    
-    transition:none;
 }
 
 #railroad_select_popup h2 {
@@ -3753,11 +3760,11 @@ a {
     color: #999999;
 }
 
-.warning_text, .warning_sentence {
+.warning_text, .warning_sentence, .unregistered_formation {
     color: #ee3333 !important;
 }
 
-.dark_mode .warning_text, .dark_mode .warning_sentence {
+.dark_mode .warning_text, .dark_mode .warning_sentence, .dark_mode .unregistered_formation {
     color: #ff6666 !important;
 }
 
@@ -3903,8 +3910,6 @@ a {
 button:has(abbr) {
     display: block;
     
-    box-sizing: content-box;
-    
     width: 316px;
     
     margin: 5px auto;
@@ -4014,14 +4019,14 @@ button abbr {
     padding: 0 5px;
 }
 
-.operation_data_detail button {
+.operation_data_detail button, .key_and_value button {
     display: inline-block;
-    
-    height: 24px;
     
     margin: 0 0 0 10px;
     padding: 0 6px;
     
+    line-height: 22px;
+    font-size: 14px;
     vertical-align: top;
 }
 
@@ -4232,11 +4237,6 @@ button abbr {
     border-top-width: 8px;
 }
 
-.train_overview a, .operation_table_train a {
-    color: inherit;
-    text-decoration: none;
-}
-
 .train_overview b {
     display: inline-block;
     
@@ -4271,7 +4271,7 @@ button abbr {
     float: right;
 }
 
-.train_overview div, .operation_table_train div:not(.coupling_info) {
+.train_overview div div, .operation_table_train div div, .operation_table_deposited_train div {
     display: inline;
 }
 
@@ -4281,7 +4281,7 @@ button abbr {
     width: 26%;
 }
 
-.train_overview span:nth-of-type(2), .operation_table_train div:not(.coupling_info) span:nth-child(2) {
+.train_overview span:nth-of-type(2), .operation_table_train div div span:nth-child(2) {
     width: 10%;
 }
 
@@ -4306,12 +4306,12 @@ button abbr {
     color: #cccccc;
 }
 
-.operation_table_train .coupling_info a {
+.operation_table_train .coupling_info u {
     color: #333333;
     text-decoration: underline;
 }
 
-.dark_mode .operation_table_train .coupling_info a {
+.dark_mode .operation_table_train .coupling_info u {
     color: #ffffff;
 }
 
@@ -4404,24 +4404,22 @@ button abbr {
     color: #999999;
 }
 
-.suggestion_area a {
-    display: block;
-    
-    position: relative;
-    
-    padding: 5px 0 5px 60px;
-    
-    line-height: 30px;
-    color: inherit;
-    text-decoration: none;
-    
-    z-index: 2;
-}
-
 .dark_mode .suggestion_area div {
     background-color: #666666;
     
     border-color: #808080;
+}
+
+.suggestion_area button {
+    display: block;
+    
+    padding: 5px 0 5px 60px;
+    
+    line-height: 30px;
+    font-size: inherit;
+    color: inherit;
+    
+    z-index: 2;
 }
 
 .suggestion_area .train_icon, #semifixed_formation_area .train_icon {
@@ -4562,7 +4560,7 @@ button abbr {
     margin-bottom: 50px;
 }
 
-#train_number_popup a {
+#train_number_popup u {
     display: block;
     
     width: 240px;
@@ -4578,7 +4576,7 @@ button abbr {
     text-align: left;
 }
 
-.dark_mode #train_number_popup a {
+.dark_mode #train_number_popup u {
     border-color: #999999;
 }
 
@@ -4998,7 +4996,7 @@ input[type="checkbox"], input[type="radio"] {
     text-align: center;
 }
 
-button, a.wide_button, input[type="radio"] + label, .chip + label {
+.write_button, .wide_button, input[type="radio"] + label, .chip + label, .chip_ellipsis, .operation_data_detail button, .key_and_value button, #operation_data_train_number + button {
     background-color: rgba(255,255,255,0.9);
     background-image: linear-gradient(315deg, #666666 8px, transparent 8px);
     
@@ -5009,11 +5007,7 @@ button, a.wide_button, input[type="radio"] + label, .chip + label {
     text-decoration: none;
 }
 
-button {
-    font-size: 14px;
-}
-
-.dark_mode button, .dark_mode a.wide_button, .dark_mode input[type="radio"] + label, .dark_mode .chip + label {
+.dark_mode .write_button, .dark_mode .wide_button, .dark_mode input[type="radio"] + label, .dark_mode .chip + label, .dark_mode .chip_ellipsis, .dark_mode .operation_data_detail button, .dark_mode .key_and_value button, .dark_mode #operation_data_train_number + button {
     background-color: rgba(68,68,68,0.85);
     background-image: linear-gradient(315deg, #cccccc 8px, transparent 8px);
     

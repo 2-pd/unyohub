@@ -58,7 +58,7 @@ $db_obj->busyTimeout(5000);
 
 $formation_name = $db_obj->escapeString($_POST["formation_name"]);
 
-$formation_data = $db_obj->querySingle("SELECT `formation_name`, `series_name`, `subseries_name`, `affiliation`, `caption`, `description`, `semifixed_formation`, `unavailable`, `inspection_information`, `updated_datetime`, `edited_user_id` FROM `unyohub_formations` WHERE `formation_name` = '".$formation_name."'", TRUE);
+$formation_data = $db_obj->querySingle("SELECT `formation_name`, `currently_registered`, `series_name`, `subseries_name`, `affiliation`, `caption`, `description`, `semifixed_formation`, `unavailable`, `inspection_information`, `updated_datetime`, `edited_user_id` FROM `unyohub_formations` WHERE `formation_name` = '".$formation_name."'", TRUE);
 
 if (empty($formation_data)) {
     print "ERROR: 編成詳細データがありません";
@@ -67,9 +67,13 @@ if (empty($formation_data)) {
 
 $cars_r = $db_obj->query("SELECT `car_number`, `manufacturer`, `constructed`, `description` FROM `unyohub_cars` WHERE `formation_name` = '".$formation_name."' AND `car_order` IS NOT NULL ORDER BY `car_order` ASC");
 
-$formation_data["cars"] = array();
+$cars = array();
 while ($car_data = $cars_r->fetchArray(SQLITE3_ASSOC)) {
-    $formation_data["cars"][] = $car_data;
+    $cars[] = $car_data;
+}
+
+if (!empty($cars)) {
+    $formation_data["cars"] = $cars;
 }
 
 $histories_r = $db_obj->query("SELECT `event_year_month`, `event_type`, `event_content` FROM `unyohub_formation_histories` WHERE `formation_name` = '".$formation_name."' ORDER BY `event_year_month` ASC");
@@ -114,6 +118,13 @@ if (is_null($formation_data["operations_today"]) && is_null($formation_data["ope
         $formation_data["operations_last_day"] = NULL;
     }
 }
+
+
+if (!$formation_data["currently_registered"]) {
+    unset($formation_data["unavailable"]);
+}
+
+unset($formation_data["currently_registered"]);
 
 
 $user = $wakarana->check();

@@ -265,6 +265,11 @@ td {
     padding: 10px 5px;
 }
 
+.descriptive_text {
+    color: #666666;
+    text-align: center;
+}
+
 a {
     color: #666666;
 }

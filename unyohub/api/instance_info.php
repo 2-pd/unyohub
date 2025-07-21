@@ -41,5 +41,9 @@ if (isset($_POST["last_modified_timestamp"]) && $last_modified <= intval($_POST[
         $instance_info["administrator_introduction"] = stripcslashes($main_config["administrator_introduction"]);
     }
     
+    if (!empty($main_config["quotation_guidelines"])) {
+        $instance_info["quotation_guidelines"] = stripcslashes($main_config["quotation_guidelines"]);
+    }
+    
     print json_encode($instance_info, JSON_UNESCAPED_UNICODE);
 }

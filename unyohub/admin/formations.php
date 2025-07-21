@@ -46,15 +46,35 @@ if (empty($_GET["formation_name"])) {
         print "<input type='checkbox' id='".$checkbox_id."'><label for='".$checkbox_id."' class='drop_down'>".htmlspecialchars($formations["series_names"][$cnt])."</label><div><table>";
         
         if (empty($formations["series"][$formations["series_names"][$cnt]]["subseries_names"])) {
+            $printed_cnt = 0;
             foreach ($formations["series"][$formations["series_names"][$cnt]]["formation_names"] as $formation_name) {
-                print "<tr><td><a href='formations.php?railroad_id=".$railroad_id."&formation_name=".urlencode($formation_name)."'><img src='train_icons.php/".$railroad_id."/".addslashes($formations["formations"][$formation_name]["icon_id"])."' alt='' class='train_icon'>".htmlspecialchars($formation_name)."</a></td></tr>";
+                if (!empty($formations["formations"][$formation_name]["new_formation_name"])) {
+                    continue;
+                }
+                
+                print "<tr><td><a href='formations.php?railroad_id=".$railroad_id."&formation_name=".urlencode($formation_name)."'><img src='".(!empty($formations["formations"][$formation_name]["icon_id"]) ? "train_icons.php/".$railroad_id."/".addslashes($formations["formations"][$formation_name]["icon_id"]) : "generic_train_icon.webp")."' alt='' class='train_icon'>".htmlspecialchars($formation_name)."</a></td></tr>";
+                $printed_cnt++;
+            }
+            
+            if ($printed_cnt === 0) {
+                print "<tr><td class='descriptive_text'>編集可能な編成はありません</td></tr>";
             }
         } else {
             foreach ($formations["series"][$formations["series_names"][$cnt]]["subseries_names"] as $subseries_name) {
                 print "<tr><th>".htmlspecialchars($subseries_name)."</th></tr>";
                 
+                $printed_cnt = 0;
                 foreach ($formations["series"][$formations["series_names"][$cnt]]["subseries"][$subseries_name]["formation_names"] as $formation_name) {
-                    print "<tr><td><a href='formations.php?railroad_id=".$railroad_id."&formation_name=".urlencode($formation_name)."'><img src='train_icons.php/".$railroad_id."/".addslashes($formations["formations"][$formation_name]["icon_id"])."' alt='' class='train_icon'>".htmlspecialchars($formation_name)."</a></td></tr>";
+                    if (!empty($formations["formations"][$formation_name]["new_formation_name"])) {
+                        continue;
+                    }
+                    
+                    print "<tr><td><a href='formations.php?railroad_id=".$railroad_id."&formation_name=".urlencode($formation_name)."'><img src='".(!empty($formations["formations"][$formation_name]["icon_id"]) ? "train_icons.php/".$railroad_id."/".addslashes($formations["formations"][$formation_name]["icon_id"]) : "generic_train_icon.webp")."' alt='' class='train_icon'>".htmlspecialchars($formation_name)."</a></td></tr>";
+                    $printed_cnt++;
+                }
+                
+                if ($printed_cnt === 0) {
+                    print "<tr><td class='descriptive_text'>編集可能な編成はありません</td></tr>";
                 }
             }
         }
@@ -66,8 +86,8 @@ if (empty($_GET["formation_name"])) {
     
     print "<h2>".htmlspecialchars($_GET["formation_name"])."</h2>";
     
-    $event_types = array("construct", "modify", "repaint", "renewal", "transfer", "rearrange", "other");
-    $event_types_ja = array("construct" => "新製", "modify" => "改修", "repaint" => "塗装変更", "renewal" => "更新", "transfer" => "転属", "rearrange" => "組換", "other" => "その他");
+    $event_types = array("construct", "modify", "repaint", "renewal", "transfer", "rearrange", "unregister", "other");
+    $event_types_ja = array("construct" => "新製", "modify" => "改修", "repaint" => "塗装変更", "renewal" => "更新", "transfer" => "転属", "rearrange" => "組換", "unregister" => "廃車", "other" => "その他");
     
     $db_obj = new SQLite3("../data/".$railroad_id."/railroad.db");
     $db_obj->busyTimeout(5000);

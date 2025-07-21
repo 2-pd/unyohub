@@ -23,7 +23,8 @@
     "administrator_introduction" : インスタンス運営者の紹介文(未設定なら省略),  
     "available_days_ahead" : 何日先の日付まで運用情報の閲覧と投稿が可能か,  
     "allow_guest_user" : ログインしていないユーザーの投稿を認めるか(BOOL値),  
-    "require_comments_on_speculative_posts" : 未出庫の運用への情報投稿時にコメント入力を強制するか(BOOL値)  
+    "require_comments_on_speculative_posts" : 未出庫の運用への情報投稿時にコメント入力を強制するか(BOOL値),  
+    "quotation_guidelines" : 引用情報を投稿する際に表示される案内文(未設定なら省略)  
 }  
   
 ※上記の他、**Last-Modified**レスポンスヘッダーにインスタンス情報の最終更新日時が出力される  
@@ -204,7 +205,7 @@ formations.jsonの内容を返す
 
 
 ## formation_overviews.php
-指定した路線系統の編成情報概要を取得する
+指定した路線系統に在籍中の編成の概要一覧を取得する
 
 ### 引数
 **$_POST["railroad_id"]** : 路線系統識別名  
@@ -243,7 +244,7 @@ formations.jsonの内容を返す
 **正常時** :  
 {  
     "formation_name" : 編成名,  
-    "cars" : [ 各車両の情報  
+    "cars" : [ 各車両の情報(転出・改番済みの編成では省略)  
         {  
             "car_number" : 車番,  
             "manufacturer" : 製造メーカー名,  
@@ -257,12 +258,12 @@ formations.jsonの内容を返す
     "caption" : 1行見出し,  
     "description" : 補足説明文,  
     "semifixed_formation" : 編成が組み込まれている半固定編成(「+」区切り、半固定編成を組成していない場合は省略),  
-    "unavailable" : 運用離脱中か否か,  
+    "unavailable" : 運用離脱中か否か(除籍・転出・改番済みの編成では省略),  
     "inspection_information" : 検査情報,  
     "histories" : [ 車歴情報  
         {  
             "event_year_month" : 「YYYY-MM」形式の年月、または「YYYY」形式の年,  
-            "event_type" : 変更の種類(「construct」、「modify」、「repaint」、「renewal」、「transfer」、「rearrange」、「other」のいずれか),  
+            "event_type" : 変更の種類(「construct」、「modify」、「repaint」、「renewal」、「transfer」、「rearrange」、「unregister」、「other」のいずれか),  
             "event_content" : 変更内容説明文  
         }...  
     ],  

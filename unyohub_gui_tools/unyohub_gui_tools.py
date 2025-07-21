@@ -15,7 +15,7 @@ import webbrowser
 
 
 UNYOHUB_GUI_TOOLS_APP_NAME = "鉄道運用Hub用データ編集ツール"
-UNYOHUB_GUI_TOOLS_VERSION = "25.06-2"
+UNYOHUB_GUI_TOOLS_VERSION = "25.07-1"
 UNYOHUB_GUI_TOOLS_LICENSE_TEXT = "このアプリケーションは無権利創作宣言に準拠して著作権放棄されています"
 UNYOHUB_GUI_TOOLS_LICENSE_URL = "https://www.2pd.jp/license/"
 UNYOHUB_GUI_TOOLS_REPOSITORY_URL = "https://fossil.2pd.jp/unyohub/"
@@ -248,7 +248,7 @@ def select_diagram (callback_func, enable_save_operation_table_check=False):
     
     if enable_save_operation_table_check:
         save_operation_table_value = tk.BooleanVar()
-        save_operation_table_value.set(True)
+        save_operation_table_value.set(False)
         save_operation_table_check = tk.Checkbutton(select_diagram_win, variable=save_operation_table_value, text="運用表を生成する", font=list_font, bg="#333333", fg="#999999", activebackground="#666666", activeforeground="#ffffff")
         save_operation_table_check.place(x=240, y=80, width=200)
         

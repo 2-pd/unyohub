@@ -21,7 +21,7 @@ _/_/_/_/ ファイル構成 _/_/_/_/
 └ assets.css ・・・フロントエンドのスタイルシート
 └ libs/
    └ wakarana/ ・・・Wakarana一式
-   └ zizai_captcha/ ・・・Zizai CAPTCHA一式
+   └ zizai_captcha/ ・・・Zizai CAPTCHA一式(captcha.jsは定数の改変有り)
    └ elem2img.js ・・・HTML要素画像化ライブラリ
 └ libs_data/
    └ wakarana.db ・・・Wakaranaデータベース

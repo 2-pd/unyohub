@@ -129,15 +129,31 @@ if (empty($_SERVER["PATH_INFO"]) || $_SERVER["PATH_INFO"] === "/") {
                             exit;
                         }
                         
-                        $path_info_str .= urlencode($path_info[3])."/";
-                        $page_title = $formations["formations"][$path_info[3]]["series_name"]." ".$path_info[3]." (".$railroad_info["railroad_name"].") の編成情報・運用 | ".UNYOHUB_APP_NAME;
-                        
-                        $car_numbers = array();
-                        foreach ($formations["formations"][$path_info[3]]["cars"] as $car) {
-                            $car_numbers[] = $car["car_number"];
+                        if (empty($formations["formations"][$path_info[3]]["new_formation_name"])) {
+                            $path_info_str .= urlencode($path_info[3])."/";
+                            
+                            if (!empty($formations["formations"][$path_info[3]]["cars"])) {
+                                $page_title = $formations["formations"][$path_info[3]]["series_name"]." ".$path_info[3]." (".$railroad_info["railroad_name"].") の編成情報・運用 | ".UNYOHUB_APP_NAME;
+                                
+                                $car_numbers = array();
+                                foreach ($formations["formations"][$path_info[3]]["cars"] as $car) {
+                                    $car_numbers[] = $car["car_number"];
+                                }
+                                
+                                $page_description = $railroad_info["railroad_name"]."で運用されている".$formations["formations"][$path_info[3]]["series_name"]."の編成 ".$path_info[3]." ( ".implode(" - ", $car_numbers)." ) の車両設備・車歴情報、及び運用状況です。";
+                            } else {
+                                $page_title = $path_info[3]." (".$railroad_info["railroad_name"].") の編成情報 | ".UNYOHUB_APP_NAME;
+                                $page_description = "過去に".$railroad_info["railroad_name"]."で運用されていた編成 ".$path_info[3]." の車両設備・車歴情報です。";
+                            }
+                        } else {
+                            if (!empty($formations["formations"][$path_info[3]]["new_railroad_id"])) {
+                                header("Location: /railroad_".$formations["formations"][$path_info[3]]["new_railroad_id"]."/formations/".urlencode($formations["formations"][$path_info[3]]["new_formation_name"])."/", TRUE, 301);
+                            } else {
+                                header("Location: ".$path_info_str.urlencode($formations["formations"][$path_info[3]]["new_formation_name"])."/", TRUE, 301);
+                            }
+                            
+                            exit;
                         }
-                        
-                        $page_description = $railroad_info["railroad_name"]."で運用されている".$formations["formations"][$path_info[3]]["series_name"]."の編成 ".$path_info[3]." ( ".implode(" - ", $car_numbers)." ) の車両設備・車歴情報、及び運用状況です。";
                     }
                     
                     break;
@@ -185,7 +201,7 @@ if (empty($_SERVER["PATH_INFO"]) || $_SERVER["PATH_INFO"] === "/") {
     exit;
 }
 ?><!DOCTYPE html>
-<html>
+<html lang="ja">
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width,initial-scale=1,interactive-widget=resizes-content">
@@ -195,55 +211,57 @@ print "    <title>".htmlspecialchars($page_title)."</title>\n";
 $root_url = "http".(empty($_SERVER["HTTPS"]) ? "" : "s")."://".$_SERVER["HTTP_HOST"];
 $page_description = addslashes($page_description);
 
-print "    <meta property=\"og:title\" content=\"".addslashes($page_title)."\">\n";
-print "    <meta property=\"og:type\" content=\"website\">\n";
-print "    <meta property=\"og:image\" content=\"".$root_url."/apple-touch-icon.webp\">\n";
-print "    <meta property=\"og:url\" content=\"".$root_url.$path_info_str."\">\n";
-print "    <meta property=\"og:description\" content=\"".$page_description."\">\n";
-print "    <meta property=\"twitter:card\" content=\"summary\">\n";
-print "    <meta name=\"description\" content=\"".$page_description."\">\n";
-print "    <link rel=\"canonical\" href=\"".$root_url.$path_info_str."\">\n";
 print "    <link rel=\"styleSheet\" href=\"/assets.css?v=".UNYOHUB_VERSION."\">\n";
-?>
-    <link rel="apple-touch-icon" href="/apple-touch-icon.webp">
-    <link rel="shortcut icon" href="/favicon.ico">
-    <link rel="manifest" href="/manifest.json">
-    <style id="formation_styles"></style>
-    <script>
-<?php
+print "    <script>\n";
 print "        const UNYOHUB_APP_NAME = \"".UNYOHUB_APP_NAME."\";\n";
 print "        const UNYOHUB_VERSION = \"".UNYOHUB_VERSION."\";\n";
 print "        const UNYOHUB_APP_INFO_URL = \"".UNYOHUB_APP_INFO_URL."\";\n";
 print "        const UNYOHUB_REPOSITORY_URL = \"".UNYOHUB_REPOSITORY_URL."\";\n";
 print "        const UNYOHUB_LICENSE_TEXT = \"".UNYOHUB_LICENSE_TEXT."\";\n";
+print "    </script>\n";
+print "    <script src=\"/main.js?v=".UNYOHUB_VERSION."\" defer=\"defer\"></script>\n";
 ?>
-    </script>
+    <link rel="shortcut icon" href="/favicon.ico">
+    <link rel="apple-touch-icon" href="/apple-touch-icon.webp">
+    <link rel="preload" href="/splash_screen_image.webp" as="image">
+    <link rel="manifest" href="/manifest.json">
+<?php
+print "    <link rel=\"canonical\" href=\"".$root_url.$path_info_str."\">\n";
+print "    <meta name=\"description\" content=\"".$page_description."\">\n";
+print "    <meta property=\"og:title\" content=\"".addslashes($page_title)."\">\n";
+print "    <meta property=\"og:type\" content=\"website\">\n";
+print "    <meta property=\"og:image\" content=\"".$root_url."/large_image.webp\">\n";
+print "    <meta property=\"og:url\" content=\"".$root_url.$path_info_str."\">\n";
+print "    <meta property=\"og:description\" content=\"".$page_description."\">\n";
+print "    <meta property=\"twitter:card\" content=\"summary_large_image\">\n";
+?>
+    <style id="formation_styles"></style>
 </head>
 <body>
-    <header><a id="railroad_icon" href="javascript:void(0);" onclick="about_railroad_data();"></a><span id="instance_name"></span><a id="railroad_name" href="javascript:void(0);" onclick="show_railroad_list();"></a><a id="menu_button" href="javascript:void(0);" onclick="menu_click();"></a></header>
+    <header><button type="button" id="railroad_icon" onclick="about_railroad_data();" aria-label="この路線系統について"></button><span id="instance_name"></span><button type="button" id="railroad_name" onclick="show_railroad_list();"></button><button type="button" id="menu_button" onclick="menu_click();" aria-label="メニュー"></button></header>
     <nav id="menu">
         <div id="menu_logged_in">
             <b id="menu_user_name"></b>
-            <a href="/user/user_info.php" target="_blank" rel="opener">ユーザー情報</a>
-            <a href="javascript:void(0);" onclick="user_logout();">ログアウト</a>
+            <button type="button" onclick="window.open('/user/user_info.php');">ユーザー情報</button>
+            <button type="button" onclick="user_logout();">ログアウト</button>
         </div>
         <div id="menu_admin">
-            <a href="/admin/index.php" target="_blank" rel="opener">管理画面を開く</a>
+            <button type="button" onclick="window.open('/admin/index.php');">管理画面を開く</button>
         </div>
         <div id="menu_not_logged_in">
-            <a href="javascript:void(0);" onclick="show_login_form();">ログイン</a>
-            <a href="/user/sign_up.php" target="_blank" rel="opener">新規登録</a>
+            <button type="button" onclick="show_login_form();">ログイン</button>
+            <button type="button" onclick="window.open('/user/sign_up.php');">新規登録</button>
         </div>
         <div id="menu_off_line">
             <b class="off_line_message" onclick="show_off_line_message();">オフラインモード</b>
         </div>
         <hr>
-        <a id="menu_announcements" href="javascript:void(0);" onclick="show_announcements();">お知らせ</a>
+        <button type="button" id="menu_announcements" onclick="show_announcements();">お知らせ</button>
         <hr>
-        <a href="javascript:void(0);" onclick="edit_config();">アプリの設定</a>
+        <button type="button" onclick="edit_config();">アプリの設定</button>
         <hr>
-        <a href="javascript:void(0);" onclick="show_about();"><span id="menu_instance_name"><?php print UNYOHUB_APP_NAME; ?></span>について</a>
-        <a href="javascript:void(0);" onclick="show_rules();">ルールとポリシー</a>
+        <button type="button" onclick="show_about();"><span id="menu_instance_name"><?php print UNYOHUB_APP_NAME; ?></span>について</button>
+        <button type="button" onclick="show_rules();">ルールとポリシー</button>
         <a id="menu_manual_button" href="#" target="_blank">このアプリの使い方</a>
         <hr>
         <a id="menu_reload_button" href="/" onclick="event.preventDefault(); reload_app();"><?php print UNYOHUB_APP_NAME; ?></a>
@@ -256,9 +274,9 @@ if ($path_info_str === "/") {
     print <<<EOM
             <div id="splash_screen_login_status">サーバに接続しています...</div>
             <div id="splash_screen_inner" class="wait_icon"></div>
-            <a id="splash_screen_announcement" href="javascript:void(0);" onclick="show_announcements();"></a>
+            <button type="button" id="splash_screen_announcement" onclick="show_announcements();" aria-label="お知らせ"></button>
             <div id="splash_screen_bottom">
-                <a href="javascript:void(0);" onclick="show_about();"><span id="splash_screen_instance_name">{$unyohub_app_name}</span>について</a><a href="javascript:void(0);" onclick="show_rules();">ルールとポリシー</a><span id="splash_screen_app_version">v{$unyohub_version}</span>
+                <u onclick="show_about();"><span id="splash_screen_instance_name">{$unyohub_app_name}</span>について</u><a href="/user/rules.php" onclick="event.preventDefault(); show_rules();">ルールとポリシー</a><span id="splash_screen_app_version">v{$unyohub_version}</span>
             </div>
     EOM."\n";
 }
@@ -289,10 +307,10 @@ if ($path_info_str === "/") {
         <div id="operation_data_area" class="wait_icon"></div>
     </article>
     <article onscroll="formation_table_wrapper_onscroll();">
-        <button type="button" id="formation_screenshot_button" class="screenshot_button" onclick="take_screenshot('formation_table_area');"></button>
+        <button type="button" id="formation_screenshot_button" class="screenshot_button" onclick="take_screenshot('formation_table_area');" aria-label="スクリーンショット"></button>
         <div id="formation_search_area">
             <div class='search_wrapper'><label for="car_number_search" class="search_icon">編成名・車両番号で検索</label><input type="search" id="car_number_search" onkeyup="draw_formation_table();" onsearch="draw_formation_table();" placeholder="編成名・車両番号で検索" autocomplete="off"></div>
-            <div id ="colorize_formation_table_radio_area" class="radio_area"><input type="radio" name="colorize_formation_table_radio" id="colorize_formation_table" onchange="change_colorize_formation_table(this.checked);"><label for="colorize_formation_table">車体色を表示</label><input type="radio" name="colorize_formation_table_radio" id="not_colorize_formation_table" onchange="change_colorize_formation_table(!this.checked);"><label for="not_colorize_formation_table">白黒で表示</label></div>
+            <div class="radio_area"><input type="checkbox" id="colorize_formation_table" class="chip" onchange="change_colorize_formation_table(this.checked);"><label for="colorize_formation_table" id="colorize_formation_table_label">車体色を表示</label><input type="checkbox" id="show_unregistered_formations" class="chip" onchange="change_show_unregistered_formations(this.checked);"><label for="show_unregistered_formations">除籍済みの編成を表示</label></div>
         </div>
         <div id="formation_table_area" class="wait_icon"></div>
     </article>
@@ -305,7 +323,7 @@ if ($path_info_str === "/") {
                 <select class="wide_select" id="operation_search_car_count" onchange="operation_table_list_number();"><option value="" selected="selected"></option></select>
                 <select class="wide_select" id="operation_search_starting_location" onchange="operation_table_list_number();"><option value="" selected="selected"></option></select>
                 <select class="wide_select" id="operation_search_terminal_location" onchange="operation_table_list_number();"><option value="" selected="selected"></option></select>
-                <a href="javascript:void(0);" class="additional_setting_link" onclick="reset_operation_narrow_down(false);">絞り込み条件のリセット</a>
+                <button type='button' class='execute_button' class="additional_setting_link" onclick="reset_operation_narrow_down(false);">絞り込み条件のリセット</button>
             </div>
         </div>
         <h2 id="operation_table_heading"></h2>
@@ -313,29 +331,29 @@ if ($path_info_str === "/") {
         <br>
         <div id="operation_table_info" class="informational_text"></div>
     </article>
-    <a id="railroad_announcement" href="javascript:void(0);" onclick="show_railroad_announcements();"></a>
+    <button type="button" id="railroad_announcement" onclick="show_railroad_announcements();" aria-label="お知らせ"></button>
     <footer>
         <div>
-            <button type="button" id="position_reload_button" class="reload_button" onclick="position_mode(null, '__today__');"></button>
-            <button type="button" id="position_diagram" class="footer_select" onclick="position_list_diagrams();"></button><span ontouchstart="position_time_swipe_start(event);" ontouchmove="position_time_swipe(event);" ontouchend="position_time_swipe_end(event, 360);"><button type="button" class="previous_button" onclick="position_change_time(-60);"></button><span id="position_hours" class="footer_value"></span><button type="button" class="next_button" onclick="position_change_time(60);"></button></span><span ontouchstart="position_time_swipe_start(event);" ontouchmove="position_time_swipe(event);" ontouchend="position_time_swipe_end(event, 10);"><button type="button" class="previous_button" onclick="position_change_time(-1, true);"></button><span id="position_minutes" class="footer_value"></span><button type="button" class="next_button" onclick="position_change_time(1, true);"></button></span>
-            <input type="time" id="position_time_button" class="time_button" onchange="position_time_button_change();">
+            <button type="button" id="position_reload_button" class="reload_button" onclick="position_mode(null, '__today__');" aria-label="再読み込み"></button>
+            <button type="button" id="position_diagram" class="footer_select" onclick="position_list_diagrams();" aria-label="ダイヤ選択"></button><span ontouchstart="position_time_swipe_start(event);" ontouchmove="position_time_swipe(event);" ontouchend="position_time_swipe_end(event, 360);"><button type="button" class="previous_button" onclick="position_change_time(-60);" aria-label="時を戻す"></button><span id="position_hours" class="footer_value"></span><button type="button" class="next_button" onclick="position_change_time(60);" aria-label="時を進める"></button></span><span ontouchstart="position_time_swipe_start(event);" ontouchmove="position_time_swipe(event);" ontouchend="position_time_swipe_end(event, 10);"><button type="button" class="previous_button" onclick="position_change_time(-1, true);" aria-label="分を戻す"></button><span id="position_minutes" class="footer_value"></span><button type="button" class="next_button" onclick="position_change_time(1, true);" aria-label="分を進める"></button></span>
+            <input type="time" id="position_time_button" class="time_button" onchange="position_time_button_change();" aria-label="時刻選択">
         </div>
         <div>
-            <button type="button" id="timetable_back_button" class="back_button" onclick="timetable_change_lines(timetable_selected_line, true);"></button>
-            <button type="button" class="previous_button" onclick="timetable_diagram_previous();"></button><span id="timetable_operation_name" class="footer_value_wide"></span><button type="button" class="next_button" onclick="timetable_diagram_next();"></button><button type="button" class="list_button" onclick="timetable_list_diagrams();"></button>
+            <button type="button" id="timetable_back_button" class="back_button" onclick="timetable_change_lines(timetable_selected_line, true);" aria-label="戻る"></button>
+            <button type="button" class="previous_button" onclick="timetable_diagram_previous();" aria-label="前のダイヤ"></button><span id="timetable_operation_name" class="footer_value_wide"></span><button type="button" class="next_button" onclick="timetable_diagram_next();" aria-label="次のダイヤ"></button><button type="button" class="list_button" onclick="timetable_list_diagrams();" aria-label="ダイヤ一覧"></button>
         </div>
         <div>
-            <button type="button" class="reload_button" onclick="operation_data_change_date(null);"></button>
-            <button type="button" class="previous_button" onclick="operation_data_change_date(-1);"></button><span id="operation_data_date" class="footer_value_wide"></span><button type="button" class="next_button" onclick="operation_data_change_date(1);"></button>
-            <input type="date" id="operation_date_button" class="date_button" onchange="operation_date_button_change();">
+            <button type="button" class="reload_button" onclick="operation_data_change_date(null);" aria-label="再読み込み"></button>
+            <button type="button" class="previous_button" onclick="operation_data_change_date(-1);" aria-label="前日"></button><span id="operation_data_date" class="footer_value_wide"></span><button type="button" class="next_button" onclick="operation_data_change_date(1);" aria-label="翌日"></button>
+            <input type="date" id="operation_date_button" class="date_button" onchange="operation_date_button_change();" aria-label="日付選択">
         </div>
         <div>
-            <button type="button" id="formation_back_button" class="back_button" onclick="draw_formation_table();"></button>
+            <button type="button" id="formation_back_button" class="back_button" onclick="draw_formation_table();" aria-label="戻る"></button>
         </div>
         <div id="operation_table_footer_inner">
-            <button type="button" class="back_button" onclick="operation_table_mode(null);"></button>
-            <button type="button" class="previous_button" onclick="operation_table_previous();"></button><span id="operation_table_name" class="footer_value_wide"></span><button type="button" class="next_button" onclick="operation_table_next();"></button>
-            <button type="button" class="list_button" onclick="operation_table_list_tables();"></button>
+            <button type="button" class="back_button" onclick="operation_table_mode(null);" aria-label="戻る"></button>
+            <button type="button" class="previous_button" onclick="operation_table_previous();" aria-label="前のダイヤ"></button><span id="operation_table_name" class="footer_value_wide"></span><button type="button" class="next_button" onclick="operation_table_next();" aria-label="次のダイヤ"></button>
+            <button type="button" class="list_button" onclick="operation_table_list_tables();" aria-label="ダイヤ一覧"></button>
         </div>
     </footer>
     <div id="popup_background"></div>
@@ -344,11 +362,5 @@ if ($path_info_str === "/") {
     </div>
     <div id="wait_screen"></div>
     <div id="message_area"></div>
-    
-<?php
-print "    <script src=\"/main.js?v=".UNYOHUB_VERSION."\"></script>\n";
-?>
-    <script src="/libs/zizai_captcha/captcha.js"></script>
-    <script src="/libs/elem2img.js"></script>
 </body>
 </html>
