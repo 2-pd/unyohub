@@ -5002,7 +5002,7 @@ function operation_data_draw () {
             
             if ("subseries_names" in formations["series"][series_name]) {
                 for (var subseries_name of formations["series"][series_name]["subseries_names"]) {
-                    if (!("unregistered" in formations["series"][series_name]["subseries_names"][subseries_name] && formations["series"][series_name]["subseries_names"][subseries_name]["unregistered"])) {
+                    if (!("unregistered" in formations["series"][series_name]["subseries"][subseries_name] && formations["series"][series_name]["subseries"][subseries_name]["unregistered"])) {
                         series_titles[series_name + subseries_name] = series_name;
                     }
                 }
@@ -5045,7 +5045,7 @@ function operation_data_draw () {
                 series_formation_list[series_name] = [];
                 
                 for (subseries_name of formations["series"][series_name]["subseries_names"]) {
-                    if (!("unregistered" in formations["series"][series_name]["subseries_names"][subseries_name] && formations["series"][series_name]["subseries_names"][subseries_name]["unregistered"])) {
+                    if (!("unregistered" in formations["series"][series_name]["subseries"][subseries_name] && formations["series"][series_name]["subseries"][subseries_name]["unregistered"])) {
                         series_formation_list[series_name].push(...formations["series"][series_name]["subseries"][subseries_name]["formation_names"]);
                     }
                 }
