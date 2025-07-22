@@ -5290,7 +5290,7 @@ function draw_operation_trains (operation_number, diagram_id_or_ts, is_today, se
         var highlight_str = "";
         for (var cnt = 0; cnt < trains.length; cnt++) {
             if (trains[cnt]["train_number"].startsWith(".")) {
-                buf += "<div class='" + train_div_class_name + " operation_table_deposited_train'>";
+                buf += "<div class='" + train_div_class_name + " operation_table_deposited_train'><div>";
                 buf += "<b>" + trains[cnt]["train_number"].substring(1).split("__")[0] + "<small>待機</small></b>";
                 
                 if (is_today && trains[cnt]["final_arrival_time"] < now_str) {
@@ -5298,7 +5298,7 @@ function draw_operation_trains (operation_number, diagram_id_or_ts, is_today, se
                 }
                 
                 buf += "<div" + highlight_str + "><span>" + trains[cnt]["first_departure_time"] + "</span><span>〜</span><span>" + trains[cnt]["final_arrival_time"] + "</span></div>";
-                buf += "</div>";
+                buf += "</div></div>";
             } else {
                 if (next_train_operation_list === null) {
                     var operations_list = get_operations(trains[cnt]["line_id"], trains[cnt]["train_number"], trains[cnt]["starting_station"], trains[cnt]["direction"] + "_trains");
