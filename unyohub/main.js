@@ -5619,7 +5619,16 @@ function get_formation_table_html (formation_names, search_keyword) {
         } else if (config["show_unregistered_formations_on_formation_table"]) {
             if (search_keyword.length == 0 || formation_name.includes(search_keyword)) {
                 if ("new_formation_name" in formations["formations"][formation_name]) {
-                buf += "<tr onclick='formation_detail(\"" + add_slashes(formation_name) + "\");' class='renamed_formation'><td><img src='" + UNYOHUB_GENERIC_TRAIN_ICON + "' alt='' class='train_icon'></td><td><h5><a href='/railroad_" + (formations["formations"][formation_name]["new_railroad_id"] === null ? railroad_info["railroad_id"] : formations["formations"][formation_name]["new_railroad_id"]) + "/formations/" + add_slashes(encodeURIComponent(formations["formations"][formation_name]["new_formation_name"])) + "/' onclick='event.preventDefault();'>" + formation_name_html + "</a></h5>" + (formations["formations"][formation_name]["new_railroad_id"] === null ? escape_html(formations["formations"][formation_name]["new_formation_name"]) + " に改番" : "転出済み") + "</td>";
+                    buf += "<tr onclick='formation_detail(\"" + add_slashes(formation_name) + "\");' class='renamed_formation'><td><img src='" + UNYOHUB_GENERIC_TRAIN_ICON + "' alt='' class='train_icon'></td><td>";
+                    if (formations["formations"][formation_name]["new_railroad_id"] === null) {
+                        buf += "<h5><a href='/railroad_" + railroad_info["railroad_id"] + "/formations/" + add_slashes(encodeURIComponent(formations["formations"][formation_name]["new_formation_name"])) + "/' onclick='event.preventDefault();'>" + formation_name_html + "</a></h5>" + escape_html(formations["formations"][formation_name]["new_formation_name"]) + " に改番";
+                    } else {
+                        buf += "<h5><a href='/railroad_" + formations["formations"][formation_name]["new_railroad_id"] + "/formations/" + add_slashes(encodeURIComponent(formations["formations"][formation_name]["new_formation_name"])) + "/' onclick='event.preventDefault();'>" + formation_name_html + "</a></h5>転出済み";
+                        if (formations["formations"][formation_name]["new_formation_name"] !== formation_name) {
+                            buf += " (→ " + escape_html(formations["formations"][formation_name]["new_formation_name"]) + ")";
+                        }
+                    }
+                    buf += "</td>";
                 } else {
                     buf += "<tr onclick='formation_detail(\"" + add_slashes(formation_name) + "\");' class='unregistered_formation'><td><img src='" + UNYOHUB_GENERIC_TRAIN_ICON + "' alt='' class='train_icon'></td><td><h5><a href='/railroad_" + railroad_info["railroad_id"] + "/formations/" + add_slashes(encodeURIComponent(formation_name)) + "/' onclick='event.preventDefault();'>" + formation_name_html + "</a></h5>除籍済み</td>";
                 }
