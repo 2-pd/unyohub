@@ -4413,6 +4413,8 @@ button abbr {
 .suggestion_area button {
     display: block;
     
+    width: calc(100% - 60px);
+    
     padding: 5px 0 5px 60px;
     
     line-height: 30px;
