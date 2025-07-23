@@ -5002,7 +5002,7 @@ function operation_data_draw () {
             
             if ("subseries_names" in formations["series"][series_name]) {
                 for (var subseries_name of formations["series"][series_name]["subseries_names"]) {
-                    if (!("unregistered" in formations["series"][series_name]["subseries_names"][subseries_name] && formations["series"][series_name]["subseries_names"][subseries_name]["unregistered"])) {
+                    if (!("unregistered" in formations["series"][series_name]["subseries"][subseries_name] && formations["series"][series_name]["subseries"][subseries_name]["unregistered"])) {
                         series_titles[series_name + subseries_name] = series_name;
                     }
                 }
@@ -5045,7 +5045,7 @@ function operation_data_draw () {
                 series_formation_list[series_name] = [];
                 
                 for (subseries_name of formations["series"][series_name]["subseries_names"]) {
-                    if (!("unregistered" in formations["series"][series_name]["subseries_names"][subseries_name] && formations["series"][series_name]["subseries_names"][subseries_name]["unregistered"])) {
+                    if (!("unregistered" in formations["series"][series_name]["subseries"][subseries_name] && formations["series"][series_name]["subseries"][subseries_name]["unregistered"])) {
                         series_formation_list[series_name].push(...formations["series"][series_name]["subseries"][subseries_name]["formation_names"]);
                     }
                 }
@@ -5290,7 +5290,7 @@ function draw_operation_trains (operation_number, diagram_id_or_ts, is_today, se
         var highlight_str = "";
         for (var cnt = 0; cnt < trains.length; cnt++) {
             if (trains[cnt]["train_number"].startsWith(".")) {
-                buf += "<div class='" + train_div_class_name + " operation_table_deposited_train'>";
+                buf += "<div class='" + train_div_class_name + " operation_table_deposited_train'><div>";
                 buf += "<b>" + trains[cnt]["train_number"].substring(1).split("__")[0] + "<small>待機</small></b>";
                 
                 if (is_today && trains[cnt]["final_arrival_time"] < now_str) {
@@ -5298,7 +5298,7 @@ function draw_operation_trains (operation_number, diagram_id_or_ts, is_today, se
                 }
                 
                 buf += "<div" + highlight_str + "><span>" + trains[cnt]["first_departure_time"] + "</span><span>〜</span><span>" + trains[cnt]["final_arrival_time"] + "</span></div>";
-                buf += "</div>";
+                buf += "</div></div>";
             } else {
                 if (next_train_operation_list === null) {
                     var operations_list = get_operations(trains[cnt]["line_id"], trains[cnt]["train_number"], trains[cnt]["starting_station"], trains[cnt]["direction"] + "_trains");
@@ -5619,7 +5619,16 @@ function get_formation_table_html (formation_names, search_keyword) {
         } else if (config["show_unregistered_formations_on_formation_table"]) {
             if (search_keyword.length == 0 || formation_name.includes(search_keyword)) {
                 if ("new_formation_name" in formations["formations"][formation_name]) {
-                buf += "<tr onclick='formation_detail(\"" + add_slashes(formation_name) + "\");' class='renamed_formation'><td><img src='" + UNYOHUB_GENERIC_TRAIN_ICON + "' alt='' class='train_icon'></td><td><h5><a href='/railroad_" + (formations["formations"][formation_name]["new_railroad_id"] === null ? railroad_info["railroad_id"] : formations["formations"][formation_name]["new_railroad_id"]) + "/formations/" + add_slashes(encodeURIComponent(formations["formations"][formation_name]["new_formation_name"])) + "/' onclick='event.preventDefault();'>" + formation_name_html + "</a></h5>" + (formations["formations"][formation_name]["new_railroad_id"] === null ? escape_html(formations["formations"][formation_name]["new_formation_name"]) + " に改番" : "転出済み") + "</td>";
+                    buf += "<tr onclick='formation_detail(\"" + add_slashes(formation_name) + "\");' class='renamed_formation'><td><img src='" + UNYOHUB_GENERIC_TRAIN_ICON + "' alt='' class='train_icon'></td><td>";
+                    if (formations["formations"][formation_name]["new_railroad_id"] === null) {
+                        buf += "<h5><a href='/railroad_" + railroad_info["railroad_id"] + "/formations/" + add_slashes(encodeURIComponent(formations["formations"][formation_name]["new_formation_name"])) + "/' onclick='event.preventDefault();'>" + formation_name_html + "</a></h5>" + escape_html(formations["formations"][formation_name]["new_formation_name"]) + " に改番";
+                    } else {
+                        buf += "<h5><a href='/railroad_" + formations["formations"][formation_name]["new_railroad_id"] + "/formations/" + add_slashes(encodeURIComponent(formations["formations"][formation_name]["new_formation_name"])) + "/' onclick='event.preventDefault();'>" + formation_name_html + "</a></h5>転出済み";
+                        if (formations["formations"][formation_name]["new_formation_name"] !== formation_name) {
+                            buf += " (→ " + escape_html(formations["formations"][formation_name]["new_formation_name"]) + ")";
+                        }
+                    }
+                    buf += "</td>";
                 } else {
                     buf += "<tr onclick='formation_detail(\"" + add_slashes(formation_name) + "\");' class='unregistered_formation'><td><img src='" + UNYOHUB_GENERIC_TRAIN_ICON + "' alt='' class='train_icon'></td><td><h5><a href='/railroad_" + railroad_info["railroad_id"] + "/formations/" + add_slashes(encodeURIComponent(formation_name)) + "/' onclick='event.preventDefault();'>" + formation_name_html + "</a></h5>除籍済み</td>";
                 }
