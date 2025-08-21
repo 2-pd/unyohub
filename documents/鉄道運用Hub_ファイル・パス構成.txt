@@ -19,6 +19,8 @@ _/_/_/_/ ファイル構成 _/_/_/_/
 └ index.php ・・・アプリケーションフロントエンドHTML
 └ main.js ・・・フロントエンド処理本体
 └ assets.css ・・・フロントエンドのスタイルシート
+└ on_demand_funcs.js ・・・アプリ起動直後には実行されないフロントエンド処理
+└ non_critical.css ・・・遅延読み込みされるスタイルシート
 └ libs/
    └ wakarana/ ・・・Wakarana一式
    └ zizai_captcha/ ・・・Zizai CAPTCHA一式(captcha.jsは定数の改変有り)
