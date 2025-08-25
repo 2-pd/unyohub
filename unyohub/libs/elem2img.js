@@ -1,6 +1,6 @@
 /*_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/
  *
- *  elem2img.js 25.06-1
+ *  elem2img.js 25.08-1
  *
  *_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/_/
  *
@@ -23,14 +23,14 @@ class Elem2Img {
         for (var cnt = 0; cnt < css_list.length; cnt++) {
             try {
                 for (var css_rule of css_list[cnt].cssRules) {
-                    if (css_rule.constructor.name === "CSSImportRule") {
+                    if (css_rule instanceof CSSImportRule) {
                         css_list.push(css_rule.styleSheet);
                     } else {
-                        css_code += css_rule.cssText + "\n";
+                        css_code += Elem2Img.get_css_text(css_rule);
                     }
                 }
             } catch (err) {
-                console.error("elem2img ERROR: スタイルシート " + document.styleSheets[cnt].href + " が利用できません");
+                console.error("elem2img ERROR: スタイルシート " + (document.styleSheets[cnt].href !== null ? document.styleSheets[cnt].href : (cnt + 1) + "番目") + " が利用できません");
             }
         }
         
@@ -53,6 +53,48 @@ class Elem2Img {
             func();
         } else {
             this.func_queue.push(func);
+        }
+    }
+    
+    static get_css_text (css_rule, parent_selector_text = null) {
+        if (!(css_rule instanceof CSSStyleRule)) {
+            return css_rule.cssText + "\n";
+        }
+        
+        if (parent_selector_text === null) {
+            var selector_text = css_rule.selectorText;
+        } else {
+            var parent_selectors = [];
+            var depth = 0;
+            var buf = "";
+            for (var parent_selector of parent_selector_text.split(",")){
+                depth += parent_selector.split("(").length - parent_selector.split(")").length;
+                
+                if (depth === 0) {
+                    parent_selectors.push(buf + parent_selector);
+                    buf = "";
+                } else {
+                    buf += parent_selector + ",";
+                }
+            }
+            
+            var interpolated_selector_texts = [];
+            for (var parent_selector of parent_selectors){
+                interpolated_selector_texts.push(css_rule.selectorText.split("&").join(parent_selector));
+            }
+            
+            var selector_text = interpolated_selector_texts.join(",");
+        }
+        
+        if (css_rule.cssRules.length >= 1) {
+            var descendant_css_text = "";
+            for (var child_css_rule of css_rule.cssRules) {
+                descendant_css_text += Elem2Img.get_css_text(child_css_rule, selector_text) + "\n";
+            }
+            
+            return selector_text + "{" + css_rule.style.cssText + "}\n" + descendant_css_text;
+        } else {
+            return selector_text + "{" + css_rule.style.cssText + "}\n";
         }
     }
     
@@ -159,12 +201,17 @@ class Elem2Img {
             ctx.fillRect(0, 0, canv_width, canv_height);
         }
         
-        return new Promise(function (resolve) {
+        return new Promise(function (resolve, reject) {
             var img_elem = document.createElement("img");
             
             img_elem.onload = function () {
                 ctx.drawImage(img_elem, 0, 0, canv_width, canv_height);
                 resolve(canv);
+            };
+            
+            img_elem.onerror = function () {
+                console.error("elem2img ERROR: 画像の生成に失敗しました");
+                reject();
             };
             
             img_elem.src = svg_data;
@@ -204,7 +251,7 @@ class Elem2Img {
                     
                     e2i.paste_svg(svg_data, canv_width, canv_height).then(function (canv) {
                         callback_func(canv.toDataURL(mime_type, quality / 100));
-                    });
+                    }, function () {});
                 })();
             });
         });
