@@ -23,7 +23,7 @@ if (is_object($user)) {
         exit;
     }
     
-    if (substr($_POST["guest_id"], 0, 1) !== "*" || strlen($_POST["guest_id"]) !== 13) {
+    if (!preg_match("/\A\*[0-9A-Z]{12}\z/u", $_POST["guest_id"])) {
         print "ERROR: ゲストIDが不正です";
         exit;
     }
