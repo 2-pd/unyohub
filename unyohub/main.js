@@ -4075,36 +4075,35 @@ function get_previous_formation (formation_name, series_name, subseries_name = n
     var formation_list = subseries_name !== null ? formations["series"][series_name]["subseries"][subseries_name]["formation_names"] : formations["series"][series_name]["formation_names"];
     var formation_index = formation_list.indexOf(formation_name);
     
-    var previous_subseries_name = subseries_name;
     if (formation_index >= 1) {
         var previous_series_name = series_name;
+        var previous_subseries_name = subseries_name;
         var previous_formation_name = formation_list[formation_index - 1];
     } else {
-        var series_index = formations["series_names"].indexOf(series_name);
-        if (series_index >= 1) {
-            var previous_series_name = formations["series_names"][series_index - 1];
-        } else {
-            var previous_series_name = formations["series_names"][formations["series_names"].length - 1];
-        }
-        
         var previous_formation_name = null;
         if ("subseries_name" in formations["formations"][formation_name]) {
             var subseries_index = formations["series"][series_name]["subseries_names"].indexOf(formations["formations"][formation_name]["subseries_name"]);
             if (subseries_index >= 1) {
-                previous_subseries_name = formations["series"][series_name]["subseries_names"][subseries_index - 1];
-                var previous_subseries_formation_names = formations["series"][series_name]["subseries"][previous_subseries_name]["formation_names"];
-                
-                previous_formation_name = previous_subseries_formation_names[previous_subseries_formation_names.length - 1];
+                var previous_series_name = series_name;
+                var previous_subseries_name = formations["series"][series_name]["subseries_names"][subseries_index - 1];
+                previous_formation_name = formations["series"][series_name]["subseries"][previous_subseries_name]["formation_names"][formations["series"][series_name]["subseries"][previous_subseries_name]["formation_names"].length - 1];
             }
         }
         
         if (previous_formation_name === null) {
-            if ("subseries_names" in formations["series"][previous_series_name]) {
-                previous_subseries_name = formations["series"][previous_series_name]["subseries_names"][formations["series"][previous_series_name]["subseries_names"].length - 1];
-                var formation_list = formations["series"][previous_series_name]["subseries"][previous_subseries_name]["formation_names"];
+            var series_index = formations["series_names"].indexOf(series_name);
+            if (series_index >= 1) {
+                var previous_series_name = formations["series_names"][series_index - 1];
             } else {
-                previous_subseries_name = null;
-                var formation_list = formations["series"][previous_series_name]["formation_names"];
+                var previous_series_name = formations["series_names"][formations["series_names"].length - 1];
+            }
+            
+            if ("subseries_names" in formations["series"][previous_series_name]) {
+                var previous_subseries_name = formations["series"][previous_series_name]["subseries_names"][formations["series"][previous_series_name]["subseries_names"].length - 1];
+                formation_list = formations["series"][previous_series_name]["subseries"][previous_subseries_name]["formation_names"];
+            } else {
+                var previous_subseries_name = null;
+                formation_list = formations["series"][previous_series_name]["formation_names"];
             }
             
             previous_formation_name = formation_list[formation_list.length - 1];
@@ -4122,34 +4121,34 @@ function get_next_formation (formation_name, series_name, subseries_name = null)
     var formation_list = subseries_name !== null ? formations["series"][series_name]["subseries"][subseries_name]["formation_names"] : formations["series"][series_name]["formation_names"];
     var formation_index = formation_list.indexOf(formation_name);
     
-    var next_subseries_name = subseries_name;
     if (formation_index <= formation_list.length - 2) {
         var next_series_name = series_name;
+        var next_subseries_name = subseries_name;
         var next_formation_name = formation_list[formation_index + 1];
     } else {
-        var series_index = formations["series_names"].indexOf(series_name);
-        if (series_index <= formations["series_names"].length - 2) {
-            var next_series_name = formations["series_names"][series_index + 1];
-        } else {
-            var next_series_name = formations["series_names"][0];
-        }
-        
         var next_formation_name = null;
-        if ("subseries_name" in formations["formations"][formation_name]) {
-            var subseries_index = formations["series"][series_name]["subseries_names"].indexOf(formations["formations"][formation_name]["subseries_name"]);
+        if (subseries_name !== null) {
+            var subseries_index = formations["series"][series_name]["subseries_names"].indexOf(subseries_name);
             if (subseries_index <= formations["series"][series_name]["subseries_names"].length - 2) {
-                next_series_name = formations["series"][series_name]["subseries_names"][subseries_index + 1];
-                
-                next_formation_name = formations["series"][series_name]["subseries"][next_series_name]["formation_names"][0];
+                var next_series_name = series_name;
+                var next_subseries_name = formations["series"][series_name]["subseries_names"][subseries_index + 1];
+                next_formation_name = formations["series"][series_name]["subseries"][next_subseries_name]["formation_names"][0];
             }
         }
         
         if (next_formation_name === null) {
+            var series_index = formations["series_names"].indexOf(series_name);
+            if (series_index <= formations["series_names"].length - 2) {
+                var next_series_name = formations["series_names"][series_index + 1];
+            } else {
+                var next_series_name = formations["series_names"][0];
+            }
+            
             if ("subseries_names" in formations["series"][next_series_name]) {
-                next_subseries_name = formations["series"][next_series_name]["subseries_names"][0];
+                var next_subseries_name = formations["series"][next_series_name]["subseries_names"][0];
                 next_formation_name = formations["series"][next_series_name]["subseries"][next_subseries_name]["formation_names"][0];
             } else {
-                next_subseries_name = null;
+                var next_subseries_name = null;
                 next_formation_name = formations["series"][next_series_name]["formation_names"][0];
             }
         }

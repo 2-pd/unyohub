@@ -1,9 +1,33 @@
-/* 鉄道運用Hub main.js */
+/* 鉄道運用Hub on_demand_funcs.js */
 
+
+function bin_to_int (uint8_bin, start, length) {
+    var end = start + length;
+    var byte_start = Math.floor(start / 8);
+    
+    if (end % 8 >= 1) {
+        var bin_int = uint8_bin[byte_start] << 8;
+        if (uint8_bin.length > byte_start + 1) {
+            bin_int += uint8_bin[byte_start + 1];
+        }
+        
+        return bin_int >> (8 - end % 8) & (2**length - 1);
+    } else {
+        return uint8_bin[byte_start] & (2**length - 1);
+    }
+}
 
 function get_guest_id () {
     if (config["guest_id"] === null) {
-        config["guest_id"] = "*" + Math.floor(Math.random() * 1000000000000);
+        const BASE32_TABLE = ["A", "B", "C", "D", "E", "F", "G", "H", "I", "J", "K", "L", "M", "N", "O", "P", "Q", "R", "S", "T", "U", "V", "W", "X", "Y", "Z", "2", "3", "4", "5", "6", "7"];
+        
+        var random_bytes = crypto.getRandomValues(new Uint8Array(8));
+        var guest_id = "*"
+        for (var cnt = 0; cnt < 12; cnt++) {
+            guest_id += BASE32_TABLE[bin_to_int(random_bytes, cnt * 5, 5)];
+        }
+        
+        config["guest_id"] = guest_id;
         
         save_config();
     }

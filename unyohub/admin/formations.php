@@ -94,7 +94,7 @@ if (empty($_GET["formation_name"])) {
     
     $formation_name = $db_obj->escapeString($_GET["formation_name"]);
     
-    $formation_data = $db_obj->querySingle("SELECT `affiliation`, `caption`, `description`, `semifixed_formation`, `unavailable`, `inspection_information` FROM `unyohub_formations` WHERE `formation_name` = '".$formation_name."'", TRUE);
+    $formation_data = $db_obj->querySingle("SELECT `currently_registered`, `affiliation`, `caption`, `description`, `semifixed_formation`, `unavailable`, `inspection_information` FROM `unyohub_formations` WHERE `formation_name` = '".$formation_name."'", TRUE);
     
     if (!empty($formation_data)) {
         $cars_r = $db_obj->query("SELECT `car_number`, `manufacturer`, `constructed`, `description` FROM `unyohub_cars` WHERE `formation_name` = '".$formation_name."' AND `car_order` IS NOT NULL ORDER BY `car_order` ASC");
@@ -111,9 +111,11 @@ if (empty($_GET["formation_name"])) {
             $histories_data[] = $history_data;
         }
         
-        $formation_data["semifixed_formation"] = !is_null($formation_data["semifixed_formation"]) ? $formation_data["semifixed_formation"] : $_GET["formation_name"];
+        if ($formation_data["currently_registered"]) {
+            $formation_data["semifixed_formation"] = !is_null($formation_data["semifixed_formation"]) ? $formation_data["semifixed_formation"] : $_GET["formation_name"];
+        }
         
-        if (isset($_POST["affiliation"], $_POST["caption"], $_POST["description"], $_POST["semifixed_formation"], $_POST["inspection_information"])) {
+        if (isset($_POST["affiliation"], $_POST["caption"], $_POST["description"], $_POST["inspection_information"])) {
             $is_unavailable = !empty($_POST["unavailable"]);
             $semifixed_formation = empty($_POST["semifixed_formation"]) ? $_GET["formation_name"] : $_POST["semifixed_formation"];
             $updated_datetime = date("Y-m-d H:i:s");
@@ -124,7 +126,7 @@ if (empty($_GET["formation_name"])) {
                 goto on_error;
             }
             
-            if ($semifixed_formation !== $formation_data["semifixed_formation"]) {
+            if ($formation_data["currently_registered"] && $semifixed_formation !== $formation_data["semifixed_formation"]) {
                 $semifixed_formation_names = explode("+", $semifixed_formation);
                 
                 if (!in_array($_GET["formation_name"], $semifixed_formation_names)) {
@@ -134,8 +136,8 @@ if (empty($_GET["formation_name"])) {
                 }
                 
                 foreach ($semifixed_formation_names as $semifixed_formation_name) {
-                    if (!array_key_exists($semifixed_formation_name, $formations["formations"])) {
-                        print "<script> alert('【!】存在しない編成が半固定編成に指定されています。処理はキャンセルされました。'); </script>";
+                    if (!array_key_exists($semifixed_formation_name, $formations["formations"]) || empty($formations["formations"][$semifixed_formation_name]["cars"])) {
+                        print "<script> alert('【!】在籍していない編成が半固定編成に指定されています。処理はキャンセルされました。'); </script>";
                         
                         goto on_error;
                     }
@@ -265,9 +267,11 @@ if (empty($_GET["formation_name"])) {
         print "<h3>編成の特記事項</h3>";
         print "<textarea name='description'>".htmlspecialchars($formation_data["description"])."</textarea>";
         
-        print "<h3>半固定編成</h3>";
-        print "<div class='informational_text'>".htmlspecialchars($railroad_info["alias_of_forward_direction"])."から順に「+」で区切って入力</div>";
-        print "<input type='text' name='semifixed_formation' placeholder='".addslashes($_GET["formation_name"])."' value='".addslashes($formation_data["semifixed_formation"])."'>";
+        if ($formation_data["currently_registered"]) {
+            print "<h3>半固定編成</h3>";
+            print "<div class='informational_text'>".htmlspecialchars($railroad_info["alias_of_forward_direction"])."から順に「+」で区切って入力</div>";
+            print "<input type='text' name='semifixed_formation' placeholder='".addslashes($_GET["formation_name"])."' value='".addslashes($formation_data["semifixed_formation"])."'>";
+        }
         
         print "<h3>検査情報</h3>";
         print "<div class='chip_wrapper'><input type='checkbox' name='unavailable' id='unavailable' class='chip' value='YES'".($formation_data["unavailable"] ? " checked='checked'" : "")."><label for='unavailable'>運用離脱中</label></div>";
