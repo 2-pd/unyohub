@@ -105,7 +105,7 @@ input, textarea {
 
     border: 1px solid #555555;
     
-    box-shadow: 0 4px 4px 0 rgba(0,0,0,0.3);
+    box-shadow: 0 4px 4px 0 rgba(0, 0, 0, 0.3);
 }
 
 #menu button, #menu a {
@@ -203,7 +203,29 @@ input, textarea {
     
     padding: 5px 10px;
     
+    background-color: rgba(255, 255, 255, 0.9);
+    background-image: linear-gradient(315deg, #666666 10px, transparent 10px) !important;
+    
+    border: 1px solid #666666;
+    border-radius: 6px;
+    
+    line-height: 26px;
+    color: #333333;
+    
     z-index: 2;
+    
+    .dark_mode & {
+        background-color: rgba(68, 68, 68, 0.85);
+        background-image: linear-gradient(315deg, #cccccc 10px, transparent 10px) !important;
+        
+        border-color: #cccccc;
+        
+        color: #ffffff;
+    }
+    
+    .dark_mode .preview_popup & {
+        background-color: rgba(102, 102, 102, 0.85);
+    }
     
     &:before {
         content: "";
@@ -219,10 +241,10 @@ input, textarea {
         background-size: 26px;
         
         vertical-align: top;
-        
-        .dark_mode & {
-            background-image: url(data:image/webp;base64,UklGRtYBAABXRUJQVlA4TMkBAAAvM8AMENXIrW1btRuVrnrUhBpQqpjM772zj6CAzzvYhvhY2TZlDCHTccQwIqBAAEDAedu2Oa/ZRrNtM9lrSrtV27aSbdu2NwF15xhxMRSZI1YOHvi3cZ7+M5DWVRQOvYpZGEoh1xvRkQKdL3jbZLyOSTJP8UfYN6xVtoCD0SNmDNKYge8fMHoHPAbnxQY8nFM1EGa83D9A9D7mPj7WRGJJBu6pbWwPLt2DNOttY2cG18hCr43BGxrdkwWWDIeSHOX4WudXUXKJ1Puwwak00W0StxG3By1N2JqfUjRmUGxw38/IGpFgHmEl+RL3HFZmEA2UmQ/Lkkwt/HDZWJoYNf3/VKIRzuaRV5IfsM/lReA0Ms18+pTkxL7LYWYG0kClafzBoCRD5zmH8pKcAXPS9DfwNNLPPFJKcsDglMPhGw0UmA/HkjwR4Z3DxH2NaDaNn9QsyRMz8ygtyRkYi9zjc6oGIsxnXEmeEHHNYX0G1fhqHrYlOSnxxaGzNNFj+tWFRhqZz8LSnCI5XCVB5IYeh5DS3ALuQnDHYP6jRnejhUnjknlNoK5ke5Rtwllwdap/r8QlqofAA0IpX2Q92sbkQXsb1F3q3d11E0oAAA==);
-        }
+    }
+    
+    .dark_mode &:before {
+        background-image: url(data:image/webp;base64,UklGRtYBAABXRUJQVlA4TMkBAAAvM8AMENXIrW1btRuVrnrUhBpQqpjM772zj6CAzzvYhvhY2TZlDCHTccQwIqBAAEDAedu2Oa/ZRrNtM9lrSrtV27aSbdu2NwF15xhxMRSZI1YOHvi3cZ7+M5DWVRQOvYpZGEoh1xvRkQKdL3jbZLyOSTJP8UfYN6xVtoCD0SNmDNKYge8fMHoHPAbnxQY8nFM1EGa83D9A9D7mPj7WRGJJBu6pbWwPLt2DNOttY2cG18hCr43BGxrdkwWWDIeSHOX4WudXUXKJ1Puwwak00W0StxG3By1N2JqfUjRmUGxw38/IGpFgHmEl+RL3HFZmEA2UmQ/Lkkwt/HDZWJoYNf3/VKIRzuaRV5IfsM/lReA0Ms18+pTkxL7LYWYG0kClafzBoCRD5zmH8pKcAXPS9DfwNNLPPFJKcsDglMPhGw0UmA/HkjwR4Z3DxH2NaDaNn9QsyRMz8ygtyRkYi9zjc6oGIsxnXEmeEHHNYX0G1fhqHrYlOSnxxaGzNNFj+tWFRhqZz8LSnCI5XCVB5IYeh5DS3ALuQnDHYP6jRnejhUnjknlNoK5ke5Rtwllwdap/r8QlqofAA0IpX2Q92sbkQXsb1F3q3d11E0oAAA==);
     }
 }
 
@@ -333,7 +355,7 @@ input, textarea {
         animation: popup_up 0.05s ease-out;
         
         .dark_mode & {
-            background-color: rgba(68,68,68,0.85);
+            background-color: rgba(68, 68, 68, 0.85);
         }
     }
     
@@ -543,7 +565,7 @@ a.connecting_railroad_link h5, .connecting_railroad_link a {
     width: 100%;
     height: 100%;
     
-    background-color: rgba(0,0,0,0.75);
+    background-color: rgba(0, 0, 0, 0.75);
     
     overflow: hidden;
     
@@ -585,6 +607,10 @@ a.connecting_railroad_link h5, .connecting_railroad_link a {
     
     .dark_mode & {
         background-color: #666666;
+        
+        .operation_data_detail button {
+            background-color: rgba(102, 102, 102, 0.85) !important;
+        }
     }
     
     input {
@@ -599,6 +625,16 @@ a.connecting_railroad_link h5, .connecting_railroad_link a {
         line-height: 24px;
         font-size: 18px;
         text-align: center;
+    }
+    
+    button {
+        line-height: 22px;
+        
+        .dark_mode & {
+            background-color: rgba(102, 102, 102, 0.85);
+            
+            color: #ffffff;
+        }
     }
     
     .popup_close_button {
@@ -684,18 +720,6 @@ a.connecting_railroad_link h5, .connecting_railroad_link a {
     
     100% {
         top: 20px;
-    }
-}
-
-.square_popup button, .preview_popup button, .preview_popup .wide_button {
-    min-width: 50px;
-    
-    line-height: 22px;
-    
-    .dark_mode & {
-        background-color: rgba(102,102,102,0.85) !important;
-        
-        color: #ffffff;
     }
 }
 
@@ -1544,7 +1568,7 @@ button:has(abbr) {
 }
 
 #wait_screen {
-    background-color: rgba(0,0,0,0.9);
+    background-color: rgba(0, 0, 0, 0.9);
     
     z-index: 301 !important;
 }
@@ -1762,5 +1786,5 @@ textarea {
     
     border-radius: 21px;
     
-    filter: drop-shadow(1px 2px 1px rgba(0,0,0,0.25));
+    filter: drop-shadow(1px 2px 1px rgba(0, 0, 0, 0.25));
 }

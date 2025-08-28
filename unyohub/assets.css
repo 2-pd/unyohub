@@ -68,7 +68,7 @@ header {
     font-size: 18px;
     color: #ffffff;
     
-    box-shadow: 0 0 3px 3px rgba(0,0,0,0.2);
+    box-shadow: 0 0 3px 3px rgba(0, 0, 0, 0.2);
     
     z-index: 33;
     
@@ -753,7 +753,7 @@ header {
     color: #ffff33;
     font-weight: bold;
     
-    box-shadow: 0 3px 3px rgba(0,0,0,0.2);
+    box-shadow: 0 3px 3px rgba(0, 0, 0, 0.2);
     
     z-index: 29;
 }
@@ -851,13 +851,15 @@ header {
     overflow: scroll;
     overflow-y: hidden;
     
-    box-shadow: 0 -5px 3px -2px rgba(0,0,0,0.1) inset;
+    box-shadow: 0 -5px 3px -2px rgba(0, 0, 0, 0.1) inset;
     
     .dark_mode & {
         background-color: #222222;
     }
     
     .active_tab {
+        position: relative;
+        
         padding-top: 30px;
         
         background-position-y: 3px;
@@ -865,7 +867,7 @@ header {
         
         border-top: 2px solid transparent;
         
-        box-shadow: 0 0 8px 0 rgba(0,0,0,0.5);
+        box-shadow: 0 0 8px 0 rgba(0, 0, 0, 0.5);
         
         z-index: 34;
         
@@ -1034,12 +1036,12 @@ article {
     
     border-radius: 8px;
     
-    background-color: rgba(255,255,255,0.9);
+    background-color: rgba(255, 255, 255, 0.9);
     
     z-index: 10;
     
     .dark_mode & {
-        background-color: rgba(68,68,68,0.9);
+        background-color: rgba(68, 68, 68, 0.9);
     }
 }
 
@@ -1196,7 +1198,7 @@ button:has(abbr:empty) {
             font-size: 15px;
             color: inherit;
             
-            filter: drop-shadow(0 1px 2px rgba(0,0,0,0.25));
+            filter: drop-shadow(0 1px 2px rgba(0, 0, 0, 0.25));
             
             z-index: 2;
         }
@@ -1326,7 +1328,7 @@ button:has(abbr:empty) {
     max-width: 40px;
     max-height: 40px;
     
-    filter: drop-shadow(0 1px 2px rgba(0,0,0,0.25));
+    filter: drop-shadow(0 1px 2px rgba(0, 0, 0, 0.25));
 }
 
 .connecting_line_T, .connecting_line_B, .connecting_line_TL, .connecting_line_TR, .connecting_line_L, .connecting_line_R, .connecting_line_BL, .connecting_line_BR {
@@ -2186,7 +2188,7 @@ input[type="checkbox"]:checked + label.drop_down {
     
     margin: 0 auto;
     
-    filter: drop-shadow(0 2px 4px rgba(0,0,0,0.25));
+    filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.25));
 }
 
 .descriptive_text {
@@ -2837,7 +2839,7 @@ footer {
     line-height: 45px;
     font-size: 25px;
     
-    box-shadow: 0 0 2px 2px rgba(0,0,0,0.2);
+    box-shadow: 0 0 2px 2px rgba(0, 0, 0, 0.2);
     
     overflow: hidden;
     
@@ -3039,10 +3041,10 @@ footer {
     border-radius: 4px;
     
     background-size: 30px;
-    background-color: rgba(255,255,255,0.9);
+    background-color: rgba(255, 255, 255, 0.9);
     
     .dark_mode & {
-        background-color: rgba(68,68,68,0.85);
+        background-color: rgba(68, 68, 68, 0.85);
     }
 }
 
@@ -3289,8 +3291,8 @@ input[type="checkbox"], input[type="radio"] {
     background-color: #666666;
 }
 
-.write_button, .wide_button, input[type="radio"] + label, .chip + label, .chip_ellipsis, .operation_data_detail button, .key_and_value button, #operation_data_train_number + button {
-    background-color: rgba(255,255,255,0.9);
+.wide_button, input[type="radio"] + label, .chip + label, .chip_ellipsis, .operation_data_detail button, .key_and_value button, #operation_data_train_number + button {
+    background-color: rgba(255, 255, 255, 0.9);
     background-image: linear-gradient(315deg, #666666 8px, transparent 8px);
     
     border: 1px solid #666666;
@@ -3300,7 +3302,7 @@ input[type="checkbox"], input[type="radio"] {
     text-decoration: none;
     
     .dark_mode & {
-        background-color: rgba(68,68,68,0.85);
+        background-color: rgba(68, 68, 68, 0.85);
         background-image: linear-gradient(315deg, #cccccc 8px, transparent 8px);
         
         border-color: #cccccc;

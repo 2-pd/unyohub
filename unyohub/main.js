@@ -4100,10 +4100,10 @@ function get_previous_formation (formation_name, series_name, subseries_name = n
             
             if ("subseries_names" in formations["series"][previous_series_name]) {
                 var previous_subseries_name = formations["series"][previous_series_name]["subseries_names"][formations["series"][previous_series_name]["subseries_names"].length - 1];
-                var formation_list = formations["series"][previous_series_name]["subseries"][previous_subseries_name]["formation_names"];
+                formation_list = formations["series"][previous_series_name]["subseries"][previous_subseries_name]["formation_names"];
             } else {
                 var previous_subseries_name = null;
-                var formation_list = formations["series"][previous_series_name]["formation_names"];
+                formation_list = formations["series"][previous_series_name]["formation_names"];
             }
             
             previous_formation_name = formation_list[formation_list.length - 1];
