@@ -118,7 +118,7 @@ function get_operation_info ($ts, $operation_number) {
     return $operation_data;
 }
 
-function get_formation_info ($formations_str, $validate = FALSE) {
+function get_formation_info ($formations_str, $validate_level = 0) {
     global $db_obj;
     
     $formation_pattern = array("");
@@ -137,7 +137,7 @@ function get_formation_info ($formations_str, $validate = FALSE) {
     
     $formation_pattern_last = array(NULL);
     
-    if ($validate) {
+    if ($validate_level >= 2) {
         $coupling_group_intersection = NULL;
         $min_car_count_range = 0;
         $max_car_count_range = 0;
@@ -147,15 +147,15 @@ function get_formation_info ($formations_str, $validate = FALSE) {
         if ($formation !== "?") {
             $formation_escaped = $db_obj->escapeString($formation);
             
-            $formation_data = $db_obj->querySingle("SELECT `series_name`, `subseries_name`".($validate ? ", `car_count`" : "")." FROM `unyohub_formations` WHERE `formation_name` = '".$formation_escaped."' AND `currently_registered` = 1", TRUE);
+            $formation_data = $db_obj->querySingle("SELECT `series_name`, `subseries_name`".($validate_level >= 2 ? ", `car_count`" : "")." FROM `unyohub_formations` WHERE `formation_name` = '".$formation_escaped."' AND `currently_registered` = 1", TRUE);
             
             if (empty($formation_data)) {
-                $formation_data = $db_obj->querySingle("SELECT `series_name`".($validate ? ", `max_car_count`, `min_car_count`" : "")." FROM `unyohub_series_caches` WHERE `series_title` = '".$formation_escaped."'", TRUE);
+                $formation_data = $db_obj->querySingle("SELECT `series_name`".($validate_level >= 2 ? ", `max_car_count`, `min_car_count`" : "")." FROM `unyohub_series_caches` WHERE `series_title` = '".$formation_escaped."'", TRUE);
                 
                 if (!empty($formation_data)) {
                     $formation_data["series_title"] = $formation;
                 } else {
-                    if ($validate) {
+                    if ($validate_level >= 1) {
                         print "ERROR: 入力された編成名・車両形式に誤りがあります";
                         exit;
                     }
@@ -165,7 +165,7 @@ function get_formation_info ($formations_str, $validate = FALSE) {
             } else {
                 $formation_data["series_title"] = $formation_data["series_name"].$formation_data["subseries_name"];
                 
-                if ($validate) {
+                if ($validate_level >= 2) {
                     $formation_data["max_car_count"] = $formation_data["car_count"];
                     $formation_data["min_car_count"] = $formation_data["car_count"];
                 }
@@ -173,7 +173,7 @@ function get_formation_info ($formations_str, $validate = FALSE) {
                 $formation_list[] = $formation;
             }
             
-            if ($validate) {
+            if ($validate_level >= 2) {
                 $coupling_groups_r = $db_obj->query("SELECT `coupling_group` FROM `unyohub_coupling_groups` WHERE `series_or_formation` = '".$formation_escaped."'");
                 
                 $coupling_groups = [];
@@ -206,7 +206,7 @@ function get_formation_info ($formations_str, $validate = FALSE) {
         } else {
             $formation_data = array("series_name" => "?", "series_title" => "?");
             
-            if ($validate) {
+            if ($validate_level >= 2) {
                 if (is_array($coupling_group_intersection) && empty($coupling_group_intersection)) {
                     print "ERROR: 併結できない編成の組み合わせです";
                     exit;
@@ -254,12 +254,12 @@ function get_formation_info ($formations_str, $validate = FALSE) {
         $formation_pattern_last = $formation_pattern_last_2;
     }
     
-    if ($validate && !empty($formation_list) && max(array_count_values($formation_list)) >= 2) {
+    if ($validate_level >= 1 && !empty($formation_list) && max(array_count_values($formation_list)) >= 2) {
         print "ERROR: 投稿しようとしている情報には同一の編成が複数含まれています";
         exit;
     }
     
-    if ($validate) {
+    if ($validate_level >= 2) {
         return array("formation_pattern" => array_merge(array_unique($formation_pattern)), "formation_list" => $formation_list, "min_car_count_range" => $min_car_count_range, "max_car_count_range" => $max_car_count_range);
     } else {
         return array("formation_pattern" => array_merge(array_unique($formation_pattern)), "formation_list" => $formation_list);
