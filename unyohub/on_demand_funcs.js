@@ -2537,6 +2537,10 @@ function show_moderation_info (railroad_id, user_id, ip_address) {
 }
 
 function revoke_operation_data (railroad_id, yyyy_mm_dd, operation_number, assign_order, user_id) {
+    if (user_id !== user_data["user_id"] && !confirm("この投稿を取り消しますか？")) {
+        return;
+    }
+    
     open_wait_screen();
     
     if (one_time_token === null) {
