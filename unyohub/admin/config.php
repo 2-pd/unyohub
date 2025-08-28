@@ -24,6 +24,7 @@ if (isset($_POST["instance_name"], $_POST["introduction_text"], $_POST["manual_u
     $config_str .= "require_invite_code = ".(!empty($_POST["require_invite_code"]) ? "true" : "false")."\n";
     $config_str .= "require_email_address = ".(!empty($_POST["require_email_address"]) ? "true" : "false")."\n";
     $config_str .= "allow_guest_user = ".(!empty($_POST["allow_guest_user"]) ? "true" : "false")."\n";
+    $config_str .= "validate_posted_formations = ".(!empty($_POST["validate_posted_formations"]) ? "true" : "false")."\n";
     $config_str .= "require_comments_on_speculative_posts = ".(!empty($_POST["require_comments_on_speculative_posts"]) ? "true" : "false")."\n";
     $config_str .= "\n";
     $config_str .= "quotation_guidelines = \"".str_replace(array("\r\n", "\n", "\r"), "\\n", addslashes($_POST["quotation_guidelines"]))."\"\n";
@@ -92,6 +93,11 @@ if ($config["allow_guest_user"]) {
     print " checked='checked'";
 }
 print "><label for='allow_guest_user'>ログインしていないユーザーの投稿を認める</label>";
+print "<input type='checkbox' name='validate_posted_formations' id='validate_posted_formations' class='toggle' value='YES'";
+if ($config["validate_posted_formations"]) {
+    print " checked='checked'";
+}
+print "><label for='validate_posted_formations'>投稿時に組成や両数の妥当性を検証する</label>";
 print "<input type='checkbox' name='require_comments_on_speculative_posts' id='require_comments_on_speculative_posts' class='toggle' value='YES'";
 if ($config["require_comments_on_speculative_posts"]) {
     print " checked='checked'";
