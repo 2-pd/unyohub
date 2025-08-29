@@ -74,18 +74,21 @@ def convert_timetable_2 (mes, main_dir, diagram_revision, diagram_id):
                     break
                 
                 if station_name.endswith("]"):
-                    station_list.append(station_name[:-3].strip())
-                    
                     if station_name[-2] == "着":
                         arrival_time_mapping.append(True)
                         departure_time_mapping.append(False)
                     else:
                         arrival_time_mapping.append(False)
                         departure_time_mapping.append(True)
+                    
+                    station_name = station_name[:-3].strip()
+                    if len(station_list) == 0 or station_list[-1] != station_name:
+                        station_list.append(station_name)
                 else:
-                    station_list.append(station_name)
                     arrival_time_mapping.append(True)
                     departure_time_mapping.append(True)
+                    
+                    station_list.append(station_name)
             
             for cnt_2 in range(len(timetable_data), cnt + 7):
                 timetable_data.append([""] * len(timetable_data[0]))
@@ -94,7 +97,7 @@ def convert_timetable_2 (mes, main_dir, diagram_revision, diagram_id):
             
             trains = timetable_data_t[1:]
             
-            station_count = len(set(station_list))
+            station_count = len(station_list)
             if station_count != len(railroad_info["lines"][line_id]["stations"]):
                 mes("時刻表の駅数が路線情報と整合しません: " + line_id + " - " + direction, True)
                 mes("エラー発生のため処理が中断されました")
@@ -159,6 +162,13 @@ def convert_timetable_2 (mes, main_dir, diagram_revision, diagram_id):
                     if departure_time_mapping[cnt]:
                         departure_times.append(time_string)
                 
+                if output_arrival_times:
+                    for cnt in range(0, len(departure_times)):
+                        if departure_times[cnt] == "" and arrival_times[cnt] != "":
+                            departure_times[cnt] = arrival_times[cnt]
+                        elif arrival_times[cnt] == "" and departure_times[cnt] != "":
+                            arrival_times[cnt] = departure_times[cnt]
+                
                 if direction == "inbound":
                     last_stopped_station_index = len(railroad_info["lines"][line_id]["stations"]) - last_stopped_station_index - 1
                 
@@ -170,7 +180,7 @@ def convert_timetable_2 (mes, main_dir, diagram_revision, diagram_id):
                         direction_data[train[0]][train_cnt]["starting_station"] = station_list[cnt]
                         
                         if direction == "inbound":
-                            starting_station_index = len(railroad_info["lines"][line_id]["stations"]) - cnt - 1
+                            starting_station_index = station_count - cnt - 1
                         else:
                             starting_station_index = cnt
                         
