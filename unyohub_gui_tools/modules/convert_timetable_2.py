@@ -63,20 +63,48 @@ def convert_timetable_2 (mes, main_dir, diagram_revision, diagram_id):
             if timetable_data[8][0] != "":
                 timetable_data.insert(2, [""] * len(timetable_data[0]))
             
-            if len(timetable_data) != len(railroad_info["lines"][line_id]["stations"]) + 15:
-                for cnt in range(len(railroad_info["lines"][line_id]["stations"]) + 15 - len(timetable_data)):
-                    timetable_data.append([""] * len(timetable_data[0]))
+            station_list = []
+            arrival_time_mapping = []
+            departure_time_mapping = []
+            for cnt in range(9, len(timetable_data)):
+                station_name = timetable_data[cnt][0].strip()
+                
+                if len(station_name) == 0:
+                    cnt -= 1
+                    break
+                
+                if station_name.endswith("]"):
+                    station_list.append(station_name[:-3].strip())
+                    
+                    if station_name[-2] == "着":
+                        arrival_time_mapping.append(True)
+                        departure_time_mapping.append(False)
+                    else:
+                        arrival_time_mapping.append(False)
+                        departure_time_mapping.append(True)
+                else:
+                    station_list.append(station_name)
+                    arrival_time_mapping.append(True)
+                    departure_time_mapping.append(True)
+            
+            for cnt_2 in range(len(timetable_data), cnt + 7):
+                timetable_data.append([""] * len(timetable_data[0]))
             
             timetable_data_t = [list(x) for x in zip(*timetable_data)]
             
-            station_list = timetable_data_t[0][9: -6]
             trains = timetable_data_t[1:]
             
-            if len(station_list) != len(railroad_info["lines"][line_id]["stations"]):
+            station_count = len(set(station_list))
+            if station_count != len(railroad_info["lines"][line_id]["stations"]):
                 mes("時刻表の駅数が路線情報と整合しません: " + line_id + " - " + direction, True)
                 mes("エラー発生のため処理が中断されました")
                 
                 return
+            
+            if len(departure_time_mapping) == station_count:
+                output_arrival_times = False
+            else:
+                output_arrival_times = True
             
             direction_data = {}
             previous_train_number = ""
@@ -97,28 +125,39 @@ def convert_timetable_2 (mes, main_dir, diagram_revision, diagram_id):
                 
                 direction_data[train[0]].append({})
                 
-                departure_times = train[9: -6]
+                times = train[9: -6]
                 
-                last_departure_time = "00:00"
+                if output_arrival_times:
+                    arrival_times = []
+                departure_times = []
+                
+                last_time_string = "00:00"
                 last_stopped_station_index = 0
-                for cnt in range(len(departure_times)):
-                    if departure_times[cnt] != "":
-                        if departure_times[cnt][0] == "|":
-                            departure_time = departure_times[cnt][1:].strip()
-                            before_departure_time = "|"
+                for cnt in range(len(times)):
+                    if times[cnt] != "":
+                        if times[cnt][0] == "|":
+                            time_string = times[cnt][1:].strip()
+                            before_time_string = "|"
                         else:
-                            departure_time = departure_times[cnt]
-                            before_departure_time = ""
+                            time_string = times[cnt]
+                            before_time_string = ""
                         
-                        departure_time = shape_time_string(departure_time)
+                        time_string = shape_time_string(time_string)
                         
-                        if time_regexp.match(departure_time) is None or departure_time < last_departure_time:
+                        if time_regexp.match(time_string) is None or time_string < last_time_string:
                             mes("《注意》異常な時刻値が検出されました: " + line_id + " - " + train[0])
                         
-                        last_departure_time = departure_time
-                        last_stopped_station_index = cnt
+                        last_time_string = time_string
+                        last_stopped_station_index = len(departure_times)
                         
-                        departure_times[cnt] = before_departure_time + departure_time
+                        time_string = before_time_string + time_string
+                    else:
+                        time_string = ""
+                    
+                    if output_arrival_times and arrival_time_mapping[cnt]:
+                        arrival_times.append(time_string)
+                    if departure_time_mapping[cnt]:
+                        departure_times.append(time_string)
                 
                 if direction == "inbound":
                     last_stopped_station_index = len(railroad_info["lines"][line_id]["stations"]) - last_stopped_station_index - 1
@@ -159,7 +198,8 @@ def convert_timetable_2 (mes, main_dir, diagram_revision, diagram_id):
                 if train[-3] != "":
                     direction_data[train[0]][train_cnt]["next_trains"].append({ "line_id" : train[-3], "train_number" : train[-2], "starting_station" : train[-1] })
                 
-                
+                if output_arrival_times:
+                    direction_data[train[0]][train_cnt]["arrival_times"] = [None if arrival_time == "" else arrival_time for arrival_time in arrival_times]
                 direction_data[train[0]][train_cnt]["departure_times"] = [None if departure_time == "" else departure_time for departure_time in departure_times]
             
             line_data[direction + "_trains"] = direction_data
