@@ -1029,89 +1029,137 @@ button:has(abbr) {
     font-size: 18px;
 }
 
-.train_detail_departure_time {
-    position: relative;
+.station_times {
+    width: min(100%, 360px);
     
-    width: 240px;
+    margin: 0 auto 60px auto;
     
-    margin: 0 auto;
-    padding: 0 10px;
-    border-left: 20px solid #808080;
+    border-collapse: collapse;
     
-    line-height: 36px;
     font-size: 18px;
     text-align: left;
     
-    &:before {
-        content: "";
-        
-        position: absolute;
-        top: 14px;
-        left: -14px;
-        
-        width: 8px;
-        height: 8px;
-        
-        background-color: #ffffff;
-        
-        border-radius: 4px;
+    tr:nth-child(2n) {
+        background-color: #f7f7f7;
         
         .dark_mode & {
-            background-color: #eeeeee;
+            background-color: #777777;
         }
     }
     
-    &:after {
-        content: "";
+    tr td {
+        height: 44px;
         
-        display: block;
+        padding: 0;
         
-        clear: both;
-    }
-    
-    &:last-of-type {
-        margin-bottom: 60px;
-    }
-    
-    span {
-        float: right;
-    }
-}
-
-.train_detail_departure_time_highlight {
-    font-weight: bold;
-    
-    &:before {
-        top: 11px;
-        left: -17px;
-        
-        width: 12px;
-        height: 12px;
-        
-        background-color: #ffff33;
-        
-        border: 1px solid #ffffff;
-        border-radius: 7px;
-        
-        .dark_mode & {
-            background-color: #cccc33;
+        &:first-child {
+            position: relative;
             
-            border-color: #eeeeee;
+            width: 50px;
+            
+            .connecting_railroads_button {
+                top: 6px;
+                left: 6px;
+                
+                width: 30px;
+                height: 30px;
+                
+                border-width: 1px;
+                
+                background-color: #ffffff;
+                background-size: 30px;
+                
+                .dark_mode & {
+                    background-color: #666666;
+                }
+            }
+        }
+        
+        &:nth-child(2) {
+            position: relative;
+            
+            width: 20px;
+            
+            &:before {
+                content: "";
+                
+                position: absolute;
+                top: 16px;
+                left: 6px;
+                
+                width: 8px;
+                height: 8px;
+                
+                background-color: #ffffff;
+                
+                border-radius: 4px;
+                
+                .dark_mode & {
+                    background-color: #eeeeee;
+                }
+            }
+        }
+        
+        &:nth-child(3) {
+            width: 80px;
+            
+            time, small {
+                display: block;
+                
+                line-height: 20px;
+                text-indent: 5px;
+            }
+            
+            small {
+                font-size: 15px;
+                color: #666666;
+                
+                .dark_mode & {
+                    color: #cccccc;
+                }
+            }
+        }
+        
+        &:last-child {
+            width: calc(100% - 150px);
         }
     }
-}
-
-.deadhead_train_departure_time span {
-    &:before {
-        content: "(";
+    
+    .train_detail_departure_time_highlight {
+        font-weight: bold;
         
-        color: #999999;
+        td:nth-child(2):before {
+            top: 13px;
+            left: 3px;
+            
+            width: 12px;
+            height: 12px;
+            
+            background-color: #ffff33;
+            
+            border: 1px solid #ffffff;
+            border-radius: 7px;
+            
+            .dark_mode & {
+                background-color: #cccc33;
+                
+                border-color: #eeeeee;
+            }
+        }
     }
     
-    &:after {
-        content: ")";
+    .deadhead_train_departure_time time {
+        &:before {
+            content: "(";
+            
+            color: #999999;
+        }
         
-        color: #999999;
+        &:after {
+            content: ")";
+            
+            color: #999999;
+        }
     }
 }
 
