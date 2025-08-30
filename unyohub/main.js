@@ -2569,19 +2569,22 @@ function get_train_positions (trains, line_id, hh_and_mm, is_inbound) {
             
             if (!train_number.startsWith("_") && train_number in timetable["timetable"][line_id][train_direction]) {
                 for_3: for (var timetable_train of timetable["timetable"][line_id][train_direction][train_number]) {
+                    var departure_times = timetable_train["departure_times"];
+                    var arrival_times = "arrival_times" in timetable_train ? timetable_train["arrival_times"] : departure_times;
+                    
                     if (timetable_train["starting_station"] === train["starting_station"]) {
                         var last_stopped = null;
                         var last_stopped_time = null;
                         
                         for (cnt = 0; cnt < station_list.length; cnt++) {
-                            var departure_time = timetable_train["departure_times"][cnt];
-                            
-                            if (departure_time !== null) {
-                                departure_time = departure_time.slice(-5);
+                            if (departure_times[cnt] !== null) {
+                                var departure_time = departure_times[cnt].slice(-5);
                                 
                                 if (departure_time >= hh_and_mm) {
-                                    if (last_stopped !== null) {
-                                        var train_position = calculate_train_position(line_id, minutes_now, last_stopped, cnt, hh_mm_to_minutes(last_stopped_time), hh_mm_to_minutes(departure_time));
+                                    var arrival_time = arrival_times[cnt].slice(-5);
+                                    
+                                    if (arrival_time >= hh_and_mm && last_stopped !== null) {
+                                        var train_position = calculate_train_position(line_id, minutes_now, last_stopped, cnt, hh_mm_to_minutes(last_stopped_time), hh_mm_to_minutes(arrival_time));
                                     } else {
                                         if ("double_station_spacing" in railroad_info["lines"][line_id] && railroad_info["lines"][line_id]["double_station_spacing"]) {
                                             var train_position = cnt * 2;
