@@ -278,9 +278,10 @@ def convert_formation_table (mes, main_dir):
                     json_data["series"][series_name]["formation_names"].append(formation_name)
                 else:
                     json_data["series"][series_name]["subseries"][subseries_name]["formation_names"].append(formation_name)
-                    json_data["formations"][formation_name]["subseries_name"] = subseries_name
                     
                     if currently_registered:
+                        json_data["formations"][formation_name]["subseries_name"] = subseries_name
+                        
                         if car_count > subseries_max_car_count:
                             subseries_max_car_count = car_count
                         

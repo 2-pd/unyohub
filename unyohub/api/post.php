@@ -23,7 +23,7 @@ if (is_object($user)) {
         exit;
     }
     
-    if (substr($_POST["guest_id"], 0, 1) !== "*" || strlen($_POST["guest_id"]) !== 13) {
+    if (!preg_match("/\A\*[0-9A-Z]{12}\z/u", $_POST["guest_id"])) {
         print "ERROR: ゲストIDが不正です";
         exit;
     }
@@ -142,9 +142,9 @@ if (empty($formations)) {
 }
 
 if ($formations !== "運休" && $formations !== "ウヤ" && $formations !== "トケ") {
-    $formation_info = get_formation_info($formations, TRUE);
+    $formation_info = get_formation_info($formations, $config["validate_posted_formations"] ? 2 : 1);
     
-    if ($formation_info["min_car_count_range"] > $operation_data["max_car_count"] || $formation_info["max_car_count_range"] < $operation_data["min_car_count"]) {
+    if ($config["validate_posted_formations"] && ($formation_info["min_car_count_range"] > $operation_data["max_car_count"] || $formation_info["max_car_count_range"] < $operation_data["min_car_count"])) {
         print "ERROR: 編成の両数が異常です";
         exit;
     }

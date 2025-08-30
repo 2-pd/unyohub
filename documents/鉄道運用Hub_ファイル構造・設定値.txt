@@ -27,6 +27,7 @@ available_days_ahead 何日先の日付まで運用情報の閲覧と投稿が�
 require_invite_code ユーザー登録時に招待コードを必要とするか(BOOL値)
 require_email_address ユーザー登録時にメールアドレス入力を必要とするか(BOOL値)
 allow_guest_user ログインしていないユーザーの投稿を認めるか(BOOL値)
+validate_posted_formations 投稿時に組成や両数の妥当性を検証するか(BOOL値)
 require_comments_on_speculative_posts 未出庫の運用への情報投稿時にコメント入力を強制するか(BOOL値)
 
 quotation_guidelines 引用情報を投稿する際に表示される案内文
@@ -320,7 +321,8 @@ log_ip_address 投稿者のIPアドレスを記録するか(BOOL値)
                             "starting_station" : 始発駅
                         }...
                     ],
-                    "departure_times" : 路線内の各駅発車時刻を配列で(時刻は「HH:MM」形式。通過駅及び走行区間に含まれていない駅はnull、通過時間の決まっている通過駅は時刻の前に半角縦線を付けて「|HH:MM」の形式とする)
+                    "arrival_times" : 路線内の各駅到着時刻を配列で(省略可能。時刻は「HH:MM」形式。通過駅及び走行区間に含まれていない駅はnull、通過時間の決まっている通過駅は時刻の前に半角縦線を付けて「|HH:MM」の形式とする。始発駅では到着時刻の代わりに発車時刻を入力する),
+                    "departure_times" : 路線内の各駅発車時刻を配列で(時刻は「HH:MM」形式。通過駅及び走行区間に含まれていない駅はnull、通過時間の決まっている通過駅は時刻の前に半角縦線を付けて「|HH:MM」の形式とする。終着駅では発車時刻の代わりに到着時刻を入力する)
                 }...
             ]...
         },

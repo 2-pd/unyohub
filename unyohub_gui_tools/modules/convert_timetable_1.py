@@ -37,6 +37,7 @@ def convert_timetable_1 (mes, file_name, digits_count):
     
     line_list = line_list_str.split()
     station_list = {}
+    station_name_list = {}
     line_stations = {}
     rename_list = {}
     
@@ -48,12 +49,24 @@ def convert_timetable_1 (mes, file_name, digits_count):
             line_list[cnt] = line_list[cnt][:period_pos]
         
         station_list[line_list[cnt]] = []
+        station_name_list[line_list[cnt]] = []
         line_stations[line_list[cnt]] = []
         
         for cnt_2 in range(3, len(timetable_data_t[1])):
-            if line_list[cnt] in timetable_data_t[1][cnt_2]:
+            if line_list[cnt] in timetable_data_t[1][cnt_2].split():
                 station_list[line_list[cnt]].append(timetable_data_t[0][cnt_2].strip())
                 line_stations[line_list[cnt]].append(cnt_2)
+                
+                if station_list[line_list[cnt]][-1].endswith("]"):
+                    station_name_list[line_list[cnt]].append(station_list[line_list[cnt]][-1][:-3].strip())
+                else:
+                    station_name_list[line_list[cnt]].append(station_list[line_list[cnt]][-1])
+        
+        if station_list[line_list[cnt]][0].endswith("[発]"):
+            station_list[line_list[cnt]][0] = station_name_list[line_list[cnt]][0]
+        
+        if station_list[line_list[cnt]][-1].endswith("[着]"):
+            station_list[line_list[cnt]][-1] = station_name_list[line_list[cnt]][-1]
         
         new_timetable_t[line_list[cnt]] = [["", "", "", "", "", "", "", "", ""] + station_list[line_list[cnt]] + ["", "", "", "", "", ""]]
     
@@ -80,7 +93,7 @@ def convert_timetable_1 (mes, file_name, digits_count):
                     
                     if train[cnt] != "":
                         if starting_station is None:
-                            starting_station = station_list[line_id][cnt - 9]
+                            starting_station = station_name_list[line_id][cnt - 9]
                         
                         if train[cnt][0] == "|":
                             departure_time = train[cnt][1:].strip()
@@ -125,14 +138,14 @@ def convert_timetable_1 (mes, file_name, digits_count):
                     train[4] = train[0]
                     for cnt in range(9, len(new_timetable_t[previous_line_id][-1]) - 6):
                         if new_timetable_t[previous_line_id][-1][cnt] != "":
-                            train[5] = station_list[previous_line_id][cnt - 9]
+                            train[5] = station_name_list[previous_line_id][cnt - 9]
                             break
                     
                     new_timetable_t[previous_line_id][-1][-6] = line_id
                     new_timetable_t[previous_line_id][-1][-5] = train[0]
                     for cnt in range(9, len(train) - 6):
                         if train[cnt] != "":
-                            new_timetable_t[previous_line_id][-1][-4] = station_list[line_id][cnt - 9]
+                            new_timetable_t[previous_line_id][-1][-4] = station_name_list[line_id][cnt - 9]
                             break
                 elif train[0] + "@" + starting_station in previous_trains:
                     previous_train_data = previous_trains.pop(train[0] + "@" + starting_station)
@@ -149,7 +162,7 @@ def convert_timetable_1 (mes, file_name, digits_count):
                             if new_timetable_t[previous_line_id][cnt_2][0] == previous_train_number:
                                 for cnt_3 in range(9, len(new_timetable_t[previous_line_id][cnt_2]) - 6):
                                     if new_timetable_t[previous_line_id][cnt_2][cnt_3] != "":
-                                        starting_station = station_list[previous_line_id][cnt_3 - 9]
+                                        starting_station = station_name_list[previous_line_id][cnt_3 - 9]
                                         break
                                 
                                 if starting_station == previous_train_data[cnt]["starting_station"]:
@@ -165,7 +178,7 @@ def convert_timetable_1 (mes, file_name, digits_count):
                         new_timetable_t[previous_line_id][previous_train_index][next_train_row + 1] = train[0]
                         for cnt_2 in range(9, len(train) - 6):
                             if train[cnt_2] != "":
-                                new_timetable_t[previous_line_id][previous_train_index][next_train_row + 2] = station_list[line_id][cnt_2 - 9]
+                                new_timetable_t[previous_line_id][previous_train_index][next_train_row + 2] = station_name_list[line_id][cnt_2 - 9]
                                 break
                 
                 new_timetable_t[line_id].append(train)
@@ -175,7 +188,7 @@ def convert_timetable_1 (mes, file_name, digits_count):
         if previous_line_id is not None and timetable_column[-1].strip() != "":
             for cnt in reversed(range(9, len(new_timetable_t[previous_line_id][-1]) - 6)):
                 if new_timetable_t[previous_line_id][-1][cnt] != "":
-                    terminal_station = station_list[previous_line_id][cnt - 9]
+                    terminal_station = station_name_list[previous_line_id][cnt - 9]
                     break
             
             for train_number in timetable_column[-1].strip().split():

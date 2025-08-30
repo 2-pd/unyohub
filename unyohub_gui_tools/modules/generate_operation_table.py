@@ -69,49 +69,6 @@ def generate_operation_table (mes, main_dir, diagram_revision, diagram_id, save_
         outbound_timetable.append([""] * len(outbound_timetable[0]))
     
     
-    mes("着時刻行を発時刻行に統合しています...")
-    
-    arrival_time_row = []
-    
-    detected_station_indexes = {inbound_timetable[4][0].strip() + "__" + inbound_timetable[4][1].strip() : 4}
-    for cnt in range(5, len(inbound_timetable) - 1):
-        station_and_line = inbound_timetable[cnt][0].strip() + "__" + inbound_timetable[cnt][1].strip()
-        
-        if station_and_line in detected_station_indexes:
-            arrival_time_row.append(detected_station_indexes[station_and_line])
-            
-            for cnt_2 in range(2, len(inbound_timetable[cnt])):
-                time_string = inbound_timetable[cnt][cnt_2].strip()
-                
-                if time_string == "" or time_string == "||" or time_string == "ﾚ":
-                    inbound_timetable[cnt][cnt_2] = inbound_timetable[detected_station_indexes[station_and_line]][cnt_2]
-        
-        detected_station_indexes[station_and_line] = cnt
-    
-    for cnt in reversed(arrival_time_row):
-        inbound_timetable.pop(cnt)
-    
-    arrival_time_row = []
-    
-    detected_station_indexes = {outbound_timetable[4][0].strip() + "__" + inbound_timetable[4][1].strip() : 4}
-    for cnt in range(5, len(outbound_timetable) - 1):
-        station_and_line = outbound_timetable[cnt][0].strip() + "__" + outbound_timetable[cnt][1].strip()
-        
-        if station_and_line in detected_station_indexes:
-            arrival_time_row.append(detected_station_indexes[station_and_line])
-            
-            for cnt_2 in range(2, len(outbound_timetable[cnt])):
-                time_string = outbound_timetable[cnt][cnt_2].strip()
-                
-                if time_string == "" or time_string == "||" or time_string == "ﾚ":
-                    outbound_timetable[cnt][cnt_2] = outbound_timetable[detected_station_indexes[station_and_line]][cnt_2]
-        
-        detected_station_indexes[station_and_line] = cnt
-    
-    for cnt in reversed(arrival_time_row):
-        outbound_timetable.pop(cnt)
-    
-    
     inbound_timetable_t = [list(x) for x in zip(*inbound_timetable)]
     outbound_timetable_t = [list(x) for x in zip(*outbound_timetable)]
     
@@ -123,17 +80,17 @@ def generate_operation_table (mes, main_dir, diagram_revision, diagram_id, save_
         symbols_outbound = []
         
         for cnt in range(4, len(inbound_timetable_t[1]) - 1):
-            if "[" in inbound_timetable_t[1][cnt]:
-                symbol_start = inbound_timetable_t[1][cnt].find("[") + 1
-                symbol_end = inbound_timetable_t[1][cnt].find("]")
+            if "{" in inbound_timetable_t[1][cnt]:
+                symbol_start = inbound_timetable_t[1][cnt].find("{") + 1
+                symbol_end = inbound_timetable_t[1][cnt].find("}")
                 
                 symbols_inbound.append({"station" : cnt, "symbol" : inbound_timetable_t[1][cnt][symbol_start:symbol_end]})
                 inbound_timetable_t[1][cnt] = inbound_timetable_t[1][cnt][0:symbol_start - 1] + inbound_timetable_t[1][cnt][symbol_end + 1:]
         
         for cnt in range(4, len(outbound_timetable_t[1]) - 1):
-            if "[" in outbound_timetable_t[1][cnt]:
-                symbol_start = outbound_timetable_t[1][cnt].find("[") + 1
-                symbol_end = outbound_timetable_t[1][cnt].find("]")
+            if "{" in outbound_timetable_t[1][cnt]:
+                symbol_start = outbound_timetable_t[1][cnt].find("{") + 1
+                symbol_end = outbound_timetable_t[1][cnt].find("}")
                 
                 symbols_outbound.append({"station" : cnt, "symbol" : outbound_timetable_t[1][cnt][symbol_start:symbol_end]})
                 outbound_timetable_t[1][cnt] = outbound_timetable_t[1][cnt][0:symbol_start - 1] + outbound_timetable_t[1][cnt][symbol_end + 1:]
@@ -161,14 +118,18 @@ def generate_operation_table (mes, main_dir, diagram_revision, diagram_id, save_
             inbound_timetable_t[cnt][0] = operation_number + "__" + str(train_cnt)
             
             symbol_added = False
+            symbol_set = set()
             for symbol_data in symbols_inbound:
                 if len(inbound_timetable_t[cnt][symbol_data["station"]]) >= 1 and inbound_timetable_t[cnt][symbol_data["station"]][0] != "|":
-                    if not symbol_added:
-                        symbol_added = True
+                    if symbol_data["symbol"] not in symbol_set:
+                        if not symbol_added:
+                            symbol_added = True
+                            
+                            inbound_timetable_t[cnt][0] += "__"
                         
-                        inbound_timetable_t[cnt][0] += "__"
-                    
-                    inbound_timetable_t[cnt][0] += symbol_data["symbol"]
+                        inbound_timetable_t[cnt][0] += symbol_data["symbol"]
+                        
+                        symbol_set.add(symbol_data["symbol"])
         else:
             train_number = inbound_timetable_t[cnt][0].strip()
             
@@ -204,14 +165,18 @@ def generate_operation_table (mes, main_dir, diagram_revision, diagram_id, save_
             outbound_timetable_t[cnt][0] = operation_number + "__" + str(train_cnt)
             
             symbol_added = False
+            symbol_set = set()
             for symbol_data in symbols_outbound:
                 if len(outbound_timetable_t[cnt][symbol_data["station"]]) >= 1 and outbound_timetable_t[cnt][symbol_data["station"]][0] != "|":
-                    if not symbol_added:
-                        symbol_added = True
+                    if symbol_data["symbol"] not in symbol_set:
+                        if not symbol_added:
+                            symbol_added = True
+                            
+                            outbound_timetable_t[cnt][0] += "__"
                         
-                        outbound_timetable_t[cnt][0] += "__"
-                    
-                    outbound_timetable_t[cnt][0] += symbol_data["symbol"]
+                        outbound_timetable_t[cnt][0] += symbol_data["symbol"]
+                        
+                        symbol_set.add(symbol_data["symbol"])
         else:
             train_number = outbound_timetable_t[cnt][0].strip()
             
