@@ -45,8 +45,6 @@ input, textarea {
     
     line-height: 40px;
     
-    overflow-y: scroll;
-    
     z-index: 35;
     
     transition-duration: 0.25s;
@@ -360,6 +358,10 @@ input, textarea {
     }
     
     h3 {
+        margin: 15px 0 10px 0;
+        
+        padding: 5px 10px;
+        
         background-color: #444444;
         
         color: #ffffff;
@@ -370,7 +372,11 @@ input, textarea {
     }
     
     h4 {
-        border-color: #666666;
+        margin: 20px 0 10px 0;
+        
+        padding-left: 8px;
+        
+        border-left: 4px solid #666666;
         
         line-height: 32px;
         font-size: 18px;

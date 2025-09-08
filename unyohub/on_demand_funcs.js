@@ -591,8 +591,10 @@ function select_lines (line_id = null, station_name = null, position_mode = true
         
         if (position_mode) {
             buf += "position_change_lines(" + line_id_text + ", " + (station_name === null ? "0" : "\"" + add_slashes(station_name) + "\"") + ");";
-        } else {
+        } else if (mode_val === 1 && station_name === timetable_selected_station) {
             buf += "timetable_change_lines(" + line_id_text + ");";
+        } else {
+            buf += "timetable_select_station(\"" + add_slashes(station_name) + "\", " + line_id_text + ", true);";
         }
         
         buf += "'><abbr style='background-color: " + line_color + ";'>" + line_symbol + "</abbr>" + line_name + "</button>";
@@ -1115,7 +1117,12 @@ function train_detail (line_id, train_number, starting_station, train_direction,
                     var onclick_func = "affiliated_railroad_id" in railroad_info["lines"][train["line_id"]] ? "close_square_popup(); select_railroad(\"" + railroad_info["lines"][train["line_id"]]["affiliated_railroad_id"] + "\", \"timetable_mode\", \"" + train["line_id"] + "\", \"" + add_slashes(stations[station_index]["station_name"]) + "\", " + train["is_inbound"] + ");" : "show_station_timetable(\"" + train["line_id"] + "\", \"" + stations[station_index]["station_name"] + "\", " + train["is_inbound"] + ");";
                     
                     buf += "<tr class='" + (is_deadhead_train ? "deadhead_train_departure_time" : "") + highlight_str + "'>";
-                    buf += "<td>" + ("connecting_railroads" in  stations[station_index] &&  stations[station_index]["connecting_railroads"].length >= 1 ? "<button type='button' class='connecting_railroads_button' onclick='select_lines(\"" + train["line_id"] + "\", \"" + add_slashes(stations[station_index]["station_name"]) + "\", false);'></button>" : "") + "</td>";
+                    if (("connecting_lines" in stations[station_index] && stations[station_index]["connecting_lines"].length >= 1) || ("connecting_railroads" in  stations[station_index] && stations[station_index]["connecting_railroads"].length >= 1)) {
+                        buf += "<td><button type='button' class='connecting_railroads_button' onclick='select_lines(\"" + train["line_id"] + "\", \"" + add_slashes(stations[station_index]["station_name"]) + "\", " + (mode_val === 0 ? "true" : "false") + ");'></button></td>";
+                    } else {
+                        buf += "<td></td>";
+                    }
+                    
                     buf += "<td style='background-color: " + (config["dark_mode"] ? convert_color_dark_mode(railroad_info["lines"][train["line_id"]]["line_color"]) : railroad_info["lines"][train["line_id"]]["line_color"]) + ";'></td>";
                     buf += "<td>";
                     if (arrival_times[cnt] !== train["departure_times"][cnt]) {
@@ -2009,13 +2016,13 @@ function write_operation_data (railroad_id, yyyy_mm_dd, operation_number, train_
     
     buf += "<div class='warning_text' id='quote_guide' style='display: none;'>情報の出典を補足情報にご入力ください。";
     if ("quotation_guidelines" in instance_info) {
-        buf += "<br><br>" + convert_to_html(instance_info["quotation_guidelines"]) + "</div>";
+        buf += "<br><br>" + convert_to_html(instance_info["quotation_guidelines"]);
     }
+    buf += "</div>";
+    
     buf += "</div><br>";
     
     buf += "<button type='button' class='wide_button' onclick='check_post_operation_data();'>投稿する</button>";
-    
-    buf += "</div>";
     
     if (user_data !== null) {
         get_one_time_token();

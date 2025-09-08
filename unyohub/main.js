@@ -804,21 +804,29 @@ function railroad_icon_touch_end (railroad_id) {
 var menu_off_line_elm = document.getElementById("menu_off_line");
 
 window.ononline = function () {
-    menu_off_line_elm.style.display = "none";
-    
-    check_logged_in();
+    setTimeout(function () {
+        if (navigator.onLine) {
+            menu_off_line_elm.style.display = "none";
+            
+            check_logged_in();
+        }
+    }, 2000);
 }
 
 function on_off_line () {
-    menu_off_line_elm.style.display = "block";
-    
-    menu_admin_elm.style.display = "none";
-    menu_logged_in_elm.style.display = "none";
-    menu_not_logged_in_elm.style.display = "none";
-    
-    if (location.pathname === "/") {
-        splash_screen_login_status_elm.innerHTML = "<b class='off_line_message' onclick='show_off_line_message();'>オフラインモード</b>";
-    }
+    setTimeout(function () {
+        if (!navigator.onLine) {
+            menu_off_line_elm.style.display = "block";
+            
+            menu_admin_elm.style.display = "none";
+            menu_logged_in_elm.style.display = "none";
+            menu_not_logged_in_elm.style.display = "none";
+            
+            if (location.pathname === "/") {
+                splash_screen_login_status_elm.innerHTML = "<b class='off_line_message' onclick='show_off_line_message();'>オフラインモード</b>";
+            }
+        }
+    }, 2000);
 }
 
 window.onoffline = on_off_line;
@@ -2935,7 +2943,7 @@ function show_station_timetable (line_id, station_name, is_inbound = null) {
         }
     }
     
-    timetable_select_station(station_name, line_id);
+    timetable_select_station(station_name, line_id, true);
 }
 
 
@@ -3090,8 +3098,12 @@ function timetable_change_lines (line_id, force_station_select_mode = false) {
     }
 }
 
-function timetable_select_station (station_name, line_id = null) {
+function timetable_select_station (station_name, line_id = null, reset_scroll_amount = false) {
     timetable_selected_station = station_name;
+    
+    if (reset_scroll_amount) {
+        timetable_wrapper_scroll_amount = 0;
+    }
     
     if (line_id !== null && line_id !== timetable_selected_line) {
         timetable_selected_line = line_id;
@@ -3128,7 +3140,7 @@ function draw_station_timetable (station_name) {
     var previous_station = timetable_get_neighboring_station(timetable_selected_line, station_name, -1);
     var next_station = timetable_get_neighboring_station(timetable_selected_line, station_name, 1);
     
-    document.getElementById("timetable_station_name").innerHTML = "<a href='/railroad_" + railroad_info["railroad_id"] + "/timetable/" + timetable_selected_line + "/" + encodeURIComponent(previous_station) + "/' class='previous_button' onclick='event.preventDefault(); timetable_select_station(\"" + previous_station + "\");'>" + escape_html(previous_station) + "</a><h2>" + escape_html(station_name) + "</h2><a href='/railroad_" + railroad_info["railroad_id"] + "/timetable/" + timetable_selected_line + "/" + encodeURIComponent(next_station) + "/' class='next_button' onclick='event.preventDefault(); timetable_select_station(\"" + next_station + "\");'>" + escape_html(next_station) + "</a>";
+    document.getElementById("timetable_station_name").innerHTML = "<a href='/railroad_" + railroad_info["railroad_id"] + "/timetable/" + timetable_selected_line + "/" + encodeURIComponent(previous_station) + "/' class='previous_button' onclick='event.preventDefault(); timetable_select_station(\"" + previous_station + "\", null, true);'>" + escape_html(previous_station) + "</a><h2>" + escape_html(station_name) + "</h2><a href='/railroad_" + railroad_info["railroad_id"] + "/timetable/" + timetable_selected_line + "/" + encodeURIComponent(next_station) + "/' class='next_button' onclick='event.preventDefault(); timetable_select_station(\"" + next_station + "\", null, true);'>" + escape_html(next_station) + "</a>";
     
     if (document.getElementById("radio_inbound").checked) {
         var train_direction = "inbound_trains";
@@ -4330,7 +4342,7 @@ function formation_detail (formation_name) {
                         if (cnt === 0) {
                             buf += "<td rowspan='" + data["cars"].length + "'><span>▲" + escape_html(railroad_info["alias_of_forward_direction"]) + "</span></td>";
                             
-                            var car_class = "car_info_car_C1";
+                            var car_class = data["cars"].length >= 2 ? "car_info_car_C1" : "car_info_car_C";
                         } else if (cnt === data["cars"].length - 1) {
                             var car_class = "car_info_car_C2";
                         } else {
