@@ -2009,13 +2009,13 @@ function write_operation_data (railroad_id, yyyy_mm_dd, operation_number, train_
     
     buf += "<div class='warning_text' id='quote_guide' style='display: none;'>情報の出典を補足情報にご入力ください。";
     if ("quotation_guidelines" in instance_info) {
-        buf += "<br><br>" + convert_to_html(instance_info["quotation_guidelines"]) + "</div>";
+        buf += "<br><br>" + convert_to_html(instance_info["quotation_guidelines"]);
     }
+    buf += "</div>";
+    
     buf += "</div><br>";
     
     buf += "<button type='button' class='wide_button' onclick='check_post_operation_data();'>投稿する</button>";
-    
-    buf += "</div>";
     
     if (user_data !== null) {
         get_one_time_token();

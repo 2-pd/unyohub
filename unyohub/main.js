@@ -4330,7 +4330,7 @@ function formation_detail (formation_name) {
                         if (cnt === 0) {
                             buf += "<td rowspan='" + data["cars"].length + "'><span>▲" + escape_html(railroad_info["alias_of_forward_direction"]) + "</span></td>";
                             
-                            var car_class = "car_info_car_C1";
+                            var car_class = data["cars"].length >= 2 ? "car_info_car_C1" : "car_info_car_C";
                         } else if (cnt === data["cars"].length - 1) {
                             var car_class = "car_info_car_C2";
                         } else {
