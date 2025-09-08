@@ -804,21 +804,29 @@ function railroad_icon_touch_end (railroad_id) {
 var menu_off_line_elm = document.getElementById("menu_off_line");
 
 window.ononline = function () {
-    menu_off_line_elm.style.display = "none";
-    
-    check_logged_in();
+    setTimeout(function () {
+        if (navigator.onLine) {
+            menu_off_line_elm.style.display = "none";
+            
+            check_logged_in();
+        }
+    }, 2000);
 }
 
 function on_off_line () {
-    menu_off_line_elm.style.display = "block";
-    
-    menu_admin_elm.style.display = "none";
-    menu_logged_in_elm.style.display = "none";
-    menu_not_logged_in_elm.style.display = "none";
-    
-    if (location.pathname === "/") {
-        splash_screen_login_status_elm.innerHTML = "<b class='off_line_message' onclick='show_off_line_message();'>オフラインモード</b>";
-    }
+    setTimeout(function () {
+        if (!navigator.onLine) {
+            menu_off_line_elm.style.display = "block";
+            
+            menu_admin_elm.style.display = "none";
+            menu_logged_in_elm.style.display = "none";
+            menu_not_logged_in_elm.style.display = "none";
+            
+            if (location.pathname === "/") {
+                splash_screen_login_status_elm.innerHTML = "<b class='off_line_message' onclick='show_off_line_message();'>オフラインモード</b>";
+            }
+        }
+    }, 2000);
 }
 
 window.onoffline = on_off_line;
