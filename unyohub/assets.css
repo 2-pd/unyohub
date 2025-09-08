@@ -194,6 +194,8 @@ header {
     
     width: 250px;
     max-height: 0;
+    
+    overflow-y: scroll;
 }
 
 .off_line_message, #off_line_message_popup h3 {
@@ -657,7 +659,7 @@ header {
     }
 }
 
-:where(#icon_area, .popup) h3 {
+#icon_area h3 {
     margin: 15px 0 10px 0;
     
     padding: 5px 10px;
@@ -669,7 +671,7 @@ header {
     color: #ffffff;
 }
 
-:where(#icon_area, .popup) h4 {
+#icon_area h4 {
     margin: 10px 0 5px 0;
     
     padding-left: 6px;
