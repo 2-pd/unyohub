@@ -2935,7 +2935,7 @@ function show_station_timetable (line_id, station_name, is_inbound = null) {
         }
     }
     
-    timetable_select_station(station_name, line_id);
+    timetable_select_station(station_name, line_id, true);
 }
 
 
@@ -3090,8 +3090,12 @@ function timetable_change_lines (line_id, force_station_select_mode = false) {
     }
 }
 
-function timetable_select_station (station_name, line_id = null) {
+function timetable_select_station (station_name, line_id = null, reset_scroll_amount = false) {
     timetable_selected_station = station_name;
+    
+    if (reset_scroll_amount) {
+        timetable_wrapper_scroll_amount = 0;
+    }
     
     if (line_id !== null && line_id !== timetable_selected_line) {
         timetable_selected_line = line_id;
@@ -3128,7 +3132,7 @@ function draw_station_timetable (station_name) {
     var previous_station = timetable_get_neighboring_station(timetable_selected_line, station_name, -1);
     var next_station = timetable_get_neighboring_station(timetable_selected_line, station_name, 1);
     
-    document.getElementById("timetable_station_name").innerHTML = "<a href='/railroad_" + railroad_info["railroad_id"] + "/timetable/" + timetable_selected_line + "/" + encodeURIComponent(previous_station) + "/' class='previous_button' onclick='event.preventDefault(); timetable_select_station(\"" + previous_station + "\");'>" + escape_html(previous_station) + "</a><h2>" + escape_html(station_name) + "</h2><a href='/railroad_" + railroad_info["railroad_id"] + "/timetable/" + timetable_selected_line + "/" + encodeURIComponent(next_station) + "/' class='next_button' onclick='event.preventDefault(); timetable_select_station(\"" + next_station + "\");'>" + escape_html(next_station) + "</a>";
+    document.getElementById("timetable_station_name").innerHTML = "<a href='/railroad_" + railroad_info["railroad_id"] + "/timetable/" + timetable_selected_line + "/" + encodeURIComponent(previous_station) + "/' class='previous_button' onclick='event.preventDefault(); timetable_select_station(\"" + previous_station + "\", null, true);'>" + escape_html(previous_station) + "</a><h2>" + escape_html(station_name) + "</h2><a href='/railroad_" + railroad_info["railroad_id"] + "/timetable/" + timetable_selected_line + "/" + encodeURIComponent(next_station) + "/' class='next_button' onclick='event.preventDefault(); timetable_select_station(\"" + next_station + "\", null, true);'>" + escape_html(next_station) + "</a>";
     
     if (document.getElementById("radio_inbound").checked) {
         var train_direction = "inbound_trains";
