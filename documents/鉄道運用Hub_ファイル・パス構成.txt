@@ -79,6 +79,7 @@ _/_/_/_/ ファイル構成 _/_/_/_/
    └ railroads.php ・・・路線系統別の操作一覧
    └ manage_files.php ・・・各路線系統データのファイル管理
    └ formations.php ・・・編成情報の編集
+   └ reference_books.php ・・・参考書籍情報の編集
    └ train_icons.php ・・・管理画面で使用する車両アイコン画像を配信
    └ admin_styles.css ・・・管理画面用スタイルシート
 └ commands/

@@ -64,6 +64,23 @@ _/_/_/_/ データベース _/_/_/_/
   PRIMARY KEY(`series_or_formation`, `coupling_group`)
 
 
+`unyohub_reference_books` 参考書籍データ
+  `publisher_name` TEXT NOT NULL 出版社名
+  `book_title` TEXT NOT NULL 書籍名
+  `authors` TEXT 著者名(様々なケースが考えられるため正規化しない。不明な場合はNULL)
+  `publication_year` INTEGER 発行年(不明な場合はNULL)
+
+  PRIMARY KEY(`publisher_name`, `book_title`)
+
+
+`unyohub_formation_reference_books` 参考書籍対応表
+  `formation_name` TEXT NOT NULL 編成名
+  `publisher_name` TEXT NOT NULL 出版社名
+  `book_title` TEXT NOT NULL 書籍名
+
+  PRIMARY KEY(`formation_name`, `publisher_name`, `book_title`)
+
+
 `unyohub_operations` 運用表データ
   `diagram_revision` TEXT NOT NULL ダイヤ改正識別名
   `diagram_id` TEXT NOT NULL ダイヤ識別名

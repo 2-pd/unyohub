@@ -269,6 +269,14 @@ formations.jsonの内容を返す
     ],  
     "updated_timestamp" : 編成情報が更新されたタイムスタンプ(UTC),  
     "edited_user_name" : 最後に編集したユーザーのハンドルネーム(コントロールパネルアクセス権のあるユーザーでアクセスした場合のみ),  
+    "reference_books" : [ 参考書籍情報(なければ省略)  
+        {  
+            "publisher_name" : 出版社名,  
+            "book_title" : 書籍名,  
+            "authors" : 著者名テキスト(なければNULL),  
+            "publication_year" : 発行年(なければNULL)  
+        }...  
+    ],  
     "operations_today" : [ 当日の運用情報(なければNULL)  
         {  
             "operation_number" : 運用番号,  
@@ -305,7 +313,8 @@ formations.jsonの内容を返す
             "from_beginner" : ビギナーの投稿か否か(ビギナーでなければ省略),  
             "is_quotation" : 引用情報か否か(引用情報でなければ省略)  
         }...  
-    ]  
+    ],  
+    "editable" : アクセス者がこの編成の情報を編集する権限を有するか否か(BOOL値)  
 }  
 ▲クライアント端末からAccept-Encodingヘッダーが送信されていた場合、このデータは自動的にgzip圧縮される  
   
