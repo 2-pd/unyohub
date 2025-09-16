@@ -63,7 +63,7 @@ $reference_books_r = $db_obj->query("SELECT * FROM `unyohub_reference_books` ORD
 print "<h3>参考書籍の一覧</h3>";
 while ($reference_book_info = $reference_books_r->fetchArray(SQLITE3_ASSOC)) {
     print "<form method='post' action='reference_books.php?railroad_id=".$railroad_id."'>";
-    print "<h4>".htmlspecialchars($reference_book_info["publisher_name"])." ".htmlspecialchars($reference_book_info["book_title"])."</h4>";
+    print "<h4>".htmlspecialchars($reference_book_info["publisher_name"])."『".htmlspecialchars($reference_book_info["book_title"])."』</h4>";
     print "<input type='hidden' name='publisher_name' value='".addslashes($reference_book_info["publisher_name"])."'>";
     print "<input type='hidden' name='book_title' value='".addslashes($reference_book_info["book_title"])."'>";
     print "<h5>著者</h5>";

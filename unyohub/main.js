@@ -4275,7 +4275,8 @@ function formation_detail (formation_name) {
     buf += "<h3>車歴</h3>";
     buf += "<div id='histories_area'><div class='descriptive_text'>車歴データがありません</div></div>";
     
-    buf += "<div id='formation_updated_area' class='informational_text'></div>"
+    buf += "<div id='formation_reference_books_area' class='descriptive_text'></div>";
+    buf += "<div id='formation_updated_area' class='informational_text'></div>";
     
     formation_table_area_elm.innerHTML = buf;
     article_elms[3].scrollTop = 0;
@@ -4398,7 +4399,22 @@ function formation_detail (formation_name) {
                     histories_area_elm.innerHTML = buf;
                 }
                 
-                document.getElementById("formation_updated_area").innerText = "編成情報更新日時: " + get_date_and_time(data["updated_timestamp"]) + ("edited_user_name" in data ? " (" + data["edited_user_name"] + ")" : "");
+                if ("reference_books" in data) {
+                    var reference_books_html = "<h5>参考書籍</h5>";
+                    for (var reference_book_info of data["reference_books"]) {
+                        if (reference_book_info["authors"] !== null) {
+                            reference_books_html += escape_html(reference_book_info["authors"]);
+                        }
+                        reference_books_html += "『" + escape_html(reference_book_info["book_title"]) + "』" + escape_html(reference_book_info["publisher_name"]);
+                        if (reference_book_info["publication_year"] !== null) {
+                            reference_books_html += " (" + reference_book_info["publication_year"] + ")";
+                        }
+                        reference_books_html += "<br>";
+                    }
+                    document.getElementById("formation_reference_books_area").innerHTML = reference_books_html;
+                }
+                
+                document.getElementById("formation_updated_area").innerHTML = "編成情報更新日時: " + get_date_and_time(data["updated_timestamp"]) + ("edited_user_name" in data ? " (" + data["edited_user_name"] + ")" : "") + ("editable" in data && data["editable"] ? " <a href='/admin/formations.php?railroad_id=" + railroad_info["railroad_id"] + "&formation_name=" + escape_form_data(formation_name) + "' target='_blank' class='execute_link'>この編成の情報を編集</a>" : "");
             }
         });
     }

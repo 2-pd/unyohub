@@ -349,7 +349,7 @@ if (empty($_GET["formation_name"])) {
             if (isset($formation_reference_books[$reference_books[$cnt]["publisher_name"]]) && in_array($reference_books[$cnt]["book_title"], $formation_reference_books[$reference_books[$cnt]["publisher_name"]])) {
                 print " checked='checked'";
             }
-            print "><label for='reference_book_".$cnt."'>".htmlspecialchars($reference_books[$cnt]["publisher_name"])." ".htmlspecialchars($reference_books[$cnt]["book_title"])."</label>";
+            print "><label for='reference_book_".$cnt."'>".htmlspecialchars($reference_books[$cnt]["publisher_name"])."『".htmlspecialchars($reference_books[$cnt]["book_title"])."』</label>";
         }
         
         print "<br><a class='execute_button' href='reference_books.php?railroad_id=".$railroad_id."' onclick='if(!confirm(\"編成情報の編集を中断して参考書籍の追加・削除を行いますか？\\n保存していない内容があれば破棄されます。\")){ event.preventDefault(); }'>参考書籍の追加・削除</a>";

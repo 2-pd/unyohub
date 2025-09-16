@@ -145,10 +145,10 @@ if (!empty($formation_data["edited_user_id"]) && is_object($user) && $user->chec
     if (is_object($edited_user)) {
         $formation_data["edited_user_name"] = $edited_user->get_name();
     }
-    
-    if ($user->check_permission("railroads/".basename($_POST["railroad_id"])."/formation", "edit_data")) {
-        $formation_data["editable"] = TRUE;
-    }
+}
+
+if ($user->check_permission("railroads/".basename($_POST["railroad_id"])."/formation", "edit_data")) {
+    $formation_data["editable"] = TRUE;
 }
 
 unset($formation_data["edited_user_id"]);
