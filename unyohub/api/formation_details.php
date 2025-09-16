@@ -91,6 +91,17 @@ if (empty($formation_data["semifixed_formation"])) {
     unset($formation_data["semifixed_formation"]);
 }
 
+$reference_books_r = $db_obj->query("SELECT `unyohub_reference_books`.* FROM `unyohub_formation_reference_books`, `unyohub_reference_books` WHERE `unyohub_formation_reference_books`.`formation_name` = '".$formation_name."' AND `unyohub_formation_reference_books`.`publisher_name` = `unyohub_reference_books`.`publisher_name` AND `unyohub_formation_reference_books`.`book_title` = `unyohub_reference_books`.`book_title`");
+
+$reference_books = array();
+while ($reference_book_info = $reference_books_r->fetchArray(SQLITE3_ASSOC)) {
+    $reference_books[] = $reference_book_info;
+}
+
+if (!empty($reference_books)) {
+    $formation_data["reference_books"] = $reference_books;
+}
+
 
 $ts_now = time();
 
@@ -133,6 +144,10 @@ if (!empty($formation_data["edited_user_id"]) && is_object($user) && $user->chec
     
     if (is_object($edited_user)) {
         $formation_data["edited_user_name"] = $edited_user->get_name();
+    }
+    
+    if ($user->check_permission("railroads/".basename($_POST["railroad_id"])."/formation", "edit_data")) {
+        $formation_data["editable"] = TRUE;
     }
 }
 
