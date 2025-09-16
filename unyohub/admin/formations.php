@@ -81,6 +81,8 @@ if (empty($_GET["formation_name"])) {
         
         print "</table></div>";
     }
+    
+    print "<br><a class='execute_button' href='reference_books.php?railroad_id=".$railroad_id."'>参考書籍の追加・削除</a>";
 } else {
     print " <a href='formations.php?railroad_id=".$railroad_id."'>編成情報の編集</a> &gt;</nav>";
     
