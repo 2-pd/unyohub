@@ -79,6 +79,7 @@ _/_/_/_/ データベース _/_/_/_/
   `book_title` TEXT NOT NULL 書籍名
 
   PRIMARY KEY(`formation_name`, `publisher_name`, `book_title`)
+  INDEX `unyohub_idx_fr1`(`publisher_name`, `book_title`)
 
 
 `unyohub_operations` 運用表データ
