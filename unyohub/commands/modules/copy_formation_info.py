@@ -27,6 +27,9 @@ def copy_formation_info (mes, source_main_dir, source_formation_name, target_mai
     cur.execute("SELECT `event_year_month`, `event_type`, `event_content` FROM `unyohub_formation_histories` WHERE `formation_name` = :formation_name", {"formation_name" : source_formation_name})
     histories_data = cur.fetchall()
     
+    cur.execute("SELECT `unyohub_reference_books`.`publisher_name`, `unyohub_reference_books`.`book_title`, `unyohub_reference_books`.`authors`, `unyohub_reference_books`.`publication_year` FROM `unyohub_formation_reference_books`, `unyohub_reference_books` WHERE `unyohub_formation_reference_books`.`formation_name` = :formation_name AND `unyohub_formation_reference_books`.`publisher_name` = `unyohub_reference_books`.`publisher_name` AND `unyohub_formation_reference_books`.`book_title` = `unyohub_reference_books`.`book_title`", {"formation_name" : source_formation_name})
+    reference_books = cur.fetchall()
+    
     conn.close()
     
     
@@ -48,6 +51,13 @@ def copy_formation_info (mes, source_main_dir, source_formation_name, target_mai
     
     for history_data in histories_data:
         cur.execute("INSERT INTO `unyohub_formation_histories`(`formation_name`, `event_year_month`, `event_type`, `event_content`) VALUES (:formation_name, :event_year_month, :event_type, :event_content)", {"formation_name" : target_formation_name, "event_year_month" : history_data[0], "event_type" : history_data[1], "event_content" : history_data[2]})
+    
+    for reference_book in reference_books:
+        cur.execute("REPLACE INTO `unyohub_formation_reference_books`(`formation_name`, `publisher_name`, `book_title`) VALUES (:formation_name, :publisher_name, :book_title)", {"formation_name" : target_formation_name, "publisher_name" : reference_book[0], "book_title" : reference_book[1]})
+        
+        cur.execute("SELECT COUNT(*) FROM `unyohub_reference_books` WHERE `publisher_name` = :publisher_name AND `book_title` = :book_title", {"publisher_name" : reference_book[0], "book_title" : reference_book[1]})
+        if cur.fetchone()[0] == 0:
+            cur.execute("INSERT INTO `unyohub_reference_books`(`publisher_name`, `book_title`, `authors`, `publication_year`) VALUES (:publisher_name, :book_title, :authors, :publication_year)", {"publisher_name" : reference_book[0], "book_title" : reference_book[1], "authors" : reference_book[2], "publication_year" : reference_book[3]})
     
     mes("データベースの書き込み処理を完了しています...")
     
