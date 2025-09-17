@@ -1872,7 +1872,7 @@ function operation_table_list_tables () {
 function take_screenshot (elm_id, is_popup = false) {
     var popup_inner_elm = open_popup("screenshot_popup", "スクリーンショット");
     
-    popup_inner_elm.innerHTML = "<div id='screenshot_preview'></div><button type='button' id='save_screenshot_button' class='wide_button' onclick='save_screenshot();' style='display: none;'>画像として保存</button>";
+    popup_inner_elm.innerHTML = "<div id='screenshot_preview'></div><button type='button' id='save_screenshot_button' class='wide_button' onclick='save_screenshot();' style='display: none;'>画像として保存</button><br><u class='bottom_link' onclick='about_railroad_data();'>データのご利用条件</u>";
     
     var screenshot_area_elm = document.createElement("div");
     screenshot_area_elm.classList.add("screenshot_area");

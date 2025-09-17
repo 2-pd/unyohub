@@ -139,16 +139,18 @@ unset($formation_data["currently_registered"]);
 
 
 $user = $wakarana->check();
-if (!empty($formation_data["edited_user_id"]) && is_object($user) && $user->check_permission("control_panel_user")) {
-    $edited_user = $wakarana->get_user($formation_data["edited_user_id"]);
-    
-    if (is_object($edited_user)) {
-        $formation_data["edited_user_name"] = $edited_user->get_name();
+if (is_object($user)) {
+    if (!empty($formation_data["edited_user_id"]) && $user->check_permission("control_panel_user")) {
+        $edited_user = $wakarana->get_user($formation_data["edited_user_id"]);
+        
+        if (is_object($edited_user)) {
+            $formation_data["edited_user_name"] = $edited_user->get_name();
+        }
     }
-}
-
-if ($user->check_permission("railroads/".basename($_POST["railroad_id"])."/formation", "edit_data")) {
-    $formation_data["editable"] = TRUE;
+    
+    if ($user->check_permission("railroads/".basename($_POST["railroad_id"])."/formation", "edit_data")) {
+        $formation_data["editable"] = TRUE;
+    }
 }
 
 unset($formation_data["edited_user_id"]);

@@ -3371,7 +3371,7 @@ function draw_station_timetable (station_name) {
     }
     
     if (buf.length !== 0) {
-        timetable_area_elm.innerHTML = buf;
+        timetable_area_elm.innerHTML = buf + "<u class='bottom_link' onclick='about_railroad_data();'>使用しているデータについて</u>";
     } else {
         timetable_area_elm.innerHTML = "<div class='no_data'>条件に合う列車は登録されていません</div>";
     }
@@ -3860,6 +3860,7 @@ function operation_data_draw () {
     }
     
     buf += "<br><div class='informational_text'>最新の投稿: " + get_date_and_time(operation_data["last_modified_timestamp"]) + "</div>";
+    buf += "<u class='bottom_link' onclick='about_railroad_data();'>使用しているデータについて</u>";
     
     operation_data_area_elm.innerHTML = buf;
 }
@@ -4047,6 +4048,7 @@ function draw_formation_table (update_title = true) {
         buf += "車両アイコン更新日時: " + get_date_and_time(train_icons["last_modified_timestamp"]) + "<br>";
         buf += "編成概要更新日時: " + get_date_and_time(formation_overviews["last_modified_timestamp"]);
         buf += "</div>";
+        buf += "<u class='bottom_link' onclick='about_railroad_data();'>使用しているデータについて</u>";
         
         formation_table_area_elm.innerHTML = buf;
     } else {
@@ -4414,7 +4416,7 @@ function formation_detail (formation_name) {
                     document.getElementById("formation_reference_books_area").innerHTML = reference_books_html;
                 }
                 
-                document.getElementById("formation_updated_area").innerHTML = "編成情報更新日時: " + get_date_and_time(data["updated_timestamp"]) + ("edited_user_name" in data ? " (" + data["edited_user_name"] + ")" : "") + ("editable" in data && data["editable"] ? " <a href='/admin/formations.php?railroad_id=" + railroad_info["railroad_id"] + "&formation_name=" + escape_form_data(formation_name) + "' target='_blank' class='execute_link'>この編成の情報を編集</a>" : "");
+                document.getElementById("formation_updated_area").innerHTML = "編成情報更新日時: " + get_date_and_time(data["updated_timestamp"]) + ("edited_user_name" in data ? " (" + escape_html(data["edited_user_name"]) + ")" : "") + "<u class='bottom_link' onclick='about_railroad_data();'>使用しているデータについて</u>" + ("editable" in data && data["editable"] ? " <a href='/admin/formations.php?railroad_id=" + railroad_info["railroad_id"] + "&formation_name=" + escape_form_data(formation_name) + "' target='_blank' class='execute_link'>この編成の情報を編集</a>" : "");
             }
         });
     }
@@ -4798,7 +4800,7 @@ function draw_operation_table (is_today) {
         operation_table_area_elm.innerHTML = "<div class='no_data'>絞り込み条件に一致する運用が見つかりません</div>";
     }
     
-    operation_table_info_elm.innerHTML = "ダイヤ情報更新日時: " + get_date_and_time(diagram_info[operation_table["diagram_revision"]]["last_modified_timestamp"]) + "<br>運用表更新日時: " + get_date_and_time(operation_table["last_modified_timestamp"]) + "<br>時刻表更新日時: " + get_date_and_time(timetable["last_modified_timestamp"]);
+    operation_table_info_elm.innerHTML = "ダイヤ情報更新日時: " + get_date_and_time(diagram_info[operation_table["diagram_revision"]]["last_modified_timestamp"]) + "<br>運用表更新日時: " + get_date_and_time(operation_table["last_modified_timestamp"]) + "<br>時刻表更新日時: " + get_date_and_time(timetable["last_modified_timestamp"]) + "<u class='bottom_link' onclick='about_railroad_data();'>使用しているデータについて</u>";
 }
 
 function reset_operation_narrow_down (close_menu = true) {
