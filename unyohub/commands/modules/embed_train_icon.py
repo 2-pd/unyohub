@@ -1,6 +1,5 @@
 # coding: utf-8
 
-import sys
 import os
 import glob
 import json
@@ -9,12 +8,18 @@ import base64
 def embed_train_icon (mes, dir_path):
     mes("アイコン画像をファイルに埋め込み", is_heading=True)
     
-    mes("ファイルの一覧を取得しています...")
     extension_list = ["webp", "png", "gif", "jpeg", "jpg"]
+    icons_dir_path = dir_path + "/icons"
     files = []
     
+    if not os.path.isdir(icons_dir_path):
+        mes("フォルダ icons が存在しません", True)
+        return
+    
+    mes("ファイルの一覧を取得しています...")
+    
     for extension in extension_list:
-        files += glob.glob(dir_path + "/*." + extension)
+        files += glob.glob(icons_dir_path + "/*." + extension)
     
     files.sort()
     
@@ -46,12 +51,11 @@ def embed_train_icon (mes, dir_path):
         
         train_icons[icon_id] = "data:" + mime_type + ";base64," + base64.b64encode(img_data).decode()
     
-    mes("train_icons.jsonを作成しています...")
+    mes("train_icons.json を作成しています...")
     try:
         with open(dir_path + "/train_icons.json", "w", encoding="utf-8") as json_f:
             json.dump(train_icons, json_f, ensure_ascii=False, separators=(',', ':'))
     except:
-        mes("train_icons.jsonの保存に失敗しました", True)
-        return
-    
-    mes("処理が完了しました")
+        mes("train_icons.json の保存に失敗しました", True)
+    else:
+        mes("処理が完了しました")
