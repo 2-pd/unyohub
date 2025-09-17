@@ -26,6 +26,7 @@ def embed_train_icon (mes, dir_path):
     mes(str(len(files)) + "件の画像ファイルが検出されました")
     
     train_icons = {}
+    icon_list = {}
     
     for file_name in files:
         file_base_name = os.path.basename(file_name)
@@ -50,6 +51,7 @@ def embed_train_icon (mes, dir_path):
         icon_id = file_base_name[0:file_base_name.rfind(".")]
         
         train_icons[icon_id] = "data:" + mime_type + ";base64," + base64.b64encode(img_data).decode()
+        icon_list[icon_id] = { "file_name" : file_base_name, "media_type" : mime_type }
     
     mes("train_icons.json を作成しています...")
     try:
@@ -57,5 +59,14 @@ def embed_train_icon (mes, dir_path):
             json.dump(train_icons, json_f, ensure_ascii=False, separators=(',', ':'))
     except:
         mes("train_icons.json の保存に失敗しました", True)
-    else:
-        mes("処理が完了しました")
+        return
+    
+    mes("icon_list.json を作成しています...")
+    try:
+        with open(icons_dir_path + "/icon_list.json", "w", encoding="utf-8") as json_f:
+            json.dump(icon_list, json_f, ensure_ascii=False, separators=(',', ':'))
+    except:
+        mes("icon_list.json の保存に失敗しました", True)
+        return
+    
+    mes("処理が完了しました")
