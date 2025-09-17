@@ -6,7 +6,11 @@
     <link rel="shortcut icon" href="files/tools_icon.ico">
     <style>
         * {
-            font-family: "Noto Sans CJK JP", "Meiryo", "Hiragino Kaku Gothic ProN", sans-serif;
+            font-family: "Noto Sans CJK JP", "Noto Sans JP", "Hiragino Kaku Gothic ProN", sans-serif;
+        }
+        
+        html {
+            scroll-behavior: smooth;
         }
         
         body {
@@ -71,12 +75,9 @@
     <br>
     <a href="#kihon">基本的な使い方</a><br>
     　<a href="#folder">作業フォルダについて</a><br>
-    　<a href="#db_setup">データベースのセットアップ</a><br>
-    　<a href="#icon_umekomi">アイコン画像をファイルに埋め込み</a><br>
     　<a href="#unyohyo_seisei">運用情報付き時刻表の変換</a><br>
     　<a href="#zikokuhyo">時刻表の変換</a><br>
     　<a href="#unyohyo">運用表の変換</a><br>
-    　<a href="#moderation_db">モデレーションDBのセットアップ</a><br>
     <br>
     <a href="#license">ライセンス</a>
     
@@ -89,8 +90,8 @@
     
     
     <h2 id="kido">アプリの起動</h2>
-    Windowsの場合は、 unyohub_tools_win.bat をダブルクリックすれば本ツールが起動します。<br>
-    GNU/Linuxの場合は、 unyohub_gui_tools.py をダブルクリックするか、同ファイルを端末エミュレータからPython3コマンドで実行してください。
+    本ツールは unyohub_gui_tools.py をダブルクリックすることで起動します。<br>
+    ダブルクリックで起動しない場合は、同ファイルを端末エミュレータからPython3コマンドで実行してください。
     
     
     <h2 id="kihon">基本的な使い方</h2>
@@ -99,16 +100,6 @@
     本ツールでは、各種ファイルの編集を行う前に、編集するファイルが入ったフォルダを作業フォルダとして指定する必要があります。<br>
     <br>
     一部のファイル変換処理では、作業フォルダ内で変換対象のファイルを検索して処理を行うほか、作業フォルダ内に存在する特定のファイルを自動的に読み込んで変換処理に使用します。
-    
-    <h3 id="db_setup">データベースのセットアップ</h3>
-    作業フォルダ内に各路線系統用のデータベースファイル「railroad.db」を生成します。<br>
-    <br>
-    既に作業フォルダ内に railroad.db が存在する場合は同ファイルのテーブルやインデックスを確認し、欠損しているものがあれば追加します。
-    
-    <h3 id="icon_umekomi">アイコン画像をファイルに埋め込み</h3>
-    指定したフォルダ内の画像ファイルを全てエンコードして、JSONファイル「train_icons.json」に埋め込みます。<br>
-    <br>
-    なお、この処理では作業フォルダを使用しません。
     
     <h3 id="unyohyo_seisei">運用情報付き時刻表の変換</h3>
     列車ごとに運用番号が記載された時刻表から、以下の「時刻表の変換」(ステップ1)と「運用表の変換」(ステップ1)で使用可能な時刻表と運用表をそれぞれ生成します。<br>
@@ -140,13 +131,6 @@
     このほか、ステップ1と同様に各列車が列車番号のみで記載された形式の運用表ファイルを読み込み、各列車に始発駅と終着駅の時刻を併記して出力する「運用表を印刷用に変換」も利用可能です。<br>
     <br>
     なお、この処理で使用する運用表ファイルはCSV形式でなければならず、記載内容も本ツールが読み取り可能な様式に合わせて製作する必要があります。
-    
-    <h3 id="moderation_db">モデレーションDBのセットアップ</h3>
-    モデレーションログを格納するためのデータベースファイル「moderation.db」を生成します。<br>
-    <br>
-    既存の moderation.db を指定した場合は、同ファイルのテーブルやインデックスを確認し、欠損しているものがあれば追加します。<br>
-    <br>
-    なお、この処理では作業フォルダを使用しません。
     
     <h2 id="license">ライセンス</h2>
     本ツール本体、及び、この利用説明を含む各付属ファイルは<a href="https://www.2pd.jp/license/">無権利創作宣言</a>に準拠して著作権放棄されています。<br>
