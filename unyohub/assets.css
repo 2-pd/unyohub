@@ -2208,6 +2208,12 @@ input[type="checkbox"]:checked + label.drop_down {
     &:empty {
         display: none;
     }
+    
+    h5 {
+        margin: 20px 0 5px 0;
+        
+        font-size: inherit;
+    }
 }
 
 #car_info_table {
@@ -2810,6 +2816,20 @@ h2 small {
     
     .dark_mode & {
         background-color: #555555;
+    }
+}
+
+.bottom_link {
+    display: block;
+    
+    margin-top: 30px;
+    
+    line-height: 30px;
+    color: #666666;
+    text-align: center;
+    
+    .dark_mode & {
+        color: #cccccc;
     }
 }
 

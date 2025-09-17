@@ -39,6 +39,13 @@ def initialize_db (mes, main_dir):
     mes("テーブル「unyohub_coupling_groups」を作成しています...")
     cur.execute("CREATE TABLE IF NOT EXISTS `unyohub_coupling_groups`(`series_or_formation` TEXT NOT NULL, `coupling_group` TEXT NOT NULL, PRIMARY KEY(`series_or_formation`, `coupling_group`))")
     
+    mes("テーブル「unyohub_reference_books」を作成しています...")
+    cur.execute("CREATE TABLE IF NOT EXISTS `unyohub_reference_books`(`publisher_name` TEXT NOT NULL, `book_title` TEXT NOT NULL, `authors` TEXT, `publication_year` INTEGER, PRIMARY KEY(`publisher_name`, `book_title`))")
+    
+    mes("テーブル「unyohub_formation_reference_books」を作成しています...")
+    cur.execute("CREATE TABLE IF NOT EXISTS `unyohub_formation_reference_books`(`formation_name` TEXT NOT NULL, `publisher_name` TEXT NOT NULL, `book_title` TEXT NOT NULL, PRIMARY KEY(`formation_name`, `publisher_name`, `book_title`))")
+    cur.execute("CREATE INDEX IF NOT EXISTS `unyohub_idx_fr1` ON `unyohub_formation_reference_books`(`publisher_name`, `book_title`)")
+    
     mes("テーブル「unyohub_operations」を作成しています...")
     cur.execute("CREATE TABLE IF NOT EXISTS `unyohub_operations`(`diagram_revision` TEXT NOT NULL, `diagram_id` TEXT NOT NULL, `operation_number` TEXT NOT NULL, `starting_location` TEXT, `starting_track` TEXT, `starting_time` TEXT, `terminal_location` TEXT, `terminal_track` TEXT, `ending_time` TEXT, `min_car_count` INTEGER NOT NULL, `max_car_count` INTEGER NOT NULL, PRIMARY KEY(`diagram_revision`, `diagram_id`, `operation_number`))")
     cur.execute("CREATE UNIQUE INDEX IF NOT EXISTS `unyohub_idx_o1` ON `unyohub_operations`(`diagram_revision`, `diagram_id`, `starting_location`, `starting_track`)")

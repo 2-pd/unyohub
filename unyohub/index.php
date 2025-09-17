@@ -291,6 +291,7 @@ if ($path_info_str === "/") {
         <div id="position_area_supplement" class="radio_area">
             <div><input type="radio" name="show_train_numbers_or_train_types" id="show_train_numbers_radio" onchange="change_show_train_types(!this.checked);"><label for="show_train_numbers_radio">列車番号を表示</label><input type="radio" name="show_train_numbers_or_train_types" id="show_train_types_radio" onchange="change_show_train_types(this.checked);"><label for="show_train_types_radio"><span id="show_train_types_label_train_type">種別</span><span id="show_train_types_label_final_destination">行き先</span>を表示</label></div>
             <div class="informational_text">列車の走行位置は時刻表に基づく推定であり、遅延や不定期列車の情報は反映されません</div>
+            <u class="bottom_link" onclick="about_railroad_data();">使用しているデータについて</u>
         </div>
     </article>
     <article onscroll="timetable_wrapper_onscroll();">
