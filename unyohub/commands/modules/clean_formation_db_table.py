@@ -37,6 +37,7 @@ def clean_formation_db_table (mes, main_dir):
         cur.execute("DELETE FROM `unyohub_formations` WHERE `formation_name` = :formation_name", {"formation_name" : formation_name})
         cur.execute("DELETE FROM `unyohub_cars` WHERE `formation_name` = :formation_name", {"formation_name" : formation_name})
         cur.execute("DELETE FROM `unyohub_formation_histories` WHERE `formation_name` = :formation_name", {"formation_name" : formation_name})
+        cur.execute("DELETE FROM `unyohub_formation_reference_books` WHERE `formation_name` = :formation_name", {"formation_name" : formation_name})
     
     mes("編成表にない車両をデータベースから削除しています...")
     

@@ -81,6 +81,8 @@ if (empty($_GET["formation_name"])) {
         
         print "</table></div>";
     }
+    
+    print "<br><a class='execute_button' href='reference_books.php?railroad_id=".$railroad_id."'>参考書籍の追加・削除</a>";
 } else {
     print " <a href='formations.php?railroad_id=".$railroad_id."'>編成情報の編集</a> &gt;</nav>";
     
@@ -113,6 +115,24 @@ if (empty($_GET["formation_name"])) {
         
         if ($formation_data["currently_registered"]) {
             $formation_data["semifixed_formation"] = !is_null($formation_data["semifixed_formation"]) ? $formation_data["semifixed_formation"] : $_GET["formation_name"];
+        }
+        
+        $reference_books_r = $db_obj->query("SELECT * FROM `unyohub_reference_books` ORDER BY `publisher_name` ASC, `book_title` ASC");
+        
+        $reference_books = array();
+        while ($reference_book_info = $reference_books_r->fetchArray(SQLITE3_ASSOC)) {
+            $reference_books[] = $reference_book_info;
+        }
+        
+        $formation_reference_books_r = $db_obj->query("SELECT * FROM `unyohub_formation_reference_books` WHERE `formation_name` = '".$formation_name."'");
+        
+        $formation_reference_books = array();
+        while ($reference_book_info = $formation_reference_books_r->fetchArray(SQLITE3_ASSOC)) {
+            if (!isset($formation_reference_books[$reference_book_info["publisher_name"]])) {
+                $formation_reference_books[$reference_book_info["publisher_name"]] = array();
+            }
+            
+            $formation_reference_books[$reference_book_info["publisher_name"]][] = $reference_book_info["book_title"];
         }
         
         if (isset($_POST["affiliation"], $_POST["caption"], $_POST["description"], $_POST["inspection_information"])) {
@@ -188,6 +208,21 @@ if (empty($_GET["formation_name"])) {
                 }
                 
                 $db_obj->querySingle("INSERT INTO `unyohub_formation_histories`(`formation_name`, `event_year_month`, `event_type`, `event_content`) VALUES ('".$formation_name."', '".$event_year_month."', '".$db_obj->escapeString($_POST["event_type_".$cnt])."', '".$db_obj->escapeString($_POST["event_content_".$cnt])."')");
+            }
+            
+            $db_obj->querySingle("DELETE FROM `unyohub_formation_reference_books` WHERE `formation_name` = '".$formation_name."'");
+            for ($cnt = 0; isset($_POST["publisher_name_".$cnt], $_POST["book_title_".$cnt]); $cnt++) {
+                if (!empty($_POST["reference_book_".$cnt])) {
+                    $db_obj->querySingle("INSERT INTO `unyohub_formation_reference_books`(`formation_name`, `publisher_name`, `book_title`) VALUES ('".$formation_name."', '".$db_obj->escapeString($_POST["publisher_name_".$cnt])."', '".$db_obj->escapeString($_POST["book_title_".$cnt])."')");
+                    
+                    if (!isset($formation_reference_books[$_POST["publisher_name_".$cnt]])) {
+                        $formation_reference_books[$_POST["publisher_name_".$cnt]] = array();
+                    }
+                    
+                    $formation_reference_books[$_POST["publisher_name_".$cnt]][] = $_POST["book_title_".$cnt];
+                } elseif (isset($formation_reference_books[$_POST["publisher_name_".$cnt]]) && in_array($_POST["book_title_".$cnt], $formation_reference_books[$_POST["publisher_name_".$cnt]])) {
+                    array_splice($formation_reference_books[$_POST["publisher_name_".$cnt]], array_search($_POST["book_title_".$cnt], $formation_reference_books[$_POST["publisher_name_".$cnt]]), 1);
+                }
             }
             
             print "<script> alert('編成情報を保存しました'); </script>";
@@ -305,6 +340,19 @@ if (empty($_GET["formation_name"])) {
         }
         print "</div>";
         print "<br><div class='informational_text'><a href='javascript:void(0);' onclick='add_history();'>+ 車歴の追加</a></div>";
+        
+        print "<h3>参考書籍</h3>";
+        for ($cnt = 0; isset($reference_books[$cnt]); $cnt++) {
+            print "<input type='hidden' name='publisher_name_".$cnt."' value='".addslashes($reference_books[$cnt]["publisher_name"])."'>";
+            print "<input type='hidden' name='book_title_".$cnt."' value='".addslashes($reference_books[$cnt]["book_title"])."'>";
+            print "<input type='checkbox' name='reference_book_".$cnt."' id='reference_book_".$cnt."' class='toggle' value='YES'";
+            if (isset($formation_reference_books[$reference_books[$cnt]["publisher_name"]]) && in_array($reference_books[$cnt]["book_title"], $formation_reference_books[$reference_books[$cnt]["publisher_name"]])) {
+                print " checked='checked'";
+            }
+            print "><label for='reference_book_".$cnt."'>".htmlspecialchars($reference_books[$cnt]["publisher_name"])."『".htmlspecialchars($reference_books[$cnt]["book_title"])."』</label>";
+        }
+        
+        print "<br><a class='execute_button' href='reference_books.php?railroad_id=".$railroad_id."' onclick='if(!confirm(\"編成情報の編集を中断して参考書籍の追加・削除を行いますか？\\n保存していない内容があれば破棄されます。\")){ event.preventDefault(); }'>参考書籍の追加・削除</a>";
         
         print "<br><button type='submit' class='wide_button'>上書き保存</button>";
         
