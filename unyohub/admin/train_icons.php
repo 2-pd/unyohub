@@ -11,15 +11,14 @@ if (count($path_info_split) <= 2 || $path_info_split[1] === "..") {
     exit;
 }
 
-$train_icons = @json_decode(@file_get_contents("../data/".$path_info_split[1]."/train_icons.json"), TRUE);
+$icon_dir_path = "../data/".$path_info_split[1]."/icons/";
+$icon_list = @json_decode(@file_get_contents($icon_dir_path."icon_list.json"), TRUE);
 
-if (empty($train_icons) || empty($train_icons[$path_info_split[2]])) {
+if (empty($icon_list) || empty($icon_list[$path_info_split[2]]) || !file_exists($icon_dir_path.$icon_list[$path_info_split[2]]["file_name"])) {
     header("HTTP/1.1 404 Not Found");
     exit;
 }
 
-$icon_data = explode(";", $train_icons[$path_info_split[2]]);
+header("Content-type: ".$icon_list[$path_info_split[2]]["media_type"]);
 
-header("Content-type: ".substr($icon_data[0], 5));
-
-print base64_decode(substr($icon_data[1], 7));
+readfile($icon_dir_path.$icon_list[$path_info_split[2]]["file_name"]);

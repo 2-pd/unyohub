@@ -14,6 +14,14 @@
 **第1引数** : 管理者ユーザーID(省略時は「unyohub_admin」)
 
 
+## unyohub embed-icons
+車両アイコン画像をJSONファイルに埋め込む  
+処理本体は**embed_train_icon.py**
+
+### 引数
+**第1引数** : 路線系統識別名
+
+
 ## unyohub conv-formations
 編成表データを変換する  
 処理本体は**convert_formation_table.py**

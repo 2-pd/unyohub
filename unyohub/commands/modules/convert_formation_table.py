@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 # coding: utf-8
 
+import os
 import csv
 import json
 import sqlite3
@@ -32,7 +33,7 @@ def insert_series_data (mes, cur, series_title, series_name, min_car_count, max_
 def convert_formation_table (mes, main_dir):
     mes("編成表の変換", is_heading=True)
     
-    mes("formations.csvを読み込んでいます...")
+    mes("formations.csv を読み込んでいます...")
     
     with open(main_dir + "/formations.csv", "r", encoding="utf-8-sig") as csv_f:
         csv_reader = csv.reader(csv_f)
@@ -345,13 +346,24 @@ def convert_formation_table (mes, main_dir):
     conn.commit()
     conn.close()
     
-    mes("formations.jsonを作成しています...")
+    mes("formations.json を作成しています...")
+    
+    json_file_path = main_dir + "/formations.json"
+    
+    if not os.path.exists(json_file_path):
+        new_json_file = True
+    else:
+        new_json_file = False
+    
     try:
-        with open(main_dir + "/formations.json", "w", encoding="utf-8") as json_f:
+        with open(json_file_path, "w", encoding="utf-8") as json_f:
             json.dump(json_data, json_f, ensure_ascii=False, separators=(',', ':'))
     except PermissionError:
-        mes("formations.jsonの書き込み権限がありません", True)
+        mes("formations.json の書き込み権限がありません", True)
     except:
-        mes("formations.jsonの作成に失敗しました", True)
+        mes("formations.json の作成に失敗しました", True)
     else:
+        if new_json_file and os.name == "posix":
+            os.chmod(json_file_path, 0o766)
+        
         mes("処理が完了しました")

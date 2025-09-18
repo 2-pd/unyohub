@@ -46,6 +46,9 @@ _/_/_/_/ ファイル構成 _/_/_/_/
       └ formations.json ・・・JSONに変換された編成表
       └ railroad_announcements.json ・・・路線系統別のお知らせデータ
       └ diagram_revisions.txt ・・・ダイヤ改正識別名(「YYYY-MM-DD」形式)を新しいものから順に1行に1つずつ記載したテキストファイル
+      └ icons/ ・・・列車アイコン画像フォルダ(train_icons.jsonの生成に使用する)
+         └ icon_list.json ・・・アイコン一覧情報ファイル
+         └ ****.**** ・・・アイコン画像ファイル
       └ ****/ ・・・フォルダ名は各ダイヤ改正識別名を使用
          └ diagram_info.json ・・・各改正日のダイヤに属するダイヤの情報
          └ operation_table_****.json ・・・JSONに変換された各ダイヤの運用表データ
@@ -78,6 +81,7 @@ _/_/_/_/ ファイル構成 _/_/_/_/
    └ announcements.php ・・・お知らせの編集
    └ railroads.php ・・・路線系統別の操作一覧
    └ manage_files.php ・・・各路線系統データのファイル管理
+   └ manage_train_icons.php ・・・各路線系統データの車両アイコン画像管理
    └ formations.php ・・・編成情報の編集
    └ reference_books.php ・・・参考書籍情報の編集
    └ train_icons.php ・・・管理画面で使用する車両アイコン画像を配信
