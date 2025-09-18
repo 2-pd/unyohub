@@ -267,6 +267,8 @@ table {
         
         padding: 10px 5px;
         
+        line-height: 40px;
+        
         button {
             position: absolute;
             
@@ -292,7 +294,6 @@ a {
 a:has(.train_icon), b:has(.train_icon) {
     display: block;
     
-    line-height: 40px;
     font-size: 20px;
     text-align: center;
 }

@@ -76,9 +76,6 @@ if (empty($_GET["file_name"])) {
         case "formations.csv":
             print "<h2>編成表元ファイルの管理</h2>";
             break;
-        case "train_icons.json":
-            print "<h2>車両アイコンファイルの管理</h2>";
-            break;
         default:
             print "【!】指定されたパスは編集可能なファイル名ではありません";
             goto invalid_file_name;
@@ -108,7 +105,6 @@ if (empty($_GET["file_name"])) {
             document.getElementById("new_file").value = "";
         }
     }
-    
     
     function restore_trash_file (trash_file_name) {
         if (confirm("過去のバージョンを復元して現在のファイルを置き換えますか？")) {
