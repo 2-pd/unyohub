@@ -10,6 +10,7 @@ from tkinter import simpledialog
 import os
 import traceback
 import platform
+import re
 import json
 import webbrowser
 
@@ -192,7 +193,8 @@ def select_diagram (callback_func, enable_save_operation_table_check=False):
     
     select_diagram_callback = callback_func
     
-    dir_list = sorted([ dir_name for dir_name in os.listdir(config["main_dir"]) if os.path.isdir(config["main_dir"] + "/" + dir_name) ], reverse=True)
+    yyyy_mm_dd_reg_exp = re.compile(r"^[0-9]{4}-(0[1-9]|1[0-2])-(0[1-9]|[12][0-9]|3[01])$")
+    dir_list = sorted([ dir_name for dir_name in os.listdir(config["main_dir"]) if os.path.isdir(config["main_dir"] + "/" + dir_name) and yyyy_mm_dd_reg_exp.match(dir_name) ], reverse=True)
     
     if len(dir_list) == 0:
         mes("現在の作業フォルダにはダイヤ改正日別フォルダがありません", True)
@@ -239,7 +241,7 @@ def select_diagram (callback_func, enable_save_operation_table_check=False):
     
     if enable_save_operation_table_check:
         save_operation_table_value = tk.BooleanVar()
-        save_operation_table_value.set(False)
+        save_operation_table_value.set(True)
         save_operation_table_check = tk.Checkbutton(select_diagram_win, variable=save_operation_table_value, text="運用表を生成する", font=list_font, bg="#333333", fg="#999999", activebackground="#666666", activeforeground="#ffffff")
         save_operation_table_check.place(x=240, y=80, width=200)
         
