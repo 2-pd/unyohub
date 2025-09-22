@@ -1503,6 +1503,10 @@ function get_diagram_revision (date_str = null) {
 }
 
 function search_diagram_schedules (diagram_revision, date_str) {
+    if ("exceptional_dates" in diagram_info[diagram_revision] && date_str in diagram_info[diagram_revision]["exceptional_dates"]) {
+        return diagram_info[diagram_revision]["exceptional_dates"][date_str];
+    }
+    
     for (var diagram_schedule of diagram_info[diagram_revision]["diagram_schedules"]) {
         for (var diagram_period of diagram_schedule["periods"]) {
             if (diagram_period["start_date"] <= date_str && (diagram_period["end_date"] === null || diagram_period["end_date"] >= date_str)) {
