@@ -665,7 +665,7 @@ function position_list_diagrams () {
     
     var diagram_list = timetable_get_diagram_list(operation_table["diagram_revision"]);
     
-    get_diagram_id([get_date_string(get_timestamp()), get_date_string(get_timestamp() + 86400)], function (today_diagram_data, tomorrow_diagram_data) {
+    get_diagram_id([get_date_string(get_timestamp()), get_date_string(get_timestamp() + 86400)], null, function (today_diagram_data, tomorrow_diagram_data) {
         if (today_diagram_data === null || tomorrow_diagram_data === null) {
             return;
         }
@@ -1203,7 +1203,7 @@ function timetable_change_diagram (operation_table_name) {
             var date_string = get_date_string(get_timestamp() + 86400);
         }
         
-        get_diagram_id(date_string, function (diagram_data) {
+        get_diagram_id(date_string, "joined_railroads" in railroad_info ? railroad_info["joined_railroads"] : null, function (diagram_data) {
             if (diagram_data !== null) {
                 load_timetable_diagram(diagram_data["diagram_revision"], diagram_data["diagram_id"], date_string);
             }
@@ -1269,7 +1269,7 @@ function timetable_list_diagrams () {
     
     var diagram_list = timetable_get_diagram_list(operation_table["diagram_revision"]);
     
-    get_diagram_id([get_date_string(get_timestamp()), get_date_string(get_timestamp() + 86400)], function (today_diagram_data, tomorrow_diagram_data) {
+    get_diagram_id([get_date_string(get_timestamp()), get_date_string(get_timestamp() + 86400)], null, function (today_diagram_data, tomorrow_diagram_data) {
         if (today_diagram_data === null || tomorrow_diagram_data === null) {
             return;
         }
@@ -1358,7 +1358,7 @@ function operation_detail (operation_number_or_index, operation_data_date_ts_or_
     if (typeof operation_data_date_ts_or_diagram_id !== "string") {
         var operation_data_date = get_date_string(operation_data_date_ts_or_diagram_id);
         
-        get_diagram_id(operation_data_date, function (diagram_data) {
+        get_diagram_id(operation_data_date, null, function (diagram_data) {
             if (diagram_data === null) {
                 return;
             }
@@ -1764,7 +1764,7 @@ function operation_data_history (formation_name, operation_number = null) {
     var operation_data_date = get_date_string(ts);
     if (operation_table === null) {
         var load_data_promise = new Promise(function (resolve, reject) {
-            get_diagram_id(operation_data_date, function (diagram_data) {
+            get_diagram_id(operation_data_date, null, function (diagram_data) {
                 load_data(resolve, null, reject, diagram_data["diagram_revision"], diagram_data["diagram_id"], null, operation_data_date);
             });
         });
@@ -1824,7 +1824,7 @@ function operation_table_change (diagram_revision, diagram_id) {
     document.getElementById("operation_table_name").innerText = diagram_info[diagram_revision]["diagrams"][diagram_id]["diagram_name"];
     
     var today_date_string = get_date_string(get_timestamp());
-    get_diagram_id(today_date_string, function (diagram_data) {
+    get_diagram_id(today_date_string, null, function (diagram_data) {
         load_data(function () {
             operation_table_list_number();
         }, null, function () {
