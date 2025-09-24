@@ -18,19 +18,6 @@ function replace_file ($railroad_id, $file_name, $new_file) {
     touch($file_path);
 }
 
-function exec_python_command ($subcommand, $args) {
-    $args_str = is_array($args) ? implode(" ", $args) : $args;
-    
-    exec("python3 ../commands/unyohub ".$subcommand." ".$args_str, $output);
-    
-    $result = "";
-    foreach ($output as $row) {
-        $result .= htmlspecialchars(preg_replace("/[\\x1b]\\[[0-9]{1,2}m/", "", $row))."<br>";
-    }
-    
-    return $result;
-}
-
 
 if (empty($_GET["railroad_id"])) {
     print "【!】URLが誤っています";
@@ -75,9 +62,10 @@ if (empty($_GET["file_name"])) {
     print "<a href='manage_files.php?railroad_id=".$railroad_id."&file_name=formations.csv' class='execute_button'>アップロード・復元</a>";
     
     print "<h3>車両アイコンファイル</h3>";
-    $train_icons_path = "../data/".$railroad_id."/train_icons.json";
-    print "<h5>train_icons.json</h5><div class='informational_text'>".(file_exists($train_icons_path) ? "更新日時 ".date("Y-m-d H:i:s", filemtime($train_icons_path)) : "ファイルなし")."</div>";
-    print "<a href='manage_files.php?railroad_id=".$railroad_id."&file_name=train_icons.json' class='execute_button'>アップロード・復元</a>";
+    $icon_list_path = "../data/".$railroad_id."/icons/icon_list.json";
+    $icon_list = @json_decode(@file_get_contents($icon_list_path), TRUE);
+    print "<div class='informational_text'>".(!empty($icon_list) ? "登録済みアイコン ".count($icon_list)."個<br>更新日時 ".date("Y-m-d H:i:s", filemtime($icon_list_path)) : "登録済みアイコンなし")."</div>";
+    print "<a href='manage_train_icons.php?railroad_id=".$railroad_id."' class='execute_button'>追加・削除</a>";
 } else {
     print " <a href='manage_files.php?railroad_id=".$railroad_id."'>データファイルの管理</a> &gt;</nav>";
     
@@ -87,9 +75,6 @@ if (empty($_GET["file_name"])) {
             break;
         case "formations.csv":
             print "<h2>編成表元ファイルの管理</h2>";
-            break;
-        case "train_icons.json":
-            print "<h2>車両アイコンファイルの管理</h2>";
             break;
         default:
             print "【!】指定されたパスは編集可能なファイル名ではありません";
@@ -120,7 +105,6 @@ if (empty($_GET["file_name"])) {
             document.getElementById("new_file").value = "";
         }
     }
-    
     
     function restore_trash_file (trash_file_name) {
         if (confirm("過去のバージョンを復元して現在のファイルを置き換えますか？")) {

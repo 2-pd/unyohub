@@ -308,6 +308,21 @@ def generate_operation_table (mes, main_dir, diagram_revision, diagram_id, save_
         if save_operation_table:
             mes("出入庫情報をまとめています...")
             
+            inbound_station_names = []
+            outbound_station_names = []
+            
+            for station_name in inbound_timetable_t[0][4:]:
+                if "[" in station_name:
+                    inbound_station_names.append(station_name[:station_name.find("[")])
+                else:
+                    inbound_station_names.append(station_name)
+            
+            for station_name in outbound_timetable_t[0][4:]:
+                if "[" in station_name:
+                    outbound_station_names.append(station_name[:station_name.find("[")])
+                else:
+                    outbound_station_names.append(station_name)
+            
             for cnt in range(1, len(operation_table)):
                 first_train_number = operation_table[cnt][6]
                 last_train_number = next((train_number for train_number in reversed(operation_table[cnt][6:]) if train_number != ""), None)
@@ -319,7 +334,7 @@ def generate_operation_table (mes, main_dir, diagram_revision, diagram_id, save_
                         if inbound_timetable_t[first_train_index][cnt_2] == "":
                             continue
                         
-                        operation_table[cnt][2] = inbound_timetable_t[0][cnt_2]
+                        operation_table[cnt][2] = inbound_station_names[cnt_2 - 4]
                         break
                 else:
                     first_train_index = outbound_timetable[0].index(first_train_number)
@@ -328,7 +343,7 @@ def generate_operation_table (mes, main_dir, diagram_revision, diagram_id, save_
                         if outbound_timetable_t[first_train_index][cnt_2] == "":
                             continue
                         
-                        operation_table[cnt][2] = outbound_timetable_t[0][cnt_2]
+                        operation_table[cnt][2] = outbound_station_names[cnt_2 - 4]
                         break
                 
                 if last_train_number in inbound_timetable[0]:
@@ -338,7 +353,7 @@ def generate_operation_table (mes, main_dir, diagram_revision, diagram_id, save_
                         if inbound_timetable_t[last_train_index][cnt_2] == "":
                             continue
                         
-                        operation_table[cnt][4] = inbound_timetable_t[0][cnt_2]
+                        operation_table[cnt][4] = inbound_station_names[cnt_2 - 4]
                         break
                 else:
                     last_train_index = outbound_timetable[0].index(last_train_number)
@@ -347,7 +362,7 @@ def generate_operation_table (mes, main_dir, diagram_revision, diagram_id, save_
                         if outbound_timetable_t[last_train_index][cnt_2] == "":
                             continue
                         
-                        operation_table[cnt][4] = outbound_timetable_t[0][cnt_2]
+                        operation_table[cnt][4] = outbound_station_names[cnt_2 - 4]
                         break
     elif save_operation_table:
         mes("《注意》運用表として出力すべきデータがありません")

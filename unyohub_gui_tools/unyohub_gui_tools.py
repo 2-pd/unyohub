@@ -10,12 +10,13 @@ from tkinter import simpledialog
 import os
 import traceback
 import platform
+import re
 import json
 import webbrowser
 
 
 UNYOHUB_GUI_TOOLS_APP_NAME = "鉄道運用Hub用データ編集ツール"
-UNYOHUB_GUI_TOOLS_VERSION = "25.08-1"
+UNYOHUB_GUI_TOOLS_VERSION = "25.09-1"
 UNYOHUB_GUI_TOOLS_LICENSE_TEXT = "このアプリケーションは無権利創作宣言に準拠して著作権放棄されています"
 UNYOHUB_GUI_TOOLS_LICENSE_URL = "https://www.2pd.jp/license/"
 UNYOHUB_GUI_TOOLS_REPOSITORY_URL = "https://fossil.2pd.jp/unyohub/"
@@ -111,32 +112,23 @@ def open_main_window ():
     button_main_dir = tk.Button(main_win, text="作業フォルダ変更", font=button_font, command=change_main_dir, bg="#666666", fg="#ffffff", relief=tk.FLAT, highlightbackground="#666666")
     button_main_dir.place(x=160, y=75, width=150, height=35)
     
-    button_initialize_db = tk.Button(main_win, text="データベースのセットアップ", font=button_font, command=initialize_db, bg="#666666", fg="#ffffff", relief=tk.FLAT, highlightbackground="#666666")
-    button_initialize_db.place(x=10, y=140, width=300, height=40)
-    
-    button_embed_train_icon = tk.Button(main_win, text="アイコン画像をファイルに埋め込み", font=button_font, command=embed_train_icon, bg="#666666", fg="#ffffff", relief=tk.FLAT, highlightbackground="#666666")
-    button_embed_train_icon.place(x=10, y=190, width=300, height=40)
-    
     button_generate_operation_table = tk.Button(main_win, text="運用情報付き時刻表の変換", font=button_font, command=generate_operation_table, bg="#666666", fg="#ffffff", relief=tk.FLAT, highlightbackground="#666666")
-    button_generate_operation_table.place(x=10, y=240, width=300, height=40)
+    button_generate_operation_table.place(x=10, y=140, width=300, height=40)
     
     button_convert_timetable_1 = tk.Button(main_win, text="時刻表の変換(ステップ1)", font=button_font, command=convert_timetable_1, bg="#666666", fg="#ffffff", relief=tk.FLAT, highlightbackground="#666666")
-    button_convert_timetable_1.place(x=10, y=290, width=300, height=40)
+    button_convert_timetable_1.place(x=10, y=190, width=300, height=40)
     
     button_convert_timetable_2 = tk.Button(main_win, text="時刻表の変換(ステップ2)", font=button_font, command=convert_timetable_2, bg="#666666", fg="#ffffff", relief=tk.FLAT, highlightbackground="#666666")
-    button_convert_timetable_2.place(x=10, y=340, width=300, height=40)
+    button_convert_timetable_2.place(x=10, y=240, width=300, height=40)
     
     button_convert_operation_table_for_printing = tk.Button(main_win, text="運用表を印刷用に変換", font=button_font, command=lambda: convert_operation_table_1(True), bg="#666666", fg="#ffffff", relief=tk.FLAT, highlightbackground="#666666")
-    button_convert_operation_table_for_printing.place(x=10, y=390, width=300, height=40)
+    button_convert_operation_table_for_printing.place(x=10, y=290, width=300, height=40)
     
     button_convert_operation_table_1 = tk.Button(main_win, text="運用表の変換(ステップ1)", font=button_font, command=lambda: convert_operation_table_1(False), bg="#666666", fg="#ffffff", relief=tk.FLAT, highlightbackground="#666666")
-    button_convert_operation_table_1.place(x=10, y=440, width=300, height=40)
+    button_convert_operation_table_1.place(x=10, y=340, width=300, height=40)
     
     button_convert_operation_table_2 = tk.Button(main_win, text="運用表の変換(ステップ2)", font=button_font, command=convert_operation_table_2, bg="#666666", fg="#ffffff", relief=tk.FLAT, highlightbackground="#666666")
-    button_convert_operation_table_2.place(x=10, y=490, width=300, height=40)
-    
-    button_initialize_moderation_db = tk.Button(main_win, text="モデレーションDBのセットアップ", font=button_font, command=initialize_moderation_db, bg="#666666", fg="#ffffff", relief=tk.FLAT, highlightbackground="#666666")
-    button_initialize_moderation_db.place(x=10, y=540, width=300, height=40)
+    button_convert_operation_table_2.place(x=10, y=390, width=300, height=40)
     
     mes(UNYOHUB_GUI_TOOLS_APP_NAME + " v" + UNYOHUB_GUI_TOOLS_VERSION + "\n\n" + UNYOHUB_GUI_TOOLS_LICENSE_TEXT)
     
@@ -201,7 +193,8 @@ def select_diagram (callback_func, enable_save_operation_table_check=False):
     
     select_diagram_callback = callback_func
     
-    dir_list = sorted([ dir_name for dir_name in os.listdir(config["main_dir"]) if os.path.isdir(config["main_dir"] + "/" + dir_name) ], reverse=True)
+    yyyy_mm_dd_reg_exp = re.compile(r"^[0-9]{4}-(0[1-9]|1[0-2])-(0[1-9]|[12][0-9]|3[01])$")
+    dir_list = sorted([ dir_name for dir_name in os.listdir(config["main_dir"]) if os.path.isdir(config["main_dir"] + "/" + dir_name) and yyyy_mm_dd_reg_exp.match(dir_name) ], reverse=True)
     
     if len(dir_list) == 0:
         mes("現在の作業フォルダにはダイヤ改正日別フォルダがありません", True)
@@ -248,7 +241,7 @@ def select_diagram (callback_func, enable_save_operation_table_check=False):
     
     if enable_save_operation_table_check:
         save_operation_table_value = tk.BooleanVar()
-        save_operation_table_value.set(False)
+        save_operation_table_value.set(True)
         save_operation_table_check = tk.Checkbutton(select_diagram_win, variable=save_operation_table_value, text="運用表を生成する", font=list_font, bg="#333333", fg="#999999", activebackground="#666666", activeforeground="#ffffff")
         save_operation_table_check.place(x=240, y=80, width=200)
         
@@ -300,42 +293,6 @@ def change_main_dir ():
     if len(dir_path) >= 1 :
         config["main_dir"] = dir_path
         label_main_dir["text"] = os.path.basename(config["main_dir"])
-
-
-def initialize_db ():
-    global config
-    
-    if not os.path.isfile("modules/initialize_db.py"):
-        messagebox.showinfo("処理モジュールがありません", "initialize_db.py が本ツールの modules フォルダに存在しないためこの機能は使用できません")
-        return
-    
-    if messagebox.askokcancel("データベースのセットアップ", "現在の作業フォルダにデータベースファイルをセットアップしますか？"):
-        try:
-            clear_mes()
-            
-            initialize_db = importlib.import_module("modules.initialize_db")
-            initialize_db.initialize_db(mes, config["main_dir"])
-        except:
-            error_mes(traceback.format_exc())
-
-
-def embed_train_icon ():
-    global config
-    
-    if not os.path.isfile("modules/embed_train_icon.py"):
-        messagebox.showinfo("処理モジュールがありません", "embed_train_icon.py が本ツールの modules フォルダに存在しないためこの機能は使用できません")
-        return
-    
-    dir_path = filedialog.askdirectory(title="アイコン画像のあるフォルダを選択してください", initialdir=config["main_dir"])
-    
-    if len(dir_path) >= 1:
-        try:
-            clear_mes()
-            
-            embed_train_icon = importlib.import_module("modules.embed_train_icon")
-            embed_train_icon.embed_train_icon(mes, dir_path)
-        except:
-            error_mes(traceback.format_exc())
 
 
 def generate_operation_table ():
@@ -498,24 +455,6 @@ def convert_operation_table_2 (input_file_name=None):
             
             convert_operation_table_2 = importlib.import_module("modules.convert_operation_table_2")
             convert_operation_table_2.convert_operation_table_2(mes, config["main_dir"], file_name)
-        except:
-            error_mes(traceback.format_exc())
-
-
-def initialize_moderation_db ():
-    global config
-    
-    if not os.path.isfile("modules/initialize_moderation_db.py"):
-        messagebox.showinfo("処理モジュールがありません", "initialize_moderation_db.py が本ツールの modules フォルダに存在しないためこの機能は使用できません")
-        return
-    
-    db_file_path = filedialog.asksaveasfilename(title="モデレーション用データベースの保存先を選択してください", filetypes=[("SQLite3 データベースファイル","*.db")], initialdir=config["main_dir"], initialfile="moderation.db", defaultextension="db")
-    if len(db_file_path) >= 1:
-        try:
-            clear_mes()
-            
-            initialize_moderation_db = importlib.import_module("modules.initialize_moderation_db")
-            initialize_moderation_db.initialize_moderation_db(mes, db_file_path)
         except:
             error_mes(traceback.format_exc())
 

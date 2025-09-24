@@ -118,8 +118,6 @@ header {
         left: 49px;
         
         width: 1px;
-        
-        
     }
     
     .dark_mode &:after {
@@ -194,6 +192,8 @@ header {
     
     width: 250px;
     max-height: 0;
+    
+    overflow-y: scroll;
 }
 
 .off_line_message, #off_line_message_popup h3 {
@@ -657,7 +657,7 @@ header {
     }
 }
 
-:where(#icon_area, .popup) h3 {
+#icon_area h3 {
     margin: 15px 0 10px 0;
     
     padding: 5px 10px;
@@ -669,7 +669,7 @@ header {
     color: #ffffff;
 }
 
-:where(#icon_area, .popup) h4 {
+#icon_area h4 {
     margin: 10px 0 5px 0;
     
     padding-left: 6px;
@@ -2206,6 +2206,12 @@ input[type="checkbox"]:checked + label.drop_down {
     &:empty {
         display: none;
     }
+    
+    h5 {
+        margin: 20px 0 5px 0;
+        
+        font-size: inherit;
+    }
 }
 
 #car_info_table {
@@ -2811,6 +2817,20 @@ h2 small {
     }
 }
 
+.bottom_link {
+    display: block;
+    
+    margin-top: 30px;
+    
+    line-height: 30px;
+    color: #666666;
+    text-align: center;
+    
+    .dark_mode & {
+        color: #cccccc;
+    }
+}
+
 #railroad_announcement, #railroad_announcements_heading {
     background-image: url(data:image/webp;base64,UklGRpIDAABXRUJQVlA4TIYDAAAvR8AREHVIjCRJkaTVX2l/yO5pWAFqoXci4AgAWEhaZm125+v2bKtSZ9vGA2zfH2zbpX1XGWvbceBIbtvspTdeYIoi/YSaERR/ZQatevJByVqvt6fzVcb/fiB2CF+9dUrwUq9Sj78YOPl22c+gPl95wDqQNfkFp0SsA20NMJopwGl9NMEsQIzHs0TeJE0HMckJ9qC3q1ehUO4YwI3xLUX67NF3LXGaAKbg6eZ0RGhUJOyVq5coY0RgR654TCCB5rQ4kQw95uxIcdqxRi1+GBnMYINDETUhkY5PI2bpg6jkOIk/mTUpOYSNQQ4VY4/bq1nUmhaahfYiY+QbzbtMqmqJ1DYuv+KvAzW/Ri3u0hBvHaHvcCpQX8WBa6KS8KtLpKWhd12K/6cJCvQxlWZoBNQ6ioAqHRnvL0LO/Ia4mmH8SN6ieyXBfZpU+UCspdSlJU8wLVrSiPlaTZlOTxoaUCgy7TNfh782mL+EATlSoh0MZO4o+nLTseYM4S/Xcm2R08BvRJAHBsL3IDo9y/2PvSxQtUnOAztVhZ87kuRdSAvYcKs0ZNWF2cUnl6XaKuuB4Qdim0wElguKMhC5DzGZujf/CEAH+5/l+Z/ZynD+i6+ywN70ATzvGpeDQInBQO9ODAT6rAUKd6IkP5jbv9CdCA/c+w647IR74JMiwNwJdv4USwDsBC5geR6e58nzfMRDIGwnIgJ3Vp8l/y09z3p8gvrgMOsD/+xk73nm61VTP0XtQ2xTPysLjdF9mGzqeakPiGB2AdvZX/DZwoGUaab3u87+63QXLgLb3X5A5B7ENP1Atz9xvAVI593+pLSlRdk7UNDvlwo5axYh2nrQiQIypEppSo8W1mMpPanrTE9Nf6tmNRqv+9sSzZnThYS1SMqt4BY50K0cWgEr4UMNjqxkwFUzj/Bfh8BmHnF5VaF4NP+K5rWqz5FEmz6puF8aEt9OYOpqiTSwNC7FzcyPFtDmQbfczo9jE62K9kIodxJI+USdeXZ6vnYqeqqBdD49X1eJpwZb3VIHC+pHmouONSpxNS4ersCOSH4vuMutRKxJktORS+41I8A45+mJwYF+JcK5YwL3+Qov/b93/3yIsenTRoJdniVyL2rFZKCRfB4y9dC1REia/Myev0KtZQLk2mEb5Wf7BhbPGbhqrZBfQ36rxa0dguKrVL9l994pWd6vb1nWr4TPPWOyAA==);
     background-repeat: no-repeat;
@@ -3203,92 +3223,6 @@ input[type="search"] {
 
 input[type="checkbox"], input[type="radio"] {
     display: none !important;
-}
-
-.toggle + label {
-    display: block;
-    
-    position: relative;
-    
-    margin: 10px 0 20px max(20px, calc(50% - 230px));
-    
-    padding-left: 54px;
-    
-    line-height: 24px;
-    font-size: 18px;
-    text-align: left;
-    
-    &:before {
-        content: "";
-        
-        display: inline-block;
-        
-        position: absolute;
-        
-        top: 0;
-        left: 0;
-        
-        width: 42px;
-        height: 22px;
-        
-        border: 1px solid #cccccc;
-        
-        background-color: #dddddd;
-        
-        border-radius: 6px;
-        
-        transition-duration: 0.25s;
-        transition-property: all;
-    }
-    
-    &:after {
-        content: "";
-        
-        display: inline-block;
-        
-        position: absolute;
-        
-        top: 2px;
-        left: 2px;
-        
-        width: 20px;
-        height: 20px;
-        
-        background-color: #f7f7f7;
-        
-        border-radius: 4px;
-        
-        transition-duration: 0.2s;
-        transition-property: all;
-        
-        .dark_mode & {
-            background-color: #cccccc;
-        }
-    }
-}
-
-.toggle:checked + label {
-    &:before {
-        border-color: #009966;
-        
-        background-color: #33cc99;
-        
-        .dark_mode & {
-            border-color: #ffffff;
-        }
-    }
-    
-    &:after {
-        left: 22px;
-        
-        background-color: #ffffff;
-    }
-}
-
-.dark_mode .toggle:not(:checked) + label:before {
-    border-color: #999999;
-    
-    background-color: #666666;
 }
 
 .wide_button, input[type="radio"] + label, .chip + label, .chip_ellipsis, .operation_data_detail button, .key_and_value button, #operation_data_train_number + button {

@@ -33,3 +33,16 @@ function print_footer () {
     </html>
     EOM;
 }
+
+function exec_python_command ($subcommand, $args) {
+    $args_str = is_array($args) ? implode(" ", $args) : $args;
+    
+    exec("python3 ../commands/unyohub ".$subcommand." ".$args_str, $output);
+    
+    $result = "";
+    foreach ($output as $row) {
+        $result .= htmlspecialchars(preg_replace("/[\\x1b]\\[[0-9]{1,2}m/", "", $row))."<br>";
+    }
+    
+    return $result;
+}
