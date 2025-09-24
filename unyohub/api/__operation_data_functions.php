@@ -57,6 +57,12 @@ function get_diagram_id ($ts) {
     global $diagram_info;
     
     $year = date("Y", $ts);
+    $mm_dd = date("m-d", $ts);
+    $today = $year."-".$mm_dd;
+    
+    if (isset($diagram_info["exceptional_dates"][$today])) {
+        return $diagram_info["exceptional_dates"][$today];
+    }
     
     $holiday_list = ["01-01", "02-11", "02-23", "04-29", "05-03", "05-04", "05-05", "08-11", "11-03", "11-23"];
     $happy_monday_list = [["01", "second"], ["07", "third"], ["09", "third"], ["10", "second"]];
@@ -85,14 +91,12 @@ function get_diagram_id ($ts) {
         $holiday_list[] = "09-".($shubun - 1);
     }
     
-    $today_mm_dd = date("m-d", $ts);
-    if (array_search($today_mm_dd, $holiday_list) !== FALSE) {
+    if (array_search($mm_dd, $holiday_list) !== FALSE) {
         $day_index = 0;
     } else {
         $day_index = intval(date("w", $ts));
     }
     
-    $today = date("Y", $ts)."-".$today_mm_dd;
     foreach ($diagram_info["diagram_schedules"] as $diagram_schedule) {
         foreach ($diagram_schedule["periods"] as $period) {
             if ($period["start_date"] <= $today && (is_null($period["end_date"]) || $period["end_date"] >= $today)) {
