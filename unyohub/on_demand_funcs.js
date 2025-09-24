@@ -1205,15 +1205,15 @@ function timetable_change_diagram (operation_table_name) {
         
         get_diagram_id(date_string, "joined_railroads" in railroad_info ? railroad_info["joined_railroads"] : null, function (diagram_data) {
             if (diagram_data !== null) {
-                load_timetable_diagram(diagram_data["diagram_revision"], diagram_data["diagram_id"], date_string);
+                load_timetable_diagram(diagram_data["diagram_revision"], diagram_data["diagram_id"], diagram_data["joined_railroad_diagram_ids"], date_string);
             }
         });
     } else {
-        load_timetable_diagram(operation_table["diagram_revision"], operation_table_name, null);
+        load_timetable_diagram(operation_table["diagram_revision"], operation_table_name, null, null);
     }
 }
 
-function load_timetable_diagram (diagram_revision, diagram_id, date_string) {
+function load_timetable_diagram (diagram_revision, diagram_id, joined_railroad_diagram_ids, date_string) {
     var resolved = false;
     
     timetable_promise = new Promise(function (resolve, reject) {
@@ -1225,7 +1225,7 @@ function load_timetable_diagram (diagram_revision, diagram_id, date_string) {
             } else if (timetable_selected_station !== null) {
                 timetable_select_station(timetable_selected_station);
             }
-        }, null, reject, diagram_revision, diagram_id, "joined_railroads" in railroad_info ? railroad_info["joined_railroads"] : null, date_string);
+        }, null, reject, diagram_revision, diagram_id, joined_railroad_diagram_ids, date_string);
     });
     
     if (timetable_selected_station !== null) {

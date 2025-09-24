@@ -1676,7 +1676,7 @@ function get_diagram_id (dates, joined_railroads, callback_1, callback_2 = null)
     Promise.all(promise_list_1).then(function () {
         callback_1(...dates.map(function (date_str) {
             if (joined_railroads === null) {
-                return { diagram_revision : diagram_revisions[date_str], diagram_id : diagram_ids[railroad_info["railroad_id"]][diagram_revisions[date_str]][date_str] };
+                return { diagram_revision : diagram_revisions[date_str], diagram_id : diagram_ids[railroad_info["railroad_id"]][diagram_revisions[date_str]][date_str], joined_railroad_diagram_ids : null };
             } else {
                 var joined_railroad_diagram_ids = {}
                 for (var joined_railroad_id of joined_railroads) {
@@ -1692,7 +1692,7 @@ function get_diagram_id (dates, joined_railroads, callback_1, callback_2 = null)
             if (updates_exist) {
                 callback_2(...dates.map(function (date_str) {
                     if (joined_railroads === null) {
-                        return { diagram_revision : diagram_revisions[date_str], diagram_id : diagram_ids[railroad_info["railroad_id"]][diagram_revisions[date_str]][date_str] };
+                        return { diagram_revision : diagram_revisions[date_str], diagram_id : diagram_ids[railroad_info["railroad_id"]][diagram_revisions[date_str]][date_str], joined_railroad_diagram_ids : null };
                     } else {
                         var joined_railroad_diagram_ids = {}
                         for (var joined_railroad_id of joined_railroads) {
@@ -1793,7 +1793,7 @@ function set_line_operations (joined_railroad_id, data) {
     }
 }
 
-function load_operation_table (resolve_func_1, reject_func_1, resolve_func_2, reject_func_2, diagram_revision, diagram_id, joined_railroads = null) {
+function load_operation_table (resolve_func_1, reject_func_1, resolve_func_2, reject_func_2, diagram_revision, diagram_ids, joined_railroads = null) {
     var railroad_ids = joined_railroads === null ? [null] : [null, ...joined_railroads];
     
     var promise_list_1 = [];
@@ -1812,10 +1812,10 @@ function load_operation_table (resolve_func_1, reject_func_1, resolve_func_2, re
                 
                 idb_start_transaction(["operation_tables", "line_operations"], false, function (transaction) {
                     var operation_tables = transaction.objectStore("operation_tables");
-                    var operations_get_request = operation_tables.get([railroad_id, diagram_revision, diagram_id]);
+                    var operations_get_request = operation_tables.get([railroad_id, diagram_revision, diagram_ids[railroad_id]]);
                     
                     var line_operations_store = transaction.objectStore("line_operations");
-                    var line_operations_get_request = line_operations_store.get([railroad_id, diagram_revision, diagram_id]);
+                    var line_operations_get_request = line_operations_store.get([railroad_id, diagram_revision, diagram_ids[railroad_id]]);
                     
                     var promise_list_3 = [
                         new Promise(function (resolve, reject) {
@@ -1848,7 +1848,7 @@ function load_operation_table (resolve_func_1, reject_func_1, resolve_func_2, re
                             reject_1();
                         }
                         
-                        update_operation_table(resolve_2, reject_2, railroad_id_or_null, diagram_revision, diagram_id, last_modified_timestamp);
+                        update_operation_table(resolve_2, reject_2, railroad_id_or_null, diagram_revision, diagram_ids[railroad_id], last_modified_timestamp);
                     });
                 });
             }));
@@ -2175,13 +2175,25 @@ function update_operation_data (resolve_func_1, reject_func_1, resolve_func_2, r
 }
 
 
-function load_data (callback_1, callback_2, reject_func, diagram_revision, diagram_id, joined_railroads = null, operation_data_date = null) {
+function load_data (callback_1, callback_2, reject_func, diagram_revision, diagram_id, joined_railroad_diagram_ids = null, operation_data_date = null) {
+    var diagram_ids = { [railroad_info["railroad_id"]] : diagram_id };
+    
+    if (joined_railroad_diagram_ids === null) {
+        var joined_railroads = null;
+    } else {
+        var joined_railroads = Object.keys(joined_railroad_diagram_ids);
+        
+        for (var joined_railroad_id of joined_railroads) {
+            diagram_ids[joined_railroad_id] = joined_railroad_diagram_ids[joined_railroad_id];
+        }
+    }
+    
     var promise_list_1 = [];
     var promise_list_2 = [];
     
     promise_list_1.push(new Promise(function (resolve_1, reject_1) {
         promise_list_2.push(new Promise(function (resolve_2, reject_2) {
-            load_operation_table(resolve_1, reject_1, resolve_2, reject_2, diagram_revision, diagram_id, joined_railroads);
+            load_operation_table(resolve_1, reject_1, resolve_2, reject_2, diagram_revision, diagram_ids, joined_railroads);
         }));
     }));
     
@@ -2275,10 +2287,12 @@ function position_mode (line_id = null, date_str = "__today__", scroll_target_st
         
         if (date_str !== "__today__" && date_str !== "__tomorrow__") {
             var diagram_id = date_str;
+            var joined_railroad_diagram_ids = null;
             var operation_data_date = null;
             position_diagram_elm.innerHTML = "<small>" + escape_html(diagram_info[diagram_data["diagram_revision"]]["diagrams"][diagram_id]["diagram_name"]) + "</small>";
         } else {
             var diagram_id = diagram_data["diagram_id"];
+            var joined_railroad_diagram_ids = diagram_data["joined_railroad_diagram_ids"];
             var operation_data_date = diagram_date;
         }
         
@@ -2306,7 +2320,7 @@ function position_mode (line_id = null, date_str = "__today__", scroll_target_st
         }, function () {
             position_area_elm.innerHTML = "<div class='no_data'>表示に必要なデータが利用できません</div>";
             position_line_select_elm.style.display = "none";
-        }, diagram_data["diagram_revision"], diagram_id, "joined_railroads" in railroad_info ? railroad_info["joined_railroads"] : null, operation_data_date);
+        }, diagram_data["diagram_revision"], diagram_id, joined_railroad_diagram_ids, operation_data_date);
     });
 }
 
@@ -2502,7 +2516,7 @@ function draw_train_position (hh_and_mm) {
     var outbound_trains = line_operations["lines"][position_selected_line]["outbound_trains"];
     if ("joined_railroads" in railroad_info) {
         for (var railroad_id of railroad_info["joined_railroads"]) {
-            if (position_selected_line in joined_line_operations[railroad_id]["lines"]) {
+            if (railroad_id in joined_line_operations && position_selected_line in joined_line_operations[railroad_id]["lines"]) {
                 inbound_trains = Object.assign(inbound_trains, joined_line_operations[railroad_id]["lines"][position_selected_line]["inbound_trains"]);
                 outbound_trains = Object.assign(outbound_trains, joined_line_operations[railroad_id]["lines"][position_selected_line]["outbound_trains"]);
             }
@@ -2857,7 +2871,7 @@ function get_operations (line_id, train_number, starting_station, train_directio
     
     if ("joined_railroads" in railroad_info) {
         for (railroad_id of railroad_info["joined_railroads"]) {
-            if (line_id in joined_line_operations[railroad_id]["lines"] && train_number in joined_line_operations[railroad_id]["lines"][line_id][train_direction]) {
+            if (railroad_id in joined_line_operations && line_id in joined_line_operations[railroad_id]["lines"] && train_number in joined_line_operations[railroad_id]["lines"][line_id][train_direction]) {
                 for (var train of joined_line_operations[railroad_id]["lines"][line_id][train_direction][train_number]) {
                     if (train["starting_station"] === starting_station) {
                         return [...train["operation_numbers"]];
@@ -3024,7 +3038,7 @@ function timetable_mode (require_load_data = true, draw_station_list = true) {
                     } else if (timetable_selected_station !== null) {
                         timetable_select_station(timetable_selected_station);
                     }
-                }, reject, diagram_data["diagram_revision"], diagram_data["diagram_id"], "joined_railroads" in railroad_info ? railroad_info["joined_railroads"] : null,  date_string);
+                }, reject, diagram_data["diagram_revision"], diagram_data["diagram_id"], diagram_data["joined_railroad_diagram_ids"], date_string);
             });
         });
         
