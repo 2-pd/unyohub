@@ -112,23 +112,26 @@ def open_main_window ():
     button_main_dir = tk.Button(main_win, text="作業フォルダ変更", font=button_font, command=change_main_dir, bg="#666666", fg="#ffffff", relief=tk.FLAT, highlightbackground="#666666")
     button_main_dir.place(x=160, y=75, width=150, height=35)
     
+    button_convert_gtfs_to_timetable = tk.Button(main_win, text="GTFSデータから時刻表を生成", font=button_font, command=convert_gtfs_to_timetable, bg="#666666", fg="#ffffff", relief=tk.FLAT, highlightbackground="#666666")
+    button_convert_gtfs_to_timetable.place(x=10, y=140, width=300, height=40)
+    
     button_generate_operation_table = tk.Button(main_win, text="運用情報付き時刻表の変換", font=button_font, command=generate_operation_table, bg="#666666", fg="#ffffff", relief=tk.FLAT, highlightbackground="#666666")
-    button_generate_operation_table.place(x=10, y=140, width=300, height=40)
+    button_generate_operation_table.place(x=10, y=190, width=300, height=40)
     
     button_convert_timetable_1 = tk.Button(main_win, text="時刻表の変換(ステップ1)", font=button_font, command=convert_timetable_1, bg="#666666", fg="#ffffff", relief=tk.FLAT, highlightbackground="#666666")
-    button_convert_timetable_1.place(x=10, y=190, width=300, height=40)
+    button_convert_timetable_1.place(x=10, y=240, width=300, height=40)
     
     button_convert_timetable_2 = tk.Button(main_win, text="時刻表の変換(ステップ2)", font=button_font, command=convert_timetable_2, bg="#666666", fg="#ffffff", relief=tk.FLAT, highlightbackground="#666666")
-    button_convert_timetable_2.place(x=10, y=240, width=300, height=40)
+    button_convert_timetable_2.place(x=10, y=290, width=300, height=40)
     
     button_convert_operation_table_for_printing = tk.Button(main_win, text="運用表を印刷用に変換", font=button_font, command=lambda: convert_operation_table_1(True), bg="#666666", fg="#ffffff", relief=tk.FLAT, highlightbackground="#666666")
-    button_convert_operation_table_for_printing.place(x=10, y=290, width=300, height=40)
+    button_convert_operation_table_for_printing.place(x=10, y=340, width=300, height=40)
     
     button_convert_operation_table_1 = tk.Button(main_win, text="運用表の変換(ステップ1)", font=button_font, command=lambda: convert_operation_table_1(False), bg="#666666", fg="#ffffff", relief=tk.FLAT, highlightbackground="#666666")
-    button_convert_operation_table_1.place(x=10, y=340, width=300, height=40)
+    button_convert_operation_table_1.place(x=10, y=390, width=300, height=40)
     
     button_convert_operation_table_2 = tk.Button(main_win, text="運用表の変換(ステップ2)", font=button_font, command=convert_operation_table_2, bg="#666666", fg="#ffffff", relief=tk.FLAT, highlightbackground="#666666")
-    button_convert_operation_table_2.place(x=10, y=390, width=300, height=40)
+    button_convert_operation_table_2.place(x=10, y=440, width=300, height=40)
     
     mes(UNYOHUB_GUI_TOOLS_APP_NAME + " v" + UNYOHUB_GUI_TOOLS_VERSION + "\n\n" + UNYOHUB_GUI_TOOLS_LICENSE_TEXT)
     
@@ -181,7 +184,7 @@ def console_copy ():
     main_win.clipboard_append(console_area.get("0.0", tk.END).strip())
 
 
-def select_diagram (callback_func, enable_save_operation_table_check=False):
+def select_diagram (callback_func, enable_diagram_id_entry=True, enable_save_operation_table_check=False):
     global config
     global main_win
     global select_diagram_win
@@ -194,7 +197,7 @@ def select_diagram (callback_func, enable_save_operation_table_check=False):
     select_diagram_callback = callback_func
     
     yyyy_mm_dd_reg_exp = re.compile(r"^[0-9]{4}-(0[1-9]|1[0-2])-(0[1-9]|[12][0-9]|3[01])$")
-    dir_list = sorted([ dir_name for dir_name in os.listdir(config["main_dir"]) if os.path.isdir(config["main_dir"] + "/" + dir_name) and yyyy_mm_dd_reg_exp.match(dir_name) ], reverse=True)
+    dir_list = sorted([ dir_name for dir_name in os.listdir(config["main_dir"]) if yyyy_mm_dd_reg_exp.match(dir_name) and os.path.isdir(config["main_dir"] + "/" + dir_name) ], reverse=True)
     
     if len(dir_list) == 0:
         mes("現在の作業フォルダにはダイヤ改正日別フォルダがありません", True)
@@ -233,11 +236,14 @@ def select_diagram (callback_func, enable_save_operation_table_check=False):
     diagram_revision_list_scroll_y.place(x=190, y=40, width=20, height=140)
     diagram_revision_list.select_set(0)
     
-    label_diagram_id = tk.Label(select_diagram_win, text="ダイヤ識別名:", font=label_font, fg="#ffffff", bg="#444444")
-    label_diagram_id.place(x=240, y=10)
-    
-    diagram_id_entry = tk.Entry(select_diagram_win, bg="#333333", fg="#ffffff", relief=tk.FLAT)
-    diagram_id_entry.place(x=240, y=40, width=200)
+    if enable_diagram_id_entry:
+        label_diagram_id = tk.Label(select_diagram_win, text="ダイヤ識別名:", font=label_font, fg="#ffffff", bg="#444444")
+        label_diagram_id.place(x=240, y=10)
+        
+        diagram_id_entry = tk.Entry(select_diagram_win, bg="#333333", fg="#ffffff", relief=tk.FLAT)
+        diagram_id_entry.place(x=240, y=40, width=200)
+    else:
+        diagram_id_entry = None
     
     if enable_save_operation_table_check:
         save_operation_table_value = tk.BooleanVar()
@@ -264,19 +270,24 @@ def select_diagram_ok ():
     global save_operation_table_value
     global generate_number_value
     
-    diagram_revision = diagram_revision_list.get(diagram_revision_list.curselection())
-    diagram_id = diagram_id_entry.get()
+    args = [ diagram_revision_list.get(diagram_revision_list.curselection()) ]
     
-    if len(diagram_id) == 0:
-        messagebox.showerror("エラー", "ダイヤ識別名を入力してください")
-        return
+    if diagram_id_entry is not None:
+        diagram_id = diagram_id_entry.get()
+        
+        if len(diagram_id) == 0:
+            messagebox.showerror("エラー", "ダイヤ識別名を入力してください")
+            return
+        
+        args.append(diagram_id)
     
     close_select_diagram_win()
     
-    if save_operation_table_value != None:
-        select_diagram_callback(diagram_revision, diagram_id, save_operation_table_value.get(), generate_number_value.get())
-    else:
-        select_diagram_callback(diagram_revision, diagram_id)
+    if save_operation_table_value is not None:
+        args.append(save_operation_table_value.get())
+        args.append(generate_number_value.get())
+    
+    select_diagram_callback(*args)
 
 
 def close_select_diagram_win ():
@@ -295,17 +306,45 @@ def change_main_dir ():
         label_main_dir["text"] = os.path.basename(config["main_dir"])
 
 
-def generate_operation_table ():
+def convert_gtfs_to_timetable ():
+    if not os.path.isfile("modules/convert_gtfs_to_timetable.py"):
+        messagebox.showinfo("処理モジュールがありません", "convert_gtfs_to_timetable.py が本ツールの modules フォルダに存在しないためこの機能は使用できません")
+        return
+    
+    select_diagram(convert_gtfs_to_timetable_exec, False)
+
+
+def convert_gtfs_to_timetable_exec (diagram_revision):
     global config
     
+    if (not os.path.isfile(config["main_dir"] + "/" + diagram_revision + "/stops_inbound.csv")) or (not os.path.isfile(config["main_dir"] + "/" + diagram_revision + "/stops_inbound.csv")):
+        messagebox.showwarning("GTFS schedule形式データを変換できません", "指定された改正日のフォルダにはGTFS schedule形式データの変換に必要なstop_idと停留場名の対応表が欠落しています")
+        return
+    
+    if (not os.path.isfile(config["main_dir"] + "/" + diagram_revision + "/trips.txt")) or (not os.path.isfile(config["main_dir"] + "/" + diagram_revision + "/stop_times.txt")):
+        messagebox.showwarning("変換元データが欠落しています", "指定された改正日のフォルダにはGTFS schedule形式のデータファイルが欠落しています")
+        return
+    
+    try:
+        clear_mes()
+        
+        convert_gtfs_to_timetable = importlib.import_module("modules.convert_gtfs_to_timetable")
+        convert_gtfs_to_timetable.convert_gtfs_to_timetable(mes, config["main_dir"], diagram_revision)
+    except:
+        error_mes(traceback.format_exc())
+
+
+def generate_operation_table ():
     if not os.path.isfile("modules/generate_operation_table.py"):
         messagebox.showinfo("処理モジュールがありません", "generate_operation_table.py が本ツールの modules フォルダに存在しないためこの機能は使用できません")
         return
     
-    select_diagram(generate_operation_table_exec, True)
+    select_diagram(generate_operation_table_exec, enable_save_operation_table_check=True)
 
 
 def generate_operation_table_exec (diagram_revision, diagram_id, save_operation_table, generate_train_number):
+    global config
+    
     try:
         clear_mes()
         
@@ -370,6 +409,7 @@ def convert_timetable_2 ():
 
 
 def convert_timetable_2_exec (diagram_revision, diagram_id):
+    global config
     
     try:
         clear_mes()
