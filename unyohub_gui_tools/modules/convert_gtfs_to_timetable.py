@@ -153,22 +153,26 @@ def convert_gtfs_to_timetable (mes, main_dir, diagram_revision):
                 outbound_timetables_t[trip_info[stop_time["trip_id"]]["diagram_id"]].append([stop_time["trip_id"], "普通", trip_info[stop_time["trip_id"]]["destination"]] + [""] * (len(outbound_timetable_t[0]) - 3))
                 outbound_timetables_t[trip_info[stop_time["trip_id"]]["diagram_id"]][-1][last_row_index_outbound + 1] = last_departure_time[:5]
                 
-                inbound_timetables_t[trip_info[stop_time["trip_id"]]["diagram_id"]][-1][-1] = "@outbound"
+                line_id = list(set(outbound_timetable_t[1][last_row_index_outbound + 1].split()) & set(outbound_timetable_t[1][row_index_outbound].split()))[0]
+                
+                inbound_timetables_t[trip_info[stop_time["trip_id"]]["diagram_id"]][-1][-1] = "@" + line_id + ".outbound"
                 
                 direction = "outbound"
             elif direction == "outbound" and (row_index_outbound is None or row_index_outbound < last_row_index_outbound):
                 inbound_timetables_t[trip_info[stop_time["trip_id"]]["diagram_id"]].append([stop_time["trip_id"], "普通", trip_info[stop_time["trip_id"]]["destination"]] + [""] * (len(inbound_timetable_t[0]) - 3))
                 inbound_timetables_t[trip_info[stop_time["trip_id"]]["diagram_id"]][-1][last_row_index_inbound + 1] = last_departure_time[:5]
                 
-                outbound_timetables_t[trip_info[stop_time["trip_id"]]["diagram_id"]][-1][-1] = "@inbound"
+                line_id = list(set(inbound_timetable_t[1][last_row_index_inbound + 1].split()) & set(inbound_timetable_t[1][row_index_inbound].split()))[0]
+                
+                outbound_timetables_t[trip_info[stop_time["trip_id"]]["diagram_id"]][-1][-1] = "@" + line_id + ".inbound"
                 
                 direction = "inbound"
         
-        if direction is None or direction == "inbound":
+        if (direction is None or direction == "inbound") and row_index_inbound is not None:
             inbound_timetables_t[trip_info[stop_time["trip_id"]]["diagram_id"]][-1][row_index_inbound] = stop_time["arrival_time"][:5]
             inbound_timetables_t[trip_info[stop_time["trip_id"]]["diagram_id"]][-1][row_index_inbound + 1] = stop_time["departure_time"][:5]
         
-        if direction is None or direction == "outbound":
+        if (direction is None or direction == "outbound") and row_index_outbound is not None:
             outbound_timetables_t[trip_info[stop_time["trip_id"]]["diagram_id"]][-1][row_index_outbound] = stop_time["arrival_time"][:5]
             outbound_timetables_t[trip_info[stop_time["trip_id"]]["diagram_id"]][-1][row_index_outbound + 1] = stop_time["departure_time"][:5]
         
