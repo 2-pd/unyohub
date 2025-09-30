@@ -57,7 +57,7 @@ def convert_gtfs_to_timetable (mes, main_dir, diagram_revision):
         inbound_timetable_t[0].append(stop_info[1] + "[発]")
         inbound_timetable_t[1].append(stop_info[2])
     
-    inbound_timetable_t[0][0] = " ".join(lines_inbound)
+    inbound_timetable_t[1][0] = " ".join(lines_inbound)
     inbound_timetable_t[0].append("")
     inbound_timetable_t[1].append("")
     
@@ -86,7 +86,7 @@ def convert_gtfs_to_timetable (mes, main_dir, diagram_revision):
         outbound_timetable_t[0].append(stop_info[1] + "[発]")
         outbound_timetable_t[1].append(stop_info[2])
     
-    outbound_timetable_t[0][0] = " ".join(lines_outbound)
+    outbound_timetable_t[1][0] = " ".join(lines_outbound)
     outbound_timetable_t[0].append("")
     outbound_timetable_t[1].append("")
     
