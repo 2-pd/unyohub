@@ -138,6 +138,27 @@
 (なし)
 
 
+## unyohub get-gtfs-realtime
+鉄道事業者の公開APIから運行情報データを取得し、車両運用情報を更新する  
+処理本体は**get_gtfs_realtime.py**
+
+### 引数
+**第1引数** : 路線系統識別名(省略時は全路線系統の運行情報データを取得)
+
+### オプション
+**-s** : 処理開始をランダムな秒数遅延し、コンソール出力も行わない
+
+
+## unyohub update-train-number-mappings
+便識別名と列車番号の対応表をデータベースに書き込む  
+処理本体は**update_train_number_mappings.py**
+
+### 引数
+**第1引数** : 路線系統識別名  
+**第2引数** : ダイヤ改正識別名  
+**第3引数** : ダイヤ識別名
+
+
 ## unyohub cache-transitions
 運用データから運用遷移データのキャッシュを生成する  
 処理本体は**cache_transition_data.py**

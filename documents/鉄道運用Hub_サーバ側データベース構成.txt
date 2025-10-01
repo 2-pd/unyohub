@@ -109,6 +109,25 @@ _/_/_/_/ データベース _/_/_/_/
   `final_arrival_time` TEXT NOT NULL 「HH:MM」形式の終着時刻
 
   PRIMARY KEY(`diagram_revision`, `diagram_id`, `operation_number`, `train_number`)
+  INDEX `unyohub_idx_t1`(`diagram_revision`, `diagram_id`, `train_number`)
+
+
+`unyohub_train_number_mappings` 列車番号と便識別名の対応表
+  `diagram_revision` TEXT NOT NULL ダイヤ改正識別名
+  `diagram_id` TEXT NOT NULL ダイヤ識別名
+  `train_number` TEXT NOT NULL 列車番号(アルファベットなどを含む場合があるため文字列型)
+  `trip_id` TEXT NOT NULL GTFSデータ上での便識別名
+
+  PRIMARY KEY(`diagram_revision`, `diagram_id`, `train_number`)
+  UNIQUE INDEX `unyohub_idx_tm1`(`diagram_revision`, `diagram_id`, `trip_id`)
+
+
+`unyohub_operation_logs` 運用情報ログ
+  `operation_date` TEXT NOT NULL 「YYYY-MM-DD」形式の日付
+  `trip_id` TEXT NOT NULL 公開APIから取得した便識別名
+  `vehicle_id` TEXT NOT NULL 公開APIから取得した車両識別名
+
+  PRIMARY KEY(`operation_date`, `trip_id`)
 
 
 `unyohub_data` ユーザー投稿データ
