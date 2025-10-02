@@ -108,7 +108,7 @@ class diagram:
             if not self.load_diagram_info(diagram_revision):
                 return diagram_revision, None
         
-        if date_string in self.diagram_info[diagram_revision]["exceptional_dates"]:
+        if "exceptional_dates" in self.diagram_info[diagram_revision] and date_string in self.diagram_info[diagram_revision]["exceptional_dates"]:
             return diagram_revision, self.diagram_info[diagram_revision]["exceptional_dates"][date_string]
         
         if date_string[5:] in self.get_holiday_list(int(date_string[:4])):
