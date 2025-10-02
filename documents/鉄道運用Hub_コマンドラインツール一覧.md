@@ -149,9 +149,9 @@
 **-s** : 処理開始をランダムな秒数遅延し、コンソール出力も行わない
 
 
-## unyohub update-train-number-mappings
+## unyohub update-trip-ids
 便識別名と列車番号の対応表をデータベースに書き込む  
-処理本体は**update_train_number_mappings.py**
+処理本体は**update_trip_ids.py**
 
 ### 引数
 **第1引数** : 路線系統識別名  

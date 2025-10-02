@@ -4,7 +4,7 @@
 import csv
 import sqlite3
 
-def update_train_number_mappings (mes, main_dir, diagram_revision, diagram_id):
+def update_trip_ids (mes, main_dir, diagram_revision, diagram_id):
     mes("便識別名と列車番号の対応表をデータベースに書き込み", is_heading=True)
     
     
