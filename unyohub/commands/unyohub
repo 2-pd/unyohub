@@ -71,105 +71,128 @@ def print_usage ():
     print("  モデレーションログ格納データベースファイルを生成する\n")
 
 
-print(UNYOHUB_COMMANDS_APP_NAME + " \x1b[90mv" + UNYOHUB_COMMANDS_VERSION + "\x1b[0m")
+args = []
+options = set()
+arg_count = 0
+for arg_index in range(1, len(sys.argv)):
+    if sys.argv[arg_index].startswith("-"):
+        options.add(sys.argv[arg_index])
+    else:
+        args.append(sys.argv[arg_index])
+        arg_count += 1
+
+if "-s" not in options:
+    print(UNYOHUB_COMMANDS_APP_NAME + " \x1b[90mv" + UNYOHUB_COMMANDS_VERSION + "\x1b[0m")
 
 os.chdir(os.path.dirname(os.path.abspath(__file__)))
 data_dir = (os.path.abspath(UNYOHUB_DATA_DIR))
 
-args = sys.argv
-arg_count = len(args)
-
-if arg_count >= 2:
-    match args[1]:
+if arg_count >= 1:
+    match args[0]:
         case "setup-libs":
-            if arg_count == 3:
-                subprocess.run(["php", "modules/libs_setup.php", args[2]])
-            elif arg_count == 2:
+            if arg_count == 2:
+                subprocess.run(["php", "modules/libs_setup.php", args[1]])
+            elif arg_count == 1:
                 subprocess.run(["php", "modules/libs_setup.php"])
             else:
                 print("\x1b[31m引数の数が異常です\x1b[0m")
         case "embed-icons":
-            if arg_count == 3:
+            if arg_count == 2:
                 embed_train_icon = importlib.import_module("modules.embed_train_icon")
-                embed_train_icon.embed_train_icon(mes, data_dir + "/" + os.path.basename(args[2]))
+                embed_train_icon.embed_train_icon(mes, data_dir + "/" + os.path.basename(args[1]))
             else:
                 print("\x1b[31m引数の数が異常です\x1b[0m")
         case "conv-formations":
-            if arg_count == 3:
+            if arg_count == 2:
                 convert_formation_table = importlib.import_module("modules.convert_formation_table")
-                convert_formation_table.convert_formation_table(mes, data_dir + "/" + os.path.basename(args[2]))
+                convert_formation_table.convert_formation_table(mes, data_dir + "/" + os.path.basename(args[1]))
                 
                 print("\n生成された編成表データに問題がなければ \x1b[93munyohub clean-formation-db\x1b[0m \x1b[90m<路線系統識別名>\x1b[0m を実行することで不要なデータを削除できます")
             else:
                 print("\x1b[31m引数の数が異常です\x1b[0m")
         case "copy-formation-info":
             copy_formation_info = importlib.import_module("modules.copy_formation_info")
-            if arg_count == 6:
-                copy_formation_info.copy_formation_info(mes, data_dir + "/" + os.path.basename(args[2]), args[3], data_dir + "/" + os.path.basename(args[4]), args[5])
-            elif arg_count == 5:
-                copy_formation_info.copy_formation_info(mes, data_dir + "/" + os.path.basename(args[2]), args[3], data_dir + "/" + os.path.basename(args[4]), None)
+            if arg_count == 5:
+                copy_formation_info.copy_formation_info(mes, data_dir + "/" + os.path.basename(args[1]), args[2], data_dir + "/" + os.path.basename(args[3]), args[4])
+            elif arg_count == 4:
+                copy_formation_info.copy_formation_info(mes, data_dir + "/" + os.path.basename(args[1]), args[2], data_dir + "/" + os.path.basename(args[3]), None)
             else:
                 print("\x1b[31m引数の数が異常です\x1b[0m")
         case "clean-formation-db":
-            if arg_count == 3:
+            if arg_count == 2:
                 clean_formation_db_table = importlib.import_module("modules.clean_formation_db_table")
-                clean_formation_db_table.clean_formation_db_table(mes, data_dir + "/" + os.path.basename(args[2]))
+                clean_formation_db_table.clean_formation_db_table(mes, data_dir + "/" + os.path.basename(args[1]))
             else:
                 print("\x1b[31m引数の数が異常です\x1b[0m")
         case "update-operations":
-            if arg_count == 5:
+            if arg_count == 4:
                 write_operations_to_db = importlib.import_module("modules.write_operations_to_db")
-                write_operations_to_db.write_operations_to_db(mes, data_dir + "/" + os.path.basename(args[2]), os.path.basename(args[3]), os.path.basename(args[4]))
+                write_operations_to_db.write_operations_to_db(mes, data_dir + "/" + os.path.basename(args[1]), os.path.basename(args[2]), os.path.basename(args[3]))
             else:
                 print("\x1b[31m引数の数が異常です\x1b[0m")
         case "role-info":
-            if arg_count == 3:
-                subprocess.run(["php", "modules/role_info.php", args[2]])
-            elif arg_count == 2:
+            if arg_count == 2:
+                subprocess.run(["php", "modules/role_info.php", args[1]])
+            elif arg_count == 1:
                 subprocess.run(["php", "modules/role_info.php"])
             else:
                 print("\x1b[31m引数の数が異常です\x1b[0m")
         case "create-role":
-            if arg_count == 4:
-                subprocess.run(["php", "modules/create_role.php", args[2], args[3]])
+            if arg_count == 3:
+                subprocess.run(["php", "modules/create_role.php", args[1], args[2]])
             else:
                 print("\x1b[31m引数の数が異常です\x1b[0m")
         case "delete-role":
-            if arg_count == 3:
-                subprocess.run(["php", "modules/delete_role.php", args[2]])
+            if arg_count == 2:
+                subprocess.run(["php", "modules/delete_role.php", args[1]])
             else:
                 print("\x1b[31m引数の数が異常です\x1b[0m")
         case "add-permission":
-            if arg_count == 5 or arg_count == 4:
-                subprocess.run(["php", "modules/add_permission.php", *args[2:]])
+            if arg_count == 4 or arg_count == 3:
+                subprocess.run(["php", "modules/add_permission.php", *args[1:]])
             else:
                 print("\x1b[31m引数の数が異常です\x1b[0m")
         case "remove-permission":
-            if arg_count == 5 or arg_count == 4:
-                subprocess.run(["php", "modules/remove_permission.php", *args[2:]])
+            if arg_count == 4 or arg_count == 3:
+                subprocess.run(["php", "modules/remove_permission.php", *args[1:]])
             else:
                 print("\x1b[31m引数の数が異常です\x1b[0m")
         case "assign-role":
-            if arg_count == 4:
-                subprocess.run(["php", "modules/assign_role.php", args[2], args[3]])
+            if arg_count == 3:
+                subprocess.run(["php", "modules/assign_role.php", args[1], args[2]])
             else:
                 print("\x1b[31m引数の数が異常です\x1b[0m")
         case "remove-role":
-            if arg_count == 4:
-                subprocess.run(["php", "modules/remove_role.php", args[2], args[3]])
+            if arg_count == 3:
+                subprocess.run(["php", "modules/remove_role.php", args[1], args[2]])
             else:
                 print("\x1b[31m引数の数が異常です\x1b[0m")
         case "init-db":
-            if arg_count == 3:
+            if arg_count == 2:
                 initialize_db = importlib.import_module("modules.initialize_db")
-                initialize_db.initialize_db(mes, data_dir + "/" + os.path.basename(args[2]))
+                initialize_db.initialize_db(mes, data_dir + "/" + os.path.basename(args[1]))
             else:
                 print("\x1b[31m引数の数が異常です\x1b[0m")
         case "init-moderation-db":
             initialize_moderation_db = importlib.import_module("modules.initialize_moderation_db")
             initialize_moderation_db.initialize_moderation_db(mes, os.path.dirname(data_dir) + "/config/moderation.db")
+        case "get-gtfs-realtime":
+            if arg_count <= 2:
+                get_gtfs_realtime = importlib.import_module("modules.get_gtfs_realtime")
+                if arg_count == 1:
+                    get_gtfs_realtime.get_gtfs_realtime(mes, options=options)
+                else:
+                    get_gtfs_realtime.get_gtfs_realtime(mes, args[1], options=options)
+            else:
+                print("\x1b[31m引数の数が異常です\x1b[0m")
+        case "update-train-number-mappings":
+            if arg_count == 4:
+                update_train_number_mappings = importlib.import_module("modules.update_train_number_mappings")
+                update_train_number_mappings.update_train_number_mappings(mes, data_dir + "/" + os.path.basename(args[1]), os.path.basename(args[2]), os.path.basename(args[3]))
+            else:
+                print("\x1b[31m引数の数が異常です\x1b[0m")
         case _:
-            print("\x1b[31mコマンド \x1b[1m" + args[1] + "\x1b[22m は存在しません\x1b[0m")
+            print("\x1b[31mコマンド \x1b[1m" + args[0] + "\x1b[22m は存在しません\x1b[0m")
             print_usage()
 else:
     print_usage()
