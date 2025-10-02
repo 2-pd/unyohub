@@ -112,7 +112,7 @@ _/_/_/_/ データベース _/_/_/_/
   INDEX `unyohub_idx_t1`(`diagram_revision`, `diagram_id`, `train_number`)
 
 
-`unyohub_train_number_mappings` 列車番号と便識別名の対応表
+`unyohub_trip_ids` 列車番号と便識別名の対応表
   `diagram_revision` TEXT NOT NULL ダイヤ改正識別名
   `diagram_id` TEXT NOT NULL ダイヤ識別名
   `train_number` TEXT NOT NULL 列車番号(アルファベットなどを含む場合があるため文字列型)
