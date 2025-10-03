@@ -70,6 +70,9 @@ def print_usage ():
     print("\x1b[93minit-moderation-db\x1b[0m")
     print("  モデレーションログ格納データベースファイルを生成する\n")
     
+    print("\x1b[93mget-gtfs-realtime\x1b[0m \x1b[90m<路線系統識別名>\x1b[0m")
+    print("  鉄道事業者の公開APIから運行情報データを取得し、車両運用情報を更新する\n")
+    
     print("\x1b[93mupdate-trip-ids\x1b[0m \x1b[90m<路線系統識別名> <ダイヤ改正識別名> <ダイヤ識別名>\x1b[0m")
     print("  便識別名と列車番号の対応表をデータベースに書き込む\n")
 

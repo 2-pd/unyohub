@@ -134,7 +134,7 @@ _/_/_/_/ データベース _/_/_/_/
   `operation_date` TEXT NOT NULL 「YYYY-MM-DD」形式の日付
   `operation_number` TEXT NOT NULL 運用番号(アルファベットなどを含む場合があるため文字列型)
   `assign_order` INTEGER NOT NULL 当該運用に何番目に充当された編成の情報か(1から始まり、差し替えのたびに1ずつ増える)
-  `user_id` TEXT NOT NULL 投稿者ID(未登録ユーザーの場合、クライアント端末が生成する12桁の乱数値の頭に「*」を付加した文字列を記録する)
+  `user_id` TEXT NOT NULL 投稿者ID(未登録ユーザーの場合、クライアント端末が生成するランダムな英数字12文字の頭に「*」を付加した文字列を記録する。公開APIから自動取得された情報の場合は「#」となる)
   `train_number` TEXT 目撃時の列車番号または「○」(出庫時)、「△」(入庫時)、NULL(引用情報の場合)
   `formations` TEXT NOT NULL 充当組成(複数編成併結による運用の場合も「+」で区切って1レコードに格納)
   `is_quotation` INTEGER NOT NULL 引用情報か否か
