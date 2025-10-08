@@ -3,7 +3,7 @@
 import copy
 import csv
 
-def convert_gtfs_to_timetable (mes, main_dir, diagram_revision):
+def convert_gtfs_to_timetable (mes, main_dir, diagram_revision, generate_train_number):
     mes("GTFSデータから時刻表を生成", is_heading=True)
     
     
@@ -43,6 +43,11 @@ def convert_gtfs_to_timetable (mes, main_dir, diagram_revision):
     for stop_info in stops_inbound:
         stop_info_inbound[stop_info[0]] = { "stop_name" : stop_info[1], "row_index" : len(inbound_timetable_t[0]) }
         
+        if len(stop_info) >= 4:
+            stop_info_inbound[stop_info[0]]["stop_symbol"] = stop_info[3].strip()
+        else:
+            stop_info_inbound[stop_info[0]]["stop_symbol"] = ""
+        
         line_ids = []
         for line_id in stop_info[2].split():
             if line_id not in lines_inbound:
@@ -71,6 +76,11 @@ def convert_gtfs_to_timetable (mes, main_dir, diagram_revision):
     last_departure_time_indexes = {}
     for stop_info in stops_outbound:
         stop_info_outbound[stop_info[0]] = { "stop_name" : stop_info[1], "row_index" : len(outbound_timetable_t[0]) }
+        
+        if len(stop_info) >= 4:
+            stop_info_outbound[stop_info[0]]["stop_symbol"] = stop_info[3].strip()
+        else:
+            stop_info_outbound[stop_info[0]]["stop_symbol"] = ""
         
         line_ids = []
         for line_id in stop_info[2].split():
@@ -110,6 +120,12 @@ def convert_gtfs_to_timetable (mes, main_dir, diagram_revision):
         inbound_timetables_t[trip["service_id"]] = copy.deepcopy(inbound_timetable_t)
         outbound_timetables_t[trip["service_id"]] = copy.deepcopy(outbound_timetable_t)
     
+    if generate_train_number:
+        train_number_mappings = {}
+        
+        for diagram_id in diagram_ids:
+            train_number_mappings[diagram_id] = {}
+    
     
     mes("時刻表を生成しています...")
     
@@ -117,15 +133,39 @@ def convert_gtfs_to_timetable (mes, main_dir, diagram_revision):
     for stop_time in stop_times:
         if stop_time["stop_id"] in stop_info_inbound:
             row_index_inbound = stop_info_inbound[stop_time["stop_id"]]["row_index"]
+            stop_symbol_inbound = stop_info_inbound[stop_time["stop_id"]]["stop_symbol"]
         else:
             row_index_inbound = None
+            stop_symbol_inbound = None
         
         if stop_time["stop_id"] in stop_info_outbound:
             row_index_outbound = stop_info_outbound[stop_time["stop_id"]]["row_index"]
+            stop_symbol_outbound = stop_info_outbound[stop_time["stop_id"]]["stop_symbol"]
         else:
             row_index_outbound = None
+            stop_symbol_outbound = None
         
         if last_trip_id != stop_time["trip_id"]:
+            if generate_train_number and last_trip_id is not None:
+                last_train_number = starting_stop_symbol + first_departure_time[:2] + first_departure_time[3:5]
+                
+                if direction == "inbound":
+                    last_train_number += last_stop_symbol_inbound
+                else:
+                    last_train_number += last_stop_symbol_outbound
+                
+                if last_train_number in train_number_mappings[last_diagram_id]:
+                    train_number_mappings[last_diagram_id][last_train_number].append(last_trip_id)
+                    last_train_number += "-" + str(len(train_number_mappings[last_diagram_id][last_train_number]))
+                else:
+                    train_number_mappings[last_diagram_id][last_train_number] = [last_trip_id]
+                
+                if inbound_timetables_t[last_diagram_id][-1][0] == last_trip_id:
+                    inbound_timetables_t[last_diagram_id][-1][0] = last_train_number
+                
+                if outbound_timetables_t[last_diagram_id][-1][0] == last_trip_id:
+                    outbound_timetables_t[last_diagram_id][-1][0] = last_train_number
+            
             if row_index_inbound is not None:
                 inbound_timetables_t[trip_info[stop_time["trip_id"]]["diagram_id"]].append([stop_time["trip_id"], "普通", trip_info[stop_time["trip_id"]]["destination"]] + [""] * (len(inbound_timetable_t[0]) - 3))
                 
@@ -135,17 +175,24 @@ def convert_gtfs_to_timetable (mes, main_dir, diagram_revision):
             last_stop_is_starting_stop = True
             last_trip_id = stop_time["trip_id"]
             direction = None
+            first_departure_time = stop_time["departure_time"]
         elif last_stop_is_starting_stop:
             if last_row_index_inbound is not None and row_index_inbound is not None and row_index_inbound > last_row_index_inbound:
                 direction = "inbound"
                 
                 if last_row_index_outbound is not None and (row_index_outbound is None or row_index_outbound < last_row_index_outbound):
                     del outbound_timetables_t[trip_info[stop_time["trip_id"]]["diagram_id"]][-1]
+                
+                if generate_train_number:
+                    starting_stop_symbol = last_stop_symbol_inbound
             else:
                 direction = "outbound"
                 
                 if last_row_index_inbound is not None and (row_index_inbound is None or row_index_inbound < last_row_index_inbound):
                     del inbound_timetables_t[trip_info[stop_time["trip_id"]]["diagram_id"]][-1]
+                
+                if generate_train_number:
+                    starting_stop_symbol = last_stop_symbol_outbound
             
             last_stop_is_starting_stop = False
         else:
@@ -176,9 +223,32 @@ def convert_gtfs_to_timetable (mes, main_dir, diagram_revision):
             outbound_timetables_t[trip_info[stop_time["trip_id"]]["diagram_id"]][-1][row_index_outbound] = stop_time["arrival_time"][:5]
             outbound_timetables_t[trip_info[stop_time["trip_id"]]["diagram_id"]][-1][row_index_outbound + 1] = stop_time["departure_time"][:5]
         
+        last_diagram_id = trip_info[stop_time["trip_id"]]["diagram_id"]
         last_row_index_inbound = row_index_inbound
         last_row_index_outbound = row_index_outbound
+        last_stop_symbol_inbound = stop_symbol_inbound
+        last_stop_symbol_outbound = stop_symbol_outbound
         last_departure_time = stop_time["departure_time"]
+    
+    if generate_train_number and last_trip_id is not None:
+        last_train_number = starting_stop_symbol + first_departure_time[:2] + first_departure_time[3:5]
+        
+        if direction == "inbound":
+            last_train_number += last_stop_symbol_inbound
+        else:
+            last_train_number += last_stop_symbol_outbound
+        
+        if last_train_number in train_number_mappings[last_diagram_id]:
+            train_number_mappings[last_diagram_id][last_train_number].append(last_trip_id)
+            last_train_number += "-" + str(len(train_number_mappings[last_diagram_id][last_train_number]))
+        else:
+            train_number_mappings[last_diagram_id][last_train_number] = [last_trip_id]
+        
+        if inbound_timetables_t[last_diagram_id][-1][0] == last_trip_id:
+            inbound_timetables_t[last_diagram_id][-1][0] = last_train_number
+        
+        if outbound_timetables_t[last_diagram_id][-1][0] == last_trip_id:
+            outbound_timetables_t[last_diagram_id][-1][0] = last_train_number
     
     
     mes("不要なデータを除外しています...")
@@ -211,6 +281,20 @@ def convert_gtfs_to_timetable (mes, main_dir, diagram_revision):
         with open(dir_path + "timetable_" + diagram_id + ".outbound.csv", "w", encoding="utf-8-sig") as csv_f:
             csv_writer = csv.writer(csv_f, lineterminator="\n")
             csv_writer.writerows(outbound_timetables[diagram_id])
+        
+        if generate_train_number:
+            mapping_table = []
+            
+            for train_number in train_number_mappings[diagram_id].keys():
+                for cnt in range(len(train_number_mappings[diagram_id][train_number])):
+                    mapping_table.append([ train_number_mappings[diagram_id][train_number][cnt], train_number ])
+                    
+                    if cnt >= 1:
+                        mapping_table[-1][1] += "-" + str(cnt + 1)
+            
+            with open(dir_path + "train_number_mappings_" + diagram_id + ".csv", "w", encoding="utf-8-sig") as csv_f:
+                csv_writer = csv.writer(csv_f, lineterminator="\n")
+                csv_writer.writerows(mapping_table)
     
     
     mes("処理が完了しました")
