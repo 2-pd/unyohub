@@ -184,7 +184,7 @@ def console_copy ():
     main_win.clipboard_append(console_area.get("0.0", tk.END).strip())
 
 
-def select_diagram (callback_func, enable_diagram_id_entry=True, enable_save_operation_table_check=False):
+def select_diagram (callback_func, enable_diagram_id_entry=True, enable_save_operation_table_check=False, enable_generate_number_check=False):
     global config
     global main_win
     global select_diagram_win
@@ -250,13 +250,15 @@ def select_diagram (callback_func, enable_diagram_id_entry=True, enable_save_ope
         save_operation_table_value.set(True)
         save_operation_table_check = tk.Checkbutton(select_diagram_win, variable=save_operation_table_value, text="運用表を生成する", font=list_font, bg="#333333", fg="#999999", activebackground="#666666", activeforeground="#ffffff")
         save_operation_table_check.place(x=240, y=80, width=200)
-        
+    else:
+        save_operation_table_value = None
+    
+    if enable_generate_number_check:
         generate_number_value = tk.BooleanVar()
         generate_number_value.set(False)
         generate_number_check = tk.Checkbutton(select_diagram_win, variable=generate_number_value, text="仮の列車番号を生成する", font=list_font, bg="#333333", fg="#999999", activebackground="#666666", activeforeground="#ffffff")
         generate_number_check.place(x=240, y=110, width=200)
     else:
-        save_operation_table_value = None
         generate_number_value = None
     
     button_ok = tk.Button(select_diagram_win, text="OK", font=button_font, command=select_diagram_ok, bg="#666666", fg="#ffffff", relief=tk.FLAT, highlightbackground="#666666")
@@ -285,6 +287,8 @@ def select_diagram_ok ():
     
     if save_operation_table_value is not None:
         args.append(save_operation_table_value.get())
+    
+    if generate_number_value is not None:
         args.append(generate_number_value.get())
     
     select_diagram_callback(*args)
@@ -311,10 +315,10 @@ def convert_gtfs_to_timetable ():
         messagebox.showinfo("処理モジュールがありません", "convert_gtfs_to_timetable.py が本ツールの modules フォルダに存在しないためこの機能は使用できません")
         return
     
-    select_diagram(convert_gtfs_to_timetable_exec, False)
+    select_diagram(convert_gtfs_to_timetable_exec, False, enable_generate_number_check=True)
 
 
-def convert_gtfs_to_timetable_exec (diagram_revision):
+def convert_gtfs_to_timetable_exec (diagram_revision, generate_train_number):
     global config
     
     if (not os.path.isfile(config["main_dir"] + "/" + diagram_revision + "/stops_inbound.csv")) or (not os.path.isfile(config["main_dir"] + "/" + diagram_revision + "/stops_inbound.csv")):
@@ -329,7 +333,7 @@ def convert_gtfs_to_timetable_exec (diagram_revision):
         clear_mes()
         
         convert_gtfs_to_timetable = importlib.import_module("modules.convert_gtfs_to_timetable")
-        convert_gtfs_to_timetable.convert_gtfs_to_timetable(mes, config["main_dir"], diagram_revision)
+        convert_gtfs_to_timetable.convert_gtfs_to_timetable(mes, config["main_dir"], diagram_revision, generate_train_number)
     except:
         error_mes(traceback.format_exc())
 
@@ -339,7 +343,7 @@ def generate_operation_table ():
         messagebox.showinfo("処理モジュールがありません", "generate_operation_table.py が本ツールの modules フォルダに存在しないためこの機能は使用できません")
         return
     
-    select_diagram(generate_operation_table_exec, enable_save_operation_table_check=True)
+    select_diagram(generate_operation_table_exec, enable_save_operation_table_check=True, enable_generate_number_check=True)
 
 
 def generate_operation_table_exec (diagram_revision, diagram_id, save_operation_table, generate_train_number):
