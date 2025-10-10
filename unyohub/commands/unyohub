@@ -71,10 +71,13 @@ def print_usage ():
     print("  モデレーションログ格納データベースファイルを生成する\n")
     
     print("\x1b[93mget-gtfs-realtime\x1b[0m \x1b[90m<路線系統識別名>\x1b[0m")
-    print("  鉄道事業者の公開APIから運行情報データを取得し、車両運用情報を更新する\n")
+    print("  鉄道事業者の公開APIから在線情報を取得し、車両運用情報を更新する\n")
     
     print("\x1b[93mupdate-trip-ids\x1b[0m \x1b[90m<路線系統識別名> <ダイヤ改正識別名> <ダイヤ識別名>\x1b[0m")
     print("  便識別名と列車番号の対応表をデータベースに書き込む\n")
+    
+    print("\x1b[93mgenerate-operation-table\x1b[0m \x1b[90m<路線系統識別名> <YYYY-MM-DD形式の日付>\x1b[0m")
+    print("  1日分の在線情報をもとに運用表を生成する\n")
 
 
 args = []
@@ -195,6 +198,12 @@ if arg_count >= 1:
             if arg_count == 4:
                 update_trip_ids = importlib.import_module("modules.update_trip_ids")
                 update_trip_ids.update_trip_ids(mes, data_dir + "/" + os.path.basename(args[1]), os.path.basename(args[2]), os.path.basename(args[3]))
+            else:
+                print("\x1b[31m引数の数が異常です\x1b[0m")
+        case "generate-operation-table":
+            if arg_count == 3:
+                generate_operation_table = importlib.import_module("modules.generate_operation_table")
+                generate_operation_table.generate_operation_table(mes, data_dir + "/" + os.path.basename(args[1]), args[2])
             else:
                 print("\x1b[31m引数の数が異常です\x1b[0m")
         case _:
