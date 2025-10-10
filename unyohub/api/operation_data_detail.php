@@ -43,7 +43,7 @@ for ($cnt = 0; $cnt < count($operation_numbers); $cnt++) {
         $is_beginner = TRUE;
         
         if ($operation["user_id"] === "#") {
-            $data[$cnt_2]["user_id"] = "#bot";
+            $data[$cnt_2]["user_id"] = "#";
             $data[$cnt_2]["user_name"] = "公開在線情報";
             $data[$cnt_2]["is_management_member"] = TRUE;
             $is_beginner = FALSE;

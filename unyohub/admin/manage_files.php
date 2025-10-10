@@ -82,7 +82,7 @@ if (empty($_GET["file_name"])) {
             print "<h2>編成表元ファイルの管理</h2>";
             break;
         case "formation_name_mappings.json":
-            print "<h2>編成識別名対応表ファイルの管理</h2>";
+            print "<h2>車両識別名対応表ファイルの管理</h2>";
             break;
         default:
             print "【!】指定されたパスは編集可能なファイル名ではありません";
