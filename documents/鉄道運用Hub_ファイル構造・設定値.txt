@@ -228,7 +228,7 @@ log_ip_address 投稿者のIPアドレスを記録するか(BOOL値)
 ███ formation_name_mappings.json ███
 
 {
-    "公開API上の編成識別名" : 編成表の編成名...
+    "公開API上の車両識別名" : 編成表の編成名...
 }
 
 
