@@ -19,33 +19,53 @@ def generate_operation_table (mes, main_dir, date_string):
         return False
     
     
-    mes("timetable_" + diagram_id + ".jsonを読み込んでいます...")
+    mes("railroad_info.json を読み込んでいます...")
+    with open(main_dir + "/railroad_info.json", "r", encoding="utf-8-sig") as json_f:
+        railroad_info = json.load(json_f)
+    
+    mes("timetable_" + diagram_id + ".json を読み込んでいます...")
     with open(main_dir + "/" + diagram_revision + "/timetable_" + diagram_id + ".json", "r", encoding="utf-8-sig") as json_f:
         timetable = json.load(json_f)
     
     trains = {}
     
-    for line_id in timetable.keys():
+    for line_id in railroad_info["lines_order"]:
+        station_count = len(railroad_info["lines"][line_id]["stations"])
+        
         for direction in ["inbound_trains", "outbound_trains"]:
             for train_number in timetable[line_id][direction].keys():
                 if train_number not in trains:
-                    trains[train_number] = { "first_departure_time" : None, "final_arrival_time" : None }
+                    trains[train_number] = { "first_departure_time" : None, "final_arrival_time" : None, "starting_station" : None, "terminal_station" : None }
                 
-                for departure_time in timetable[line_id][direction][train_number][0]["departure_times"]:
-                    if departure_time is not None:
-                        first_departure_time = departure_time
+                for cnt in range(station_count):
+                    if timetable[line_id][direction][train_number][0]["departure_times"][cnt] is not None:
+                        first_departure_time = timetable[line_id][direction][train_number][0]["departure_times"][cnt]
+                        
+                        if direction == "inbound_trains":
+                            starting_station = railroad_info["lines"][line_id]["stations"][station_count - 1 - cnt]["station_name"]
+                        else:
+                            starting_station = railroad_info["lines"][line_id]["stations"][cnt]["station_name"]
+                        
                         break
                 
-                for departure_time in reversed(timetable[line_id][direction][train_number][-1]["departure_times"]):
-                    if departure_time is not None:
-                        final_arrival_time = departure_time
+                for cnt in range(station_count - 1, -1, -1):
+                    if timetable[line_id][direction][train_number][0]["departure_times"][cnt] is not None:
+                        final_arrival_time = timetable[line_id][direction][train_number][0]["departure_times"][cnt]
+                        
+                        if direction == "inbound_trains":
+                            terminal_station = railroad_info["lines"][line_id]["stations"][station_count - 1 - cnt]["station_name"]
+                        else:
+                            terminal_station = railroad_info["lines"][line_id]["stations"][cnt]["station_name"]
+                        
                         break
                 
                 if trains[train_number]["first_departure_time"] is None or first_departure_time < trains[train_number]["first_departure_time"]:
                     trains[train_number]["first_departure_time"] = first_departure_time
+                    trains[train_number]["starting_station"] = starting_station
                 
                 if trains[train_number]["final_arrival_time"] is None or final_arrival_time > trains[train_number]["final_arrival_time"]:
                     trains[train_number]["final_arrival_time"] = final_arrival_time
+                    trains[train_number]["terminal_station"] = terminal_station
     
     
     mes("データベースに接続しています...")
@@ -90,6 +110,8 @@ def generate_operation_table (mes, main_dir, date_string):
             operation.append(operation_logs[vehicle_id][time_key])
         
         operation[0] = operation[6]
+        operation[2] = trains[operation[6]]["starting_station"]
+        operation[4] = trains[operation[-1]]["terminal_station"]
         
         operation_table.append(operation)
     
