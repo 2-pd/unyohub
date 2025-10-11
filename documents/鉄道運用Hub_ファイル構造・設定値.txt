@@ -64,6 +64,13 @@ log_ip_address 投稿者のIPアドレスを記録するか(BOOL値)
 }
 
 
+███ gtfs_realtime_endpoints.json ███
+
+{
+    "路線系統識別名" : GTFSに準じたTripUpdateデータの配信URL...
+}
+
+
 ███ announcements.json ███
 
 ※このファイルの更新日時は最も新しいお知らせが更新されたタイムスタンプと同一の値をセットする
@@ -215,6 +222,13 @@ log_ip_address 投稿者のIPアドレスを記録するか(BOOL値)
             ]
         }...
     }
+}
+
+
+███ formation_name_mappings.json ███
+
+{
+    "公開API上の車両識別名" : 編成表の編成名...
 }
 
 

@@ -53,6 +53,14 @@ def initialize_db (mes, main_dir):
     
     mes("テーブル「unyohub_trains」を作成しています...")
     cur.execute("CREATE TABLE IF NOT EXISTS `unyohub_trains`(`diagram_revision` TEXT NOT NULL, `diagram_id` TEXT NOT NULL, `operation_number` TEXT NOT NULL, `train_number` TEXT NOT NULL, `first_departure_time` TEXT NOT NULL, `final_arrival_time` TEXT NOT NULL, PRIMARY KEY(`diagram_revision`, `diagram_id`, `operation_number`, `train_number`))")
+    cur.execute("CREATE INDEX IF NOT EXISTS `unyohub_idx_t1` ON `unyohub_trains`(`diagram_revision`, `diagram_id`, `train_number`)")
+    
+    mes("テーブル「unyohub_trip_ids」を作成しています...")
+    cur.execute("CREATE TABLE IF NOT EXISTS `unyohub_trip_ids`(`diagram_revision` TEXT NOT NULL, `diagram_id` TEXT NOT NULL, `train_number` TEXT NOT NULL, `trip_id` TEXT NOT NULL, PRIMARY KEY(`diagram_revision`, `diagram_id`, `train_number`))")
+    cur.execute("CREATE UNIQUE INDEX IF NOT EXISTS `unyohub_idx_ti1` ON `unyohub_trip_ids`(`diagram_revision`, `diagram_id`, `trip_id`)")
+    
+    mes("テーブル「unyohub_operation_logs」を作成しています...")
+    cur.execute("CREATE TABLE IF NOT EXISTS `unyohub_operation_logs`(`operation_date` TEXT NOT NULL, `trip_id` TEXT NOT NULL, `vehicle_id` TEXT NOT NULL, PRIMARY KEY(`operation_date`, `trip_id`))")
     
     mes("テーブル「unyohub_data」を作成しています...")
     cur.execute("CREATE TABLE IF NOT EXISTS `unyohub_data`(`operation_date` TEXT NOT NULL, `operation_number` TEXT NOT NULL, `assign_order` INTEGER NOT NULL, `user_id` TEXT NOT NULL, `train_number` TEXT, `formations` TEXT NOT NULL, `is_quotation` INTEGER NOT NULL, `posted_datetime` TEXT NOT NULL, `comment` TEXT, `ip_address` TEXT, PRIMARY KEY(`operation_date`, `operation_number`, `assign_order`, `user_id`))")

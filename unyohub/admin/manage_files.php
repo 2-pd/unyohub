@@ -56,16 +56,21 @@ if (empty($_GET["file_name"])) {
     print "<h5>railroad_info.json</h5><div class='informational_text'>更新日時 ".date("Y-m-d H:i:s", filemtime($railroad_info_path))."</div>";
     print "<a href='manage_files.php?railroad_id=".$railroad_id."&file_name=railroad_info.json' class='execute_button'>アップロード・復元</a>";
     
-    print "<h3>編成表元ファイル</h3>";
-    $formations_path = "../data/".$railroad_id."/formations.csv";
-    print "<h5>formations.csv</h5><div class='informational_text'>".(file_exists($formations_path) ? "更新日時 ".date("Y-m-d H:i:s", filemtime($formations_path)) : "ファイルなし")."</div>";
-    print "<a href='manage_files.php?railroad_id=".$railroad_id."&file_name=formations.csv' class='execute_button'>アップロード・復元</a>";
-    
     print "<h3>車両アイコンファイル</h3>";
     $icon_list_path = "../data/".$railroad_id."/icons/icon_list.json";
     $icon_list = @json_decode(@file_get_contents($icon_list_path), TRUE);
     print "<div class='informational_text'>".(!empty($icon_list) ? "登録済みアイコン ".count($icon_list)."個<br>更新日時 ".date("Y-m-d H:i:s", filemtime($icon_list_path)) : "登録済みアイコンなし")."</div>";
     print "<a href='manage_train_icons.php?railroad_id=".$railroad_id."' class='execute_button'>追加・削除</a>";
+    
+    print "<h3>編成表元ファイル</h3>";
+    $formations_path = "../data/".$railroad_id."/formations.csv";
+    print "<h5>formations.csv</h5><div class='informational_text'>".(file_exists($formations_path) ? "更新日時 ".date("Y-m-d H:i:s", filemtime($formations_path)) : "ファイルなし")."</div>";
+    print "<a href='manage_files.php?railroad_id=".$railroad_id."&file_name=formations.csv' class='execute_button'>アップロード・復元</a>";
+    
+    print "<h3>車両識別名対応表ファイル</h3>";
+    $formation_name_mappings_path = "../data/".$railroad_id."/formation_name_mappings.json";
+    print "<h5>formation_name_mappings.json</h5><div class='informational_text'>".(file_exists($formation_name_mappings_path) ? "更新日時 ".date("Y-m-d H:i:s", filemtime($formation_name_mappings_path)) : "ファイルなし")."</div>";
+    print "<a href='manage_files.php?railroad_id=".$railroad_id."&file_name=formation_name_mappings.json' class='execute_button'>アップロード・復元</a>";
 } else {
     print " <a href='manage_files.php?railroad_id=".$railroad_id."'>データファイルの管理</a> &gt;</nav>";
     
@@ -75,6 +80,9 @@ if (empty($_GET["file_name"])) {
             break;
         case "formations.csv":
             print "<h2>編成表元ファイルの管理</h2>";
+            break;
+        case "formation_name_mappings.json":
+            print "<h2>車両識別名対応表ファイルの管理</h2>";
             break;
         default:
             print "【!】指定されたパスは編集可能なファイル名ではありません";
@@ -161,6 +169,11 @@ if (empty($_GET["file_name"])) {
                 
                 break;
             default:
+                if (pathinfo($_GET["file_name"], PATHINFO_EXTENSION) === "json" && !json_validate(file_get_contents($new_file))) {
+                    print "<script> alert('【!】JSONファイルの構文に不備があります。処理はキャンセルされました。'); </script>";
+                    goto on_error;
+                }
+                
                 replace_file($railroad_id, $_GET["file_name"], $new_file);
                 
                 $result = NULL;

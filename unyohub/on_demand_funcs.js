@@ -806,7 +806,9 @@ function get_operation_data_detail (operation_date, operation_number_or_list, ar
                         }
                     }
                     
-                    if (data_item["user_id"] !== null && !data_item["user_id"].startsWith("*")) {
+                    if (data_item["user_id"] === "#") {
+                        var user_name_html = "<span>公開在線情報";
+                    } else if (data_item["user_id"] !== null && !data_item["user_id"].startsWith("*")) {
                         var user_name_html = data_item["user_name"] !== null ? escape_html(data_item["user_name"]) : data_item["user_id"];
                         var class_html = "";
                         
@@ -836,7 +838,7 @@ function get_operation_data_detail (operation_date, operation_number_or_list, ar
                     if (user_data !== null && (data_item["user_id"] === user_data["user_id"] || "ip_address" in data_item)) {
                         user_name_html += "<button type='button' onclick='edit_operation_data(\"" + railroad_id + "\", \"" + operation_date + "\", \"" + add_slashes(operation_number) + "\", " + data_item["assign_order"] + ", \"" + add_slashes(data_item["user_id"]) + "\", \"" + add_slashes(formation_text) + "\"" + ip_address_str + ");'>";
                         
-                        if (data_item["user_id"] === user_data["user_id"]) {
+                        if (data_item["user_id"] === "#" || data_item["user_id"] === user_data["user_id"]) {
                             user_name_html += "取り消し";
                         } else {
                             user_name_html += "詳細";
@@ -2460,7 +2462,7 @@ function edit_operation_data (railroad_id, yyyy_mm_dd, operation_number, assign_
     buf += "<div class='key_and_value'><b>運用番号</b>" + escape_html(operation_number) + "</div>";
     buf += "<div class='key_and_value'><b>編成名</b>" + escape_html(formation_text) + "</div>";
     
-    if (user_id !== user_data["user_id"]) {
+    if (user_id !== user_data["user_id"] && user_id !== "#") {
         buf += "<input type='checkbox' id='edit_operation_data_moderation_info'><label for='edit_operation_data_moderation_info' class='drop_down'>投稿者情報</label><div>";
         buf += "<div class='key_and_value'><b>ユーザーID</b>" + escape_html(user_id) + "<div id='edit_operation_data_is_timed_out_user'></div></div>";
         buf += "<div id='edit_operation_data_user_info' class='loading_icon'></div>";
@@ -2477,7 +2479,7 @@ function edit_operation_data (railroad_id, yyyy_mm_dd, operation_number, assign_
     
     buf += "<br><br><button type='button' class='wide_button' onclick='revoke_operation_data(\"" + railroad_id + "\", \"" + yyyy_mm_dd + "\", \"" + add_slashes(operation_number) + "\", " + assign_order + ",\"" + add_slashes(user_id) + "\");'>投稿を取り消す</button>";
     
-    if (user_id !== user_data["user_id"]) {
+    if (user_id !== user_data["user_id"] && user_id !== "#") {
         buf += "<button type='button' class='wide_button' onclick='revoke_users_all_operation_data(\"" + railroad_id + "\", \"" + add_slashes(user_id) + "\");'>ユーザーの投稿を全て取り消す</button>";
     }
     
@@ -2485,7 +2487,7 @@ function edit_operation_data (railroad_id, yyyy_mm_dd, operation_number, assign_
     
     get_one_time_token();
     
-    if (user_id !== user_data["user_id"]) {
+    if (user_id !== user_data["user_id"] && user_id !== "#") {
         show_moderation_info(railroad_id, user_id, ip_address);
     }
 }

@@ -24,3 +24,48 @@ C列には所属路線の路線識別名を指定します。複数の路線に�
 (3) 時刻表CSVファイルの生成
 「鉄道運用Hub用データ編集ツール」で「GTFSデータから時刻表を生成」を実行すると、各ダイヤの時刻表CSVファイルがダイヤ改正日別フォルダ内に生成されます。
 時刻表CSVファイルの生成時にはstop_times.txtでtrip_idとして指定されている値が列車番号としてそのまま出力されるため、変更する必要がある場合は出力された時刻表CSVファイルを別途編集してください。
+
+
+_/_/_/_/ GTFS realtime形式公開APIからの在線情報取得 _/_/_/_/
+
+(1) 依存ライブラリのインストール
+サーバにProtocol Buffersのデコード環境をセットアップします。
+FedoraやCentOSの場合、以下のコマンドを実行すれば必要なライブラリがインストールされます。
+
+sudo dnf install python3-protobuf protobuf-compiler
+
+
+(2) GTFS realtime形式バイナリのデコード用ファイル生成
+GTFSの公式サイトから最新版の「gtfs-realtime.proto」ファイルをダウンロードして「commands」フォルダ内に配置し、commandsフォルダで端末エミュレーターを開いて以下のコマンドを実行します。
+
+protoc --python_out=./modules gtfs-realtime.proto
+
+コマンドの実行後、commandsフォルダ下の「modules」フォルダ内にファイル「gtfs_realtime_pb2.py」が生成されていれば、gtfs-realtime.protoファイルは削除しても問題ありません。
+
+
+(3) APIエンドポイントURLの設定
+「設定ファイル設定値」に従い、「config」フォルダ内の「gtfs_realtime_endpoints.json」に鉄道事業者が公開しているGTFS形式 TripUpdateデータの配信URLを設定します。
+
+
+(4) 運行情報自動取得の設定
+crontabへ、運行情報を取得するコマンドを自動実行するための設定を行います。
+例えば、/var/www/unyohubに設置されている本アプリケーションで毎時8分から15分おきに運行情報を取得する場合は以下のように設定します。
+
+8-53/15 * * * * /var/www/unyohub/commands/unyohub get-gtfs-realtime -s
+
+このとき、毎時0分や15分などのきりのよい時間に実行する設定は、接続先サーバに負荷が集中する原因となるため避けてください。
+
+
+(5) 公開API上の車両識別名と編成表の編成名を紐付け
+運行情報のログがある程度データベースに蓄積されたところで、データベースに記録された「vehicle_id」の値がどの編成に対応しているのかを推測し、路線系統別フォルダ内に「formation_name_mappings.json」を作成します。
+
+
+(6) GTFSデータ上の便識別名と運用表上の列車番号を紐づけ
+路線系統別フォルダ下のダイヤ改正日別フォルダ内に「train_number_mappings_ダイヤ識別名.csv」の形式でネーミングしたCSVファイルを作成し、GTFSデータ上での便識別名(trip_id)と運用表上の列車番号との対応関係を1行に1対ずつ入力します。
+例えば、ダイヤ識別名が「weekday」の場合、ファイル名は「train_number_mappings_weekday.csv」となります。
+
+便識別名はA列、列車番号はB列に入力してください。
+
+入力が完了したら以下のコマンドを実行し、データベースを更新します。
+
+unyohub update-trip-ids 路線系統識別名 ダイヤ改正識別名 ダイヤ識別名
