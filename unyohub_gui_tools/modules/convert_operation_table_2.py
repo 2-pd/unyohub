@@ -29,8 +29,8 @@ def get_lines_and_station(mes, railroad_info, station_initial, cnt, cnt_2):
 def split_station_name_and_track(station_name):
     if ":" in station_name:
         station_name_and_track = station_name.split(":")
-        station_name = station_name_and_track[0]
-        station_track = station_name_and_track[1]
+        station_name = station_name_and_track[0].strip()
+        station_track = station_name_and_track[1].strip()
     else:
         station_track = None
     
@@ -71,6 +71,9 @@ def convert_operation_table_2 (mes, main_dir, file_name):
     operations = {}
     operation_groups = []
     
+    starting_locations = set()
+    terminal_locations = set()
+    
     cnt = 0
     id_cnt = 1
     stopped_train_list = {}
@@ -86,6 +89,24 @@ def convert_operation_table_2 (mes, main_dir, file_name):
         else:
             starting_location, starting_track = split_station_name_and_track(operation_data[cnt][1].strip())
             terminal_location, terminal_track = split_station_name_and_track(operation_data[cnt][2].strip())
+            
+            if starting_track is not None:
+                starting_location_str = starting_location + "__" + starting_track
+                
+                if starting_location_str in starting_locations:
+                    mes(starting_location + " の " + starting_track + " から出庫する運用が複数存在しています", True)
+                    error_occurred = True
+                else:
+                    starting_locations.add(starting_location_str)
+            
+            if terminal_track is not None:
+                terminal_location_str = terminal_location + "__" + terminal_track
+                
+                if terminal_location_str in terminal_locations:
+                    mes(terminal_location + " の " + terminal_track + " に入庫する運用が複数存在しています", True)
+                    error_occurred = True
+                else:
+                    terminal_locations.add(terminal_location_str)
             
             car_count = operation_data[cnt + 1][0].strip()
             

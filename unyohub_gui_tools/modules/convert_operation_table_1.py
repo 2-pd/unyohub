@@ -387,14 +387,26 @@ def convert_operation_table_1 (mes, main_dir, file_name, json_file_name, digits_
             
             if len(output_row_2[1]) == 0:
                 if for_printing:
-                    output_row_2[1] = output_row_2[4][1:]
+                    if len(output_row_2) >= 5:
+                        output_row_2[1] = output_row_2[4][1:]
+                    else:
+                        mes("出庫時刻が認識できません: " + output_row_1[0], True)
+                        error_occurred = True
                 else:
-                    output_row_2[1] = output_row_2[3][1:]
+                    if len(output_row_2) >= 4:
+                        output_row_2[1] = output_row_2[3][1:]
+                    else:
+                        mes("出庫時刻が認識できません: " + output_row_1[0], True)
+                        error_occurred = True
             else:
                 output_row_2[1] = convert_time_style(output_row_2[1], False)
             
             if len(output_row_2[2]) == 0:
-                output_row_2[2] = output_row_3[-1][1:]
+                if len(output_row_2) >= 4:
+                    output_row_2[2] = output_row_3[-1][1:]
+                else:
+                    mes("入庫時刻が認識できません: " + output_row_1[0], True)
+                    error_occurred = True
             else:
                 output_row_2[2] = convert_time_style(output_row_2[2], False)
             
