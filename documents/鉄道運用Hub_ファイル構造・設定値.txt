@@ -300,6 +300,7 @@ log_ip_address 投稿者のIPアドレスを記録するか(BOOL値)
             "min_car_count" : 充当可能な最小の編成両数,
             "max_car_count" : 充当可能な最大の編成両数,
             "main_color" : テーマカラー,
+            "default_icon" : 運用情報未投稿時用のアイコン識別名(省略時は汎用アイコンを表示),
             "comment" : 補足説明文
         }...
     },
