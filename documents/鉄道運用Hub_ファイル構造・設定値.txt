@@ -328,6 +328,7 @@ log_ip_address 投稿者のIPアドレスを記録するか(BOOL値)
                     "previous_trains" : [ 直通元の区間組成
                         {
                             "line_id" : 走行路線の識別名,
+                            "direction" : 上りか下りか(上りなら「inbound」、下りなら「outbound」),
                             "train_number" : 列車番号,
                             "starting_station" : 始発駅
                         }...
@@ -335,6 +336,7 @@ log_ip_address 投稿者のIPアドレスを記録するか(BOOL値)
                     "next_trains" : [ 直通先の区間組成
                         {
                             "line_id" : 走行路線の識別名,
+                            "direction" : 上りか下りか(上りなら「inbound」、下りなら「outbound」),
                             "train_number" : 列車番号,
                             "starting_station" : 始発駅
                         }...
