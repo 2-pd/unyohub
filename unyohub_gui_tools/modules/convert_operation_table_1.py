@@ -228,6 +228,11 @@ def convert_operation_table_1 (mes, main_dir, file_name, json_file_name, digits_
             else:
                 color = "#ffffff"
             
+            if len(operation) >= 3:
+                icon_id = operation[2]
+            else:
+                icon_id = ""
+            
             if for_printing:
                 output_data.append(["◆" + operation[0][1:].strip()])
                 merged_cell_row_indexes.add(len(output_data) - 1)
@@ -263,9 +268,9 @@ def convert_operation_table_1 (mes, main_dir, file_name, json_file_name, digits_
                 output_cell_styles_2 = [None, {"text-align" : "center"}, {"text-align" : "center"}, None]
                 output_cell_styles_3 = [None, None, None, None]
             else:
-                output_row_1 = [operation[0], operation[2], operation[4]]
-                output_row_2 = [operation[1], convert_time_style(operation[3], False), convert_time_style(operation[5], False)]
-                output_row_3 = [color, "", ""]
+                output_row_1 = [operation[0], operation[1], operation[2], operation[4]]
+                output_row_2 = [color, "", convert_time_style(operation[3], False), convert_time_style(operation[5], False)]
+                output_row_3 = [icon_id, "", "", ""]
             
             previous_train_name = None
             
@@ -385,30 +390,28 @@ def convert_operation_table_1 (mes, main_dir, file_name, json_file_name, digits_
                 del output_row_2[-1]
                 del output_row_3[-1]
             
-            if len(output_row_2[1]) == 0:
-                if for_printing:
-                    if len(output_row_2) >= 5:
-                        output_row_2[1] = output_row_2[4][1:]
-                    else:
-                        mes("出庫時刻が認識できません: " + output_row_1[0], True)
-                        error_occurred = True
-                else:
-                    if len(output_row_2) >= 4:
-                        output_row_2[1] = output_row_2[3][1:]
-                    else:
-                        mes("出庫時刻が認識できません: " + output_row_1[0], True)
-                        error_occurred = True
+            if for_printing:
+                starting_time_row_index = 1
             else:
-                output_row_2[1] = convert_time_style(output_row_2[1], False)
+                starting_time_row_index = 2
             
-            if len(output_row_2[2]) == 0:
-                if len(output_row_2) >= 4:
-                    output_row_2[2] = output_row_3[-1][1:]
+            if len(output_row_2[starting_time_row_index]) == 0:
+                if len(output_row_2) >= 5:
+                    output_row_2[starting_time_row_index] = output_row_2[4][1:]
+                else:
+                    mes("出庫時刻が認識できません: " + output_row_1[0], True)
+                    error_occurred = True
+            else:
+                output_row_2[starting_time_row_index] = convert_time_style(output_row_2[starting_time_row_index], False)
+            
+            if len(output_row_2[starting_time_row_index + 1]) == 0:
+                if len(output_row_2) >= 5:
+                    output_row_2[starting_time_row_index + 1] = output_row_3[-1][1:]
                 else:
                     mes("入庫時刻が認識できません: " + output_row_1[0], True)
                     error_occurred = True
             else:
-                output_row_2[2] = convert_time_style(output_row_2[2], False)
+                output_row_2[starting_time_row_index + 1] = convert_time_style(output_row_2[starting_time_row_index + 1], False)
             
             if for_printing:
                 while True:
