@@ -268,7 +268,7 @@ def convert_operation_table_1 (mes, main_dir, file_name, json_file_name, digits_
                 output_cell_styles_2 = [None, {"text-align" : "center"}, {"text-align" : "center"}, None]
                 output_cell_styles_3 = [None, None, None, None]
             else:
-                output_row_1 = [operation[0], operation[1],operation[2], operation[4]]
+                output_row_1 = [operation[0], operation[1], operation[2], operation[4]]
                 output_row_2 = [color, "", convert_time_style(operation[3], False), convert_time_style(operation[5], False)]
                 output_row_3 = [icon_id, "", "", ""]
             

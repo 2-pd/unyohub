@@ -87,8 +87,8 @@ def convert_operation_table_2 (mes, main_dir, file_name):
             
             cnt += 1
         else:
-            starting_location, starting_track = split_station_name_and_track(operation_data[cnt][1].strip())
-            terminal_location, terminal_track = split_station_name_and_track(operation_data[cnt][2].strip())
+            starting_location, starting_track = split_station_name_and_track(operation_data[cnt][2].strip())
+            terminal_location, terminal_track = split_station_name_and_track(operation_data[cnt][3].strip())
             
             if starting_track is not None:
                 starting_location_str = starting_location + "__" + starting_track
@@ -108,7 +108,7 @@ def convert_operation_table_2 (mes, main_dir, file_name):
                 else:
                     terminal_locations.add(terminal_location_str)
             
-            car_count = operation_data[cnt + 1][0].strip()
+            car_count = operation_data[cnt][1].strip()
             
             if "(" in car_count:
                 bracket_pos = car_count.find("(")
@@ -120,7 +120,7 @@ def convert_operation_table_2 (mes, main_dir, file_name):
                     
                     car_count = int(car_count[0:bracket_pos])
                 else:
-                    mes(operation_number + " に正しい両数が指定されていません: " + str(cnt + 1) + "行目", True)
+                    mes(operation_number + " に正しい両数が指定されていません: " + str(cnt) + "行目", True)
                     error_occurred = True
                     
                     car_count = 0
@@ -130,13 +130,20 @@ def convert_operation_table_2 (mes, main_dir, file_name):
                 if car_count.isdecimal():
                     car_count = int(car_count)
                 else:
-                    mes(operation_number + " に正しい両数が指定されていません: " + str(cnt + 1) + "行目", True)
+                    mes(operation_number + " に正しい両数が指定されていません: " + str(cnt) + "行目", True)
                     error_occurred = True
                     
                     car_count = 0
                 
                 min_car_count = car_count
                 max_car_count = car_count
+            
+            if len(operation_data[cnt + 2][0]) >= 1:
+                default_icon = operation_data[cnt + 2][0].strip()
+                if default_icon == "":
+                    default_icon = None
+            else:
+                default_icon = None
             
             if len(operation_data) >= cnt + 4 and len(operation_data[cnt + 3]) >= 1 and len(operation_data[cnt + 3][0]) >= 1:
                 comment = operation_data[cnt + 3][0]
@@ -153,16 +160,19 @@ def convert_operation_table_2 (mes, main_dir, file_name):
                 "trains" : [],
                 "starting_location" : starting_location,
                 "starting_track" : starting_track,
-                "starting_time" : operation_data[cnt + 1][1].strip(),
+                "starting_time" : operation_data[cnt + 1][2].strip(),
                 "terminal_location" : terminal_location,
                 "terminal_track" : terminal_track,
-                "ending_time" : operation_data[cnt + 1][2].strip(),
+                "ending_time" : operation_data[cnt + 1][3].strip(),
                 "car_count" : car_count,
                 "min_car_count" : min_car_count,
                 "max_car_count" : max_car_count,
-                "main_color" : operation_data[cnt + 2][0],
+                "main_color" : operation_data[cnt + 1][0],
                 "comment" : comment
             }
+            
+            if default_icon is not None:
+                operations[operation_number]["default_icon"] = default_icon
             
             if hidden_by_default:
                 operations[operation_number]["hidden_by_default"] = True
@@ -173,7 +183,7 @@ def convert_operation_table_2 (mes, main_dir, file_name):
                 operations[operation_number]["starting_time"] = None
                 operations[operation_number]["ending_time"] = None
             else:
-                cnt_2 = 3
+                cnt_2 = 4
                 while cnt_2 < len(operation_data[cnt]) and operation_data[cnt][cnt_2] != "":
                     if operation_data[cnt][cnt_2][0:1] == ".":
                         train_number = operation_data[cnt][cnt_2] + "__" + str(id_cnt)
