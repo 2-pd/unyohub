@@ -16,7 +16,8 @@ def convert_timetable_1 (mes, file_name, digits_count):
         csv_reader = csv.reader(csv_f)
         timetable_data = [data_row for data_row in csv_reader]
     
-    mes("データを変換しています...")
+    
+    mes("路線情報を処理しています...")
     
     if timetable_data[2][1].strip() != "":
         timetable_data.insert(2, [""] * len(timetable_data[0]))
@@ -35,17 +36,24 @@ def convert_timetable_1 (mes, file_name, digits_count):
         
         return
     
+    if file_base_name[0:10] == "timetable_":
+        file_base_name = file_base_name[10:]
+    
+    file_base_name_period_pos = file_base_name.find(".")
+    diagram_id = file_base_name[:file_base_name_period_pos]
+    default_direction = file_base_name[file_base_name_period_pos + 1:-4]
+    
     line_list = line_list_str.split()
     station_list = {}
     station_name_list = {}
     line_stations = {}
-    rename_list = {}
+    direction_list = {}
     
     for cnt in range(len(line_list)):
         period_pos = line_list[cnt].rfind(".")
         
         if period_pos != -1:
-            rename_list[line_list[cnt][:period_pos]] = line_list[cnt][period_pos + 1:]
+            direction_list[line_list[cnt][:period_pos]] = line_list[cnt][period_pos + 1:]
             line_list[cnt] = line_list[cnt][:period_pos]
         
         station_list[line_list[cnt]] = []
@@ -69,6 +77,9 @@ def convert_timetable_1 (mes, file_name, digits_count):
             station_list[line_list[cnt]][-1] = station_name_list[line_list[cnt]][-1]
         
         new_timetable_t[line_list[cnt]] = [["", "", ""] + station_list[line_list[cnt]] + ["", "", "", "", "", ""]]
+    
+    
+    mes("各列車時刻データを変換しています...")
     
     previous_trains = {}
     
@@ -146,7 +157,10 @@ def convert_timetable_1 (mes, file_name, digits_count):
                         previous_line_id = previous2_line_id
                 
                 if previous_line_id is not None:
-                    new_timetable_t[previous_line_id][-1][-6] = line_id
+                    if line_id in direction_list:
+                        new_timetable_t[previous_line_id][-1][-6] = line_id + "." + direction_list[line_id]
+                    else:
+                        new_timetable_t[previous_line_id][-1][-6] = line_id + "." + default_direction
                     new_timetable_t[previous_line_id][-1][-5] = train[0]
                     for cnt in range(3, len(train) - 6):
                         if train[cnt] != "":
@@ -175,7 +189,10 @@ def convert_timetable_1 (mes, file_name, digits_count):
                         else:
                             next_train_row = -3
                         
-                        new_timetable_t[previous_line_id][previous_train_index][next_train_row] = line_id
+                        if line_id in direction_list:
+                            new_timetable_t[previous_line_id][previous_train_index][next_train_row] = line_id + "." + direction_list[line_id]
+                        else:
+                            new_timetable_t[previous_line_id][previous_train_index][next_train_row] = line_id + "." + default_direction
                         new_timetable_t[previous_line_id][previous_train_index][next_train_row + 1] = train[0]
                         for cnt_2 in range(3, len(train) - 6):
                             if train[cnt_2] != "":
@@ -204,7 +221,7 @@ def convert_timetable_1 (mes, file_name, digits_count):
                     else:
                         next_train_row = -3
                     
-                    new_timetable_t[previous_line_id][-1][next_train_row] = next_train_info[1].split(".")[0]
+                    new_timetable_t[previous_line_id][-1][next_train_row] = next_train_info[1]
                     if len(next_train_info[0]) >= 1:
                         new_timetable_t[previous_line_id][-1][next_train_row + 1] = next_train_info[0]
                     else:
@@ -217,16 +234,13 @@ def convert_timetable_1 (mes, file_name, digits_count):
                     previous_trains[train_number + ":" + terminal_station].append({"line_id" : previous_line_id, "train_number" : new_timetable_t[previous_line_id][-1][0], "starting_station" : starting_station})
     
     
-    mes("データを新しいCSVファイルに書き込んでいます...")
-    
-    if file_base_name[0:10] == "timetable_":
-        file_base_name = file_base_name[10:]
-    
     for line_id in line_list:
-        new_file_name = "timetable_" + line_id + "." + file_base_name[:-4]
+        if line_id in direction_list:
+            new_file_name = "timetable_" + line_id + "." + diagram_id + "." + direction_list[line_id]
+        else:
+            new_file_name = "timetable_" + line_id + "." + diagram_id + "." + default_direction
         
-        if line_id in rename_list:
-            new_file_name = new_file_name[:new_file_name.rfind(".") + 1] + rename_list[line_id]
+        mes(new_file_name + " を保存しています...")
         
         with open(dir_path + new_file_name + ".csv", "w", encoding="utf-8-sig") as csv_f:
             csv_writer = csv.writer(csv_f, lineterminator="\n")
