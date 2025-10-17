@@ -902,7 +902,7 @@ function train_detail (line_id, train_number, starting_station, train_direction,
     
     var train_operations = get_operations(line_id, train_number, starting_station, train_direction);
     
-    var train_data = [get_train(line_id, train_number, starting_station)];
+    var train_data = [get_train(line_id, train_direction === "inbound_trains", train_number, starting_station)];
     
     var buf = "<span class='train_detail_day' style='background-color: " + (config["dark_mode"] ? convert_color_dark_mode(diagram_info[operation_table["diagram_revision"]]["diagrams"][operation_table["diagram_id"]]["main_color"]) : diagram_info[operation_table["diagram_revision"]]["diagrams"][operation_table["diagram_id"]]["main_color"]) + ";'>";
     
@@ -1029,7 +1029,13 @@ function train_detail (line_id, train_number, starting_station, train_direction,
         }
         
         for (var previous_train of previous_trains) {
-            train_data.unshift(get_train(previous_train["line_id"], previous_train["train_number"], previous_train["starting_station"]));
+            if ("direction" in previous_train) { //v25.09-1以前の使用で作成された時刻表データとの互換性維持
+                var is_inbound = (previous_train["direction"] === "inbound");
+            } else {
+                var is_inbound = null;
+            }
+            
+            train_data.unshift(get_train(previous_train["line_id"], is_inbound, previous_train["train_number"], previous_train["starting_station"]));
             
             if (train_data[0] !== null && train_data[0]["previous_trains"].length >= 1) {
                 previous_trains.push(...train_data[0]["previous_trains"]);
@@ -1041,7 +1047,13 @@ function train_detail (line_id, train_number, starting_station, train_direction,
         }
         
         for (var next_train of next_trains) {
-            train_data.push(get_train(next_train["line_id"], next_train["train_number"], next_train["starting_station"]));
+            if ("direction" in next_train) { //v25.09-1以前の使用で作成された時刻表データとの互換性維持
+                var is_inbound = (next_train["direction"] === "inbound");
+            } else {
+                var is_inbound = null;
+            }
+            
+            train_data.push(get_train(next_train["line_id"], is_inbound, next_train["train_number"], next_train["starting_station"]));
             
             if (train_data[train_data.length - 1] !== null && train_data[train_data.length - 1]["next_trains"].length >= 1) {
                 next_trains.push(...train_data[train_data.length - 1]["next_trains"]);
