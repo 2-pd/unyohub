@@ -151,8 +151,10 @@ header {
     position: absolute;
     left: 70px;
     
-    width: calc(100vw - 120px);
+    width: calc(100vw - 170px);
     height: 40px;
+    
+    padding-right: 50px;
     
     background-size: 40px;
     background-position: calc(100vw - 165px) 0;
@@ -160,7 +162,10 @@ header {
     line-height: 40px;
     font-size: 22px;
     color: #ffffff;
-    text-indent: 10px;
+    text-indent: 5px;
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
     
     small {
         font-size: 16px;
@@ -1611,6 +1616,12 @@ button:has(abbr:empty) {
         background-image: linear-gradient(315deg, #444444 5px, transparent 5px);
         
         color: #333333;
+    }
+    
+    small {
+        margin-right: 3px;
+        
+        font-size: 14px;
     }
 }
 

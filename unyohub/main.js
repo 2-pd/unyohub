@@ -2528,7 +2528,7 @@ function draw_train_position (hh_and_mm) {
                     train["train_type"] = "回送";
                 }
                 
-                buf += "></span><span class='train_type' style='background-color: " + train_color + "; border-color: " + train_color + ";'>" + train["train_type"].substring(0, 1) + " ";
+                buf += "></span><span class='train_type' style='background-color: " + train_color + "; border-color: " + train_color + ";'><small>" + train["train_type"].substring(0, 1) + "</small>";
                 
                 if (config["show_final_destinations_in_position_mode"]) {
                     buf += get_final_destination(position_selected_line, direction_cnt === 0, train["train_number"], train["starting_station"], 4);
