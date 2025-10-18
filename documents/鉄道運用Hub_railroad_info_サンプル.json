@@ -442,7 +442,6 @@
             "line_color" : "#33cc66",
             "line_symbol" : "汐",
             "inbound_forward_direction" : true,
-            "show_final_destinations_in_position_mode" : true,
             "stations" : [
                 {
                     "station_name" : "汐見橋",
@@ -495,7 +494,6 @@
             "line_color" : "#666666",
             "line_symbol" : "師",
             "inbound_forward_direction" : true,
-            "show_final_destinations_in_position_mode" : true,
             "stations" : [
                 {
                     "station_name" : "羽衣",
@@ -538,7 +536,6 @@
             "line_color" : "#666666",
             "line_symbol" : "多",
             "inbound_forward_direction" : true,
-            "show_final_destinations_in_position_mode" : true,
             "stations" : [
                 {
                     "station_name" : "みさき公園",
@@ -573,7 +570,6 @@
             "line_color" : "#ff99cc",
             "line_symbol" : "加",
             "inbound_forward_direction" : false,
-            "show_final_destinations_in_position_mode" : true,
             "stations" : [
                 {
                     "station_name" : "紀ノ川",

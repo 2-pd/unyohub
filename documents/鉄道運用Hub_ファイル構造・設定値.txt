@@ -102,7 +102,6 @@ log_ip_address 投稿者のIPアドレスを記録するか(BOOL値)
             "inbound_forward_direction" : 上り列車の進行方向と編成の前位側(奇数向き)方向が一致するかどうか(BOOL値),
             "clockwise_is_inbound" : 上り列車が時計回り運転となるか(BOOL値。環状運転していない路線の場合nullまたは省略)
             "double_station_spacing" : 走行位置モードで駅間を2行で表示させるか(1行で表示させる場合や乗り入れ先路線の場合は省略可能。BOOL値),
-            "show_final_destinations_in_position_mode" : 走行位置モードで種別の代わりに行き先を表示させるか(種別を表示させる場合や乗り入れ先路線の場合は省略可能。BOOL値),
             "stations" : [ 駅一覧
                 {
                     "station_name" : 駅名,
@@ -135,10 +134,11 @@ log_ip_address 投稿者のIPアドレスを記録するか(BOOL値)
     },
     "lines_order" : この路線系統に属する路線の路線識別名を表示させたい順に配列で,
     "joined_lines_order" : 乗り入れ先路線系統に属する路線の路線識別名を表示させたい順に配列で(他の路線系統に乗り入れていない場合は省略可能),
-    "train_color_rules" : [ 列車番号の色分け規則(配列で複数指定可能)
+    "train_color_rules" : [ 列車表示色の判定規則
         {
-            "pattern" : 列車番号の正規表現パターン,
-            "color" : 色コード文字列
+            "pattern" : 正規表現パターン,
+            "color" : 色コード文字列,
+            "subject" : 判定対象(列車番号なら"train_number"、列車種別なら"train_type"。省略時は列車番号とみなす)
         }...
     ],
     "deadhead_train_number" : 回送列車の列車番号にマッチする正規表現パターン,
