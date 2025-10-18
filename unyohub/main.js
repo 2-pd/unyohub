@@ -2543,7 +2543,7 @@ function draw_train_position (hh_and_mm) {
                 
                 if (config["show_train_types_in_position_mode"]) {
                     if (train["train_type"] !== "回送" && "show_final_destinations_in_position_mode" in railroad_info["lines"][position_selected_line] && railroad_info["lines"][position_selected_line]["show_final_destinations_in_position_mode"]) {
-                        buf += get_final_destination(position_selected_line, train["train_number"], train["starting_station"], 4);
+                        buf += get_final_destination(position_selected_line, direction_cnt === 0, train["train_number"], train["starting_station"], 4);
                     } else {
                         buf += train["train_type"];
                     }
@@ -2838,26 +2838,24 @@ function convert_formation_data (line_id, operation_list, is_inbound) {
 }
 
 
-function get_train (line_id, train_number, starting_station) {
-    var train_data = { line_id : line_id, train_number : train_number };
-    
-    if (train_number in timetable["timetable"][line_id]["inbound_trains"]) {
-        for (var train of timetable["timetable"][line_id]["inbound_trains"][train_number]) {
-            if (train["starting_station"] === starting_station) {
-                Object.assign(train_data, train);
-                train_data["is_inbound"] = true;
-                
-                return train_data;
-            }
+function get_train (line_id, is_inbound, train_number, starting_station) {
+    if (is_inbound === null) {
+        if (train_number in timetable["timetable"][line_id]["inbound_trains"]) {
+            is_inbound = true;
+        } else if (train_number in timetable["timetable"][line_id]["outbound_trains"]) {
+            is_inbound = false;
+        } else {
+            return null;
         }
-    } else if (train_number in timetable["timetable"][line_id]["outbound_trains"]) {
-        for (var train of timetable["timetable"][line_id]["outbound_trains"][train_number]) {
-            if (train["starting_station"] === starting_station) {
-                Object.assign(train_data, train);
-                train_data["is_inbound"] = false;
-                
-                return train_data;
-            }
+    }
+    
+    var train_data = { line_id : line_id, is_inbound : is_inbound, train_number : train_number };
+    
+    for (var train of timetable["timetable"][line_id][is_inbound ? "inbound_trains" : "outbound_trains"][train_number]) {
+        if (train["starting_station"] === starting_station) {
+            Object.assign(train_data, train);
+            
+            return train_data;
         }
     }
     
@@ -2888,21 +2886,21 @@ function get_operations (line_id, train_number, starting_station, train_directio
     return null;
 }
 
-function get_final_destination (line_id, train_number, starting_station, max_length = 10) {
+function get_final_destination (line_id, is_inbound, train_number, starting_station, max_length = 10) {
     if (!train_number.startsWith("_")) {
-        var next_trains = [{line_id : line_id, train_number : train_number, starting_station : starting_station}];
+        var next_trains = [{line_id : line_id, is_inbound : is_inbound, train_number : train_number, starting_station : starting_station}];
     } else {
-        if (!(train_number in line_operations["lines"][line_id]["inbound_trains"] || train_number in line_operations["lines"][line_id]["outbound_trains"])) {
+        if (!(train_number in line_operations["lines"][line_id][(is_inbound ? "inbound" : "outbound") + "_trains"])) {
             return "＊＊＊";
         }
         
-        var next_trains = [{line_id : line_id, train_number : train_number.substring(1, train_number.lastIndexOf("__")), starting_station : starting_station}];
+        var next_trains = [{line_id : line_id, is_inbound : is_inbound, train_number : train_number.substring(1, train_number.lastIndexOf("__")), starting_station : starting_station}];
     }
     
     var buf = "";
     
     for (var next_train of next_trains) {
-        var train_data = get_train(next_train["line_id"], next_train["train_number"], next_train["starting_station"]);
+        var train_data = get_train(next_train["line_id"], is_inbound, next_train["train_number"], next_train["starting_station"]);
         
         if (train_data !== null) {
             if ("destination" in train_data) {
@@ -3371,7 +3369,7 @@ function draw_station_timetable (station_name) {
                 
                 buf += "</b>" + escape_html(train_info["train_type"]) + "</span>　";
                 
-                buf += get_final_destination(timetable_selected_line, train_info["train_number"], train_info["starting_station"]);
+                buf += get_final_destination(timetable_selected_line, is_inbound, train_info["train_number"], train_info["starting_station"]);
                 
                 if (railroad_info["lines"][timetable_selected_line]["inbound_forward_direction"] === is_inbound) {
                     var direction_sign_left = "<span class='direction_sign'>◀</span> ";

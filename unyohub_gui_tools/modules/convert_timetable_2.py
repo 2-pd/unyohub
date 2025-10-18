@@ -203,24 +203,34 @@ def convert_timetable_2 (mes, main_dir, diagram_revision, diagram_id):
                     direction_data[train[0]][train_cnt]["destination"] = train[2]
                 
                 if train[-6] != "":
-                    direction_data[train[0]][train_cnt]["next_trains"].append({ "line_id" : train[-6], "train_number" : train[-5], "starting_station" : train[-4] })
+                    line_id_and_direction = train[-6].split(".")
+                    if len(line_id_and_direction) != 2 or (line_id_and_direction[1] != "inbound" and line_id_and_direction[1] != "outbound"):
+                        mes("《注意》直通先路線の方面指定が不正です: " + line_id + " - " + train[0])
+                        line_id_and_direction.insert(1, direction)
                     
-                    next_train_key = train[-6] + ":" + train[-5] + ":" + train[-4]
+                    direction_data[train[0]][train_cnt]["next_trains"].append({ "line_id" : line_id_and_direction[0], "direction" : line_id_and_direction[1], "train_number" : train[-5], "starting_station" : train[-4] })
+                    
+                    next_train_key = line_id_and_direction[0] + ":" + line_id_and_direction[1] + ":" + train[-5] + ":" + train[-4]
                     
                     if next_train_key not in previous_trains:
                         previous_trains[next_train_key] = []
                     
-                    previous_trains[next_train_key].append({ "line_id" : line_id, "train_number" : train[0], "starting_station" : direction_data[train[0]][train_cnt]["starting_station"] })
+                    previous_trains[next_train_key].append({ "line_id" : line_id, "direction" : direction, "train_number" : train[0], "starting_station" : direction_data[train[0]][train_cnt]["starting_station"] })
                 
                 if train[-3] != "":
-                    direction_data[train[0]][train_cnt]["next_trains"].append({ "line_id" : train[-3], "train_number" : train[-2], "starting_station" : train[-1] })
+                    line_id_and_direction = train[-6].split(".")
+                    if len(line_id_and_direction) != 2 or (line_id_and_direction[1] != "inbound" and line_id_and_direction[1] != "outbound"):
+                        mes("《注意》直通先路線の方面指定が不正です: " + line_id + " - " + train[0])
+                        line_id_and_direction.insert(1, direction)
                     
-                    next_train_key = train[-3] + ":" + train[-2] + ":" + train[-1]
+                    direction_data[train[0]][train_cnt]["next_trains"].append({ "line_id" : line_id_and_direction[0], "direction" : line_id_and_direction[1], "train_number" : train[-2], "starting_station" : train[-1] })
+                    
+                    next_train_key = line_id_and_direction[0] + ":" + line_id_and_direction[1] + ":" + train[-2] + ":" + train[-1]
                     
                     if next_train_key not in previous_trains:
                         previous_trains[next_train_key] = []
                     
-                    previous_trains[next_train_key].append({ "line_id" : line_id, "train_number" : train[0], "starting_station" : direction_data[train[0]][train_cnt]["starting_station"] })
+                    previous_trains[next_train_key].append({ "line_id" : line_id, "direction" : direction, "train_number" : train[0], "starting_station" : direction_data[train[0]][train_cnt]["starting_station"] })
                 
                 if output_arrival_times:
                     direction_data[train[0]][train_cnt]["arrival_times"] = [None if arrival_time == "" else arrival_time for arrival_time in arrival_times]
@@ -234,7 +244,7 @@ def convert_timetable_2 (mes, main_dir, diagram_revision, diagram_id):
         for direction in ["inbound", "outbound"]:
             for train_number in output_data[line_id][direction + "_trains"].keys():
                 for cnt in range(len(output_data[line_id][direction + "_trains"][train_number])):
-                    next_train_key = line_id + ":" + train_number + ":" + output_data[line_id][direction + "_trains"][train_number][cnt]["starting_station"]
+                    next_train_key = line_id + ":" + direction + ":" + train_number + ":" + output_data[line_id][direction + "_trains"][train_number][cnt]["starting_station"]
                     
                     if next_train_key in previous_trains:
                         output_data[line_id][direction + "_trains"][train_number][cnt]["previous_trains"] = previous_trains[next_train_key]

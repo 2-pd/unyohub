@@ -121,15 +121,15 @@ def get_railroad_gtfs_realtime (mes, main_dir, url):
                     continue
                 
                 if operation_data[operation_number]["formations"] is None:
-                    cur.execute("DELETE FROM `unyohub_data_caches` WHERE `operation_date` = :operation_date AND `operation_number` = :operation_number", { "operation_date" : operation_date, "operation_number" : operation_number })
-                    
                     assign_order = 1
                     posts_count = 1
-                else:
-                    cur.execute("UPDATE `unyohub_data_caches` SET `posts_count` = :posts_count, `updated_datetime` = :updated_datetime WHERE `operation_date` = :operation_date AND `operation_number` = :operation_number", { "operation_date" : operation_date, "operation_number" : operation_number, "posts_count" : posts_count, "updated_datetime" : now_datetime })
                     
+                    cur.execute("DELETE FROM `unyohub_data_caches` WHERE `operation_date` = :operation_date AND `operation_number` = :operation_number", { "operation_date" : operation_date, "operation_number" : operation_number })
+                else:
                     assign_order = operation_data[operation_number]["assign_order"] + 1
                     posts_count = operation_data[operation_number]["posts_count"] + 1
+                    
+                    cur.execute("UPDATE `unyohub_data_caches` SET `posts_count` = :posts_count, `updated_datetime` = :updated_datetime WHERE `operation_date` = :operation_date AND `operation_number` = :operation_number", { "operation_date" : operation_date, "operation_number" : operation_number, "posts_count" : posts_count, "updated_datetime" : now_datetime })
             else:
                 assign_order = 1
                 posts_count = 1
