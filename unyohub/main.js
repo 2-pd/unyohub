@@ -110,7 +110,7 @@ function get_default_config () {
         "refresh_interval" : 5,
         "operation_data_cache_period" : 7,
         "position_mode_minute_step" : 1,
-        "show_train_types_in_position_mode" : false,
+        "show_final_destinations_in_position_mode" : false,
         "show_deadhead_trains_on_timetable" : true,
         "show_starting_trains_only_on_timetable" : false,
         "colorize_corrected_posts" : false,
@@ -2296,8 +2296,8 @@ function position_mode (line_id = null, date_str = "__today__", scroll_target_st
             var operation_data_date = diagram_date;
         }
         
-        if (config["show_train_types_in_position_mode"]) {
-            document.getElementById("show_train_types_radio").checked = true;
+        if (config["show_final_destinations_in_position_mode"]) {
+            document.getElementById("show_final_destinations_radio").checked = true;
         } else {
             document.getElementById("show_train_numbers_radio").checked = true;
         }
@@ -2468,17 +2468,6 @@ function position_change_lines (line_id, scroll_target = -1) {
         article_elms[0].scrollTop = scroll_target;
     }
     
-    var label_train_type_elm = document.getElementById("show_train_types_label_train_type");
-    var label_final_destination_elm = document.getElementById("show_train_types_label_final_destination");
-    
-    if ("show_final_destinations_in_position_mode" in railroad_info["lines"][line_id] && railroad_info["lines"][line_id]["show_final_destinations_in_position_mode"]) {
-        label_train_type_elm.style.display = "none";
-        label_final_destination_elm.style.display = "inline";
-    } else {
-        label_train_type_elm.style.display = "inline";
-        label_final_destination_elm.style.display = "none";
-    }
-    
     position_change_time(0);
 }
 
@@ -2539,14 +2528,10 @@ function draw_train_position (hh_and_mm) {
                     train["train_type"] = "回送";
                 }
                 
-                buf += "></span><span class='train_type' style='background-color: " + train_color + "; border-color: " + train_color + ";'>";
+                buf += "></span><span class='train_type' style='background-color: " + train_color + "; border-color: " + train_color + ";'>" + train["train_type"].substring(0, 1) + " ";
                 
-                if (config["show_train_types_in_position_mode"]) {
-                    if (train["train_type"] !== "回送" && "show_final_destinations_in_position_mode" in railroad_info["lines"][position_selected_line] && railroad_info["lines"][position_selected_line]["show_final_destinations_in_position_mode"]) {
-                        buf += get_final_destination(position_selected_line, direction_cnt === 0, train["train_number"], train["starting_station"], 4);
-                    } else {
-                        buf += train["train_type"];
-                    }
+                if (config["show_final_destinations_in_position_mode"]) {
+                    buf += get_final_destination(position_selected_line, direction_cnt === 0, train["train_number"], train["starting_station"], 4);
                 } else {
                     buf += train["train_title"];
                 }
@@ -2900,7 +2885,7 @@ function get_final_destination (line_id, is_inbound, train_number, starting_stat
     var buf = "";
     
     for (var next_train of next_trains) {
-        var train_data = get_train(next_train["line_id"], is_inbound, next_train["train_number"], next_train["starting_station"]);
+        var train_data = get_train(next_train["line_id"], "direction" in next_train ? next_train["direction"] : null/*v25.09-1以前の仕様で作成された時刻表データとの互換性維持*/, next_train["train_number"], next_train["starting_station"]);
         
         if (train_data !== null) {
             if ("destination" in train_data) {

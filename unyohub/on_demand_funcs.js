@@ -736,8 +736,8 @@ function position_time_button_change () {
     position_change_time(hh_mm_to_minutes(hh_and_mm) - hh_mm_to_minutes(get_hh_mm(position_time * 60)));
 }
 
-function change_show_train_types (bool_val) {
-    config["show_train_types_in_position_mode"] = bool_val;
+function change_show_final_destinations (bool_val) {
+    config["show_final_destinations_in_position_mode"] = bool_val;
     
     save_config();
     
@@ -1029,7 +1029,7 @@ function train_detail (line_id, train_number, starting_station, train_direction,
         }
         
         for (var previous_train of previous_trains) {
-            if ("direction" in previous_train) { //v25.09-1以前の使用で作成された時刻表データとの互換性維持
+            if ("direction" in previous_train) { //v25.09-1以前の仕様で作成された時刻表データとの互換性維持
                 var is_inbound = (previous_train["direction"] === "inbound");
             } else {
                 var is_inbound = null;
@@ -1047,7 +1047,7 @@ function train_detail (line_id, train_number, starting_station, train_direction,
         }
         
         for (var next_train of next_trains) {
-            if ("direction" in next_train) { //v25.09-1以前の使用で作成された時刻表データとの互換性維持
+            if ("direction" in next_train) { //v25.09-1以前の仕様で作成された時刻表データとの互換性維持
                 var is_inbound = (next_train["direction"] === "inbound");
             } else {
                 var is_inbound = null;
