@@ -946,13 +946,25 @@ function train_detail (line_id, train_number, starting_station, train_direction,
                 } else {
                     buf_2 += " \"" + operation_table["diagram_id"] + "\", false";
                 }
-                buf_2 += ");'>" + train_operation + "運用(" + operation_table["operations"][train_operation]["car_count"] + "両)</u>";
+                buf_2 += ");'>" + train_operation + "運用(";
+                if ("hidden_by_default" in operation_table["operations"][train_operation] && operation_table["operations"][train_operation]["hidden_by_default"]) {
+                    buf_2 += "臨時"
+                } else {
+                    buf_2 += operation_table["operations"][train_operation]["car_count"] + "両";
+                }
+                buf_2 += ")</u>";
             } else {
                 var at_pos = train_operation.indexOf("@");
                 var railroad_id = train_operation.substring(at_pos + 1);
                 train_operation = train_operation.substring(0, at_pos);
                 
-                buf_2 += train_operation + "運用(" + joined_operation_tables[railroad_id]["operations"][train_operation]["car_count"] + "両)";
+                buf_2 += train_operation + "運用(";
+                if ("hidden_by_default" in joined_operation_tables[railroad_id]["operations"][train_operation] && joined_operation_tables[railroad_id]["operations"][train_operation]["hidden_by_default"]) {
+                    buf_2 += "臨時"
+                } else {
+                    buf_2 += joined_operation_tables[railroad_id]["operations"][train_operation]["car_count"] + "両";
+                }
+                buf_2 += ")";
             }
         }
     } else {
@@ -970,6 +982,7 @@ function train_detail (line_id, train_number, starting_station, train_direction,
             if (!train_operation.includes("@")) {
                 var railroad_id = null;
                 var data = operation_data["operations"];
+                var operations = operation_table["operations"];
             } else {
                 var at_pos = train_operation.indexOf("@");
                 var railroad_id = train_operation.substring(at_pos + 1);
@@ -977,13 +990,14 @@ function train_detail (line_id, train_number, starting_station, train_direction,
                 train_operation = train_operation.substring(0, at_pos);
                 
                 var data = joined_operation_data[railroad_id]["operations"];
+                var operations = joined_operation_tables[railroad_id]["operations"];
             }
             
             if (buf_2.length >= 1) {
                 buf_2 += " +";
             }
             
-            var default_icon = "default_icon" in operation_table["operations"][train_operation] ? operation_table["operations"][train_operation]["default_icon"] : null;
+            var default_icon = "default_icon" in operations[train_operation] ? operations[train_operation]["default_icon"] : null;
             
             if (train_operation in data && data[train_operation] !== null) {
                 if (data[train_operation]["formations"] !== "") {
@@ -2320,9 +2334,11 @@ function select_operation_to_write_data (line_id, train_number, starting_station
         var at_pos = train_operation.indexOf("@");
         if (at_pos === -1) {
             var railroad_id = railroad_info["railroad_id"];
+            var operations = operation_table["operations"];
         } else {
             var railroad_id = train_operation.substring(at_pos + 1);
             train_operation = train_operation.substring(0, at_pos);
+            var operations = joined_operation_tables[railroad_id]["operations"];
         }
         
         for (var train of (railroad_id === railroad_info["railroad_id"] ? operation_table["operations"][train_operation]["trains"] : joined_operation_tables[railroad_id]["operations"][train_operation]["trains"])) {
@@ -2363,7 +2379,13 @@ function select_operation_to_write_data (line_id, train_number, starting_station
             buf += "-" + position_operations[position_keys[cnt]]["position_rear"];
         }
         
-        buf += "</b>両目</div>" + escape_html(position_operations[position_keys[cnt]]["operation_number"]) + "運用</td></tr>";
+        buf += "</b>両目</div>" + escape_html(position_operations[position_keys[cnt]]["operation_number"]) + "運用";
+        
+        if ("hidden_by_default" in operations[position_operations[position_keys[cnt]]["operation_number"]] && operations[position_operations[position_keys[cnt]]["operation_number"]]["hidden_by_default"]) {
+            buf += "<small>(臨時)</small>";
+        }
+        
+        buf += "</td></tr>";
     }
     
     buf += "</table>";

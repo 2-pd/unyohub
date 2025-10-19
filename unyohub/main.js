@@ -2591,8 +2591,6 @@ function calculate_train_position (line_id, minutes_now, previous_station_index,
 }
 
 function get_train_positions (trains, line_id, hh_and_mm, is_inbound) {
-    var hidden_formation_regexp = /^(\?|運休)(\+(\?|運休))*$/;
-    
     var station_list = [...railroad_info["lines"][line_id]["stations"]];
     
     if (is_inbound) {
@@ -2716,7 +2714,7 @@ function get_train_positions (trains, line_id, hh_and_mm, is_inbound) {
                 }
             }
             
-            if (!(hidden_by_default && hidden_formation_regexp.test(formation_data["formation_text"]))) {
+            if (!(hidden_by_default && formation_data["formation_text"] === "運休")) {
                 line_positions[train_position].push({
                     railroad_id : formation_data["railroad_id"],
                     train_number : train_number,
@@ -2760,12 +2758,14 @@ function convert_formation_data (line_id, operation_list, is_inbound) {
             for (var operation_number of operation_list) {
                 if (!operation_number.includes("@")) {
                     var data = operation_data["operations"];
+                    var operations = operation_table["operations"];
                 } else {
                     var at_pos = operation_number.indexOf("@");
                     railroad_id = operation_number.substring(at_pos + 1);
                     
                     operation_number = operation_number.substring(0, at_pos);
                     var data = joined_operation_data[railroad_id]["operations"];
+                    var operations = joined_operation_tables[railroad_id]["operations"];
                 }
                 
                 if (operation_number in data && data[operation_number] !== null) {
@@ -2800,6 +2800,10 @@ function convert_formation_data (line_id, operation_list, is_inbound) {
                     from_beginner = from_beginner || ("from_beginner" in data[operation_number] && data[operation_number]["from_beginner"]);
                     is_quotation = is_quotation || ("is_quotation" in data[operation_number] && data[operation_number]["is_quotation"]);
                 } else {
+                    if ("hidden_by_default" in operations[operation_number] && operations[operation_number]["hidden_by_default"]) {
+                        continue;
+                    }
+                    
                     if (formation_text.length === 0) {
                         formation_text = "?";
                     } else if (railroad_info["lines"][line_id]["inbound_forward_direction"] === is_inbound) {
