@@ -7,7 +7,7 @@
    viewBox="0 0 47.624999 47.625002"
    version="1.1"
    id="svg5"
-   inkscape:version="1.3 (0e150ed6c4, 2023-07-21)"
+   inkscape:version="1.4.2 (ebf0e940d0, 2025-05-08)"
    sodipodi:docname="検索エラー.svg"
    inkscape:export-filename="検索エラー.webp"
    inkscape:export-xdpi="96"
@@ -30,11 +30,11 @@
      showgrid="false"
      units="px"
      inkscape:zoom="2.9148709"
-     inkscape:cx="118.35859"
+     inkscape:cx="118.18705"
      inkscape:cy="116.30018"
      inkscape:window-width="1920"
-     inkscape:window-height="1008"
-     inkscape:window-x="0"
+     inkscape:window-height="1052"
+     inkscape:window-x="1920"
      inkscape:window-y="0"
      inkscape:window-maximized="1"
      inkscape:current-layer="layer1"
@@ -49,20 +49,56 @@
      inkscape:groupmode="layer"
      id="layer1">
     <path
-       id="path4"
-       style="fill:#999999;fill-opacity:0.6;stroke-width:0.79375;stroke-linecap:round;stroke-linejoin:round;paint-order:stroke fill markers"
-       inkscape:label="path1"
-       d="M 22.489584 1.3229167 A 21.166668 21.166668 0 0 0 1.3229167 22.489584 A 21.166668 21.166668 0 0 0 22.489584 43.65625 A 21.166668 21.166668 0 0 0 34.546212 39.837879 L 42.333334 47.625 L 47.625 42.333334 L 39.837879 34.546212 A 21.166668 21.166668 0 0 0 43.65625 22.489584 A 21.166668 21.166668 0 0 0 22.489584 1.3229167 z M 22.489584 5.2916667 A 17.197916 17.197916 0 0 1 39.6875 22.489584 A 17.197916 17.197916 0 0 1 22.489584 39.6875 A 17.197916 17.197916 0 0 1 5.2916667 22.489584 A 17.197916 17.197916 0 0 1 22.489584 5.2916667 z " />
-    <path
-       style="fill:#999999;fill-opacity:0.6;stroke-width:0.79375;stroke-linecap:round;stroke-linejoin:round;paint-order:stroke fill markers"
-       d="m 19.182292,10.583333 0.661458,17.197918 h 5.291667 l 0.661459,-17.197918 z"
-       id="path3"
-       sodipodi:nodetypes="ccccc" />
-    <path
+       id="path1"
+       style="fill:#999999;fill-opacity:0.6;stroke-width:2.64583;paint-order:stroke markers fill"
+       d="M 31.75 19.84375 A 11.90625 11.90625 0 0 0 19.84375 31.75 A 11.90625 11.90625 0 0 0 31.75 43.65625 A 11.90625 11.90625 0 0 0 38.741305 41.387138 L 44.979167 47.625 L 47.625 44.979167 L 41.387138 38.741305 A 11.90625 11.90625 0 0 0 43.65625 31.75 A 11.90625 11.90625 0 0 0 31.75 19.84375 z M 31.75 22.489584 A 9.260417 9.260417 0 0 1 41.010417 31.75 A 9.260417 9.260417 0 0 1 31.75 41.010417 A 9.260417 9.260417 0 0 1 22.489584 31.75 A 9.260417 9.260417 0 0 1 31.75 22.489584 z " />
+    <rect
+       style="fill:#999999;fill-opacity:0.6;stroke-width:2.64583;paint-order:stroke markers fill"
        id="rect3"
-       style="fill:#999999;fill-opacity:0.6;stroke-width:0.79375;stroke-linecap:round;stroke-linejoin:round;paint-order:stroke fill markers"
-       d="m 19.843751,30.427084 v 3.96875 h 5.291666 v -3.96875 z"
-       inkscape:label="path4" />
+       width="31.75"
+       height="2.6458335"
+       x="5.2916675"
+       y="2.6458333" />
+    <rect
+       style="fill:#999999;fill-opacity:0.6;stroke-width:2.64583;paint-order:stroke markers fill"
+       id="rect4"
+       width="31.75"
+       height="2.6458333"
+       x="5.2916675"
+       y="11.906251" />
+    <rect
+       style="fill:#999999;fill-opacity:0.6;stroke-width:2.64583;paint-order:stroke markers fill"
+       id="rect5"
+       width="14.552084"
+       height="2.6458333"
+       x="5.291667"
+       y="21.166666" />
+    <rect
+       style="fill:#999999;fill-opacity:0.6;stroke-width:2.64583;paint-order:stroke markers fill"
+       id="rect6"
+       width="11.90625"
+       height="2.6458333"
+       x="5.2916675"
+       y="30.427082" />
+    <rect
+       style="fill:#999999;fill-opacity:0.6;stroke-width:2.64583;paint-order:stroke markers fill"
+       id="rect7"
+       width="14.552084"
+       height="2.6458333"
+       x="5.291667"
+       y="39.687504" />
+    <path
+       style="fill:#999999;fill-opacity:0.6;stroke-width:2.64583;paint-order:stroke markers fill"
+       d="m 30.1625,25.135417 0.264584,9.260417 h 2.645833 L 33.3375,25.135417 Z"
+       id="path10"
+       sodipodi:nodetypes="ccccc" />
+    <rect
+       style="fill:#999999;fill-opacity:0.6;stroke-width:2.64583;paint-order:stroke markers fill"
+       id="rect10"
+       width="2.6458333"
+       height="2.6458333"
+       x="30.427084"
+       y="35.71875" />
   </g>
   <metadata
      id="metadata824">

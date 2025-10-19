@@ -1531,6 +1531,17 @@ button:has(abbr) {
                     white-space: nowrap;
                 }
             }
+            
+            small {
+                display: inline-block;
+                
+                font-size: 14px;
+                color: #666666;
+                
+                .dark_mode & {
+                    color: #cccccc;
+                }
+            }
         }
     }
     
