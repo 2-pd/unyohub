@@ -65,7 +65,7 @@ if ($ts === FALSE) {
     exit;
 }
 
-if ($ts < $ts_now - 183600) {
+if ($ts < $ts_now - 183600 && !(is_object($user) && $user->check_permission("control_panel_user"))) {
     print "ERROR: 2日以上前の運用情報を投稿することはできません";
     exit;
 }

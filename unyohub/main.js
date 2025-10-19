@@ -3683,7 +3683,9 @@ function operation_data_draw () {
         if (days_before === 1) {
             buf_h2 += "(昨日)";
         } else {
-            show_write_operation_data_button = "false";
+            if (user_data === null || !user_data["is_control_panel_user"]) {
+                show_write_operation_data_button = "false";
+            }
             
             if (days_before === 2) {
                 buf_h2 += "(一昨日)";
