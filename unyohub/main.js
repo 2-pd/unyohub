@@ -2769,10 +2769,8 @@ function convert_formation_data (line_id, operation_list, is_inbound) {
                 }
                 
                 if (operation_number in data && data[operation_number] !== null) {
-                    if (data[operation_number]["formations"] !== "") {
-                        var operation_formation_text = data[operation_number]["formations"];
-                    } else {
-                        var operation_formation_text = "運休";
+                    if (data[operation_number]["formations"] === "") {
+                        continue;
                     }
                     
                     if (railroad_info["lines"][line_id]["inbound_forward_direction"] === is_inbound) {
@@ -2782,7 +2780,7 @@ function convert_formation_data (line_id, operation_list, is_inbound) {
                             formation_text += "+";
                         }
                         
-                        formation_text += operation_formation_text;
+                        formation_text += data[operation_number]["formations"];
                     } else {
                         if (formation_text.length === 0) {
                             var formation_data = data[operation_number]["formations"].split("+");
@@ -2792,7 +2790,7 @@ function convert_formation_data (line_id, operation_list, is_inbound) {
                             formation_text = "+" + formation_text;
                         }
                         
-                        formation_text = operation_formation_text + formation_text;
+                        formation_text = data[operation_number]["formations"] + formation_text;
                     }
                     
                     reassigned = reassigned || ("relieved_formations" in data[operation_number] && data[operation_number]["relieved_formations"].length >= 1);
@@ -2810,6 +2808,11 @@ function convert_formation_data (line_id, operation_list, is_inbound) {
                         formation_text = "?+" + formation_text;
                     }
                 }
+            }
+            
+            if (formation_text.length === 0) {
+                formation_text = "運休";
+                first_formation = "";
             }
         }
     } else {
