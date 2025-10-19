@@ -64,6 +64,13 @@ log_ip_address 投稿者のIPアドレスを記録するか(BOOL値)
 }
 
 
+███ gtfs_realtime_endpoints.json ███
+
+{
+    "路線系統識別名" : GTFSに準じたTripUpdateデータの配信URL...
+}
+
+
 ███ announcements.json ███
 
 ※このファイルの更新日時は最も新しいお知らせが更新されたタイムスタンプと同一の値をセットする
@@ -95,7 +102,6 @@ log_ip_address 投稿者のIPアドレスを記録するか(BOOL値)
             "inbound_forward_direction" : 上り列車の進行方向と編成の前位側(奇数向き)方向が一致するかどうか(BOOL値),
             "clockwise_is_inbound" : 上り列車が時計回り運転となるか(BOOL値。環状運転していない路線の場合nullまたは省略)
             "double_station_spacing" : 走行位置モードで駅間を2行で表示させるか(1行で表示させる場合や乗り入れ先路線の場合は省略可能。BOOL値),
-            "show_final_destinations_in_position_mode" : 走行位置モードで種別の代わりに行き先を表示させるか(種別を表示させる場合や乗り入れ先路線の場合は省略可能。BOOL値),
             "stations" : [ 駅一覧
                 {
                     "station_name" : 駅名,
@@ -128,10 +134,11 @@ log_ip_address 投稿者のIPアドレスを記録するか(BOOL値)
     },
     "lines_order" : この路線系統に属する路線の路線識別名を表示させたい順に配列で,
     "joined_lines_order" : 乗り入れ先路線系統に属する路線の路線識別名を表示させたい順に配列で(他の路線系統に乗り入れていない場合は省略可能),
-    "train_color_rules" : [ 列車番号の色分け規則(配列で複数指定可能)
+    "train_color_rules" : [ 列車表示色の判定規則
         {
-            "pattern" : 列車番号の正規表現パターン,
-            "color" : 色コード文字列
+            "pattern" : 正規表現パターン,
+            "color" : 色コード文字列,
+            "subject" : 判定対象(列車番号なら"train_number"、列車種別なら"train_type"。省略時は列車番号とみなす)
         }...
     ],
     "deadhead_train_number" : 回送列車の列車番号にマッチする正規表現パターン,
@@ -218,6 +225,13 @@ log_ip_address 投稿者のIPアドレスを記録するか(BOOL値)
 }
 
 
+███ formation_name_mappings.json ███
+
+{
+    "公開API上の車両識別名" : 編成表の編成名...
+}
+
+
 ███ diagram_info.json ███
 
 {
@@ -286,6 +300,7 @@ log_ip_address 投稿者のIPアドレスを記録するか(BOOL値)
             "min_car_count" : 充当可能な最小の編成両数,
             "max_car_count" : 充当可能な最大の編成両数,
             "main_color" : テーマカラー,
+            "default_icon" : 運用情報未投稿時用のアイコン識別名(省略時は汎用アイコンを表示),
             "comment" : 補足説明文
         }...
     },
@@ -313,6 +328,7 @@ log_ip_address 投稿者のIPアドレスを記録するか(BOOL値)
                     "previous_trains" : [ 直通元の区間組成
                         {
                             "line_id" : 走行路線の識別名,
+                            "direction" : 上りか下りか(上りなら「inbound」、下りなら「outbound」),
                             "train_number" : 列車番号,
                             "starting_station" : 始発駅
                         }...
@@ -320,6 +336,7 @@ log_ip_address 投稿者のIPアドレスを記録するか(BOOL値)
                     "next_trains" : [ 直通先の区間組成
                         {
                             "line_id" : 走行路線の識別名,
+                            "direction" : 上りか下りか(上りなら「inbound」、下りなら「outbound」),
                             "train_number" : 列車番号,
                             "starting_station" : 始発駅
                         }...
