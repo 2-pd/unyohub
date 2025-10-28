@@ -325,6 +325,7 @@ log_ip_address 投稿者のIPアドレスを記録するか(BOOL値)
                     "starting_station" : 始発駅,
                     "train_type" : 列車種別,
                     "destination" : 行き先(データ上の終着駅と同一である場合は省略可能),
+                    "is_extra_train" : 予定臨時列車か否か(予定臨時列車は運用表に記載されている場合にのみ各駅の時刻表で表示される。予定臨時列車でない場合は省略可能)
                     "previous_trains" : [ 直通元の区間組成
                         {
                             "line_id" : 走行路線の識別名,
