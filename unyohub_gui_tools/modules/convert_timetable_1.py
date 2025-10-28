@@ -95,7 +95,17 @@ def convert_timetable_1 (mes, file_name, digits_count):
             train = list(itemgetter(*line_stations[line_id])(timetable_column))
             
             if sum([i != "" and i != "||" for i in train]) > 1:
-                train = [timetable_column[0].strip().zfill(digits_count), timetable_column[1].strip(), timetable_column[2].strip()] + train + ["", "", "", "", "", ""]
+                train_number = timetable_column[0].strip()
+                
+                if train_number.startswith("◆"):
+                    train_number = train_number[1:].strip()
+                    temporary_train_symbol = "◆"
+                else:
+                    temporary_train_symbol = ""
+                
+                train_number = train_number.zfill(digits_count)
+                
+                train = [temporary_train_symbol + train_number, timetable_column[1].strip(), timetable_column[2].strip()] + train + ["", "", "", "", "", ""]
                 starting_station = None
                 train_station_set = set()
                 
@@ -129,7 +139,7 @@ def convert_timetable_1 (mes, file_name, digits_count):
                                 else:
                                     departure_time = "24:" + departure_time.zfill(2)
                             else:
-                                mes("時刻として認識できない値が含まれています: " + train[0], True)
+                                mes("時刻として認識できない値が含まれています: " + train_number, True)
                                 
                                 departure_time = "00:00"
                         else:
@@ -141,7 +151,7 @@ def convert_timetable_1 (mes, file_name, digits_count):
                                 
                                 departure_time = departure_time_split[0] + ":" + departure_time_split[1].zfill(2)
                             else:
-                                mes("時刻として認識できない値が含まれています: " + train[0], True)
+                                mes("時刻として認識できない値が含まれています: " + train_number, True)
                                 
                                 departure_time = "00:00"
                         
@@ -161,17 +171,17 @@ def convert_timetable_1 (mes, file_name, digits_count):
                         new_timetable_t[previous_line_id][-1][-6] = line_id + "." + direction_list[line_id]
                     else:
                         new_timetable_t[previous_line_id][-1][-6] = line_id + "." + default_direction
-                    new_timetable_t[previous_line_id][-1][-5] = train[0]
+                    new_timetable_t[previous_line_id][-1][-5] = train_number
                     for cnt in range(3, len(train) - 6):
                         if train[cnt] != "":
                             new_timetable_t[previous_line_id][-1][-4] = station_name_list[line_id][cnt - 3]
                             break
-                elif train[0] + ":" + starting_station in previous_trains:
-                    previous_train_data = previous_trains.pop(train[0] + ":" + starting_station)
+                elif train_number + ":" + starting_station in previous_trains:
+                    previous_train_data = previous_trains.pop(train_number + ":" + starting_station)
                     
                     for train_data in previous_train_data:
                         for cnt in range(1, len(new_timetable_t[train_data["line_id"]])):
-                            if new_timetable_t[train_data["line_id"]][cnt][0] == train_data["train_number"]:
+                            if new_timetable_t[train_data["line_id"]][cnt][0].lstrip("◆") == train_data["train_number"]:
                                 for cnt_2 in range(3, len(new_timetable_t[train_data["line_id"]][cnt]) - 6):
                                     if new_timetable_t[train_data["line_id"]][cnt][cnt_2] != "":
                                         previous_line_train_starting_station = station_name_list[train_data["line_id"]][cnt_2 - 3]
@@ -190,7 +200,7 @@ def convert_timetable_1 (mes, file_name, digits_count):
                             new_timetable_t[train_data["line_id"]][previous_train_index][next_train_row] = line_id + "." + direction_list[line_id]
                         else:
                             new_timetable_t[train_data["line_id"]][previous_train_index][next_train_row] = line_id + "." + default_direction
-                        new_timetable_t[train_data["line_id"]][previous_train_index][next_train_row + 1] = train[0]
+                        new_timetable_t[train_data["line_id"]][previous_train_index][next_train_row + 1] = train_number
                         for cnt in range(3, len(train) - 6):
                             if train[cnt] != "":
                                 new_timetable_t[train_data["line_id"]][previous_train_index][next_train_row + 2] = station_name_list[line_id][cnt - 3]
@@ -222,13 +232,13 @@ def convert_timetable_1 (mes, file_name, digits_count):
                     if len(next_train_info[0]) >= 1:
                         new_timetable_t[previous_line_id][-1][next_train_row + 1] = next_train_info[0]
                     else:
-                        new_timetable_t[previous_line_id][-1][next_train_row + 1] = new_timetable_t[previous_line_id][-1][0]
+                        new_timetable_t[previous_line_id][-1][next_train_row + 1] = new_timetable_t[previous_line_id][-1][0].lstrip("◆")
                     new_timetable_t[previous_line_id][-1][next_train_row + 2] = terminal_station
                 else:
                     if train_number + ":" + terminal_station not in previous_trains:
                         previous_trains[train_number + ":" + terminal_station] = []
                     
-                    previous_trains[train_number + ":" + terminal_station].append({"line_id" : previous_line_id, "train_number" : new_timetable_t[previous_line_id][-1][0], "starting_station" : previous_line_starting_station})
+                    previous_trains[train_number + ":" + terminal_station].append({"line_id" : previous_line_id, "train_number" : new_timetable_t[previous_line_id][-1][0].lstrip("◆"), "starting_station" : previous_line_starting_station})
     
     
     for line_id in line_list:
