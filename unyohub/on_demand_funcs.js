@@ -1084,6 +1084,12 @@ function train_detail (line_id, train_number, starting_station, train_direction,
                 continue;
             }
             
+            var train_operations_2 = get_operations(train["line_id"], train["train_number"], train["starting_station"], train["is_inbound"] ? "inbound_trains" : "outbound_trains");
+            
+            if (train_operations_2 === null && "is_temporary_train" in train && train["is_temporary_train"]) {
+                continue;
+            }
+            
             var timetable_train_number = train["train_number"].split("__")[0];
             
             if ("clockwise_is_inbound" in railroad_info["lines"][train["line_id"]] && railroad_info["lines"][train["line_id"]]["clockwise_is_inbound"] !== null) {
@@ -1100,9 +1106,7 @@ function train_detail (line_id, train_number, starting_station, train_direction,
             
             buf += "<span style='color: " + (config["dark_mode"] ? convert_font_color_dark_mode(get_train_color(timetable_train_number, train["train_type"])) : get_train_color(timetable_train_number, train["train_type"])) + ";'>" + escape_html(train["train_type"] + "　" + timetable_train_number) + "</span>";
             
-            if (train_operations !== null) {
-                var train_operations_2 = get_operations(train["line_id"], train["train_number"], train["starting_station"], train["is_inbound"] ? "inbound_trains" : "outbound_trains");
-                
+            if (train_operations_2 !== null) {
                 if (railroad_info["lines"][train["line_id"]]["inbound_forward_direction"] === train["is_inbound"]) {
                     var before_train_str = "◀ ";
                     var after_train_str = " 　";
