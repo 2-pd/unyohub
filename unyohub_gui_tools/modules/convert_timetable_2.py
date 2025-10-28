@@ -121,6 +121,12 @@ def convert_timetable_2 (mes, main_dir, diagram_revision, diagram_id):
                 if train[0] == "":
                     continue
                 
+                if train[0].startswith("◆"):
+                    train[0] = train[0][1:]
+                    is_temporary_train = True
+                else:
+                    is_temporary_train = False
+                
                 if train[0] != previous_train_number:
                     if train[0] in direction_data:
                         mes("《注意》直通情報のない同一名の列車が検出されました: " + line_id + " - " + train[0])
@@ -202,6 +208,9 @@ def convert_timetable_2 (mes, main_dir, diagram_revision, diagram_id):
                 if train[2] != "":
                     direction_data[train[0]][train_cnt]["destination"] = train[2]
                 
+                if is_temporary_train:
+                    direction_data[train[0]][train_cnt]["is_temporary_train"] = True
+                
                 if train[-6] != "":
                     line_id_and_direction = train[-6].split(".")
                     if len(line_id_and_direction) != 2 or (line_id_and_direction[1] != "inbound" and line_id_and_direction[1] != "outbound"):
@@ -236,7 +245,7 @@ def convert_timetable_2 (mes, main_dir, diagram_revision, diagram_id):
                     direction_data[train[0]][train_cnt]["arrival_times"] = [None if arrival_time == "" else arrival_time for arrival_time in arrival_times]
                 direction_data[train[0]][train_cnt]["departure_times"] = [None if departure_time == "" else departure_time for departure_time in departure_times]
             
-            line_data[direction + "_trains"] = direction_data
+            line_data[direction + "_trains"] = { key : direction_data[key] for key in sorted(direction_data.keys()) }
         
         output_data[line_id] = line_data
     
