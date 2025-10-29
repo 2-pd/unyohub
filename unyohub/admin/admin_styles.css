@@ -549,7 +549,7 @@ input, select {
     font-size: 18px;
 }
 
-input[type="text"], input[type="number"], input[type="password"], input[type="search"], select {
+input[type="text"], input[type="number"], input[type="password"], input[type="search"], input[type="date"], select {
     background-color: #ffffff;
     
     border: none;

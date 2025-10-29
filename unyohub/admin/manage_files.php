@@ -221,7 +221,7 @@ if (empty($_GET["file_name"])) {
     
     print "<h3>現在のファイル</h3>";
     print "<h5>".$_GET["file_name"]."</h5><div class='informational_text'>".(file_exists($file_path) ? "更新日時 ".date("Y-m-d H:i:s", filemtime($file_path)) : "ファイルなし")."</div>";
-    print "<button type='buuton' class='wide_button' onclick='document.getElementById(\"new_file\").click();'>新しいファイルのアップロード</button>";
+    print "<button type='button' class='wide_button' onclick='document.getElementById(\"new_file\").click();'>新しいファイルのアップロード</button>";
     
     print "<h3>過去のバージョン</h3>";
     if (is_dir($trash_path)) {
@@ -230,7 +230,7 @@ if (empty($_GET["file_name"])) {
         if (!empty($trash_files)) {
             print "<table>";
             foreach (array_reverse($trash_files) as $trash_file_path) {
-                print "<tr><td>更新日時 ".date("Y-m-d H:i:s", filemtime($trash_file_path))."<button type='buuton' onclick='restore_trash_file(\"".basename($trash_file_path)."\");'>復元</button></td></tr>";
+                print "<tr><td>更新日時 ".date("Y-m-d H:i:s", filemtime($trash_file_path))."<button type='button' onclick='restore_trash_file(\"".basename($trash_file_path)."\");'>復元</button></td></tr>";
             }
             print "</table>";
         } else {
