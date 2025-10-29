@@ -282,6 +282,35 @@ table {
     }
 }
 
+.file_list {
+    max-width: 480px;
+    
+    margin: 0 auto;
+    
+    padding: 0 10px;
+    
+    list-style: none;
+    
+    li {
+        height: 40px;
+        
+        line-height: 40px;
+        font-size: 18px;
+        
+        a {
+            display: block;
+        }
+        
+        small {
+            font-size: 16px;
+        }
+    }
+    
+    li:not(:last-child) {
+        border-bottom: 1px solid #cccccc;
+    }
+}
+
 .descriptive_text {
     color: #666666;
     text-align: center;

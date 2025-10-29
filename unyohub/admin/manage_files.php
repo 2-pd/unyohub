@@ -52,6 +52,28 @@ if (empty($_GET["file_name"])) {
     
     print "<h2>データファイルの管理</h2>";
     
+    print "<h3>ダイヤ改正別データ</h3>";
+    
+    $dir_list = array_reverse(glob("../data/".$railroad_id."/[0-9][0-9][0-9][0-9]-[01][0-9]-[0-3][0-9]"));
+    
+    $buf = "";
+    foreach ($dir_list as $dir_path) {
+        if (!is_dir($dir_path)) {
+            continue;
+        }
+        
+        $diagram_revision = basename($dir_path);
+        $buf .= "<li><a href='manage_diagram_files.php?railroad_id=".$railroad_id."&diagram_revision=".$diagram_revision."'>".$diagram_revision."<small> 改正</small></a></li>";
+    }
+    
+    if (!empty($buf)) {
+        print "<ul class='file_list'>".$buf."</ul>";
+    } else {
+        print "<div class='informational_text'>ダイヤ改正別フォルダなし</div>";
+    }
+    
+    print "<a href='manage_diagram_files.php?railroad_id=".$railroad_id."&new_dir=yes' class='execute_button'>ダイヤ改正日別フォルダの追加</a>";
+    
     print "<h3>路線系統情報ファイル</h3>";
     print "<h5>railroad_info.json</h5><div class='informational_text'>更新日時 ".date("Y-m-d H:i:s", filemtime($railroad_info_path))."</div>";
     print "<a href='manage_files.php?railroad_id=".$railroad_id."&file_name=railroad_info.json' class='execute_button'>アップロード・復元</a>";
@@ -67,6 +89,11 @@ if (empty($_GET["file_name"])) {
     print "<h5>formations.csv</h5><div class='informational_text'>".(file_exists($formations_path) ? "更新日時 ".date("Y-m-d H:i:s", filemtime($formations_path)) : "ファイルなし")."</div>";
     print "<a href='manage_files.php?railroad_id=".$railroad_id."&file_name=formations.csv' class='execute_button'>アップロード・復元</a>";
     
+    print "<h3>ダイヤ改正日一覧ファイル</h3>";
+    $diagram_revisions_path = "../data/".$railroad_id."/diagram_revisions.txt";
+    print "<h5>diagram_revisions.txt</h5><div class='informational_text'>".(file_exists($diagram_revisions_path) ? "更新日時 ".date("Y-m-d H:i:s", filemtime($diagram_revisions_path)) : "ファイルなし")."</div>";
+    print "<a href='manage_files.php?railroad_id=".$railroad_id."&file_name=diagram_revisions.txt' class='execute_button'>アップロード・復元</a>";
+    
     print "<h3>車両識別名対応表ファイル</h3>";
     $formation_name_mappings_path = "../data/".$railroad_id."/formation_name_mappings.json";
     print "<h5>formation_name_mappings.json</h5><div class='informational_text'>".(file_exists($formation_name_mappings_path) ? "更新日時 ".date("Y-m-d H:i:s", filemtime($formation_name_mappings_path)) : "ファイルなし")."</div>";
@@ -80,6 +107,9 @@ if (empty($_GET["file_name"])) {
             break;
         case "formations.csv":
             print "<h2>編成表元ファイルの管理</h2>";
+            break;
+        case "diagram_revisions.txt":
+            print "<h2>ダイヤ改正日一覧ファイルの管理</h2>";
             break;
         case "formation_name_mappings.json":
             print "<h2>車両識別名対応表ファイルの管理</h2>";
