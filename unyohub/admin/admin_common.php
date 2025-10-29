@@ -34,10 +34,11 @@ function print_footer () {
     EOM;
 }
 
-function exec_python_command ($subcommand, $args) {
+function exec_python_command ($subcommand, $args, $options="") {
     $args_str = is_array($args) ? implode(" ", $args) : $args;
+    $options_str = is_array($options) ? implode(" ", $options) : $options;
     
-    exec("python3 ../commands/unyohub ".$subcommand." ".$args_str, $output);
+    exec("python3 ../commands/unyohub ".$subcommand." ".$args_str.(!empty($options) ? " ".$options : ""), $output);
     
     $result = "";
     foreach ($output as $row) {

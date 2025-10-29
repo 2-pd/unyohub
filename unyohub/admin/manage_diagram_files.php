@@ -2,6 +2,33 @@
 include "admin_common.php";
 
 
+function replace_file ($railroad_id, $diagram_revision, $file_name, $new_file) {
+    $file_path = "../data/".$railroad_id."/".$diagram_revision."/".$file_name;
+    
+    if (file_exists($file_path)) {
+        $trash_path = "../data/".$railroad_id."/trash";
+        $diagram_files_trash_path = $trash_path."/".$diagram_revision;
+        
+        if (!is_dir($trash_path)) {
+            mkdir($trash_path);
+            chmod($trash_path, 0o777);
+        }
+        
+        if (!is_dir($diagram_files_trash_path)) {
+            mkdir($diagram_files_trash_path);
+            chmod($diagram_files_trash_path, 0o777);
+        }
+        
+        $trash_file_path = $diagram_files_trash_path."/".$file_name."__".date("YmdHis", filemtime($file_path)).".bak";
+        
+        rename($file_path, $trash_file_path);
+    }
+    
+    rename($new_file, $file_path);
+    touch($file_path);
+}
+
+
 if (empty($_GET["railroad_id"])) {
     print "【!】URLが誤っています";
     exit;
@@ -36,11 +63,62 @@ if (isset($_GET["diagram_revision"])) {
     $dir_path = "../data/".$railroad_id."/".$_GET["diagram_revision"]."/";
     
     if (!preg_match($diagram_revision_reg_exp, $_GET["diagram_revision"]) || !is_dir($dir_path)) {
-        print "【!】指定されたダイヤ改正日が正しくありません";
+        print "<div class='informational_text'>指定されたダイヤ改正日が正しくありません</div>";
         goto end_of_article;
     }
     
     print "<h2>".intval(substr($_GET["diagram_revision"], 0, 4))."年".intval(substr($_GET["diagram_revision"], 5, 2))."月".intval(substr($_GET["diagram_revision"], 8))."日ダイヤのファイル</h2>";
+    
+    $token_html = "<input type='hidden' name='one_time_token' value='".$user->create_one_time_token()."'>";
+    
+    print "<form action='manage_diagram_files.php?railroad_id=".$railroad_id."&diagram_revision=".$_GET["diagram_revision"]."' method='post' enctype='multipart/form-data' id='upload_form' style='display: none;'>";
+    print $token_html;
+    print "<input type='file' name='new_file' id='new_file' onchange='document.getElementById(\"upload_form\").submit();'>";
+    print "</form>";
+    
+    if (isset($_FILES["new_file"]["tmp_name"]) && is_uploaded_file($_FILES["new_file"]["tmp_name"])) {
+        if (!isset($_POST["one_time_token"]) || !$user->check_one_time_token($_POST["one_time_token"])) {
+            print "<script> alert('【!】ワンタイムトークンが無効です。処理はキャンセルされました。'); </script>";
+            goto on_error;
+        }
+        
+        $new_file = $_FILES["new_file"]["tmp_name"];
+        $file_name = $_FILES["new_file"]["name"];
+        chmod($new_file, 0o766);
+        
+        $extension = pathinfo($file_name, PATHINFO_EXTENSION);
+        
+        if ($extension === "json") {
+            if (!json_validate(file_get_contents($new_file))) {
+                print "<script> alert('【!】JSONファイルの構文に不備があります。処理はキャンセルされました。'); </script>";
+                goto on_error;
+            }
+            
+            replace_file($railroad_id, $_GET["diagram_revision"], $file_name, $new_file);
+            
+            if (str_starts_with($file_name, "operation_table_")) {
+                $result = exec_python_command("update-operations", array($railroad_id, $_GET["diagram_revision"], substr(pathinfo($file_name, PATHINFO_FILENAME), 16)));
+            } else {
+                $result = NULL;
+            }
+        } else {
+            replace_file($railroad_id, $_GET["diagram_revision"], $file_name, $new_file);
+            
+            if ($extension === "csv" && str_starts_with($file_name, "train_number_mappings_")) {
+                $result = exec_python_command("update-trip-ids", array($railroad_id, $_GET["diagram_revision"], substr(pathinfo($file_name, PATHINFO_FILENAME), 22)));
+            } else {
+                $result = NULL;
+            }
+        }
+        
+        print "<script> alert('ファイルを更新しました'); </script>";
+        
+        if (!empty($result)) {
+            print "<input type='checkbox' id='result_drop_down'><label for='result_drop_down' class='drop_down'>更新処理実行ログ</label>";
+            print "<div><div class='announcement'>".$result."</div></div>";
+        }
+    }
+    on_error:
     
     $file_list = glob($dir_path."*");
     
@@ -117,6 +195,9 @@ if (isset($_GET["diagram_revision"])) {
     } else {
         print "<div class='informational_text'>ファイルなし</div>";
     }
+    
+    print "<br><button type='button' class='wide_button' onclick='document.getElementById(\"new_file\").click();'>新しいファイルのアップロード</button>";
+    print "<div class='informational_text'>アップロードされたファイルと同じ名前のファイルが既にサーバ上で存在している場合、そのファイルはアップロードされたファイルで上書きされます。</div>";
 } elseif (!empty($_GET["new_dir"])) {
     if (isset($_POST["diagram_revision"])) {
         if (!preg_match($diagram_revision_reg_exp, $_POST["diagram_revision"])) {
@@ -137,6 +218,7 @@ if (isset($_GET["diagram_revision"])) {
         }
         
         mkdir($new_dir_path);
+        chmod($new_dir_path, 0o777);
         
         print "<script> alert('フォルダを作成しました。\\n新しいダイヤの有効化にはダイヤ改正日一覧ファイルへの改正日情報追加が必要です。'); location.href = 'manage_diagram_files.php?railroad_id=".$railroad_id."&diagram_revision=".$_POST["diagram_revision"]."'; </script>";
         

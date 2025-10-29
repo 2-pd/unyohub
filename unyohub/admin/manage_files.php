@@ -4,15 +4,20 @@ include "admin_common.php";
 
 function replace_file ($railroad_id, $file_name, $new_file) {
     $file_path = "../data/".$railroad_id."/".$file_name;
-    $trash_path = "../data/".$railroad_id."/trash";
     
-    if (!is_dir($trash_path)) {
-        mkdir($trash_path);
+    if (file_exists($file_path)) {
+        $trash_path = "../data/".$railroad_id."/trash";
+        
+        if (!is_dir($trash_path)) {
+            mkdir($trash_path);
+            chmod($trash_path, 0o777);
+        }
+        
+        $trash_file_path = $trash_path."/".$file_name."__".date("YmdHis", filemtime($file_path)).".bak";
+        
+        rename($file_path, $trash_file_path);
     }
     
-    $trash_file_path = $trash_path."/".$file_name."__".date("YmdHis", filemtime($file_path)).".bak";
-    
-    rename($file_path, $trash_file_path);
     rename($new_file, $file_path);
     touch($file_path);
 }
@@ -208,11 +213,11 @@ if (empty($_GET["file_name"])) {
                 $result = NULL;
         }
         
-        print "<script> alert('ファイルを差し替えました'); </script>";
+        print "<script> alert('ファイルを更新しました'); </script>";
     }
     
     if (!empty($result)) {
-        print "<input type='checkbox' id='result_drop_down'><label for='result_drop_down' class='drop_down'>差し替え処理実行ログ</label>";
+        print "<input type='checkbox' id='result_drop_down'><label for='result_drop_down' class='drop_down'>更新処理実行ログ</label>";
         print "<div><div class='announcement'>".$result."</div></div>";
     }
     
