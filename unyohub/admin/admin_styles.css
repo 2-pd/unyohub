@@ -292,10 +292,11 @@ table {
     list-style: none;
     
     li {
-        height: 40px;
+        padding: 5px 0;
         
-        line-height: 40px;
+        line-height: 30px;
         font-size: 18px;
+        font-weight: bold;
         
         a {
             display: block;
@@ -303,6 +304,19 @@ table {
         
         small {
             font-size: 16px;
+            font-weight: normal;
+        }
+        
+        .informational_text {
+            height: 20px;
+            
+            margin-top: 5px;
+            
+            padding: 0;
+            
+            text-align: right;
+            font-size: 16px;
+            font-weight: normal;
         }
     }
     

@@ -8,7 +8,6 @@ function replace_file ($railroad_id, $file_name, $new_file) {
     
     if (!is_dir($trash_path)) {
         mkdir($trash_path);
-        chmod($trash_path, 0o777);
     }
     
     $trash_file_path = $trash_path."/".$file_name."__".date("YmdHis", filemtime($file_path)).".bak";
