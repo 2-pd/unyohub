@@ -904,7 +904,7 @@ function train_detail (line_id, train_number, starting_station, train_direction,
     
     var train_data = [get_train(line_id, train_direction === "inbound_trains", train_number, starting_station)];
     
-    var buf = "<span class='train_detail_day' style='background-color: " + (config["dark_mode"] ? convert_color_dark_mode(diagram_info[operation_table["diagram_revision"]]["diagrams"][operation_table["diagram_id"]]["main_color"]) : diagram_info[operation_table["diagram_revision"]]["diagrams"][operation_table["diagram_id"]]["main_color"]) + ";'>";
+    var buf = "<span class='train_detail_day' style='border-color: " + (config["dark_mode"] ? convert_color_dark_mode(diagram_info[operation_table["diagram_revision"]]["diagrams"][operation_table["diagram_id"]]["main_color"]) : diagram_info[operation_table["diagram_revision"]]["diagrams"][operation_table["diagram_id"]]["main_color"]) + ";'>";
     
     buf += diagram_info[operation_table["diagram_revision"]]["diagrams"][operation_table["diagram_id"]]["diagram_name"];
     
@@ -1430,22 +1430,14 @@ function draw_operation_detail (operation_number_or_index, diagram_revision, dia
         var diagram_id_or_ts = operation_data_date_ts;
     }
     
-    var bg_color = diagram_info[diagram_revision]["diagrams"][diagram_id]["main_color"];
-    
-    if (config["dark_mode"]) {
-        bg_color = convert_color_dark_mode(bg_color);
-        
-        var color_style = "";
-    } else {
-        var color_style = " color: #444444;";
-    }
+    var buf = "<span class='train_detail_day' style='border-color: " + (config["dark_mode"] ? convert_color_dark_mode(diagram_info[diagram_revision]["diagrams"][diagram_id]["main_color"]) : diagram_info[diagram_revision]["diagrams"][diagram_id]["main_color"]) + ";'>" + diagram_info[operation_table["diagram_revision"]]["diagrams"][operation_table["diagram_id"]]["diagram_name"] + "</span>";
     
     if (operation_number in operation_table["operations"]) {
-        var buf = "<div class='heading_wrapper' style='background-color: " + bg_color + ";" + color_style + "'><button type='button' class='previous_button' onclick='previous_operation_number(" + (typeof operation_number_or_index === "string" ? "\"" + operation_number + "\"" : operation_number_or_index) + ", " + diagram_id_or_ts + ");'></button><h2>" + operation_number + "運用<small>" + operation_table["operations"][operation_number]["operation_group_name"] + " (" + operation_table["operations"][operation_number]["car_count"] + "両)</small></h2><button type='button' class='next_button' onclick='next_operation_number(" + (typeof operation_number_or_index === "string" ? "\"" + operation_number + "\"" : operation_number_or_index) + ", " + diagram_id_or_ts + ");'></button></div>";
+        buf += "<div class='heading_wrapper' style='background-color: " + (config["dark_mode"] ? convert_color_dark_mode(operation_table["operations"][operation_number]["main_color"]) : operation_table["operations"][operation_number]["main_color"]) + ";'><button type='button' class='previous_button' onclick='previous_operation_number(" + (typeof operation_number_or_index === "string" ? "\"" + operation_number + "\"" : operation_number_or_index) + ", " + diagram_id_or_ts + ");'></button><h2>" + operation_number + "運用<small>" + operation_table["operations"][operation_number]["operation_group_name"] + " (" + operation_table["operations"][operation_number]["car_count"] + "両)</small></h2><button type='button' class='next_button' onclick='next_operation_number(" + (typeof operation_number_or_index === "string" ? "\"" + operation_number + "\"" : operation_number_or_index) + ", " + diagram_id_or_ts + ");'></button></div>";
         
         var default_icon = "default_icon" in operation_table["operations"][operation_number] ? operation_table["operations"][operation_number]["default_icon"] : null;
     } else {
-        var buf = "<h2 style='background-color: " + bg_color + ";" + color_style + "'>" + operation_number + "運用</h2>";
+        buf += "<h2>" + operation_number + "運用</h2>";
         
         var default_icon = null;
     }

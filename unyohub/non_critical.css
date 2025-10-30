@@ -1016,12 +1016,12 @@ button:has(abbr) {
     top: 12px;
     left: 16px;
     
-    padding: 4px 20px;
+    padding: 2px 18px;
     
-    border-radius: 4px;
+    border: 2px solid transparent;
     
-    line-height: 24px;
-    font-size: 16px;
+    line-height: 22px;
+    font-size: 15px;
 }
 
 #train_operation_detail_area, #operation_data_detail_area {
@@ -1090,7 +1090,7 @@ button:has(abbr) {
                 content: "";
                 
                 position: absolute;
-                top: 16px;
+                top: 18px;
                 left: 6px;
                 
                 width: 8px;
@@ -1135,7 +1135,7 @@ button:has(abbr) {
         font-weight: bold;
         
         td:nth-child(2):before {
-            top: 13px;
+            top: 15px;
             left: 3px;
             
             width: 12px;
@@ -1694,7 +1694,7 @@ button:has(abbr) {
         top: 10px;
         left: 10px;
         
-        & + h3 {
+        & + h3, & + .heading_wrapper {
             margin-top: 30px;
         }
     }
