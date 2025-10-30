@@ -7,7 +7,7 @@
    viewBox="0 0 7.9374999 7.9375002"
    version="1.1"
    id="svg5"
-   inkscape:version="1.3 (0e150ed6c4, 2023-07-21)"
+   inkscape:version="1.4.2 (ebf0e940d0, 2025-05-08)"
    sodipodi:docname="閉じるボタン.svg"
    inkscape:export-filename="閉じるボタン.webp"
    inkscape:export-xdpi="192"
@@ -30,11 +30,11 @@
      showgrid="false"
      units="px"
      inkscape:zoom="16.489"
-     inkscape:cx="13.91837"
-     inkscape:cy="16.07132"
+     inkscape:cx="15.919704"
+     inkscape:cy="21.408212"
      inkscape:window-width="1920"
-     inkscape:window-height="1008"
-     inkscape:window-x="0"
+     inkscape:window-height="1052"
+     inkscape:window-x="1920"
      inkscape:window-y="0"
      inkscape:window-maximized="1"
      inkscape:current-layer="layer1"
@@ -48,20 +48,17 @@
      id="layer1">
     <rect
        style="fill:#999999;fill-opacity:1;stroke-width:3.02408"
-       id="rect1006"
+       id="rect1"
        width="6.3499999"
-       height="0.79374999"
-       x="2.4376602"
-       y="-0.39687487"
+       height="0.5291667"
+       x="2.4376605"
+       y="-0.26458338"
        transform="rotate(45)" />
-    <rect
-       style="fill:#999999;fill-opacity:1;stroke-width:3.02408"
-       id="rect1006-7"
-       width="6.3499999"
-       height="0.79374999"
-       x="-3.1749997"
-       y="-6.0095353"
-       transform="rotate(135)" />
+    <path
+       id="path1"
+       style="fill:#999999;stroke-width:1.05833;stroke-linejoin:round;paint-order:stroke markers fill"
+       d="m 6.0267254,1.5365973 -1.683798,1.683798 0.3741773,0.3741774 1.6837981,-1.683798 z m -2.8063301,2.8063301 -1.683798,1.6837979 0.3741774,0.3741774 1.683798,-1.683798 z"
+       sodipodi:nodetypes="cccccccccc" />
   </g>
   <metadata
      id="metadata824">

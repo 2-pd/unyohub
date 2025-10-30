@@ -7,7 +7,7 @@
    viewBox="0 0 4.2333332 15.875"
    version="1.1"
    id="svg5"
-   inkscape:version="1.4 (e7c3feb100, 2024-10-09)"
+   inkscape:version="1.4.2 (ebf0e940d0, 2025-05-08)"
    sodipodi:docname="日付選択ボタン.svg"
    inkscape:export-filename="日付選択ボタン.webp"
    inkscape:export-xdpi="96"
@@ -30,11 +30,11 @@
      showgrid="false"
      units="px"
      inkscape:zoom="5"
-     inkscape:cx="2.4"
+     inkscape:cx="2.3"
      inkscape:cy="28"
      inkscape:window-width="1920"
-     inkscape:window-height="1052"
-     inkscape:window-x="1920"
+     inkscape:window-height="1008"
+     inkscape:window-x="0"
      inkscape:window-y="0"
      inkscape:window-maximized="1"
      inkscape:current-layer="layer1"
@@ -49,21 +49,22 @@
     <path
        id="rect1"
        style="fill:#999999;fill-opacity:1;stroke-width:0.661458;stroke-linecap:round;stroke-linejoin:round;paint-order:stroke fill markers"
-       d="M 0 5.8208332 L 0 10.054167 L 4.2333333 10.054167 L 4.2333333 5.8208332 L 0 5.8208332 z M 1.5875 7.4083332 L 2.6458333 7.4083332 L 2.6458333 8.4666665 L 1.5875 8.4666665 L 1.5875 7.4083332 z " />
+       d="M 0,6.3499999 V 9.5249998 H 4.2333333 V 6.3499999 Z M 1.0583333,7.4083332 H 3.1749999 V 8.4666665 H 1.0583333 Z"
+       sodipodi:nodetypes="cccccccccc" />
     <rect
        style="fill:#999999;fill-opacity:1;stroke-width:0.661458;stroke-linecap:round;stroke-linejoin:round;paint-order:stroke fill markers"
        id="rect2"
        width="2.6458333"
-       height="2.6458333"
+       height="1.3229166"
        x="0.79374999"
-       y="0" />
+       y="1.0583333" />
     <rect
        style="fill:#999999;fill-opacity:1;stroke-width:0.661458;stroke-linecap:round;stroke-linejoin:round;paint-order:stroke fill markers"
        id="rect3"
        width="2.6458333"
-       height="2.6458333"
+       height="1.3229166"
        x="0.79374999"
-       y="13.229166" />
+       y="13.49375" />
   </g>
   <metadata
      id="metadata824">

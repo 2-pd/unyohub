@@ -7,7 +7,7 @@
    viewBox="0 0 15.875 15.875"
    version="1.1"
    id="svg5"
-   inkscape:version="1.3.2 (091e20ef0f, 2023-11-25)"
+   inkscape:version="1.4.2 (ebf0e940d0, 2025-05-08)"
    sodipodi:docname="一覧表示ボタン.svg"
    inkscape:export-filename="一覧表示ボタン.webp"
    inkscape:export-xdpi="96"
@@ -30,11 +30,11 @@
      showgrid="false"
      units="px"
      inkscape:zoom="8.2445"
-     inkscape:cx="26.502517"
-     inkscape:cy="29.716781"
+     inkscape:cx="26.745103"
+     inkscape:cy="16.859725"
      inkscape:window-width="1920"
-     inkscape:window-height="1008"
-     inkscape:window-x="0"
+     inkscape:window-height="1052"
+     inkscape:window-x="1920"
      inkscape:window-y="0"
      inkscape:window-maximized="1"
      inkscape:current-layer="layer1"
@@ -49,45 +49,45 @@
     <rect
        style="fill:#999999;stroke-width:0.661458;stroke-linecap:round;stroke-linejoin:round;paint-order:stroke fill markers"
        id="rect1"
-       width="2.6458333"
-       height="2.6458333"
-       x="0"
+       width="2.1166666"
+       height="1.5875"
+       x="0.52916664"
        y="0.52916664" />
     <rect
        style="fill:#999999;stroke-width:0.661458;stroke-linecap:round;stroke-linejoin:round;paint-order:stroke fill markers"
        id="rect2"
-       width="11.1125"
-       height="2.6458333"
+       width="10.583333"
+       height="1.5875"
        x="4.7624998"
        y="0.52916664" />
     <rect
        style="fill:#999999;stroke-width:0.661458;stroke-linecap:round;stroke-linejoin:round;paint-order:stroke fill markers"
        id="rect3"
-       width="2.6458333"
-       height="2.6458333"
-       x="0"
-       y="6.6145835" />
+       width="2.1166666"
+       height="1.5875"
+       x="0.52916664"
+       y="7.1437502" />
     <rect
        style="fill:#999999;stroke-width:0.661458;stroke-linecap:round;stroke-linejoin:round;paint-order:stroke fill markers"
        id="rect4"
-       width="11.1125"
-       height="2.6458333"
+       width="10.583333"
+       height="1.5875"
        x="4.7624998"
-       y="6.6145835" />
+       y="7.1437502" />
     <rect
        style="fill:#999999;stroke-width:0.661458;stroke-linecap:round;stroke-linejoin:round;paint-order:stroke fill markers"
        id="rect5"
-       width="2.6458333"
-       height="2.6458333"
-       x="0"
-       y="12.7" />
+       width="2.1166666"
+       height="1.5875"
+       x="0.52916664"
+       y="13.758333" />
     <rect
        style="fill:#999999;stroke-width:0.661458;stroke-linecap:round;stroke-linejoin:round;paint-order:stroke fill markers"
        id="rect6"
-       width="11.1125"
-       height="2.6458333"
+       width="10.583333"
+       height="1.5875"
        x="4.7624998"
-       y="12.7" />
+       y="13.758333" />
   </g>
   <metadata
      id="metadata824">
