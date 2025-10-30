@@ -1,7 +1,7 @@
 @charset "utf-8";
 
 * {
-    font-family: "Noto Sans CJK JP", "Meiryo", "Hiragino Kaku Gothic ProN", sans-serif;
+    font-family: "Noto Sans CJK JP", "Noto Sans JP", "Hiragino Kaku Gothic ProN", sans-serif;
     
     outline: 0 !important;
     
@@ -122,7 +122,7 @@ header {
     border: none;
     border-radius: 0;
     
-    background-image: url(data:image/webp;base64,UklGRhwBAABXRUJQVlA4TA8BAAAvO8AOEJegEJIkp+v8SU7sCXLUUNC2kWMdfyRH7BHsqaBtI8c6/kiO2CPYU1HbSM52/lo8+1xO1+cClJlRa5W11kABAD4A/P8ZAoVEBGP9/xuzlJIOR24kKdLAMu/+/7VNlZm9pznxVET/HbmRJEXVDokTzNrwhmYoWz/yRZHzfXTMtLcPV+/Hjcl95YqYAqYUHmM8p+MnyLZ6Omf0ZMvV80P82ON3yKNSINKAUwHTgVIC0jJTM1I73IvpFZOyE7NSu+Tz1Dcvaz6vTd/NC+u4VahMnqVGzzeP2tiWK4vcE4v0GdSZtAGUQXSBVME0Ef7xHvrltphlcidv/PnuhMrCpRsbY+WfkRhr3WezgWzNAA==) !important;
+    background-image: url(data:image/webp;base64,UklGRgABAABXRUJQVlA4TPMAAAAvO8AOEIdgpm0bq/whFOiulYaZtm2s8odQoLtWM23bWOUPoUB3rYoiSWouIwPlaMAQXwoLceuibf3/sg0YABILH0DDxtwm8CQJ3F2HI7eNHGlnPZ3DTP3/tZuryptPEf1n4LaRot1kjxm6b5A/aF2Yp1XXYSstFIvACZuAniXgzKYvWwAQ9AvbFcN8UlaM2jHpgUEf1Hqh1I/HJzJFPFHoy0MZ7AlA6CIcDulqnEY+y2MXYSIfkZ1JS0ceLSDS6AFA2j1Rfex38fcBvjJ/V5P5m5zM3/NkxsKkxhE5Bk3YsjtYsnu9ym5qn4HaV+H2kf6fVQAA) !important;
     background-repeat: no-repeat;
     background-position: center;
     background-size: 30px;
@@ -457,7 +457,7 @@ button, a.wide_button, .chip + label {
     
     border-color: #333333;
     
-    background-image: url(data:image/webp;base64,UklGRqAAAABXRUJQVlA4TJMAAAAvH8AHEC9AkG3TTOn+bNcgyLZppnR/thNk2zRTuj/byQQstk91aUUQYNtR7H8qwSqSZCdLEvCSANI/Fp4D8O/m7t4eSUBE/9W2bcM4A7e0M/Bt7V7O0DspYfYMDkUye4bqGcY77lwzimlHeYbQt7ajaJcUFHszGXcZJ6CFvuRoMwIWYgORUwFCI8NIMXIcgXPCbwoA);
+    background-image: url(data:image/webp;base64,UklGRpwAAABXRUJQVlA4TI8AAAAvH8AHEC9AkG3TTOn+bNcgyLZppnR/thNk2zRTuj/byQQstk91aUUQYNtR7H8qwSCSrTYvTcClCMABFnBA/LuhvFQBEf1X5LZtk8VbOp6hf2Uer+IIV8J4IYQrSVcyv2AerzzClTBeCMFv2SjYLZGCeXOPfXMGzuoiGfyXRODix7ZOQ6cnSZZGz4VSXvSbFAA=);
     background-repeat: no-repeat;
     background-size: 16px;
     background-position: 4px 50%;
@@ -761,7 +761,7 @@ input[type="checkbox"] + label.drop_down {
         width: 45px;
         height: 45px;
         
-        background-image: url(data:image/webp;base64,UklGRnoAAABXRUJQVlA4TG4AAAAvJ8AFECcw//M//2LBFPcNs0AfAINBJElOtsAAEqKEN8DX+hcFG5AQ0X+Fbds2GWX3IdhX5JSzOVrMgZ3MyNkkC9/Zw5ci740vRS4QioDQhFI0ik40EE0EI8FM0f4xC24+VjNmwWyIFbHzQ2APAg==);
+        background-image: url(data:image/webp;base64,UklGRnwAAABXRUJQVlA4TG8AAAAvJ8AFECcw//M//2LBFPcNs0AfAINB20aSqlsCB+FFcFoCtyp/TqfttAshov8K27Ztstj5CNbyXTjBwZbiYBvsKQb7x58kn52JQW6YJIFJFEJSSRa8Fa/B6XBaqp5qIKm/1EQxXIsJMSJmFgQOIwAA);
         background-repeat: no-repeat;
         background-size: 20px 12px;
         background-position: center;

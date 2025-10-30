@@ -7,7 +7,7 @@
    viewBox="0 0 5.2916665 15.875"
    version="1.1"
    id="svg5"
-   inkscape:version="1.4 (e7c3feb100, 2024-10-09)"
+   inkscape:version="1.4.2 (ebf0e940d0, 2025-05-08)"
    sodipodi:docname="時刻選択ボタン.svg"
    inkscape:export-filename="時刻選択ボタン.webp"
    inkscape:export-xdpi="96"
@@ -30,7 +30,7 @@
      showgrid="false"
      units="px"
      inkscape:zoom="10"
-     inkscape:cx="10.2"
+     inkscape:cx="10.25"
      inkscape:cy="31.3"
      inkscape:window-width="1920"
      inkscape:window-height="1052"
@@ -48,7 +48,7 @@
      id="layer1">
     <path
        style="fill:#999999;fill-opacity:1;stroke-width:0.79375;stroke-linecap:round;stroke-linejoin:round;stroke-opacity:0.74902;paint-order:stroke fill markers"
-       d="m 1e-7,3.9687499 2.645937,3.96875 L 1e-7,11.90625 0,15.875 5.2916667,7.9374999 1e-7,0 Z"
+       d="m 0.26458343,2.6458333 3.30729147,5.2916666 -3.30729147,5.2916661 -1e-7,2.116667 L 4.8947917,7.9374999 0.26458343,0.52916665 Z"
        id="path1"
        sodipodi:nodetypes="ccccccc" />
   </g>
