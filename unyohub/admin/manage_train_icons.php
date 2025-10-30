@@ -151,7 +151,7 @@ if (!empty($icon_list)) {
     print "<div class='informational_text'>登録済みのアイコンはありません</div>";
 }
 
-print "<br><button type='buuton' class='wide_button' onclick='document.getElementById(\"new_icon_file\").click();'>新しいアイコンのアップロード</button>";
+print "<br><button type='button' class='wide_button' onclick='document.getElementById(\"new_icon_file\").click();'>新しいアイコンのアップロード</button>";
 
 print "<div class='informational_text'>選択した画像のファイル名はそのままアイコン識別名として使用されます。<br><br>既に登録されているアイコンの識別名と同じ名前のファイルをアップロードすると既存のアイコンが上書きされます。</div>";
 

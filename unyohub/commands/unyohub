@@ -8,7 +8,7 @@ import subprocess
 
 
 UNYOHUB_COMMANDS_APP_NAME = "鉄道運用Hub コマンドラインツール"
-UNYOHUB_COMMANDS_VERSION = "25.10-1"
+UNYOHUB_COMMANDS_VERSION = "25.10-2"
 
 UNYOHUB_DATA_DIR = "../data"
 
@@ -136,7 +136,7 @@ if arg_count >= 1:
         case "update-operations":
             if arg_count == 4:
                 write_operations_to_db = importlib.import_module("modules.write_operations_to_db")
-                write_operations_to_db.write_operations_to_db(mes, data_dir + "/" + os.path.basename(args[1]), os.path.basename(args[2]), os.path.basename(args[3]))
+                write_operations_to_db.write_operations_to_db(mes, data_dir + "/" + os.path.basename(args[1]), os.path.basename(args[2]), os.path.basename(args[3]), options=options)
             else:
                 print("\x1b[31m引数の数が異常です\x1b[0m")
         case "role-info":
@@ -197,7 +197,7 @@ if arg_count >= 1:
         case "update-trip-ids":
             if arg_count == 4:
                 update_trip_ids = importlib.import_module("modules.update_trip_ids")
-                update_trip_ids.update_trip_ids(mes, data_dir + "/" + os.path.basename(args[1]), os.path.basename(args[2]), os.path.basename(args[3]))
+                update_trip_ids.update_trip_ids(mes, data_dir + "/" + os.path.basename(args[1]), os.path.basename(args[2]), os.path.basename(args[3]), options=options)
             else:
                 print("\x1b[31m引数の数が異常です\x1b[0m")
         case "generate-operation-table":

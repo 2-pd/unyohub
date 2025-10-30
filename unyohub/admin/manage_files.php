@@ -4,16 +4,20 @@ include "admin_common.php";
 
 function replace_file ($railroad_id, $file_name, $new_file) {
     $file_path = "../data/".$railroad_id."/".$file_name;
-    $trash_path = "../data/".$railroad_id."/trash";
     
-    if (!is_dir($trash_path)) {
-        mkdir($trash_path);
-        chmod($trash_path, 0o777);
+    if (file_exists($file_path)) {
+        $trash_path = "../data/".$railroad_id."/trash";
+        
+        if (!is_dir($trash_path)) {
+            mkdir($trash_path);
+            chmod($trash_path, 0o777);
+        }
+        
+        $trash_file_path = $trash_path."/".$file_name."__".date("YmdHis", filemtime($file_path)).".bak";
+        
+        rename($file_path, $trash_file_path);
     }
     
-    $trash_file_path = $trash_path."/".$file_name."__".date("YmdHis", filemtime($file_path)).".bak";
-    
-    rename($file_path, $trash_file_path);
     rename($new_file, $file_path);
     touch($file_path);
 }
@@ -52,6 +56,28 @@ if (empty($_GET["file_name"])) {
     
     print "<h2>データファイルの管理</h2>";
     
+    print "<h3>ダイヤ改正別データ</h3>";
+    
+    $dir_list = array_reverse(glob("../data/".$railroad_id."/[0-9][0-9][0-9][0-9]-[01][0-9]-[0-3][0-9]"));
+    
+    $buf = "";
+    foreach ($dir_list as $dir_path) {
+        if (!is_dir($dir_path)) {
+            continue;
+        }
+        
+        $diagram_revision = basename($dir_path);
+        $buf .= "<li><a href='manage_diagram_files.php?railroad_id=".$railroad_id."&diagram_revision=".$diagram_revision."' class='dir_link'>".$diagram_revision."<small> 改正</small></a></li>";
+    }
+    
+    if (!empty($buf)) {
+        print "<ul class='file_list'>".$buf."</ul>";
+    } else {
+        print "<div class='informational_text'>ダイヤ改正別フォルダなし</div>";
+    }
+    
+    print "<div class='link_block'><a href='manage_diagram_files.php?railroad_id=".$railroad_id."&new_dir=yes'>ダイヤ改正日別フォルダの追加</a></div>";
+    
     print "<h3>路線系統情報ファイル</h3>";
     print "<h5>railroad_info.json</h5><div class='informational_text'>更新日時 ".date("Y-m-d H:i:s", filemtime($railroad_info_path))."</div>";
     print "<a href='manage_files.php?railroad_id=".$railroad_id."&file_name=railroad_info.json' class='execute_button'>アップロード・復元</a>";
@@ -67,6 +93,11 @@ if (empty($_GET["file_name"])) {
     print "<h5>formations.csv</h5><div class='informational_text'>".(file_exists($formations_path) ? "更新日時 ".date("Y-m-d H:i:s", filemtime($formations_path)) : "ファイルなし")."</div>";
     print "<a href='manage_files.php?railroad_id=".$railroad_id."&file_name=formations.csv' class='execute_button'>アップロード・復元</a>";
     
+    print "<h3>ダイヤ改正日一覧ファイル</h3>";
+    $diagram_revisions_path = "../data/".$railroad_id."/diagram_revisions.txt";
+    print "<h5>diagram_revisions.txt</h5><div class='informational_text'>".(file_exists($diagram_revisions_path) ? "更新日時 ".date("Y-m-d H:i:s", filemtime($diagram_revisions_path)) : "ファイルなし")."</div>";
+    print "<a href='manage_files.php?railroad_id=".$railroad_id."&file_name=diagram_revisions.txt' class='execute_button'>アップロード・復元</a>";
+    
     print "<h3>車両識別名対応表ファイル</h3>";
     $formation_name_mappings_path = "../data/".$railroad_id."/formation_name_mappings.json";
     print "<h5>formation_name_mappings.json</h5><div class='informational_text'>".(file_exists($formation_name_mappings_path) ? "更新日時 ".date("Y-m-d H:i:s", filemtime($formation_name_mappings_path)) : "ファイルなし")."</div>";
@@ -80,6 +111,9 @@ if (empty($_GET["file_name"])) {
             break;
         case "formations.csv":
             print "<h2>編成表元ファイルの管理</h2>";
+            break;
+        case "diagram_revisions.txt":
+            print "<h2>ダイヤ改正日一覧ファイルの管理</h2>";
             break;
         case "formation_name_mappings.json":
             print "<h2>車両識別名対応表ファイルの管理</h2>";
@@ -107,7 +141,7 @@ if (empty($_GET["file_name"])) {
     print <<< EOM
     <script>
     function upload_file () {
-        if (confirm("選択したファイルで現在のファイルを置き換えますか？")) {
+        if (confirm("選択したファイルを新しい {$_GET["file_name"]} としてアップロードしますか？")) {
             document.getElementById("upload_form").submit();
         } else {
             document.getElementById("new_file").value = "";
@@ -115,7 +149,7 @@ if (empty($_GET["file_name"])) {
     }
     
     function restore_trash_file (trash_file_name) {
-        if (confirm("過去のバージョンを復元して現在のファイルを置き換えますか？")) {
+        if (confirm("過去のバージョンを復元して現在の {$_GET["file_name"]} を置き換えますか？")) {
             document.getElementById("trash_file_name").value = trash_file_name;
             document.getElementById("restore_form").submit();
         }
@@ -179,11 +213,11 @@ if (empty($_GET["file_name"])) {
                 $result = NULL;
         }
         
-        print "<script> alert('ファイルを差し替えました'); </script>";
+        print "<script> alert('".$_GET["file_name"]." を更新しました'); </script>";
     }
     
     if (!empty($result)) {
-        print "<input type='checkbox' id='result_drop_down'><label for='result_drop_down' class='drop_down'>差し替え処理実行ログ</label>";
+        print "<input type='checkbox' id='result_drop_down'><label for='result_drop_down' class='drop_down'>更新処理実行ログ</label>";
         print "<div><div class='announcement'>".$result."</div></div>";
     }
     
@@ -191,7 +225,7 @@ if (empty($_GET["file_name"])) {
     
     print "<h3>現在のファイル</h3>";
     print "<h5>".$_GET["file_name"]."</h5><div class='informational_text'>".(file_exists($file_path) ? "更新日時 ".date("Y-m-d H:i:s", filemtime($file_path)) : "ファイルなし")."</div>";
-    print "<button type='buuton' class='wide_button' onclick='document.getElementById(\"new_file\").click();'>新しいファイルのアップロード</button>";
+    print "<button type='button' class='wide_button' onclick='document.getElementById(\"new_file\").click();'>新しいファイルのアップロード</button>";
     
     print "<h3>過去のバージョン</h3>";
     if (is_dir($trash_path)) {
@@ -200,7 +234,7 @@ if (empty($_GET["file_name"])) {
         if (!empty($trash_files)) {
             print "<table>";
             foreach (array_reverse($trash_files) as $trash_file_path) {
-                print "<tr><td>更新日時 ".date("Y-m-d H:i:s", filemtime($trash_file_path))."<button type='buuton' onclick='restore_trash_file(\"".basename($trash_file_path)."\");'>復元</button></td></tr>";
+                print "<tr><td>更新日時 ".date("Y-m-d H:i:s", filemtime($trash_file_path))."<button type='button' onclick='restore_trash_file(\"".basename($trash_file_path)."\");'>復元</button></td></tr>";
             }
             print "</table>";
         } else {

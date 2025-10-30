@@ -7,9 +7,9 @@
    viewBox="0 0 13.229167 10.583334"
    version="1.1"
    id="svg8"
-   inkscape:version="1.3 (0e150ed6c4, 2023-07-21)"
+   inkscape:version="1.4.2 (ebf0e940d0, 2025-05-08)"
    sodipodi:docname="メニューボタン.svg"
-   inkscape:export-filename="./メニューボタン.webp"
+   inkscape:export-filename="メニューボタン.webp"
    inkscape:export-xdpi="192"
    inkscape:export-ydpi="192"
    xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
@@ -29,15 +29,15 @@
      inkscape:pageopacity="0.0"
      inkscape:pageshadow="2"
      inkscape:zoom="5"
-     inkscape:cx="13.8"
+     inkscape:cx="13.9"
      inkscape:cy="21.6"
      inkscape:document-units="px"
      inkscape:current-layer="layer1"
      showgrid="false"
      units="px"
      inkscape:window-width="1920"
-     inkscape:window-height="1008"
-     inkscape:window-x="0"
+     inkscape:window-height="1052"
+     inkscape:window-x="1920"
      inkscape:window-y="0"
      inkscape:window-maximized="1"
      inkscape:pagecheckerboard="0"
@@ -71,25 +71,25 @@
      id="layer1"
      transform="translate(0,-283.77083)">
     <rect
-       style="fill:#cccccc;stroke-width:6.95688;fill-opacity:1"
+       style="fill:#cccccc;fill-opacity:1;stroke-width:6.95688"
        id="rect847"
        width="3.1750002"
-       height="0.7937482"
+       height="0.5291667"
        x="5.0270834"
        y="285.88748" />
     <rect
-       style="fill:#cccccc;stroke-width:6.95688;fill-opacity:1"
+       style="fill:#cccccc;fill-opacity:1;stroke-width:6.95688"
        id="rect847-3"
        width="3.175"
-       height="0.7937482"
+       height="0.5291667"
        x="5.0270839"
-       y="288.66562" />
+       y="288.79791" />
     <rect
-       style="fill:#cccccc;stroke-width:6.95688;fill-opacity:1"
+       style="fill:#cccccc;fill-opacity:1;stroke-width:6.95688"
        id="rect847-6"
        width="3.175"
-       height="0.7937482"
+       height="0.5291667"
        x="5.0270839"
-       y="291.44373" />
+       y="291.70834" />
   </g>
 </svg>
