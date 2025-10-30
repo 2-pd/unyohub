@@ -141,7 +141,7 @@ if (empty($_GET["file_name"])) {
     print <<< EOM
     <script>
     function upload_file () {
-        if (confirm("選択したファイルで現在のファイルを置き換えますか？")) {
+        if (confirm("選択したファイルを新しい {$_GET["file_name"]} としてアップロードしますか？")) {
             document.getElementById("upload_form").submit();
         } else {
             document.getElementById("new_file").value = "";
@@ -149,7 +149,7 @@ if (empty($_GET["file_name"])) {
     }
     
     function restore_trash_file (trash_file_name) {
-        if (confirm("過去のバージョンを復元して現在のファイルを置き換えますか？")) {
+        if (confirm("過去のバージョンを復元して現在の {$_GET["file_name"]} を置き換えますか？")) {
             document.getElementById("trash_file_name").value = trash_file_name;
             document.getElementById("restore_form").submit();
         }
@@ -213,7 +213,7 @@ if (empty($_GET["file_name"])) {
                 $result = NULL;
         }
         
-        print "<script> alert('ファイルを更新しました'); </script>";
+        print "<script> alert('".$_GET["file_name"]." を更新しました'); </script>";
     }
     
     if (!empty($result)) {

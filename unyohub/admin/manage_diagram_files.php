@@ -2,7 +2,7 @@
 include "admin_common.php";
 
 
-function replace_file ($railroad_id, $diagram_revision, $file_name, $new_file) {
+function replace_file ($railroad_id, $diagram_revision, $file_name, $new_file = NULL) {
     $file_path = "../data/".$railroad_id."/".$diagram_revision."/".$file_name;
     
     if (file_exists($file_path)) {
@@ -24,8 +24,10 @@ function replace_file ($railroad_id, $diagram_revision, $file_name, $new_file) {
         rename($file_path, $trash_file_path);
     }
     
-    rename($new_file, $file_path);
-    touch($file_path);
+    if (!empty($new_file)) {
+        rename($new_file, $file_path);
+        touch($file_path);
+    }
 }
 
 
@@ -127,33 +129,33 @@ if (isset($_GET["diagram_revision"])) {
             }
         }
         
-        print "<script> alert('ファイルを更新しました'); </script>";
+        print "<script> alert('".addslashes($file_name)." を保存しました'); </script>";
     } elseif (!empty($_POST["delete_file_name"])) {
         if (!isset($_POST["one_time_token"]) || !$user->check_one_time_token($_POST["one_time_token"])) {
             print "<script> alert('【!】ワンタイムトークンが無効です。処理はキャンセルされました。'); </script>";
             goto on_error;
         }
         
-        $delete_file_path = $dir_path.$_POST["delete_file_name"];
+        $delete_file_name = basename($_POST["delete_file_name"]);
         
-        if (!file_exists($delete_file_path)) {
+        if (!file_exists($dir_path.$delete_file_name)) {
             print "<script> alert('【!】削除対象として指定されたファイルが存在しません。'); </script>";
             goto on_error;
         }
         
-        unlink($delete_file_path);
+        replace_file($railroad_id, $_GET["diagram_revision"], $delete_file_name, NULL);
         
-        $extension = pathinfo($_POST["delete_file_name"], PATHINFO_EXTENSION);
+        $extension = pathinfo($delete_file_name, PATHINFO_EXTENSION);
         
-        if ($extension === "json" && str_starts_with($_POST["delete_file_name"], "operation_table_")) {
-            $result = exec_python_command("update-operations", array($railroad_id, $_GET["diagram_revision"], substr(pathinfo($_POST["delete_file_name"], PATHINFO_FILENAME), 16)), "-D");
-        } elseif ($extension === "csv" && str_starts_with($_POST["delete_file_name"], "train_number_mappings_")) {
-            $result = exec_python_command("update-trip-ids", array($railroad_id, $_GET["diagram_revision"], substr(pathinfo($_POST["delete_file_name"], PATHINFO_FILENAME), 22)), "-D");
+        if ($extension === "json" && str_starts_with($delete_file_name, "operation_table_")) {
+            $result = exec_python_command("update-operations", array($railroad_id, $_GET["diagram_revision"], substr(pathinfo($delete_file_name, PATHINFO_FILENAME), 16)), "-D");
+        } elseif ($extension === "csv" && str_starts_with($delete_file_name, "train_number_mappings_")) {
+            $result = exec_python_command("update-trip-ids", array($railroad_id, $_GET["diagram_revision"], substr(pathinfo($delete_file_name, PATHINFO_FILENAME), 22)), "-D");
         } else {
             $result = NULL;
         }
         
-        print "<script> alert('ファイルを削除しました'); </script>";
+        print "<script> alert('".addslashes($delete_file_name)." を削除しました'); </script>";
     } else {
         $result = NULL;
     }
