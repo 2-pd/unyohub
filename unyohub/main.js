@@ -2885,23 +2885,27 @@ function get_operations (line_id, train_number, starting_station, train_directio
 
 function get_final_destination (line_id, is_inbound, train_number, starting_station, max_length = 10) {
     if (!train_number.startsWith("_")) {
-        var next_trains = [{line_id : line_id, is_inbound : is_inbound, train_number : train_number, starting_station : starting_station}];
+        var next_trains = [{ line_id : line_id, direction : (is_inbound ? "inbound" : "outbound"), train_number : train_number, starting_station : starting_station }];
     } else {
         if (!(train_number in line_operations["lines"][line_id][(is_inbound ? "inbound" : "outbound") + "_trains"])) {
             return "";
         }
         
-        var next_trains = [{line_id : line_id, is_inbound : is_inbound, train_number : train_number.substring(1, train_number.lastIndexOf("__")), starting_station : starting_station}];
+        var next_trains = [{ line_id : line_id, direction : (is_inbound ? "inbound" : "outbound"), train_number : train_number.substring(1, train_number.lastIndexOf("__")), starting_station : starting_station }];
     }
     
     var buf = "";
     
     for (var next_train of next_trains) {
-        var train_data = get_train(next_train["line_id"], "direction" in next_train ? next_train["direction"] : null/*v25.09-1以前の仕様で作成された時刻表データとの互換性維持*/, next_train["train_number"], next_train["starting_station"]);
+        var train_data = get_train(next_train["line_id"], "direction" in next_train ? next_train["direction"] === "inbound" : null/*v25.09-1以前の仕様で作成された時刻表データとの互換性維持*/, next_train["train_number"], next_train["starting_station"]);
         
         if (train_data !== null) {
             if ("destination" in train_data) {
                 buf += (buf.length >= 1 ? " / " : "") + escape_html(train_data["destination"]);
+                
+                if ("is_temporary_train" in train_data && train_data["is_temporary_train"]) {
+                    buf += "方面";
+                }
             } else if (train_data["next_trains"].length >= 1) {
                 next_trains.push(...train_data["next_trains"]);
             } else {
@@ -2918,6 +2922,10 @@ function get_final_destination (line_id, is_inbound, train_number, starting_stat
                 }
                 
                 buf += (buf.length >= 1 ? " / " : "") + escape_html(station_list[last_stopped_index]["station_name"]);
+                
+                if ("is_temporary_train" in train_data && train_data["is_temporary_train"]) {
+                    buf += "方面";
+                }
             }
         }
     }
