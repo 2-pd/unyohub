@@ -360,6 +360,24 @@ a:has(.train_icon), b:has(.train_icon) {
     filter: drop-shadow(0 1px 2px rgba(0,0,0,0.25));
 }
 
+.dir_link:before {
+    content: "";
+    
+    display: inline-block;
+    
+    width: 30px;
+    height: 30px;
+    
+    margin-right: 10px;
+    
+    background-image: url(data:image/webp;base64,UklGRmAAAABXRUJQVlA4TFMAAAAvL8ALEB8gEEjyd5tpDYFAkr/bTAsEkvzdZlpIQKgWi64HqP5FYBxJVqrFHUIh/xMpkQF8dzlG9H8CcOk2pavcqryqrDpQAUCdIzMJK3+itjsuDQA=);
+    background-size: 24px;
+    background-repeat: no-repeat;
+    background-position: center;
+    
+    vertical-align: top;
+}
+
 #icon_area {
     max-width: 480px;
     
@@ -520,6 +538,12 @@ button, a.wide_button, .chip + label {
     color: #666666;
     text-align: right;
     text-decoration: underline;
+}
+
+.link_block {
+    padding: 15px 0 10px 0;
+    
+    text-align: center;
 }
 
 textarea {

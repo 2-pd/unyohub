@@ -67,7 +67,7 @@ if (empty($_GET["file_name"])) {
         }
         
         $diagram_revision = basename($dir_path);
-        $buf .= "<li><a href='manage_diagram_files.php?railroad_id=".$railroad_id."&diagram_revision=".$diagram_revision."'>".$diagram_revision."<small> 改正</small></a></li>";
+        $buf .= "<li><a href='manage_diagram_files.php?railroad_id=".$railroad_id."&diagram_revision=".$diagram_revision."' class='dir_link'>".$diagram_revision."<small> 改正</small></a></li>";
     }
     
     if (!empty($buf)) {
@@ -76,7 +76,7 @@ if (empty($_GET["file_name"])) {
         print "<div class='informational_text'>ダイヤ改正別フォルダなし</div>";
     }
     
-    print "<a href='manage_diagram_files.php?railroad_id=".$railroad_id."&new_dir=yes' class='execute_button'>ダイヤ改正日別フォルダの追加</a>";
+    print "<div class='link_block'><a href='manage_diagram_files.php?railroad_id=".$railroad_id."&new_dir=yes'>ダイヤ改正日別フォルダの追加</a></div>";
     
     print "<h3>路線系統情報ファイル</h3>";
     print "<h5>railroad_info.json</h5><div class='informational_text'>更新日時 ".date("Y-m-d H:i:s", filemtime($railroad_info_path))."</div>";
