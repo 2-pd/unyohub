@@ -67,7 +67,7 @@ if (isset($_GET["diagram_revision"])) {
         goto end_of_article;
     }
     
-    print "<h2>".intval(substr($_GET["diagram_revision"], 0, 4))."年".intval(substr($_GET["diagram_revision"], 5, 2))."月".intval(substr($_GET["diagram_revision"], 8))."日ダイヤのファイル</h2>";
+    print "<h2>".intval(substr($_GET["diagram_revision"], 0, 4))."年".intval(substr($_GET["diagram_revision"], 5, 2))."月".intval(substr($_GET["diagram_revision"], 8))."日改正ダイヤのデータ</h2>";
     
     $token_html = "<input type='hidden' name='one_time_token' value='".$user->create_one_time_token()."'>";
     
@@ -75,6 +75,22 @@ if (isset($_GET["diagram_revision"])) {
     print $token_html;
     print "<input type='file' name='new_file' id='new_file' onchange='document.getElementById(\"upload_form\").submit();'>";
     print "</form>";
+    
+    print "<form action='manage_diagram_files.php?railroad_id=".$railroad_id."&diagram_revision=".$_GET["diagram_revision"]."' method='post' id='delete_form' style='display: none;'>";
+    print $token_html;
+    print "<input type='hidden' name='delete_file_name' id='delete_file_name'>";
+    print "</form>";
+    
+    print <<< EOM
+    <script>
+    function delete_file (file_name) {
+        if (confirm(file_name + " を削除しますか？")) {
+            document.getElementById("delete_file_name").value = file_name;
+            document.getElementById("delete_form").submit();
+        }
+    }
+    </script>
+    EOM;
     
     if (isset($_FILES["new_file"]["tmp_name"]) && is_uploaded_file($_FILES["new_file"]["tmp_name"])) {
         if (!isset($_POST["one_time_token"]) || !$user->check_one_time_token($_POST["one_time_token"])) {
@@ -112,12 +128,41 @@ if (isset($_GET["diagram_revision"])) {
         }
         
         print "<script> alert('ファイルを更新しました'); </script>";
-        
-        if (!empty($result)) {
-            print "<input type='checkbox' id='result_drop_down'><label for='result_drop_down' class='drop_down'>更新処理実行ログ</label>";
-            print "<div><div class='announcement'>".$result."</div></div>";
+    } elseif (!empty($_POST["delete_file_name"])) {
+        if (!isset($_POST["one_time_token"]) || !$user->check_one_time_token($_POST["one_time_token"])) {
+            print "<script> alert('【!】ワンタイムトークンが無効です。処理はキャンセルされました。'); </script>";
+            goto on_error;
         }
+        
+        $delete_file_path = $dir_path.$_POST["delete_file_name"];
+        
+        if (!file_exists($delete_file_path)) {
+            print "<script> alert('【!】削除対象として指定されたファイルが存在しません。'); </script>";
+            goto on_error;
+        }
+        
+        unlink($delete_file_path);
+        
+        $extension = pathinfo($_POST["delete_file_name"], PATHINFO_EXTENSION);
+        
+        if ($extension === "json" && str_starts_with($_POST["delete_file_name"], "operation_table_")) {
+            $result = exec_python_command("update-operations", array($railroad_id, $_GET["diagram_revision"], substr(pathinfo($_POST["delete_file_name"], PATHINFO_FILENAME), 16)), "-D");
+        } elseif ($extension === "csv" && str_starts_with($_POST["delete_file_name"], "train_number_mappings_")) {
+            $result = exec_python_command("update-trip-ids", array($railroad_id, $_GET["diagram_revision"], substr(pathinfo($_POST["delete_file_name"], PATHINFO_FILENAME), 22)), "-D");
+        } else {
+            $result = NULL;
+        }
+        
+        print "<script> alert('ファイルを削除しました'); </script>";
+    } else {
+        $result = NULL;
     }
+    
+    if (!empty($result)) {
+        print "<input type='checkbox' id='result_drop_down'><label for='result_drop_down' class='drop_down'>更新処理実行ログ</label>";
+        print "<div><div class='announcement'>".$result."</div></div>";
+    }
+    
     on_error:
     
     $file_list = glob($dir_path."*");
@@ -156,7 +201,7 @@ if (isset($_GET["diagram_revision"])) {
     if (!empty($operation_table_files)) {
         print "<ul class='file_list'>";
         foreach ($operation_table_files as $file_name) {
-            print "<li>".$file_name."<div class='informational_text'>更新日時 ".date("Y-m-d H:i:s", filemtime($dir_path.$file_name))."</div></li>";
+            print "<li>".$file_name."<button onclick='delete_file(\"".$file_name."\");'>削除</button><div class='informational_text'>更新日時 ".date("Y-m-d H:i:s", filemtime($dir_path.$file_name))."</div></li>";
         }
         print "</ul>";
     } else {
@@ -167,7 +212,7 @@ if (isset($_GET["diagram_revision"])) {
     if (!empty($timetable_files)) {
         print "<ul class='file_list'>";
         foreach ($timetable_files as $file_name) {
-            print "<li>".$file_name."<div class='informational_text'>更新日時 ".date("Y-m-d H:i:s", filemtime($dir_path.$file_name))."</div></li>";
+            print "<li>".$file_name."<button onclick='delete_file(\"".$file_name."\");'>削除</button><div class='informational_text'>更新日時 ".date("Y-m-d H:i:s", filemtime($dir_path.$file_name))."</div></li>";
         }
         print "</ul>";
     } else {
@@ -178,7 +223,7 @@ if (isset($_GET["diagram_revision"])) {
     if (!empty($train_number_mappings_files)) {
         print "<ul class='file_list'>";
         foreach ($train_number_mappings_files as $file_name) {
-            print "<li>".$file_name."<div class='informational_text'>更新日時 ".date("Y-m-d H:i:s", filemtime($dir_path.$file_name))."</div></li>";
+            print "<li>".$file_name."<button onclick='delete_file(\"".$file_name."\");'>削除</button><div class='informational_text'>更新日時 ".date("Y-m-d H:i:s", filemtime($dir_path.$file_name))."</div></li>";
         }
         print "</ul>";
     } else {
@@ -189,7 +234,7 @@ if (isset($_GET["diagram_revision"])) {
     if (!empty($other_files)) {
         print "<ul class='file_list'>";
         foreach ($other_files as $file_name) {
-            print "<li>".$file_name."<div class='informational_text'>更新日時 ".date("Y-m-d H:i:s", filemtime($dir_path.$file_name))."</div></li>";
+            print "<li>".$file_name."<button onclick='delete_file(\"".$file_name."\");'>削除</button><div class='informational_text'>更新日時 ".date("Y-m-d H:i:s", filemtime($dir_path.$file_name))."</div></li>";
         }
         print "</ul>";
     } else {
