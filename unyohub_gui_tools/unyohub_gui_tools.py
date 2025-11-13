@@ -197,7 +197,7 @@ def select_diagram (callback_func, enable_diagram_id_entry=True, enable_save_ope
     select_diagram_callback = callback_func
     
     yyyy_mm_dd_reg_exp = re.compile(r"^[0-9]{4}-(0[1-9]|1[0-2])-(0[1-9]|[12][0-9]|3[01])$")
-    dir_list = sorted([ dir_name for dir_name in os.listdir(config["main_dir"]) if yyyy_mm_dd_reg_exp.match(dir_name) and os.path.isdir(config["main_dir"] + "/" + dir_name) ], reverse=True)
+    dir_list = sorted([ dir_info.name for dir_info in os.scandir(config["main_dir"]) if yyyy_mm_dd_reg_exp.match(dir_info.name) and dir_info.is_dir() ])
     
     if len(dir_list) == 0:
         mes("現在の作業フォルダにはダイヤ改正日別フォルダがありません", True)
@@ -234,7 +234,7 @@ def select_diagram (callback_func, enable_diagram_id_entry=True, enable_save_ope
     diagram_revision_list_scroll_y["command"] = diagram_revision_list.yview
     diagram_revision_list.place(x=30, y=40, width=160, height=140)
     diagram_revision_list_scroll_y.place(x=190, y=40, width=20, height=140)
-    diagram_revision_list.select_set(0)
+    diagram_revision_list.select_set(len(dir_list) - 1)
     
     if enable_diagram_id_entry:
         label_diagram_id = tk.Label(select_diagram_win, text="ダイヤ識別名:", font=label_font, fg="#ffffff", bg="#444444")
