@@ -378,8 +378,19 @@ def convert_timetable_1 (input_file_name=None, digits_count=None):
     
     if input_file_name is None:
         file_name = filedialog.askopenfilename(title="変換対象の時刻表CSVファイルを選択してください", filetypes=[("CSV形式の表ファイル","*.csv")], initialdir=config["main_dir"])
+        
+        if file_name.endswith(".inbound.csv"):
+            file_name_2 = file_name[:-12] + ".outbound.csv"
+        elif file_name.endswith(".outbound.csv"):
+            file_name_2 = file_name[:-13] + ".inbound.csv"
+        else:
+            file_name_2 = None
+        
+        if not (file_name_2 is not None and os.path.isfile(file_name_2) and messagebox.askyesno("同じダイヤの時刻表ファイルが見つかりました", "同じフォルダにある " + os.path.basename(file_name_2) + " も同様に変換しますか？")):
+            file_name_2 = None
     else:
         file_name = input_file_name
+        file_name_2 = None
     
     if len(file_name) >= 1:
         if digits_count is None:
@@ -394,6 +405,9 @@ def convert_timetable_1 (input_file_name=None, digits_count=None):
             
             convert_timetable_1 = importlib.import_module("modules.convert_timetable_1")
             convert_timetable_1.convert_timetable_1(mes, file_name, digits_count)
+            
+            if file_name_2 is not None:
+                convert_timetable_1.convert_timetable_1(mes, file_name_2, digits_count)
         except:
             error_mes(traceback.format_exc())
 
