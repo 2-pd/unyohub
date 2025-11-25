@@ -439,9 +439,13 @@ def convert_operation_table_1 (for_printing):
     if len(file_name) == 0:
         return
     
-    json_file_name = filedialog.askopenfilename(title="運用表に対応するダイヤの変換済み時刻表を選択してください", filetypes=[("JSONファイル","*.json")], initialdir=config["main_dir"])
-    if len(json_file_name) == 0:
-        return
+    file_path_split = os.path.split(file_name)
+    json_file_name = file_path_split[0] + "/timetable_" + file_path_split[1][16:-4] + ".json"
+    
+    if not (os.path.isfile(json_file_name) and messagebox.askyesno("運用表の変換に使用する時刻表", "同じフォルダにある " + os.path.basename(json_file_name) + " をこの運用表のダイヤに対応する時刻表として使用しますか？")) :
+        json_file_name = filedialog.askopenfilename(title="運用表に対応するダイヤの変換済み時刻表を選択してください", filetypes=[("JSONファイル","*.json")], initialdir=config["main_dir"])
+        if len(json_file_name) == 0:
+            return
     
     if for_printing:
         file_name_for_printing = filedialog.asksaveasfilename(title="印刷用運用表のファイル名を指定してください", filetypes=[("HTMLファイル","*.html")], initialdir=config["main_dir"], initialfile=os.path.splitext(os.path.basename(file_name))[0] + "_印刷用.html", defaultextension="html")
