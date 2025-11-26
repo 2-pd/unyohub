@@ -28,7 +28,7 @@ if (is_object($user)) {
 if (empty($verification_code)) {
     switch ($rejection_reason) {
         case "invalid_email_address":
-            print "ERROR: 正しいメールアドレスではありません";
+            print "ERROR: 正しいメールアドレスが入力されていません";
             break;
         case "blacklisted_email_domain":
             print "ERROR: 使用できないメールアドレスです";

@@ -16,9 +16,9 @@ if (isset($_POST["user_id"], $_POST["password"], $_POST["user_name"], $_POST["zi
     }
     
     if ($main_config["require_email_address"] && empty($error_list) && !$wakarana->email_address_verify($_POST["email_address"], $_POST["verification_code"])) {
-        switch ($user->get_rejection_reason()) {
+        switch ($wakarana->get_rejection_reason()) {
             case "invalid_email_address":
-                $error_list[] = "正しいメールアドレスではありません";
+                $error_list[] = "正しいメールアドレスが入力されていません";
                 break;
             case "blacklisted_email_domain":
                 $error_list[] = "使用できないメールアドレスです";
