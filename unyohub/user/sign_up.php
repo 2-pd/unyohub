@@ -16,7 +16,22 @@ if (isset($_POST["user_id"], $_POST["password"], $_POST["user_name"], $_POST["zi
     }
     
     if ($main_config["require_email_address"] && empty($error_list) && !$wakarana->email_address_verify($_POST["email_address"], $_POST["verification_code"])) {
-        $error_list[] = "無効なメールアドレス確認コードです";
+        switch ($user->get_rejection_reason()) {
+            case "invalid_email_address":
+                $error_list[] = "正しいメールアドレスではありません";
+                break;
+            case "blacklisted_email_domain":
+                $error_list[] = "使用できないメールアドレスです";
+                break;
+            case "email_address_already_exists":
+                $error_list[] = "既に使用されているメールアドレスです";
+                break;
+            case "parameters_not_matched":
+                $error_list[] = "無効なメールアドレス確認コードです";
+                break;
+            default:
+                $error_list[] = "メースアドレス確認コードの照合に失敗しました";
+        }
     }
     
     if (empty($error_list)) {

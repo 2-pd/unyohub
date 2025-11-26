@@ -42,12 +42,23 @@ if (is_object($user)) {
         
         if (!$user->check_one_time_token($_POST["one_time_token"])) {
             print "    <div class=\"warning_text\">ワンタイムトークンの認証に失敗しました。再度ご送信ください</div>\n";
-        } elseif (!$wakarana->check_email_address($_POST["email_address"])) {
-            print "    <div class=\"warning_text\">使用できないメールアドレスです</div>\n";
-        } elseif (!empty($wakarana->search_users_with_email_address($_POST["email_address"]))) {
-            print "    <div class=\"warning_text\">既に使用されているメールアドレスです</div>\n";
         } elseif (!$user->email_address_verify($_POST["email_address"], $_POST["verification_code"], TRUE)) {
-            print "    <div class=\"warning_text\">正しいメールアドレス確認コードを入力してください</div>\n";
+            switch ($user->get_rejection_reason()) {
+                case "invalid_email_address":
+                    print "    <div class=\"warning_text\">正しいメールアドレスではありません</div>\n";
+                    break;
+                case "blacklisted_email_domain":
+                    print "    <div class=\"warning_text\">使用できないメールアドレスです</div>\n";
+                    break;
+                case "email_address_already_exists":
+                    print "    <div class=\"warning_text\">既に使用されているメールアドレスです</div>\n";
+                    break;
+                case "parameters_not_matched":
+                    print "    <div class=\"warning_text\">正しいメールアドレス確認コードを入力してください</div>\n";
+                    break;
+                default:
+                    print "    <div class=\"warning_text\">メースアドレス確認コードの照合に失敗しました</div>\n";
+            }
         } else {
             $user->remove_all_email_addresses();
             $user->add_email_address($_POST["email_address"]);
