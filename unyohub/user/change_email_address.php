@@ -37,17 +37,30 @@ $user = $wakarana->check();
 if (is_object($user)) {
     $email_address = "";
     
-    if (isset($_POST["email_address"], $_POST["verification_code"], $_POST["one_time_token"])) {
+    if (isset($_POST["email_address"], $_POST["verification_code"], $_POST["password"], $_POST["one_time_token"])) {
         $email_address = addslashes($_POST["email_address"]);
         
         if (!$user->check_one_time_token($_POST["one_time_token"])) {
             print "    <div class=\"warning_text\">ワンタイムトークンの認証に失敗しました。再度ご送信ください</div>\n";
-        } elseif (!$wakarana->check_email_address($_POST["email_address"])) {
-            print "    <div class=\"warning_text\">使用できないメールアドレスです</div>\n";
-        } elseif (!empty($wakarana->search_users_with_email_address($_POST["email_address"]))) {
-            print "    <div class=\"warning_text\">既に使用されているメールアドレスです</div>\n";
+        } elseif (!$user->check_password($_POST["password"])) {
+            print "    <div class=\"warning_text\">パスワードが一致しません。パスワードを確認して再度お試しください</div>\n";
         } elseif (!$user->email_address_verify($_POST["email_address"], $_POST["verification_code"], TRUE)) {
-            print "    <div class=\"warning_text\">正しいメールアドレス確認コードを入力してください</div>\n";
+            switch ($user->get_rejection_reason()) {
+                case "invalid_email_address":
+                    print "    <div class=\"warning_text\">正しいメールアドレスが入力されていません</div>\n";
+                    break;
+                case "blacklisted_email_domain":
+                    print "    <div class=\"warning_text\">使用できないメールアドレスです</div>\n";
+                    break;
+                case "email_address_already_exists":
+                    print "    <div class=\"warning_text\">既に使用されているメールアドレスです</div>\n";
+                    break;
+                case "parameters_not_matched":
+                    print "    <div class=\"warning_text\">正しいメールアドレス確認コードを入力してください</div>\n";
+                    break;
+                default:
+                    print "    <div class=\"warning_text\">メースアドレス確認コードの照合に失敗しました</div>\n";
+            }
         } else {
             $user->remove_all_email_addresses();
             $user->add_email_address($_POST["email_address"]);
@@ -69,6 +82,9 @@ if (is_object($user)) {
     print "        <h4>確認コード</h4>\n";
     print "        <div class=\"informational_text\">確認メールに記載された8桁の確認コード(大文字小文字区別なし)を入力してください。</div>\n";
     print "        <input type=\"text\" name=\"verification_code\" autocomplete=\"off\">\n";
+    print "        <h4>パスワード</h4>\n";
+    print "        <div class=\"informational_text\">メールアドレスの変更にはパスワードの再入力が必要です。</div>\n";
+    print "        <input type=\"password\" name=\"password\" autocomplete=\"current-password\">\n";
     print "        <br>\n";
     print "        <button type=\"button\" class=\"wide_button\" onclick=\"this.disabled = true; document.getElementById('change_email_address_form').submit();\">メールアドレスを変更</button>\n";
     print "    </form>\n";
