@@ -13,18 +13,10 @@ if (isset($_POST["user_id"], $_POST["password"], $_POST["user_name"], $_POST["zi
     
     if (strlen($_POST["user_id"]) < 5) {
         $error_list[] = "ユーザーIDは5文字以上必要です";
-    } elseif (!wakarana::check_id_string($_POST["user_id"])) {
-        $error_list[] = "ユーザーIDに使用できない文字が含まれています";
-    } elseif (is_object($wakarana->get_user($_POST["user_id"]))) {
-        $error_list[] = "既に他のユーザーが使用しているユーザーIDです";
-    }
-    
-    if (!wakarana::check_password_strength($_POST["password"])) {
-        $error_list[] = "パスワードは大文字・小文字・数字を全て含む10文字以上を設定してください";
     }
     
     if ($main_config["require_email_address"] && empty($error_list) && !$wakarana->email_address_verify($_POST["email_address"], $_POST["verification_code"])) {
-        $error_list[] = "正しいメールアドレス確認コードを入力してください";
+        $error_list[] = "無効なメールアドレス確認コードです";
     }
     
     if (empty($error_list)) {
@@ -60,7 +52,20 @@ if (isset($_POST["user_id"], $_POST["password"], $_POST["user_name"], $_POST["zi
             
             goto footer;
         } else {
-            $error_list[] = "ユーザーの登録に失敗しました";
+            switch ($wakarana->get_rejection_reason()) {
+                case "invalid_user_id":
+                    $error_list[] = "ユーザーIDに使用できない文字が含まれています";
+                    break;
+                case "user_already_exists":
+                    $error_list[] = "既に他のユーザーが使用しているユーザーIDです";
+                    break;
+                case "weak_password":
+                    $error_list[] = "パスワードは大文字・小文字・数字を全て含む10文字以上を設定してください";
+                    break;
+                default:
+                    $error_list[] = "ユーザーの登録に失敗しました";
+                    break;
+            }
         }
     }
 }
