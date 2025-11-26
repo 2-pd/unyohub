@@ -106,8 +106,8 @@ def open_main_window ():
     label_heading_main_dir = tk.Label(main_win, text="作業フォルダ:", font=label_font, fg="#cccccc", bg="#444444")
     label_heading_main_dir.place(x=10, y=10)
     
-    label_main_dir = tk.Label(main_win, text=os.path.basename(config["main_dir"]), font=label_font, fg="#ffffff", bg="#444444")
-    label_main_dir.place(x=10, y=35)
+    label_main_dir = tk.Label(main_win, font=label_font, fg="#ffffff", bg="#444444", padx=10, anchor="w")
+    label_main_dir.place(x=0, y=35, width=320)
     
     button_main_dir = tk.Button(main_win, text="作業フォルダ変更", font=button_font, command=change_main_dir, bg="#666666", fg="#ffffff", relief=tk.FLAT, highlightbackground="#666666")
     button_main_dir.place(x=160, y=75, width=150, height=35)
@@ -134,6 +134,7 @@ def open_main_window ():
     button_convert_operation_table_2.place(x=10, y=440, width=300, height=40)
     
     mes(UNYOHUB_GUI_TOOLS_APP_NAME + " v" + UNYOHUB_GUI_TOOLS_VERSION + "\n\n" + UNYOHUB_GUI_TOOLS_LICENSE_TEXT)
+    change_main_dir(config["main_dir"])
     
     main_win.mainloop()
 
@@ -300,14 +301,33 @@ def close_select_diagram_win ():
     select_diagram_win.destroy()
 
 
-def change_main_dir ():
+def change_main_dir (main_dir=None):
     global config
+    global label_main_dir
     
-    dir_path = filedialog.askdirectory(title="作業フォルダを選択してください", initialdir=config["main_dir"])
-    
-    if len(dir_path) >= 1 :
+    if main_dir is None:
+        dir_path = filedialog.askdirectory(title="作業フォルダを選択してください", initialdir=config["main_dir"])
+        
+        if len(dir_path) == 0:
+            return
+        
         config["main_dir"] = dir_path
-        label_main_dir["text"] = os.path.basename(config["main_dir"])
+    else:
+        dir_path = main_dir
+    
+    dir_name = os.path.basename(dir_path)
+    label_main_dir["text"] = dir_name
+    
+    if main_dir is None:
+        clear_mes()
+        
+        mes("作業フォルダとして " + dir_name + " が選択されました")
+    
+    if os.path.isfile(dir_path + "/railroad_info.json"):
+        label_main_dir["fg"] = "#ffffff"
+    else:
+        label_main_dir["fg"] = "#ffee00"
+        mes("\n《注意》現在の作業フォルダには railroad_info.json がありません")
 
 
 def convert_gtfs_to_timetable ():
