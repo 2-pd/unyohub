@@ -38,5 +38,17 @@ if (is_object($user)) {
     
     print json_encode($data, JSON_UNESCAPED_UNICODE);
 } else {
-    print "ERROR: ユーザーID・メールアドレスまたはパスワードが違います";
+    switch ($wakarana->get_rejection_reason()) {
+        case "parameters_not_matched":
+            print "ERROR: ユーザーID・メールアドレスまたはパスワードが違います";
+            break;
+        case "unavailable_user":
+            print "ERROR: 指定されたユーザーアカウントは停止状態です";
+            break;
+        case "currently_locked_out":
+            print "ERROR: しばらく待ってから再度お試しください";
+            break;
+        default:
+            print "ERROR: ログイン処理に失敗しました";
+    }
 }
