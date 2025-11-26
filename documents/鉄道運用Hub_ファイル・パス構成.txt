@@ -70,6 +70,7 @@ _/_/_/_/ ファイル構成 _/_/_/_/
    └ send_password_reset_email.php ・・・パスワードリセットメールを送信する
    └ reset_password.php ・・・ユーザーのパスワードをリセットしてランダムな値を設定する
    └ clear_caches.php ・・・クライアント端末に保存されているアプリ設定やIndexedDBキャッシュを削除する機能をJavascriptで記述したPHPファイル
+   └ check_new_user_id.php ・・・ユーザーの新規登録時にIDが使用可能かを確認するためのエンドポイント
    └ user_config_styles.css ・・・ユーザー設定画面用スタイルシート
 └ admin/ ・・・管理画面
    └ admin_common.php ・・・管理画面共通関数等
