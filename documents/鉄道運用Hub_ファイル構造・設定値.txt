@@ -41,7 +41,7 @@ log_ip_address 投稿者のIPアドレスを記録するか(BOOL値)
 
 {
     "railroads" : {
-        "路線系統識別名" : {
+        路線系統識別名 : {
         "railroad_name" : 路線系統表示名,
         "main_color": 路線系統のテーマカラー,
         "railroad_icon" : BASE64エンコードされた路線系統のアイコンデータ
@@ -67,7 +67,7 @@ log_ip_address 投稿者のIPアドレスを記録するか(BOOL値)
 ███ gtfs_realtime_endpoints.json ███
 
 {
-    "路線系統識別名" : GTFSに準じたTripUpdateデータの配信URL...
+    路線系統識別名 : GTFSに準じたTripUpdateデータの配信URL...
 }
 
 
@@ -94,7 +94,7 @@ log_ip_address 投稿者のIPアドレスを記録するか(BOOL値)
     "railroad_icon" : BASE64エンコードされた路線系統のアイコンデータ,
     "joined_railroads" : 直通する路線系統の路線系統識別名を配列で列挙(他の路線系統に属する運用が乗り入れしていない場合は省略可能),
     "lines" : { 個々の路線の情報
-        "路線識別名" : {
+        路線識別名 : {
             "line_name" : 路線名,
             "line_color" : 路線のテーマカラー,
             "line_symbol" : 路線記号または路線の略称(2文字以内。省略時は路線名の最初の文字で代用される),
@@ -143,6 +143,7 @@ log_ip_address 投稿者のIPアドレスを記録するか(BOOL値)
     ],
     "deadhead_train_number" : 回送列車の列車番号にマッチする正規表現パターン,
     "alias_of_forward_direction" : 前位側(奇数側)の呼称(「北側」、「上り方」など),
+    "forward_direction_is_east" : 編成表左端の先頭車が東向きか(東向きでない場合は省略可能。BOOL値),
     "description" : 路線系統データの説明文(URLは表示時に自動でリンクに変換される。省略可能),
     "editors" : [ 路線系統データ製作者の情報(省略可能)
         {
@@ -167,7 +168,7 @@ log_ip_address 投稿者のIPアドレスを記録するか(BOOL値)
 
 ※このファイルは変換スクリプトにより自動生成されるものである
 {
-    "アイコン識別名" : アイコン画像のバイナリのBASE64文字列...
+    アイコン識別名 : アイコン画像のバイナリのBASE64文字列...
 }
 
 
@@ -176,7 +177,7 @@ log_ip_address 投稿者のIPアドレスを記録するか(BOOL値)
 ※このファイルは変換スクリプトにより自動生成されるものである
 {
     "formations" : {
-        "編成名": { 各編成の情報
+        編成名 : { 各編成の情報
             "cars" : [ 各車両の情報(除籍・転出・改番済みの編成では省略)
                 {
                     "car_number" : 車番,
@@ -185,7 +186,7 @@ log_ip_address 投稿者のIPアドレスを記録するか(BOOL値)
                     "coloring_id" : 車体塗装識別名(省略可能)
                 }...
             ],
-            "series_name" : 形式名(除籍・転出・改番済みの編成では省略),
+            "series_name" : 形式名等(除籍・転出・改番済みの編成では省略),
             "subseries_name" : 番台名等(省略可能。除籍・転出・改番済みの編成では常に省略),
             "icon_id" : アイコン識別名(除籍・転出・改番済みの編成では省略),
             "new_railroad_id" : 転出先路線系統の識別名(転出・改番済みの編成以外では省略。転属を伴わない改番の場合はnull),
@@ -193,9 +194,9 @@ log_ip_address 投稿者のIPアドレスを記録するか(BOOL値)
         }...
     },
     "series" : {
-        "形式名" : {
+        形式名等 : {
             "subseries" : [ 番台等の情報(番台等がない場合は省略可能)
-                "番台名等" : {
+                番台名等 : {
                     "formation_names" : 編成名を配列で,
                     "icon_id" : アイコン識別名(現時点で在籍中の編成が存在しない場合は省略),
                     "unregistered" : 在籍中の編成が存在しないか否か(現時点で在籍中の編成が存在する場合は省略)
@@ -204,12 +205,13 @@ log_ip_address 投稿者のIPアドレスを記録するか(BOOL値)
             "subseries_names" : 番台名等を配列で(番台等がない場合は省略可能),
             "formation_names" : 編成名を配列で(番台等を指定した場合は省略),
             "icon_id" : アイコン識別名(現時点で在籍中の編成が存在しない場合は省略),
+            "is_series_group" : 形式ではなく系列か(形式の場合は省略可能。BOOL値),
             "unregistered" : 在籍中の編成が存在しないか否か(現時点で在籍中の編成が存在する場合は省略)
         }...
     },
     "series_names" : 形式名を配列で,
     "body_colorings" : { 車体塗装情報(省略可能)
-        "車体塗装識別名" : {
+        車体塗装識別名 : {
             "base_color" : ベースカラーの色コード,
             "font_color" : 車番の文字の色コード,
             "stripes" : [ ベースカラー以外の塗装情報を重なり順の上側から列挙(塗装がベースカラーのみの場合は省略可能)
@@ -228,7 +230,7 @@ log_ip_address 投稿者のIPアドレスを記録するか(BOOL値)
 ███ formation_name_mappings.json ███
 
 {
-    "公開API上の車両識別名" : 編成表の編成名...
+    公開API上の車両識別名 : 編成表の編成名...
 }
 
 
@@ -236,7 +238,7 @@ log_ip_address 投稿者のIPアドレスを記録するか(BOOL値)
 
 {
     "diagrams" : { 運用パターンの一覧
-        "ダイヤ識別名" : { この識別名は運用表JSONデータのファイル名に使用
+        ダイヤ識別名 : { この識別名は運用表JSONデータのファイル名に使用
             "diagram_name" : ダイヤ表示名,
             "main_color" : 時刻表の背景色,
             "timetable_id" : 時刻表識別名
@@ -263,7 +265,7 @@ log_ip_address 投稿者のIPアドレスを記録するか(BOOL値)
         }...
     ],
     "exceptional_dates" : { 例外ダイヤ実施情報
-        "YYYY-MM-DD形式の日付" : ダイヤ識別名...
+        YYYY-MM-DD形式の日付 : ダイヤ識別名...
     }
 }
 
@@ -275,7 +277,7 @@ log_ip_address 投稿者のIPアドレスを記録するか(BOOL値)
 ※発車待ちの列車の列車番号は、発車後の列車番号の先頭に「_」を付加したものとなる
 {
     "operations" : {
-        "運用番号" : { 各運用の情報
+        運用番号 : { 各運用の情報
             "trains" : [ 各区間組成の情報の情報(折り返し等の発車待ちの情報も含む)
                 {
                     "train_number" : 列車番号(発車待ちや列車番号が不明な場合は仮ID),
@@ -304,10 +306,10 @@ log_ip_address 投稿者のIPアドレスを記録するか(BOOL値)
             "comment" : 補足説明文
         }...
     },
-    operation_groups : [
+    "operation_groups" : [
         {
-            operation_group_name : 運用系統タイトル,
-            operation_numbers : 運用番号を配列で
+            "operation_group_name" : 運用系統タイトル,
+            "operation_numbers" : 運用番号を配列で
         }
     ]
 }
@@ -318,9 +320,9 @@ log_ip_address 投稿者のIPアドレスを記録するか(BOOL値)
 ※ファイル名の「****」部分は「時刻表識別名」が入る
 ※このファイルは変換スクリプトにより自動生成されるものである
 {
-    "路線識別名" : {
+    路線識別名 : {
         "inbound_trains" : { 上り時刻表
-            "列車番号" : [
+            列車番号 : [
                 { 各区間組成の情報
                     "starting_station" : 始発駅,
                     "train_type" : 列車種別,
@@ -363,7 +365,7 @@ announcements.jsonと同様
 
 ※このファイルは変換スクリプトにより自動生成されるものである
 {
-    "アイコン識別名" : {
+    アイコン識別名 : {
         "file_name" : アイコン画像のファイル名,
         "media_type" : アイコン画像のMIMEタイプ
     }...
