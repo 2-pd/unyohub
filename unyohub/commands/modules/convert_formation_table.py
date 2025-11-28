@@ -111,7 +111,10 @@ def convert_formation_table (mes, main_dir):
         elif formation_name.startswith("# "):
             if subseries_name is not None:
                 if subseries_max_car_count >= 1:
-                    insert_series_data(mes, cur, series_name + subseries_name, series_name, subseries_min_car_count, subseries_max_car_count, subseries_coupling_group_set)
+                    if not series_is_series_group:
+                        subseries_name = series_name + subseries_name
+                    
+                    insert_series_data(mes, cur, subseries_name, series_name, subseries_min_car_count, subseries_max_car_count, subseries_coupling_group_set)
                 elif not unregistered_subseries:
                     mes(subseries_name + " には在籍中の編成が存在しませんが廃区分として設定されていません", True)
             
@@ -129,6 +132,12 @@ def convert_formation_table (mes, main_dir):
             else:
                 unregistered_series = False
             
+            if series_name.startswith("*"):
+                series_name = series_name[1:].strip()
+                series_is_series_group = True
+            else:
+                series_is_series_group = False
+            
             mes("・" + series_name + " のデータ処理を開始します...")
             
             json_data["series"][series_name] = {}
@@ -138,6 +147,9 @@ def convert_formation_table (mes, main_dir):
             coupling_group_set = set()
             min_car_count = None
             max_car_count = 0
+            
+            if series_is_series_group:
+                json_data["series"][series_name]["is_series_group"] = True
             
             if unregistered_series:
                 json_data["series"][series_name]["unregistered"] = True
@@ -150,7 +162,10 @@ def convert_formation_table (mes, main_dir):
         elif formation_name.startswith("## "):
             if subseries_name is not None:
                 if subseries_max_car_count >= 1:
-                    insert_series_data(mes, cur, series_name + subseries_name, series_name, subseries_min_car_count, subseries_max_car_count, subseries_coupling_group_set)
+                    if not series_is_series_group:
+                        subseries_name = series_name + subseries_name
+                    
+                    insert_series_data(mes, cur, subseries_name, series_name, subseries_min_car_count, subseries_max_car_count, subseries_coupling_group_set)
                 elif not unregistered_subseries:
                     mes(subseries_name + " には在籍中の編成が存在しませんが廃区分として設定されていません", True)
             
