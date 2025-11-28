@@ -166,18 +166,18 @@ def convert_formation_table (mes, main_dir):
             
             subseries_name = formation_name[3:].strip()
             
-            if series_is_series_group:
-                subseries_full_name = subseries_name
-            else:
-                subseries_full_name = series_name + subseries_name
-            
             if subseries_name.startswith("†"):
                 subseries_name = subseries_name[1:].strip()
                 unregistered_subseries = True
             else:
                 unregistered_subseries = False
             
-            mes("・" + series_name + " " + subseries_name + " のデータを処理しています...")
+            if series_is_series_group:
+                subseries_full_name = subseries_name
+            else:
+                subseries_full_name = series_name + subseries_name
+            
+            mes("・" + subseries_full_name + " のデータを処理しています...")
             
             if "subseries" not in json_data["series"][series_name]:
                 json_data["series"][series_name]["subseries"] = {}
