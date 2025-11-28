@@ -12,7 +12,7 @@ _/_/_/_/ データベース _/_/_/_/
   `formation_name` TEXT NOT NULL PRIMARY KEY 編成名
   `currently_registered` INTEGER NOT NULL 現時点で在籍中の編成か否か(在籍中の場合は1、除籍済みの場合は0)
   `series_name` TEXT NOT NULL 車両形式
-  `subseries_name` TEXT 番台名等(番台等がない場合はNULL)
+  `subseries_name` TEXT 番台等を含む車両形式(番台等がない場合はNULL)
   `car_count` INTEGER NOT NULL 編成両数(unyohub_carsのデータから算出可能であるが、動作高速化の観点から正規化しない)
   `affiliation` TEXT 所属車両基地
   `caption` TEXT 1行見出し
