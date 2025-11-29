@@ -2100,6 +2100,12 @@ input[type="checkbox"]:checked + label.drop_down {
         border-radius: 8px 8px 0 0 !important;
     }
     
+    .car_2F {
+        margin-top: 4px;
+        
+        padding-top: 5px;
+    }
+    
     .car_highlight {
         border: 1px solid #ffcc00 !important;
         
@@ -2171,12 +2177,12 @@ input[type="checkbox"]:checked + label.drop_down {
     right: 5px;
 }
 
-.car_M span:before, .car_M span:after, .car_M1 span:first-of-type:before, .car_M1 span:first-of-type:after, .car_M2 span:last-of-type:before, .car_M2 span:last-of-type:after, .car_MO1 span:first-of-type:before, .car_MO2 span:last-of-type:before, .car_OM1 span:first-of-type:after, .car_OM2 span:last-of-type:after {
+:is(.car_M span, .car_M1 span:first-of-type, .car_M2 span:last-of-type, .car_MO1 span:first-of-type, .car_MO2 span:last-of-type):before, :is(.car_M span, .car_M1 span:first-of-type, .car_M2 span:last-of-type, .car_OM1 span:first-of-type, .car_OM2 span:last-of-type):after {
     background-color: #444444;
-    
-    .dark_mode & {
-        background-color: #eeeeee;
-    }
+}
+
+.dark_mode :is(.car_M span, .car_M1 span:first-of-type, .car_M2 span:last-of-type, .car_MO1 span:first-of-type, .car_MO2 span:last-of-type):before, .dark_mode :is(.car_M span, .car_M1 span:first-of-type, .car_M2 span:last-of-type, .car_OM1 span:first-of-type, .car_OM2 span:last-of-type):after {
+    background-color: #eeeeee;
 }
 
 .car_2W span:before, .car_2W1 span:first-child:before, .car_2W2 span:last-child:before {
