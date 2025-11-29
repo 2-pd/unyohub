@@ -1961,7 +1961,7 @@ input[type="checkbox"]:checked + label.drop_down {
     text-align: center;
 }
 
-.formation_table {
+.formation_table, .reversed_formation_table {
     margin: 0 auto 12px auto;
     
     border-collapse: collapse;
@@ -2084,28 +2084,6 @@ input[type="checkbox"]:checked + label.drop_down {
         border-color: #808080;
     }
     
-    .car_C1, .car_C {
-        border-radius: 8px 0 0 0;
-        
-        padding-left: 6px;
-    }
-    
-    .car_C2, .car_C {
-        border-radius: 0 8px 0 0;
-        
-        padding-right: 6px;
-    }
-    
-    .car_C {
-        border-radius: 8px 8px 0 0 !important;
-    }
-    
-    .car_2F {
-        margin-top: 4px;
-        
-        padding-top: 5px;
-    }
-    
     .car_highlight {
         border: 1px solid #ffcc00 !important;
         
@@ -2134,7 +2112,29 @@ input[type="checkbox"]:checked + label.drop_down {
     }
 }
 
-.car_PL:before, .car_PL:after, .car_PL1:before, .car_PL2:after, .car_PG:before, .car_PG:after, .car_PG1:before, .car_PG2:after, .car_PD:before, .car_PD:after, .car_PD1:before, .car_PD2:after, .car_PX:before, .car_PX:after, .car_PX1:before, .car_PX2:after, .car_ZL:before, .car_ZL:after, .car_ZL1:before, .car_ZL2:after, .car_ZG:before, .car_ZG:after, .car_ZG1:before, .car_ZG2:after {
+.car_C {
+    border-radius: 8px 8px 0 0 !important;
+}
+
+.formation_table .car_C1, .car_C, .reversed_formation_table .car_C2 {
+    border-radius: 8px 0 0 0;
+    
+    padding-left: 6px;
+}
+
+.formation_table .car_C2, .car_C, .reversed_formation_table .car_C1 {
+    border-radius: 0 8px 0 0;
+    
+    padding-right: 6px;
+}
+
+:is(.formation_table, .reversed_formation_table) .car_2F {
+    margin-top: 4px;
+    
+    padding-top: 5px;
+}
+
+:is(.car_PL, .formation_table .car_PL1, .reversed_formation_table .car_PL2, .car_PG, .formation_table .car_PG1, .reversed_formation_table .car_PG2, .car_PD, .formation_table .car_PD1, .reversed_formation_table .car_PD2, .car_PX, .formation_table .car_PX1, .reversed_formation_table .car_PX2, .car_ZL, .formation_table .car_ZL1, .reversed_formation_table .car_ZL2, .car_ZG, .formation_table .car_ZG1, .reversed_formation_table .car_ZG2):before, :is(.car_PL, .formation_table .car_PL2, .reversed_formation_table .car_PL1, .car_PG, .formation_table .car_PG2, .reversed_formation_table .car_PG1, .car_PD, .formation_table .car_PD2, .reversed_formation_table .car_PD1, .car_PX, .formation_table .car_PX2, .reversed_formation_table .car_PX1, .car_ZL, .formation_table .car_ZL2, .reversed_formation_table .car_ZL1, .car_ZG, .formation_table .car_ZG2, .reversed_formation_table .car_ZG1):after {
     content: "";
     
     display: block;
@@ -2149,39 +2149,39 @@ input[type="checkbox"]:checked + label.drop_down {
     background-repeat: no-repeat;
 }
 
-.car_PL:before, .car_PL:after, .car_PL1:before, .car_PL2:after, .car_PG:before, .car_PG:after, .car_PG1:before, .car_PG2:after {
+:is(.car_PL, .car_PL1, .car_PL2, .car_PG, .car_PG1, .car_PG2):before, :is(.car_PL, .car_PL1, .car_PL2, .car_PG, .car_PG1, .car_PG2):after {
     background-image: url(data:image/webp;base64,UklGRr4AAABXRUJQVlA4TLIAAAAvF8ADELW4jSRJUlw/Gz7oGn5EnDyJ2zahI9BGxIIIpwEAoMnccXfP2jT5ATuBNaS5W9MLHC7gBJJ3kjs/oLZtG0bynPpFvuXf3TlygGweAW2+DGa+RXqV/LjBTVA8L+5asS2PmR2E5cRkU8bzTVPl95/xeMrGso7lMENaX/IWD0JDDhcTTYeLlnUtoCoOa6AAd2WiRMUyBo5nBXdQxbPXq/GB1ZbdqzHj1blaj344MEkC);
 }
 
-.car_PL:before, .car_PL:after, .car_PL1:before, .car_PL2:after, .car_ZL:before, .car_ZL:after, .car_ZL1:before, .car_ZL2:after {
+:is(.formation_table .car_PL, .formation_table .car_PL1, .reversed_formation_table .car_PG, .reversed_formation_table .car_PG2, .formation_table .car_ZL, .formation_table .car_ZL1, .reversed_formation_table .car_ZG, .reversed_formation_table .car_ZG2):before, :is(.formation_table .car_PL, .formation_table .car_PL2, .reversed_formation_table .car_PG, .reversed_formation_table .car_PG1, .formation_table .car_ZL, .formation_table .car_ZL2, .reversed_formation_table .car_ZG, .reversed_formation_table .car_ZG1):after {
     transform: scale(-1, 1);
 }
 
-.car_PX:before, .car_PX:after, .car_PX1:before, .car_PX2:after {
+:is(.car_PX, .car_PX1, .car_PX2):before, :is(.car_PX, .car_PX1, .car_PX2):after {
     background-image: url(data:image/webp;base64,UklGRqwAAABXRUJQVlA4TKAAAAAvF8ADEI9gkG2kvj/Ek/5Pw0DaNrl/EVf610DaNrl/EVf6V40kSWn67nB3iCWmCMDu6rtbFWFXryo4CBWfmQsORMKA/P85Mx8K2khSnvkP/Mu9e1QQ0X9Fbts28imd8jfMJgAA5iYOegd3BuMEizCTPRBa9WAMUB68Qyz2Zuutxfqk4Xs5tnSl+3uuh/sje4ut2dF6aXLRUjV/4MsAhwgG);
 }
 
-.car_PD:before, .car_PD:after, .car_PD1:before, .car_PD2:after {
+:is(.car_PD, .car_PD1, .car_PD2):before, :is(.car_PD, .car_PD1, .car_PD2):after {
     background-image: url(data:image/webp;base64,UklGRtgAAABXRUJQVlA4TMwAAAAvF8ADEDU4iGw3bgTdCJLe1ZONoCTvSobwHeHEtq1leb+7/0By98RQiDaAfwBUIpU/UoksGtkteXJLPodnNm0bZS64bygZKMkgWYrXmtLocMFb5OqXtx9s6WIxoA8aCKQXs+4r9AK3aDbSQNKT8DpPL6a8xN/LZcJ/3EyyrvLnmfJFtI+rn1X9fKPDZX+LGHiGF47BxHCWZyLLi9oMaiuyBiPGgVYjK0+CBteeNpCGyTi6m5A7cXR8efcmAenlJy8N/jdiHNN3wGIGkgQ=);
 }
 
-.car_ZL:before, .car_ZL:after, .car_ZL1:before, .car_ZL2:after, .car_ZG:before, .car_ZG:after, .car_ZG1:before, .car_ZG2:after {
+:is(.car_ZL, .car_ZL1, .car_ZL2, .car_ZG, .car_ZG1, .car_ZG2):before, :is(.car_ZL, .car_ZL1, .car_ZL2, .car_ZG, .car_ZG1, .car_ZG2):after {
     background-image: url(data:image/webp;base64,UklGRt4AAABXRUJQVlA4TNEAAAAvF8ADEFWwjSTJCaETAZbaWZRPknj3F8KLCCcCABDObHtr3tKq49VFO1mNyUbyfrBrM5LtfegUtm3byJndfaPGoghYk9KUJ7YkGmmFMWm3QEN+jJ1Klh/SAFteZCRNDtxkuVhysCd758HRG3GKjYTPN+1VT7DLXeFP5uRi9KXEhxmsvRkQ5KB26EpnKcHLlVN4cEjSQhGPzAgDgFzxLvhLQpr4yoyrl+YYXwancoKhH4os+HCEDFDzDd9GmhEy0Og/vPAfoNbqTSZMG1UtVYFCKgA=);
 }
 
-.car_PL:before, .car_PL1:before, .car_PG:before, .car_PG1:before, .car_PX:before, .car_PX1:before, .car_PD:before, .car_PD1:before, .car_ZL:before, .car_ZL1:before, .car_ZG:before, .car_ZG1:before {
+:is(.car_PL, .formation_table .car_PL1, .reversed_formation_table .car_PL2, .car_PG, .formation_table .car_PG1, .reversed_formation_table .car_PG2, .car_PD, .formation_table .car_PD1, .reversed_formation_table .car_PD2 .car_PX, .formation_table .car_PX1, .reversed_formation_table .car_PX2, .car_ZL, .formation_table .car_ZL1, .reversed_formation_table .car_ZL2, .car_ZG, .formation_table .car_ZG1, .reversed_formation_table .car_ZG2):before {
     left: 5px;
 }
 
-.car_PL:after, .car_PL2:after, .car_PG:after, .car_PG2:after, .car_PX:after, .car_PX2:after, .car_PD:after, .car_PD2:after, .car_ZL:after, .car_ZL2:after, .car_ZG:after, .car_ZG2:after {
+:is(.car_PL, .formation_table .car_PL2, .reversed_formation_table .car_PL1, .car_PG, .formation_table .car_PG2, .reversed_formation_table .car_PG1, .car_PD, .formation_table .car_PD2, .reversed_formation_table .car_PD1, .car_PX, .formation_table .car_PX2, .reversed_formation_table .car_PX1, .car_ZL, .formation_table .car_ZL2, .reversed_formation_table .car_ZL1, .car_ZG, .formation_table .car_ZG2, .reversed_formation_table .car_ZG1):after {
     right: 5px;
 }
 
-:is(.car_M span, .car_M1 span:first-of-type, .car_M2 span:last-of-type, .car_MO1 span:first-of-type, .car_MO2 span:last-of-type):before, :is(.car_M span, .car_M1 span:first-of-type, .car_M2 span:last-of-type, .car_OM1 span:first-of-type, .car_OM2 span:last-of-type):after {
+:is(.car_M span, .formation_table .car_M1 span:first-of-type, .reversed_formation_table .car_M2 span:first-of-type, .formation_table .car_M2 span:last-of-type, .reversed_formation_table .car_M1 span:last-of-type, .formation_table .car_MO1 span:first-of-type, .reversed_formation_table .car_OM2 span:first-of-type, .formation_table .car_MO2 span:last-of-type, .reversed_formation_table .car_OM1 span:last-of-type):before, :is(.car_M span, .formation_table .car_M1 span:first-of-type, .reversed_formation_table .car_M2 span:first-of-type, .formation_table .car_M2 span:last-of-type, .reversed_formation_table .car_M1 span:last-of-type, .formation_table .car_OM1 span:first-of-type, .reversed_formation_table .car_MO2 span:first-of-type, .formation_table .car_OM2 span:last-of-type, .reversed_formation_table .car_MO1 span:last-of-type):after {
     background-color: #444444;
 }
 
-.dark_mode :is(.car_M span, .car_M1 span:first-of-type, .car_M2 span:last-of-type, .car_MO1 span:first-of-type, .car_MO2 span:last-of-type):before, .dark_mode :is(.car_M span, .car_M1 span:first-of-type, .car_M2 span:last-of-type, .car_OM1 span:first-of-type, .car_OM2 span:last-of-type):after {
+.dark_mode :is(.car_M span, .formation_table .car_M1 span:first-of-type, .reversed_formation_table .car_M2 span:first-of-type, .formation_table .car_M2 span:last-of-type, .reversed_formation_table .car_M1 span:last-of-type, .formation_table .car_MO1 span:first-of-type, .reversed_formation_table .car_OM2 span:first-of-type, .formation_table .car_MO2 span:last-of-type, .reversed_formation_table .car_OM1 span:last-of-type):before, .dark_mode :is(.car_M span, .formation_table .car_M1 span:first-of-type, .reversed_formation_table .car_M2 span:first-of-type, .formation_table .car_M2 span:last-of-type, .reversed_formation_table .car_M1 span:last-of-type, .formation_table .car_OM1 span:first-of-type, .reversed_formation_table .car_MO2 span:first-of-type, .formation_table .car_OM2 span:last-of-type, .reversed_formation_table .car_MO1 span:last-of-type):after {
     background-color: #eeeeee;
 }
 

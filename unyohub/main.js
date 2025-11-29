@@ -481,7 +481,7 @@ function update_display_settings (redraw = false) {
             
             case 3:
                 if (selected_formation_name === null) {
-                    draw_formation_table();
+                    draw_formation_table(false);
                 }
                 break;
             
@@ -4002,7 +4002,7 @@ function formation_table_wrapper_onscroll () {
     }
 }
 
-function get_formation_table_html (formation_names, search_keyword) {
+function get_formation_table_html (formation_names, reverse_formations, search_keyword) {
     var buf = "";
     var search_hit_formation_count = 0;
     var search_hit_formations_car_count = 0;
@@ -4033,7 +4033,7 @@ function get_formation_table_html (formation_names, search_keyword) {
             buf_2 += "</h5>";
             
             var search_hit_count = 0;
-            for (var car of formations["formations"][formation_name]["cars"]) {
+            for (var car of (reverse_formations ? formations["formations"][formation_name]["cars"].toReversed() : formations["formations"][formation_name]["cars"])) {
                 var car_class = "";
                 
                 if (search_keyword.length >= 1) {
@@ -4103,6 +4103,7 @@ function draw_formation_table (update_title = true) {
     document.getElementById("formation_screenshot_button").style.display = "none";
     document.getElementById("formation_back_button").style.display = "none";
     
+    var reverse_formations = (config["force_arrange_west_side_car_on_left"] && "forward_direction_is_east" in railroad_info && railroad_info["forward_direction_is_east"]);
     var search_keyword = str_to_halfwidth(car_number_search_elm.value).toUpperCase();
     
     var buf = ""
@@ -4113,7 +4114,7 @@ function draw_formation_table (update_title = true) {
             var search_hit_formations_car_count = 0;
             
             for (var subseries_name of formations["series"][series_name]["subseries_names"]) {
-                var [buf_3, subseries_search_hit_formation_count, subseries_search_hit_formations_car_count] = get_formation_table_html(formations["series"][series_name]["subseries"][subseries_name]["formation_names"], search_keyword);
+                var [buf_3, subseries_search_hit_formation_count, subseries_search_hit_formations_car_count] = get_formation_table_html(formations["series"][series_name]["subseries"][subseries_name]["formation_names"], reverse_formations, search_keyword);
                 
                 if (buf_3.length >= 1) {
                     buf_2 += "<tr><th colspan='2'>" + escape_html(subseries_name) + "</th></tr>" + buf_3;
@@ -4122,7 +4123,7 @@ function draw_formation_table (update_title = true) {
                 }
             }
         } else {
-            var [buf_2, search_hit_formation_count, search_hit_formations_car_count] = get_formation_table_html(formations["series"][series_name]["formation_names"], search_keyword);
+            var [buf_2, search_hit_formation_count, search_hit_formations_car_count] = get_formation_table_html(formations["series"][series_name]["formation_names"], reverse_formations, search_keyword);
         }
         
         if (buf_2.length >= 1) {
@@ -4130,7 +4131,7 @@ function draw_formation_table (update_title = true) {
             
             buf += "<input type='checkbox' id='" + checkbox_id + "'" + (checkbox_id in formation_table_drop_down_status && formation_table_drop_down_status[checkbox_id] ? " checked='checked'" : "") + " onclick='update_formation_table_drop_down_status(this);'>";
             buf += "<label for='" + checkbox_id + "' class='drop_down'>" + escape_html(series_name) + (search_keyword.length >= 1 ? " (" + search_hit_formation_count + "編成該当)" : "") + "</label>";
-            buf += "<div id='formation_table_" + checkbox_id + "'><h3 class='formation_table_series_name'>" + escape_html(series_name) + "</h3><button type='button' class='screenshot_button' onclick='take_screenshot(\"formation_table_" + checkbox_id + "\");' aria-label='スクリーンショット'></button><table class='formation_table'><tr><td colspan='2'>" + search_hit_formation_count + "編成 " + search_hit_formations_car_count + "両 " + (search_keyword.length >= 1 ? "該当" : "在籍中") + "" + buf_2 + "</td></tr></table></div>";
+            buf += "<div id='formation_table_" + checkbox_id + "'><h3 class='formation_table_series_name'>" + escape_html(series_name) + "</h3><button type='button' class='screenshot_button' onclick='take_screenshot(\"formation_table_" + checkbox_id + "\");' aria-label='スクリーンショット'></button><table class='" + (reverse_formations ? "reversed_formation_table" : "formation_table") + "'><tr><td colspan='2'>" + search_hit_formation_count + "編成 " + search_hit_formations_car_count + "両 " + (search_keyword.length >= 1 ? "該当" : "在籍中") + "" + buf_2 + "</td></tr></table></div>";
         }
     }
     
