@@ -2344,6 +2344,15 @@ input[type="checkbox"]:checked + label.drop_down {
     bottom: 4px;
 }
 
+.car_info_car_2F {
+    outline: 2px solid #999999 !important;
+    outline-offset: -4px;
+    
+    .dark_mode & {
+        outline-color: #cccccc !important;
+    }
+}
+
 .car_info_car_WC {
     background-image: url(data:image/webp;base64,UklGRtQCAABXRUJQVlA4TMcCAAAvO8AJEIcEO5JsV83svXj/RyKkRP5VHiTdM3JBQGgkyZEU3Xr+1J7BY/D+Z9JxI0mKlDWzx/g7R85/wwY6GUWSJCXHAw5wiNTzhQMM8KIIJmmq7RjADPwg8IFAILCAAQNWMGDAeN1rilRKKZKpfZ99/BbT430x1ZHh9bl8/hUDyWC4vQyCifD4WOrINI4MpPEvwatxRKhk+PjeTB8/hfT4WAzjvxhur4OBYLo8DwbS5WUgjCPC138ZR6bxL8LHzybUUV3VlVeG86NMpZQibfZpNmddF9GnO+xXJiIiItb70KfruqZp03Td8eF3g0DgBYFA4AGB/9+fnv5bRMRiryIimiYTTdM0ERHLvYlY78Nszvp0EU0zn4vV3kXs9m02ZxGzPTNItK09lZOk7l6cCq7F3d2hHcWpu9s/xanhTN85uf/61395gC8R/Z8AA6BmbqTIqi4ama823orpAhvDwplyA1SM2ZiOlxtM2djOmpoCiWMPQgcv/Q0picKqOSu4KwF0tXPeEZDrFsDCsMSJBIDjnCwByEiMFku0J4CuNk43AbkeiRKIdtzHUctOLYck/vtPEszHjF9QcpdzJ2poKQzquMm5EbVB2NBxhXM5om6Z8LVexQXO+YjXBCCoOMM5HfHTCSqOcA77BpacXL+GfZy9vjx58xpaOS2ehi++zw0KtnG2el5QZFCwiRM861HrCrD/qe/ZIev25aLQqwA77zn3W6z3LzGDBpxyTlpv4yfOxyYNB50DvufEDhr2OLt9a7w1DW1Oq8/7nvDBat3hbGetEFbVbHE2s74Tfqip7Uygs5b1m/BHDR4l8NCy/xHyem4ncIuXJWRkSkRuJHCd95LwSqR0WORaAld5bwhvRUbnRS4lcJHXT+gXWawulDiXwFleMyFIFFaaGQmtcwblE3GZLDNA+WxhHMJcmfFWLYwW6yoeXaw0AAAA);
     background-repeat: no-repeat;
