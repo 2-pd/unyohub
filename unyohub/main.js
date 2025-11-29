@@ -115,6 +115,7 @@ function get_default_config () {
         "show_starting_trains_only_on_timetable" : false,
         "colorize_corrected_posts" : false,
         "colorize_beginners_posts" : false,
+        "force_arrange_west_side_car_on_left" : false,
         "show_unregistered_formations_on_formation_table" : true,
         "colorize_formation_table" : true,
         "simplify_operation_details" : false,
@@ -462,7 +463,7 @@ function update_display_settings (redraw = false) {
                     update_railroad_list(railroads, document.getElementById("splash_screen_inner"), loading_completed);
                 });
                 break;
-                
+            
             case 0:
                 position_change_lines(position_selected_line);
                 break;
@@ -476,6 +477,12 @@ function update_display_settings (redraw = false) {
             
             case 2:
                 operation_data_draw();
+                break;
+            
+            case 3:
+                if (selected_formation_name === null) {
+                    draw_formation_table();
+                }
                 break;
             
             case 4:
