@@ -29,6 +29,7 @@ _/_/_/_/ クライアント側ローカルストレージ _/_/_/_/
     "show_starting_trains_only_on_timetable" : 時刻表閲覧時に当駅始発のみを表示するか(BOOL値),
     "colorize_corrected_posts" : 訂正のあった情報を色で区別して表示するか(BOOL値),
     "colorize_beginners_posts" : ビギナーユーザーから投稿された情報を色で区別して表示するか(BOOL値),
+    "force_arrange_west_side_car_on_left" : 編成表の各編成をその記載順によらず西向き先頭車が編成表左側になる順で表示するか(BOOL値),
     "show_unregistered_formations_on_formation_table" : 編成表に除籍・転出・改番済みの編成を表示するか(BOOL値),
     "colorize_formation_table" : 編成表の表示に実際の車体色を反映するか(BOOL値),
     "simplify_operation_details" : 運用表の各運用詳細情報閲覧時に列車情報を簡略表示するか(BOOL値),

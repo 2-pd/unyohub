@@ -89,7 +89,7 @@ if (empty($_GET["formation_name"])) {
     print "<h2>".htmlspecialchars($_GET["formation_name"])."</h2>";
     
     $event_types = array("construct", "modify", "repaint", "renewal", "transfer", "rearrange", "unregister", "other");
-    $event_types_ja = array("construct" => "新製", "modify" => "改修", "repaint" => "塗装変更", "renewal" => "更新", "transfer" => "転属", "rearrange" => "組換", "unregister" => "廃車", "other" => "その他");
+    $event_types_ja = array("construct" => "新製", "modify" => "改修", "repaint" => "塗装等変更", "renewal" => "更新", "transfer" => "転属", "rearrange" => "組換", "unregister" => "廃車", "other" => "その他");
     
     $db_obj = new SQLite3("../data/".$railroad_id."/railroad.db");
     $db_obj->busyTimeout(5000);
