@@ -25,7 +25,7 @@ if (is_object($user)) {
 connect_moderation_db();
 
 $now_ts = time();
-$now_datetime = date("Y-m-d h:i:s", $now_ts);
+$now_datetime = date("Y-m-d H:i:s", $now_ts);
 
 $moderation_db_obj->query("DELETE FROM `unyohub_moderation_timed_out_ip_addresses` WHERE `expiration_datetime` < '".$now_datetime."'");
 
@@ -42,7 +42,7 @@ if ($timed_out_days < 1 || $timed_out_days > 90) {
     exit;
 }
 
-$moderation_db_obj->query("INSERT INTO `unyohub_moderation_timed_out_ip_addresses` (`ip_address`, `expiration_datetime`) VALUES ('".$ip_address."', '".date("Y-m-d h:i:s", $timed_out_days * 86400 + $now_ts)."')");
+$moderation_db_obj->query("INSERT INTO `unyohub_moderation_timed_out_ip_addresses` (`ip_address`, `expiration_datetime`) VALUES ('".$ip_address."', '".date("Y-m-d H:i:s", $timed_out_days * 86400 + $now_ts)."')");
 $moderation_db_obj->query("INSERT INTO `unyohub_moderation_ip_address_timed_out_logs` (`ip_address`, `timed_out_datetime`, `moderator_id`, `timed_out_days`) VALUES ('".$ip_address."', '".$now_datetime."', '".$user->get_id()."', ".$timed_out_days.")");
 
 print "SUCCEEDED";

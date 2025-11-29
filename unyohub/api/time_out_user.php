@@ -25,7 +25,7 @@ if (is_object($user)) {
 connect_moderation_db();
 
 $now_ts = time();
-$now_datetime = date("Y-m-d h:i:s", $now_ts);
+$now_datetime = date("Y-m-d H:i:s", $now_ts);
 
 $moderation_db_obj->query("DELETE FROM `unyohub_moderation_timed_out_users` WHERE `expiration_datetime` < '".$now_datetime."'");
 
@@ -42,7 +42,7 @@ if ($timed_out_days < 1 || $timed_out_days > 90) {
     exit;
 }
 
-$moderation_db_obj->query("INSERT INTO `unyohub_moderation_timed_out_users` (`user_id`, `expiration_datetime`) VALUES ('".$user_id."', '".date("Y-m-d h:i:s", $timed_out_days * 86400 + $now_ts)."')");
+$moderation_db_obj->query("INSERT INTO `unyohub_moderation_timed_out_users` (`user_id`, `expiration_datetime`) VALUES ('".$user_id."', '".date("Y-m-d H:i:s", $timed_out_days * 86400 + $now_ts)."')");
 $moderation_db_obj->query("INSERT INTO `unyohub_moderation_user_timed_out_logs` (`user_id`, `timed_out_datetime`, `moderator_id`, `timed_out_days`) VALUES ('".$user_id."', '".$now_datetime."', '".$user->get_id()."', ".$timed_out_days.")");
 
 print "SUCCEEDED";

@@ -1338,6 +1338,29 @@ button:has(abbr) {
     margin-left: 16px;
 }
 
+.popup_subtitle {
+    position: relative;
+    
+    line-height: 45px;
+    font-size: 18px;
+    color: #666666;
+    font-weight: bold;
+    text-align: center;
+    
+    .dark_mode & {
+        color: #cccccc;
+    }
+    
+    .date_button {
+        top: 0;
+        right: 0;
+        
+        width: 45px;
+        
+        margin: 0;
+    }
+}
+
 #operation_data_formation {
     width: calc(100% - 90px);
     

@@ -16,7 +16,7 @@ import webbrowser
 
 
 UNYOHUB_GUI_TOOLS_APP_NAME = "鉄道運用Hub用データ編集ツール"
-UNYOHUB_GUI_TOOLS_VERSION = "25.10-2"
+UNYOHUB_GUI_TOOLS_VERSION = "25.11-1"
 UNYOHUB_GUI_TOOLS_LICENSE_TEXT = "このアプリケーションは無権利創作宣言に準拠して著作権放棄されています"
 UNYOHUB_GUI_TOOLS_LICENSE_URL = "https://www.2pd.jp/license/"
 UNYOHUB_GUI_TOOLS_REPOSITORY_URL = "https://fossil.2pd.jp/unyohub/"
@@ -106,8 +106,8 @@ def open_main_window ():
     label_heading_main_dir = tk.Label(main_win, text="作業フォルダ:", font=label_font, fg="#cccccc", bg="#444444")
     label_heading_main_dir.place(x=10, y=10)
     
-    label_main_dir = tk.Label(main_win, text=os.path.basename(config["main_dir"]), font=label_font, fg="#ffffff", bg="#444444")
-    label_main_dir.place(x=10, y=35)
+    label_main_dir = tk.Label(main_win, font=label_font, fg="#ffffff", bg="#444444", padx=10, anchor="w")
+    label_main_dir.place(x=0, y=35, width=320)
     
     button_main_dir = tk.Button(main_win, text="作業フォルダ変更", font=button_font, command=change_main_dir, bg="#666666", fg="#ffffff", relief=tk.FLAT, highlightbackground="#666666")
     button_main_dir.place(x=160, y=75, width=150, height=35)
@@ -134,6 +134,7 @@ def open_main_window ():
     button_convert_operation_table_2.place(x=10, y=440, width=300, height=40)
     
     mes(UNYOHUB_GUI_TOOLS_APP_NAME + " v" + UNYOHUB_GUI_TOOLS_VERSION + "\n\n" + UNYOHUB_GUI_TOOLS_LICENSE_TEXT)
+    change_main_dir(config["main_dir"])
     
     main_win.mainloop()
 
@@ -197,7 +198,7 @@ def select_diagram (callback_func, enable_diagram_id_entry=True, enable_save_ope
     select_diagram_callback = callback_func
     
     yyyy_mm_dd_reg_exp = re.compile(r"^[0-9]{4}-(0[1-9]|1[0-2])-(0[1-9]|[12][0-9]|3[01])$")
-    dir_list = sorted([ dir_name for dir_name in os.listdir(config["main_dir"]) if yyyy_mm_dd_reg_exp.match(dir_name) and os.path.isdir(config["main_dir"] + "/" + dir_name) ], reverse=True)
+    dir_list = sorted([ dir_info.name for dir_info in os.scandir(config["main_dir"]) if yyyy_mm_dd_reg_exp.match(dir_info.name) and dir_info.is_dir() ])
     
     if len(dir_list) == 0:
         mes("現在の作業フォルダにはダイヤ改正日別フォルダがありません", True)
@@ -234,7 +235,7 @@ def select_diagram (callback_func, enable_diagram_id_entry=True, enable_save_ope
     diagram_revision_list_scroll_y["command"] = diagram_revision_list.yview
     diagram_revision_list.place(x=30, y=40, width=160, height=140)
     diagram_revision_list_scroll_y.place(x=190, y=40, width=20, height=140)
-    diagram_revision_list.select_set(0)
+    diagram_revision_list.select_set(len(dir_list) - 1)
     
     if enable_diagram_id_entry:
         label_diagram_id = tk.Label(select_diagram_win, text="ダイヤ識別名:", font=label_font, fg="#ffffff", bg="#444444")
@@ -300,14 +301,33 @@ def close_select_diagram_win ():
     select_diagram_win.destroy()
 
 
-def change_main_dir ():
+def change_main_dir (main_dir=None):
     global config
+    global label_main_dir
     
-    dir_path = filedialog.askdirectory(title="作業フォルダを選択してください", initialdir=config["main_dir"])
-    
-    if len(dir_path) >= 1 :
+    if main_dir is None:
+        dir_path = filedialog.askdirectory(title="作業フォルダを選択してください", initialdir=config["main_dir"])
+        
+        if len(dir_path) == 0:
+            return
+        
         config["main_dir"] = dir_path
-        label_main_dir["text"] = os.path.basename(config["main_dir"])
+    else:
+        dir_path = main_dir
+    
+    dir_name = os.path.basename(dir_path)
+    label_main_dir["text"] = dir_name
+    
+    if main_dir is None:
+        clear_mes()
+        
+        mes("作業フォルダとして " + dir_name + " が選択されました")
+    
+    if os.path.isfile(dir_path + "/railroad_info.json"):
+        label_main_dir["fg"] = "#ffffff"
+    else:
+        label_main_dir["fg"] = "#ffee00"
+        mes("\n《注意》現在の作業フォルダには railroad_info.json がありません")
 
 
 def convert_gtfs_to_timetable ():
@@ -378,8 +398,19 @@ def convert_timetable_1 (input_file_name=None, digits_count=None):
     
     if input_file_name is None:
         file_name = filedialog.askopenfilename(title="変換対象の時刻表CSVファイルを選択してください", filetypes=[("CSV形式の表ファイル","*.csv")], initialdir=config["main_dir"])
+        
+        if file_name.endswith(".inbound.csv"):
+            file_name_2 = file_name[:-12] + ".outbound.csv"
+        elif file_name.endswith(".outbound.csv"):
+            file_name_2 = file_name[:-13] + ".inbound.csv"
+        else:
+            file_name_2 = None
+        
+        if not (file_name_2 is not None and os.path.isfile(file_name_2) and messagebox.askyesno("同じダイヤの時刻表ファイルが見つかりました", "同じフォルダにある " + os.path.basename(file_name_2) + " も同様に変換しますか？")):
+            file_name_2 = None
     else:
         file_name = input_file_name
+        file_name_2 = None
     
     if len(file_name) >= 1:
         if digits_count is None:
@@ -394,6 +425,9 @@ def convert_timetable_1 (input_file_name=None, digits_count=None):
             
             convert_timetable_1 = importlib.import_module("modules.convert_timetable_1")
             convert_timetable_1.convert_timetable_1(mes, file_name, digits_count)
+            
+            if file_name_2 is not None:
+                convert_timetable_1.convert_timetable_1(mes, file_name_2, digits_count)
         except:
             error_mes(traceback.format_exc())
 
@@ -439,9 +473,13 @@ def convert_operation_table_1 (for_printing):
     if len(file_name) == 0:
         return
     
-    json_file_name = filedialog.askopenfilename(title="運用表に対応するダイヤの変換済み時刻表を選択してください", filetypes=[("JSONファイル","*.json")], initialdir=config["main_dir"])
-    if len(json_file_name) == 0:
-        return
+    file_path_split = os.path.split(file_name)
+    json_file_name = file_path_split[0] + "/timetable_" + file_path_split[1][16:-4] + ".json"
+    
+    if not (os.path.isfile(json_file_name) and messagebox.askyesno("運用表の変換に使用する時刻表", "同じフォルダにある " + os.path.basename(json_file_name) + " をこの運用表のダイヤに対応する時刻表として使用しますか？")) :
+        json_file_name = filedialog.askopenfilename(title="運用表に対応するダイヤの変換済み時刻表を選択してください", filetypes=[("JSONファイル","*.json")], initialdir=config["main_dir"])
+        if len(json_file_name) == 0:
+            return
     
     if for_printing:
         file_name_for_printing = filedialog.asksaveasfilename(title="印刷用運用表のファイル名を指定してください", filetypes=[("HTMLファイル","*.html")], initialdir=config["main_dir"], initialfile=os.path.splitext(os.path.basename(file_name))[0] + "_印刷用.html", defaultextension="html")

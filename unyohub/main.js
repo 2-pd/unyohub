@@ -3,11 +3,11 @@
 const UNYOHUB_INDEXEDDB_VERSION = 2412001;
 
 
-const UNYOHUB_GENERIC_TRAIN_ICON = "data:image/webp;base64,UklGRngCAABXRUJQVlA4TGwCAAAvT8AdEJVIkm07bhst/QLu7Zlm2YK2CYgQP35pmv/Uls0uAgq2bcee31a2bc5bstkct2Tbjl60ze4t2bZtPRMQ53o2pNDRH8YI4BcYfVlNvSh4lsHnZOiTzqZEzTzPErPzCSdpnudFuv2aAcWwxMQBHRES3XFCAYqI2yb9LVYokNiCsUOMFV9U1gCRbyT58wfwklUxXrzIeBT/hJhAzpP4X8NCrHfNyC3QJFEQ1ayTuGA6LbObznnkdUvfgH63jYflyhLTdynrKjFLNFlYeaEZVAQYHCljCxiRIxqS7x6/Q8TtwgsBFkr86Ltq9OvtEXZBcQmY5OqAtoMjYDQ72KHCCuV22LTCthnkMvsis5JS7ZBihWk7TNn4w5E/O+kP50/6OAd0NqTIiQlOZPzB+ERENiwn2eMJoYs7dcstnSkYXAsUMrhR5/eU/kMehCPHgIMcZYcB+PEjF/nG58iLhA85yfuLqEY34OZvBcrFDz6/qAX2chTbIvl7ci9SqCfz/5EQ5EkKLPDxJHkXuHmSXIvs4slcoPck64pXnidwC2iefFGL4M2PKaps+sFGjUk/mKjR6AcNNbL8SJk1wvyYatnkB8baHs+PFxcItWDdC9biKB1eLMdSvBfEHYvg3gPuYjCLHrAwbPGA9mEUeUDhsBTtAVHDcPYgOw17ZXkAc9gOyVt/0w45LFjtj5VoZKA/+luo7o+qFmL7SzEtyb0/3FpeRP0hbAHDd2/8/MO2BLu9sRPNTPbGRBu1vVHTlhJ7I6ENbgodXsyjFvPwra21iFGLMH3+8CrxMs4mXW1RLVE5zio9bQW2lxj5colzHQ==";
+const UNYOHUB_GENERIC_TRAIN_ICON = "data:image/webp;base64,UklGRo4CAABXRUJQVlA4TIICAAAvT8AdEJVIkiRJkaR+ukUtMzxjvplZnV2RIXvd8GYoiIADybZp69nvfdu2bdtm/CMboW3bNmLbtm2bewLyX/0z3aCFs7lMugxa0Hx9ZKGKD2Dy4/Zw9E6MC7nkHFE30NiRWLcwXM1llpiYD/iS5vlyXaT70QvFEp1/8TtEZkq05gEFKDNzpkui2IkZ8S8OjzldfiOzpwvmLo4c6WJm6SExvIhT6D0QJ1GSPvIunT0QIw6g1QY5iQvGbJldO+eR182+AT22jYflxBJjF2mQq0G7afYAxixgzcwZbZLYAibkiGKz+YvfITJhNQswHkps6eAFmPx0vqZfUFwCLrl6Q/tBG3A6aPkhxQvJftj0wrYbxOX2nZgXi/BDuBfG/DDq5AOH/fqxv/dc0zwHJXMhkhL6mOecXzlenuvrfp0HJejb3tDm9eJOXc/0msey1zsR5hQgM++E9kCUSyBEzueRv3iWFCRrEGqEAmESWOMgDvYriCvQtcAyEswLc4lk/j8DnCNZCmwjMZvCTCLBuBh0Ihm0CpQjQbFAOpJ3EsU7oUjgL2CNBOYCFN9x8LVDFslxHBxmlck4GK/REQdtNfLiIKdGdBxrzbziwLOGehyDWu0jSxww15KnKOYcZSEK5sdoi4LWMZKjIGkMnyiOY5lJRX+UZyPx/RHXYn794duCc3/m1DJo9YdmC4L9vRNo+UnsD1JL8tQbjztEM5u9sdHGQG/0t9HQG/VtZPRGepuF9UZoG969mVebGfWGYdsg1dvWBmNvMLbtkHz0xeerLTnsi4M8IBN9MX4Ii6Bl7+IyaXHZez1EY5GTFuk6Hl4lXqbZpJMv0iVSp1mlm69E/ZgTH4/5rw4=";
 
-const UNYOHUB_UNKNOWN_TRAIN_ICON = "data:image/webp;base64,UklGRqADAABXRUJQVlA4TJMDAAAvT8AdELVQuq03kST1T3+OaO5eMQ8zM/OOeXbMzMwQUY6wrMGVWo2FMUWRldBVEVIACCDAyGa2bXtLNpvjlmzb0Yu22b0l27b9uAmwv+qFRQhPPi+MIP5C8vFEVGnAqwvsBoK2y7PtTt1wOHRnftjiwH04HI7cp5fEIMSoO1PXCJuZO73WooOb2fSG++pYCkXu7KBgqWyHLBvgFAoJgfwD3gojS2elHs/Of8JEoM+L839iEmwy62voS6DFfWi1hZk7V8yGVfbDJc+8r4df8OX1dZ5GZ1lhdta9MKuxoTstEia80YqQGSI4U3HCE3JCU/DfI242fZo3giRUCWDgrCc/Oz1vchHi2kVyc42wHJxdaOEkhyopVMphWwq7YtB3saWelJAuhzQpzMphRsbKSf7JCf9wXUozLixCdL/KmQufZ7InqrAYt7JHnDB6ePBsuac7hCLWBBmyuPPMZ0LmLumok5y6gpwUThEE8MdV5Be/KUodvlxJPkutOnpBzeUaZE7rwfcO2QqOrij2lRDY2m5u5kU+4Ft+4Vcad9/wHs9zAztpLQRWQnhLl/A6v9An7F7mOC0N2zvA/K8kf4k9iLqeH+gFfs81CHqYX5HZ3YuYW+mldjch5FI6Mf3PXIiIko/4FcEfUiBhoRd9JwJKvkbWV/yf7ir62F94nEOUeOPNHOVZovorSPcEMd3EW76NqMdI9zYxj+Ktv0DMW6QbxeyjvaWYr0k3HTEdaG8HMT+Tro9c9fa3ENP/9ZP592sjZlqHpZhlHZ4j5oQKN9PHPk4e21k7FXF+8Cx99JXk8Ah9yuUSbe7HlfmMrSgzfTGuzO24Mg/iunzPdbgur7AX0KR7hQvwdrPoRu/xHDewE29b3l146v9oEJJMdAiu4KdJ8K3goUlwrxRumqxVMNekMKtsVtME1QpymuyQrRgfevRWy3aqR/iVyLtIxVYd03owVUezHjTVkaNHyK4jQo9BXWGlB5Z1e8T5o8UpJOqMTS3YsCnpSiR4PFVI1IKEqcx41IAHi2ZZA5bixhrQGUeJBhTHhVgNiInDVYPCJW6zkgYoxm0S5CO/fhBnrOfHmjVkKD8Gm1CbHzVNiM8vxDUJnvnh0aTUyg/NJojwm9upw6JNjP3c2LPG87mtNqM+N+qaheTcSGqGagiPrwyTVobxG82aVixpxUT/9eHdnbc06+5nZVHrTnWa8+4Lsgz705b49Gn7qw4A";
+const UNYOHUB_UNKNOWN_TRAIN_ICON = "data:image/webp;base64,UklGRroDAABXRUJQVlA4TK0DAAAvT8AdEJVQtm07bS3l05fsYmZmZmau6jFXj5mZKQ/sSNbRGfd1zwkndm4ipAAQQICRbdu2bdtGXrIRbdu2t8+2bds2bwLsoH6afOVNSkjNuqu8kZN1iirT/IDs0/1GUG3OCxfJc8zEIMcdd66HctJC6uDOiaHD3n0YFsud+3oqhRF3ti4QHwmYmTtr1qGDm5kNbLszIiQE8995OLV8dqY093xBhIgpj3wRwk2CEbRwnqIggXp3Rk2Grd3nEqh1HiDXVtm784Jj4TJ3w3M+8nUffoNv9ns+7GZc4tjCvbJvQ27lgwREQiRqZjbgQzO3ICOPGAmxF4iPBMxQC5GISGgSxyZfIPtsvjS5CPESRPLqDmE5+IDQylsOrVJokcNNKdwWg4WLrc2lhEo5VEjhmByOCjlZM/yVE/6dpJ1nWzmHVKoYZR/nec5fF7zbHvbr5VA5o5B2h3DI7nnnRQ/shcxdVG3KOVeQM7VxBGa8BBV5Pky4QJxLriTXkGijDNSkqI0HenC/BQtX9LBBlCZENEJqZ2dxP+/yDX8y5gjJqz/4ire5hzPobMhxAx8z5ggZV+9zNdIuYXmE7O9xAaLu5h96gX9zB4Ke5wgyxzyJmAfppY65DyE3shLT/8+1iKj5jiMI/pYKCU/Si34UATW/I+s31vluo48d8zKXUQPJJ3ElbxLV30K+V4hZ3YF3/BBRL5Hvc2JexDt/h5jPyPcHMRfR3bXE/E6+/4mYB7o7nZj/yddHbr37k4npD34yT7z2MXMdriXmd3R4i5jPUOF++tiXKeM0hmnESVzJmxwh+lZKeIE+56ZGm6dxZX7iFJT5n+txZR7GlXkW1+Vv7sJ1+YALAU3GfMA1eLdFrP7gK97iHs7Au5b3GJ77BI0UTUhpEKdJiG2EUE0IaVS+mlTeDVyyicapgY0mtWWjNtYEgwZqmqDSQIjfevBrJNgwHuvBQ2vlpB4cb2NTD9bb6M91eITIXS5626jRg5q2kK0HWW146FG5t52iqgcqbcYnLQabyAUtOD+JdS1Ym0RLJsE0TyJXi+kkM2OyPCYskYbyqE8J+eWRl0JKeSE5pfIuD68UjMqrDVPOkSwPqRTjU2l8HAkkc7M0bqRxoDT2p7FYGgtpdJZGR1ooL42yNHJKC9lpIbg0gtIq69L2aSiVhlLaSJAfZfGzTzMelsUD65ATZXG8i1DJanRjkbWxiD7sIrFhWRsmWh++uvMlz959JosOd9ryHLqvZBkeU8s8ndpBHQA=";
 
-const UNYOHUB_CANCELED_TRAIN_ICON = "data:image/webp;base64,UklGRjoEAABXRUJQVlA4TC4EAAAvT8AdEEfEKJJsJ73k6IIz/r1gAAUcMyLYRratZHHJ6b8W6iB0J3dHkSTLStbf2F1wxr8XDKCA4x+3se06ivS+8JB5E0EEFWwN9EcH1ERGF2uF9mkdIFA/ga4+29Jq2EWJR/SM8jJX3C+j0Q4LKDZQrFGgUGi+foi8Gc4ut9L6BZECgEbiR4wR/ASJLK+1K9/1f1T/6nR+lvpdd+f17TFWtnLlU+b29SqDNfOV53fKuD/afDkc/KCHo0aACBBx/VMj4Nc/hFfxpgCAHgQRvw8CRAUAMBgMhjkAAJgCmAIApjAABiQoQQSIFjV6EAThIByRIAcRCapBRIL6BEURLp4gDuW935qv7NMvHNK2bTsbKWPbWO+ObWtt22ZmbXt/9zbN+zz3m2M+P32iiP5DcNtGkqRIM3vv3FOo/oGzUc/PA+yJwRx94rInDaGcfiSAeXwKyLkFkWsHVEXuKmFCEVVNRZJzMPJuibwKVVXkjRImFVFVvSFy+wKKK57rzObvoisfUX9h3X12yuGjpx/J+gHMX3gm60cdJn7X9zSC6yJ71cNJkfm3t+++iJ+nj12J03Q+F95+G7tyUj2zV+Qd5PNHK3mq5w+vzbmMCdfS86p58fNvChp5/RjwsE++KW7Chy5kZi7gOC6gSXB8QLEHx30UL3CvQgKbGMUlHJ9QLOG4Q6Wkoqa5fqC0wMv5H09wpFHopaB0oD6pqYgz5Jc1tXimqvPU/vd3Zl3w5F6u7Q87U+8lj8vyHS2X7Nk54VqaXOJz0dUpbvRBuiyZ62rxIYwqRPy1nUhUKyZtJ1GDGLWcNNSJWbtJMiAErSZhqVC0maQFlSQtlqTa307SWrE6qsM9hMuzYwzBZDfl4g45/zkwSdNO4wc8uESt5GZB1UbZkMXnA110fjDE5gtHZP6wxGWAJyoTTDEZ4YrIDFt+BPhyowCQFwmEnGhApEcEIzUqEDdtpkUGIy06NCExIAqIA1V2LMgy40GXFROGjLhwJMeG4xYK21I3YGwfs8hkN/GTmA0vqlxY0WXCiSMPRjxZ0OPKgRxfBtQQ0sG0dRdJFoDFjPaQZAFYzBBlwV7MkGXBXMwwpPAVshCEeTDDEcS6Emcuw3fAuhLooQzH+CE95tmeZQc1l+EsN6y/M/xhBvavk5lpVmCTrG1QTmgTL8uM4N728o4e3lUvl8lZ8LKXEWo2HPVQ2EbMiq1F/+mvDtI+UrU6wdvnCt4+XPD2CYO3jxm8fdbg7QMHb586ePvoWm7Iuup7HKJ30rU2mvgch8g+TtLRNzjlWpwo7ks9x0l85p5rfWI1zE37RCZ22+eqiS/22WfisH2+mzhjn18mLjy1zZN/apoHtnmgRpZtc9vMe9usmblom89mfh/wHxERNQ33cuUc5mRAX66NnsciMf9yYdktchVwubBzQgCXa4MeBQ==";
+const UNYOHUB_CANCELED_TRAIN_ICON = "data:image/webp;base64,UklGRiQEAABXRUJQVlA4TBgEAAAvT8AdEBfkIJIkRco+ZlBy/s3xvwfGbSQp8kL+Wd79mHkYtI3kyHPf+z+S50/u1m1sO66ykhbvXUZGBAWQkhPREGVQDzE10IUHjf5VQoQCuVQe/lVpqFhFEtvILpKXWmMjmGQOgaENwQiCIQwCgZSGpc/tLP1e7eMeIhSAjIhEE2mEgkSW9/At/vYvx+HYvHOzN9/4qnWelvPi00zteSrTkPmT59/L2B2f0pAAAIAAAAD8AIADAIcjAIADvBBwgAB/CAAASMoBFQpFRRsKRRcVFfqLLjQpiSvAAyQlAABJISmelABlGbzIjbIMVHVEIW3b9jRP3N3XMRzmvmXu7u7D3d0d+s9p3+Z57hQ+N08i+g/JkSRFkof7LJyYqn7g/693srX+gTWb/MHya35QseckAbI/oiB78QPGn3Fln7z74Jyyk44wq6xzTp4om/xBccfa2Wu+iCg7R3mr5qz1ReTarLIOxOZrO/bH5yOnz9TrDczrngdvHwL58tqOniBYtvaOj0GctcsIbqS+TnatHXn4ePzF8JB7paw4l7wYf/xwRNndlI/gmL2B4PqnXyLitpaeKsae3/l4zRf59em6gPbx/pBiz91PBLdM0PfRy+s4tixoCY6bKBIcEyie4n4MWdgSFCs43qF4iGOKSm5heV1VQ15GCj/f4Hh9lEJGXkNVXXlhbkB6fq0XWnH7h5U7M49eDCjg5EUy41Y+tBd7odXmp/tS4KXuaq8yNEm81BX4OTVepMYTl1PoSbSmEyms8HSaTiqqPa2Gk+pKT6/ZpLJBCBpNGvKEosnEZRSRNJjL8OvPkDSWq/dFupo8/S51I+hrpLy5nf5fPvTRNFPPhxCKqJFUClRNlApZfBHQRRcFQ2yRcEQWDUtcGnii0sEUkxauiPSw5UeALzcKAHmRQMiJBkR6RDBSowLx/AVaZDDSokMTEgOigDhQZceCLDMedFkxYciIC0dybDhepHCux8aMy90G6WskvtDNhhdVLqzoMuHEkQcjnizoceVAji8DagjpYDp7hSSVddCfWq4J4nroUAv1lxvGjwGfQYHcDPiKCeVWwA4kmN8C9hDh/B5wAAjoYcAvfkiPQ6eWr7ghfZXmB3vODOqYH2KSF9aHYe6zAjsXZoET2tth3jKC+zbMGj2878NskzPgdpg2aiZsDZFVQsyIZdl/qS+N0zlSab0fv3Ou+J3Dxe+cMH7nmPE7Z43fOXD8zqnjd44eu3P+yHuI5j5lbE4i7iEi7klaOvqVwSXiQvckmrsqw5sQ7aZN80DPXdMkem6Z5paed6ZZ1bNmmoRwu26aL3r2TOP0/DbNbz1pg2ZxaaLfmFmcEJg0y0PSbe69yAUk2vHeLifcBYDfrn+OIWsd/+3CckvZRcDbhd12Ani7/tMT";
 
 
 function escape_html (text) {
@@ -115,6 +115,7 @@ function get_default_config () {
         "show_starting_trains_only_on_timetable" : false,
         "colorize_corrected_posts" : false,
         "colorize_beginners_posts" : false,
+        "force_arrange_west_side_car_on_left" : false,
         "show_unregistered_formations_on_formation_table" : true,
         "colorize_formation_table" : true,
         "simplify_operation_details" : false,
@@ -462,7 +463,7 @@ function update_display_settings (redraw = false) {
                     update_railroad_list(railroads, document.getElementById("splash_screen_inner"), loading_completed);
                 });
                 break;
-                
+            
             case 0:
                 position_change_lines(position_selected_line);
                 break;
@@ -476,6 +477,12 @@ function update_display_settings (redraw = false) {
             
             case 2:
                 operation_data_draw();
+                break;
+            
+            case 3:
+                if (selected_formation_name === null) {
+                    draw_formation_table(false);
+                }
                 break;
             
             case 4:
@@ -930,7 +937,7 @@ function update_formation_styles (railroad_id = null) {
         if ("subseries_names" in series_data[series_name]) {
             for (var subseries_name of series_data[series_name]["subseries_names"]) {
                 if (!("unregistered" in series_data[series_name]["subseries"][subseries_name] && series_data[series_name]["subseries"][subseries_name]["unregistered"])) {
-                    icon_ids_data[series_name + subseries_name] = series_data[series_name]["subseries"][subseries_name]["icon_id"];
+                    icon_ids_data["is_series_group" in series_data[series_name] && series_data[series_name]["is_series_group"] ? subseries_name : series_name + subseries_name] = series_data[series_name]["subseries"][subseries_name]["icon_id"];
                 }
             }
         }
@@ -3995,7 +4002,7 @@ function formation_table_wrapper_onscroll () {
     }
 }
 
-function get_formation_table_html (formation_names, search_keyword) {
+function get_formation_table_html (formation_names, reverse_formations, search_keyword) {
     var buf = "";
     var search_hit_formation_count = 0;
     var search_hit_formations_car_count = 0;
@@ -4026,7 +4033,7 @@ function get_formation_table_html (formation_names, search_keyword) {
             buf_2 += "</h5>";
             
             var search_hit_count = 0;
-            for (var car of formations["formations"][formation_name]["cars"]) {
+            for (var car of (reverse_formations ? formations["formations"][formation_name]["cars"].toReversed() : formations["formations"][formation_name]["cars"])) {
                 var car_class = "";
                 
                 if (search_keyword.length >= 1) {
@@ -4096,6 +4103,7 @@ function draw_formation_table (update_title = true) {
     document.getElementById("formation_screenshot_button").style.display = "none";
     document.getElementById("formation_back_button").style.display = "none";
     
+    var reverse_formations = (config["force_arrange_west_side_car_on_left"] && "forward_direction_is_east" in railroad_info && railroad_info["forward_direction_is_east"]);
     var search_keyword = str_to_halfwidth(car_number_search_elm.value).toUpperCase();
     
     var buf = ""
@@ -4106,7 +4114,7 @@ function draw_formation_table (update_title = true) {
             var search_hit_formations_car_count = 0;
             
             for (var subseries_name of formations["series"][series_name]["subseries_names"]) {
-                var [buf_3, subseries_search_hit_formation_count, subseries_search_hit_formations_car_count] = get_formation_table_html(formations["series"][series_name]["subseries"][subseries_name]["formation_names"], search_keyword);
+                var [buf_3, subseries_search_hit_formation_count, subseries_search_hit_formations_car_count] = get_formation_table_html(formations["series"][series_name]["subseries"][subseries_name]["formation_names"], reverse_formations, search_keyword);
                 
                 if (buf_3.length >= 1) {
                     buf_2 += "<tr><th colspan='2'>" + escape_html(subseries_name) + "</th></tr>" + buf_3;
@@ -4115,15 +4123,17 @@ function draw_formation_table (update_title = true) {
                 }
             }
         } else {
-            var [buf_2, search_hit_formation_count, search_hit_formations_car_count] = get_formation_table_html(formations["series"][series_name]["formation_names"], search_keyword);
+            var [buf_2, search_hit_formation_count, search_hit_formations_car_count] = get_formation_table_html(formations["series"][series_name]["formation_names"], reverse_formations, search_keyword);
         }
         
         if (buf_2.length >= 1) {
             var checkbox_id = "series_" + series_name;
             
+            var unregistered = ("unregistered" in formations["series"][series_name] && formations["series"][series_name]["unregistered"]);
+            
             buf += "<input type='checkbox' id='" + checkbox_id + "'" + (checkbox_id in formation_table_drop_down_status && formation_table_drop_down_status[checkbox_id] ? " checked='checked'" : "") + " onclick='update_formation_table_drop_down_status(this);'>";
-            buf += "<label for='" + checkbox_id + "' class='drop_down'>" + escape_html(series_name) + (search_keyword.length >= 1 ? " (" + search_hit_formation_count + "編成該当)" : "") + "</label>";
-            buf += "<div id='formation_table_" + checkbox_id + "'><h3 class='formation_table_series_name'>" + escape_html(series_name) + "</h3><button type='button' class='screenshot_button' onclick='take_screenshot(\"formation_table_" + checkbox_id + "\");' aria-label='スクリーンショット'></button><table class='formation_table'><tr><td colspan='2'>" + search_hit_formation_count + "編成 " + search_hit_formations_car_count + "両 " + (search_keyword.length >= 1 ? "該当" : "在籍中") + "" + buf_2 + "</td></tr></table></div>";
+            buf += "<label for='" + checkbox_id + "' class='formation_table_drop_down'><span><img src='" + get_icon(series_name) + "' alt='' class='train_icon'" + (unregistered ? " style='opacity: 0.5;'" : "") + "></span>" + escape_html(series_name) + (search_keyword.length >= 1 ? " (" + search_hit_formation_count + "編成該当)" : (unregistered ? "<small>(除籍済み)</small>" : "")) + "</label>";
+            buf += "<div id='formation_table_" + checkbox_id + "'><h3 class='formation_table_series_name'>" + escape_html(series_name) + "</h3><button type='button' class='screenshot_button' onclick='take_screenshot(\"formation_table_" + checkbox_id + "\");' aria-label='スクリーンショット'></button><table class='" + (reverse_formations ? "reversed_formation_table" : "formation_table") + "'><tr><td colspan='2'>" + search_hit_formation_count + "編成 " + search_hit_formations_car_count + "両 " + (search_keyword.length >= 1 ? "該当" : "在籍中") + "" + buf_2 + "</td></tr></table></div>";
         }
     }
     
@@ -4315,7 +4325,15 @@ function formation_detail (formation_name) {
     buf += "<div id='semifixed_formation_area'></div>";
     
     buf += "<h3>基本情報</h3>";
-    buf += "<div class='key_and_value'><b>車両形式</b><span id='formation_series_name'>" + ("series_name" in formations["formations"][formation_name] ? escape_html(series_name + ("subseries_name" in formations["formations"][formation_name] ? " " + formations["formations"][formation_name]["subseries_name"] : "")) : "") + "</div>";
+    buf += "<div class='key_and_value'><b>車両形式</b><span id='formation_series_name'>";
+    if ("series_name" in formations["formations"][formation_name]) {
+        if ("is_series_group" in formations["series"][series_name] && formations["series"][series_name]["is_series_group"]) {
+            buf += escape_html(formations["formations"][formation_name]["subseries_name"]);
+        } else {
+            buf += escape_html(series_name + ("subseries_name" in formations["formations"][formation_name] ? " " + formations["formations"][formation_name]["subseries_name"] : ""));
+        }
+    }
+    buf += "</div>";
     buf += "<div class='key_and_value' id='formation_affiliation'></div>";
     
     buf += "<div class='descriptive_text' id='formation_description'></div>";
@@ -4383,7 +4401,7 @@ function formation_detail (formation_name) {
                     document.getElementById("formation_caption").innerText = data["caption"];
                 }
                 
-                document.getElementById("formation_series_name").innerText = data["series_name"] + ("subseries_name" in data ? " " + data["subseries_name"] : "");
+                document.getElementById("formation_series_name").innerText = "subseries_name" in data ? data["subseries_name"] : data["series_name"];
                 
                 if (data["affiliation"] !== null && data["affiliation"].length >= 1) {
                     document.getElementById("formation_affiliation").innerHTML = "<b>" + ("cars" in formations["formations"][formation_name] ? "" : "最終") + "所属</b>" + escape_html(data["affiliation"]);
@@ -4469,7 +4487,7 @@ function formation_detail (formation_name) {
                 
                 formation_operations_area_elm.innerHTML = buf;
                 
-                var event_type_ja = { construct : "新製", modify : "改修", repaint : "塗装変更", renewal : "更新", transfer : "転属", rearrange : "組換", unregister : "廃車", other : "その他" };
+                var event_type_ja = { construct : "新製", modify : "改修", repaint : "塗装等変更", renewal : "更新", transfer : "転属", rearrange : "組換", unregister : "廃車", other : "その他" };
                 
                 var buf = "";
                 for (var history of data["histories"]) {

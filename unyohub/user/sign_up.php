@@ -13,18 +13,25 @@ if (isset($_POST["user_id"], $_POST["password"], $_POST["user_name"], $_POST["zi
     
     if (strlen($_POST["user_id"]) < 5) {
         $error_list[] = "ユーザーIDは5文字以上必要です";
-    } elseif (!wakarana::check_id_string($_POST["user_id"])) {
-        $error_list[] = "ユーザーIDに使用できない文字が含まれています";
-    } elseif (is_object($wakarana->get_user($_POST["user_id"]))) {
-        $error_list[] = "既に他のユーザーが使用しているユーザーIDです";
-    }
-    
-    if (!wakarana::check_password_strength($_POST["password"])) {
-        $error_list[] = "パスワードは大文字・小文字・数字を全て含む10文字以上を設定してください";
     }
     
     if ($main_config["require_email_address"] && empty($error_list) && !$wakarana->email_address_verify($_POST["email_address"], $_POST["verification_code"])) {
-        $error_list[] = "正しいメールアドレス確認コードを入力してください";
+        switch ($wakarana->get_rejection_reason()) {
+            case "invalid_email_address":
+                $error_list[] = "正しいメールアドレスが入力されていません";
+                break;
+            case "blacklisted_email_domain":
+                $error_list[] = "使用できないメールアドレスです";
+                break;
+            case "email_address_already_exists":
+                $error_list[] = "既に使用されているメールアドレスです";
+                break;
+            case "parameters_not_matched":
+                $error_list[] = "無効なメールアドレス確認コードです";
+                break;
+            default:
+                $error_list[] = "メースアドレス確認コードの照合に失敗しました";
+        }
     }
     
     if (empty($error_list)) {
@@ -60,7 +67,19 @@ if (isset($_POST["user_id"], $_POST["password"], $_POST["user_name"], $_POST["zi
             
             goto footer;
         } else {
-            $error_list[] = "ユーザーの登録に失敗しました";
+            switch ($wakarana->get_rejection_reason()) {
+                case "invalid_user_id":
+                    $error_list[] = "ユーザーIDに使用できない文字が含まれています";
+                    break;
+                case "user_already_exists":
+                    $error_list[] = "既に他のユーザーが使用しているユーザーIDです";
+                    break;
+                case "weak_password":
+                    $error_list[] = "パスワードは大文字・小文字・数字を全て含む10文字以上を設定してください";
+                    break;
+                default:
+                    $error_list[] = "ユーザーの登録に失敗しました";
+            }
         }
     }
 }
@@ -80,6 +99,81 @@ print_header("新規ユーザー登録", TRUE, TRUE);
             setTimeout(function () {
                 document.getElementById("sign_up_form").submit();
             }, 10);
+        }
+        
+        var id_regexp = /^[0-9A-Za-z_]+$/;
+        var latest_request_id = null;
+        
+        function check_user_id (id_string) {
+            let request_id = Date.now();
+            latest_request_id = request_id;
+            
+            var result_elm = document.getElementById("user_id_check_result");
+            
+            if (id_string.length < 5) {
+                result_elm.innerText = "ユーザーIDは5文字以上必要です";
+                result_elm.className = "warning_text";
+                return;
+            }
+            
+            if (!id_regexp.test(id_string)) {
+                result_elm.innerText = "ユーザーIDに使用できない文字が含まれています";
+                result_elm.className = "warning_text";
+                return;
+            }
+            
+            result_elm.innerText = "IDが使用可能か確認しています...";
+            result_elm.className = "informational_text";
+            
+            setTimeout(function () {
+                if (request_id !== latest_request_id) {
+                    return;
+                }
+                
+                var ajax_request = new XMLHttpRequest();
+                ajax_request.onloadend = function () {
+                    if (ajax_request.responseText === "OK") {
+                        result_elm.innerText = "使用可能なユーザーIDです";
+                        result_elm.className = "informational_text";
+                    } else {
+                        if (ajax_request.status === 200) {
+                            result_elm.innerText = ajax_request.responseText;
+                        } else {
+                            result_elm.innerText = "検証に失敗しました";
+                        }
+                        
+                        result_elm.className = "warning_text";
+                    }
+                };
+                
+                ajax_request.open("POST", "/user/check_new_user_id.php", true);
+                ajax_request.setRequestHeader("Content-Type", "application/x-www-form-urlencoded;charset=UTF-8");
+                ajax_request.timeout = 10000;
+                ajax_request.send("user_id=" + encodeURIComponent(id_string).replace(/%20/g, "+"));
+            }, 1000);
+        }
+        
+        var uppercase_regexp = /[A-Z]/;
+        var lowercase_regexp = /[a-z]/;
+        var number_regexp = /[0-9]/;
+        
+        function check_password (password_string) {
+            var result_elm = document.getElementById("password_check_result");
+            
+            if (password_string.length < 10) {
+                result_elm.innerText = "パスワードは10文字以上必要です";
+                result_elm.className = "warning_text";
+                return;
+            }
+            
+            if (!(uppercase_regexp.test(password_string) && lowercase_regexp.test(password_string) && number_regexp.test(password_string))) {
+                result_elm.innerText = "パスワードには大文字・小文字・数字を全て使用してください";
+                result_elm.className = "warning_text";
+                return;
+            }
+            
+            result_elm.innerText = "使用可能なパスワードです";
+            result_elm.className = "informational_text";
         }
         
         function send_verification_email () {
@@ -124,15 +218,18 @@ if (!empty($error_list)) {
 ?>
         
         <h3>ユーザーID</h3>
-        <div class="informational_text">半角英数字とアンダーバーの組み合わせで5文字以上が利用可能です。</div>
-        <input type="text" name="user_id" autocomplete="username" value="<?php if (isset($_POST["user_id"])) { print addslashes($_POST["user_id"]); } ?>">
+        <div class="informational_text">半角英数字とアンダーバーが利用可能です。</div>
+        <input type="text" name="user_id" autocomplete="username" value="<?php if (isset($_POST["user_id"])) { print addslashes($_POST["user_id"]); } ?>" onkeyup="check_user_id(this.value);">
+        <div id="user_id_check_result" class="informational_text">ユーザーIDは5文字以上必要です</div>
         
         <h3>ハンドルネーム</h3>
+        <div class="informational_text">ハンドルネームは運用情報を投稿した際の投稿者名として表示されます。</div>
         <input type="text" name="user_name" autocomplete="nickname" value="<?php if (isset($_POST["user_name"])) { print addslashes($_POST["user_name"]); } ?>">
         
         <h3>パスワード</h3>
-        <div class="informational_text">大文字・小文字・数字を全て含む10文字以上を設定してください。</div>
-        <input type="password" name="password" autocomplete="new-password">
+        <div class="informational_text">大文字・小文字・数字を全て使用してください。</div>
+        <input type="password" name="password" autocomplete="new-password" onkeyup="check_password(this.value);">
+        <div id="password_check_result" class="informational_text">パスワードは10文字以上必要です</div>
         
 <?php
 if ($main_config["require_email_address"]) {
