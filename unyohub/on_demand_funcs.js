@@ -1773,18 +1773,33 @@ function update_formation_table_drop_down_status (elm) {
 function operation_data_history (formation_name, operation_number = null) {
     var popup_inner_elm = open_popup("data_history_popup", "運用履歴", true);
     
-    popup_inner_elm.innerHTML = "";
     popup_inner_elm.className = "wait_icon";
+    
+    get_operation_data_history(formation_name, operation_number);
+}
+
+function get_operation_data_history (formation_name, operation_number, yyyy_mm = "") {
+    var popup_inner_elm = document.getElementById("data_history_popup_inner");
+    
+    popup_inner_elm.innerHTML = "";
     
     if (operation_number === null) {
         var post_q = "formation_name=" + escape_form_data(formation_name);
-        var subtitle = formation_name;
+        var h3_text = formation_name;
     } else {
         var post_q = "operation_number=" + escape_form_data(operation_number);
-        var subtitle = operation_number + "運用";
+        var h3_text = operation_number + "運用";
     }
     
-    var ts = get_timestamp();
+    if (yyyy_mm === "") {
+        var ts = get_timestamp();
+        var day_count = 30
+    } else {
+        var ts = Math.floor(Date.parse(yyyy_mm + "-01 12:00:00") / 1000);
+        post_q += "&year_month=" + yyyy_mm;
+        var day_count = new Date(Number(yyyy_mm.substring(0, 4)), Number(yyyy_mm.substring(5)), 0).getDate();
+    }
+    
     var operation_data_date = get_date_string(ts);
     if (operation_table === null) {
         var load_data_promise = new Promise(function (resolve, reject) {
@@ -1801,12 +1816,14 @@ function operation_data_history (formation_name, operation_number = null) {
             const YOBI_LIST = ["日", "月", "火", "水", "木", "金", "土"];
             
             if (response !== false) {
-                var buf = "<h3>" + escape_html(subtitle) + "</h3>";
+                var dt = new Date();
+                var buf = "<h3>" + escape_html(h3_text) + "</h3>";
+                buf += "<div class='popup_subtitle'>" + (yyyy_mm === "" ? "過去30日間" : yyyy_mm.substring(0, 4) + "年" + Number(yyyy_mm.substring(5)) + "月") + "の運用履歴<input type='month' class='date_button' value='" + yyyy_mm + "' min='2000-01' max='" + dt.getFullYear() + "-" + ("0" + (dt.getMonth() + 1)).slice(-2) + "' onchange='get_operation_data_history(" + (formation_name === null ? "null" : "\"" + add_slashes(formation_name) + "\"") + ", " + (operation_number === null ? "null" : "\"" + add_slashes(operation_number) + "\"") + ", this.value);'></div>";
                 
                 var data = JSON.parse(response);
                 
                 var day_value = new Date((ts - 10800) * 1000).getDay();
-                for (var cnt = 0; cnt < 30; cnt++) {
+                for (var cnt = 0; cnt < day_count; cnt++) {
                     var yyyy_mm_dd = get_date_string(ts);
                     
                     buf += "<h4>" + Number(yyyy_mm_dd.substring(5, 7)) + "月" + Number(yyyy_mm_dd.substring(8)) + "日 (" + YOBI_LIST[day_value] + ")</h4>";
@@ -1816,7 +1833,11 @@ function operation_data_history (formation_name, operation_number = null) {
                         buf += "<div class='descriptive_text'>情報がありません</div>";
                     }
                     
-                    ts -= 86400;
+                    if (yyyy_mm === "") {
+                        ts -= 86400;
+                    } else {
+                        ts += 86400;
+                    }
                     day_value = (day_value !== 0 ? day_value - 1 : 6);
                 }
                 
