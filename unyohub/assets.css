@@ -1759,6 +1759,16 @@ label.formation_table_drop_down {
             vertical-align: top;
         }
     }
+    
+    small {
+        font-size: 14px;
+        color: #cccccc;
+        font-weight: normal;
+        
+        .dark_mode & {
+            color: #dddddd;
+        }
+    }
 }
 
 input[type="checkbox"]:checked + :is(label.drop_down, label.formation_table_drop_down) {
