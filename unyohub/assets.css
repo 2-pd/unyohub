@@ -1658,7 +1658,7 @@ button:has(abbr:empty) {
     text-decoration: underline;
 }
 
-input[type="checkbox"] + label.drop_down {
+input[type="checkbox"] + :is(label.drop_down, label.formation_table_drop_down) {
     display: block;
     
     position: relative;
@@ -1679,6 +1679,8 @@ input[type="checkbox"] + label.drop_down {
     color: #ffffff;
     
     z-index: 1;
+    
+    -webkit-tap-highlight-color: transparent;
     
     .dark_mode & {
         background-color: #808080;
@@ -1723,7 +1725,43 @@ input[type="checkbox"] + label.drop_down {
     }
 }
 
-input[type="checkbox"]:checked + label.drop_down {
+label.formation_table_drop_down {
+    position: relative;
+    
+    width: calc(100% - 80px) !important;
+    
+    margin-top: 20px !important;
+    
+    padding-left: 70px !important;
+    
+    span {
+        position: absolute;
+        bottom: 0;
+        left: 0;
+        
+        width: 40px;
+        
+        padding: 10px;
+        
+        background-color: #eeeeee;
+        
+        border-radius: 5px 5px 0 0;
+        
+        line-height: 40px;
+        text-align: center;
+        text-indent: 0;
+        
+        .dark_mode & {
+            background-color: #555555;
+        }
+        
+        .train_icon {
+            vertical-align: top;
+        }
+    }
+}
+
+input[type="checkbox"]:checked + :is(label.drop_down, label.formation_table_drop_down) {
     &:after {
         transform: scaleY(-1);
     }
