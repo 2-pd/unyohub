@@ -10,6 +10,12 @@ const UNYOHUB_UNKNOWN_TRAIN_ICON = "data:image/webp;base64,UklGRroDAABXRUJQVlA4T
 const UNYOHUB_CANCELED_TRAIN_ICON = "data:image/webp;base64,UklGRiQEAABXRUJQVlA4TBgEAAAvT8AdEBfkIJIkRco+ZlBy/s3xvwfGbSQp8kL+Wd79mHkYtI3kyHPf+z+S50/u1m1sO66ykhbvXUZGBAWQkhPREGVQDzE10IUHjf5VQoQCuVQe/lVpqFhFEtvILpKXWmMjmGQOgaENwQiCIQwCgZSGpc/tLP1e7eMeIhSAjIhEE2mEgkSW9/At/vYvx+HYvHOzN9/4qnWelvPi00zteSrTkPmT59/L2B2f0pAAAIAAAAD8AIADAIcjAIADvBBwgAB/CAAASMoBFQpFRRsKRRcVFfqLLjQpiSvAAyQlAABJISmelABlGbzIjbIMVHVEIW3b9jRP3N3XMRzmvmXu7u7D3d0d+s9p3+Z57hQ+N08i+g/JkSRFkof7LJyYqn7g/693srX+gTWb/MHya35QseckAbI/oiB78QPGn3Fln7z74Jyyk44wq6xzTp4om/xBccfa2Wu+iCg7R3mr5qz1ReTarLIOxOZrO/bH5yOnz9TrDczrngdvHwL58tqOniBYtvaOj0GctcsIbqS+TnatHXn4ePzF8JB7paw4l7wYf/xwRNndlI/gmL2B4PqnXyLitpaeKsae3/l4zRf59em6gPbx/pBiz91PBLdM0PfRy+s4tixoCY6bKBIcEyie4n4MWdgSFCs43qF4iGOKSm5heV1VQ15GCj/f4Hh9lEJGXkNVXXlhbkB6fq0XWnH7h5U7M49eDCjg5EUy41Y+tBd7odXmp/tS4KXuaq8yNEm81BX4OTVepMYTl1PoSbSmEyms8HSaTiqqPa2Gk+pKT6/ZpLJBCBpNGvKEosnEZRSRNJjL8OvPkDSWq/dFupo8/S51I+hrpLy5nf5fPvTRNFPPhxCKqJFUClRNlApZfBHQRRcFQ2yRcEQWDUtcGnii0sEUkxauiPSw5UeALzcKAHmRQMiJBkR6RDBSowLx/AVaZDDSokMTEgOigDhQZceCLDMedFkxYciIC0dybDhepHCux8aMy90G6WskvtDNhhdVLqzoMuHEkQcjnizoceVAji8DagjpYDp7hSSVddCfWq4J4nroUAv1lxvGjwGfQYHcDPiKCeVWwA4kmN8C9hDh/B5wAAjoYcAvfkiPQ6eWr7ghfZXmB3vODOqYH2KSF9aHYe6zAjsXZoET2tth3jKC+zbMGj2878NskzPgdpg2aiZsDZFVQsyIZdl/qS+N0zlSab0fv3Ou+J3Dxe+cMH7nmPE7Z43fOXD8zqnjd44eu3P+yHuI5j5lbE4i7iEi7klaOvqVwSXiQvckmrsqw5sQ7aZN80DPXdMkem6Z5paed6ZZ1bNmmoRwu26aL3r2TOP0/DbNbz1pg2ZxaaLfmFmcEJg0y0PSbe69yAUk2vHeLifcBYDfrn+OIWsd/+3CckvZRcDbhd12Ani7/tMT";
 
 
+var funcs_load_resolve;
+var funcs_load_promise = new Promise(function (resolve) {
+    funcs_load_resolve = resolve;
+});
+
+
 function escape_html (text) {
     return text.replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;");
 }
@@ -287,6 +293,10 @@ function update_instance_info () {
                 localStorage.setItem("unyohub_instance_info", JSON.stringify(instance_info));
                 
                 update_instance_info();
+                
+                if (last_modified_timestamp_q === null) {
+                    funcs_load_promise.then(function () { show_welcome_message(); });
+                }
             }
         });
     }
@@ -839,11 +849,6 @@ function on_off_line () {
 
 window.onoffline = on_off_line;
 
-
-var funcs_load_resolve;
-var funcs_load_promise = new Promise(function (resolve) {
-    funcs_load_resolve = resolve;
-});
 
 window.onload = function () {
     db_open_promise.then(function () {

@@ -212,7 +212,7 @@ $root_url = "http".(empty($_SERVER["HTTPS"]) ? "" : "s")."://".$_SERVER["HTTP_HO
 $page_description = addslashes($page_description);
 
 print "    <link rel=\"stylesheet\" href=\"/assets.css?v=".UNYOHUB_VERSION."\">\n";
-print "    <link rel=\"stylesheet\" href=\"/non_critical.css?v=".UNYOHUB_VERSION."\" media=\"print\" onload=\"this.media='all';\">\n";
+print "    <link rel=\"stylesheet\" href=\"/non_critical.css?v=".UNYOHUB_VERSION."\" id=\"non_critical_css\" media=\"print\" onload=\"this.media='all';\">\n";
 print "    <script>\n";
 print "        const UNYOHUB_APP_NAME = \"".UNYOHUB_APP_NAME."\";\n";
 print "        const UNYOHUB_VERSION = \"".UNYOHUB_VERSION."\";\n";

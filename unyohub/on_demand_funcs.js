@@ -3257,4 +3257,30 @@ function reload_app () {
 }
 
 
-funcs_load_resolve();
+function show_welcome_message () {
+    if (!("instance_introduction" in instance_info)) {
+        return;
+    }
+    
+    var message_box_elm = document.createElement("div");
+    message_box_elm.id = "welcome_message_box";
+    
+    var instance_name_html = escape_html(instance_info["instance_name"]);
+    message_box_elm.innerHTML = "<h3>" + instance_name_html + "</h3>" + convert_to_html(instance_info["instance_introduction"]) + "<div class='link_block'><u onclick='show_about();'>" + instance_name_html + "について</u>" + ("manual_url" in instance_info ? "　<a href='" + add_slashes(instance_info["manual_url"]) + "' target='_blank' class='external_link'>使い方</a>" : "") + "</div><button type='button' class='message_close_button' onclick='close_welcome_message();'></button>";
+    
+    document.getElementsByTagName("body")[0].appendChild(message_box_elm);
+}
+
+function close_welcome_message () {
+    document.getElementById("welcome_message_box").remove();
+}
+
+
+(function () {
+    var non_critical_css_elm = document.getElementById("non_critical_css");
+    if (non_critical_css_elm.media === "all") {
+        funcs_load_resolve();
+    } else {
+        non_critical_css_elm.addEventListener("load", funcs_load_resolve);
+    }
+})();
