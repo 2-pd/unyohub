@@ -149,18 +149,22 @@ input, textarea {
 }
 
 .enlarge .category_index {
-    line-height: 32px;
+    line-height: 52px;
 }
 
 .enlarge .subcategory_index {
-    line-height: 30px;
+    line-height: 40px;
     
     &:before {
-        top: 23px;
+        top: 28px;
+    }
+    
+    &.active_category_item {
+        max-height: 40px;
     }
     
     &.active_index:before {
-        top: 22px;
+        top: 27px;
     }
 }
 

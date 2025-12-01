@@ -527,7 +527,7 @@ header {
     
     background-color: currentColor;
     
-    line-height: 22px;
+    line-height: 32px;
     font-size: 18px;
     
     &.active_index b {
@@ -540,12 +540,20 @@ header {
 }
 
 .subcategory_index {
-    padding: 12px 0 12px 14px;
+    max-height: 0;
+    
+    padding: 0 0 0 14px;
     
     background-color: #f7f7f7;
     
-    line-height: 20px;
+    line-height: 30px;
     font-size: 15px;
+    
+    overflow: hidden;
+    
+    opacity: 0;
+    
+    transition: max-height 0.2s, padding 0.2s, opacity 0.2s;
     
     .dark_mode & {
         background-color: #555555;
@@ -558,7 +566,7 @@ header {
         
         position: absolute;
         
-        top: 18px;
+        top: 23px;
         left: 3px;
         
         width: 8px;
@@ -567,8 +575,16 @@ header {
         background-color: currentColor;
     }
     
+    &.active_category_item {
+        max-height: 30px;
+        
+        padding: 12px 0 12px 14px;
+        
+        opacity: 1;
+    }
+    
     &.active_index:before {
-        top: 17px;
+        top: 22px;
         left: 2px;
         
         width: 6px;

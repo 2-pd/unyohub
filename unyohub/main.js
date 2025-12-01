@@ -638,6 +638,7 @@ function get_railroad_list (callback_func) {
 }
 
 var railroad_list_area;
+var railroad_list_active_index;
 
 function update_railroad_list (railroads, area_elm = null, loading_completed = true) {
     if (area_elm !== null) {
@@ -652,15 +653,11 @@ function update_railroad_list (railroads, area_elm = null, loading_completed = t
     if (config["show_favorite_railroads"] || config["show_favorite_stations"]) {
         var categories_html = "<li class='category_index' onclick='scroll_to_category(0);'" + favorite_category_style + "><b>お気に入り</b></li>";
         var icons_html = "<h3 class='icon_heading'" + favorite_category_style + "><b>お気に入り</b></h3>";
-        
         var heading_cnt = 1;
         
         if (config["show_favorite_railroads"]) {
             if (config["show_favorite_stations"]) {
-                categories_html += "<li class='subcategory_index' onclick='scroll_to_category(1);'" + favorite_subcategory_style + "><span>路線系統</span></li>";
-                icons_html += "<h4 class='icon_heading'" + favorite_subcategory_style + "><span>お気に入り路線系統</span></h4>";
-                
-                heading_cnt = 3;
+                icons_html += "<h4" + favorite_subcategory_style + "><span>お気に入り路線系統</span></h4>";
             }
             
             if (config["favorite_railroads"].length >= 1) {
@@ -674,8 +671,7 @@ function update_railroad_list (railroads, area_elm = null, loading_completed = t
         
         if (config["show_favorite_stations"]) {
             if (config["show_favorite_railroads"]) {
-                categories_html += "<li class='subcategory_index' onclick='scroll_to_category(2);'" + favorite_subcategory_style + "><span>駅</span></li>";
-                icons_html += "<h4 class='icon_heading'" + favorite_subcategory_style + "><span>お気に入り駅</span></h4>";
+                icons_html += "<h4" + favorite_subcategory_style + "><span>お気に入り駅</span></h4>";
             }
             
             if (config["favorite_stations"].length >= 1) {
@@ -697,12 +693,13 @@ function update_railroad_list (railroads, area_elm = null, loading_completed = t
         categories_html += "<li class='category_index' onclick='scroll_to_category(" + heading_cnt + ");'" + category_html + "li>";
         icons_html += "<h3 class='icon_heading'" + category_html + "h3>";
         
+        var category_index = heading_cnt;
         heading_cnt++;
         
         if ("subcategories" in category) {
             for (var subcategory of category["subcategories"]) {
                 var subcategory_html = " style='color: " + (config["dark_mode"] ? convert_color_dark_mode(subcategory["subcategory_color"]) : subcategory["subcategory_color"]) + ";'><span>" + escape_html(subcategory["subcategory_name"]) + "</span></";
-                categories_html += "<li class='subcategory_index' onclick='scroll_to_category(" + heading_cnt + ");'" + subcategory_html + "li>";
+                categories_html += "<li class='subcategory_index category_items_" + category_index + "' onclick='scroll_to_category(" + heading_cnt + ");'" + subcategory_html + "li>";
                 icons_html += "<h4 class='icon_heading'" + subcategory_html + "h4>";
                 
                 heading_cnt++;
@@ -730,6 +727,7 @@ function update_railroad_list (railroads, area_elm = null, loading_completed = t
     
     icon_area_elm = document.getElementById("icon_area");
     
+    railroad_list_active_index = null;
     icon_area_onscroll();
 }
 
@@ -745,16 +743,45 @@ function icon_area_onscroll () {
     
     for (var cnt = 0; cnt < heading_elms.length; cnt++) {
         if (heading_elms[cnt].getBoundingClientRect().top > icon_area_top) {
-            index_elms[cnt].classList.add("active_index");
-            
             break;
         }
-        
-        index_elms[cnt].classList.remove("active_index");
     }
     
-    for (cnt++; cnt < heading_elms.length; cnt++) {
-        index_elms[cnt].classList.remove("active_index");
+    if (cnt >= heading_elms.length) {
+        cnt = -1;
+    }
+    
+    if (cnt === railroad_list_active_index) {
+        return;
+    }
+    
+    if (cnt === -1 || index_elms[cnt].classList.contains("category_index")) {
+        var category_id = "category_items_" + cnt;
+    } else {
+        for (var class_name of index_elms[cnt].className.split(" ")) {
+            if (class_name.startsWith("category_items_")) {
+                var category_id = class_name;
+                break;
+            }
+        }
+    }
+    
+    railroad_list_active_index = cnt;
+    
+    for (cnt = 0; cnt < heading_elms.length; cnt++) {
+        if (cnt === railroad_list_active_index) {
+            index_elms[cnt].classList.add("active_index");
+        } else {
+            index_elms[cnt].classList.remove("active_index");
+        }
+        
+        if (index_elms[cnt].classList.contains("subcategory_index")) {
+            if (index_elms[cnt].classList.contains(category_id)) {
+                index_elms[cnt].classList.add("active_category_item");
+            } else {
+                index_elms[cnt].classList.remove("active_category_item");
+            }
+        }
     }
 }
 
