@@ -9,10 +9,11 @@ if (!$user->check_permission("instance_administrator")) {
 print_header();
 
 
-if (isset($_POST["instance_name"], $_POST["introduction_text"], $_POST["manual_url"], $_POST["administrator_name"], $_POST["administrator_url"], $_POST["administrator_introduction"], $_POST["available_days_ahead"], $_POST["quotation_guidelines"], $_POST["sender_email_address"])) {
+if (isset($_POST["instance_name"], $_POST["instance_introduction"], $_POST["instance_explanation"], $_POST["manual_url"], $_POST["administrator_name"], $_POST["administrator_url"], $_POST["administrator_introduction"], $_POST["available_days_ahead"], $_POST["quotation_guidelines"], $_POST["sender_email_address"])) {
     $config_str = "instance_name = \"".addslashes($_POST["instance_name"])."\"\n";
     $config_str .= "\n";
-    $config_str .= "introduction_text = \"".str_replace(array("\r\n", "\n", "\r"), "\\n", addslashes($_POST["introduction_text"]))."\"\n";
+    $config_str .= "instance_introduction = \"".str_replace(array("\r\n", "\n", "\r"), "\\n", addslashes($_POST["instance_introduction"]))."\"\n";
+    $config_str .= "instance_explanation = \"".str_replace(array("\r\n", "\n", "\r"), "\\n", addslashes($_POST["instance_explanation"]))."\"\n";
     $config_str .= "manual_url = \"".addslashes($_POST["manual_url"])."\"\n";
     $config_str .= "\n";
     $config_str .= "administrator_name = \"".addslashes($_POST["administrator_name"])."\"\n";
@@ -57,8 +58,12 @@ print "<input type='hidden' name='one_time_token' value='".$user->create_one_tim
 print "<h3>インスタンス情報</h3>";
 print "<h4>インスタンス名</h4>";
 print "<input type='text' name='instance_name' value='".addslashes($config["instance_name"])."'>";
-print "<h4>インスタンスの紹介文</h4>";
-print "<textarea name='introduction_text'>".htmlspecialchars(stripcslashes($config["introduction_text"]))."</textarea>";
+print "<h4>インスタンス紹介</h4>";
+print "<div class='informational_text'>インスタンス紹介はこのインスタンスを初めて使用するユーザーに対して表示されます。</div>";
+print "<textarea name='instance_introduction'>".htmlspecialchars(stripcslashes($config["instance_introduction"]))."</textarea>";
+print "<h4>インスタンス説明</h4>";
+print "<div class='informational_text'>インスタンス説明はアプリ情報画面でインスタンス紹介に続けて表示されます。</div>";
+print "<textarea name='instance_explanation'>".htmlspecialchars(stripcslashes($config["instance_explanation"]))."</textarea>";
 print "<h4>ユーザーマニュアルのURL</h4>";
 print "<input type='text' name='manual_url' value='".addslashes($config["manual_url"])."'>";
 

@@ -15,7 +15,8 @@ _/_/_/_/ 設定ファイル設定値 _/_/_/_/
 
 instance_name 鉄道運用Hubインスタンスの表示名
 
-introduction_text インスタンスの紹介文
+instance_introduction インスタンスの紹介文
+instance_explanation インスタンスについての説明
 manual_url ユーザーマニュアルのURL
 
 administrator_name インスタンス運営者名
