@@ -3207,8 +3207,12 @@ function show_about () {
     var buf = "<img src='/apple-touch-icon.webp' alt='" + UNYOHUB_APP_NAME + "' id='unyohub_icon'>";
     buf += "<h2>" + escape_html(instance_info["instance_name"]) + "</h2>";
     
-    if ("introduction_text" in instance_info) {
-        buf += "<div class='long_text'>" + convert_to_html(instance_info["introduction_text"]) + "</div>";
+    if ("instance_introduction" in instance_info) {
+        buf += "<div class='long_text'>" + convert_to_html(instance_info["instance_introduction"]) + "</div>";
+    }
+    
+    if ("instance_explanation" in instance_info) {
+        buf += "<div class='long_text'>" + convert_to_html(instance_info["instance_explanation"]) + "</div>";
     }
     
     if ("manual_url" in instance_info) {
