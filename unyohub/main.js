@@ -950,11 +950,25 @@ var formation_styles_available = false;
 
 function update_formation_styles (railroad_id = null) {
     if (railroad_id === null) {
-        var series_names = formations["series_names"];
         var series_data = formations["series"];
+        var series_names = formations["series_names"];
+        if ("prefixes" in formations) {
+            var prefix_data = formations["prefixes"];
+            var prefix_order = formations["prefix_order"];
+        } else {
+            var prefix_data = {};
+            var prefix_order = [];
+        }
     } else {
-        var series_names = joined_railroad_formations[railroad_id]["series_names"];
         var series_data = joined_railroad_formations[railroad_id]["series"];
+        var series_names = joined_railroad_formations[railroad_id]["series_names"];
+        if ("prefixes" in joined_railroad_formations[railroad_id]) {
+            var prefix_data = joined_railroad_formations[railroad_id]["prefixes"];
+            var prefix_order = joined_railroad_formations[railroad_id]["prefix_order"];
+        } else {
+            var prefix_data = {};
+            var prefix_order = [];
+        }
     }
     
     var icon_ids_data = {};
@@ -969,10 +983,14 @@ function update_formation_styles (railroad_id = null) {
         if ("subseries_names" in series_data[series_name]) {
             for (var subseries_name of series_data[series_name]["subseries_names"]) {
                 if (!("unregistered" in series_data[series_name]["subseries"][subseries_name] && series_data[series_name]["subseries"][subseries_name]["unregistered"])) {
-                    icon_ids_data["is_series_group" in series_data[series_name] && series_data[series_name]["is_series_group"] ? subseries_name : series_name + subseries_name] = series_data[series_name]["subseries"][subseries_name]["icon_id"];
+                    icon_ids_data[series_name + subseries_name] = series_data[series_name]["subseries"][subseries_name]["icon_id"];
                 }
             }
         }
+    }
+    
+    for (var prefix of prefix_order) {
+        icon_ids_data[prefix] = prefix_data[prefix]["icon_id"];
     }
     
     if (railroad_id !== null) {
@@ -4357,15 +4375,7 @@ function formation_detail (formation_name) {
     buf += "<div id='semifixed_formation_area'></div>";
     
     buf += "<h3>基本情報</h3>";
-    buf += "<div class='key_and_value'><b>車両形式</b><span id='formation_series_name'>";
-    if ("series_name" in formations["formations"][formation_name]) {
-        if ("is_series_group" in formations["series"][series_name] && formations["series"][series_name]["is_series_group"]) {
-            buf += escape_html(formations["formations"][formation_name]["subseries_name"]);
-        } else {
-            buf += escape_html(series_name + ("subseries_name" in formations["formations"][formation_name] ? " " + formations["formations"][formation_name]["subseries_name"] : ""));
-        }
-    }
-    buf += "</div>";
+    buf += "<div class='key_and_value'><b>車両形式</b><span id='formation_series_name'>" + ("series_name" in formations["formations"][formation_name] ? escape_html(series_name + ("subseries_name" in formations["formations"][formation_name] ? " " + formations["formations"][formation_name]["subseries_name"] : "")) : "") + "</div>";
     buf += "<div class='key_and_value' id='formation_affiliation'></div>";
     
     buf += "<div class='descriptive_text' id='formation_description'></div>";
@@ -4433,7 +4443,7 @@ function formation_detail (formation_name) {
                     document.getElementById("formation_caption").innerText = data["caption"];
                 }
                 
-                document.getElementById("formation_series_name").innerText = "subseries_name" in data ? data["subseries_name"] : data["series_name"];
+                document.getElementById("formation_series_name").innerText = data["series_name"] + ("subseries_name" in data ? " " + data["subseries_name"] : "");
                 
                 if (data["affiliation"] !== null && data["affiliation"].length >= 1) {
                     document.getElementById("formation_affiliation").innerHTML = "<b>" + ("cars" in formations["formations"][formation_name] ? "" : "最終") + "所属</b>" + escape_html(data["affiliation"]);
