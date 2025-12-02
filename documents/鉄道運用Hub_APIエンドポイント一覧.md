@@ -254,7 +254,7 @@ formations.jsonの内容を返す
         }...  
     ],  
     "series_name" : 形式名,  
-    "subseries_name" : 番台等を含む形式名(番台等の区分がない場合はNULL),  
+    "subseries_name" : 番台名等(番台等がない場合はNULL),  
     "affiliation" : 所属車両基地,  
     "caption" : 1行見出し,  
     "description" : 補足説明文,  

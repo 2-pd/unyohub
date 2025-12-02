@@ -1766,6 +1766,14 @@ function change_show_unregistered_formations (bool_val) {
     draw_formation_table(false);
 }
 
+function change_group_formations_by_prefix (bool_val) {
+    config["group_formations_by_prefix"] = bool_val;
+    
+    save_config();
+    
+    draw_formation_table(false);
+}
+
 function update_formation_table_drop_down_status (elm) {
     formation_table_drop_down_status[elm.id] = elm.checked;
 }
