@@ -122,6 +122,7 @@ function get_default_config () {
         "colorize_corrected_posts" : false,
         "colorize_beginners_posts" : false,
         "force_arrange_west_side_car_on_left" : false,
+        "group_formations_by_prefix" : false,
         "show_unregistered_formations_on_formation_table" : true,
         "colorize_formation_table" : true,
         "simplify_operation_details" : false,
@@ -4028,13 +4029,22 @@ function formations_mode (formation_name = null) {
     formation_table_drop_down_status = {};
     formation_table_wrapper_scroll_amount = 0;
     
-    var label_elm = document.getElementById("colorize_formation_table_label");
+    var colorize_label_elm = document.getElementById("colorize_formation_table_label");
     if (formation_styles_available) {
-        label_elm.style.display = "inline-block";
+        colorize_label_elm.style.display = "inline-block";
         
         document.getElementById("colorize_formation_table").checked = config["colorize_formation_table"];
     } else {
-        label_elm.style.display = "none";
+        colorize_label_elm.style.display = "none";
+    }
+    
+    var prefix_label_elm = document.getElementById("group_formations_by_prefix_label");
+    if ("prefixes" in formations) {
+        prefix_label_elm.style.display = "inline-block";
+        
+        document.getElementById("group_formations_by_prefix").checked = config["group_formations_by_prefix"];
+    } else {
+        prefix_label_elm.style.display = "none";
     }
     
     document.getElementById("show_unregistered_formations").checked = config["show_unregistered_formations_on_formation_table"];
@@ -4145,6 +4155,23 @@ function get_formation_table_html (formation_names, reverse_formations, search_k
     return [buf, search_hit_formation_count, search_hit_formations_car_count];
 }
 
+function get_formation_groups () {
+    if (config["group_formations_by_prefix"] && "prefixes" in formations) {
+        var groups = {...formations["prefixes"]};
+        var group_names = [...formations["prefix_order"]];
+        
+        if ("no_prefix_formation_names" in formations) {
+            groups["その他"] = { "formation_names" : formations["no_prefix_formation_names"] };
+            group_names.push("その他");
+        }
+    } else {
+        var groups = formations["series"];
+        var group_names = formations["series_names"];
+    }
+    
+    return [groups, group_names];
+}
+
 function draw_formation_table (update_title = true) {
     if (update_title) {
         change_title(railroad_info["railroad_name"] + "の編成表 | " + instance_info["instance_name"], "/railroad_" + railroad_info["railroad_id"] + "/formations/");
@@ -4156,15 +4183,17 @@ function draw_formation_table (update_title = true) {
     var reverse_formations = (config["force_arrange_west_side_car_on_left"] && "forward_direction_is_east" in railroad_info && railroad_info["forward_direction_is_east"]);
     var search_keyword = str_to_halfwidth(car_number_search_elm.value).toUpperCase();
     
+    var [groups, group_names] = get_formation_groups();
+    
     var buf = ""
-    for (var series_name of formations["series_names"]) {
-        if ("subseries_names" in formations["series"][series_name]) {
+    for (var group_name of group_names) {
+        if ("subseries_names" in groups[group_name]) {
             var buf_2 = "";
             var search_hit_formation_count = 0;
             var search_hit_formations_car_count = 0;
             
-            for (var subseries_name of formations["series"][series_name]["subseries_names"]) {
-                var [buf_3, subseries_search_hit_formation_count, subseries_search_hit_formations_car_count] = get_formation_table_html(formations["series"][series_name]["subseries"][subseries_name]["formation_names"], reverse_formations, search_keyword);
+            for (var subseries_name of groups[group_name]["subseries_names"]) {
+                var [buf_3, subseries_search_hit_formation_count, subseries_search_hit_formations_car_count] = get_formation_table_html(groups[group_name]["subseries"][subseries_name]["formation_names"], reverse_formations, search_keyword);
                 
                 if (buf_3.length >= 1) {
                     buf_2 += "<tr><th colspan='2'>" + escape_html(subseries_name) + "</th></tr>" + buf_3;
@@ -4173,17 +4202,17 @@ function draw_formation_table (update_title = true) {
                 }
             }
         } else {
-            var [buf_2, search_hit_formation_count, search_hit_formations_car_count] = get_formation_table_html(formations["series"][series_name]["formation_names"], reverse_formations, search_keyword);
+            var [buf_2, search_hit_formation_count, search_hit_formations_car_count] = get_formation_table_html(groups[group_name]["formation_names"], reverse_formations, search_keyword);
         }
         
         if (buf_2.length >= 1) {
-            var checkbox_id = "series_" + series_name;
+            var checkbox_id = "series_" + group_name;
             
-            var unregistered = ("unregistered" in formations["series"][series_name] && formations["series"][series_name]["unregistered"]);
+            var unregistered = ("unregistered" in groups[group_name] && groups[group_name]["unregistered"]);
             
             buf += "<input type='checkbox' id='" + checkbox_id + "'" + (checkbox_id in formation_table_drop_down_status && formation_table_drop_down_status[checkbox_id] ? " checked='checked'" : "") + " onclick='update_formation_table_drop_down_status(this);'>";
-            buf += "<label for='" + checkbox_id + "' class='formation_table_drop_down'><span><img src='" + get_icon(series_name) + "' alt='' class='train_icon'" + (unregistered ? " style='opacity: 0.5;'" : "") + "></span>" + escape_html(series_name) + (search_keyword.length >= 1 ? " (" + search_hit_formation_count + "編成該当)" : (unregistered ? "<small>(除籍済み)</small>" : "")) + "</label>";
-            buf += "<div id='formation_table_" + checkbox_id + "'><h3 class='formation_table_series_name'>" + escape_html(series_name) + "</h3><button type='button' class='screenshot_button' onclick='take_screenshot(\"formation_table_" + checkbox_id + "\");' aria-label='スクリーンショット'></button><table class='" + (reverse_formations ? "reversed_formation_table" : "formation_table") + "'><tr><td colspan='2'>" + search_hit_formation_count + "編成 " + search_hit_formations_car_count + "両 " + (search_keyword.length >= 1 ? "該当" : "在籍中") + "" + buf_2 + "</td></tr></table></div>";
+            buf += "<label for='" + checkbox_id + "' class='formation_table_drop_down'><span><img src='" + get_icon(group_name) + "' alt='' class='train_icon'" + (unregistered ? " style='opacity: 0.5;'" : "") + "></span>" + escape_html(group_name) + (search_keyword.length >= 1 ? " (" + search_hit_formation_count + "編成該当)" : (unregistered ? "<small>(除籍済み)</small>" : "")) + "</label>";
+            buf += "<div id='formation_table_" + checkbox_id + "'><h3 class='formation_table_series_name'>" + escape_html(group_name) + "</h3><button type='button' class='screenshot_button' onclick='take_screenshot(\"formation_table_" + checkbox_id + "\");' aria-label='スクリーンショット'></button><table class='" + (reverse_formations ? "reversed_formation_table" : "formation_table") + "'><tr><td colspan='2'>" + search_hit_formation_count + "編成 " + search_hit_formations_car_count + "両 " + (search_keyword.length >= 1 ? "該当" : "在籍中") + "" + buf_2 + "</td></tr></table></div>";
         }
     }
     
@@ -4233,39 +4262,41 @@ function get_operation_data_html (data, ts, clickable = true, no_data_text = "�
     }
 }
 
-function get_previous_formation (formation_name, series_name, subseries_name = null) {
-    var formation_list = subseries_name !== null ? formations["series"][series_name]["subseries"][subseries_name]["formation_names"] : formations["series"][series_name]["formation_names"];
+function get_previous_formation (formation_name, group_name, subseries_name = null) {
+    var [groups, group_names] = get_formation_groups();
+    
+    var formation_list = subseries_name !== null ? groups[group_name]["subseries"][subseries_name]["formation_names"] : groups[group_name]["formation_names"];
     var formation_index = formation_list.indexOf(formation_name);
     
     if (formation_index >= 1) {
-        var previous_series_name = series_name;
+        var previous_group_name = group_name;
         var previous_subseries_name = subseries_name;
         var previous_formation_name = formation_list[formation_index - 1];
     } else {
         var previous_formation_name = null;
-        if ("subseries_name" in formations["formations"][formation_name]) {
-            var subseries_index = formations["series"][series_name]["subseries_names"].indexOf(formations["formations"][formation_name]["subseries_name"]);
+        if (subseries_name !== null) {
+            var subseries_index = groups[group_name]["subseries_names"].indexOf(subseries_name);
             if (subseries_index >= 1) {
-                var previous_series_name = series_name;
-                var previous_subseries_name = formations["series"][series_name]["subseries_names"][subseries_index - 1];
-                previous_formation_name = formations["series"][series_name]["subseries"][previous_subseries_name]["formation_names"][formations["series"][series_name]["subseries"][previous_subseries_name]["formation_names"].length - 1];
+                var previous_group_name = group_name;
+                var previous_subseries_name = groups[group_name]["subseries_names"][subseries_index - 1];
+                previous_formation_name = groups[group_name]["subseries"][previous_subseries_name]["formation_names"][groups[group_name]["subseries"][previous_subseries_name]["formation_names"].length - 1];
             }
         }
         
         if (previous_formation_name === null) {
-            var series_index = formations["series_names"].indexOf(series_name);
+            var series_index = group_names.indexOf(group_name);
             if (series_index >= 1) {
-                var previous_series_name = formations["series_names"][series_index - 1];
+                var previous_group_name = group_names[series_index - 1];
             } else {
-                var previous_series_name = formations["series_names"][formations["series_names"].length - 1];
+                var previous_group_name = group_names[group_names.length - 1];
             }
             
-            if ("subseries_names" in formations["series"][previous_series_name]) {
-                var previous_subseries_name = formations["series"][previous_series_name]["subseries_names"][formations["series"][previous_series_name]["subseries_names"].length - 1];
-                formation_list = formations["series"][previous_series_name]["subseries"][previous_subseries_name]["formation_names"];
+            if ("subseries_names" in groups[previous_group_name]) {
+                var previous_subseries_name = groups[previous_group_name]["subseries_names"][groups[previous_group_name]["subseries_names"].length - 1];
+                formation_list = groups[previous_group_name]["subseries"][previous_subseries_name]["formation_names"];
             } else {
                 var previous_subseries_name = null;
-                formation_list = formations["series"][previous_series_name]["formation_names"];
+                formation_list = groups[previous_group_name]["formation_names"];
             }
             
             previous_formation_name = formation_list[formation_list.length - 1];
@@ -4275,43 +4306,45 @@ function get_previous_formation (formation_name, series_name, subseries_name = n
     if ("cars" in formations["formations"][previous_formation_name]) {
         return previous_formation_name;
     } else {
-        return get_previous_formation(previous_formation_name, previous_series_name, previous_subseries_name);
+        return get_previous_formation(previous_formation_name, previous_group_name, previous_subseries_name);
     }
 }
 
-function get_next_formation (formation_name, series_name, subseries_name = null) {
-    var formation_list = subseries_name !== null ? formations["series"][series_name]["subseries"][subseries_name]["formation_names"] : formations["series"][series_name]["formation_names"];
+function get_next_formation (formation_name, group_name, subseries_name = null) {
+    var [groups, group_names] = get_formation_groups();
+    
+    var formation_list = subseries_name !== null ? groups[group_name]["subseries"][subseries_name]["formation_names"] : groups[group_name]["formation_names"];
     var formation_index = formation_list.indexOf(formation_name);
     
     if (formation_index <= formation_list.length - 2) {
-        var next_series_name = series_name;
+        var next_group_name = group_name;
         var next_subseries_name = subseries_name;
         var next_formation_name = formation_list[formation_index + 1];
     } else {
         var next_formation_name = null;
         if (subseries_name !== null) {
-            var subseries_index = formations["series"][series_name]["subseries_names"].indexOf(subseries_name);
-            if (subseries_index <= formations["series"][series_name]["subseries_names"].length - 2) {
-                var next_series_name = series_name;
-                var next_subseries_name = formations["series"][series_name]["subseries_names"][subseries_index + 1];
-                next_formation_name = formations["series"][series_name]["subseries"][next_subseries_name]["formation_names"][0];
+            var subseries_index = groups[group_name]["subseries_names"].indexOf(subseries_name);
+            if (subseries_index <= groups[group_name]["subseries_names"].length - 2) {
+                var next_group_name = group_name;
+                var next_subseries_name = groups[group_name]["subseries_names"][subseries_index + 1];
+                next_formation_name = groups[group_name]["subseries"][next_subseries_name]["formation_names"][0];
             }
         }
         
         if (next_formation_name === null) {
-            var series_index = formations["series_names"].indexOf(series_name);
-            if (series_index <= formations["series_names"].length - 2) {
-                var next_series_name = formations["series_names"][series_index + 1];
+            var series_index = group_names.indexOf(group_name);
+            if (series_index <= group_names.length - 2) {
+                var next_group_name = group_names[series_index + 1];
             } else {
-                var next_series_name = formations["series_names"][0];
+                var next_group_name = group_names[0];
             }
             
-            if ("subseries_names" in formations["series"][next_series_name]) {
-                var next_subseries_name = formations["series"][next_series_name]["subseries_names"][0];
-                next_formation_name = formations["series"][next_series_name]["subseries"][next_subseries_name]["formation_names"][0];
+            if ("subseries_names" in groups[next_group_name]) {
+                var next_subseries_name = groups[next_group_name]["subseries_names"][0];
+                next_formation_name = groups[next_group_name]["subseries"][next_subseries_name]["formation_names"][0];
             } else {
                 var next_subseries_name = null;
-                next_formation_name = formations["series"][next_series_name]["formation_names"][0];
+                next_formation_name = groups[next_group_name]["formation_names"][0];
             }
         }
     }
@@ -4319,7 +4352,7 @@ function get_next_formation (formation_name, series_name, subseries_name = null)
     if ("cars" in formations["formations"][next_formation_name]) {
         return next_formation_name;
     } else {
-        return get_next_formation(next_formation_name, next_series_name, next_subseries_name);
+        return get_next_formation(next_formation_name, next_group_name, next_subseries_name);
     }
 }
 
@@ -4347,8 +4380,16 @@ function formation_detail (formation_name) {
         
         change_title(series_name + " " + formation_name + " (" + railroad_info["railroad_name"] + ") の編成情報・運用 | " + instance_info["instance_name"], "/railroad_" + railroad_info["railroad_id"] + "/formations/" + encodeURIComponent(formation_name) + "/");
         
-        var previous_formation_name = get_previous_formation(formation_name, series_name, "subseries_name" in formations["formations"][formation_name] ? formations["formations"][formation_name]["subseries_name"] : null);
-        var next_formation_name = get_next_formation(formation_name, series_name, "subseries_name" in formations["formations"][formation_name] ? formations["formations"][formation_name]["subseries_name"] : null);
+        if (config["group_formations_by_prefix"] && "prefixes" in formations) {
+            var group_name = "prefix" in formations["formations"][formation_name] ? formations["formations"][formation_name]["prefix"] : "その他";
+            var subseries_name = null;
+        } else {
+            var group_name = series_name;
+            var subseries_name = "subseries_name" in formations["formations"][formation_name] ? formations["formations"][formation_name]["subseries_name"] : null;
+        }
+        
+        var previous_formation_name = get_previous_formation(formation_name, group_name, subseries_name);
+        var next_formation_name = get_next_formation(formation_name, group_name, subseries_name);
         
         var buf = "<div class='heading_wrapper'><a href='/railroad_" + railroad_info["railroad_id"] + "/formations/" + encodeURIComponent(previous_formation_name) + "/' class='previous_button' onclick='event.preventDefault(); formation_detail(\"" + add_slashes(previous_formation_name) + "\");'>" + escape_html(previous_formation_name) + "</a><h2>" + escape_html(formation_name) + "</h2><a href='/railroad_" + railroad_info["railroad_id"] + "/formations/" + encodeURIComponent(next_formation_name) + "/' class='next_button' onclick='event.preventDefault(); formation_detail(\"" + add_slashes(next_formation_name) + "\");'>" + escape_html(next_formation_name) + "</a></div>";
         
