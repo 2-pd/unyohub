@@ -372,7 +372,7 @@ def convert_formation_table (mes, main_dir):
                 
                 continue
             
-            insert_series_data(mes, cur, prefix, series_name, prefixes[prefix].pop("min_car_count"), prefixes[prefix].pop("max_car_count"), prefixes[prefix].pop("coupling_group_set"))
+            insert_series_data(mes, cur, prefix, prefix, prefixes[prefix].pop("min_car_count"), prefixes[prefix].pop("max_car_count"), prefixes[prefix].pop("coupling_group_set"))
         
         json_data["prefixes"] = prefixes
         json_data["prefix_order"] = [*prefixes.keys()]
