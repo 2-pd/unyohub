@@ -1824,6 +1824,8 @@ function get_operation_data_history (formation_name, operation_number, yyyy_mm =
             const YOBI_LIST = ["日", "月", "火", "水", "木", "金", "土"];
             
             if (response !== false) {
+                var holiday_list = get_holiday_list(operation_data_date.substring(0, 4));
+                
                 var dt = new Date();
                 var buf = "<h3>" + escape_html(h3_text) + "</h3>";
                 buf += "<div class='popup_subtitle'>" + (yyyy_mm === "" ? "過去30日間" : yyyy_mm.substring(0, 4) + "年" + Number(yyyy_mm.substring(5)) + "月") + "の運用履歴<input type='month' class='date_button' value='" + yyyy_mm + "' min='2000-01' max='" + dt.getFullYear() + "-" + ("0" + (dt.getMonth() + 1)).slice(-2) + "' onchange='get_operation_data_history(" + (formation_name === null ? "null" : "\"" + add_slashes(formation_name) + "\"") + ", " + (operation_number === null ? "null" : "\"" + add_slashes(operation_number) + "\"") + ", this.value);'></div>";
@@ -1834,7 +1836,7 @@ function get_operation_data_history (formation_name, operation_number, yyyy_mm =
                 for (var cnt = 0; cnt < day_count; cnt++) {
                     var yyyy_mm_dd = get_date_string(ts);
                     
-                    buf += "<h4>" + Number(yyyy_mm_dd.substring(5, 7)) + "月" + Number(yyyy_mm_dd.substring(8)) + "日 (" + YOBI_LIST[day_value] + ")</h4>";
+                    buf += "<h4>" + Number(yyyy_mm_dd.substring(5, 7)) + "月" + Number(yyyy_mm_dd.substring(8)) + "日 (" + YOBI_LIST[day_value] + (holiday_list.includes(yyyy_mm_dd.substring(5)) ? "・祝" : "") + ")</h4>";
                     if (yyyy_mm_dd in data) {
                         buf += get_operation_data_html(data[yyyy_mm_dd], ts, (operation_table !== null && get_diagram_revision(yyyy_mm_dd) === operation_table["diagram_revision"]));
                     } else {
@@ -1843,10 +1845,11 @@ function get_operation_data_history (formation_name, operation_number, yyyy_mm =
                     
                     if (yyyy_mm === "") {
                         ts -= 86400;
+                        day_value = (day_value !== 0 ? day_value - 1 : 6);
                     } else {
                         ts += 86400;
+                        day_value = (day_value !== 6 ? day_value + 1 : 0);
                     }
-                    day_value = (day_value !== 0 ? day_value - 1 : 6);
                 }
                 
                 popup_inner_elm.innerHTML = buf;
