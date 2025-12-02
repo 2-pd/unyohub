@@ -1777,6 +1777,7 @@ label.formation_table_drop_down {
     }
     
     small {
+        line-height: 20px;
         font-size: 14px;
         color: #cccccc;
         font-weight: normal;
