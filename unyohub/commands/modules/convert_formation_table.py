@@ -159,7 +159,7 @@ def convert_formation_table (mes, main_dir):
         elif formation_name.startswith("## "):
             if subseries_name is not None:
                 if subseries_max_car_count >= 1:
-                    insert_series_data(mes, cur, subseries_name, series_name, subseries_min_car_count, subseries_max_car_count, subseries_coupling_group_set)
+                    insert_series_data(mes, cur, series_name + subseries_name, series_name, subseries_min_car_count, subseries_max_car_count, subseries_coupling_group_set)
                 elif not unregistered_subseries:
                     mes(subseries_name + " には在籍中の編成が存在しませんが廃区分として設定されていません", True)
             

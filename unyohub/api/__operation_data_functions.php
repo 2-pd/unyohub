@@ -151,26 +151,26 @@ function get_formation_info ($formations_str, $validate_level = 0) {
         if ($formation !== "?") {
             $formation_escaped = $db_obj->escapeString($formation);
             
-            $formation_data = $db_obj->querySingle("SELECT `series_name`, `subseries_name`".($validate_level >= 2 ? ", `car_count`" : "")." FROM `unyohub_formations` WHERE `formation_name` = '".$formation_escaped."' AND `currently_registered` = 1", TRUE);
+            $formation_data = $db_obj->querySingle("SELECT `series_name`, `subseries_name`, `prefix`".($validate_level >= 2 ? ", `car_count`" : "")." FROM `unyohub_formations` WHERE `formation_name` = '".$formation_escaped."' AND `currently_registered` = 1", TRUE);
             
             if (empty($formation_data)) {
-                $formation_data = $db_obj->querySingle("SELECT `series_title`, `series_name`".($validate_level >= 2 ? ", `max_car_count`, `min_car_count`" : "")." FROM `unyohub_series_caches` WHERE `series_title` = '".$formation_escaped."'", TRUE);
+                $formation_data = $db_obj->querySingle("SELECT `series_name`".($validate_level >= 2 ? ", `max_car_count`, `min_car_count`" : "")." FROM `unyohub_series_caches` WHERE `series_title` = '".$formation_escaped."'", TRUE);
                 
                 if (!empty($formation_data)) {
-                    if ($formation_data["series_name"] !== $formation_data["series_title"]) {
-                        $formation_data["subseries_name"] = $formation_data["series_title"];
-                    } else {
-                        $formation_data["subseries_name"] = NULL;
-                    }
+                    $formation_data["series_title"] = $formation;
                 } else {
                     if ($validate_level >= 1) {
                         print "ERROR: 入力された編成名・車両形式に誤りがあります";
                         exit;
                     }
                     
-                    $formation_data = array("series_name" => "?", "subseries_name" => NULL);
+                    $formation_data = array("series_name" => "?", "series_title" => "?");
                 }
+                
+                $formation_data["prefix"] = NULL;
             } else {
+                $formation_data["series_title"] = $formation_data["series_name"].$formation_data["subseries_name"];
+                
                 if ($validate_level >= 2) {
                     $formation_data["max_car_count"] = $formation_data["car_count"];
                     $formation_data["min_car_count"] = $formation_data["car_count"];
@@ -203,14 +203,14 @@ function get_formation_info ($formations_str, $validate_level = 0) {
                 }
                 
                 $min_car_count_range += $formation_data["min_car_count"];
-                if (($formation !== $formation_data["series_name"] && $formation !== $formation_data["subseries_name"]) || empty($coupling_groups)) {
+                if ($formation !== $formation_data["series_title"] || empty($coupling_groups)) {
                     $max_car_count_range += $formation_data["max_car_count"];
                 } else {
                     $max_car_count_range += 20;
                 }
             }
         } else {
-            $formation_data = array("series_name" => "?", "subseries_name" => NULL);
+            $formation_data = array("series_name" => "?", "series_title" => "?", "prefix" => NULL);
             
             if ($validate_level >= 2) {
                 if (is_array($coupling_group_intersection) && empty($coupling_group_intersection)) {
@@ -238,11 +238,16 @@ function get_formation_info ($formations_str, $validate_level = 0) {
             if ($formation_data["series_name"] !== $formation) {
                 $formation_pattern_2[] = $forward_pattern.$formation_data["series_name"];
                 $formation_pattern_last_2[] = $formation_data["series_name"];
+                
+                if ($formation_data["series_title"] !== $formation_data["series_name"]) {
+                    $formation_pattern_2[] = $forward_pattern.$formation_data["series_title"];
+                    $formation_pattern_last_2[] = $formation_data["series_title"];
+                }
             }
             
-            if (!empty($formation_data["subseries_name"])) {
-                $formation_pattern_2[] = $forward_pattern.$formation_data["subseries_name"];
-                $formation_pattern_last_2[] = $formation_data["subseries_name"];
+            if (!empty($formation_data["prefix"])) {
+                $formation_pattern_2[] = $forward_pattern.$formation_data["prefix"];
+                $formation_pattern_last_2[] = $formation_data["prefix"];
             }
             
             if ($formation !== "?") {
@@ -250,7 +255,7 @@ function get_formation_info ($formations_str, $validate_level = 0) {
                 $formation_pattern_last_2[] = "?";
             }
             
-            if ($formation_pattern_last[$cnt] === $formation_data["series_name"] || $formation_pattern_last[$cnt] === $formation_data["subseries_name"] ||$formation_pattern_last[$cnt] === "?" ) {
+            if ($formation_pattern_last[$cnt] === $formation_data["series_name"] || $formation_pattern_last[$cnt] === $formation_data["series_title"] || $formation_pattern_last[$cnt] === $formation_data["prefix"] || $formation_pattern_last[$cnt] === "?") {
                 $formation_pattern_2[] = $formation_pattern[$cnt];
                 $formation_pattern_last_2[] = $formation_pattern_last[$cnt];
             }
