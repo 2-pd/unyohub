@@ -9,7 +9,7 @@ $db_obj->busyTimeout(5000);
 
 if (empty($_POST["year_month"])) {
     $ts = time();
-    $start_date = date("Y-m-d", $ts - 2592000);
+    $start_date = date("Y-m-d", $ts - 2505600);
     $end_date = date("Y-m-d", $ts);
 } elseif (preg_match("/\A2[0-9]{3}-(0[1-9]|1[0-2])\z/", $_POST["year_month"])) {
     $start_date = $_POST["year_month"]."-01";
@@ -20,9 +20,9 @@ if (empty($_POST["year_month"])) {
 }
 
 if (isset($_POST["formation_name"])) {
-    $sql_r = $db_obj->query("SELECT `unyohub_data_each_formation`.`operation_date`, `unyohub_data_each_formation`.`operation_number`, `unyohub_data_caches`.`formations` FROM `unyohub_data_each_formation`, `unyohub_data_caches` WHERE `unyohub_data_each_formation`.`formation_name` = '".$db_obj->escapeString($_POST["formation_name"])."' AND `unyohub_data_each_formation`.`operation_date` <= '".$end_date."' AND `unyohub_data_each_formation`.`operation_date` > '".$start_date."' AND `unyohub_data_each_formation`.`operation_date` = `unyohub_data_caches`.`operation_date` AND `unyohub_data_each_formation`.`operation_number` = `unyohub_data_caches`.`operation_number` ORDER BY `unyohub_data_each_formation`.`operation_date` ASC, `unyohub_data_each_formation`.`operation_number` ASC, `unyohub_data_caches`.`assign_order` DESC");
+    $sql_r = $db_obj->query("SELECT `unyohub_data_each_formation`.`operation_date`, `unyohub_data_each_formation`.`operation_number`, `unyohub_data_caches`.`formations` FROM `unyohub_data_each_formation`, `unyohub_data_caches` WHERE `unyohub_data_each_formation`.`formation_name` = '".$db_obj->escapeString($_POST["formation_name"])."' AND `unyohub_data_each_formation`.`operation_date` <= '".$end_date."' AND `unyohub_data_each_formation`.`operation_date` >= '".$start_date."' AND `unyohub_data_each_formation`.`operation_date` = `unyohub_data_caches`.`operation_date` AND `unyohub_data_each_formation`.`operation_number` = `unyohub_data_caches`.`operation_number` ORDER BY `unyohub_data_each_formation`.`operation_date` ASC, `unyohub_data_each_formation`.`operation_number` ASC, `unyohub_data_caches`.`assign_order` DESC");
 } elseif (isset($_POST["operation_number"])) {
-    $sql_r = $db_obj->query("SELECT `operation_date`, `operation_number`, `formations` FROM `unyohub_data_caches` WHERE `operation_number` = '".$db_obj->escapeString($_POST["operation_number"])."' AND `operation_date` <= '".$end_date."' AND `operation_date` > '".$start_date."' AND `formations` IS NOT NULL ORDER BY `operation_date` ASC, `assign_order` DESC");
+    $sql_r = $db_obj->query("SELECT `operation_date`, `operation_number`, `formations` FROM `unyohub_data_caches` WHERE `operation_number` = '".$db_obj->escapeString($_POST["operation_number"])."' AND `operation_date` <= '".$end_date."' AND `operation_date` >= '".$start_date."' AND `formations` IS NOT NULL ORDER BY `operation_date` ASC, `assign_order` DESC");
 } else {
     print "ERROR: 送信値が不正です";
     exit;
