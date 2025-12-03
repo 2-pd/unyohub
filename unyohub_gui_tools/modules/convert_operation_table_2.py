@@ -37,6 +37,18 @@ def split_station_name_and_track(station_name):
     return station_name, station_track
 
 
+def correct_train_number (train_number):
+    train_number = list(train_number)
+    
+    for cnt in range(len(train_number)):
+        if train_number[cnt] != "O":
+            break
+        
+        train_number[cnt] = "0"
+    
+    return "".join(train_number)
+
+
 def convert_operation_table_2 (mes, main_dir, file_name):
     mes("運用表の変換(ステップ2)", is_heading=True)
     
@@ -87,6 +99,13 @@ def convert_operation_table_2 (mes, main_dir, file_name):
             
             cnt += 1
         else:
+            if operation_number[0] == "@":
+                operation_number = correct_train_number(operation_number[1:].strip())
+                hidden_by_default = True
+            else:
+                operation_number = correct_train_number(operation_number)
+                hidden_by_default = False
+            
             starting_location, starting_track = split_station_name_and_track(operation_data[cnt][2].strip())
             terminal_location, terminal_track = split_station_name_and_track(operation_data[cnt][3].strip())
             
@@ -150,12 +169,6 @@ def convert_operation_table_2 (mes, main_dir, file_name):
             else:
                 comment = None
             
-            if operation_number[0] == "@":
-                operation_number = operation_number[1:].strip()
-                hidden_by_default = True
-            else:
-                hidden_by_default = False
-            
             operations[operation_number] = {
                 "trains" : [],
                 "starting_location" : starting_location,
@@ -201,7 +214,7 @@ def convert_operation_table_2 (mes, main_dir, file_name):
                             "direction" : None
                         })
                     else:
-                        train_number = operation_data[cnt][cnt_2].strip()
+                        train_number = correct_train_number(operation_data[cnt][cnt_2].strip())
                         
                         if "(" in train_number:
                             bracket_pos = train_number.find("(")

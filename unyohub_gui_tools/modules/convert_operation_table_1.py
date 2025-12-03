@@ -48,6 +48,18 @@ def convert_station_name_and_track (station_name):
         return station_name
 
 
+def correct_train_number (train_number):
+    train_number = list(train_number)
+    
+    for cnt in range(len(train_number)):
+        if train_number[cnt] != "O":
+            break
+        
+        train_number[cnt] = "0"
+    
+    return "".join(train_number)
+
+
 def get_train_style (train_name):
     global train_color_regexp_list
     global train_color_list
@@ -260,7 +272,7 @@ def convert_operation_table_1 (mes, main_dir, file_name, json_file_name, digits_
                 if operation[0][0] == "@":
                     operation[0] = operation[0][1:]
                 
-                output_row_1 = [operation[0], convert_station_name_and_track(operation[2]), convert_station_name_and_track(operation[4]), ""]
+                output_row_1 = [correct_train_number(operation[0]), convert_station_name_and_track(operation[2]), convert_station_name_and_track(operation[4]), ""]
                 output_row_2 = ["所定" + operation[1].split("(")[0] + "両", operation[3].strip(), operation[5].strip(), ""]
                 output_row_3 = ["", "", "", ""]
                 
@@ -303,6 +315,8 @@ def convert_operation_table_1 (mes, main_dir, file_name, json_file_name, digits_
                     else:
                         train_name = train_name_car_count[0]
                     
+                    corrected_train_name = correct_train_number(train_name)
+                    
                     if len(train_name_car_count) == 2:
                         car_count = "(" + train_name_car_count[1]
                     else:
@@ -310,78 +324,82 @@ def convert_operation_table_1 (mes, main_dir, file_name, json_file_name, digits_
                     
                     if len(train_time) == 2:
                         if "-" not in train_time[1]:
-                            mes("時刻の指定が異常です: " + train_name, True)
+                            mes("時刻の指定が異常です: " + corrected_train_name, True)
                             error_occurred = True
                             continue
                         
                         train_rows = train_time[1][:-1].split("-")
                         
                         if len(train_rows[0]) == 1 and len(train_rows[1]) == 1:
-                            if train_name not in train_number_list:
-                                mes("《注意》時刻表にない列車 " + train_name + " をスキップします")
+                            if corrected_train_name not in train_number_list:
+                                mes("《注意》時刻表にない列車 " + corrected_train_name + " をスキップします")
                                 continue
                             
-                            first_departure_times = list(train_number_list[train_name].keys())
+                            first_departure_times = list(train_number_list[corrected_train_name].keys())
                             first_departure_times.sort()
                             
                             within_segment = False
                             for first_departure_time in first_departure_times:
-                                if train_number_list[train_name][first_departure_time][0][0] == train_rows[0] or within_segment:
+                                if train_number_list[corrected_train_name][first_departure_time][0][0] == train_rows[0] or within_segment:
                                     if not for_printing or not within_segment:
                                         output_row_1.append(train_name + car_count)
-                                        output_row_2.append(train_number_list[train_name][first_departure_time][0])
-                                        output_row_3.append(train_number_list[train_name][first_departure_time][1])
+                                        output_row_2.append(train_number_list[corrected_train_name][first_departure_time][0])
+                                        output_row_3.append(train_number_list[corrected_train_name][first_departure_time][1])
                                     else:
-                                        output_row_3[-1] = train_number_list[train_name][first_departure_time][1]
+                                        output_row_3[-1] = train_number_list[corrected_train_name][first_departure_time][1]
                                     
-                                    if train_number_list[train_name][first_departure_time][1][0] == train_rows[1]:
+                                    if train_number_list[corrected_train_name][first_departure_time][1][0] == train_rows[1]:
                                         break
                                     
                                     within_segment = True
                         else:
-                            if for_printing and train_name[0] == "?":
-                                train_name = train_name[1:]
+                            if not for_printing:
+                                output_row_1.append(train_name + car_count)
+                            else:
+                                if corrected_train_name[0] == "?":
+                                    corrected_train_name = corrected_train_name[1:]
+                                
+                                output_row_1.append(corrected_train_name + car_count)
                             
-                            output_row_1.append(train_name + car_count)
                             output_row_2.append(convert_time_style(train_rows[0]))
                             output_row_3.append(convert_time_style(train_rows[1]))
                         
                         if for_printing:
-                            output_cell_styles_1.append(get_train_style(train_name))
+                            output_cell_styles_1.append(get_train_style(corrected_train_name))
                             output_cell_styles_2.append(None)
                             output_cell_styles_3.append(None)
                     else:
-                        if train_name not in train_number_list:
-                            mes("《注意》時刻表にない列車 " + train_name + " をスキップします")
+                        if corrected_train_name not in train_number_list:
+                            mes("《注意》時刻表にない列車 " + corrected_train_name + " をスキップします")
                             continue
                         
-                        first_departure_times = list(train_number_list[train_name].keys())
+                        first_departure_times = list(train_number_list[corrected_train_name].keys())
                         first_departure_times.sort()
                         
                         if not for_printing:
                             for first_departure_time in first_departure_times:
                                 output_row_1.append(train_name + car_count)
-                                output_row_2.append(train_number_list[train_name][first_departure_time][0])
-                                output_row_3.append(train_number_list[train_name][first_departure_time][1])
+                                output_row_2.append(train_number_list[corrected_train_name][first_departure_time][0])
+                                output_row_3.append(train_number_list[corrected_train_name][first_departure_time][1])
                         else:
                             if train_name[0] == "?":
                                 train_name = train_name[1:]
                             
-                            output_row_1.append(train_name + car_count)
-                            output_row_2.append(train_number_list[train_name][first_departure_times[0]][0])
-                            output_row_3.append(train_number_list[train_name][first_departure_times[-1]][1])
+                            output_row_1.append(corrected_train_name + car_count)
+                            output_row_2.append(train_number_list[corrected_train_name][first_departure_times[0]][0])
+                            output_row_3.append(train_number_list[corrected_train_name][first_departure_times[-1]][1])
                             
-                            output_cell_styles_1.append(get_train_style(train_name))
+                            output_cell_styles_1.append(get_train_style(corrected_train_name))
                             output_cell_styles_2.append({"text-align" : "center"})
                             output_cell_styles_3.append({"text-align" : "center"})
                         
-                        if train_name + car_count in train_list:
-                            mes("同一列車の同一組成位置が複数の運用に割り当てられています: " + train_name + car_count, True)
+                        if corrected_train_name + car_count in train_list:
+                            mes("同一列車の同一組成位置が複数の運用に割り当てられています: " + corrected_train_name + car_count, True)
                             error_occurred = True
                         else:
-                            train_list.append(train_name + car_count)
+                            train_list.append(corrected_train_name + car_count)
                     
-                    previous_train_name = train_name
+                    previous_train_name = corrected_train_name
             
             if output_row_1[-1].startswith("."):
                 mes("《注意》無効な留置指定「" + output_row_1[-1] + "」を除外します")
