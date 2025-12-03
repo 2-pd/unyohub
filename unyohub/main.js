@@ -2918,7 +2918,7 @@ function get_train (line_id, is_inbound, train_number, starting_station) {
 }
 
 function get_operations (line_id, train_number, starting_station, train_direction) {
-    if (train_number in line_operations["lines"][line_id][train_direction]) {
+    if (line_id in line_operations["lines"] && train_number in line_operations["lines"][line_id][train_direction]) {
         for (var train of line_operations["lines"][line_id][train_direction][train_number]) {
             if (train["starting_station"] === starting_station) {
                 return [...train["operation_numbers"]];
@@ -4211,7 +4211,7 @@ function draw_formation_table (update_title = true) {
             var unregistered = ("unregistered" in groups[group_name] && groups[group_name]["unregistered"]);
             
             buf += "<input type='checkbox' id='" + checkbox_id + "'" + (checkbox_id in formation_table_drop_down_status && formation_table_drop_down_status[checkbox_id] ? " checked='checked'" : "") + " onclick='update_formation_table_drop_down_status(this);'>";
-            buf += "<label for='" + checkbox_id + "' class='formation_table_drop_down'><span><img src='" + get_icon(group_name) + "' alt='' class='train_icon'" + (unregistered ? " style='opacity: 0.5;'" : "") + "></span>" + escape_html(group_name) + (search_keyword.length >= 1 ? " (" + search_hit_formation_count + "編成該当)" : (unregistered ? "<small>(除籍済み)</small>" : "")) + "</label>";
+            buf += "<label for='" + checkbox_id + "' class='formation_table_drop_down'><span><img src='" + (unregistered ? UNYOHUB_GENERIC_TRAIN_ICON + "' style='opacity: 0.5;" : get_icon(group_name)) + "' alt='' class='train_icon'></span>" + escape_html(group_name) + (search_keyword.length >= 1 ? " (" + search_hit_formation_count + "編成該当)" : (unregistered ? "<small>(除籍済み)</small>" : "")) + "</label>";
             buf += "<div id='formation_table_" + checkbox_id + "'><h3 class='formation_table_series_name'>" + escape_html(group_name) + "</h3><button type='button' class='screenshot_button' onclick='take_screenshot(\"formation_table_" + checkbox_id + "\");' aria-label='スクリーンショット'></button><table class='" + (reverse_formations ? "reversed_formation_table" : "formation_table") + "'><tr><td colspan='2'>" + search_hit_formation_count + "編成 " + search_hit_formations_car_count + "両 " + (search_keyword.length >= 1 ? "該当" : "在籍中") + "" + buf_2 + "</td></tr></table></div>";
         }
     }
