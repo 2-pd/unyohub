@@ -63,7 +63,7 @@ def convert_formation_table (mes, main_dir):
     
     body_colorings = {}
     for coloring in formation_data:
-        if coloring[0].startswith("# "):
+        if coloring[0].startswith("# ") or coloring[0].endswith("*"):
             break
         
         if len(coloring[0]) >= 1:
@@ -101,6 +101,9 @@ def convert_formation_table (mes, main_dir):
     car_numbers = set()
     abbr_numbers = set()
     
+    prefixes = {}
+    no_prefix_formation_names = []
+    
     series_name = None
     subseries_name = None
     while cnt < len(formation_data):
@@ -108,10 +111,16 @@ def convert_formation_table (mes, main_dir):
         
         if len(formation_name) == 0:
             cnt += 1
+        elif formation_name.endswith("*"):
+            prefix = formation_name[:-1]
+            
+            prefixes[prefix] = { "formation_names" : [], "icon_id" : formation_data[cnt + 1][0].strip(), "max_car_count" : 0, "min_car_count" : None, "coupling_group_set" : set() }
+            
+            cnt += 2
         elif formation_name.startswith("# "):
             if subseries_name is not None:
                 if subseries_max_car_count >= 1:
-                    insert_series_data(mes, cur, subseries_full_name, series_name, subseries_min_car_count, subseries_max_car_count, subseries_coupling_group_set)
+                    insert_series_data(mes, cur, series_name + subseries_name, series_name, subseries_min_car_count, subseries_max_car_count, subseries_coupling_group_set)
                 elif not unregistered_subseries:
                     mes(subseries_name + " には在籍中の編成が存在しませんが廃区分として設定されていません", True)
             
@@ -129,25 +138,15 @@ def convert_formation_table (mes, main_dir):
             else:
                 unregistered_series = False
             
-            if series_name.startswith("*"):
-                series_name = series_name[1:].strip()
-                series_is_series_group = True
-            else:
-                series_is_series_group = False
-            
             mes("・" + series_name + " のデータ処理を開始します...")
             
             json_data["series"][series_name] = {}
             json_data["series_names"].append(series_name)
             
             subseries_name = None
-            subseries_full_name = None
             coupling_group_set = set()
             min_car_count = None
             max_car_count = 0
-            
-            if series_is_series_group:
-                json_data["series"][series_name]["is_series_group"] = True
             
             if unregistered_series:
                 json_data["series"][series_name]["unregistered"] = True
@@ -160,7 +159,7 @@ def convert_formation_table (mes, main_dir):
         elif formation_name.startswith("## "):
             if subseries_name is not None:
                 if subseries_max_car_count >= 1:
-                    insert_series_data(mes, cur, subseries_full_name, series_name, subseries_min_car_count, subseries_max_car_count, subseries_coupling_group_set)
+                    insert_series_data(mes, cur, series_name + subseries_name, series_name, subseries_min_car_count, subseries_max_car_count, subseries_coupling_group_set)
                 elif not unregistered_subseries:
                     mes(subseries_name + " には在籍中の編成が存在しませんが廃区分として設定されていません", True)
             
@@ -172,12 +171,7 @@ def convert_formation_table (mes, main_dir):
             else:
                 unregistered_subseries = False
             
-            if series_is_series_group:
-                subseries_full_name = subseries_name
-            else:
-                subseries_full_name = series_name + subseries_name
-            
-            mes("・" + subseries_full_name + " のデータを処理しています...")
+            mes("・" + series_name + " " + subseries_name + " のデータを処理しています...")
             
             if "subseries" not in json_data["series"][series_name]:
                 json_data["series"][series_name]["subseries"] = {}
@@ -229,9 +223,27 @@ def convert_formation_table (mes, main_dir):
                     json_data["formations"][formation_name]["cars"] = []
                     json_data["formations"][formation_name]["series_name"] = series_name
                     json_data["formations"][formation_name]["icon_id"] = formation_data[cnt + 1][0].strip()
-                elif new_formation_name is not None:
-                    json_data["formations"][formation_name]["new_railroad_id"] = new_railroad_id
-                    json_data["formations"][formation_name]["new_formation_name"] = new_formation_name
+                    
+                    prefix = formation_data[cnt + 3][0].strip()
+                    if len(prefix) >= 1:
+                        if prefix in prefixes:
+                            json_data["formations"][formation_name]["prefix"] = prefix
+                            
+                            prefixes[prefix]["formation_names"].append(formation_name)
+                        else:
+                            mes("《注意》未定義の電算記号等が割り当てられています: " + prefix)
+                            prefix = None
+                    else:
+                        prefix = None
+                else:
+                    if new_formation_name is not None:
+                        json_data["formations"][formation_name]["new_railroad_id"] = new_railroad_id
+                        json_data["formations"][formation_name]["new_formation_name"] = new_formation_name
+                    
+                    prefix = None
+                
+                if prefix is None:
+                    no_prefix_formation_names.append(formation_name)
                 
                 car_list_old = set()
                 for row_data in cur.execute("SELECT `car_number` FROM `unyohub_cars` WHERE `formation_name` = :formation_name", {"formation_name" : formation_name}):
@@ -283,7 +295,7 @@ def convert_formation_table (mes, main_dir):
                     unavailable_value = None
                     unavailable_q = ", `unavailable` = NULL"
                 
-                cur.execute("INSERT INTO `unyohub_formations`(`formation_name`, `currently_registered`, `series_name`, `subseries_name`, `car_count`, `affiliation`, `caption`, `description`, `semifixed_formation`, `unavailable`, `inspection_information`, `overview_updated`, `updated_datetime`, `edited_user_id`) VALUES (:formation_name, :currently_registered, :series_name, :subseries_name, :car_count, '', '', '', NULL, :unavailable, '', :overview_updated, :updated_datetime, NULL) ON CONFLICT(`formation_name`) DO UPDATE SET `currently_registered` = :currently_registered_2, `series_name` = :series_name_2, `subseries_name` = :subseries_name_2, `car_count` = :car_count_2" + unavailable_q, {"formation_name" : formation_name, "currently_registered" : currently_registered, "series_name" : series_name, "subseries_name" : subseries_full_name, "car_count" : car_count, "unavailable" : unavailable_value, "overview_updated" : datetime_now, "updated_datetime" : datetime_now, "currently_registered_2" : currently_registered, "series_name_2" : series_name, "subseries_name_2" : subseries_full_name, "car_count_2" : car_count})
+                cur.execute("INSERT INTO `unyohub_formations`(`formation_name`, `currently_registered`, `series_name`, `subseries_name`, `prefix`, `car_count`, `affiliation`, `caption`, `description`, `semifixed_formation`, `unavailable`, `inspection_information`, `overview_updated`, `updated_datetime`, `edited_user_id`) VALUES (:formation_name, :currently_registered, :series_name, :subseries_name, :prefix, :car_count, '', '', '', NULL, :unavailable, '', :overview_updated, :updated_datetime, NULL) ON CONFLICT(`formation_name`) DO UPDATE SET `currently_registered` = :currently_registered_2, `series_name` = :series_name_2, `subseries_name` = :subseries_name_2, `prefix` = :prefix_2, `car_count` = :car_count_2" + unavailable_q, {"formation_name" : formation_name, "currently_registered" : currently_registered, "series_name" : series_name, "subseries_name" : subseries_name, "prefix" : prefix, "car_count" : car_count, "unavailable" : unavailable_value, "overview_updated" : datetime_now, "updated_datetime" : datetime_now, "currently_registered_2" : currently_registered, "series_name_2" : series_name, "subseries_name_2" : subseries_name, "prefix_2" : prefix, "car_count_2" : car_count})
                 
                 formation_list.add(formation_name)
                 
@@ -311,6 +323,13 @@ def convert_formation_table (mes, main_dir):
                     if min_car_count is None or car_count < min_car_count:
                         min_car_count = car_count
                     
+                    if prefix is not None:
+                        if car_count > prefixes[prefix]["max_car_count"]:
+                            prefixes[prefix]["max_car_count"] = car_count
+                        
+                        if prefixes[prefix]["min_car_count"] is None or car_count < prefixes[prefix]["min_car_count"]:
+                            prefixes[prefix]["min_car_count"] = car_count
+                    
                     coupling_groups = formation_data[cnt + 2][0].split()
                     for coupling_group in coupling_groups:
                         if len(coupling_group) >= 1:
@@ -320,6 +339,9 @@ def convert_formation_table (mes, main_dir):
                             
                             if subseries_name is not None:
                                 subseries_coupling_group_set.add(coupling_group)
+                            
+                            if prefix is not None:
+                                prefixes[prefix]["coupling_group_set"].add(coupling_group)
                 else:
                     unregistered_formation_list.add(formation_name)
             
@@ -338,6 +360,24 @@ def convert_formation_table (mes, main_dir):
         insert_series_data(mes, cur, series_name, series_name, min_car_count, max_car_count, coupling_group_set)
     elif not unregistered_series:
         mes(series_name + " には在籍中の編成が存在しませんが廃系列として設定されていません", True)
+    
+    if len(prefixes) >= 1:
+        mes("電算記号等の情報を整理しています...")
+        
+        for prefix in [*prefixes.keys()]:
+            if len(prefixes[prefix]["formation_names"]) == 0:
+                mes("《注意》どの編成にも割り当てられていない電算記号等が定義されています: " + prefix)
+                
+                del prefixes[prefix]
+                
+                continue
+            
+            insert_series_data(mes, cur, prefix, prefix, prefixes[prefix].pop("min_car_count"), prefixes[prefix].pop("max_car_count"), prefixes[prefix].pop("coupling_group_set"))
+        
+        json_data["prefixes"] = prefixes
+        json_data["prefix_order"] = [*prefixes.keys()]
+        if len(no_prefix_formation_names) >= 1:
+            json_data["no_prefix_formation_names"] = no_prefix_formation_names
     
     mes("編成表から除外された編成を検出しています...")
     

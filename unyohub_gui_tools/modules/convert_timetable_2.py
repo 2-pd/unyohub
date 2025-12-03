@@ -25,6 +25,18 @@ def shape_time_string (time_str):
     return time_str.zfill(5)
 
 
+def correct_train_number (train_number):
+    train_number = list(train_number)
+    
+    for cnt in range(len(train_number)):
+        if train_number[cnt] != "O":
+            break
+        
+        train_number[cnt] = "0"
+    
+    return "".join(train_number)
+
+
 def convert_timetable_2 (mes, main_dir, diagram_revision, diagram_id):
     mes("時刻表の変換(ステップ2)", is_heading=True)
 
@@ -127,6 +139,8 @@ def convert_timetable_2 (mes, main_dir, diagram_revision, diagram_id):
                 else:
                     is_temporary_train = False
                 
+                train[0] = correct_train_number(train[0])
+                
                 if train[0] != previous_train_number:
                     if train[0] in direction_data:
                         mes("《注意》直通情報のない同一名の列車が検出されました: " + line_id + " - " + train[0])
@@ -217,6 +231,8 @@ def convert_timetable_2 (mes, main_dir, diagram_revision, diagram_id):
                         mes("《注意》直通先路線の方面指定が不正です: " + line_id + " - " + train[0])
                         line_id_and_direction.insert(1, direction)
                     
+                    train[-5] = correct_train_number(train[-5])
+                    
                     direction_data[train[0]][train_cnt]["next_trains"].append({ "line_id" : line_id_and_direction[0], "direction" : line_id_and_direction[1], "train_number" : train[-5], "starting_station" : train[-4] })
                     
                     next_train_key = line_id_and_direction[0] + ":" + line_id_and_direction[1] + ":" + train[-5] + ":" + train[-4]
@@ -231,6 +247,8 @@ def convert_timetable_2 (mes, main_dir, diagram_revision, diagram_id):
                     if len(line_id_and_direction) != 2 or (line_id_and_direction[1] != "inbound" and line_id_and_direction[1] != "outbound"):
                         mes("《注意》直通先路線の方面指定が不正です: " + line_id + " - " + train[0])
                         line_id_and_direction.insert(1, direction)
+                    
+                    train[-2] = correct_train_number(train[-2])
                     
                     direction_data[train[0]][train_cnt]["next_trains"].append({ "line_id" : line_id_and_direction[0], "direction" : line_id_and_direction[1], "train_number" : train[-2], "starting_station" : train[-1] })
                     

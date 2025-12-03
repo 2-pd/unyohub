@@ -16,7 +16,8 @@
 **タイムスタンプが省略されるか、main.iniの変更日時がタイムスタンプより新しかった場合** :  
 {  
     "instance_name" : 鉄道運用Hubインスタンスの表示名,  
-    "introduction_text" : インスタンスの紹介文(未設定なら省略),  
+    "instance_introduction" : インスタンスの紹介文(未設定なら省略),  
+    "instance_explanation" : インスタンスについての説明(未設定なら省略),  
     "manual_url" : ユーザーマニュアルのURL(未設定なら省略),  
     "administrator_name" : インスタンス運営者名(未設定なら省略),  
     "administrator_url" : インスタンス運営者紹介ページのURL(未設定なら省略),  
@@ -253,7 +254,7 @@ formations.jsonの内容を返す
         }...  
     ],  
     "series_name" : 形式名,  
-    "subseries_name" : 番台等を含む形式名(番台等の区分がない場合はNULL),  
+    "subseries_name" : 番台名等(番台等がない場合はNULL),  
     "affiliation" : 所属車両基地,  
     "caption" : 1行見出し,  
     "description" : 補足説明文,  

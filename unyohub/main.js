@@ -10,6 +10,12 @@ const UNYOHUB_UNKNOWN_TRAIN_ICON = "data:image/webp;base64,UklGRroDAABXRUJQVlA4T
 const UNYOHUB_CANCELED_TRAIN_ICON = "data:image/webp;base64,UklGRiQEAABXRUJQVlA4TBgEAAAvT8AdEBfkIJIkRco+ZlBy/s3xvwfGbSQp8kL+Wd79mHkYtI3kyHPf+z+S50/u1m1sO66ykhbvXUZGBAWQkhPREGVQDzE10IUHjf5VQoQCuVQe/lVpqFhFEtvILpKXWmMjmGQOgaENwQiCIQwCgZSGpc/tLP1e7eMeIhSAjIhEE2mEgkSW9/At/vYvx+HYvHOzN9/4qnWelvPi00zteSrTkPmT59/L2B2f0pAAAIAAAAD8AIADAIcjAIADvBBwgAB/CAAASMoBFQpFRRsKRRcVFfqLLjQpiSvAAyQlAABJISmelABlGbzIjbIMVHVEIW3b9jRP3N3XMRzmvmXu7u7D3d0d+s9p3+Z57hQ+N08i+g/JkSRFkof7LJyYqn7g/693srX+gTWb/MHya35QseckAbI/oiB78QPGn3Fln7z74Jyyk44wq6xzTp4om/xBccfa2Wu+iCg7R3mr5qz1ReTarLIOxOZrO/bH5yOnz9TrDczrngdvHwL58tqOniBYtvaOj0GctcsIbqS+TnatHXn4ePzF8JB7paw4l7wYf/xwRNndlI/gmL2B4PqnXyLitpaeKsae3/l4zRf59em6gPbx/pBiz91PBLdM0PfRy+s4tixoCY6bKBIcEyie4n4MWdgSFCs43qF4iGOKSm5heV1VQ15GCj/f4Hh9lEJGXkNVXXlhbkB6fq0XWnH7h5U7M49eDCjg5EUy41Y+tBd7odXmp/tS4KXuaq8yNEm81BX4OTVepMYTl1PoSbSmEyms8HSaTiqqPa2Gk+pKT6/ZpLJBCBpNGvKEosnEZRSRNJjL8OvPkDSWq/dFupo8/S51I+hrpLy5nf5fPvTRNFPPhxCKqJFUClRNlApZfBHQRRcFQ2yRcEQWDUtcGnii0sEUkxauiPSw5UeALzcKAHmRQMiJBkR6RDBSowLx/AVaZDDSokMTEgOigDhQZceCLDMedFkxYciIC0dybDhepHCux8aMy90G6WskvtDNhhdVLqzoMuHEkQcjnizoceVAji8DagjpYDp7hSSVddCfWq4J4nroUAv1lxvGjwGfQYHcDPiKCeVWwA4kmN8C9hDh/B5wAAjoYcAvfkiPQ6eWr7ghfZXmB3vODOqYH2KSF9aHYe6zAjsXZoET2tth3jKC+zbMGj2878NskzPgdpg2aiZsDZFVQsyIZdl/qS+N0zlSab0fv3Ou+J3Dxe+cMH7nmPE7Z43fOXD8zqnjd44eu3P+yHuI5j5lbE4i7iEi7klaOvqVwSXiQvckmrsqw5sQ7aZN80DPXdMkem6Z5paed6ZZ1bNmmoRwu26aL3r2TOP0/DbNbz1pg2ZxaaLfmFmcEJg0y0PSbe69yAUk2vHeLifcBYDfrn+OIWsd/+3CckvZRcDbhd12Ani7/tMT";
 
 
+var funcs_load_resolve;
+var funcs_load_promise = new Promise(function (resolve) {
+    funcs_load_resolve = resolve;
+});
+
+
 function escape_html (text) {
     return text.replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;");
 }
@@ -116,6 +122,7 @@ function get_default_config () {
         "colorize_corrected_posts" : false,
         "colorize_beginners_posts" : false,
         "force_arrange_west_side_car_on_left" : false,
+        "group_formations_by_prefix" : false,
         "show_unregistered_formations_on_formation_table" : true,
         "colorize_formation_table" : true,
         "simplify_operation_details" : false,
@@ -287,6 +294,10 @@ function update_instance_info () {
                 localStorage.setItem("unyohub_instance_info", JSON.stringify(instance_info));
                 
                 update_instance_info();
+                
+                if (last_modified_timestamp_q === null) {
+                    funcs_load_promise.then(function () { show_welcome_message(); });
+                }
             }
         });
     }
@@ -628,6 +639,7 @@ function get_railroad_list (callback_func) {
 }
 
 var railroad_list_area;
+var railroad_list_active_index;
 
 function update_railroad_list (railroads, area_elm = null, loading_completed = true) {
     if (area_elm !== null) {
@@ -642,15 +654,11 @@ function update_railroad_list (railroads, area_elm = null, loading_completed = t
     if (config["show_favorite_railroads"] || config["show_favorite_stations"]) {
         var categories_html = "<li class='category_index' onclick='scroll_to_category(0);'" + favorite_category_style + "><b>お気に入り</b></li>";
         var icons_html = "<h3 class='icon_heading'" + favorite_category_style + "><b>お気に入り</b></h3>";
-        
         var heading_cnt = 1;
         
         if (config["show_favorite_railroads"]) {
             if (config["show_favorite_stations"]) {
-                categories_html += "<li class='subcategory_index' onclick='scroll_to_category(1);'" + favorite_subcategory_style + "><span>路線系統</span></li>";
-                icons_html += "<h4 class='icon_heading'" + favorite_subcategory_style + "><span>お気に入り路線系統</span></h4>";
-                
-                heading_cnt = 3;
+                icons_html += "<h4" + favorite_subcategory_style + "><span>お気に入り路線系統</span></h4>";
             }
             
             if (config["favorite_railroads"].length >= 1) {
@@ -664,8 +672,7 @@ function update_railroad_list (railroads, area_elm = null, loading_completed = t
         
         if (config["show_favorite_stations"]) {
             if (config["show_favorite_railroads"]) {
-                categories_html += "<li class='subcategory_index' onclick='scroll_to_category(2);'" + favorite_subcategory_style + "><span>駅</span></li>";
-                icons_html += "<h4 class='icon_heading'" + favorite_subcategory_style + "><span>お気に入り駅</span></h4>";
+                icons_html += "<h4" + favorite_subcategory_style + "><span>お気に入り駅</span></h4>";
             }
             
             if (config["favorite_stations"].length >= 1) {
@@ -687,12 +694,13 @@ function update_railroad_list (railroads, area_elm = null, loading_completed = t
         categories_html += "<li class='category_index' onclick='scroll_to_category(" + heading_cnt + ");'" + category_html + "li>";
         icons_html += "<h3 class='icon_heading'" + category_html + "h3>";
         
+        var category_index = heading_cnt;
         heading_cnt++;
         
         if ("subcategories" in category) {
             for (var subcategory of category["subcategories"]) {
                 var subcategory_html = " style='color: " + (config["dark_mode"] ? convert_color_dark_mode(subcategory["subcategory_color"]) : subcategory["subcategory_color"]) + ";'><span>" + escape_html(subcategory["subcategory_name"]) + "</span></";
-                categories_html += "<li class='subcategory_index' onclick='scroll_to_category(" + heading_cnt + ");'" + subcategory_html + "li>";
+                categories_html += "<li class='subcategory_index category_items_" + category_index + "' onclick='scroll_to_category(" + heading_cnt + ");'" + subcategory_html + "li>";
                 icons_html += "<h4 class='icon_heading'" + subcategory_html + "h4>";
                 
                 heading_cnt++;
@@ -720,6 +728,7 @@ function update_railroad_list (railroads, area_elm = null, loading_completed = t
     
     icon_area_elm = document.getElementById("icon_area");
     
+    railroad_list_active_index = null;
     icon_area_onscroll();
 }
 
@@ -735,16 +744,45 @@ function icon_area_onscroll () {
     
     for (var cnt = 0; cnt < heading_elms.length; cnt++) {
         if (heading_elms[cnt].getBoundingClientRect().top > icon_area_top) {
-            index_elms[cnt].classList.add("active_index");
-            
             break;
         }
-        
-        index_elms[cnt].classList.remove("active_index");
     }
     
-    for (cnt++; cnt < heading_elms.length; cnt++) {
-        index_elms[cnt].classList.remove("active_index");
+    if (cnt >= heading_elms.length) {
+        cnt = -1;
+    }
+    
+    if (cnt === railroad_list_active_index) {
+        return;
+    }
+    
+    if (cnt === -1 || index_elms[cnt].classList.contains("category_index")) {
+        var category_id = "category_items_" + cnt;
+    } else {
+        for (var class_name of index_elms[cnt].className.split(" ")) {
+            if (class_name.startsWith("category_items_")) {
+                var category_id = class_name;
+                break;
+            }
+        }
+    }
+    
+    railroad_list_active_index = cnt;
+    
+    for (cnt = 0; cnt < heading_elms.length; cnt++) {
+        if (cnt === railroad_list_active_index) {
+            index_elms[cnt].classList.add("active_index");
+        } else {
+            index_elms[cnt].classList.remove("active_index");
+        }
+        
+        if (index_elms[cnt].classList.contains("subcategory_index")) {
+            if (index_elms[cnt].classList.contains(category_id)) {
+                index_elms[cnt].classList.add("active_category_item");
+            } else {
+                index_elms[cnt].classList.remove("active_category_item");
+            }
+        }
     }
 }
 
@@ -840,11 +878,6 @@ function on_off_line () {
 window.onoffline = on_off_line;
 
 
-var funcs_load_resolve;
-var funcs_load_promise = new Promise(function (resolve) {
-    funcs_load_resolve = resolve;
-});
-
 window.onload = function () {
     db_open_promise.then(function () {
         if (location.pathname.startsWith("/railroad_")) {
@@ -918,11 +951,25 @@ var formation_styles_available = false;
 
 function update_formation_styles (railroad_id = null) {
     if (railroad_id === null) {
-        var series_names = formations["series_names"];
         var series_data = formations["series"];
+        var series_names = formations["series_names"];
+        if ("prefixes" in formations) {
+            var prefix_data = formations["prefixes"];
+            var prefix_order = formations["prefix_order"];
+        } else {
+            var prefix_data = {};
+            var prefix_order = [];
+        }
     } else {
-        var series_names = joined_railroad_formations[railroad_id]["series_names"];
         var series_data = joined_railroad_formations[railroad_id]["series"];
+        var series_names = joined_railroad_formations[railroad_id]["series_names"];
+        if ("prefixes" in joined_railroad_formations[railroad_id]) {
+            var prefix_data = joined_railroad_formations[railroad_id]["prefixes"];
+            var prefix_order = joined_railroad_formations[railroad_id]["prefix_order"];
+        } else {
+            var prefix_data = {};
+            var prefix_order = [];
+        }
     }
     
     var icon_ids_data = {};
@@ -937,10 +984,14 @@ function update_formation_styles (railroad_id = null) {
         if ("subseries_names" in series_data[series_name]) {
             for (var subseries_name of series_data[series_name]["subseries_names"]) {
                 if (!("unregistered" in series_data[series_name]["subseries"][subseries_name] && series_data[series_name]["subseries"][subseries_name]["unregistered"])) {
-                    icon_ids_data["is_series_group" in series_data[series_name] && series_data[series_name]["is_series_group"] ? subseries_name : series_name + subseries_name] = series_data[series_name]["subseries"][subseries_name]["icon_id"];
+                    icon_ids_data[series_name + subseries_name] = series_data[series_name]["subseries"][subseries_name]["icon_id"];
                 }
             }
         }
+    }
+    
+    for (var prefix of prefix_order) {
+        icon_ids_data[prefix] = prefix_data[prefix]["icon_id"];
     }
     
     if (railroad_id !== null) {
@@ -2867,7 +2918,7 @@ function get_train (line_id, is_inbound, train_number, starting_station) {
 }
 
 function get_operations (line_id, train_number, starting_station, train_direction) {
-    if (train_number in line_operations["lines"][line_id][train_direction]) {
+    if (line_id in line_operations["lines"] && train_number in line_operations["lines"][line_id][train_direction]) {
         for (var train of line_operations["lines"][line_id][train_direction][train_number]) {
             if (train["starting_station"] === starting_station) {
                 return [...train["operation_numbers"]];
@@ -3978,13 +4029,22 @@ function formations_mode (formation_name = null) {
     formation_table_drop_down_status = {};
     formation_table_wrapper_scroll_amount = 0;
     
-    var label_elm = document.getElementById("colorize_formation_table_label");
+    var colorize_label_elm = document.getElementById("colorize_formation_table_label");
     if (formation_styles_available) {
-        label_elm.style.display = "inline-block";
+        colorize_label_elm.style.display = "inline-block";
         
         document.getElementById("colorize_formation_table").checked = config["colorize_formation_table"];
     } else {
-        label_elm.style.display = "none";
+        colorize_label_elm.style.display = "none";
+    }
+    
+    var prefix_label_elm = document.getElementById("group_formations_by_prefix_label");
+    if ("prefixes" in formations) {
+        prefix_label_elm.style.display = "inline-block";
+        
+        document.getElementById("group_formations_by_prefix").checked = config["group_formations_by_prefix"];
+    } else {
+        prefix_label_elm.style.display = "none";
     }
     
     document.getElementById("show_unregistered_formations").checked = config["show_unregistered_formations_on_formation_table"];
@@ -4095,6 +4155,23 @@ function get_formation_table_html (formation_names, reverse_formations, search_k
     return [buf, search_hit_formation_count, search_hit_formations_car_count];
 }
 
+function get_formation_groups () {
+    if (config["group_formations_by_prefix"] && "prefixes" in formations) {
+        var groups = {...formations["prefixes"]};
+        var group_names = [...formations["prefix_order"]];
+        
+        if ("no_prefix_formation_names" in formations) {
+            groups["その他"] = { "formation_names" : formations["no_prefix_formation_names"] };
+            group_names.push("その他");
+        }
+    } else {
+        var groups = formations["series"];
+        var group_names = formations["series_names"];
+    }
+    
+    return [groups, group_names];
+}
+
 function draw_formation_table (update_title = true) {
     if (update_title) {
         change_title(railroad_info["railroad_name"] + "の編成表 | " + instance_info["instance_name"], "/railroad_" + railroad_info["railroad_id"] + "/formations/");
@@ -4106,15 +4183,17 @@ function draw_formation_table (update_title = true) {
     var reverse_formations = (config["force_arrange_west_side_car_on_left"] && "forward_direction_is_east" in railroad_info && railroad_info["forward_direction_is_east"]);
     var search_keyword = str_to_halfwidth(car_number_search_elm.value).toUpperCase();
     
+    var [groups, group_names] = get_formation_groups();
+    
     var buf = ""
-    for (var series_name of formations["series_names"]) {
-        if ("subseries_names" in formations["series"][series_name]) {
+    for (var group_name of group_names) {
+        if ("subseries_names" in groups[group_name]) {
             var buf_2 = "";
             var search_hit_formation_count = 0;
             var search_hit_formations_car_count = 0;
             
-            for (var subseries_name of formations["series"][series_name]["subseries_names"]) {
-                var [buf_3, subseries_search_hit_formation_count, subseries_search_hit_formations_car_count] = get_formation_table_html(formations["series"][series_name]["subseries"][subseries_name]["formation_names"], reverse_formations, search_keyword);
+            for (var subseries_name of groups[group_name]["subseries_names"]) {
+                var [buf_3, subseries_search_hit_formation_count, subseries_search_hit_formations_car_count] = get_formation_table_html(groups[group_name]["subseries"][subseries_name]["formation_names"], reverse_formations, search_keyword);
                 
                 if (buf_3.length >= 1) {
                     buf_2 += "<tr><th colspan='2'>" + escape_html(subseries_name) + "</th></tr>" + buf_3;
@@ -4123,17 +4202,17 @@ function draw_formation_table (update_title = true) {
                 }
             }
         } else {
-            var [buf_2, search_hit_formation_count, search_hit_formations_car_count] = get_formation_table_html(formations["series"][series_name]["formation_names"], reverse_formations, search_keyword);
+            var [buf_2, search_hit_formation_count, search_hit_formations_car_count] = get_formation_table_html(groups[group_name]["formation_names"], reverse_formations, search_keyword);
         }
         
         if (buf_2.length >= 1) {
-            var checkbox_id = "series_" + series_name;
+            var checkbox_id = "series_" + group_name;
             
-            var unregistered = ("unregistered" in formations["series"][series_name] && formations["series"][series_name]["unregistered"]);
+            var unregistered = ("unregistered" in groups[group_name] && groups[group_name]["unregistered"]);
             
             buf += "<input type='checkbox' id='" + checkbox_id + "'" + (checkbox_id in formation_table_drop_down_status && formation_table_drop_down_status[checkbox_id] ? " checked='checked'" : "") + " onclick='update_formation_table_drop_down_status(this);'>";
-            buf += "<label for='" + checkbox_id + "' class='formation_table_drop_down'><span><img src='" + get_icon(series_name) + "' alt='' class='train_icon'" + (unregistered ? " style='opacity: 0.5;'" : "") + "></span>" + escape_html(series_name) + (search_keyword.length >= 1 ? " (" + search_hit_formation_count + "編成該当)" : (unregistered ? "<small>(除籍済み)</small>" : "")) + "</label>";
-            buf += "<div id='formation_table_" + checkbox_id + "'><h3 class='formation_table_series_name'>" + escape_html(series_name) + "</h3><button type='button' class='screenshot_button' onclick='take_screenshot(\"formation_table_" + checkbox_id + "\");' aria-label='スクリーンショット'></button><table class='" + (reverse_formations ? "reversed_formation_table" : "formation_table") + "'><tr><td colspan='2'>" + search_hit_formation_count + "編成 " + search_hit_formations_car_count + "両 " + (search_keyword.length >= 1 ? "該当" : "在籍中") + "" + buf_2 + "</td></tr></table></div>";
+            buf += "<label for='" + checkbox_id + "' class='formation_table_drop_down'><span><img src='" + (unregistered ? UNYOHUB_GENERIC_TRAIN_ICON + "' style='opacity: 0.5;" : get_icon(group_name)) + "' alt='' class='train_icon'></span>" + escape_html(group_name) + (search_keyword.length >= 1 ? " (" + search_hit_formation_count + "編成該当)" : (unregistered ? "<small>(除籍済み)</small>" : "")) + "</label>";
+            buf += "<div id='formation_table_" + checkbox_id + "'><h3 class='formation_table_series_name'>" + escape_html(group_name) + "</h3><button type='button' class='screenshot_button' onclick='take_screenshot(\"formation_table_" + checkbox_id + "\");' aria-label='スクリーンショット'></button><table class='" + (reverse_formations ? "reversed_formation_table" : "formation_table") + "'><tr><td colspan='2'>" + search_hit_formation_count + "編成 " + search_hit_formations_car_count + "両 " + (search_keyword.length >= 1 ? "該当" : "在籍中") + "" + buf_2 + "</td></tr></table></div>";
         }
     }
     
@@ -4183,39 +4262,41 @@ function get_operation_data_html (data, ts, clickable = true, no_data_text = "�
     }
 }
 
-function get_previous_formation (formation_name, series_name, subseries_name = null) {
-    var formation_list = subseries_name !== null ? formations["series"][series_name]["subseries"][subseries_name]["formation_names"] : formations["series"][series_name]["formation_names"];
+function get_previous_formation (formation_name, group_name, subseries_name = null) {
+    var [groups, group_names] = get_formation_groups();
+    
+    var formation_list = subseries_name !== null ? groups[group_name]["subseries"][subseries_name]["formation_names"] : groups[group_name]["formation_names"];
     var formation_index = formation_list.indexOf(formation_name);
     
     if (formation_index >= 1) {
-        var previous_series_name = series_name;
+        var previous_group_name = group_name;
         var previous_subseries_name = subseries_name;
         var previous_formation_name = formation_list[formation_index - 1];
     } else {
         var previous_formation_name = null;
-        if ("subseries_name" in formations["formations"][formation_name]) {
-            var subseries_index = formations["series"][series_name]["subseries_names"].indexOf(formations["formations"][formation_name]["subseries_name"]);
+        if (subseries_name !== null) {
+            var subseries_index = groups[group_name]["subseries_names"].indexOf(subseries_name);
             if (subseries_index >= 1) {
-                var previous_series_name = series_name;
-                var previous_subseries_name = formations["series"][series_name]["subseries_names"][subseries_index - 1];
-                previous_formation_name = formations["series"][series_name]["subseries"][previous_subseries_name]["formation_names"][formations["series"][series_name]["subseries"][previous_subseries_name]["formation_names"].length - 1];
+                var previous_group_name = group_name;
+                var previous_subseries_name = groups[group_name]["subseries_names"][subseries_index - 1];
+                previous_formation_name = groups[group_name]["subseries"][previous_subseries_name]["formation_names"][groups[group_name]["subseries"][previous_subseries_name]["formation_names"].length - 1];
             }
         }
         
         if (previous_formation_name === null) {
-            var series_index = formations["series_names"].indexOf(series_name);
+            var series_index = group_names.indexOf(group_name);
             if (series_index >= 1) {
-                var previous_series_name = formations["series_names"][series_index - 1];
+                var previous_group_name = group_names[series_index - 1];
             } else {
-                var previous_series_name = formations["series_names"][formations["series_names"].length - 1];
+                var previous_group_name = group_names[group_names.length - 1];
             }
             
-            if ("subseries_names" in formations["series"][previous_series_name]) {
-                var previous_subseries_name = formations["series"][previous_series_name]["subseries_names"][formations["series"][previous_series_name]["subseries_names"].length - 1];
-                formation_list = formations["series"][previous_series_name]["subseries"][previous_subseries_name]["formation_names"];
+            if ("subseries_names" in groups[previous_group_name]) {
+                var previous_subseries_name = groups[previous_group_name]["subseries_names"][groups[previous_group_name]["subseries_names"].length - 1];
+                formation_list = groups[previous_group_name]["subseries"][previous_subseries_name]["formation_names"];
             } else {
                 var previous_subseries_name = null;
-                formation_list = formations["series"][previous_series_name]["formation_names"];
+                formation_list = groups[previous_group_name]["formation_names"];
             }
             
             previous_formation_name = formation_list[formation_list.length - 1];
@@ -4225,43 +4306,45 @@ function get_previous_formation (formation_name, series_name, subseries_name = n
     if ("cars" in formations["formations"][previous_formation_name]) {
         return previous_formation_name;
     } else {
-        return get_previous_formation(previous_formation_name, previous_series_name, previous_subseries_name);
+        return get_previous_formation(previous_formation_name, previous_group_name, previous_subseries_name);
     }
 }
 
-function get_next_formation (formation_name, series_name, subseries_name = null) {
-    var formation_list = subseries_name !== null ? formations["series"][series_name]["subseries"][subseries_name]["formation_names"] : formations["series"][series_name]["formation_names"];
+function get_next_formation (formation_name, group_name, subseries_name = null) {
+    var [groups, group_names] = get_formation_groups();
+    
+    var formation_list = subseries_name !== null ? groups[group_name]["subseries"][subseries_name]["formation_names"] : groups[group_name]["formation_names"];
     var formation_index = formation_list.indexOf(formation_name);
     
     if (formation_index <= formation_list.length - 2) {
-        var next_series_name = series_name;
+        var next_group_name = group_name;
         var next_subseries_name = subseries_name;
         var next_formation_name = formation_list[formation_index + 1];
     } else {
         var next_formation_name = null;
         if (subseries_name !== null) {
-            var subseries_index = formations["series"][series_name]["subseries_names"].indexOf(subseries_name);
-            if (subseries_index <= formations["series"][series_name]["subseries_names"].length - 2) {
-                var next_series_name = series_name;
-                var next_subseries_name = formations["series"][series_name]["subseries_names"][subseries_index + 1];
-                next_formation_name = formations["series"][series_name]["subseries"][next_subseries_name]["formation_names"][0];
+            var subseries_index = groups[group_name]["subseries_names"].indexOf(subseries_name);
+            if (subseries_index <= groups[group_name]["subseries_names"].length - 2) {
+                var next_group_name = group_name;
+                var next_subseries_name = groups[group_name]["subseries_names"][subseries_index + 1];
+                next_formation_name = groups[group_name]["subseries"][next_subseries_name]["formation_names"][0];
             }
         }
         
         if (next_formation_name === null) {
-            var series_index = formations["series_names"].indexOf(series_name);
-            if (series_index <= formations["series_names"].length - 2) {
-                var next_series_name = formations["series_names"][series_index + 1];
+            var series_index = group_names.indexOf(group_name);
+            if (series_index <= group_names.length - 2) {
+                var next_group_name = group_names[series_index + 1];
             } else {
-                var next_series_name = formations["series_names"][0];
+                var next_group_name = group_names[0];
             }
             
-            if ("subseries_names" in formations["series"][next_series_name]) {
-                var next_subseries_name = formations["series"][next_series_name]["subseries_names"][0];
-                next_formation_name = formations["series"][next_series_name]["subseries"][next_subseries_name]["formation_names"][0];
+            if ("subseries_names" in groups[next_group_name]) {
+                var next_subseries_name = groups[next_group_name]["subseries_names"][0];
+                next_formation_name = groups[next_group_name]["subseries"][next_subseries_name]["formation_names"][0];
             } else {
                 var next_subseries_name = null;
-                next_formation_name = formations["series"][next_series_name]["formation_names"][0];
+                next_formation_name = groups[next_group_name]["formation_names"][0];
             }
         }
     }
@@ -4269,7 +4352,7 @@ function get_next_formation (formation_name, series_name, subseries_name = null)
     if ("cars" in formations["formations"][next_formation_name]) {
         return next_formation_name;
     } else {
-        return get_next_formation(next_formation_name, next_series_name, next_subseries_name);
+        return get_next_formation(next_formation_name, next_group_name, next_subseries_name);
     }
 }
 
@@ -4297,8 +4380,16 @@ function formation_detail (formation_name) {
         
         change_title(series_name + " " + formation_name + " (" + railroad_info["railroad_name"] + ") の編成情報・運用 | " + instance_info["instance_name"], "/railroad_" + railroad_info["railroad_id"] + "/formations/" + encodeURIComponent(formation_name) + "/");
         
-        var previous_formation_name = get_previous_formation(formation_name, series_name, "subseries_name" in formations["formations"][formation_name] ? formations["formations"][formation_name]["subseries_name"] : null);
-        var next_formation_name = get_next_formation(formation_name, series_name, "subseries_name" in formations["formations"][formation_name] ? formations["formations"][formation_name]["subseries_name"] : null);
+        if (config["group_formations_by_prefix"] && "prefixes" in formations) {
+            var group_name = "prefix" in formations["formations"][formation_name] ? formations["formations"][formation_name]["prefix"] : "その他";
+            var subseries_name = null;
+        } else {
+            var group_name = series_name;
+            var subseries_name = "subseries_name" in formations["formations"][formation_name] ? formations["formations"][formation_name]["subseries_name"] : null;
+        }
+        
+        var previous_formation_name = get_previous_formation(formation_name, group_name, subseries_name);
+        var next_formation_name = get_next_formation(formation_name, group_name, subseries_name);
         
         var buf = "<div class='heading_wrapper'><a href='/railroad_" + railroad_info["railroad_id"] + "/formations/" + encodeURIComponent(previous_formation_name) + "/' class='previous_button' onclick='event.preventDefault(); formation_detail(\"" + add_slashes(previous_formation_name) + "\");'>" + escape_html(previous_formation_name) + "</a><h2>" + escape_html(formation_name) + "</h2><a href='/railroad_" + railroad_info["railroad_id"] + "/formations/" + encodeURIComponent(next_formation_name) + "/' class='next_button' onclick='event.preventDefault(); formation_detail(\"" + add_slashes(next_formation_name) + "\");'>" + escape_html(next_formation_name) + "</a></div>";
         
@@ -4325,15 +4416,7 @@ function formation_detail (formation_name) {
     buf += "<div id='semifixed_formation_area'></div>";
     
     buf += "<h3>基本情報</h3>";
-    buf += "<div class='key_and_value'><b>車両形式</b><span id='formation_series_name'>";
-    if ("series_name" in formations["formations"][formation_name]) {
-        if ("is_series_group" in formations["series"][series_name] && formations["series"][series_name]["is_series_group"]) {
-            buf += escape_html(formations["formations"][formation_name]["subseries_name"]);
-        } else {
-            buf += escape_html(series_name + ("subseries_name" in formations["formations"][formation_name] ? " " + formations["formations"][formation_name]["subseries_name"] : ""));
-        }
-    }
-    buf += "</div>";
+    buf += "<div class='key_and_value'><b>車両形式</b><span id='formation_series_name'>" + ("series_name" in formations["formations"][formation_name] ? escape_html(series_name + ("subseries_name" in formations["formations"][formation_name] ? " " + formations["formations"][formation_name]["subseries_name"] : "")) : "") + "</div>";
     buf += "<div class='key_and_value' id='formation_affiliation'></div>";
     
     buf += "<div class='descriptive_text' id='formation_description'></div>";
@@ -4401,7 +4484,7 @@ function formation_detail (formation_name) {
                     document.getElementById("formation_caption").innerText = data["caption"];
                 }
                 
-                document.getElementById("formation_series_name").innerText = "subseries_name" in data ? data["subseries_name"] : data["series_name"];
+                document.getElementById("formation_series_name").innerText = data["series_name"] + ("subseries_name" in data ? " " + data["subseries_name"] : "");
                 
                 if (data["affiliation"] !== null && data["affiliation"].length >= 1) {
                     document.getElementById("formation_affiliation").innerHTML = "<b>" + ("cars" in formations["formations"][formation_name] ? "" : "最終") + "所属</b>" + escape_html(data["affiliation"]);

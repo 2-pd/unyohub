@@ -21,8 +21,12 @@ if (isset($_POST["last_modified_timestamp"]) && $last_modified <= intval($_POST[
         "require_comments_on_speculative_posts" => $main_config["require_comments_on_speculative_posts"]
     );
     
-    if (!empty($main_config["introduction_text"])) {
-        $instance_info["introduction_text"] = stripcslashes($main_config["introduction_text"]);
+    if (!empty($main_config["instance_introduction"])) {
+        $instance_info["instance_introduction"] = stripcslashes($main_config["instance_introduction"]);
+    }
+    
+    if (!empty($main_config["instance_explanation"])) {
+        $instance_info["instance_explanation"] = stripcslashes($main_config["instance_explanation"]);
     }
     
     if (!empty($main_config["manual_url"])) {

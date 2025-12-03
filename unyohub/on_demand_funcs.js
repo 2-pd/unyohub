@@ -1766,6 +1766,14 @@ function change_show_unregistered_formations (bool_val) {
     draw_formation_table(false);
 }
 
+function change_group_formations_by_prefix (bool_val) {
+    config["group_formations_by_prefix"] = bool_val;
+    
+    save_config();
+    
+    draw_formation_table(false);
+}
+
 function update_formation_table_drop_down_status (elm) {
     formation_table_drop_down_status[elm.id] = elm.checked;
 }
@@ -1816,6 +1824,8 @@ function get_operation_data_history (formation_name, operation_number, yyyy_mm =
             const YOBI_LIST = ["日", "月", "火", "水", "木", "金", "土"];
             
             if (response !== false) {
+                var holiday_list = get_holiday_list(operation_data_date.substring(0, 4));
+                
                 var dt = new Date();
                 var buf = "<h3>" + escape_html(h3_text) + "</h3>";
                 buf += "<div class='popup_subtitle'>" + (yyyy_mm === "" ? "過去30日間" : yyyy_mm.substring(0, 4) + "年" + Number(yyyy_mm.substring(5)) + "月") + "の運用履歴<input type='month' class='date_button' value='" + yyyy_mm + "' min='2000-01' max='" + dt.getFullYear() + "-" + ("0" + (dt.getMonth() + 1)).slice(-2) + "' onchange='get_operation_data_history(" + (formation_name === null ? "null" : "\"" + add_slashes(formation_name) + "\"") + ", " + (operation_number === null ? "null" : "\"" + add_slashes(operation_number) + "\"") + ", this.value);'></div>";
@@ -1826,7 +1836,7 @@ function get_operation_data_history (formation_name, operation_number, yyyy_mm =
                 for (var cnt = 0; cnt < day_count; cnt++) {
                     var yyyy_mm_dd = get_date_string(ts);
                     
-                    buf += "<h4>" + Number(yyyy_mm_dd.substring(5, 7)) + "月" + Number(yyyy_mm_dd.substring(8)) + "日 (" + YOBI_LIST[day_value] + ")</h4>";
+                    buf += "<h4>" + Number(yyyy_mm_dd.substring(5, 7)) + "月" + Number(yyyy_mm_dd.substring(8)) + "日 (" + YOBI_LIST[day_value] + (holiday_list.includes(yyyy_mm_dd.substring(5)) ? "・祝" : "") + ")</h4>";
                     if (yyyy_mm_dd in data) {
                         buf += get_operation_data_html(data[yyyy_mm_dd], ts, (operation_table !== null && get_diagram_revision(yyyy_mm_dd) === operation_table["diagram_revision"]));
                     } else {
@@ -1835,10 +1845,11 @@ function get_operation_data_history (formation_name, operation_number, yyyy_mm =
                     
                     if (yyyy_mm === "") {
                         ts -= 86400;
+                        day_value = (day_value !== 0 ? day_value - 1 : 6);
                     } else {
                         ts += 86400;
+                        day_value = (day_value !== 6 ? day_value + 1 : 0);
                     }
-                    day_value = (day_value !== 0 ? day_value - 1 : 6);
                 }
                 
                 popup_inner_elm.innerHTML = buf;
@@ -3207,8 +3218,12 @@ function show_about () {
     var buf = "<img src='/apple-touch-icon.webp' alt='" + UNYOHUB_APP_NAME + "' id='unyohub_icon'>";
     buf += "<h2>" + escape_html(instance_info["instance_name"]) + "</h2>";
     
-    if ("introduction_text" in instance_info) {
-        buf += "<div class='long_text'>" + convert_to_html(instance_info["introduction_text"]) + "</div>";
+    if ("instance_introduction" in instance_info) {
+        buf += "<div class='long_text'>" + convert_to_html(instance_info["instance_introduction"]) + "</div>";
+    }
+    
+    if ("instance_explanation" in instance_info) {
+        buf += "<div class='long_text'>" + convert_to_html(instance_info["instance_explanation"]) + "</div>";
     }
     
     if ("manual_url" in instance_info) {
@@ -3253,4 +3268,30 @@ function reload_app () {
 }
 
 
-funcs_load_resolve();
+function show_welcome_message () {
+    if (!("instance_introduction" in instance_info)) {
+        return;
+    }
+    
+    var message_box_elm = document.createElement("div");
+    message_box_elm.id = "welcome_message_box";
+    
+    var instance_name_html = escape_html(instance_info["instance_name"]);
+    message_box_elm.innerHTML = "<h3>" + instance_name_html + "</h3>" + convert_to_html(instance_info["instance_introduction"]) + "<div class='link_block'><u onclick='show_about();'>" + instance_name_html + "について</u>" + ("manual_url" in instance_info ? "　<a href='" + add_slashes(instance_info["manual_url"]) + "' target='_blank' class='external_link'>使い方</a>" : "") + "</div><button type='button' class='message_close_button' onclick='close_welcome_message();'></button>";
+    
+    document.getElementsByTagName("body")[0].appendChild(message_box_elm);
+}
+
+function close_welcome_message () {
+    document.getElementById("welcome_message_box").remove();
+}
+
+
+(function () {
+    var non_critical_css_elm = document.getElementById("non_critical_css");
+    if (non_critical_css_elm.media === "all") {
+        funcs_load_resolve();
+    } else {
+        non_critical_css_elm.addEventListener("load", funcs_load_resolve);
+    }
+})();
