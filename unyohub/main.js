@@ -2918,7 +2918,7 @@ function get_train (line_id, is_inbound, train_number, starting_station) {
 }
 
 function get_operations (line_id, train_number, starting_station, train_direction) {
-    if (train_number in line_operations["lines"][line_id][train_direction]) {
+    if (line_id in line_operations["lines"] && train_number in line_operations["lines"][line_id][train_direction]) {
         for (var train of line_operations["lines"][line_id][train_direction][train_number]) {
             if (train["starting_station"] === starting_station) {
                 return [...train["operation_numbers"]];
