@@ -44,11 +44,22 @@ _/_/_/_/ データベース _/_/_/_/
 
 `unyohub_formation_histories` 車歴データ
   `formation_name` TEXT NOT NULL 編成名
+  `record_number` TEXT NOT NULL 「YYYYMM_」のあとに通し番号を付加したレコード識別名
   `event_year_month` TEXT NOT NULL 「YYYY-MM」形式の年月、または「YYYY」形式の年
   `event_type` TEXT NOT NULL 変更の種類(「construct」(新製)、「modify」(改修)、「repaint」(塗装等変更)、「renewal」(更新)、「transfer」(転属)、「rearrange」(組換)、「unregister」(廃車)、「other」(その他)のいずれか)
   `event_content` TEXT 変更内容説明文
 
+  PRIMARY KEY(`formation_name`, `record_number`)
   INDEX `unyohub_idx_fh1`(`formation_name`, `event_year_month`)
+
+
+`unyohub_car_histories` 車歴と車両の対応表
+  `formation_name` TEXT NOT NULL 編成名
+  `record_number` TEXT NOT NULL 「YYYYMM_」のあとに通し番号を付加したレコード識別名
+  `car_number` TEXT NOT NULL 車番
+
+  PRIMARY KEY(`formation_name`, `record_number`, `car_number`)
+  INDEX `unyohub_idx_ch1`(`formation_name`, `car_number`)
 
 
 `unyohub_series_caches` 車両形式データキャッシュ
