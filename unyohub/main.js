@@ -4484,7 +4484,7 @@ function formation_detail (formation_name) {
     buf += "</table>";
     
     buf += "<h3>車歴</h3>";
-    buf += "<select id='formation_histories_car_select' class='wide_select' onchange='draw_formation_histories(formation_histories, this.value);'><option value=''>全車両の車歴</option></select>";
+    buf += "<label for='formation_histories_car_select' class='filter_select_box'><select id='formation_histories_car_select' onchange='draw_formation_histories(formation_histories, this.value);'><option value=''>全車両の車歴</option></select></label>";
     buf += "<div id='histories_area'><div class='descriptive_text'>車歴データがありません</div></div>";
     
     buf += "<div id='formation_reference_books_area' class='descriptive_text'></div>";
