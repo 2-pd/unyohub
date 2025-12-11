@@ -2010,8 +2010,6 @@ input[type="checkbox"]:checked + :is(label.drop_down, label.formation_table_drop
 }
 
 #formation_table_area .screenshot_button {
-    position: absolute;
-    
     top: 6px;
     right: 0;
 }
@@ -3165,8 +3163,9 @@ footer {
     right: 55px;
     
     article & {
-        top: 100px;
-        right: 10px;
+        position: static;
+        
+        margin: -50px 0 10px min(calc(50% + 205px), calc(100% - 40px));
     }
 }
 
@@ -3265,6 +3264,19 @@ input[type="text"], input[type="number"], input[type="password"], input[type="se
         
         color: #ffffff;
     }
+}
+
+.wide_select {
+    display: block;
+    
+    width: 300px;
+    height: 36px;
+    
+    margin: 0 auto 10px auto;
+    
+    line-height: 36px;
+    font-size: 20px;
+    text-align: center;
 }
 
 .dark_mode .square_popup :is(input[type="text"], input[type="password"]) {
