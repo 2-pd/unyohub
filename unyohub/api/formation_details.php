@@ -76,10 +76,22 @@ if (!empty($cars)) {
     $formation_data["cars"] = $cars;
 }
 
-$histories_r = $db_obj->query("SELECT `event_year_month`, `event_type`, `event_content` FROM `unyohub_formation_histories` WHERE `formation_name` = '".$formation_name."' ORDER BY `event_year_month` ASC");
+$car_histories_r = $db_obj->query("SELECT `record_number`, `car_number` FROM `unyohub_car_histories` WHERE `formation_name` = '".$formation_name."'");
+
+$related_cars = array();
+while ($car_history_data = $car_histories_r->fetchArray(SQLITE3_ASSOC)) {
+    if (!isset($related_cars[$car_history_data["record_number"]])) {
+        $related_cars[$car_history_data["record_number"]] = array();
+    }
+    $related_cars[$car_history_data["record_number"]][] = $car_history_data["car_number"];
+}
+
+$histories_r = $db_obj->query("SELECT `record_number`, `event_year_month`, `event_type`, `event_content` FROM `unyohub_formation_histories` WHERE `formation_name` = '".$formation_name."' ORDER BY `event_year_month` ASC");
 
 $formation_data["histories"] = array();
 while ($history_data = $histories_r->fetchArray(SQLITE3_ASSOC)) {
+    $history_data["related_cars"] = isset($related_cars[$history_data["record_number"]]) ? $related_cars[$history_data["record_number"]] : array();
+    unset($history_data["record_number"]);
     $formation_data["histories"][] = $history_data;
 }
 
