@@ -423,7 +423,7 @@ a:has(.train_icon), b:has(.train_icon) {
     }
 }
 
-button, a.wide_button, .chip + label {
+button, .radio_area label, a.wide_button, .chip + label {
     background-color: rgba(255,255,255,0.9);
     background-image: linear-gradient(315deg, #666666 8px, transparent 8px);
     
@@ -435,7 +435,7 @@ button, a.wide_button, .chip + label {
     text-decoration: none;
 }
 
-.chip + label {
+.radio_area label, .chip + label {
     display: inline-block;
     
     position: relative;
@@ -452,21 +452,56 @@ button, a.wide_button, .chip + label {
     color: #666666;
 }
 
-.chip:checked + label {
-    padding: 4px 4px 4px 22px;
+.radio_area {
+    text-align: center;
     
+    label {
+        margin: 6px 0 6px -1px;
+        
+        padding: 8px 12px;
+        
+        border-radius: 0;
+    }
+    
+    label:first-child {
+        margin-left: 0;
+        
+        border-radius: 4px 0 0 4px;
+    }
+    
+    label:last-child {
+        border-radius: 0 4px 4px 0;
+    }
+    
+    label.selected_label {
+        padding-top: 5px;
+        
+        border-top-width: 4px;
+        
+        font-weight: bold;
+        
+        z-index: 1;
+    }
+}
+
+.radio_area label.selected_label, .chip:checked + label {
     border-color: #333333;
     
-    background-image: url(data:image/webp;base64,UklGRpwAAABXRUJQVlA4TI8AAAAvH8AHEC9AkG3TTOn+bNcgyLZppnR/thNk2zRTuj/byQQstk91aUUQYNtR7H8qwSCSrTYvTcClCMABFnBA/LuhvFQBEf1X5LZtk8VbOp6hf2Uer+IIV8J4IYQrSVcyv2AerzzClTBeCMFv2SjYLZGCeXOPfXMGzuoiGfyXRODix7ZOQ6cnSZZGz4VSXvSbFAA=);
-    background-repeat: no-repeat;
-    background-size: 16px;
-    background-position: 4px 50%;
     background-color: transparent;
     
     color: #333333;
 }
 
-.wide_button, .half_button {
+.chip:checked + label {
+    padding: 4px 4px 4px 22px;
+    
+    background-image: url(data:image/webp;base64,UklGRpwAAABXRUJQVlA4TI8AAAAvH8AHEC9AkG3TTOn+bNcgyLZppnR/thNk2zRTuj/byQQstk91aUUQYNtR7H8qwSCSrTYvTcClCMABFnBA/LuhvFQBEf1X5LZtk8VbOp6hf2Uer+IIV8J4IYQrSVcyv2AerzzClTBeCMFv2SjYLZGCeXOPfXMGzuoiGfyXRODix7ZOQ6cnSZZGz4VSXvSbFAA=);
+    background-repeat: no-repeat;
+    background-size: 16px;
+    background-position: 4px 50%;
+}
+
+.wide_button, .save_button, .half_button {
     display: block;
     
     position: relative;
@@ -499,6 +534,19 @@ button, a.wide_button, .chip + label {
     
     background-color: #333333;
     background-image: linear-gradient(135deg, transparent, rgba(255, 255, 255, 0.4));
+}
+
+.save_button {
+    position: fixed;
+    
+    bottom: 10px;
+    left: max(calc(50vw - 230px), 20px);
+    
+    margin: 0;
+}
+
+form:has(.save_button) {
+    padding-bottom: 60px;
 }
 
 .half_button {

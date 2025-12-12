@@ -24,14 +24,14 @@ if (empty($railroad_info)) {
 print_header();
 
 
-print "<article>";
-
 $formations = json_decode(file_get_contents("../data/".$railroad_id."/formations.json"), TRUE);
 
 if (empty($formations)) {
     print "【!】編成データを読み込めませんでした";
     exit;
 }
+
+print "<article>";
 
 print "<nav><a href='railroads.php?railroad_id=".$railroad_id."'>".htmlspecialchars($railroad_info["railroad_name"])."</a> &gt;";
 
@@ -88,9 +88,6 @@ if (empty($_GET["formation_name"])) {
     
     print "<h2>".htmlspecialchars($_GET["formation_name"])."</h2>";
     
-    $event_types = array("construct", "modify", "repaint", "renewal", "transfer", "rearrange", "unregister", "other");
-    $event_types_ja = array("construct" => "新製", "modify" => "改修", "repaint" => "塗装等変更", "renewal" => "更新", "transfer" => "転属", "rearrange" => "組換", "unregister" => "廃車", "other" => "その他");
-    
     $db_obj = new SQLite3("../data/".$railroad_id."/railroad.db");
     $db_obj->busyTimeout(5000);
     
@@ -106,33 +103,8 @@ if (empty($_GET["formation_name"])) {
             $cars_data[] = $car_data;
         }
         
-        $histories_r = $db_obj->query("SELECT `event_year_month`, `event_type`, `event_content` FROM `unyohub_formation_histories` WHERE `formation_name` = '".$formation_name."' ORDER BY `event_year_month` ASC");
-        
-        $histories_data = array();
-        while ($history_data = $histories_r->fetchArray(SQLITE3_ASSOC)) {
-            $histories_data[] = $history_data;
-        }
-        
         if ($formation_data["currently_registered"]) {
             $formation_data["semifixed_formation"] = !is_null($formation_data["semifixed_formation"]) ? $formation_data["semifixed_formation"] : $_GET["formation_name"];
-        }
-        
-        $reference_books_r = $db_obj->query("SELECT * FROM `unyohub_reference_books` ORDER BY `publisher_name` ASC, `book_title` ASC");
-        
-        $reference_books = array();
-        while ($reference_book_info = $reference_books_r->fetchArray(SQLITE3_ASSOC)) {
-            $reference_books[] = $reference_book_info;
-        }
-        
-        $formation_reference_books_r = $db_obj->query("SELECT * FROM `unyohub_formation_reference_books` WHERE `formation_name` = '".$formation_name."'");
-        
-        $formation_reference_books = array();
-        while ($reference_book_info = $formation_reference_books_r->fetchArray(SQLITE3_ASSOC)) {
-            if (!isset($formation_reference_books[$reference_book_info["publisher_name"]])) {
-                $formation_reference_books[$reference_book_info["publisher_name"]] = array();
-            }
-            
-            $formation_reference_books[$reference_book_info["publisher_name"]][] = $reference_book_info["book_title"];
         }
         
         if (isset($_POST["affiliation"], $_POST["caption"], $_POST["description"], $_POST["inspection_information"])) {
@@ -196,35 +168,6 @@ if (empty($_GET["formation_name"])) {
                 $db_obj->querySingle("UPDATE `unyohub_cars` SET `manufacturer` = '".$db_obj->escapeString($_POST["car_manufacturer_".$cnt])."', `constructed` = '".$db_obj->escapeString($_POST["car_constructed_".$cnt])."', `description` = '".$db_obj->escapeString($_POST["car_description_".$cnt])."' WHERE `formation_name` = '".$formation_name."' AND `car_number` = '".$db_obj->escapeString($cars_data[$cnt]["car_number"])."'");
             }
             
-            $db_obj->querySingle("DELETE FROM `unyohub_formation_histories` WHERE `formation_name` = '".$formation_name."'");
-            for ($cnt = 0; isset($_POST["event_year_".$cnt], $_POST["event_type_".$cnt], $_POST["event_content_".$cnt]); $cnt++) {
-                if (empty($_POST["event_content_".$cnt])) {
-                    continue;
-                }
-                
-                $event_year_month = intval($_POST["event_year_".$cnt]);
-                if (!empty($_POST["event_month_".$cnt])) {
-                    $event_year_month .= "-".str_pad(intval($_POST["event_month_".$cnt]), 2, "0", STR_PAD_LEFT);
-                }
-                
-                $db_obj->querySingle("INSERT INTO `unyohub_formation_histories`(`formation_name`, `event_year_month`, `event_type`, `event_content`) VALUES ('".$formation_name."', '".$event_year_month."', '".$db_obj->escapeString($_POST["event_type_".$cnt])."', '".$db_obj->escapeString($_POST["event_content_".$cnt])."')");
-            }
-            
-            $db_obj->querySingle("DELETE FROM `unyohub_formation_reference_books` WHERE `formation_name` = '".$formation_name."'");
-            for ($cnt = 0; isset($_POST["publisher_name_".$cnt], $_POST["book_title_".$cnt]); $cnt++) {
-                if (!empty($_POST["reference_book_".$cnt])) {
-                    $db_obj->querySingle("INSERT INTO `unyohub_formation_reference_books`(`formation_name`, `publisher_name`, `book_title`) VALUES ('".$formation_name."', '".$db_obj->escapeString($_POST["publisher_name_".$cnt])."', '".$db_obj->escapeString($_POST["book_title_".$cnt])."')");
-                    
-                    if (!isset($formation_reference_books[$_POST["publisher_name_".$cnt]])) {
-                        $formation_reference_books[$_POST["publisher_name_".$cnt]] = array();
-                    }
-                    
-                    $formation_reference_books[$_POST["publisher_name_".$cnt]][] = $_POST["book_title_".$cnt];
-                } elseif (isset($formation_reference_books[$_POST["publisher_name_".$cnt]]) && in_array($_POST["book_title_".$cnt], $formation_reference_books[$_POST["publisher_name_".$cnt]])) {
-                    array_splice($formation_reference_books[$_POST["publisher_name_".$cnt]], array_search($_POST["book_title_".$cnt], $formation_reference_books[$_POST["publisher_name_".$cnt]]), 1);
-                }
-            }
-            
             print "<script> alert('編成情報を保存しました'); </script>";
             
             on_error:
@@ -241,57 +184,12 @@ if (empty($_GET["formation_name"])) {
                 $cars_data[$cnt]["constructed"] = $_POST["car_constructed_".$cnt];
                 $cars_data[$cnt]["description"] = $_POST["car_description_".$cnt];
             }
-            
-            $event_dict = array();
-            for ($cnt = 0; isset($_POST["event_year_".$cnt], $_POST["event_type_".$cnt], $_POST["event_content_".$cnt]); $cnt++) {
-                if (empty($_POST["event_content_".$cnt])) {
-                    continue;
-                }
-                
-                $event_year_month = intval($_POST["event_year_".$cnt]);
-                if (empty($_POST["event_month_".$cnt])) {
-                    $event_key = $event_year_month."-00_".str_pad($cnt, 3, "0", STR_PAD_LEFT);
-                } else {
-                    $event_year_month .= "-".str_pad(intval($_POST["event_month_".$cnt]), 2, "0", STR_PAD_LEFT);
-                    $event_key = $event_year_month."_".str_pad($cnt, 3, "0", STR_PAD_LEFT);
-                }
-                
-                $event_dict[$event_key] = array("event_year_month" => $event_year_month, "event_type" => $_POST["event_type_".$cnt], "event_content" => $_POST["event_content_".$cnt]);
-            }
-            
-            $event_keys = array_keys($event_dict);
-            sort($event_keys);
-            
-            $histories_data = array();
-            foreach ($event_keys as $event_key) {
-                $histories_data[] = $event_dict[$event_key];
-            }
         }
         
-        $buf = "";
-        foreach ($event_types as $event_type) {
-            $buf .= "<option value='".$event_type."'>".$event_types_ja[$event_type]."</option>";
-        }
-        
-        print <<< EOM
-        <script>
-        function add_history () {
-            var cnt = document.getElementsByClassName("history_item").length;
-            var dt = new Date();
-            
-            var history_item_elm = document.createElement("div");
-            history_item_elm.className = "history_item";
-            history_item_elm.innerHTML = "<h5>変更年月 / 変更の種類</h5><div class='half_input_wrapper'><input type='number' name='event_year_" + cnt + "' value='" + dt.getFullYear() + "' max='2100' min='1901'>年<input type='number' name='event_month_" + cnt + "' max='12' min='0'>月 / <select name='event_type_" + cnt + "'>{$buf}</select></div><h5>変更内容</h5><textarea name='event_content_" + cnt + "'></textarea>";
-            
-            document.getElementById("histories_area").appendChild(history_item_elm);
-        }
-        </script>
-        EOM;
+        print "<div class='radio_area'><label class='selected_label'>基本情報</label><label onclick='if(confirm(\"編成基本情報の編集を中断して車歴の編集を行いますか？\\n保存していない内容があれば破棄されます。\")){ location.href = \"formation_histories.php?railroad_id=".$railroad_id."&formation_name=".urlencode($_GET["formation_name"])."\"; }'>車歴情報</label></div>";
         
         print "<form action='formations.php?railroad_id=".$railroad_id."&formation_name=".urlencode($_GET["formation_name"])."' method='post'>";
         print "<input type='hidden' name='one_time_token' value='".$user->create_one_time_token()."'>";
-        
-        print "<button type='submit' class='wide_button'>上書き保存</button>";
         
         print "<h3>編成の一行見出し</h3>";
         print "<input type='text' name='caption' value='".addslashes($formation_data["caption"])."'>";
@@ -322,39 +220,7 @@ if (empty($_GET["formation_name"])) {
             print "<textarea name='car_description_".$cnt."'>".htmlspecialchars($cars_data[$cnt]["description"])."</textarea>";
         }
         
-        print "<h3>車歴</h3>";
-        print "<div class='informational_text'>データは年月の順に並び替えられ、内容が空欄の項目は除去されて保存されます。</div>";
-        print "<div id='histories_area'>";
-        for ($cnt = 0; isset($histories_data[$cnt]); $cnt++) {
-            print "<div class='history_item'>";
-            print "<h5>変更年月 / 変更の種類</h5>";
-            $event_month = intval(substr($histories_data[$cnt]["event_year_month"], 5));
-            print "<div class='half_input_wrapper'><input type='number' name='event_year_".$cnt."' value='".intval(substr($histories_data[$cnt]["event_year_month"], 0, 4))."' max='2100' min='1901'>年<input type='number' name='event_month_".$cnt."' value='".($event_month >= 1 ? $event_month : "")."' max='12' min='0'>月 / <select name='event_type_".$cnt."'>";
-            foreach ($event_types as $event_type) {
-                print "<option value='".$event_type."'".($histories_data[$cnt]["event_type"] === $event_type ? " selected='selected'" : "").">".$event_types_ja[$event_type]."</option>";
-            }
-            print "</select></div>";
-            print "<h5>変更内容</h5>";
-            print "<textarea name='event_content_".$cnt."'>".htmlspecialchars($histories_data[$cnt]["event_content"])."</textarea>";
-            print "</div>";
-        }
-        print "</div>";
-        print "<br><div class='informational_text'><a href='javascript:void(0);' onclick='add_history();'>+ 車歴の追加</a></div>";
-        
-        print "<h3>参考書籍</h3>";
-        for ($cnt = 0; isset($reference_books[$cnt]); $cnt++) {
-            print "<input type='hidden' name='publisher_name_".$cnt."' value='".addslashes($reference_books[$cnt]["publisher_name"])."'>";
-            print "<input type='hidden' name='book_title_".$cnt."' value='".addslashes($reference_books[$cnt]["book_title"])."'>";
-            print "<input type='checkbox' name='reference_book_".$cnt."' id='reference_book_".$cnt."' class='toggle' value='YES'";
-            if (isset($formation_reference_books[$reference_books[$cnt]["publisher_name"]]) && in_array($reference_books[$cnt]["book_title"], $formation_reference_books[$reference_books[$cnt]["publisher_name"]])) {
-                print " checked='checked'";
-            }
-            print "><label for='reference_book_".$cnt."'>".htmlspecialchars($reference_books[$cnt]["publisher_name"])."『".htmlspecialchars($reference_books[$cnt]["book_title"])."』</label>";
-        }
-        
-        print "<br><a class='execute_button' href='reference_books.php?railroad_id=".$railroad_id."' onclick='if(!confirm(\"編成情報の編集を中断して参考書籍の追加・削除を行いますか？\\n保存していない内容があれば破棄されます。\")){ event.preventDefault(); }'>参考書籍の追加・削除</a>";
-        
-        print "<br><button type='submit' class='wide_button'>上書き保存</button>";
+        print "<button type='submit' class='save_button'>上書き保存</button>";
         
         print "</form>";
     } else {

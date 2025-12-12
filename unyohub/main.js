@@ -4017,6 +4017,8 @@ var selected_formation_name = null;
 var formation_table_drop_down_status;
 var formation_table_wrapper_scroll_amount;
 
+var formation_histories;
+
 function formations_mode (formation_name = null) {
     change_mode(3);
     
@@ -4356,6 +4358,27 @@ function get_next_formation (formation_name, group_name, subseries_name = null) 
     }
 }
 
+function draw_formation_histories (histories, car_number = "") {
+    const EVENT_TYPE_JA = { construct : "新製", modify : "改修", repaint : "塗装等変更", renewal : "更新", transfer : "転属", rearrange : "組換", unregister : "廃車", other : "その他" };
+    
+    var buf = "";
+    for (var history of histories) {
+        if (car_number.length >= 1 && !history["related_cars"].includes(car_number)) {
+            continue;
+        }
+        
+        if (history["event_year_month"].length === 4) {
+            var event_year_month = history["event_year_month"] + "年";
+        } else {
+            var event_year_month = history["event_year_month"].substring(0, 4) + "年" + Number(history["event_year_month"].substring(5)) + "月";
+        }
+        
+        buf += "<div class='history_item'><time datetime='" + history["event_year_month"] + "'>" + event_year_month + "</time><h5 class='event_type_" + history["event_type"] + "'>" + EVENT_TYPE_JA[history["event_type"]] + "</h5><br>" + convert_to_html(history["event_content"]) + "</div>";
+    }
+    
+    document.getElementById("histories_area").innerHTML = buf.length >= 1 ? buf : "<div class='descriptive_text'>車歴データがありません</div>";
+}
+
 function formation_detail (formation_name) {
     if ("new_formation_name" in formations["formations"][formation_name]) {
         if (formations["formations"][formation_name]["new_railroad_id"] === null) {
@@ -4461,6 +4484,7 @@ function formation_detail (formation_name) {
     buf += "</table>";
     
     buf += "<h3>車歴</h3>";
+    buf += "<label for='formation_histories_car_select' class='filter_select_box'><select id='formation_histories_car_select' onchange='draw_formation_histories(formation_histories, this.value);'><option value=''>全車両の車歴</option></select></label>";
     buf += "<div id='histories_area'><div class='descriptive_text'>車歴データがありません</div></div>";
     
     buf += "<div id='formation_reference_books_area' class='descriptive_text'></div>";
@@ -4470,7 +4494,6 @@ function formation_detail (formation_name) {
     article_elms[3].scrollTop = 0;
     
     var formation_operations_area_elm = document.getElementById("formation_operations_area");
-    var histories_area_elm = document.getElementById("histories_area");
     
     if (navigator.onLine) {
         formation_operations_area_elm.className = "loading_icon";
@@ -4544,8 +4567,15 @@ function formation_detail (formation_name) {
                     car_info_table_elm.innerHTML = buf;
                 }
                 
+                var buf = "<option value=''>全車両の車歴</option>";
+                for (var car_info of data["cars"]) {
+                    buf += "<option value='" + add_slashes(car_info["car_number"]) + "'>" + escape_html(car_info["car_number"]) + "</option>";
+                }
+                
+                document.getElementById("formation_histories_car_select").innerHTML = buf;
+                
                 if ("semifixed_formation" in data) {
-                    var buf = "";
+                    buf = "";
                     for (var semifixed_formation of data["semifixed_formation"].split("+")) {
                         buf += (buf.length >= 1 ? " + " : "") + (semifixed_formation !== formation_name ? "<a href='/railroad_" + railroad_info["railroad_id"] + "/formations/" + encodeURIComponent(semifixed_formation) + "/' onclick='event.preventDefault(); formation_detail(\"" + add_slashes(semifixed_formation) + "\");'>" : "<b>") + "<img src='" + get_icon(semifixed_formation) + "' alt='' class='train_icon'>" + escape_html(semifixed_formation) + (semifixed_formation !== formation_name ? "</a>" : "</b>");
                     }
@@ -4553,7 +4583,7 @@ function formation_detail (formation_name) {
                     document.getElementById("semifixed_formation_area").innerHTML = "<h3>半固定編成</h3><div>" + buf + "</div>";
                 }
                 
-                var buf = "<input type='checkbox' id='formation_operations'><label for='formation_operations' class='drop_down'>運用情報</label>";
+                buf = "<input type='checkbox' id='formation_operations'><label for='formation_operations' class='drop_down'>運用情報</label>";
                 if (data["operations_today"] !== null || data["operations_tomorrow"] !== null) {
                     var ts = get_timestamp();
                     
@@ -4570,22 +4600,9 @@ function formation_detail (formation_name) {
                 
                 formation_operations_area_elm.innerHTML = buf;
                 
-                var event_type_ja = { construct : "新製", modify : "改修", repaint : "塗装等変更", renewal : "更新", transfer : "転属", rearrange : "組換", unregister : "廃車", other : "その他" };
+                formation_histories = data["histories"];
                 
-                var buf = "";
-                for (var history of data["histories"]) {
-                    if (history["event_year_month"].length === 4) {
-                        var event_year_month = history["event_year_month"] + "年";
-                    } else {
-                        var event_year_month = history["event_year_month"].substring(0, 4) + "年" + Number(history["event_year_month"].substring(5)) + "月";
-                    }
-                    
-                    buf += "<div class='history_item'><time datetime='" + history["event_year_month"] + "'>" + event_year_month + "</time><h5 class='event_type_" + history["event_type"] + "'>" + event_type_ja[history["event_type"]] + "</h5><br>" + convert_to_html(history["event_content"]) + "</div>";
-                }
-                
-                if (buf.length >= 1) {
-                    histories_area_elm.innerHTML = buf;
-                }
+                draw_formation_histories(formation_histories);
                 
                 if ("reference_books" in data) {
                     var reference_books_html = "<h5>参考書籍</h5>";

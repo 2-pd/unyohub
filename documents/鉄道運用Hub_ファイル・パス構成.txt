@@ -87,6 +87,7 @@ _/_/_/_/ ファイル構成 _/_/_/_/
    └ manage_train_icons.php ・・・各路線系統の車両アイコン画像管理
    └ manage_diagram_files.php ・・・各路線系統の各ダイヤ改正識別名フォルダ内ファイル管理
    └ formations.php ・・・編成情報の編集
+   └ formation_histories.php ・・・車歴情報の編集
    └ reference_books.php ・・・参考書籍情報の編集
    └ train_icons.php ・・・管理画面で使用する車両アイコン画像を配信
    └ admin_styles.css ・・・管理画面用スタイルシート

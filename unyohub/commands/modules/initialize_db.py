@@ -30,8 +30,12 @@ def initialize_db (mes, main_dir):
     cur.execute("CREATE INDEX IF NOT EXISTS `unyohub_idx_c1` ON `unyohub_cars`(`formation_name`, `car_order`)")
     
     mes("テーブル「unyohub_formation_histories」を作成しています...")
-    cur.execute("CREATE TABLE IF NOT EXISTS `unyohub_formation_histories`(`formation_name` TEXT NOT NULL, `event_year_month` TEXT NOT NULL, `event_type` TEXT NOT NULL, `event_content` TEXT)")
+    cur.execute("CREATE TABLE IF NOT EXISTS `unyohub_formation_histories`(`formation_name` TEXT NOT NULL, `record_number` TEXT NOT NULL, `event_year_month` TEXT NOT NULL, `event_type` TEXT NOT NULL, `event_content` TEXT, PRIMARY KEY(`formation_name`, `record_number`))")
     cur.execute("CREATE INDEX IF NOT EXISTS `unyohub_idx_fh1` ON `unyohub_formation_histories`(`formation_name`, `event_year_month`)")
+    
+    mes("テーブル「unyohub_car_histories」を作成しています...")
+    cur.execute("CREATE TABLE IF NOT EXISTS `unyohub_car_histories`(`formation_name` TEXT NOT NULL, `record_number` TEXT NOT NULL, `car_number` TEXT NOT NULL, PRIMARY KEY(`formation_name`, `record_number`, `car_number`))")
+    cur.execute("CREATE INDEX IF NOT EXISTS `unyohub_idx_ch1` ON `unyohub_car_histories`(`formation_name`, `car_number`)")
     
     mes("テーブル「unyohub_series_caches」を作成しています...")
     cur.execute("CREATE TABLE IF NOT EXISTS `unyohub_series_caches`(`series_title` TEXT NOT NULL PRIMARY KEY, `series_name` TEXT NOT NULL, `min_car_count` INTEGER NOT NULL, `max_car_count` INTEGER NOT NULL)")
