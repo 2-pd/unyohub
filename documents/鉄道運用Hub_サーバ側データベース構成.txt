@@ -204,7 +204,7 @@ _/_/_/_/ データベース _/_/_/_/
 
 ███ announcements.db ███
 
-`unyohub_announcements` お知らせ
+`unyohub_announcements` お知らせデータ
   `announcement_id` TEXT NOT NULL PRIMARY KEY 「YYYYMMDD_」形式の年月日のあとに乱数値を付加したお知らせID
   `title` TEXT NOT NULL お知らせのタイトル
   `is_important` INTEGER NOT NULL 重要なお知らせか否か
@@ -221,6 +221,7 @@ _/_/_/_/ データベース _/_/_/_/
   `railroad_id` TEXT NOT NULL 路線系統識別名(アプリ全体のお知らせの場合は「/」を指定)
 
   PRIMARY KEY(`announcement_id`, `railroad_id`)
+  INDEX `unyohub_announcements_idx_ra1`(`railroad_id`)
 
 
 `unyohub_announcement_datetimes` 路線系統別のお知らせ公開・削除日時
@@ -229,7 +230,6 @@ _/_/_/_/ データベース _/_/_/_/
   `is_publication_datetime` INTEGER NOT NULL 公開日時か否か
 
   PRIMARY KEY(`railroad_id`, `publication_or_deletion_datetime`)
-  INDEX `unyohub_announcements_idx_ad1`(`publication_or_deletion_datetime`)
 
 
 ███ moderation.db ███
