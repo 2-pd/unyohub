@@ -28,17 +28,18 @@ _/_/_/_/ ファイル構成 _/_/_/_/
 └ libs_data/
    └ wakarana.db ・・・Wakaranaデータベース
    └ zizai_captcha.db ・・・Zizai CAPTCHAデータベース
+└ common_dbs/
+   └ announcements.db ・・・お知らせを格納するデータベース
+   └ moderation.db ・・・モデレーションログを格納するデータベース
 └ config/
    └ main.ini ・・・運用観察Hub基本設定ファイル
    └ railroads.json ・・・路線系統設定ファイル
    └ rules.txt ・・・ルールとポリシーを記載するテキストファイル
-   └ announcements.json ・・・お知らせデータ
    └ wakarana_config.ini ・・・Wakarana設定ファイル
    └ wakarana_custom_fields.json ・・・Wakaranaカスタムフィールド設定ファイル
    └ zizai_captcha_config.json ・・・Zizai CAPTCHA設定ファイル
    └ gtfs_realtime_endpoints.json ・・・GTFS realtime形式エンドポイント設定ファイル
    └ fonts/ ・・・Zizai CAPTCHAが使用するフォントファイル
-   └ moderation.db ・・・モデレーションログを格納するデータベース
 └ data/ ・・・路線系統ごとのデータフォルダ
    └ ****/
       └ railroad.db ・・・運用表・時刻表・ユーザー投稿データを格納するデータベース本体
@@ -46,7 +47,6 @@ _/_/_/_/ ファイル構成 _/_/_/_/
       └ train_icons.json ・・・列車アイコン画像埋め込み処理後のアイコン設定ファイル
       └ formations.json ・・・JSONに変換された編成表
       └ formation_name_mappings.json ・・・公開API上の車両識別名と編成表の編成名との対応表
-      └ railroad_announcements.json ・・・路線系統別のお知らせデータ
       └ diagram_revisions.txt ・・・ダイヤ改正識別名(「YYYY-MM-DD」形式)を新しいものから順に1行に1つずつ記載したテキストファイル
       └ icons/ ・・・列車アイコン画像フォルダ(train_icons.jsonの生成に使用する)
          └ icon_list.json ・・・アイコン一覧情報ファイル
