@@ -1,7 +1,26 @@
 <?php
 include "user_common.php";
 
-print_header("ルールとポリシー", FALSE);
+if (empty($_GET["railroad_id"])) {
+    $railroad_info = NULL;
+    $rule_path = "../config/rules.txt";
+    
+    print_header("ルールとポリシー", FALSE);
+} else {
+    $railroad_id = basename($_GET["railroad_id"]);
+    $railroad_info = @json_decode(file_get_contents("../data/".$railroad_id."/railroad_info.json"), TRUE);
+    
+    if (empty($railroad_info)) {
+        print_header("投稿ルール");
+        print "【!】利用できない路線系統です";
+        
+        goto footer;
+    }
+    
+    print_header($railroad_info["railroad_name"]."の投稿ルール", FALSE);
+    
+    $rule_path = "../data/".$railroad_id."/rules.txt";
+}
 
 if (!empty($_GET["show_accept_button"])) {
     print <<< EOM
@@ -14,21 +33,31 @@ if (!empty($_GET["show_accept_button"])) {
     EOM;
 }
 
-print "    <h2>ルールとポリシー</h2>\n";
+print "    <h2>".(empty($railroad_info) ? "ルールとポリシー" : "路線系統別の投稿ルール")."</h2>\n";
 
-$rules_split = explode("\n", preg_replace("/(https?:\/\/[^\s\\\\`\|\[\]\{\}\^]+)/u", "<a href='$1' target='_blank' class='external_link'>$1</a>", htmlspecialchars(file_get_contents("../config/rules.txt"))));
+if (file_exists($rule_path)) {
+    $rule_content = file_get_contents($rule_path);
+} else {
+    $rule_content = "";
+}
 
-$buf = "";
 $heading_list = array();
 $heading_cnt = 0;
-foreach ($rules_split as $rules_line) {
-    if (substr($rules_line, 0, 2) === "# ") {
-        $heading_list[] = substr($rules_line, 2);
-        $buf .= "    <h4 id='heading_".$heading_cnt."'>".$heading_list[$heading_cnt]."</h4>\n";
-        $heading_cnt++;
-    } else {
-        $buf .= "    ".$rules_line."<br>\n";
+if (!empty($rule_content)) {
+    $buf = "";
+    
+    $rules_split = explode("\n", preg_replace("/(https?:\/\/[^\s\\\\`\|\[\]\{\}\^]+)/u", "<a href='$1' target='_blank' class='external_link'>$1</a>", htmlspecialchars($rule_content)));
+    foreach ($rules_split as $rules_line) {
+        if (substr($rules_line, 0, 2) === "# ") {
+            $heading_list[] = substr($rules_line, 2);
+            $buf .= "    <h4 id='heading_".$heading_cnt."'>".$heading_list[$heading_cnt]."</h4>\n";
+            $heading_cnt++;
+        } else {
+            $buf .= "    ".$rules_line."<br>\n";
+        }
     }
+} else {
+    $buf = "    <div class=\"informational_text\">".(empty($railroad_info) ? "ルールとポリシーは設定されていません。" : "この路線系統の投稿ルールは<a href=\"rules.php\">".htmlspecialchars($main_config["instance_name"]))."全体の投稿ルール</a>に準じます。</div>";
 }
 
 if ($heading_cnt >= 1) {
@@ -48,4 +77,5 @@ if (!empty($_GET["show_accept_button"])) {
     print "    <button type=\"button\" class=\"wide_button\" onclick=\"window.opener.accept_rules(); window.close();\">ルールに同意して続行</button>\n";
 }
 
+footer:
 print_footer();
