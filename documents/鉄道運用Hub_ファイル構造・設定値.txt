@@ -72,21 +72,6 @@ log_ip_address 投稿者のIPアドレスを記録するか(BOOL値)
 }
 
 
-███ announcements.json ███
-
-※このファイルの更新日時は最も新しいお知らせが更新されたタイムスタンプと同一の値をセットする
-[
-    { 各お知らせの情報
-        "title" : お知らせのタイトル,
-        "is_important" : 重要なお知らせか否か(BOOL値),
-        "content" : お知らせの本文,
-        "user_id" : お知らせを最後に編集したモデレーターのユーザーID,
-        "expiration_timestamp" : お知らせの有効期限のタイムスタンプ,
-        "last_modified_timestamp" : お知らせが更新されたタイムスタンプ(UTC、秒単位)
-    }...
-]
-
-
 ███ railroad_info.json ███
 
 {
@@ -214,7 +199,8 @@ log_ip_address 投稿者のIPアドレスを記録するか(BOOL値)
     "prefixes" : { 電算記号等の情報(電算記号やそれに類するものがない場合は省略)
         電算記号等 : {
             "formation_names" : 編成名を配列で,
-            "icon_id" : アイコン識別名
+            "icon_id" : アイコン識別名,
+            "unregistered" : 在籍中の編成が存在しないか否か(現時点で在籍中の編成が存在する場合は省略)
         }
     }
     "prefix_order" : 電算記号等を配列で(電算記号やそれに類するものがない場合は省略),

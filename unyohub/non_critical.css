@@ -1506,6 +1506,10 @@ button:has(abbr) {
     }
 }
 
+#write_operation_data_popup .bottom_link {
+    margin: 15px auto 30px auto;
+}
+
 .select_operation_inbound, .select_operation_outbound {
     margin: 0 auto;
     
@@ -1686,7 +1690,7 @@ button:has(abbr) {
         text-decoration: none !important;
     }
     
-    button, label, label + div, .informational_text, .previous_button, .next_button {
+    button, label, label.drop_down + div, .informational_text, .previous_button, .next_button {
         display: none !important;
     }
     
@@ -1871,7 +1875,7 @@ textarea {
     width: 300px;
     height: 36px;
     
-    margin: 0 auto;
+    margin: 0 auto 10px auto;
     
     line-height: 36px;
     font-size: 20px;
@@ -1941,7 +1945,7 @@ textarea {
             
             border: none;
             
-            background-image: url(data:image/webp;base64,UklGRn4BAABXRUJQVlA4THEBAAAvX8AXEAehpm0kycOfyWLbcqt7aahpG0ny8Gey2Lbc6l41bSNJHv5MFtuWW93LOJKkNngzT97kH5fLwSNVVJWemfTe4/8PAP9/YGEB+P9LAA0PIAE8dJI/Sb/3NgxcXAyMJAUjSV5r7e7uCgiybadtwsxmtva/y8TS+/JTmZQqov8O3EZSJHf14jH0/kH9pldtpNW/q4664O7asHJ27dwqGq3eQV7h+jje7TqGwL1xMoYT1163Xg1JXseOK9PfhvLDSF7HhqvUZOoe0D7XLLnmkTmy9oFrGoGI2tdc/Q1F0vFEcesSoeD2Z0V2iEyVP+77RO0DWxp5tAnbb9mKCETQfsVWoWnxsAIWbDPYgnRsDew8g2kUu654GKEERZfAYQRz4tujWYez48vArBNkw1eaR6kkS7758I2Y/s7odQS+Wpt5hmmBXkfN198iScGrAvvKYOesHHCwE1yQ2tm6oLCzckFlZ+GCmZ3OBY2dp/r1rjwA);
+            background-image: url(data:image/webp;base64,UklGRmwBAABXRUJQVlA4TGABAAAvX8AXEO+goI0UqfgXhRSMQO4VgaBt23j8QQ3KiPwKgrZt4/EHNSgj8itqJElKcNkihBT+/y8y9zhzV9RdXFVWpVUeAIBVgAMAYJUCRcb/Y2bEzOr3ArCqrvrz/wcEN5IUScM8sb0Ms9f//+hMVV/VMSii/47cNnIkdjrNbF79If6nN64AAFevwlrwezo/Arg7eLXxCfIOj6/jZXvgERPGBeii6TgCdYoT0Ng6A+3mp7R+gJUDUNkqgZCiB+62nsCYYgRutrIZ5kxDeFa2YwRuek9g9BDLu14JBGsHoNI7A621E9DoHYHa2gXo9PbAw1oO7PQGYLH2Akx6E1BE6zEBhcLmazY3AIuC/JmZl0FBqoKDMihIVXBQBgWpCg7KoCD9Zzkog4JUBQ9lkElV8FAGmY8qbLdXJlTBRRlkXqqg/3X5qYL+32GzCh7kJI3FgyJNET2MKcUUXRhS7OL/dyMC);
             background-repeat: no-repeat;
             background-size: 48px;
             
@@ -1957,7 +1961,7 @@ textarea {
 
 #welcome_message_box {
     position: fixed;
-    bottom: 60px;
+    bottom: 30px;
     left: max(10px, calc(50% - 250px));
     
     width: min(calc(100% - 60px), 460px);
@@ -2016,11 +2020,11 @@ textarea {
 
 @keyframes welcome_message_box_up {
     0% {
-        bottom: 10px;
+        bottom: -20px;
     }
     
     100% {
-        bottom: 60px;
+        bottom: 30px;
     }
 }
 

@@ -42,6 +42,7 @@ if ($user->check_permission("railroads/".$railroad_id."/formation", "edit_data")
 
 if ($user->check_permission("railroads/".$railroad_id, "edit_data")) {
     print "<a href='manage_files.php?railroad_id=".$railroad_id."' class='wide_button'><img src='data:image/webp;base64,UklGRnYAAABXRUJQVlA4TGoAAAAvO8AOEBcwzMM8zAKBJOsVxg74CI4j2WqjkTchECJRKBSO1EsT87R+jxH9nwCApDLSrGlw1tYIkIMTHQ3O6gQn1upZGpzxhkvVAUg9qxNaJ0CKjgZndYITHQ3O6pyPgOu/k/VUlB9MzacA' alt=''>データファイルの管理</a>";
+    print "<a href='edit_rules.php?railroad_id=".$railroad_id."' class='wide_button'><img src='data:image/webp;base64,UklGRrYAAABXRUJQVlA4TKoAAAAvO8AOEC9AkG3T+aud6RwE2Tadv9qZHoJsm85f7UwPmYDF9qkurQgCbDuKVfkv3Na2rUQXyzlIAWM5LbwO3vRfDvYeFkf0fwK03rKx0OYWoNjWAhTXIEnbJOlK9t/QL8cpU0ZeGQ4W9JuNUMc4peRgihl5SSPUQT2UDqYgh/8ITZR6AFPYNKvj1IMpYYI6Q70pxZuc7XfB7vuIfAbsvo/IZ8Du+4h8AsHnAw==' alt=''>投稿ルールの編集</a>";
 }
 
 print "</article>";

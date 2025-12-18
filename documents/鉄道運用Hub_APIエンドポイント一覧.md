@@ -263,6 +263,7 @@ formations.jsonの内容を返す
     "inspection_information" : 検査情報,  
     "histories" : [ 車歴情報  
         {  
+            "related_cars" : この車歴に対応する車両番号を配列で,  
             "event_year_month" : 「YYYY-MM」形式の年月、または「YYYY」形式の年,  
             "event_type" : 変更の種類(「construct」、「modify」、「repaint」、「renewal」、「transfer」、「rearrange」、「unregister」、「other」のいずれか),  
             "event_content" : 変更内容説明文  

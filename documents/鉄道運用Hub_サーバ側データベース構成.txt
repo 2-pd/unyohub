@@ -44,11 +44,22 @@ _/_/_/_/ データベース _/_/_/_/
 
 `unyohub_formation_histories` 車歴データ
   `formation_name` TEXT NOT NULL 編成名
+  `record_number` TEXT NOT NULL 「YYYYMM_」形式の年月のあとに通し番号を付加したレコード識別名
   `event_year_month` TEXT NOT NULL 「YYYY-MM」形式の年月、または「YYYY」形式の年
   `event_type` TEXT NOT NULL 変更の種類(「construct」(新製)、「modify」(改修)、「repaint」(塗装等変更)、「renewal」(更新)、「transfer」(転属)、「rearrange」(組換)、「unregister」(廃車)、「other」(その他)のいずれか)
   `event_content` TEXT 変更内容説明文
 
+  PRIMARY KEY(`formation_name`, `record_number`)
   INDEX `unyohub_idx_fh1`(`formation_name`, `event_year_month`)
+
+
+`unyohub_car_histories` 車歴と車両の対応表
+  `formation_name` TEXT NOT NULL 編成名
+  `record_number` TEXT NOT NULL 「YYYYMM_」形式の年月のあとに通し番号を付加したレコード識別名
+  `car_number` TEXT NOT NULL 車番
+
+  PRIMARY KEY(`formation_name`, `record_number`, `car_number`)
+  INDEX `unyohub_idx_ch1`(`formation_name`, `car_number`)
 
 
 `unyohub_series_caches` 車両形式データキャッシュ
@@ -189,6 +200,36 @@ _/_/_/_/ データベース _/_/_/_/
   `operation_number` TEXT NOT NULL 当日の運用番号(アルファベットなどを含む場合があるため文字列型)
 
   PRIMARY KEY(`operation_date`, `operation_number`, `previous_day_operation_number`)
+
+
+███ announcements.db ███
+
+`unyohub_announcements` お知らせデータ
+  `announcement_id` TEXT NOT NULL PRIMARY KEY 「YYYYMMDD_」形式の年月日のあとに乱数値を付加したお知らせID
+  `title` TEXT NOT NULL お知らせのタイトル
+  `is_important` INTEGER NOT NULL 重要なお知らせか否か
+  `content` TEXT NOT NULL お知らせの本文
+  `user_id` TEXT NOT NULL お知らせを編集したモデレーターのユーザーID
+  `publication_datetime` TEXT NOT NULL 「YYYY-MM-DD HH:MM:SS」形式のお知らせ公開日時(予約投稿では未来の日時となる)
+  `expiration_datetime` TEXT NOT NULL 「YYYY-MM-DD HH:MM:SS」形式のお知らせ有効期限
+
+  INDEX `unyohub_announcements_idx_a1`(`expiration_datetime`)
+
+
+`unyohub_railroad_announcements` お知らせと路線系統の対応表
+  `announcement_id` TEXT NOT NULL 「YYYYMMDD_」形式の年月日のあとに乱数値を付加したお知らせID
+  `railroad_id` TEXT NOT NULL 路線系統識別名(アプリ全体のお知らせの場合は「/」を指定)
+
+  PRIMARY KEY(`announcement_id`, `railroad_id`)
+  INDEX `unyohub_announcements_idx_ra1`(`railroad_id`)
+
+
+`unyohub_announcement_datetimes` 路線系統別のお知らせ公開・削除日時
+  `railroad_id` TEXT NOT NULL 路線系統識別名(アプリ全体のお知らせの場合は「/」を指定)
+  `publication_or_deletion_datetime` TEXT NOT NULL 「YYYY-MM-DD HH:MM:SS」形式のお知らせ公開・削除日時(予約投稿では未来の日時となる)
+  `is_publication_datetime` INTEGER NOT NULL 公開日時か否か
+
+  PRIMARY KEY(`railroad_id`, `publication_or_deletion_datetime`)
 
 
 ███ moderation.db ███

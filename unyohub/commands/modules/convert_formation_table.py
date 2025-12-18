@@ -114,7 +114,16 @@ def convert_formation_table (mes, main_dir):
         elif formation_name.endswith("*"):
             prefix = formation_name[:-1]
             
+            if prefix.startswith("†"):
+                prefix = prefix[1:].strip()
+                currently_registered = False
+            else:
+                currently_registered = True
+            
             prefixes[prefix] = { "formation_names" : [], "icon_id" : formation_data[cnt + 1][0].strip(), "max_car_count" : 0, "min_car_count" : None, "coupling_group_set" : set() }
+            
+            if not currently_registered:
+                prefixes[prefix]["unregistered"] = True
             
             cnt += 2
         elif formation_name.startswith("# "):
@@ -223,26 +232,24 @@ def convert_formation_table (mes, main_dir):
                     json_data["formations"][formation_name]["cars"] = []
                     json_data["formations"][formation_name]["series_name"] = series_name
                     json_data["formations"][formation_name]["icon_id"] = formation_data[cnt + 1][0].strip()
-                    
-                    prefix = formation_data[cnt + 3][0].strip()
-                    if len(prefix) >= 1:
-                        if prefix in prefixes:
-                            json_data["formations"][formation_name]["prefix"] = prefix
-                            
-                            prefixes[prefix]["formation_names"].append(formation_name)
-                        else:
-                            mes("《注意》未定義の電算記号等が割り当てられています: " + prefix)
-                            prefix = None
-                    else:
-                        prefix = None
                 else:
                     if new_formation_name is not None:
                         json_data["formations"][formation_name]["new_railroad_id"] = new_railroad_id
                         json_data["formations"][formation_name]["new_formation_name"] = new_formation_name
-                    
-                    prefix = None
                 
-                if prefix is None:
+                prefix = ""
+                for prefix_candidate in prefixes.keys():
+                    if len(prefix_candidate) > len(prefix) and formation_name.startswith(prefix_candidate):
+                        prefix = prefix_candidate
+                
+                if prefix != "":
+                    json_data["formations"][formation_name]["prefix"] = prefix
+                    prefixes[prefix]["formation_names"].append(formation_name)
+                    
+                    if "unregistered" in prefixes[prefix] and currently_registered:
+                        mes("廃止済みの電算記号等 " + prefix + " に在籍中の編成 " + formation_name + " が含まれています", True)
+                else:
+                    prefix = None
                     no_prefix_formation_names.append(formation_name)
                 
                 car_list_old = set()
@@ -371,6 +378,12 @@ def convert_formation_table (mes, main_dir):
                 del prefixes[prefix]
                 
                 continue
+            
+            if "unregistered" in prefixes[prefix]:
+                continue
+            
+            if prefixes[prefix]["max_car_count"] == 0:
+                mes(prefix + " には在籍中の編成が存在しませんが廃止済みの電算記号等として設定されていません", True)
             
             insert_series_data(mes, cur, prefix, prefix, prefixes[prefix].pop("min_car_count"), prefixes[prefix].pop("max_car_count"), prefixes[prefix].pop("coupling_group_set"))
         
