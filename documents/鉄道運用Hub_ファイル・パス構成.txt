@@ -48,6 +48,7 @@ _/_/_/_/ ファイル構成 _/_/_/_/
       └ formations.json ・・・JSONに変換された編成表
       └ formation_name_mappings.json ・・・公開API上の車両識別名と編成表の編成名との対応表
       └ diagram_revisions.txt ・・・ダイヤ改正識別名(「YYYY-MM-DD」形式)を新しいものから順に1行に1つずつ記載したテキストファイル
+      └ rules.txt ・・・路線系統別の投稿ルールを記載するテキストファイル
       └ icons/ ・・・列車アイコン画像フォルダ(train_icons.jsonの生成に使用する)
          └ icon_list.json ・・・アイコン一覧情報ファイル
          └ ****.**** ・・・アイコン画像ファイル

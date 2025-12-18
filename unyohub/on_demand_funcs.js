@@ -2076,7 +2076,9 @@ function write_operation_data (railroad_id, yyyy_mm_dd, operation_number, train_
     }
     buf += "</div>";
     
-    buf += "</div><br>";
+    buf += "</div>";
+    
+    buf += "<a href='/user/rules.php?railroad_id=" + railroad_info["railroad_id"] + "' target='_blank' class='bottom_link'>" + escape_html(railroad_info["railroad_name"]) + "の投稿ルール</a>";
     
     buf += "<button type='button' class='wide_button' onclick='check_post_operation_data();'>投稿する</button>";
     
