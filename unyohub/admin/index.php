@@ -7,7 +7,7 @@ print "<article id='portal_article'>";
 print "<h2>管理画面トップページ</h2>";
 
 if ($user->check_permission("railroads", "edit_announcement")) {
-    print "<a href='announcements.php' class='wide_button'><img src='data:image/webp;base64,UklGRp4BAABXRUJQVlA4TJEBAAAvR8AREDXIbSRJkqTWX2mjbjvT6z6yOgKubW3HnG+tse2JnfTJDZiVb8Co7dJ25d4q7VTDLivd2J7vmYC7LE+fUz9cEvfz40Sv3Ieci6HDMwo/RD1fjENUs8JrFpUn4FqFUYf4OSqfMOyDKvaxwPilSuH5hEXvuCV7sGorpOpbVpPBYN1iwqjohHWtFc97HiPy0D1UdkM/BHU1nBYcN/wWfDW4ChwN8YJYAguSt0DaICnIaDAWVDSUF7Q1tBQMN27BWcNpgbnBFCCRakiT7mn6ohr2zFfuHmuFfU3Zl1W6ZaJjfMtPx/eSbLSD3h0zEDa9guGv5B9jQzOkNW24aDlfkCPVunLmbELcxhi1SE2Udsoc5M0OkfL0LumMue9AsyOUAicIUk9YgSOtDCiWOENS2TvXcKiHd/8/4dj/d3+/gjDM32ObYum5mXLVMzCltydDakaSsXcdzNi5BzIITPDTnXDVSb2T1vSQMw1Jv7kGH3KqZoGf8Wt8yLlUViV/Je2Q7iFHM+p3zSL4XVf6GB+yDQA=' alt=''>お知らせの編集</a>";
+    print "<a href='announcements.php?railroad_id=/' class='wide_button'><img src='data:image/webp;base64,UklGRp4BAABXRUJQVlA4TJEBAAAvR8AREDXIbSRJkqTWX2mjbjvT6z6yOgKubW3HnG+tse2JnfTJDZiVb8Co7dJ25d4q7VTDLivd2J7vmYC7LE+fUz9cEvfz40Sv3Ieci6HDMwo/RD1fjENUs8JrFpUn4FqFUYf4OSqfMOyDKvaxwPilSuH5hEXvuCV7sGorpOpbVpPBYN1iwqjohHWtFc97HiPy0D1UdkM/BHU1nBYcN/wWfDW4ChwN8YJYAguSt0DaICnIaDAWVDSUF7Q1tBQMN27BWcNpgbnBFCCRakiT7mn6ohr2zFfuHmuFfU3Zl1W6ZaJjfMtPx/eSbLSD3h0zEDa9guGv5B9jQzOkNW24aDlfkCPVunLmbELcxhi1SE2Udsoc5M0OkfL0LumMue9AsyOUAicIUk9YgSOtDCiWOENS2TvXcKiHd/8/4dj/d3+/gjDM32ObYum5mXLVMzCltydDakaSsXcdzNi5BzIITPDTnXDVSb2T1vSQMw1Jv7kGH3KqZoGf8Wt8yLlUViV/Je2Q7iFHM+p3zSL4XVf6GB+yDQA=' alt=''>お知らせの編集</a>";
 }
 
 print "<h3>路線系統別の操作</h3>";
