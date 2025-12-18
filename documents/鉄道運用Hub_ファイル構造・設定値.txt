@@ -72,21 +72,6 @@ log_ip_address 投稿者のIPアドレスを記録するか(BOOL値)
 }
 
 
-███ announcements.json ███
-
-※このファイルの更新日時は最も新しいお知らせが更新されたタイムスタンプと同一の値をセットする
-[
-    { 各お知らせの情報
-        "title" : お知らせのタイトル,
-        "is_important" : 重要なお知らせか否か(BOOL値),
-        "content" : お知らせの本文,
-        "user_id" : お知らせを最後に編集したモデレーターのユーザーID,
-        "expiration_timestamp" : お知らせの有効期限のタイムスタンプ,
-        "last_modified_timestamp" : お知らせが更新されたタイムスタンプ(UTC、秒単位)
-    }...
-]
-
-
 ███ railroad_info.json ███
 
 {

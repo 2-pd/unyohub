@@ -133,9 +133,9 @@
 **第1引数** : 路線系統識別名
 
 
-## unyohub init-moderation-db
-モデレーションログ格納データベースファイルを生成する  
-処理本体は**initialize_moderation_db.py**
+## unyohub init-common-dbs
+全路線系統共通データ用データベースファイル群を生成する  
+処理本体は**initialize_common_dbs.py**
 
 ### 引数
 (なし)

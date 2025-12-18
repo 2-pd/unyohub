@@ -655,6 +655,28 @@ input[type="text"], input[type="number"], input[type="password"], input[type="se
     -webkit-appearance: none;
 }
 
+select[multiple] {
+    border: 1px solid #cccccc !important;
+    
+    option:checked {
+        background-color: #333333;
+        
+        color: #ffffff;
+        
+        &:before {
+            content: "✓";
+            
+            display: inline-block;
+            
+            width: 15px;
+            
+            margin-left: -15px;
+            
+            font-weight: bold;
+        }
+    }
+}
+
 input[type="number"] {
     display: inline-block;
     

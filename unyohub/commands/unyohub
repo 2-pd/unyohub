@@ -67,8 +67,8 @@ def print_usage ():
     print("\x1b[93minit-db\x1b[0m \x1b[90m<路線系統識別名>\x1b[0m")
     print("  各路線系統用データベースファイルを生成する\n")
     
-    print("\x1b[93minit-moderation-db\x1b[0m")
-    print("  モデレーションログ格納データベースファイルを生成する\n")
+    print("\x1b[93minit-common-dbs\x1b[0m")
+    print("  全路線系統共通データ用データベースファイル群を生成する\n")
     
     print("\x1b[93mget-gtfs-realtime\x1b[0m \x1b[90m<路線系統識別名>\x1b[0m")
     print("  鉄道事業者の公開APIから在線情報を取得し、車両運用情報を更新する\n")
@@ -182,9 +182,9 @@ if arg_count >= 1:
                 initialize_db.initialize_db(mes, data_dir + "/" + os.path.basename(args[1]))
             else:
                 print("\x1b[31m引数の数が異常です\x1b[0m")
-        case "init-moderation-db":
-            initialize_moderation_db = importlib.import_module("modules.initialize_moderation_db")
-            initialize_moderation_db.initialize_moderation_db(mes, os.path.dirname(data_dir) + "/config/moderation.db")
+        case "init-common-dbs":
+            initialize_common_dbs = importlib.import_module("modules.initialize_common_dbs")
+            initialize_common_dbs.initialize_common_dbs(mes, os.path.dirname(data_dir) + "/common_dbs")
         case "get-gtfs-realtime":
             if arg_count <= 2:
                 get_gtfs_realtime = importlib.import_module("modules.get_gtfs_realtime")

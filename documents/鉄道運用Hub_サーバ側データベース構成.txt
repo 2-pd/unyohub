@@ -202,6 +202,36 @@ _/_/_/_/ データベース _/_/_/_/
   PRIMARY KEY(`operation_date`, `operation_number`, `previous_day_operation_number`)
 
 
+███ announcements.db ███
+
+`unyohub_announcements` お知らせデータ
+  `announcement_id` TEXT NOT NULL PRIMARY KEY 「YYYYMMDD_」形式の年月日のあとに乱数値を付加したお知らせID
+  `title` TEXT NOT NULL お知らせのタイトル
+  `is_important` INTEGER NOT NULL 重要なお知らせか否か
+  `content` TEXT NOT NULL お知らせの本文
+  `user_id` TEXT NOT NULL お知らせを編集したモデレーターのユーザーID
+  `publication_datetime` TEXT NOT NULL 「YYYY-MM-DD HH:MM:SS」形式のお知らせ公開日時(予約投稿では未来の日時となる)
+  `expiration_datetime` TEXT NOT NULL 「YYYY-MM-DD HH:MM:SS」形式のお知らせ有効期限
+
+  INDEX `unyohub_announcements_idx_a1`(`expiration_datetime`)
+
+
+`unyohub_railroad_announcements` お知らせと路線系統の対応表
+  `announcement_id` TEXT NOT NULL 「YYYYMMDD_」形式の年月日のあとに乱数値を付加したお知らせID
+  `railroad_id` TEXT NOT NULL 路線系統識別名(アプリ全体のお知らせの場合は「/」を指定)
+
+  PRIMARY KEY(`announcement_id`, `railroad_id`)
+  INDEX `unyohub_announcements_idx_ra1`(`railroad_id`)
+
+
+`unyohub_announcement_datetimes` 路線系統別のお知らせ公開・削除日時
+  `railroad_id` TEXT NOT NULL 路線系統識別名(アプリ全体のお知らせの場合は「/」を指定)
+  `publication_or_deletion_datetime` TEXT NOT NULL 「YYYY-MM-DD HH:MM:SS」形式のお知らせ公開・削除日時(予約投稿では未来の日時となる)
+  `is_publication_datetime` INTEGER NOT NULL 公開日時か否か
+
+  PRIMARY KEY(`railroad_id`, `publication_or_deletion_datetime`)
+
+
 ███ moderation.db ███
 
 `unyohub_moderation_deleted_data` モデレーターが削除したユーザー投稿データ
