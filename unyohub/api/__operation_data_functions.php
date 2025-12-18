@@ -19,7 +19,7 @@ function connect_moderation_db () {
     global $moderation_db_obj;
     
     if (empty($moderation_db_obj)) {
-        $moderation_db_obj = new SQLite3("../config/moderation.db");
+        $moderation_db_obj = new SQLite3("../common_dbs/moderation.db");
         $moderation_db_obj->busyTimeout(5000);
     }
 }
