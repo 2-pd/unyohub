@@ -58,6 +58,13 @@ if (isset($_POST["enabling_railroad"])) {
         
         file_put_contents(RAILROADS_JSON_PATH, json_encode($railroads, JSON_UNESCAPED_UNICODE));
         
+        $db_obj = new SQLite3("../common_dbs/announcements.db");
+        $db_obj->busyTimeout(5000);
+        
+        $db_obj->exec("DELETE FROM `unyohub_railroad_announcements` WHERE `railroad_id` = '".$db_obj->escapeString($_POST["disabling_railroad"])."'");
+        $db_obj->exec("DELETE FROM `unyohub_announcement_datetimes` WHERE `railroad_id` = '".$db_obj->escapeString($_POST["disabling_railroad"])."'");
+        $db_obj->exec("DELETE FROM `unyohub_announcements` WHERE `announcement_id` NOT IN (SELECT `announcement_id` FROM `unyohub_railroad_announcements`)");
+        
         print "<script> alert('路線系統を無効化しました'); </script>";
     } else {
         print "<script> alert('【!】ワンタイムトークンが無効です。処理はキャンセルされました。'); </script>";
