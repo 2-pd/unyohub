@@ -1506,6 +1506,10 @@ button:has(abbr) {
     }
 }
 
+#write_operation_data_popup .bottom_link {
+    margin: 15px auto 30px auto;
+}
+
 .select_operation_inbound, .select_operation_outbound {
     margin: 0 auto;
     
