@@ -280,7 +280,26 @@ while ($announcement_data = $announcements_r->fetchArray(SQLITE3_ASSOC)) {
     print "'>".htmlspecialchars($announcement_data["title"])."</label>";
     print "<div><div class='announcement'>";
     print nl2br(htmlspecialchars($announcement_data["content"]));
-    print "<small>".htmlspecialchars($user_name)."　".substr($announcement_data["publication_datetime"], 0, 16)." (残り";
+    print "<small>";
+    if ($railroad_id !== "/") {
+        print "対象: ";
+        $railroad_announcement_r = $db_obj->query("SELECT `railroad_id` FROM `unyohub_railroad_announcements` WHERE `announcement_id` = '".$announcement_data["announcement_id"]."' ORDER BY `railroad_id` ASC");
+        
+        for ($cnt = 0; $railroad_row = $railroad_announcement_r->fetchArray(SQLITE3_NUM); $cnt++) {
+            if ($cnt >= 1) {
+                print "、";
+                
+                if ($cnt >= 3) {
+                    print "他";
+                    break;
+                }
+            }
+            
+            print htmlspecialchars($railroads["railroads"][$railroad_row[0]]["railroad_name"]);
+        }
+        print "<br>";
+    }
+    print htmlspecialchars($user_name)."　".substr($announcement_data["publication_datetime"], 0, 16)." (残り";
     if ($expiration_timestamp >= $ts + 86400) {
         print " ".floor(($expiration_timestamp - $ts) / 86400)."日";
     }
