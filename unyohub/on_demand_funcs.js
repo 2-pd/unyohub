@@ -727,7 +727,7 @@ function position_time_button_change () {
     
     var hours_minutes = position_time_button_elm.value.split(":");
     
-    if (hours_minutes[0] < 3) {
+    if (hours_minutes[0] < 4) {
         hours_minutes[0] += 24;
     }
     
@@ -1832,7 +1832,7 @@ function get_operation_data_history (formation_name, operation_number, yyyy_mm =
                 
                 var data = JSON.parse(response);
                 
-                var day_value = new Date((ts - 10800) * 1000).getDay();
+                var day_value = new Date((ts - 14400) * 1000).getDay();
                 for (var cnt = 0; cnt < day_count; cnt++) {
                     var yyyy_mm_dd = get_date_string(ts);
                     
