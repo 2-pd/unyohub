@@ -65,12 +65,12 @@ if ($ts === FALSE) {
     exit;
 }
 
-if ($ts < $ts_now - 183600 && !(is_object($user) && $user->check_permission("control_panel_user"))) {
+if ($ts < $ts_now - 187200 && !(is_object($user) && $user->check_permission("control_panel_user"))) {
     print "ERROR: 2日以上前の運用情報を投稿することはできません";
     exit;
 }
 
-if ($ts > $ts_now + (86400 * $config["available_days_ahead"]) - 10800) {
+if ($ts > $ts_now + (86400 * $config["available_days_ahead"]) - 14400) {
     print "ERROR: ".($config["available_days_ahead"] + 1)."日以上先の運用情報を投稿することはできません";
     exit;
 }
