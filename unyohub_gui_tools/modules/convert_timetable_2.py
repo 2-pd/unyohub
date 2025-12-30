@@ -6,9 +6,9 @@ import json
 import re
 
 
-def shape_time_string (time_str):
+def shape_time_string (time_str, from_previous_day, run_through_next_day):
     if ":" not in time_str:
-        if int(time_str) >= 300:
+        if int(time_str) >= 400:
             time_str = time_str[:-2] + ":" + time_str[-2:]
         elif len(time_str) >= 3:
             time_str = str(int(time_str[:-2]) + 24) + ":" + time_str[-2:]
@@ -17,10 +17,15 @@ def shape_time_string (time_str):
     else:
         time_str_split = time_str.split(":")
         
-        if int(time_str_split[0]) <= 2:
+        if int(time_str_split[0]) <= 3:
             time_str_split[0] = str(int(time_str_split[0]) + 24)
         
         time_str = time_str_split[0] + ":" + time_str_split[1].zfill(2)
+    
+    if from_previous_day and int(time_str[:-3]) >= 24:
+        time_str = str(int(time_str[:-3]) - 24) + ":" + time_str[-2:]
+    elif run_through_next_day and int(time_str[:-3]) <= 7:
+        time_str = str(int(time_str[:-3]) + 24) + ":" + time_str[-2:]
     
     return time_str.zfill(5)
 
@@ -44,7 +49,7 @@ def convert_timetable_2 (mes, main_dir, diagram_revision, diagram_id):
     with open(main_dir + "/railroad_info.json", "r", encoding="utf-8") as json_f:
         railroad_info = json.load(json_f)
     
-    time_regexp = re.compile("^[0-2][0-9]:[0-5][0-9]$")
+    time_regexp = re.compile("^[0-3][0-9]:[0-5][0-9]$")
     
     output_data = {}
     previous_trains = {}
@@ -139,6 +144,16 @@ def convert_timetable_2 (mes, main_dir, diagram_revision, diagram_id):
                 else:
                     is_temporary_train = False
                 
+                from_previous_day = False
+                run_through_next_day = False
+                
+                if train[0].startswith("~"):
+                    train[0] = train[0][1:].strip()
+                    from_previous_day = True
+                elif train[0].endswith("~"):
+                    train[0] = train[0][:-1].strip()
+                    run_through_next_day = True
+                
                 train[0] = correct_train_number(train[0])
                 
                 if train[0] != previous_train_number:
@@ -171,7 +186,7 @@ def convert_timetable_2 (mes, main_dir, diagram_revision, diagram_id):
                             time_string = times[cnt]
                             before_time_string = ""
                         
-                        time_string = shape_time_string(time_string)
+                        time_string = shape_time_string(time_string, from_previous_day, run_through_next_day)
                         
                         if time_regexp.match(time_string) is None or time_string < last_time_string:
                             mes("《注意》異常な時刻値が検出されました: " + line_id + " - " + train[0])

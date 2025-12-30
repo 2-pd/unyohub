@@ -75,7 +75,7 @@ def convert_operation_table_2 (mes, main_dir, file_name):
     
     mes("データを変換しています...")
     
-    time_regexp = re.compile("^[0-2][0-9]:[0-5][0-9]$")
+    time_regexp = re.compile("^[0-3][0-9]:[0-5][0-9]$")
     car_count_regexp = re.compile("^[1-9][0-9]?(-[1-9][0-9]?)?$")
     
     error_occurred = False

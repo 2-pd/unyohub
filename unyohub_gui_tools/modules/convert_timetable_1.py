@@ -97,6 +97,16 @@ def convert_timetable_1 (mes, file_name, digits_count):
             if sum([i != "" and i != "||" for i in train]) > 1:
                 train_number = timetable_column[0].strip()
                 
+                from_previous_day = False
+                run_through_next_day = False
+                
+                if train_number.startswith("~"):
+                    train_number = train_number[1:].strip()
+                    from_previous_day = True
+                elif train_number.endswith("~"):
+                    train_number = train_number[:-1].strip()
+                    run_through_next_day = True
+                
                 if train_number.startswith("◆"):
                     train_number = train_number[1:].strip()
                     temporary_train_symbol = "◆"
@@ -104,6 +114,11 @@ def convert_timetable_1 (mes, file_name, digits_count):
                     temporary_train_symbol = ""
                 
                 train_number = train_number.zfill(digits_count)
+                
+                if from_previous_day:
+                    train_number = "~" + train_number
+                elif run_through_next_day:
+                    train_number = train_number + "~"
                 
                 train = [temporary_train_symbol + train_number, timetable_column[1].strip(), timetable_column[2].strip()] + train + ["", "", "", "", "", ""]
                 starting_station = None
@@ -132,7 +147,7 @@ def convert_timetable_1 (mes, file_name, digits_count):
                         
                         if ":" not in departure_time:
                             if departure_time.isdecimal() and len(departure_time) <= 4:
-                                if int(departure_time) >= 300:
+                                if int(departure_time) >= 400:
                                     departure_time = departure_time[:-2] + ":" + departure_time[-2:]
                                 elif len(departure_time) >= 3:
                                     departure_time = str(int(departure_time[:-2]) + 24) + ":" + departure_time[-2:]
@@ -146,7 +161,7 @@ def convert_timetable_1 (mes, file_name, digits_count):
                             departure_time_split = departure_time.split(":")
                             
                             if departure_time_split[0].isdecimal() and departure_time_split[1].isdecimal():
-                                if int(departure_time_split[0]) <= 2:
+                                if int(departure_time_split[0]) <= 3:
                                     departure_time_split[0] = str(int(departure_time_split[0]) + 24)
                                 
                                 departure_time = departure_time_split[0] + ":" + departure_time_split[1].zfill(2)
@@ -154,6 +169,11 @@ def convert_timetable_1 (mes, file_name, digits_count):
                                 mes("時刻として認識できない値が含まれています: " + train_number, True)
                                 
                                 departure_time = "00:00"
+                        
+                        if from_previous_day and int(departure_time[:-3]) >= 24:
+                            departure_time = str(int(departure_time[:-3]) - 24) + ":" + departure_time[-2:]
+                        elif run_through_next_day and int(departure_time[:-3]) < 8:
+                            departure_time = str(int(departure_time[:-3]) + 24) + ":" + departure_time[-2:]
                         
                         train[cnt] = before_departure_time + departure_time.zfill(5)
                         

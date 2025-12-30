@@ -54,7 +54,7 @@ function get_timestamp () {
 }
 
 function get_date_string (ts) {
-    var dt = new Date((ts - 10800) * 1000);
+    var dt = new Date((ts - 14400) * 1000);
     return dt.getFullYear() + "-" + ("0" + String(dt.getMonth() + 1)).slice(-2) + "-" + ("0" + dt.getDate()).slice(-2);
 }
 
@@ -68,7 +68,7 @@ function get_hh_mm (ts = null) {
     var hours = dt.getHours();
     var minutes = ("0" + dt.getMinutes()).slice(-2);
 
-    if (hours < 3) {
+    if (hours < 4) {
         hours += 24;
     }
     hours = ("0" + hours).slice(-2);
@@ -359,7 +359,7 @@ var db_open_promise = new Promise(function (resolve, reject) {
         var operation_data_store = transaction.objectStore("operation_data");
         var idx_od1 = operation_data_store.index("idx_od1");
         
-        var cursor_request = idx_od1.openCursor(IDBKeyRange.upperBound(get_date_string(get_timestamp() - 10800 - 86400 * (config["operation_data_cache_period"])), true), "next");
+        var cursor_request = idx_od1.openCursor(IDBKeyRange.upperBound(get_date_string(get_timestamp() - 14400 - 86400 * (config["operation_data_cache_period"])), true), "next");
         
         cursor_request.onsuccess = function () {
             var cursor = cursor_request.result;
@@ -2997,6 +2997,7 @@ function get_final_destination (line_id, is_inbound, train_number, starting_stat
 
 
 var position_time;
+var position_last_updated = null;
 
 var position_time_touch_start_y;
 var position_time_touch_end_y;
@@ -3021,7 +3022,7 @@ function position_change_time (position_time_additions = null, multiply_step_val
         position_last_updated = hh_and_mm_24;
     }
     
-    if (hours < 3) {
+    if (hours < 4) {
         hours += 24;
     }
     hours = ("0" + hours).slice(-2);
@@ -3575,10 +3576,10 @@ function operation_data_change_date (date_additions) {
     if (date_additions === null) {
         var operation_data_date = ts;
     } else if (typeof date_additions === "string") {
-        var dt = new Date(date_additions + " 03:00:00");
+        var dt = new Date(date_additions + " 04:00:00");
         var operation_data_date = Math.floor(dt.getTime() / 1000);
     } else {
-        var dt = new Date(operation_data["operation_date"] + " 03:00:00");
+        var dt = new Date(operation_data["operation_date"] + " 04:00:00");
         var operation_data_date = Math.floor(dt.getTime() / 1000) + (date_additions * 86400);
     }
     
@@ -3746,7 +3747,7 @@ function operation_data_draw () {
     
     var today_ts = get_timestamp();
     var now_str = get_hh_mm(today_ts);
-    var dt = new Date(operation_data["operation_date"] + " 03:00:00");
+    var dt = new Date(operation_data["operation_date"] + " 04:00:00");
     var operation_data_date = Math.floor(dt.getTime() / 1000);
     var days_before = Math.floor((today_ts - operation_data_date) / 86400);
     
@@ -4433,7 +4434,7 @@ function formation_detail (formation_name) {
     
     buf += "<div id='formation_operations_area'></div>";
     if (navigator.onLine) {
-        buf += "<button type='button' class='execute_button' onclick='operation_data_history(\"" + add_slashes(formation_name) + "\");'>過去30日間の運用</button>";
+        buf += "<button type='button' class='execute_button' onclick='operation_data_history(\"" + add_slashes(formation_name) + "\");'>これまでの運用履歴</button>";
     }
     
     buf += "<div id='semifixed_formation_area'></div>";
