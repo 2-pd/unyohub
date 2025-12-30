@@ -2997,6 +2997,7 @@ function get_final_destination (line_id, is_inbound, train_number, starting_stat
 
 
 var position_time;
+var position_last_updated = null;
 
 var position_time_touch_start_y;
 var position_time_touch_end_y;

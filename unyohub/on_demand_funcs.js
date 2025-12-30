@@ -467,7 +467,6 @@ function show_railroad_announcements () {
 var background_updater_last_execution = null;
 var announcement_last_checked = null;
 var railroad_announcement_last_checked = null;
-var position_last_updated = null;
 
 function background_updater () {
     var date_now = new Date();
@@ -477,8 +476,13 @@ function background_updater () {
         if (now_ts < background_updater_last_execution + 60) {
             var hh_and_mm = ("0" + date_now.getHours()).slice(-2) + ":" + ("0" + date_now.getMinutes()).slice(-2);
             
-            if (mode_val === 0 && position_last_updated !== null && position_last_updated < hh_and_mm) {
-                position_change_time();
+            if (mode_val === 0 && position_last_updated !== hh_and_mm && position_last_updated !== null) {
+                if (get_date_string(now_ts) === operation_data["operation_date"]) {
+                    position_change_time();
+                } else {
+                    operation_data_last_updated = null;
+                    position_mode(null, "__today__");
+                }
             }
             
             if (announcement_last_checked !== null && now_ts > announcement_last_checked + 1800) {
@@ -488,7 +492,7 @@ function background_updater () {
             if (railroad_info !== null && railroad_announcement_last_checked !== null && now_ts > railroad_announcement_last_checked + 600) {
                 update_railroad_announcement(railroad_info["railroad_id"]);
             }
-        
+            
             if (navigator.onLine && operation_data_last_updated !== null && operation_data_last_updated < now_ts - config["refresh_interval"] * 60) {
                 update_operation_data(function () {}, function () {}, function (update_exists) {
                     if (!update_exists) {
