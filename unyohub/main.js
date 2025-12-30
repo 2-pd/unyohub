@@ -4434,7 +4434,7 @@ function formation_detail (formation_name) {
     
     buf += "<div id='formation_operations_area'></div>";
     if (navigator.onLine) {
-        buf += "<button type='button' class='execute_button' onclick='operation_data_history(\"" + add_slashes(formation_name) + "\");'>過去30日間の運用</button>";
+        buf += "<button type='button' class='execute_button' onclick='operation_data_history(\"" + add_slashes(formation_name) + "\");'>これまでの運用履歴</button>";
     }
     
     buf += "<div id='semifixed_formation_area'></div>";
