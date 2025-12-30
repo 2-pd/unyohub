@@ -19,24 +19,17 @@ def convert_time_style (time_data, with_station_initial=True):
         return ""
     
     if ":" not in time_str:
-        if int(time_str) >= 300:
-            time_str = time_str[:-2] + ":" + time_str[-2:]
-        elif len(time_str) >= 3:
-            time_str = str(int(time_str[:-2]) + 24) + ":" + time_str[-2:]
+        if len(time_str) >= 3:
+            time_str = time_str[:-2].zfill(2) + ":" + time_str[-2:]
         else:
-            time_str = "24:" + time_str.zfill(2)
+            time_str = "00:" + time_str.zfill(2)
     else:
-        time_str_split = time_str.split(":")
-        
-        if int(time_str_split[0]) <= 2:
-            time_str_split[0] = str(int(time_str_split[0]) + 24)
-        
-        time_str = time_str_split[0] + ":" + time_str_split[1].zfill(2)
+        time_str = time_str.zfill(5)
     
     if with_station_initial:
-        return time_data[0:1] + time_str.zfill(5)
+        return time_data[0:1] + time_str
     else:
-        return time_str.zfill(5)
+        return time_str
 
 
 def convert_station_name_and_track (station_name):
