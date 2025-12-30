@@ -36,7 +36,7 @@ $ts = time();
 $datetime_now = date("Y-m-d H:i:s", $ts);
 $datetime_local_now = substr($datetime_now, 0, 10)."T".substr($datetime_now, 11, 5);
 $publication_datetime = "";
-$expiration_datetime = date("Y-m-d", $ts + 86400)."T03:00";
+$expiration_datetime = date("Y-m-d", $ts + 86400)."T04:00";
 
 $important_checked = "";
 
