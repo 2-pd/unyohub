@@ -731,6 +731,7 @@ function position_time_button_change () {
     
     var hours_minutes = position_time_button_elm.value.split(":");
     
+    hours_minutes[0] = Number(hours_minutes[0]);
     if (hours_minutes[0] < 4) {
         hours_minutes[0] += 24;
     }
