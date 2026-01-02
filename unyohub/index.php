@@ -319,14 +319,6 @@ if ($path_info_str === "/") {
     <article>
         <div id="operation_search_area">
             <div class='search_wrapper'><label for="train_number_search" class="search_icon">運用・列車番号で検索</label><input type="search" id="train_number_search" onkeyup="operation_table_list_number();" onsearch="operation_table_list_number();" placeholder="運用・列車番号で検索" autocomplete="off"></div>
-            <input type="checkbox" id="operation_search_menu"><label for="operation_search_menu" class="drop_down">絞り込み条件 <span id="operation_search_filter_count"></span></label>
-            <div>
-                <select class="wide_select" id="operation_search_group_name" onchange="operation_table_list_number();"><option value="" selected="selected"></option></select>
-                <select class="wide_select" id="operation_search_car_count" onchange="operation_table_list_number();"><option value="" selected="selected"></option></select>
-                <select class="wide_select" id="operation_search_starting_location" onchange="operation_table_list_number();"><option value="" selected="selected"></option></select>
-                <select class="wide_select" id="operation_search_terminal_location" onchange="operation_table_list_number();"><option value="" selected="selected"></option></select>
-                <button type='button' class='execute_button' class="additional_setting_link" onclick="reset_operation_narrow_down(false);">絞り込み条件のリセット</button>
-            </div>
         </div>
         <h2 id="operation_table_heading"></h2>
         <div id="operation_table_area" class="wait_icon"></div>

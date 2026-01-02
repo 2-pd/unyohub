@@ -422,6 +422,22 @@ input, textarea {
     }
 }
 
+h2 small {
+    display: block;
+    
+    width: fit-content;
+    
+    margin: 0 auto;
+    
+    line-height: 20px;
+    font-size: 16px;
+    color: #555555;
+    
+    .dark_mode & {
+        color: #dddddd;
+    }
+}
+
 #railroad_select_popup h2 {
     width: 100%;
     height: 40px;
@@ -1867,19 +1883,6 @@ textarea {
     border-color: #999999;
     
     background-color: #666666;
-}
-
-.wide_select {
-    display: block;
-    
-    width: 300px;
-    height: 36px;
-    
-    margin: 0 auto 10px auto;
-    
-    line-height: 36px;
-    font-size: 20px;
-    text-align: center;
 }
 
 .rearrangeable_list {

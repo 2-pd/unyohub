@@ -1864,19 +1864,6 @@ function get_operation_data_history (formation_name, operation_number, yyyy_mm =
 }
 
 
-function sort_operation_table (sorting_criteria) {
-    operation_table_sorting_criteria = sorting_criteria;
-    operation_table_ascending_order = true;
-    
-    operation_table_list_number();
-}
-
-function operation_table_reverse_order () {
-    operation_table_ascending_order = !operation_table_ascending_order;
-    
-    operation_table_list_number();
-}
-
 function operation_table_change (diagram_revision, diagram_id) {
     operation_search_area_elm.style.display = "none";
     operation_table_area_elm.innerHTML = "";
