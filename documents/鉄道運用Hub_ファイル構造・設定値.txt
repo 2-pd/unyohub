@@ -305,7 +305,7 @@ log_ip_address 投稿者のIPアドレスを記録するか(BOOL値)
     "operation_groups" : [
         {
             "operation_group_name" : 運用系統タイトル,
-            "main_color" : 運用系統テーマカラー,
+            "main_color" : 運用系統テーマカラー(省略可能),
             "operation_numbers" : 運用番号を配列で
         }
     ]
