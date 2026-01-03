@@ -1879,9 +1879,9 @@ function customize_operation_table () {
     
     buf += "<h4>オプション</h4>";
     buf += "<input type='checkbox' id='operation_table_option_show_start_end_locations' class='toggle' onchange='change_operation_table_options();'" + (config["show_start_end_locations_on_operation_table"] ? " checked='checked'" : "") + "><label for='operation_table_option_show_start_end_locations'>出入庫場所を表示</label>";
-    buf += "<input type='checkbox' id='operation_table_option_show_current_trains' class='toggle' onchange='change_operation_table_options();'" + (config["show_current_trains_on_operation_table"] ? " checked='checked'" : "") + "><label for='operation_table_option_show_current_trains' id='label_show_current_trains'>現時刻の列車を表示</label>";
+    buf += "<input type='checkbox' id='operation_table_option_show_current_trains' class='toggle' onchange='change_operation_table_options();'" + (config["show_current_trains_on_operation_table"] ? " checked='checked'" : "") + "><label for='operation_table_option_show_current_trains' id='label_show_current_trains'>出入庫の代わりに現時刻の列車を表示</label>";
     buf += "<input type='checkbox' id='operation_table_option_show_comments' class='toggle' onchange='change_operation_table_options();'" + (config["show_comments_on_operation_table"] ? " checked='checked'" : "") + "><label for='operation_table_option_show_comments' id='label_show_comments'>備考を表示</label>";
-    buf += "<input type='checkbox' id='operation_table_option_show_assigned_formations' class='toggle' onchange='change_operation_table_options();'" + (config["show_assigned_formations_on_operation_table"] ? " checked='checked'" : "") + "><label for='operation_table_option_show_assigned_formations'>充当編成を表示</label>";
+    buf += "<input type='checkbox' id='operation_table_option_show_assigned_formations' class='toggle' onchange='change_operation_table_options();'" + (config["show_assigned_formations_on_operation_table"] ? " checked='checked'" : "") + "><label for='operation_table_option_show_assigned_formations'>充当編成を表示(当日の運用表のみ)</label>";
     
     popup_inner_elm.innerHTML = buf;
     
