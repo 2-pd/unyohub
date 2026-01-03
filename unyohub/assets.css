@@ -1642,6 +1642,11 @@ button:has(abbr:empty) {
 }
 
 .radio_area {
+    position: relative;
+    
+    max-width: 500px;
+    margin: 0 auto;
+    
     text-align: center;
 }
 
@@ -2686,6 +2691,20 @@ h2, .heading_wrapper {
     .dark_mode & {
         background-color: #555555;
     }
+}
+
+.customize_button {
+    position: absolute;
+    top: 7px;
+    right: 5px;
+    
+    width: 40px;
+    height: 40px;
+    
+    background-image: url(data:image/webp;base64,UklGRvoBAABXRUJQVlA4TO4BAAAvT8ATEE/BoG0kR77jz+TY9f5Pg0HbSI58x5/Jsev9n0HbSI58x5/Jsev9n21k20rmycfdiem/BGohhMidLxP//0NKCVtrAs73fd73fR3E///z//8IDy0qAAQQAgIIACKGDQghGEiMGGC+7wMgCggIeOj//z9ijBNuyLUW33tlzlkClmy7aaSkmblvM7P2v8NOO7Lkwa+I/jtyI0mRIgcWbwWx+wT5509tM1lSyHK8qfnz2i0IZrF7eZ99StN3PnYosvP9xgKYNitSSKU5BRY1Tzbv8y6B3KfAxpMJ0JRgLsDYkyVQCVMBZnFk59WSyEhJAJbDxktN9QDYA4yq2scDvOCQ6TjjB3UdK6D3kIhoeXSBo75uHmKP3IBZUlT1DIGuw5PbXv+k4fmRtnIMjvzoZ9o+6nvRv+n7vH5c2jM7trNk5tATmHnPyUuYFjBObo53/PfMpfLxbquwZ67imTWKbJPb07k4H+syj9i+xD3XzjjgOZ3r/5X9zku6Zf0N2u/a335PAfu9+E/DzftUTOvvxH5n5tsu3otV9hERGy+2xcCLzYn3YntsvFhtlxGJ92J7il6cEvFebE+UFzt8JN6L7THwYnNsvNgWGy+eKX8NpzUnvyn7LdszteT2YHp7OrF/s9YJ2G8tbL81+d+PAA==);
+    background-repeat: no-repeat;
+    background-size: 40px;
+    background-position: center;
 }
 
 .bottom_link {

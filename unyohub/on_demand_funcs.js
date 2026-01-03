@@ -133,7 +133,7 @@ function popup_close (close_all = false, update_url = true) {
 var screen_elm = document.getElementById("popup_screen");
 var wait_screen_elm = document.getElementById("wait_screen");
 
-function open_square_popup (id, is_preview_popup = false, title = null, allow_screenshot = false) {
+function open_square_popup (id, is_oblong_popup = false, title = null, allow_screenshot = false) {
     if (square_popup_is_open) {
         close_square_popup();
     }
@@ -146,8 +146,8 @@ function open_square_popup (id, is_preview_popup = false, title = null, allow_sc
         elm = document.createElement("div");
         elm.id = id;
         
-        if (is_preview_popup) {
-            elm.className = "preview_popup";
+        if (is_oblong_popup) {
+            elm.className = "oblong_popup";
         } else {
             elm.className = "square_popup";
         }
@@ -1863,6 +1863,81 @@ function get_operation_data_history (formation_name, operation_number, yyyy_mm =
     });
 }
 
+
+function customize_operation_table () {
+    var popup_inner_elm = open_square_popup("customize_operation_table_popup", true, "運用表のカスタマイズ");
+    
+    const view_list = [["simple", "シンプル", "スマートフォン向けに最適化されており、狭い画面でも多くの運用を一度に表示することができます。"], ["classic", "クラシック", "各列車の列車番号と始発・終着時刻を運用ごとに表形式で順に記載した、PC・タブレット端末向けの表示方式です。"], ["timeline", "タイムライン", "各運用の列車を運転時刻を基準に横方向にプロットした、PC・タブレット端末向けの表示方式です。"]];
+    var buf = "<h4>ビュー</h4>";
+    var buf_2 = "";
+    var buf_3 = "";
+    for (var view_info of view_list) {
+        buf_2 += "<input type='radio' name='operation_table_view_radio' id='radio_operation_table_view_" + view_info[0] + "' value='" + view_info[0] + "'" + (view_info[0] === config["operation_table_view"] ? " checked='checked'" : "") + " onchange='change_operation_table_view(this.value);'><label for='radio_operation_table_view_" + view_info[0] + "'>" + view_info[1] + "</label>";
+        buf_3 += "<div class='informational_text' id='operation_table_view_info_" + view_info[0] + "'>" + view_info[1] + "ビューは" + view_info[2] + "</div>";
+    }
+    buf += "<div class='radio_area'>" + buf_2 + "</div>" + buf_3;
+    
+    buf += "<h4>オプション</h4>";
+    buf += "<input type='checkbox' id='operation_table_option_show_start_end_locations' class='toggle' onchange='change_operation_table_options();'" + (config["show_start_end_locations_on_operation_table"] ? " checked='checked'" : "") + "><label for='operation_table_option_show_start_end_locations'>出入庫場所を表示</label>";
+    buf += "<input type='checkbox' id='operation_table_option_show_current_trains' class='toggle' onchange='change_operation_table_options();'" + (config["show_current_trains_on_operation_table"] ? " checked='checked'" : "") + "><label for='operation_table_option_show_current_trains' id='label_show_current_trains'>現時刻の列車を表示</label>";
+    buf += "<input type='checkbox' id='operation_table_option_show_comments' class='toggle' onchange='change_operation_table_options();'" + (config["show_comments_on_operation_table"] ? " checked='checked'" : "") + "><label for='operation_table_option_show_comments' id='label_show_comments'>備考を表示</label>";
+    buf += "<input type='checkbox' id='operation_table_option_show_assigned_formations' class='toggle' onchange='change_operation_table_options();'" + (config["show_assigned_formations_on_operation_table"] ? " checked='checked'" : "") + "><label for='operation_table_option_show_assigned_formations'>充当編成を表示</label>";
+    
+    popup_inner_elm.innerHTML = buf;
+    
+    change_operation_table_view();
+}
+
+function change_operation_table_view (view_name = null) {
+    if (view_name !== null) {
+        config["operation_table_view"] = view_name;
+        
+        operation_table_list_number();
+    } else {
+        view_name = config["operation_table_view"];
+    }
+    
+    var view_info_simple_elm = document.getElementById("operation_table_view_info_simple");
+    var view_info_classic_elm = document.getElementById("operation_table_view_info_classic");
+    var view_info_timeline_elm = document.getElementById("operation_table_view_info_timeline");
+    var show_current_trains_label_elm = document.getElementById("label_show_current_trains");
+    var show_comments_label_elm = document.getElementById("label_show_comments");
+    
+    if (view_name === "simple") {
+        view_info_simple_elm.style.display = "block";
+        view_info_classic_elm.style.display = "none";
+        view_info_timeline_elm.style.display = "none";
+        
+        show_current_trains_label_elm.style.display = "block";
+        show_comments_label_elm.style.display = "none";
+    } else {
+        view_info_simple_elm.style.display = "none";
+        
+        if (view_name === "classic") {
+            view_info_classic_elm.style.display = "block";
+            view_info_timeline_elm.style.display = "none";
+        } else {
+            view_info_classic_elm.style.display = "none";
+            view_info_timeline_elm.style.display = "block";
+        }
+        
+        show_current_trains_label_elm.style.display = "none";
+        show_comments_label_elm.style.display = "block";
+    }
+    
+    save_config();
+}
+
+function change_operation_table_options () {
+    config["show_start_end_locations_on_operation_table"] = document.getElementById("operation_table_option_show_start_end_locations").checked;
+    config["show_current_trains_on_operation_table"] = document.getElementById("operation_table_option_show_current_trains").checked;
+    config["show_comments_on_operation_table"] = document.getElementById("operation_table_option_show_comments").checked;
+    config["show_assigned_formations_on_operation_table"] = document.getElementById("operation_table_option_show_assigned_formations").checked;
+    
+    save_config();
+    
+    operation_table_list_number();
+}
 
 function operation_table_change (diagram_revision, diagram_id) {
     operation_search_area_elm.style.display = "none";
