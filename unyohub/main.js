@@ -4717,6 +4717,8 @@ var operation_table_area_elm = document.getElementById("operation_table_area");
 var operation_table_info_elm = document.getElementById("operation_table_info");
 var operation_table_footer_inner_elm = document.getElementById("operation_table_footer_inner");
 
+var operation_table_drop_down_status;
+
 function operation_table_mode (diagram_revision = "__current__") {
     change_mode(4);
     
@@ -4725,6 +4727,8 @@ function operation_table_mode (diagram_revision = "__current__") {
     operation_table_area_elm.innerHTML = "";
     operation_table_info_elm.innerHTML = "";
     operation_table_footer_inner_elm.style.display = "none";
+    
+    operation_table_drop_down_status = {};
     
     var current_diagram_revision = get_diagram_revision();
     
@@ -4805,6 +4809,48 @@ function draw_operation_table (is_today) {
     var search_keyword = str_to_halfwidth(document.getElementById("train_number_search").value).toUpperCase();
     
     var buf = "";
+    
+    if (document.getElementById("sort_by_operation_groups").checked) {
+        var sorting_criteria = "operation_groups";
+        
+        var groups = operation_table["operation_groups"];
+    } else {
+        var operation_numbers = [];
+        for (var operation_group of operation_table["operation_groups"]) {
+            operation_numbers.push(...operation_group["operation_numbers"]);
+        }
+        
+        if (document.getElementById("sort_by_starting_location").checked) {
+            var sorting_criteria = "starting_location";
+        } else {
+            var sorting_criteria = "terminal_location";
+        }
+        
+        var operations_list = {};
+        var locations = [];
+        
+        for (var operation_number of operation_numbers) {
+            if (!locations.includes(operation_table["operations"][operation_number][sorting_criteria])) {
+                locations.push(operation_table["operations"][operation_number][sorting_criteria]);
+                operations_list[operation_table["operations"][operation_number][sorting_criteria]] = [];
+            }
+            
+            operations_list[operation_table["operations"][operation_number][sorting_criteria]].push(operation_number);
+        }
+        
+        var groups = [];
+        for (var location of sort_station_names(locations)) {
+            groups.push({operation_group_name: location, operation_numbers: operations_list[location]});
+        }
+    }
+    
+    for (var group of groups) {
+        var checkbox_id = "operation_group_" + group["operation_group_name"];
+        
+        buf += "<input type='checkbox' id='" + checkbox_id + "'" + (checkbox_id in operation_table_drop_down_status && operation_table_drop_down_status[checkbox_id] ? " checked='checked'" : "") + " onclick='update_operation_table_drop_down_status(this);'>";
+            buf += "<label for='" + checkbox_id + "' class='operation_table_drop_down'" + ("main_color" in group ? " style='background-color: " + (config["dark_mode"] ? convert_color_dark_mode(group["main_color"]) : group["main_color"]) + ";'" : "") + ">" + escape_html(group["operation_group_name"]) + "</label>";
+            buf += "<div></div>";
+    }
     
     if (buf.length >= 1) {
         operation_table_area_elm.innerHTML = buf;

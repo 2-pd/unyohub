@@ -1867,7 +1867,7 @@ function get_operation_data_history (formation_name, operation_number, yyyy_mm =
 function customize_operation_table () {
     var popup_inner_elm = open_square_popup("customize_operation_table_popup", true, "運用表のカスタマイズ");
     
-    const view_list = [["simple", "シンプル", "スマートフォン向けに最適化されており、狭い画面でも多くの運用を一度に表示することができます。"], ["classic", "クラシック", "各列車の列車番号と始発・終着時刻を運用ごとに表形式で順に記載した、PC・タブレット端末向けの表示方式です。"], ["timeline", "タイムライン", "各運用の列車を運転時刻を基準に横方向にプロットした、PC・タブレット端末向けの表示方式です。"]];
+    const view_list = [["simple", "シンプル", "スマートフォン向けに最適化されており、狭い画面でも多くの運用を一度に表示することができます。"], ["classic", "クラシック", "各列車の列車番号と始発・終着時刻を運用ごとに表形式で順に記載した、PC・タブレット端末向けの表示方式です。"], ["timeline", "タイムライン", "各運用の列車を運転時刻を基準として横方向にプロットした、PC・タブレット端末向けの表示方式です。"]];
     var buf = "<h4>ビュー</h4>";
     var buf_2 = "";
     var buf_3 = "";
@@ -1937,6 +1937,10 @@ function change_operation_table_options () {
     save_config();
     
     operation_table_list_number();
+}
+
+function update_operation_table_drop_down_status (elm) {
+    operation_table_drop_down_status[elm.id] = elm.checked;
 }
 
 function operation_table_change (diagram_revision, diagram_id) {

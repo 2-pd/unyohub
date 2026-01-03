@@ -1679,7 +1679,7 @@ button:has(abbr:empty) {
     text-decoration: underline;
 }
 
-input[type="checkbox"] + :is(label.drop_down, label.formation_table_drop_down) {
+input[type="checkbox"] + :is(label.drop_down, label.formation_table_drop_down, label.operation_table_drop_down) {
     display: block;
     
     position: relative;
@@ -1793,7 +1793,7 @@ label.formation_table_drop_down {
     }
 }
 
-input[type="checkbox"]:checked + :is(label.drop_down, label.formation_table_drop_down) {
+input[type="checkbox"]:checked + :is(label.drop_down, label.formation_table_drop_down, label.operation_table_drop_down) {
     &:after {
         transform: scaleY(-1);
     }
@@ -2537,6 +2537,19 @@ input[type="checkbox"]:checked + :is(label.drop_down, label.formation_table_drop
         .dark_mode & {
             background-color: #996666;
         }
+    }
+}
+
+input[type="checkbox"] + label.operation_table_drop_down {
+    background-color: #dddddd;
+    background-image: linear-gradient(to top, #444444 0px, #444444 5px, transparent 5px), linear-gradient(-75deg, #444444 0px, #444444 50px, transparent 51px);
+    
+    color: #333333;
+    
+    .dark_mode & {
+        background-image: linear-gradient(to top, #808080 0px, #808080 5px, transparent 5px), linear-gradient(-75deg, #808080 0px, #808080 50px, transparent 51px);
+        
+        color: #ffffff;
     }
 }
 
