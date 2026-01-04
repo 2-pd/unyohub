@@ -4873,165 +4873,194 @@ function draw_operation_table (is_today) {
         buf += "<input type='checkbox' id='" + checkbox_id + "'" + (checkbox_id in operation_table_drop_down_status && operation_table_drop_down_status[checkbox_id] ? " checked='checked'" : "") + " onclick='update_operation_table_drop_down_status(this);'>";
         buf += "<label for='" + checkbox_id + "' class='operation_table_drop_down" + (config["operation_table_view"] === "simple" ? "" : " wide_drop_down") + "'" + ("main_color" in group ? " style='background-color: " + (config["dark_mode"] ? convert_color_dark_mode(group["main_color"]) : group["main_color"]) + ";'" : "") + ">" + escape_html(group["operation_group_name"]) + "</label>";
         
-        switch (config["operation_table_view"]) {
-            case "simple":
-                var buf_2 = "<tr><th>運用番号</th><th>" + (config["show_current_trains_on_operation_table"] && is_today ? "現時刻の列車" : "出庫 / 入庫") + "</th></tr>";
-                for (var operation_number of group["operation_numbers"]) {
-                    buf_2 += "<tr onclick='operation_detail(" + operation_number_order.length + ", " + (is_today ? today_ts : "\"" + operation_table["diagram_id"] + "\"") + ", " + is_today + ");'>";
-                    buf_2 += "<th style='background-color: " + (config["dark_mode"] ? convert_color_dark_mode(operation_table["operations"][operation_number]["main_color"]) : operation_table["operations"][operation_number]["main_color"]) + ";'><u>" + escape_html(operation_number) + "</u><small>(" + operation_table["operations"][operation_number]["car_count"] + ")</small></th>";
-                    if (is_today) {
-                        if (operation_table["operations"][operation_number]["starting_time"] === null || operation_table["operations"][operation_number]["ending_time"] < now_str) {
-                            buf_2 += "<td class='after_operation'>";
-                        } else if (operation_table["operations"][operation_number]["starting_time"] > now_str) {
-                            buf_2 += "<td class='before_operation'>";
-                        } else {
-                            buf_2 += "<td>";
-                        }
+        if (config["operation_table_view"] === "simple") {
+            var buf_2 = "<tr><th>運用番号</th><th>" + (config["show_current_trains_on_operation_table"] && is_today ? "現時刻の列車" : "出庫 / 入庫") + "</th></tr>";
+            for (var operation_number of group["operation_numbers"]) {
+                buf_2 += "<tr onclick='operation_detail(" + operation_number_order.length + ", " + (is_today ? today_ts : "\"" + operation_table["diagram_id"] + "\"") + ", " + is_today + ");'>";
+                buf_2 += "<th style='background-color: " + (config["dark_mode"] ? convert_color_dark_mode(operation_table["operations"][operation_number]["main_color"]) : operation_table["operations"][operation_number]["main_color"]) + ";'><u>" + escape_html(operation_number) + "</u><small>(" + operation_table["operations"][operation_number]["car_count"] + ")</small></th>";
+                if (is_today) {
+                    if (operation_table["operations"][operation_number]["starting_time"] === null || operation_table["operations"][operation_number]["ending_time"] < now_str) {
+                        buf_2 += "<td class='after_operation'>";
+                    } else if (operation_table["operations"][operation_number]["starting_time"] > now_str) {
+                        buf_2 += "<td class='before_operation'>";
                     } else {
-                        if (operation_table["operations"][operation_number]["starting_time"] === null) {
-                            buf_2 += "<td class='after_operation'>";
+                        buf_2 += "<td>";
+                    }
+                } else {
+                    if (operation_table["operations"][operation_number]["starting_time"] === null) {
+                        buf_2 += "<td class='after_operation'>";
+                    } else {
+                        buf_2 += "<td>";
+                    }
+                }
+                if (config["show_current_trains_on_operation_table"] && is_today) {
+                    if (operation_table["operations"][operation_number]["starting_time"] === null) {
+                        buf_2 += "<small>(運用なし)</small> " + escape_html(operation_table["operations"][operation_number]["starting_location"]);
+                    } else if (operation_table["operations"][operation_number]["starting_time"] > now_hh_mm) {
+                        buf_2 += "<small>(出庫前)</small> " + escape_html(operation_table["operations"][operation_number]["starting_location"]) + (operation_table["operations"][operation_number]["starting_track"] !== null ? "<small>(" + escape_html(operation_table["operations"][operation_number]["starting_track"]) + ")</small>" : "");
+                    } else {
+                        var current_train_line_id = null;
+                        var current_train_is_inbound = null;
+                        var current_train_number = null;
+                        var current_train_starting_station = null;
+                        for (var train of operation_table["operations"][operation_number]["trains"]) {
+                            if (train["final_arrival_time"] < now_hh_mm) {
+                                continue;
+                            }
+                            
+                            current_train_line_id = train["line_id"];
+                            current_train_is_inbound = "direction" in train ? train["direction"] === "inbound" : null; //v25.09-1以前の仕様で作成された時刻表データとの互換性維持
+                            current_train_number = train["train_number"];
+                            current_train_starting_station = train["starting_station"];
+                            
+                            break;
+                        }
+                        
+                        if (current_train_number !== null) {
+                            if (current_train_number.startsWith(".")) {
+                                buf_2 += "<small>(待機)</small> " + escape_html(current_train_number.substring(1).split("__")[0]);
+                            } else {
+                                var train_data = get_train(current_train_line_id, current_train_is_inbound, current_train_number, current_train_starting_station);
+                                var train_title = current_train_number.split("__")[0];
+                                
+                                
+                                if (train_data !== null) {
+                                    buf_2 += "<span style='color: " + (config["dark_mode"] ? convert_font_color_dark_mode(get_train_color(train_title, train_data["train_type"])) : get_train_color(train_title, train_data["train_type"])) + "'>" + escape_html(train_data["train_type"].substring(0, 1)) + " <b>" + escape_html(train_title) + "</b></span>　" + escape_html("destination" in train_data ? train_data["destination"] : get_final_destination(current_train_line_id, current_train_is_inbound, current_train_number, current_train_starting_station)) + "<small> 行き</small>";
+                                } else {
+                                    buf_2 += "<span style='color: " + (config["dark_mode"] ? convert_font_color_dark_mode(get_train_color(train_title)) : get_train_color(train_title)) + "'><b>" + escape_html(train_title) + "</b></span>";
+                                }
+                            }
                         } else {
-                            buf_2 += "<td>";
+                            buf_2 += "<small>(入庫済み)</small> " + escape_html(operation_table["operations"][operation_number]["terminal_location"]) + (operation_table["operations"][operation_number]["terminal_track"] !== null ? "<small>(" + escape_html(operation_table["operations"][operation_number]["terminal_track"]) + ")</small>" : "");
                         }
                     }
-                    if (config["show_current_trains_on_operation_table"] && is_today) {
-                        if (operation_table["operations"][operation_number]["starting_time"] === null) {
-                            buf_2 += "<small>(運用なし)</small> " + escape_html(operation_table["operations"][operation_number]["starting_location"]);
-                        } else if (operation_table["operations"][operation_number]["starting_time"] > now_hh_mm) {
-                            buf_2 += "<small>(出庫前)</small> " + escape_html(operation_table["operations"][operation_number]["starting_location"]) + (operation_table["operations"][operation_number]["starting_track"] !== null ? "<small>(" + escape_html(operation_table["operations"][operation_number]["starting_track"]) + ")</small>" : "");
+                } else {
+                    if (config["show_start_end_times_on_operation_table"]) {
+                        buf_2 += "<div>" + escape_html(operation_table["operations"][operation_number]["starting_location"]) + (operation_table["operations"][operation_number]["starting_track"] !== null ? "<small>(" + escape_html(operation_table["operations"][operation_number]["starting_track"]) + ")</small>" : "") + "<br>" + get_start_end_time_html(operation_table["operations"][operation_number]["starting_time"], true) + "</div>";
+                        buf_2 += "<span class='two_headed_arrow'></span>";
+                        buf_2 += "<div>" + escape_html(operation_table["operations"][operation_number]["terminal_location"]) + (operation_table["operations"][operation_number]["terminal_track"] !== null ? "<small>(" + escape_html(operation_table["operations"][operation_number]["terminal_track"]) + ")</small>" : "") + "<br>" + get_start_end_time_html(operation_table["operations"][operation_number]["ending_time"], false) + "</div>";
+                    } else {
+                        buf_2 += "<div>" + escape_html(operation_table["operations"][operation_number]["starting_location"]) + (operation_table["operations"][operation_number]["starting_track"] !== null ? "<small>(" + escape_html(operation_table["operations"][operation_number]["starting_track"]) + ")</small>" : "") + "</div>";
+                        buf_2 += "<span class='two_headed_arrow'></span>";
+                        buf_2 += "<div>" + escape_html(operation_table["operations"][operation_number]["terminal_location"]) + (operation_table["operations"][operation_number]["terminal_track"] !== null ? "<small>(" + escape_html(operation_table["operations"][operation_number]["terminal_track"]) + ")</small>" : "") + "</div>";
+                    }
+                }
+                buf_2 += "</td></tr>";
+                
+                operation_number_order.push(operation_number);
+            }
+            buf += "<div><table class='operation_table_simple'>" + buf_2 + "</table></div>";
+        } else {
+            var buf_2 = "<tr><th>運用番号</th>" + (config["show_start_end_times_on_operation_table"]  ? "<th>出入庫</th>" : "") + "<th>";
+            if (config["operation_table_view"] === "classic") {
+                buf_2 += "列車一覧";
+            } else {
+                for (var hour = 4; hour <= 27; hour++) {
+                    buf_2 += "<div class='timeline_hour'>" + hour + "時</div>";
+                }
+            }
+            buf_2 += "</th></tr>";
+            
+            for (var operation_number of group["operation_numbers"]) {
+                buf_2 += "<tr><th onclick='operation_detail(" + operation_number_order.length + ", " + (is_today ? today_ts : "\"" + operation_table["diagram_id"] + "\"") + ", " + is_today + ");' style='background-color: " + (config["dark_mode"] ? convert_color_dark_mode(operation_table["operations"][operation_number]["main_color"]) : operation_table["operations"][operation_number]["main_color"]) + ";'><u>" + escape_html(operation_number) + "</u><small>(" + operation_table["operations"][operation_number]["car_count"] + "両)</small></th>";
+                
+                if (config["show_start_end_times_on_operation_table"]) {
+                    buf_2 += "<td class='start_end_location'>";
+                    buf_2 += "○ " + escape_html(operation_table["operations"][operation_number]["starting_location"]) + (operation_table["operations"][operation_number]["starting_track"] !== null ? "<small>(" + escape_html(operation_table["operations"][operation_number]["starting_track"]) + ")</small>" : "") + "<br>";
+                    buf_2 += "△ " + escape_html(operation_table["operations"][operation_number]["terminal_location"]) + (operation_table["operations"][operation_number]["terminal_track"] !== null ? "<small>(" + escape_html(operation_table["operations"][operation_number]["terminal_track"]) + ")</small>" : "") + "<br>";
+                    buf_2 += get_start_end_time_html(operation_table["operations"][operation_number]["starting_time"], true) + " - " + get_start_end_time_html(operation_table["operations"][operation_number]["ending_time"], false);
+                    buf_2 += "</td>";
+                }
+                
+                buf_2 += "<td>";
+                
+                if (config["operation_table_view"] === "timeline") {
+                    for (var hour = 4; hour <= 27; hour++) {
+                        buf_2 += "<div class='timeline_hour'></div>";
+                    }
+                }
+                
+                var previous_final_arrival_time = operation_table["operations"][operation_number]["starting_time"];
+                for (var cnt = 0; cnt < operation_table["operations"][operation_number]["trains"].length; cnt++) {
+                    var train = operation_table["operations"][operation_number]["trains"][cnt];
+                    
+                    if (train["train_number"].startsWith(".")) {
+                        if (config["operation_table_view"] === "classic") {
+                            buf_2 += "<div class='deposited_train_cell'><div>" + escape_html(train["train_number"].substring(1).split("__")[0]) + "</div><div" + (is_today && previous_final_arrival_time < now_hh_mm && train["final_arrival_time"] >= now_hh_mm ? " class='search_highlight'" : "") + ">" + train["first_departure_time"] + "<br>" + train["final_arrival_time"] + "</div></div>";
                         } else {
-                            var current_train_line_id = null;
-                            var current_train_is_inbound = null;
-                            var current_train_number = null;
-                            var current_train_starting_station = null;
-                            for (var train of operation_table["operations"][operation_number]["trains"]) {
-                                if (train["final_arrival_time"] < now_hh_mm) {
-                                    continue;
-                                }
-                                
-                                current_train_line_id = train["line_id"];
-                                current_train_is_inbound = "direction" in train ? train["direction"] === "inbound" : null; //v25.09-1以前の仕様で作成された時刻表データとの互換性維持
-                                current_train_number = train["train_number"];
-                                current_train_starting_station = train["starting_station"];
-                                
+                            var first_departure_time_minutes = hh_mm_to_minutes(train["first_departure_time"]);
+                            
+                            buf_2 += "<div class='timeline_deposited_train' style='left: " + (first_departure_time_minutes * 2 - 480) + "px; width: " + ((hh_mm_to_minutes(train["final_arrival_time"]) - first_departure_time_minutes) * 2 - 4)  + "px;'><div>" + escape_html(train["train_number"].substring(1).split("__")[0]) + "</div></div>";
+                        }
+                    } else {
+                        var train_data = get_train(train["line_id"], train["direction"] === "inbound", train["train_number"], train["starting_station"]);
+                        var train_title = train["train_number"].split("__")[0];
+                        var operations_list = get_operations(train["line_id"], train["train_number"], train["starting_station"], train["direction"] + "_trains");
+                        
+                        var terminal_station_name = train["terminal_station"];
+                        var final_arrival_time = train["final_arrival_time"];
+                        var terminal_line_id = train["line_id"];
+                        for (var cnt_2 = 1; cnt + cnt_2 < operation_table["operations"][operation_number]["trains"].length; cnt_2++) {
+                            var train_index = cnt + cnt_2;
+                            
+                            if (operation_table["operations"][operation_number]["trains"][train_index]["train_number"] !== train["train_number"]) {
                                 break;
                             }
                             
-                            if (current_train_number !== null) {
-                                if (current_train_number.startsWith(".")) {
-                                    buf_2 += "<small>(待機)</small> " + escape_html(current_train_number.substring(1).split("__")[0]);
-                                } else {
-                                    var train_data = get_train(current_train_line_id, current_train_is_inbound, current_train_number, current_train_starting_station);
-                                    var train_title = current_train_number.split("__")[0];
-                                    
-                                    
-                                    if (train_data !== null) {
-                                        buf_2 += "<span style='color: " + (config["dark_mode"] ? convert_font_color_dark_mode(get_train_color(train_title, train_data["train_type"])) : get_train_color(train_title, train_data["train_type"])) + "'>" + escape_html(train_data["train_type"].substring(0, 1)) + " <b>" + escape_html(train_title) + "</b></span>　" + escape_html("destination" in train_data ? train_data["destination"] : get_final_destination(current_train_line_id, current_train_is_inbound, current_train_number, current_train_starting_station)) + "<small> 行き</small>";
-                                    } else {
-                                        buf_2 += "<span style='color: " + (config["dark_mode"] ? convert_font_color_dark_mode(get_train_color(train_title)) : get_train_color(train_title)) + "'><b>" + escape_html(train_title) + "</b></span>";
-                                    }
-                                }
-                            } else {
-                                buf_2 += "<small>(入庫済み)</small> " + escape_html(operation_table["operations"][operation_number]["terminal_location"]) + (operation_table["operations"][operation_number]["terminal_track"] !== null ? "<small>(" + escape_html(operation_table["operations"][operation_number]["terminal_track"]) + ")</small>" : "");
-                            }
+                            terminal_station_name = operation_table["operations"][operation_number]["trains"][train_index]["terminal_station"];
+                            final_arrival_time = operation_table["operations"][operation_number]["trains"][train_index]["final_arrival_time"];
+                            terminal_line_id = operation_table["operations"][operation_number]["trains"][train_index]["line_id"];
                         }
-                    } else {
-                        if (config["show_start_end_times_on_operation_table"]) {
-                            buf_2 += "<div>" + escape_html(operation_table["operations"][operation_number]["starting_location"]) + (operation_table["operations"][operation_number]["starting_track"] !== null ? "<small>(" + escape_html(operation_table["operations"][operation_number]["starting_track"]) + ")</small>" : "") + "<br>" + get_start_end_time_html(operation_table["operations"][operation_number]["starting_time"], true) + "</div>";
-                            buf_2 += "<span class='two_headed_arrow'></span>";
-                            buf_2 += "<div>" + escape_html(operation_table["operations"][operation_number]["terminal_location"]) + (operation_table["operations"][operation_number]["terminal_track"] !== null ? "<small>(" + escape_html(operation_table["operations"][operation_number]["terminal_track"]) + ")</small>" : "") + "<br>" + get_start_end_time_html(operation_table["operations"][operation_number]["ending_time"], false) + "</div>";
-                        } else {
-                            buf_2 += "<div>" + escape_html(operation_table["operations"][operation_number]["starting_location"]) + (operation_table["operations"][operation_number]["starting_track"] !== null ? "<small>(" + escape_html(operation_table["operations"][operation_number]["starting_track"]) + ")</small>" : "") + "</div>";
-                            buf_2 += "<span class='two_headed_arrow'></span>";
-                            buf_2 += "<div>" + escape_html(operation_table["operations"][operation_number]["terminal_location"]) + (operation_table["operations"][operation_number]["terminal_track"] !== null ? "<small>(" + escape_html(operation_table["operations"][operation_number]["terminal_track"]) + ")</small>" : "") + "</div>";
-                        }
-                    }
-                    buf_2 += "</td></tr>";
-                    
-                    operation_number_order.push(operation_number);
-                }
-                buf += "<div><table class='operation_table_simple'>" + buf_2 + "</table></div>";
-                
-                break;
-            case "classic":
-                var buf_2 = "<tr><th>運用番号</th>" + (config["show_start_end_times_on_operation_table"]  ? "<th>出入庫</th>" : "") + "<th>列車一覧</th></tr>";
-                for (var operation_number of group["operation_numbers"]) {
-                    buf_2 += "<tr><th onclick='operation_detail(" + operation_number_order.length + ", " + (is_today ? today_ts : "\"" + operation_table["diagram_id"] + "\"") + ", " + is_today + ");' style='background-color: " + (config["dark_mode"] ? convert_color_dark_mode(operation_table["operations"][operation_number]["main_color"]) : operation_table["operations"][operation_number]["main_color"]) + ";'><u>" + escape_html(operation_number) + "</u><small>(" + operation_table["operations"][operation_number]["car_count"] + "両)</small></th>";
-                    
-                    if (config["show_start_end_times_on_operation_table"]) {
-                        buf_2 += "<td class='start_end_location'>";
-                        buf_2 += "○ " + escape_html(operation_table["operations"][operation_number]["starting_location"]) + (operation_table["operations"][operation_number]["starting_track"] !== null ? "<small>(" + escape_html(operation_table["operations"][operation_number]["starting_track"]) + ")</small>" : "") + "<br>";
-                        buf_2 += "△ " + escape_html(operation_table["operations"][operation_number]["terminal_location"]) + (operation_table["operations"][operation_number]["terminal_track"] !== null ? "<small>(" + escape_html(operation_table["operations"][operation_number]["terminal_track"]) + ")</small>" : "") + "<br>";
-                        buf_2 += get_start_end_time_html(operation_table["operations"][operation_number]["starting_time"], true) + " - " + get_start_end_time_html(operation_table["operations"][operation_number]["ending_time"], false);
-                        buf_2 += "</td>";
-                    }
-                    
-                    buf_2 += "<td>";
-                    
-                    var previous_final_arrival_time = operation_table["operations"][operation_number]["starting_time"];
-                    for (var cnt = 0; cnt < operation_table["operations"][operation_number]["trains"].length; cnt++) {
-                        var train = operation_table["operations"][operation_number]["trains"][cnt];
                         
-                        if (train["train_number"].startsWith(".")) {
-                            buf_2 += "<div class='deposited_train_cell'><div>" + escape_html(train["train_number"].substring(1).split("__")[0]) + "</div><div" + (is_today && previous_final_arrival_time < now_hh_mm && train["final_arrival_time"] >= now_hh_mm ? " class='search_highlight'" : "") + ">" + train["first_departure_time"] + "<br>" + train["final_arrival_time"] + "</div></div>";
-                        } else {
-                            var train_data = get_train(train["line_id"], train["direction"] === "inbound", train["train_number"], train["starting_station"]);
-                            var train_title = train["train_number"].split("__")[0];
-                            var operations_list = get_operations(train["line_id"], train["train_number"], train["starting_station"], train["direction"] + "_trains");
-                            
-                            var terminal_station_name = train["terminal_station"];
-                            var final_arrival_time = train["final_arrival_time"];
-                            var terminal_line_id = train["line_id"];
-                            for (var cnt_2 = 1; cnt + cnt_2 < operation_table["operations"][operation_number]["trains"].length; cnt_2++) {
-                                var train_index = cnt + cnt_2;
-                                
-                                if (operation_table["operations"][operation_number]["trains"][train_index]["train_number"] !== train["train_number"]) {
-                                    break;
-                                }
-                                
-                                terminal_station_name = operation_table["operations"][operation_number]["trains"][train_index]["terminal_station"];
-                                final_arrival_time = operation_table["operations"][operation_number]["trains"][train_index]["final_arrival_time"];
-                                terminal_line_id = operation_table["operations"][operation_number]["trains"][train_index]["line_id"];
+                        for (var station of railroad_info["lines"][train["line_id"]]["stations"]) {
+                            if (station["station_name"] === train["starting_station"]) {
+                                var starting_station = station["station_initial"];
+                                break;
                             }
-                            
+                        }
+                        
+                        if (config["operation_table_view"] === "classic") {
                             buf_2 += "<div class='train_cell' onclick='train_detail(\"" + train["line_id"] + "\", \"" + train["train_number"] + "\", \"" + train["starting_station"] + "\", \"" + train["direction"] + "_trains\", " + is_today + ", " + is_today + ");'>";
                             if (train_data !== null) {
-                                buf_2 += "<div style='background-color: " + (config["dark_mode"] ? convert_color_dark_mode(get_train_color(train_title, train_data["train_type"], "#333333")) : get_train_color(train_title, train_data["train_type"], "#333333")) + "'><small>" + escape_html(train_data["train_type"].substring(0, 1)) + "</small> " + escape_html(train_title) + (operations_list.length >= 2 ? "<small>(" + train["position_forward"] + (train["position_rear"] > train["position_forward"] ? "-" + train["position_rear"] : "") + ")</small>" : "") + "</div>";
+                                buf_2 += "<div style='background-color: " + (config["dark_mode"] ? convert_color_dark_mode(get_train_color(train_title, train_data["train_type"], "#333333")) : get_train_color(train_title, train_data["train_type"], "#333333")) + ";'><small>" + escape_html(train_data["train_type"].substring(0, 1)) + "</small> " + escape_html(train_title) + (operations_list.length >= 2 ? "<small>(" + train["position_forward"] + (train["position_rear"] > train["position_forward"] ? "-" + train["position_rear"] : "") + ")</small>" : "") + "</div>";
                             } else {
                                 buf_2 += "<div style='background-color: " + (config["dark_mode"] ? convert_color_dark_mode(get_train_color(train_title, "", "#333333")) : get_train_color(train_title, "", "#333333")) + "'>" + escape_html(train_title) + "</div>";
                             }
-                            for (var station of railroad_info["lines"][train["line_id"]]["stations"]) {
-                                if (station["station_name"] === train["starting_station"]) {
-                                    var starting_station = station["station_initial"];
-                                    break;
-                                }
-                            }
+                            
                             for (var station of railroad_info["lines"][terminal_line_id]["stations"]) {
                                 if (station["station_name"] === terminal_station_name) {
                                     var terminal_station = station["station_initial"];
                                     break;
                                 }
                             }
+                            
                             buf_2 += "<div" + (is_today && previous_final_arrival_time < now_hh_mm && final_arrival_time >= now_hh_mm ? " class='search_highlight'" : "") + ">" + starting_station + " " + train["first_departure_time"] + "<br>" + terminal_station + " " + final_arrival_time + "</div>";
                             buf_2 += "</div>";
+                        } else {
+                            var first_departure_time_minutes = hh_mm_to_minutes(train["first_departure_time"]);
                             
-                            cnt += cnt_2 - 1;
+                            if (train_data !== null) {
+                                buf_2 += "<div class='timeline_train' onclick='train_detail(\"" + train["line_id"] + "\", \"" + train["train_number"] + "\", \"" + train["starting_station"] + "\", \"" + train["direction"] + "_trains\", " + is_today + ", " + is_today + ");' style='left: " + (first_departure_time_minutes * 2 - 480) + "px; width: " + ((hh_mm_to_minutes(final_arrival_time) - first_departure_time_minutes) * 2)  + "px;'><div style='background-color: " + (config["dark_mode"] ? convert_color_dark_mode(get_train_color(train_title, train_data["train_type"], "#333333")) : get_train_color(train_title, train_data["train_type"], "#333333")) + ";'><small>" + escape_html(train_data["train_type"].substring(0, 1)) + "</small> " + escape_html(train_title) + (operations_list.length >= 2 ? "<small>(" + train["position_forward"] + (train["position_rear"] > train["position_forward"] ? "-" + train["position_rear"] : "") + ")</small>" : "") + "</div><div>" + starting_station + "</div></div>";
+                            } else {
+                                buf_2 += "<div class='timeline_train' onclick='train_detail(\"" + train["line_id"] + "\", \"" + train["train_number"] + "\", \"" + train["starting_station"] + "\", \"" + train["direction"] + "_trains\", " + is_today + ", " + is_today + ");' style='left: " + (first_departure_time_minutes * 2 - 480) + "px; width: " + ((hh_mm_to_minutes(final_arrival_time) - first_departure_time_minutes) * 2)  + "px;'><div style='background-color: " + (config["dark_mode"] ? convert_color_dark_mode(get_train_color(train_title, "", "#333333")) : get_train_color(train_title, "", "#333333")) + ";'>" + escape_html(train_title) + (operations_list.length >= 2 ? "<small>(" + train["position_forward"] + (train["position_rear"] > train["position_forward"] ? "-" + train["position_rear"] : "") + ")</small>" : "") + "</div>" + starting_station + "</div>";
+                            }
                         }
                         
-                        previous_final_arrival_time = final_arrival_time;
+                        cnt += cnt_2 - 1;
                     }
                     
-                    if (config["show_comments_on_operation_table"] && operation_table["operations"][operation_number]["comment"] !== null) {
-                        buf_2 += "<div class='operation_table_comment'>" + escape_html(operation_table["operations"][operation_number]["comment"]) + "</div>";
-                    }
-                    
-                    buf_2 += "</td></tr>";
-                    
-                    operation_number_order.push(operation_number);
+                    previous_final_arrival_time = final_arrival_time;
                 }
-                buf += "<div><table class='operation_table_classic'>" + buf_2 + "</table></div>";
                 
-                break;
+                if (config["show_comments_on_operation_table"] && operation_table["operations"][operation_number]["comment"] !== null) {
+                    buf_2 += "<div class='operation_table_comment'>" + escape_html(operation_table["operations"][operation_number]["comment"]) + "</div>";
+                }
+                
+                buf_2 += "</td></tr>";
+                
+                operation_number_order.push(operation_number);
+            }
+            buf += "<div><table class='operation_table_" + config["operation_table_view"] + "'>" + buf_2 + "</table></div>";
         }
     }
     

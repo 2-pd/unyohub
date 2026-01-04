@@ -1821,8 +1821,16 @@ label.wide_drop_down {
             border-radius: 10px;
         }
         
+        .dark_mode &::-webkit-scrollbar-thumb {
+            background: #666666;
+        }
+        
         &::-webkit-scrollbar-track {
             background: #eeeeee;
+        }
+        
+        .dark_mode &::-webkit-scrollbar-track {
+            background: #555555;
         }
     }
 }
@@ -1920,7 +1928,7 @@ input[type="checkbox"]:checked + :is(label.drop_down, label.formation_table_drop
     }
 }
 
-:is(.timetable_train, #operation_data_area, .operation_table_simple, .operation_table_classic) small {
+:is(.timetable_train, #operation_data_area, .operation_table_simple, .operation_table_classic, .operation_table_timeline) small {
     font-size: 14px;
     
     color: #666666;
@@ -2648,7 +2656,7 @@ input[type="checkbox"] + label.operation_table_drop_down {
     }
 }
 
-.operation_table_classic {
+.operation_table_classic, .operation_table_timeline {
     min-width: 100%;
     
     border-collapse: collapse;
@@ -2658,6 +2666,13 @@ input[type="checkbox"] + label.operation_table_drop_down {
         
         .dark_mode & {
             border-color: #999999;
+        }
+        
+        th {
+            padding: 0;
+            
+            line-height: 30px;
+            white-space: nowrap;
         }
         
         th:first-child {
@@ -2675,6 +2690,8 @@ input[type="checkbox"] + label.operation_table_drop_down {
             
             text-align: center;
             
+            z-index: 1;
+            
             .dark_mode & {
                 background-color: #444444;
             }
@@ -2688,14 +2705,18 @@ input[type="checkbox"] + label.operation_table_drop_down {
             text-align: left;
             text-indent: 10px;
         }
+        
+        td {
+            position: relative;
+            
+            padding: 0;
+        }
     }
     
     .start_end_location {
         width: 140px;
         
         min-width: 140px;
-        
-        padding: 0;
         
         background-color: #f7f7f7;
         
@@ -2712,8 +2733,6 @@ input[type="checkbox"] + label.operation_table_drop_down {
         width: fit-content;
         
         min-width: 100% - 80px;
-        
-        padding: 0;
         
         line-height: 0;
         white-space: nowrap;
@@ -2747,20 +2766,20 @@ input[type="checkbox"] + label.operation_table_drop_down {
     }
 }
 
-.deposited_train_cell div:first-child {
+:is(.deposited_train_cell, .timeline_deposited_train) div:first-child {
+    height: 20px !important;
+    
     border: 2px solid #cccccc;
     
-    background-color: transparent;
-    
-    line-height: 20px;
+    line-height: 20px !important;
     font-size: 15px;
-    color: #666666;
+    color: #666666 !important;
     font-style: italic;
     
     .dark_mode & {
         border-color: #666666;
         
-        color: #cccccc;
+        color: #cccccc !important;
     }
 }
 
@@ -2774,6 +2793,62 @@ input[type="checkbox"] + label.operation_table_drop_down {
     
     .dark_mode & {
         color: #cccccc;
+    }
+}
+
+.operation_table_timeline th {
+    text-indent: 0 !important;
+}
+
+.timeline_hour {
+    display: inline-block;
+    
+    width: 118px;
+    height: 100%;
+    
+    border-left: 2px solid #dddddd;
+    
+    color: #666666;
+    font-weight: normal;
+    text-indent: 5px;
+    
+    .dark_mode & {
+        border-left-color: #666666;
+        
+        color: #cccccc;
+    }
+    
+    td & {
+        height: 72px;
+        
+        border-left-style: dotted;
+    }
+    
+    td &:first-child {
+        border-left-color: transparent;
+    }
+}
+
+.timeline_train, .timeline_deposited_train {
+    position: absolute;
+    
+    top: 16px;
+    
+    line-height: 24px;
+    
+    div {
+        width: inherit;
+        height: 24px;
+    }
+    
+    div:first-child {
+        color: #ffffff;
+        
+        overflow: hidden;
+        
+        small {
+             color: inherit !important;
+        }
     }
 }
 
