@@ -2581,9 +2581,7 @@ input[type="checkbox"] + label.operation_table_drop_down {
     td {
         position: relative;
         
-        :before {
-            content: "";
-            
+        .two_headed_arrow {
             display: block;
             
             position: absolute;
