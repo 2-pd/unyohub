@@ -2673,7 +2673,25 @@ input[type="checkbox"] + label.operation_table_drop_down {
         }
     }
     
-    td {
+    .start_end_location {
+        width: 140px;
+        
+        min-width: 140px;
+        
+        padding: 0;
+        
+        background-color: #f7f7f7;
+        
+        line-height: 24px;
+        font-size: 15px;
+        text-align: center;
+        
+        .dark_mode & {
+            background-color: #555555;
+        }
+    }
+    
+    td:not(.start_end_location) {
         width: fit-content;
         
         min-width: 100% - 80px;
@@ -2682,6 +2700,10 @@ input[type="checkbox"] + label.operation_table_drop_down {
         
         line-height: 0;
         white-space: nowrap;
+    }
+    
+    .start_end_location + td {
+        min-width: 100% - 220px;
     }
 }
 

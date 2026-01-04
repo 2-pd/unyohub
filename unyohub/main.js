@@ -4956,11 +4956,17 @@ function draw_operation_table (is_today) {
             case "classic":
                 var buf_2 = "<tr><th>運用番号</th>" + (config["show_start_end_locations_on_operation_table"]  ? "<th>出入庫</th>" : "") + "<th>列車一覧</th></tr>";
                 for (var operation_number of group["operation_numbers"]) {
-                    buf_2 += "<tr><th onclick='operation_detail(" + operation_number_order.length + ", " + (is_today ? today_ts : "\"" + operation_table["diagram_id"] + "\"") + ", " + is_today + ");' style='background-color: " + (config["dark_mode"] ? convert_color_dark_mode(operation_table["operations"][operation_number]["main_color"]) : operation_table["operations"][operation_number]["main_color"]) + ";'><u>" + escape_html(operation_number) + "</u><small>(" + operation_table["operations"][operation_number]["car_count"] + "両)</small></th><td>";
+                    buf_2 += "<tr><th onclick='operation_detail(" + operation_number_order.length + ", " + (is_today ? today_ts : "\"" + operation_table["diagram_id"] + "\"") + ", " + is_today + ");' style='background-color: " + (config["dark_mode"] ? convert_color_dark_mode(operation_table["operations"][operation_number]["main_color"]) : operation_table["operations"][operation_number]["main_color"]) + ";'><u>" + escape_html(operation_number) + "</u><small>(" + operation_table["operations"][operation_number]["car_count"] + "両)</small></th>";
                     
                     if (config["show_start_end_locations_on_operation_table"]) {
-                        buf_2 += "</td><td>";
+                        buf_2 += "<td class='start_end_location'>";
+                        buf_2 += "○ " + escape_html(operation_table["operations"][operation_number]["starting_location"]) + (operation_table["operations"][operation_number]["starting_track"] !== null ? "<small>(" + escape_html(operation_table["operations"][operation_number]["starting_track"]) + ")</small>" : "") + "<br>";
+                        buf_2 += "△ " + escape_html(operation_table["operations"][operation_number]["terminal_location"]) + (operation_table["operations"][operation_number]["terminal_track"] !== null ? "<small>(" + escape_html(operation_table["operations"][operation_number]["terminal_track"]) + ")</small>" : "") + "<br>";
+                        buf_2 += get_start_end_time_html(operation_table["operations"][operation_number]["starting_time"], true) + " - " + get_start_end_time_html(operation_table["operations"][operation_number]["ending_time"], false);
+                        buf_2 += "</td>";
                     }
+                    
+                    buf_2 += "<td>";
                     
                     for (var cnt = 0; cnt < operation_table["operations"][operation_number]["trains"].length; cnt++) {
                         var train = operation_table["operations"][operation_number]["trains"][cnt];
