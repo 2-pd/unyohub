@@ -4973,10 +4973,11 @@ function draw_operation_table (is_today) {
                         var train = operation_table["operations"][operation_number]["trains"][cnt];
                         
                         if (train["train_number"].startsWith(".")) {
-                            buf_2 += "<div class='deposited_train_cell'><div>" + escape_html(train["train_number"].substring(1).split("__")[0]) + "</div><div>" + train["first_departure_time"] + "<br>" + train["final_arrival_time"] + "</div></div>";
+                            buf_2 += "<div class='deposited_train_cell'><div>" + escape_html(train["train_number"].substring(1).split("__")[0]) + "</div><div" + (is_today && previous_final_arrival_time < now_hh_mm && train["final_arrival_time"] >= now_hh_mm ? " class='search_highlight'" : "") + ">" + train["first_departure_time"] + "<br>" + train["final_arrival_time"] + "</div></div>";
                         } else {
                             var train_data = get_train(train["line_id"], train["direction"] === "inbound", train["train_number"], train["starting_station"]);
                             var train_title = train["train_number"].split("__")[0];
+                            var operations_list = get_operations(train["line_id"], train["train_number"], train["starting_station"], train["direction"] + "_trains");
                             
                             var terminal_station_name = train["terminal_station"];
                             var final_arrival_time = train["final_arrival_time"];
@@ -4995,7 +4996,7 @@ function draw_operation_table (is_today) {
                             
                             buf_2 += "<div class='train_cell' onclick='train_detail(\"" + train["line_id"] + "\", \"" + train["train_number"] + "\", \"" + train["starting_station"] + "\", \"" + train["direction"] + "_trains\", " + is_today + ", " + is_today + ");'>";
                             if (train_data !== null) {
-                                buf_2 += "<div style='background-color: " + (config["dark_mode"] ? convert_color_dark_mode(get_train_color(train_title, train_data["train_type"], "#333333")) : get_train_color(train_title, train_data["train_type"], "#333333")) + "'><small>" + escape_html(train_data["train_type"].substring(0, 1)) + "</small> " + escape_html(train_title) + "</div>";
+                                buf_2 += "<div style='background-color: " + (config["dark_mode"] ? convert_color_dark_mode(get_train_color(train_title, train_data["train_type"], "#333333")) : get_train_color(train_title, train_data["train_type"], "#333333")) + "'><small>" + escape_html(train_data["train_type"].substring(0, 1)) + "</small> " + escape_html(train_title) + (operations_list.length >= 2 ? "<small>(" + train["position_forward"] + (train["position_rear"] > train["position_forward"] ? "-" + train["position_rear"] : "") + ")</small>" : "") + "</div>";
                             } else {
                                 buf_2 += "<div style='background-color: " + (config["dark_mode"] ? convert_color_dark_mode(get_train_color(train_title, "", "#333333")) : get_train_color(train_title, "", "#333333")) + "'>" + escape_html(train_title) + "</div>";
                             }
@@ -5014,9 +5015,10 @@ function draw_operation_table (is_today) {
                             buf_2 += "<div" + (is_today && previous_final_arrival_time < now_hh_mm && final_arrival_time >= now_hh_mm ? " class='search_highlight'" : "") + ">" + starting_station + " " + train["first_departure_time"] + "<br>" + terminal_station + " " + final_arrival_time + "</div>";
                             buf_2 += "</div>";
                             
-                            previous_final_arrival_time = final_arrival_time;
                             cnt += cnt_2 - 1;
                         }
+                        
+                        previous_final_arrival_time = final_arrival_time;
                     }
                     
                     if (config["show_comments_on_operation_table"] && operation_table["operations"][operation_number]["comment"] !== null) {

@@ -1808,6 +1808,22 @@ label.wide_drop_down {
         margin: 5px -5px !important;
         
         overflow-x: scroll !important;
+        
+        &::-webkit-scrollbar {
+            display: block;
+            
+            height: 20px;
+        }
+        
+        &::-webkit-scrollbar-thumb {
+            background: #dddddd;
+            
+            border-radius: 10px;
+        }
+        
+        &::-webkit-scrollbar-track {
+            background: #eeeeee;
+        }
     }
 }
 
@@ -2711,7 +2727,7 @@ input[type="checkbox"] + label.operation_table_drop_down {
 .train_cell, .deposited_train_cell {
     display: inline-block;
     
-    width: 80px;
+    width: 96px;
     
     margin: 0 2px;
     
@@ -2720,6 +2736,8 @@ input[type="checkbox"] + label.operation_table_drop_down {
     
     div:first-child {
         color: #ffffff;
+        
+        overflow: hidden;
     }
     
     small {
