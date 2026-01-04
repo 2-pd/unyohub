@@ -2627,6 +2627,7 @@ input[type="checkbox"] + label.operation_table_drop_down {
             margin: 6px 0;
             
             line-height: 24px;
+            font-size: 15px;
         }
     }
 }

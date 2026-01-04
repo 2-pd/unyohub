@@ -126,10 +126,10 @@ function get_default_config () {
         "show_unregistered_formations_on_formation_table" : true,
         "colorize_formation_table" : true,
         "operation_table_view" : "simple",
-        "show_start_end_locations_on_operation_table" : false,
-        "show_current_trains_on_operation_table" : false,
-        "show_comments_on_operation_table" : false,
-        "show_assigned_formations_on_operation_table" : false,
+        "show_start_end_times_on_operation_table" : true,
+        "show_current_trains_on_operation_table" : true,
+        "show_comments_on_operation_table" : true,
+        "show_assigned_formations_on_operation_table" : true,
         "simplify_operation_details" : false,
         "show_favorite_railroads" : true,
         "show_favorite_stations" : true,
@@ -4875,7 +4875,7 @@ function draw_operation_table (is_today) {
         
         switch (config["operation_table_view"]) {
             case "simple":
-                var buf_2 = "<tr><th>運用番号</th><th>" + (config["show_current_trains_on_operation_table"] && is_today ? "現時刻の列車" : "出入庫時刻") + "</th></tr>";
+                var buf_2 = "<tr><th>運用番号</th><th>" + (config["show_current_trains_on_operation_table"] && is_today ? "現時刻の列車" : "出庫 / 入庫") + "</th></tr>";
                 for (var operation_number of group["operation_numbers"]) {
                     buf_2 += "<tr onclick='operation_detail(" + operation_number_order.length + ", " + (is_today ? today_ts : "\"" + operation_table["diagram_id"] + "\"") + ", " + is_today + ");'>";
                     buf_2 += "<th style='background-color: " + (config["dark_mode"] ? convert_color_dark_mode(operation_table["operations"][operation_number]["main_color"]) : operation_table["operations"][operation_number]["main_color"]) + ";'><u>" + escape_html(operation_number) + "</u><small>(" + operation_table["operations"][operation_number]["car_count"] + ")</small></th>";
@@ -4936,14 +4936,14 @@ function draw_operation_table (is_today) {
                             }
                         }
                     } else {
-                        if (config["show_start_end_locations_on_operation_table"]) {
+                        if (config["show_start_end_times_on_operation_table"]) {
                             buf_2 += "<div>" + escape_html(operation_table["operations"][operation_number]["starting_location"]) + (operation_table["operations"][operation_number]["starting_track"] !== null ? "<small>(" + escape_html(operation_table["operations"][operation_number]["starting_track"]) + ")</small>" : "") + "<br>" + get_start_end_time_html(operation_table["operations"][operation_number]["starting_time"], true) + "</div>";
                             buf_2 += "<span class='two_headed_arrow'></span>";
                             buf_2 += "<div>" + escape_html(operation_table["operations"][operation_number]["terminal_location"]) + (operation_table["operations"][operation_number]["terminal_track"] !== null ? "<small>(" + escape_html(operation_table["operations"][operation_number]["terminal_track"]) + ")</small>" : "") + "<br>" + get_start_end_time_html(operation_table["operations"][operation_number]["ending_time"], false) + "</div>";
                         } else {
-                            buf_2 += "<div>" + get_start_end_time_html(operation_table["operations"][operation_number]["starting_time"], true) + "</div>";
+                            buf_2 += "<div>" + escape_html(operation_table["operations"][operation_number]["starting_location"]) + (operation_table["operations"][operation_number]["starting_track"] !== null ? "<small>(" + escape_html(operation_table["operations"][operation_number]["starting_track"]) + ")</small>" : "") + "</div>";
                             buf_2 += "<span class='two_headed_arrow'></span>";
-                            buf_2 += "<div>" + get_start_end_time_html(operation_table["operations"][operation_number]["ending_time"], false) + "</div>";
+                            buf_2 += "<div>" + escape_html(operation_table["operations"][operation_number]["terminal_location"]) + (operation_table["operations"][operation_number]["terminal_track"] !== null ? "<small>(" + escape_html(operation_table["operations"][operation_number]["terminal_track"]) + ")</small>" : "") + "</div>";
                         }
                     }
                     buf_2 += "</td></tr>";
@@ -4954,11 +4954,11 @@ function draw_operation_table (is_today) {
                 
                 break;
             case "classic":
-                var buf_2 = "<tr><th>運用番号</th>" + (config["show_start_end_locations_on_operation_table"]  ? "<th>出入庫</th>" : "") + "<th>列車一覧</th></tr>";
+                var buf_2 = "<tr><th>運用番号</th>" + (config["show_start_end_times_on_operation_table"]  ? "<th>出入庫</th>" : "") + "<th>列車一覧</th></tr>";
                 for (var operation_number of group["operation_numbers"]) {
                     buf_2 += "<tr><th onclick='operation_detail(" + operation_number_order.length + ", " + (is_today ? today_ts : "\"" + operation_table["diagram_id"] + "\"") + ", " + is_today + ");' style='background-color: " + (config["dark_mode"] ? convert_color_dark_mode(operation_table["operations"][operation_number]["main_color"]) : operation_table["operations"][operation_number]["main_color"]) + ";'><u>" + escape_html(operation_number) + "</u><small>(" + operation_table["operations"][operation_number]["car_count"] + "両)</small></th>";
                     
-                    if (config["show_start_end_locations_on_operation_table"]) {
+                    if (config["show_start_end_times_on_operation_table"]) {
                         buf_2 += "<td class='start_end_location'>";
                         buf_2 += "○ " + escape_html(operation_table["operations"][operation_number]["starting_location"]) + (operation_table["operations"][operation_number]["starting_track"] !== null ? "<small>(" + escape_html(operation_table["operations"][operation_number]["starting_track"]) + ")</small>" : "") + "<br>";
                         buf_2 += "△ " + escape_html(operation_table["operations"][operation_number]["terminal_location"]) + (operation_table["operations"][operation_number]["terminal_track"] !== null ? "<small>(" + escape_html(operation_table["operations"][operation_number]["terminal_track"]) + ")</small>" : "") + "<br>";

@@ -34,7 +34,7 @@ _/_/_/_/ クライアント側ローカルストレージ _/_/_/_/
     "show_unregistered_formations_on_formation_table" : 編成表に除籍・転出・改番済みの編成を表示するか(BOOL値),
     "colorize_formation_table" : 編成表の表示に実際の車体色を反映するか(BOOL値),
     "operation_table_view" : 運用表画面で使用するビュー("simple"または"classic"または"timeline"),
-    "show_start_end_locations_on_operation_table" : 運用表画面で各運用の出入庫場所を表示するか(BOOL値),
+    "show_start_end_times_on_operation_table" : 運用表画面で各運用の出入庫時刻を表示するか(BOOL値),
     "show_current_trains_on_operation_table" : 運用表画面で各運用の現時刻の列車を表示するか(BOOL値),
     "show_comments_on_operation_table" : 運用表画面で各運用の備考を表示するか(BOOL値),
     "show_assigned_formations_on_operation_table" : 運用表画面で各運用の当日の充当編成を表示するか(BOOL値),
