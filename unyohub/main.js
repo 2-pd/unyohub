@@ -4968,6 +4968,7 @@ function draw_operation_table (is_today) {
                     
                     buf_2 += "<td>";
                     
+                    var previous_final_arrival_time = operation_table["operations"][operation_number]["starting_time"];
                     for (var cnt = 0; cnt < operation_table["operations"][operation_number]["trains"].length; cnt++) {
                         var train = operation_table["operations"][operation_number]["trains"][cnt];
                         
@@ -4992,7 +4993,7 @@ function draw_operation_table (is_today) {
                                 terminal_line_id = operation_table["operations"][operation_number]["trains"][train_index]["line_id"];
                             }
                             
-                            buf_2 += "<div class='train_cell' onclick='train_detail(\"" + train["line_id"] + "\", \"" + train["train_number"] + "\", \"" + train["starting_station"] + "\", \"" + train["direction"] + "_trains\", " + is_today + ");'>";
+                            buf_2 += "<div class='train_cell' onclick='train_detail(\"" + train["line_id"] + "\", \"" + train["train_number"] + "\", \"" + train["starting_station"] + "\", \"" + train["direction"] + "_trains\", " + is_today + ", " + is_today + ");'>";
                             if (train_data !== null) {
                                 buf_2 += "<div style='background-color: " + (config["dark_mode"] ? convert_color_dark_mode(get_train_color(train_title, train_data["train_type"], "#333333")) : get_train_color(train_title, train_data["train_type"], "#333333")) + "'><small>" + escape_html(train_data["train_type"].substring(0, 1)) + "</small> " + escape_html(train_title) + "</div>";
                             } else {
@@ -5010,11 +5011,16 @@ function draw_operation_table (is_today) {
                                     break;
                                 }
                             }
-                            buf_2 += "<div>" + starting_station + " " + train["first_departure_time"] + "<br>" + terminal_station + " " + final_arrival_time + "</div>";
+                            buf_2 += "<div" + (is_today && previous_final_arrival_time < now_hh_mm && final_arrival_time >= now_hh_mm ? " class='search_highlight'" : "") + ">" + starting_station + " " + train["first_departure_time"] + "<br>" + terminal_station + " " + final_arrival_time + "</div>";
                             buf_2 += "</div>";
                             
+                            previous_final_arrival_time = final_arrival_time;
                             cnt += cnt_2 - 1;
                         }
+                    }
+                    
+                    if (config["show_comments_on_operation_table"] && operation_table["operations"][operation_number]["comment"] !== null) {
+                        buf_2 += "<div class='operation_table_comment'>" + escape_html(operation_table["operations"][operation_number]["comment"]) + "</div>";
                     }
                     
                     buf_2 += "</td></tr>";

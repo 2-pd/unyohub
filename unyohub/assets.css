@@ -2746,6 +2746,19 @@ input[type="checkbox"] + label.operation_table_drop_down {
     }
 }
 
+.operation_table_comment {
+    padding-bottom: 2px;
+    
+    line-height: 22px;
+    font-size: 14px;
+    color: #666666;
+    text-indent: 10px;
+    
+    .dark_mode & {
+        color: #cccccc;
+    }
+}
+
 h2, .heading_wrapper {
     position: relative;
     
