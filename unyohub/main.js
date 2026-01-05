@@ -3741,11 +3741,9 @@ function operation_data_draw () {
     var bg_color = diagram_info[operation_table["diagram_revision"]]["diagrams"][operation_table["diagram_id"]]["main_color"];
     
     if (config["dark_mode"]) {
-        operation_data_heading_elm.style.backgroundColor = convert_color_dark_mode(bg_color);
-        operation_data_heading_elm.style.color = "";
+        operation_data_heading_elm.style.borderColor = convert_color_dark_mode(bg_color);
     } else {
-        operation_data_heading_elm.style.backgroundColor = bg_color;
-        operation_data_heading_elm.style.color = "#444444";
+        operation_data_heading_elm.style.borderColor = bg_color;
     }
     
     var buf_h2 = diagram_info[operation_table["diagram_revision"]]["diagrams"][operation_table["diagram_id"]]["diagram_name"] + " ";
@@ -4977,6 +4975,10 @@ function draw_operation_table (is_today) {
                 if (config["operation_table_view"] === "timeline") {
                     for (var hour = 4; hour <= 27; hour++) {
                         buf_2 += "<div class='timeline_hour'></div>";
+                    }
+                    
+                    if (is_today) {
+                        buf_2 += "<div class='timeline_now' style='left: " + (hh_mm_to_minutes(now_hh_mm) * 2 - 481) + "px;'></div>";
                     }
                 }
                 

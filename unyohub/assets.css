@@ -1955,9 +1955,16 @@ input[type="checkbox"]:checked + :is(label.drop_down, label.formation_table_drop
 }
 
 #operation_data_heading {
-    min-height: 30px;
+    width: calc(100% - 64px);
+    
+    min-height: 26px;
+    max-width: 436px;
     
     margin-top: -40px;
+    
+    border: 2px solid transparent;
+    
+    line-height: 26px;
     
     &:empty {
         background-color: transparent !important;
@@ -2827,6 +2834,17 @@ input[type="checkbox"] + label.operation_table_drop_down {
     td &:first-child {
         border-left-color: transparent;
     }
+}
+
+.timeline_now {
+    position: absolute;
+    
+    top: 0;
+    
+    width: 2px;
+    height: 72px;
+    
+    background-color: #ffcc00;
 }
 
 .timeline_train, .timeline_deposited_train {
