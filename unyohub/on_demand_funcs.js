@@ -675,7 +675,8 @@ function position_list_diagrams () {
     
     var diagram_list = timetable_get_diagram_list(operation_table["diagram_revision"]);
     
-    get_diagram_id([get_date_string(get_timestamp()), get_date_string(get_timestamp() + 86400)], null, function (today_diagram_data, tomorrow_diagram_data) {
+    var ts = get_timestamp();
+    get_diagram_id([get_date_string(ts), get_date_string(ts + 86400)], null, function (today_diagram_data, tomorrow_diagram_data) {
         if (today_diagram_data === null || tomorrow_diagram_data === null) {
             return;
         }
@@ -698,6 +699,15 @@ function position_list_diagrams () {
             }
             
             buf += "<button type='button' class='wide_button' onclick='close_square_popup(); position_mode(null, \"" + diagram_id + "\", null, 0);' style='background-color: " + bg_color + "; border-color: " + bg_color + ";'>" + diagram_name + "</button>";
+        }
+        
+        if ("special_diagram_order" in diagram_info[today_diagram_data["diagram_revision"]] && diagram_info[today_diagram_data["diagram_revision"]]["special_diagram_order"].length >= 1) {
+            buf += "<h4>臨時ダイヤ</h4>";
+            
+            for (var diagram_id of diagram_info[today_diagram_data["diagram_revision"]]["special_diagram_order"]) {
+                var bg_color = config["dark_mode"] ? convert_color_dark_mode(diagram_info[today_diagram_data["diagram_revision"]]["diagrams"][diagram_id]["main_color"]) : diagram_info[today_diagram_data["diagram_revision"]]["diagrams"][diagram_id]["main_color"];
+                buf += "<button type='button' class='wide_button' onclick='close_square_popup(); position_mode(null, \"" + diagram_id + "\", null, 0);' style='background-color: " + bg_color + "; border-color: " + bg_color + ";'>" + escape_html(diagram_info[today_diagram_data["diagram_revision"]]["diagrams"][diagram_id]["diagram_name"]) + "</button>";
+            }
         }
         
         popup_inner_elm.innerHTML = buf;
@@ -1314,7 +1324,8 @@ function timetable_list_diagrams () {
     
     var diagram_list = timetable_get_diagram_list(operation_table["diagram_revision"]);
     
-    get_diagram_id([get_date_string(get_timestamp()), get_date_string(get_timestamp() + 86400)], null, function (today_diagram_data, tomorrow_diagram_data) {
+    var ts = get_timestamp();
+    get_diagram_id([get_date_string(ts), get_date_string(ts + 86400)], null, function (today_diagram_data, tomorrow_diagram_data) {
         if (today_diagram_data === null || tomorrow_diagram_data === null) {
             return;
         }
@@ -1337,6 +1348,15 @@ function timetable_list_diagrams () {
             }
             
             buf += "<button type='button' class='wide_button' onclick='close_square_popup(); timetable_change_diagram(\"" + diagram_id + "\");' style='background-color: " + bg_color + "; border-color: " + bg_color + ";'>" + diagram_name + "</button>";
+        }
+        
+        if ("special_diagram_order" in diagram_info[today_diagram_data["diagram_revision"]] && diagram_info[today_diagram_data["diagram_revision"]]["special_diagram_order"].length >= 1) {
+            buf += "<h4>臨時ダイヤ</h4>";
+            
+            for (var diagram_id of diagram_info[today_diagram_data["diagram_revision"]]["special_diagram_order"]) {
+                var bg_color = config["dark_mode"] ? convert_color_dark_mode(diagram_info[today_diagram_data["diagram_revision"]]["diagrams"][diagram_id]["main_color"]) : diagram_info[today_diagram_data["diagram_revision"]]["diagrams"][diagram_id]["main_color"];
+                buf += "<button type='button' class='wide_button' onclick='close_square_popup(); timetable_change_diagram(\"" + diagram_id + "\");' style='background-color: " + bg_color + "; border-color: " + bg_color + ";'>" + escape_html(diagram_info[today_diagram_data["diagram_revision"]]["diagrams"][diagram_id]["diagram_name"]) + "</button>";
+            }
         }
         
         popup_inner_elm.innerHTML = buf;
@@ -1970,21 +1990,37 @@ function operation_table_change (diagram_revision, diagram_id) {
 function operation_table_previous () {
     var list_index = diagram_info[operation_table["diagram_revision"]]["diagram_order"].indexOf(operation_table["diagram_id"]) - 1;
     
-    if (list_index < 0) {
-        list_index = diagram_info[operation_table["diagram_revision"]]["diagram_order"].length - 1;
+    if (list_index === -1) {
+        get_diagram_id (get_date_string(get_timestamp()), null ,function (diagram_data) {
+            if (diagram_data["diagram_revision"] === operation_table["diagram_revision"] && !diagram_info[operation_table["diagram_revision"]]["diagram_order"].includes(diagram_data["diagram_id"])) {
+                operation_table_change(operation_table["diagram_revision"], diagram_data["diagram_id"]);
+            } else {
+                operation_table_change(operation_table["diagram_revision"], diagram_info[operation_table["diagram_revision"]]["diagram_order"][diagram_info[operation_table["diagram_revision"]]["diagram_order"].length - 1]);
+            }
+        });
+    } else {
+        if (list_index === -2) {
+            list_index = diagram_info[operation_table["diagram_revision"]]["diagram_order"].length - 1;
+        }
+        
+        operation_table_change(operation_table["diagram_revision"], diagram_info[operation_table["diagram_revision"]]["diagram_order"][list_index]);
     }
-    
-    operation_table_change(operation_table["diagram_revision"], diagram_info[operation_table["diagram_revision"]]["diagram_order"][list_index]);
 }
 
 function operation_table_next () {
     var list_index = diagram_info[operation_table["diagram_revision"]]["diagram_order"].indexOf(operation_table["diagram_id"]) + 1;
     
     if (list_index >= diagram_info[operation_table["diagram_revision"]]["diagram_order"].length) {
-        list_index = 0;
+        get_diagram_id (get_date_string(get_timestamp()), null ,function (diagram_data) {
+            if (diagram_data["diagram_revision"] === operation_table["diagram_revision"] && !diagram_info[operation_table["diagram_revision"]]["diagram_order"].includes(diagram_data["diagram_id"])) {
+                operation_table_change(operation_table["diagram_revision"], diagram_data["diagram_id"]);
+            } else {
+                operation_table_change(operation_table["diagram_revision"], diagram_info[operation_table["diagram_revision"]]["diagram_order"][0]);
+            }
+        });
+    } else {
+        operation_table_change(operation_table["diagram_revision"], diagram_info[operation_table["diagram_revision"]]["diagram_order"][list_index]);
     }
-    
-    operation_table_change(operation_table["diagram_revision"], diagram_info[operation_table["diagram_revision"]]["diagram_order"][list_index]);
 }
 
 function operation_table_list_tables () {
@@ -1994,6 +2030,14 @@ function operation_table_list_tables () {
     for (var diagram_id of diagram_info[operation_table["diagram_revision"]]["diagram_order"]) {
         var bg_color = config["dark_mode"] ? convert_color_dark_mode(diagram_info[operation_table["diagram_revision"]]["diagrams"][diagram_id]["main_color"]) :diagram_info[operation_table["diagram_revision"]]["diagrams"][diagram_id]["main_color"];
         buf += "<button type='button' class='wide_button' onclick='close_square_popup(); operation_table_change(\"" + operation_table["diagram_revision"] + "\", \"" + diagram_id + "\");' style='background-color: " + bg_color + "; border-color: " + bg_color + ";'>"  + escape_html(diagram_info[operation_table["diagram_revision"]]["diagrams"][diagram_id]["diagram_name"]) + "</button>";
+    }
+    
+    if ("special_diagram_order" in diagram_info[operation_table["diagram_revision"]] && diagram_info[operation_table["diagram_revision"]]["special_diagram_order"].length >= 1) {
+        buf += "<h4>臨時ダイヤ</h4>";
+        for (var diagram_id of diagram_info[operation_table["diagram_revision"]]["special_diagram_order"]) {
+            var bg_color = config["dark_mode"] ? convert_color_dark_mode(diagram_info[operation_table["diagram_revision"]]["diagrams"][diagram_id]["main_color"]) :diagram_info[operation_table["diagram_revision"]]["diagrams"][diagram_id]["main_color"];
+            buf += "<button type='button' class='wide_button' onclick='close_square_popup(); operation_table_change(\"" + operation_table["diagram_revision"] + "\", \"" + diagram_id + "\");' style='background-color: " + bg_color + "; border-color: " + bg_color + ";'>"  + escape_html(diagram_info[operation_table["diagram_revision"]]["diagrams"][diagram_id]["diagram_name"]) + "</button>";
+        }
     }
     
     buf += "<button type='button' class='execute_button' onclick='close_square_popup(); operation_table_mode(null);'>他の改正版のダイヤ</button>";

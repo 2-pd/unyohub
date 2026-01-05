@@ -240,7 +240,7 @@ log_ip_address 投稿者のIPアドレスを記録するか(BOOL値)
         }
     },
     "diagram_order" : 通常ダイヤのダイヤ識別名を表示させたい順に配列で,
-    "special_diagram_order" : 臨時ダイヤのダイヤ識別名を表示させたい順に配列で,
+    "special_diagram_order" : 臨時ダイヤのダイヤ識別名を表示させたい順に配列で(臨時ダイヤが存在しない場合は省略可能),
     "diagram_schedules" : [ ダイヤ判定規則(期間の一部または全部が重複した場合は、前に書かれているものが優先される)
         {
             "periods" : [ 実施期間の一覧
