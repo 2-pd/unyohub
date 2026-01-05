@@ -3656,15 +3656,15 @@ function sort_station_names (station_names) {
     return station_names_sorted;
 }
 
-function get_operation_data_cell_html (operation_number, days_before, now_str, highlighted_formation = null, additional_text = null) {
+function get_operation_data_cell_html (operation_number, tag_name, days_before, now_str, highlighted_formation = null, additional_text = null) {
     var default_icon = "default_icon" in operation_table["operations"][operation_number] ? operation_table["operations"][operation_number]["default_icon"] : null;
     
     if (days_before >= 1 || (days_before === 0 && (operation_table["operations"][operation_number]["starting_time"] === null || operation_table["operations"][operation_number]["ending_time"] < now_str))) {
-        var buf = "<td class='after_operation'";
+        var buf = "<" + tag_name + " class='after_operation'";
     } else if (days_before <= -1 || operation_table["operations"][operation_number]["starting_time"] > now_str) {
-        var buf = "<td class='before_operation'";
+        var buf = "<" + tag_name + " class='before_operation'";
     } else {
-        var buf = "<td";
+        var buf = "<" + tag_name;
     }
     
     if (operation_number in operation_data["operations"] && operation_data["operations"][operation_number] !== null) {
@@ -3728,7 +3728,7 @@ function get_operation_data_cell_html (operation_number, days_before, now_str, h
         buf += "<wbr> <small>" + additional_text + "</small>";
     }
     
-    buf += "</td>";
+    buf += "</" + tag_name + ">";
     
     return buf;
 }
@@ -3864,7 +3864,7 @@ function operation_data_draw () {
                 }
                 buf += "</th>";
                 
-                buf += get_operation_data_cell_html(operation_number, days_before, now_str, null, (sorting_criteria === "terminal_location" && reoperated_operation_numbers.has(operation_number) ? "(再出庫有)" : null));
+                buf += get_operation_data_cell_html(operation_number, "td", days_before, now_str, null, (sorting_criteria === "terminal_location" && reoperated_operation_numbers.has(operation_number) ? "(再出庫有)" : null));
                 
                 buf += "</tr>";
                 
@@ -3992,7 +3992,7 @@ function operation_data_draw () {
                     if (operation_numbers.length >= 1) {
                         buf += "<th style='background-color: " + (config["dark_mode"] ? convert_color_dark_mode(operation_table["operations"][operation_number]["main_color"]) : operation_table["operations"][operation_number]["main_color"]) + ";'><u>" + operation_number + "</u></th>";
                         
-                        buf += get_operation_data_cell_html(operation_number, days_before, now_str, formation_name);
+                        buf += get_operation_data_cell_html(operation_number, "td", days_before, now_str, formation_name);
                         
                         operation_number_order.push(operation_number);
                     } else {
@@ -4876,14 +4876,8 @@ function draw_operation_table (is_today) {
             for (var operation_number of group["operation_numbers"]) {
                 buf_2 += "<tr onclick='operation_detail(" + operation_number_order.length + ", " + (is_today ? today_ts : "\"" + operation_table["diagram_id"] + "\"") + ", " + is_today + ");'>";
                 buf_2 += "<th style='background-color: " + (config["dark_mode"] ? convert_color_dark_mode(operation_table["operations"][operation_number]["main_color"]) : operation_table["operations"][operation_number]["main_color"]) + ";'><u>" + escape_html(operation_number) + "</u><small>(" + operation_table["operations"][operation_number]["car_count"] + ")</small></th>";
-                if (is_today) {
-                    if (operation_table["operations"][operation_number]["starting_time"] === null || operation_table["operations"][operation_number]["ending_time"] < now_str) {
-                        buf_2 += "<td class='after_operation'>";
-                    } else if (operation_table["operations"][operation_number]["starting_time"] > now_str) {
-                        buf_2 += "<td class='before_operation'>";
-                    } else {
-                        buf_2 += "<td>";
-                    }
+                if (is_today && config["show_assigned_formations_on_operation_table"]) {
+                    buf_2 += "<td>" + get_operation_data_cell_html(operation_number, "section", 0, now_hh_mm);
                 } else {
                     if (operation_table["operations"][operation_number]["starting_time"] === null) {
                         buf_2 += "<td class='after_operation'>";
@@ -4934,12 +4928,10 @@ function draw_operation_table (is_today) {
                     }
                 } else {
                     if (config["show_start_end_times_on_operation_table"]) {
-                        buf_2 += "<div>" + escape_html(operation_table["operations"][operation_number]["starting_location"]) + (operation_table["operations"][operation_number]["starting_track"] !== null ? "<small>(" + escape_html(operation_table["operations"][operation_number]["starting_track"]) + ")</small>" : "") + "<br>" + get_start_end_time_html(operation_table["operations"][operation_number]["starting_time"], true) + "</div>";
-                        buf_2 += "<span class='two_headed_arrow'></span>";
+                        buf_2 += "<div>" + escape_html(operation_table["operations"][operation_number]["starting_location"]) + (operation_table["operations"][operation_number]["starting_track"] !== null ? "<small>(" + escape_html(operation_table["operations"][operation_number]["starting_track"]) + ")</small>" : "") + "<br>" + get_start_end_time_html(operation_table["operations"][operation_number]["starting_time"], true) + "<span class='two_headed_arrow'></span></div>";
                         buf_2 += "<div>" + escape_html(operation_table["operations"][operation_number]["terminal_location"]) + (operation_table["operations"][operation_number]["terminal_track"] !== null ? "<small>(" + escape_html(operation_table["operations"][operation_number]["terminal_track"]) + ")</small>" : "") + "<br>" + get_start_end_time_html(operation_table["operations"][operation_number]["ending_time"], false) + "</div>";
                     } else {
-                        buf_2 += "<div>" + escape_html(operation_table["operations"][operation_number]["starting_location"]) + (operation_table["operations"][operation_number]["starting_track"] !== null ? "<small>(" + escape_html(operation_table["operations"][operation_number]["starting_track"]) + ")</small>" : "") + "</div>";
-                        buf_2 += "<span class='two_headed_arrow'></span>";
+                        buf_2 += "<div>" + escape_html(operation_table["operations"][operation_number]["starting_location"]) + (operation_table["operations"][operation_number]["starting_track"] !== null ? "<small>(" + escape_html(operation_table["operations"][operation_number]["starting_track"]) + ")</small>" : "") + "<span class='two_headed_arrow'></span></div>";
                         buf_2 += "<div>" + escape_html(operation_table["operations"][operation_number]["terminal_location"]) + (operation_table["operations"][operation_number]["terminal_track"] !== null ? "<small>(" + escape_html(operation_table["operations"][operation_number]["terminal_track"]) + ")</small>" : "") + "</div>";
                     }
                 }
@@ -4994,6 +4986,8 @@ function draw_operation_table (is_today) {
                             
                             buf_2 += "<div class='timeline_deposited_train' style='left: " + (first_departure_time_minutes * 2 - 480) + "px; width: " + ((hh_mm_to_minutes(train["final_arrival_time"]) - first_departure_time_minutes) * 2 - 4)  + "px;'><div>" + escape_html(train["train_number"].substring(1).split("__")[0]) + "</div></div>";
                         }
+                        
+                        previous_final_arrival_time = train["final_arrival_time"];
                     } else {
                         var train_data = get_train(train["line_id"], train["direction"] === "inbound", train["train_number"], train["starting_station"]);
                         var train_title = train["train_number"].split("__")[0];
@@ -5048,10 +5042,9 @@ function draw_operation_table (is_today) {
                             }
                         }
                         
+                        previous_final_arrival_time = final_arrival_time;
                         cnt += cnt_2 - 1;
                     }
-                    
-                    previous_final_arrival_time = final_arrival_time;
                 }
                 
                 if (config["show_comments_on_operation_table"] && operation_table["operations"][operation_number]["comment"] !== null) {

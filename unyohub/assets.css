@@ -2054,7 +2054,7 @@ input[type="checkbox"]:checked + :is(label.drop_down, label.formation_table_drop
     }
 }
 
-#operation_data_area .train_icon, .formation_data_area .train_icon {
+#operation_data_area .train_icon, .formation_data_area .train_icon, section .train_icon {
     max-width: 24px;
     max-height: 24px;
     
@@ -2624,34 +2624,20 @@ input[type="checkbox"] + label.operation_table_drop_down {
     }
     
     th {
+        padding: 2px 0 0 0;
+        
         line-height: 30px;
     }
     
-    td {
-        position: relative;
+    tr:not(:first-child) :is(th, td) {
+        padding: 0;
         
-        .two_headed_arrow {
-            display: block;
-            
-            position: absolute;
-            top: 0;
-            left: 0;
-            
-            width: 100%;
-            height: 100%;
-            
-            background-image: url(data:image/webp;base64,UklGRqgAAABXRUJQVlA4TJwAAAAvL8ALEB8gECD4T7AqREhA8H+Cq4KQgOD/BFcFBW0boPAghwJA9d9q4Cq27aai9+YgOIg1HMQSDmLpOajrEwER/SebtLFroH8Uz9lJp5tOr4pOM50inTKd3hWdZjpFOmU6vSs6zXSKdMp0eld0mukU6ZTplOgU6NTTqaRDskOgU0+nkg7J7s+roJ5OJR2SHQKdejqVdLjscNg9agU=);
-            background-repeat: no-repeat;
-            background-size: 24px;
-            background-position: center;
-        }
-    }
-    
-    tr:has(td) :is(th, td) {
         line-height: 36px;
         
         div {
             display: inline-block;
+            
+            position: relative;
             
             width: 50%;
             
@@ -2661,6 +2647,30 @@ input[type="checkbox"] + label.operation_table_drop_down {
             font-size: 15px;
         }
     }
+    
+    section {
+        line-height: 24px;
+        
+        padding: 6px 0 5px 0;
+        
+        border-bottom: 1px solid #eeeeee;
+    }
+}
+
+.two_headed_arrow {
+    display: block;
+    
+    position: absolute;
+    top: 0;
+    right: -12px;
+    
+    width: 24px;
+    height: 100%;
+    
+    background-image: url(data:image/webp;base64,UklGRqgAAABXRUJQVlA4TJwAAAAvL8ALEB8gECD4T7AqREhA8H+Cq4KQgOD/BFcFBW0boPAghwJA9d9q4Cq27aai9+YgOIg1HMQSDmLpOajrEwER/SebtLFroH8Uz9lJp5tOr4pOM50inTKd3hWdZjpFOmU6vSs6zXSKdMp0eld0mukU6ZTplOgU6NTTqaRDskOgU0+nkg7J7s+roJ5OJR2SHQKdejqVdLjscNg9agU=);
+    background-repeat: no-repeat;
+    background-size: 24px;
+    background-position: center;
 }
 
 .operation_table_classic, .operation_table_timeline {
