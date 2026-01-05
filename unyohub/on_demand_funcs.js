@@ -513,6 +513,12 @@ function background_updater () {
                         case 2:
                             operation_data_draw();
                             break;
+                        
+                        case 4:
+                            if (config["show_assigned_formations_on_operation_table"]) {
+                                draw_operation_table(true);
+                            }
+                            break;
                     }
                 }, function () {}, operation_date_last, mode_val <= 1 && "joined_railroads" in railroad_info ? railroad_info["joined_railroads"] : null, true);
             }
@@ -2577,6 +2583,12 @@ function post_operation_data () {
                 
                 case 2:
                     operation_data_draw();
+                    break;
+                
+                case 4:
+                    if (config["show_assigned_formations_on_operation_table"]) {
+                        draw_operation_table(true);
+                    }
                     break;
             }
         } else {

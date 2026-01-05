@@ -2634,7 +2634,7 @@ input[type="checkbox"] + label.operation_table_drop_down {
         
         line-height: 36px;
         
-        div {
+        p {
             display: inline-block;
             
             position: relative;
@@ -2654,6 +2654,10 @@ input[type="checkbox"] + label.operation_table_drop_down {
         padding: 6px 0 5px 0;
         
         border-bottom: 1px solid #eeeeee;
+        
+        .dark_mode & {
+            border-bottom-color: #555555;
+        }
     }
 }
 
@@ -2727,6 +2731,57 @@ input[type="checkbox"] + label.operation_table_drop_down {
             position: relative;
             
             padding: 0;
+        }
+    }
+    
+    &:has(section) {
+        td {
+            padding-top: 28px;
+        }
+        
+        .timeline_now {
+            top: 28px;
+        }
+        
+        .timeline_train, .timeline_deposited_train {
+            top: 44px;
+        }
+    }
+    
+    section {
+        position: absolute;
+        
+        top: 0;
+        left: 80px;
+        
+        width: calc(100vw - 80px);
+        
+        padding: 2px 0;
+        
+        border-bottom: 1px solid #eeeeee;
+        
+        background-color: #ffffff;
+        
+        line-height: 24px;
+        text-align: left;
+        white-space: nowrap;
+        
+        overflow: hidden;
+        
+        .dark_mode & {
+            border-bottom-color: #555555;
+            
+            background-color: #444444;
+        }
+        
+        div {
+            display: inline-block;
+            
+            margin-left: 10px;
+        }
+        
+        wbr {
+            display: none;
         }
     }
     
