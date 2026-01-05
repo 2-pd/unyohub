@@ -2562,11 +2562,15 @@ input[type="checkbox"]:checked + :is(label.drop_down, label.formation_table_drop
     }
 }
 
-.search_highlight {
+mark, .search_highlight {
     background-color: #ffff33;
+    
+    color: #333333;
     
     .dark_mode & {
         background-color: #999900;
+        
+        color: #ffffff;
     }
 }
 
@@ -2599,6 +2603,13 @@ input[type="checkbox"] + label.operation_table_drop_down {
         background-image: linear-gradient(to top, #808080 0px, #808080 5px, transparent 5px), linear-gradient(-75deg, #808080 0px, #808080 50px, transparent 51px);
         
         color: #ffffff;
+    }
+    
+    small {
+        margin-left: 5px;
+        
+        line-height: 20px;
+        font-size: 15px;
     }
 }
 
@@ -2658,6 +2669,21 @@ input[type="checkbox"] + label.operation_table_drop_down {
         .dark_mode & {
             border-bottom-color: #555555;
         }
+    }
+    
+    button {
+        display: inline-block;
+        
+        margin: 12px 4px;
+        
+        padding: 2px 12px;
+        
+        border: none;
+        border-radius: 6px;
+        
+        line-height: 32px;
+        font-size: 16px;
+        color: #ffffff;
     }
 }
 

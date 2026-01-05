@@ -1649,7 +1649,7 @@ function draw_operation_trains (operation_number, diagram_id_or_ts, is_today, se
                 var train_number_text = trains[cnt]["train_number"].split("__")[0];
                 if (search_keyword !== null && train_number_text.toUpperCase().includes(search_keyword)) {
                     var search_keyword_index = train_number_text.toUpperCase().indexOf(search_keyword);
-                    buf += escape_html(train_number_text.substring(0, search_keyword_index)) + "<span class='search_highlight'>" + escape_html(train_number_text.substring(search_keyword_index, search_keyword_index + search_keyword.length)) + "</span>" + escape_html(train_number_text.substring(search_keyword_index + search_keyword.length));
+                    buf += escape_html(train_number_text.substring(0, search_keyword_index)) + "<mark>" + escape_html(train_number_text.substring(search_keyword_index, search_keyword_index + search_keyword.length)) + "</mark>" + escape_html(train_number_text.substring(search_keyword_index + search_keyword.length));
                 } else {
                     buf += escape_html(train_number_text);
                 }
