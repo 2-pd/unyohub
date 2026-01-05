@@ -225,7 +225,7 @@ input, textarea {
         color: #ffffff;
     }
     
-    .dark_mode .preview_popup & {
+    .dark_mode .oblong_popup & {
         background-color: rgba(102, 102, 102, 0.85);
     }
     
@@ -422,6 +422,22 @@ input, textarea {
     }
 }
 
+h2 small {
+    display: block;
+    
+    width: fit-content;
+    
+    margin: 0 auto;
+    
+    line-height: 20px;
+    font-size: 16px;
+    color: #555555;
+    
+    .dark_mode & {
+        color: #dddddd;
+    }
+}
+
 #railroad_select_popup h2 {
     width: 100%;
     height: 40px;
@@ -597,7 +613,7 @@ a.connecting_railroad_link h5, .connecting_railroad_link a {
     cursor: default;
 }
 
-.square_popup, .preview_popup {
+.square_popup, .oblong_popup {
     display: none;
     
     position: fixed;
@@ -681,7 +697,7 @@ a.connecting_railroad_link h5, .connecting_railroad_link a {
     }
 }
 
-.preview_popup {
+.oblong_popup {
     width: calc(100% - 50px);
     height: calc(100% - 70px);
     
@@ -705,15 +721,15 @@ a.connecting_railroad_link h5, .connecting_railroad_link a {
     }
 }
 
-.preview_popup.popup_active {
-    animation: preview_popup_up 0.05s ease-out;
+.oblong_popup.popup_active {
+    animation: oblong_popup_up 0.05s ease-out;
     
     .popup_close_button, .screenshot_button {
-        animation: preview_popup_close_button_up 0.05s ease-out;
+        animation: oblong_popup_close_button_up 0.05s ease-out;
     }
 }
 
-@keyframes preview_popup_up {
+@keyframes oblong_popup_up {
     0% {
         top: 65px;
     }
@@ -723,7 +739,7 @@ a.connecting_railroad_link h5, .connecting_railroad_link a {
     }
 }
 
-@keyframes preview_popup_close_button_up {
+@keyframes oblong_popup_close_button_up {
     0% {
         top: 70px;
     }
@@ -1867,19 +1883,6 @@ textarea {
     border-color: #999999;
     
     background-color: #666666;
-}
-
-.wide_select {
-    display: block;
-    
-    width: 300px;
-    height: 36px;
-    
-    margin: 0 auto 10px auto;
-    
-    line-height: 36px;
-    font-size: 20px;
-    text-align: center;
 }
 
 .rearrangeable_list {

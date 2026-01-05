@@ -97,6 +97,10 @@ def convert_operation_table_2 (mes, main_dir, file_name):
         elif operation_number.startswith("# "):
             operation_groups.append({"operation_group_name" : operation_number[2:].strip(), "operation_numbers": []})
             
+            group_color = operation_data[cnt][1].strip()
+            if len(group_color) >= 1:
+                operation_groups[-1]["main_color"] = group_color
+            
             cnt += 1
         else:
             if operation_number[0] == "@":
