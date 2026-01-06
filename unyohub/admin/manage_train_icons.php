@@ -44,41 +44,50 @@ if (file_exists($icon_list_path)) {
 
 
 if (isset($_FILES["new_icon_file"])) {
-    if (!isset($_FILES["new_icon_file"]["tmp_name"]) || !is_uploaded_file($_FILES["new_icon_file"]["tmp_name"])) {
-        print "<script> alert('【!】送信されたデータが異常です'); </script>";
-        goto not_processed;
-    }
-    
     if (!isset($_POST["one_time_token"]) || !$user->check_one_time_token($_POST["one_time_token"])) {
         print "<script> alert('【!】ワンタイムトークンが無効です。処理はキャンセルされました。'); </script>";
         goto not_processed;
     }
     
-    $new_icon_path_info = pathinfo($_FILES["new_icon_file"]["name"]);
+    $processed_file_count = 0;
+    for ($cnt = 0; isset($_FILES["new_icon_file"]["tmp_name"][$cnt]); $cnt++) {
+        if (!is_uploaded_file($_FILES["new_icon_file"]["tmp_name"][$cnt])) {
+            print "<script> alert('【!】".($cnt + 1)."件目のデータが異常です'); </script>";
+            continue;
+        }
+        
+        $new_icon_path_info = pathinfo($_FILES["new_icon_file"]["name"][$cnt]);
+        
+        if (empty($new_icon_path_info["filename"]) || empty($new_icon_path_info["extension"])) {
+            print "<script> alert('【!】".($cnt + 1)."件目のファイルの名前が不正です'); </script>";
+            continue;
+        }
+        
+        if (!in_array($new_icon_path_info["extension"], ["webp", "png", "gif", "jpeg", "jpg"])) {
+            print "<script> alert('【!】".($cnt + 1)."件目のファイルは非対応のファイル形式です'); </script>";
+            continue;
+        }
+        
+        $new_file_path = "../data/".$railroad_id."/icons/".basename($_FILES["new_icon_file"]["name"][$cnt]);
+        
+        if (isset($icon_list[$new_icon_path_info["filename"]])) {
+            unlink("../data/".$railroad_id."/icons/".$icon_list[$new_icon_path_info["filename"]]["file_name"]);
+        }
+        
+        rename($_FILES["new_icon_file"]["tmp_name"][$cnt], $new_file_path);
+        
+        chmod($new_file_path, 0o766);
+        
+        $processed_file_count++;
+    }
     
-    if (empty($new_icon_path_info["filename"]) || empty($new_icon_path_info["extension"])) {
-        print "<script> alert('【!】送信されたファイルの名前が不正です'); </script>";
+    if ($processed_file_count === 0) {
         goto not_processed;
     }
-    
-    if (!in_array($new_icon_path_info["extension"], ["webp", "png", "gif", "jpeg", "jpg"])) {
-        print "<script> alert('【!】送信されたファイルは非対応のファイル形式です'); </script>";
-        goto not_processed;
-    }
-    
-    $new_file_path = "../data/".$railroad_id."/icons/".basename($_FILES["new_icon_file"]["name"]);
-    
-    if (isset($icon_list[$new_icon_path_info["filename"]])) {
-        unlink("../data/".$railroad_id."/icons/".$icon_list[$new_icon_path_info["filename"]]["file_name"]);
-    }
-    
-    rename($_FILES["new_icon_file"]["tmp_name"], $new_file_path);
-    
-    chmod($new_file_path, 0o766);
     
     $result = exec_python_command("embed-icons", $railroad_id);
     
-    print "<script> alert('アイコン画像を追加しました'); </script>";
+    print "<script> alert('".$processed_file_count."件のアイコン画像を追加しました'); </script>";
 } elseif (isset($_POST["remove_icon_id"])) {
     if (!isset($_POST["one_time_token"]) || !$user->check_one_time_token($_POST["one_time_token"])) {
         print "<script> alert('【!】ワンタイムトークンが無効です。処理はキャンセルされました。'); </script>";
@@ -111,7 +120,7 @@ $token_html = "<input type='hidden' name='one_time_token' value='".$user->create
 
 print "<form action='manage_train_icons.php?railroad_id=".$railroad_id."' method='post' enctype='multipart/form-data' id='upload_form' style='display: none;'>";
 print $token_html;
-print "<input type='file' accept='image/*' name='new_icon_file' id='new_icon_file' onchange='upload_icon_file();'>";
+print "<input type='file' accept='image/*' name='new_icon_file[]' id='new_icon_file' multiple='multiple' onchange='upload_icon_file();'>";
 print "</form>";
 
 print "<form action='manage_train_icons.php?railroad_id=".$railroad_id."' method='post' id='remove_form' style='display: none;'>";
@@ -153,7 +162,7 @@ if (!empty($icon_list)) {
 
 print "<br><button type='button' class='wide_button' onclick='document.getElementById(\"new_icon_file\").click();'>新しいアイコンのアップロード</button>";
 
-print "<div class='informational_text'>選択した画像のファイル名はそのままアイコン識別名として使用されます。<br><br>既に登録されているアイコンの識別名と同じ名前のファイルをアップロードすると既存のアイコンが上書きされます。</div>";
+print "<div class='informational_text'>複数のファイルを同時にアップロードすることができ、アップロードされた画像のファイル名はそのままアイコン識別名として使用されます。<br><br>既に登録されているアイコンの識別名と同じ名前のファイルをアップロードすると既存のアイコンが上書きされます。</div>";
 
 print "</article>";
 

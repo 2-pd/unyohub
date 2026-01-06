@@ -186,38 +186,39 @@ if (empty($_GET["formation_name"])) {
             }
         }
         
-        print "<div class='radio_area'><label class='selected_label'>基本情報</label><label onclick='if(confirm(\"編成基本情報の編集を中断して車歴の編集を行いますか？\\n保存していない内容があれば破棄されます。\")){ location.href = \"formation_histories.php?railroad_id=".$railroad_id."&formation_name=".urlencode($_GET["formation_name"])."\"; }'>車歴情報</label></div>";
+        print "<script> var data_edited = false; </script>";
+        print "<div class='radio_area'><label class='selected_label'>基本情報</label><label onclick='if(!data_edited || confirm(\"編成基本情報の編集を中断して車歴の編集を行いますか？\\n保存していない内容は破棄されます。\")){ location.href = \"formation_histories.php?railroad_id=".$railroad_id."&formation_name=".urlencode($_GET["formation_name"])."\"; }'>車歴情報</label></div>";
         
         print "<form action='formations.php?railroad_id=".$railroad_id."&formation_name=".urlencode($_GET["formation_name"])."' method='post'>";
         print "<input type='hidden' name='one_time_token' value='".$user->create_one_time_token()."'>";
         
         print "<h3>編成の一行見出し</h3>";
-        print "<input type='text' name='caption' value='".addslashes($formation_data["caption"])."'>";
+        print "<input type='text' name='caption' value='".addslashes($formation_data["caption"])."' onkeyup='data_edited = true;'>";
         
         print "<h3>所属車両基地等</h3>";
-        print "<input type='text' name='affiliation' value='".addslashes($formation_data["affiliation"])."'>";
+        print "<input type='text' name='affiliation' value='".addslashes($formation_data["affiliation"])."' onkeyup='data_edited = true;'>";
         
         print "<h3>編成の特記事項</h3>";
-        print "<textarea name='description'>".htmlspecialchars($formation_data["description"])."</textarea>";
+        print "<textarea name='description' onkeyup='data_edited = true;'>".htmlspecialchars($formation_data["description"])."</textarea>";
         
         if ($formation_data["currently_registered"]) {
             print "<h3>半固定編成</h3>";
             print "<div class='informational_text'>".htmlspecialchars($railroad_info["alias_of_forward_direction"])."から順に「+」で区切って入力</div>";
-            print "<input type='text' name='semifixed_formation' placeholder='".addslashes($_GET["formation_name"])."' value='".addslashes($formation_data["semifixed_formation"])."'>";
+            print "<input type='text' name='semifixed_formation' placeholder='".addslashes($_GET["formation_name"])."' value='".addslashes($formation_data["semifixed_formation"])."' onkeyup='data_edited = true;'>";
         }
         
         print "<h3>検査情報</h3>";
-        print "<div class='chip_wrapper'><input type='checkbox' name='unavailable' id='unavailable' class='chip' value='YES'".($formation_data["unavailable"] ? " checked='checked'" : "")."><label for='unavailable'>運用離脱中</label></div>";
-        print "<textarea name='inspection_information'>".htmlspecialchars($formation_data["inspection_information"])."</textarea>";
+        print "<div class='chip_wrapper'><input type='checkbox' name='unavailable' id='unavailable' class='chip' value='YES'".($formation_data["unavailable"] ? " checked='checked'" : "")." onchange='data_edited = true;'><label for='unavailable'>運用離脱中</label></div>";
+        print "<textarea name='inspection_information' onkeyup='data_edited = true;'>".htmlspecialchars($formation_data["inspection_information"])."</textarea>";
         
         print "<h3>各車両の情報</h3>";
         
         for ($cnt = 0; isset($cars_data[$cnt]); $cnt++) {
             print "<h4>".htmlspecialchars($cars_data[$cnt]["car_number"])."</h4>";
             print "<h5>製造メーカー / 製造年月日</h5>";
-            print "<div class='half_input_wrapper'><input type='text' name='car_manufacturer_".$cnt."' value='".addslashes($cars_data[$cnt]["manufacturer"])."'> / <input type='text' name='car_constructed_".$cnt."' value='".addslashes($cars_data[$cnt]["constructed"])."'></div>";
+            print "<div class='half_input_wrapper'><input type='text' name='car_manufacturer_".$cnt."' value='".addslashes($cars_data[$cnt]["manufacturer"])."' onkeyup='data_edited = true;'> / <input type='text' name='car_constructed_".$cnt."' value='".addslashes($cars_data[$cnt]["constructed"])."' onkeyup='data_edited = true;'></div>";
             print "<h5>特記事項</h5>";
-            print "<textarea name='car_description_".$cnt."'>".htmlspecialchars($cars_data[$cnt]["description"])."</textarea>";
+            print "<textarea name='car_description_".$cnt."' onkeyup='data_edited = true;'>".htmlspecialchars($cars_data[$cnt]["description"])."</textarea>";
         }
         
         print "<button type='submit' class='save_button'>上書き保存</button>";
