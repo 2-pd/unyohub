@@ -1035,6 +1035,14 @@ function update_formation_styles (railroad_id = null) {
                 css_code += "}";
                 
                 formation_css.insertRule(css_code, cnt);
+                
+                if ("wheel_color" in formations["body_colorings"][coloring_ids[cnt]]) {
+                    formation_css.insertRule(".car_coloring_" + coloring_ids[cnt] + " :before, .car_coloring_" + coloring_ids[cnt] + " :after { background-color: " + formations["body_colorings"][coloring_ids[cnt]]["wheel_color"] + "; }");
+                }
+                
+                if ("driving_wheel_color" in formations["body_colorings"][coloring_ids[cnt]]) {
+                    formation_css.insertRule(".car_coloring_" + coloring_ids[cnt] + " :is(.car_M span, .formation_table .car_M1 span:first-of-type, .reversed_formation_table .car_M2 span:first-of-type, .formation_table .car_M2 span:last-of-type, .reversed_formation_table .car_M1 span:last-of-type, .formation_table .car_MO1 span:first-of-type, .reversed_formation_table .car_OM2 span:first-of-type, .formation_table .car_MO2 span:last-of-type, .reversed_formation_table .car_OM1 span:last-of-type):before, .car_coloring_" + coloring_ids[cnt] + " :is(.car_M span, .formation_table .car_M1 span:first-of-type, .reversed_formation_table .car_M2 span:first-of-type, .formation_table .car_M2 span:last-of-type, .reversed_formation_table .car_M1 span:last-of-type, .formation_table .car_OM1 span:first-of-type, .reversed_formation_table .car_MO2 span:first-of-type, .formation_table .car_OM2 span:last-of-type, .reversed_formation_table .car_MO1 span:last-of-type):after { background-color: " + formations["body_colorings"][coloring_ids[cnt]]["driving_wheel_color"] + " !important; }");
+                }
             }
             
             formation_styles_available = true;
