@@ -216,7 +216,8 @@ log_ip_address 投稿者のIPアドレスを記録するか(BOOL値)
                     "end" : 終了点の数値(0〜100),
                     "verticalize" : 塗り分けが縦線の場合はtrue(falseの場合は省略可能)
                 }...
-            ]
+            ],
+            "driving_wheel_color" : 動軸の車輪色の色コード(指定しない場合は省略)
         }...
     }
 }
