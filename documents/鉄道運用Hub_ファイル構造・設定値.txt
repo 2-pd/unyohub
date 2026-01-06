@@ -217,6 +217,7 @@ log_ip_address 投稿者のIPアドレスを記録するか(BOOL値)
                     "verticalize" : 塗り分けが縦線の場合はtrue(falseの場合は省略可能)
                 }...
             ],
+            "wheel_color" : 非駆動軸の車輪色の色コード(指定しない場合は省略),
             "driving_wheel_color" : 動軸の車輪色の色コード(指定しない場合は省略)
         }...
     }
