@@ -70,11 +70,21 @@ def convert_formation_table (mes, main_dir):
             body_colorings[coloring[0]] = {"font_color" : coloring[1]}
             
             stripes = []
-            for cnt_2 in range(2, len(coloring)):
-                if len(coloring[cnt_2]) == 0:
+            for stripe_str in coloring[2:]:
+                stripe_str = stripe_str.strip()
+                
+                if len(stripe_str) == 0:
                     break
                 
-                stripe_data = coloring[cnt_2].split()
+                if stripe_str.endswith("W"):
+                    if stripe_str.endswith("MW"):
+                        body_colorings[coloring[0]]["driving_wheel_color"] = stripe_str[:-2].strip()
+                    else:
+                        body_colorings[coloring[0]]["wheel_color"] = stripe_str[:-1].strip()
+                    
+                    continue
+                
+                stripe_data = stripe_str.split()
                 stripes.append({"color" : stripe_data[0]})
                 
                 if len(stripe_data) >= 2:
