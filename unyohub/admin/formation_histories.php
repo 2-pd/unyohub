@@ -211,10 +211,17 @@ function add_history () {
     var dt = new Date();
     
     var history_item_elm = document.createElement("div");
+    history_item_elm.id = "related_cars_" + cnt;
     history_item_elm.className = "history_item";
-    history_item_elm.innerHTML = "<h5>変更年月 / 変更の種類</h5><div class='half_input_wrapper'><input type='number' name='event_year_" + cnt + "' value='" + dt.getFullYear() + "' max='2100' min='1901'>年<input type='number' name='event_month_" + cnt + "' max='12' min='0'>月 / <select name='event_type_" + cnt + "'>{$buf}</select></div><h5>該当車両</h5><div class='chip_wrapper'>{$buf_2}</div><h5>変更内容</h5><textarea name='event_content_" + cnt + "'></textarea>";
+    history_item_elm.innerHTML = "<h5>変更年月 / 変更の種類</h5><div class='half_input_wrapper'><input type='number' name='event_year_" + cnt + "' value='" + dt.getFullYear() + "' max='2100' min='1901'>年<input type='number' name='event_month_" + cnt + "' max='12' min='0'>月 / <select name='event_type_" + cnt + "'>{$buf}</select></div><h5>該当車両</h5><div class='chip_wrapper'>{$buf_2}<button type='button' onclick='select_all_cars(" + cnt + ");'>全選択</button></div><h5>変更内容</h5><textarea name='event_content_" + cnt + "'></textarea>";
     
     document.getElementById("histories_area").appendChild(history_item_elm);
+}
+
+function select_all_cars (cnt) {
+    for (var input_elm of document.getElementById("related_cars_" + cnt).getElementsByTagName("input")) {
+        input_elm.checked = true;
+    }
 }
 </script>
 EOM;
@@ -235,10 +242,11 @@ for ($cnt = 0; isset($histories_data[$cnt]); $cnt++) {
     }
     print "</select></div>";
     print "<h5>該当車両</h5>";
-    print "<div class='chip_wrapper'>";
+    print "<div id='related_cars_".$cnt."' class='chip_wrapper'>";
     for ($cnt_2 = 0; isset($car_numbers[$cnt_2]); $cnt_2++) {
         print "<input type='checkbox' name='related_car_".$cnt."_".$cnt_2."' id='related_car_".$cnt."_".$cnt_2."' class='chip' value='YES'".(isset($related_cars[$histories_data[$cnt]["record_number"]][$car_numbers[$cnt_2]]) ? " checked='checked'" : "")."><label for='related_car_".$cnt."_".$cnt_2."'>".htmlspecialchars($car_numbers[$cnt_2])."</label>";
     }
+    print "<button type='button' onclick='select_all_cars(".$cnt.");'>全選択</button>";
     print "</div>";
     print "<h5>変更内容</h5>";
     print "<textarea name='event_content_".$cnt."'>".htmlspecialchars($histories_data[$cnt]["event_content"])."</textarea>";
