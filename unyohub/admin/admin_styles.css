@@ -864,6 +864,13 @@ input[type="checkbox"] + label.drop_down {
         
         padding: 10px 40px;
     }
+    
+    small {
+        margin-right: 5px;
+        
+        line-height: 20px;
+        font-size: 15px;
+    }
 }
 
 input[type="checkbox"]:checked + label.drop_down {
