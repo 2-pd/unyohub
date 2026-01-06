@@ -149,7 +149,7 @@ if (isset($_POST["one_time_token"])) {
         }
     }
     
-    $db_obj->querySingle("UPDATE `unyohub_formations` SET `updated_datetime` = '".date("Y-m-d H:i:s")."' WHERE `formation_name` = '".$formation_name."'");
+    $db_obj->querySingle("UPDATE `unyohub_formations` SET `updated_datetime` = '".date("Y-m-d H:i:s")."', `edited_user_id` = '".$user->get_id()."' WHERE `formation_name` = '".$formation_name."'");
     
     print "<script> alert('車歴情報を保存しました'); </script>";
     
