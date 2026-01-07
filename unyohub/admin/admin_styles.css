@@ -435,7 +435,7 @@ button, .radio_area label, a.wide_button, .chip + label {
     text-decoration: none;
 }
 
-.radio_area label, .chip + label {
+.radio_area label, .chip + label, .chip_wrapper button {
     display: inline-block;
     
     position: relative;
@@ -449,7 +449,9 @@ button, .radio_area label, a.wide_button, .chip + label {
     background-image: none;
     background-color: #eeeeee;
     
+    line-height: 24px;
     color: #666666;
+    vertical-align: top;
 }
 
 .radio_area {
@@ -484,7 +486,7 @@ button, .radio_area label, a.wide_button, .chip + label {
     }
 }
 
-.radio_area label.selected_label, .chip:checked + label {
+.radio_area label.selected_label, .chip:checked + label, .chip_wrapper button {
     border-color: #333333;
     
     background-color: transparent;
@@ -864,6 +866,13 @@ input[type="checkbox"] + label.drop_down {
         
         padding: 10px 40px;
     }
+    
+    small {
+        margin-right: 5px;
+        
+        line-height: 20px;
+        font-size: 15px;
+    }
 }
 
 input[type="checkbox"]:checked + label.drop_down {
@@ -899,6 +908,24 @@ input[type="checkbox"]:checked + label.drop_down {
     padding: 0 10px 10px 15px;
     
     color: #666666;
+}
+
+.history_item {
+    width: min(488px, calc(100% - 12px));
+    
+    margin: 10px auto;
+    
+    padding: 5px 0;
+    
+    border: 1px solid #cccccc;
+    
+    h5 {
+        padding-left: 10px;
+    }
+    
+    h5:first-child {
+        margin-top: 5px;
+    }
 }
 
 .important_announcement {

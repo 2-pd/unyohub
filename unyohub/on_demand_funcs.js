@@ -133,7 +133,7 @@ function popup_close (close_all = false, update_url = true) {
 var screen_elm = document.getElementById("popup_screen");
 var wait_screen_elm = document.getElementById("wait_screen");
 
-function open_square_popup (id, is_preview_popup = false, title = null, allow_screenshot = false) {
+function open_square_popup (id, is_oblong_popup = false, title = null, allow_screenshot = false) {
     if (square_popup_is_open) {
         close_square_popup();
     }
@@ -146,8 +146,8 @@ function open_square_popup (id, is_preview_popup = false, title = null, allow_sc
         elm = document.createElement("div");
         elm.id = id;
         
-        if (is_preview_popup) {
-            elm.className = "preview_popup";
+        if (is_oblong_popup) {
+            elm.className = "oblong_popup";
         } else {
             elm.className = "square_popup";
         }
@@ -513,6 +513,12 @@ function background_updater () {
                         case 2:
                             operation_data_draw();
                             break;
+                        
+                        case 4:
+                            if (config["show_assigned_formations_on_operation_table"]) {
+                                draw_operation_table(true);
+                            }
+                            break;
                     }
                 }, function () {}, operation_date_last, mode_val <= 1 && "joined_railroads" in railroad_info ? railroad_info["joined_railroads"] : null, true);
             }
@@ -669,7 +675,8 @@ function position_list_diagrams () {
     
     var diagram_list = timetable_get_diagram_list(operation_table["diagram_revision"]);
     
-    get_diagram_id([get_date_string(get_timestamp()), get_date_string(get_timestamp() + 86400)], null, function (today_diagram_data, tomorrow_diagram_data) {
+    var ts = get_timestamp();
+    get_diagram_id([get_date_string(ts), get_date_string(ts + 86400)], null, function (today_diagram_data, tomorrow_diagram_data) {
         if (today_diagram_data === null || tomorrow_diagram_data === null) {
             return;
         }
@@ -692,6 +699,15 @@ function position_list_diagrams () {
             }
             
             buf += "<button type='button' class='wide_button' onclick='close_square_popup(); position_mode(null, \"" + diagram_id + "\", null, 0);' style='background-color: " + bg_color + "; border-color: " + bg_color + ";'>" + diagram_name + "</button>";
+        }
+        
+        if ("special_diagram_order" in diagram_info[today_diagram_data["diagram_revision"]] && diagram_info[today_diagram_data["diagram_revision"]]["special_diagram_order"].length >= 1) {
+            buf += "<h4>臨時ダイヤ</h4>";
+            
+            for (var diagram_id of diagram_info[today_diagram_data["diagram_revision"]]["special_diagram_order"]) {
+                var bg_color = config["dark_mode"] ? convert_color_dark_mode(diagram_info[today_diagram_data["diagram_revision"]]["diagrams"][diagram_id]["main_color"]) : diagram_info[today_diagram_data["diagram_revision"]]["diagrams"][diagram_id]["main_color"];
+                buf += "<button type='button' class='wide_button' onclick='close_square_popup(); position_mode(null, \"" + diagram_id + "\", null, 0);' style='background-color: " + bg_color + "; border-color: " + bg_color + ";'>" + escape_html(diagram_info[today_diagram_data["diagram_revision"]]["diagrams"][diagram_id]["diagram_name"]) + "</button>";
+            }
         }
         
         popup_inner_elm.innerHTML = buf;
@@ -731,6 +747,7 @@ function position_time_button_change () {
     
     var hours_minutes = position_time_button_elm.value.split(":");
     
+    hours_minutes[0] = Number(hours_minutes[0]);
     if (hours_minutes[0] < 4) {
         hours_minutes[0] += 24;
     }
@@ -1307,7 +1324,8 @@ function timetable_list_diagrams () {
     
     var diagram_list = timetable_get_diagram_list(operation_table["diagram_revision"]);
     
-    get_diagram_id([get_date_string(get_timestamp()), get_date_string(get_timestamp() + 86400)], null, function (today_diagram_data, tomorrow_diagram_data) {
+    var ts = get_timestamp();
+    get_diagram_id([get_date_string(ts), get_date_string(ts + 86400)], null, function (today_diagram_data, tomorrow_diagram_data) {
         if (today_diagram_data === null || tomorrow_diagram_data === null) {
             return;
         }
@@ -1330,6 +1348,15 @@ function timetable_list_diagrams () {
             }
             
             buf += "<button type='button' class='wide_button' onclick='close_square_popup(); timetable_change_diagram(\"" + diagram_id + "\");' style='background-color: " + bg_color + "; border-color: " + bg_color + ";'>" + diagram_name + "</button>";
+        }
+        
+        if ("special_diagram_order" in diagram_info[today_diagram_data["diagram_revision"]] && diagram_info[today_diagram_data["diagram_revision"]]["special_diagram_order"].length >= 1) {
+            buf += "<h4>臨時ダイヤ</h4>";
+            
+            for (var diagram_id of diagram_info[today_diagram_data["diagram_revision"]]["special_diagram_order"]) {
+                var bg_color = config["dark_mode"] ? convert_color_dark_mode(diagram_info[today_diagram_data["diagram_revision"]]["diagrams"][diagram_id]["main_color"]) : diagram_info[today_diagram_data["diagram_revision"]]["diagrams"][diagram_id]["main_color"];
+                buf += "<button type='button' class='wide_button' onclick='close_square_popup(); timetable_change_diagram(\"" + diagram_id + "\");' style='background-color: " + bg_color + "; border-color: " + bg_color + ";'>" + escape_html(diagram_info[today_diagram_data["diagram_revision"]]["diagrams"][diagram_id]["diagram_name"]) + "</button>";
+            }
         }
         
         popup_inner_elm.innerHTML = buf;
@@ -1622,7 +1649,7 @@ function draw_operation_trains (operation_number, diagram_id_or_ts, is_today, se
                 var train_number_text = trains[cnt]["train_number"].split("__")[0];
                 if (search_keyword !== null && train_number_text.toUpperCase().includes(search_keyword)) {
                     var search_keyword_index = train_number_text.toUpperCase().indexOf(search_keyword);
-                    buf += escape_html(train_number_text.substring(0, search_keyword_index)) + "<span class='search_highlight'>" + escape_html(train_number_text.substring(search_keyword_index, search_keyword_index + search_keyword.length)) + "</span>" + escape_html(train_number_text.substring(search_keyword_index + search_keyword.length));
+                    buf += escape_html(train_number_text.substring(0, search_keyword_index)) + "<mark>" + escape_html(train_number_text.substring(search_keyword_index, search_keyword_index + search_keyword.length)) + "</mark>" + escape_html(train_number_text.substring(search_keyword_index + search_keyword.length));
                 } else {
                     buf += escape_html(train_number_text);
                 }
@@ -1863,17 +1890,83 @@ function get_operation_data_history (formation_name, operation_number, yyyy_mm =
 }
 
 
-function sort_operation_table (sorting_criteria) {
-    operation_table_sorting_criteria = sorting_criteria;
-    operation_table_ascending_order = true;
+function customize_operation_table () {
+    var popup_inner_elm = open_square_popup("customize_operation_table_popup", true, "運用表のカスタマイズ");
+    
+    const view_list = [["simple", "シンプル", "スマートフォン向けに最適化されており、狭い画面でも多くの運用を一度に表示することができます。"], ["classic", "クラシック", "各列車の列車番号と始発・終着時刻を運用ごとに表形式で順に記載した、PC・タブレット端末向けの表示方式です。"], ["timeline", "タイムライン", "各運用の列車を運転時刻を基準として横方向にプロットした、PC・タブレット端末向けの表示方式です。"]];
+    var buf = "<h4>ビュー</h4>";
+    var buf_2 = "";
+    var buf_3 = "";
+    for (var view_info of view_list) {
+        buf_2 += "<input type='radio' name='operation_table_view_radio' id='radio_operation_table_view_" + view_info[0] + "' value='" + view_info[0] + "'" + (view_info[0] === config["operation_table_view"] ? " checked='checked'" : "") + " onchange='change_operation_table_view(this.value);'><label for='radio_operation_table_view_" + view_info[0] + "'>" + view_info[1] + "</label>";
+        buf_3 += "<div class='informational_text' id='operation_table_view_info_" + view_info[0] + "'>" + view_info[1] + "ビューは" + view_info[2] + "</div>";
+    }
+    buf += "<div class='radio_area'>" + buf_2 + "</div>" + buf_3;
+    
+    buf += "<h4>オプション</h4>";
+    buf += "<input type='checkbox' id='operation_table_option_show_start_end_times' class='toggle' onchange='change_operation_table_options();'" + (config["show_start_end_times_on_operation_table"] ? " checked='checked'" : "") + "><label for='operation_table_option_show_start_end_times'>出入庫時刻を表示</label>";
+    buf += "<input type='checkbox' id='operation_table_option_show_current_trains' class='toggle' onchange='change_operation_table_options();'" + (config["show_current_trains_on_operation_table"] ? " checked='checked'" : "") + "><label for='operation_table_option_show_current_trains' id='label_show_current_trains'>出入庫の代わりに現時刻の列車を表示</label>";
+    buf += "<input type='checkbox' id='operation_table_option_show_comments' class='toggle' onchange='change_operation_table_options();'" + (config["show_comments_on_operation_table"] ? " checked='checked'" : "") + "><label for='operation_table_option_show_comments' id='label_show_comments'>備考を表示</label>";
+    buf += "<input type='checkbox' id='operation_table_option_show_assigned_formations' class='toggle' onchange='change_operation_table_options();'" + (config["show_assigned_formations_on_operation_table"] ? " checked='checked'" : "") + "><label for='operation_table_option_show_assigned_formations'>充当編成を表示(当日の運用表のみ)</label>";
+    
+    popup_inner_elm.innerHTML = buf;
+    
+    change_operation_table_view();
+}
+
+function change_operation_table_view (view_name = null) {
+    if (view_name !== null) {
+        config["operation_table_view"] = view_name;
+        
+        operation_table_list_number();
+    } else {
+        view_name = config["operation_table_view"];
+    }
+    
+    var view_info_simple_elm = document.getElementById("operation_table_view_info_simple");
+    var view_info_classic_elm = document.getElementById("operation_table_view_info_classic");
+    var view_info_timeline_elm = document.getElementById("operation_table_view_info_timeline");
+    var show_current_trains_label_elm = document.getElementById("label_show_current_trains");
+    var show_comments_label_elm = document.getElementById("label_show_comments");
+    
+    if (view_name === "simple") {
+        view_info_simple_elm.style.display = "block";
+        view_info_classic_elm.style.display = "none";
+        view_info_timeline_elm.style.display = "none";
+        
+        show_current_trains_label_elm.style.display = "block";
+        show_comments_label_elm.style.display = "none";
+    } else {
+        view_info_simple_elm.style.display = "none";
+        
+        if (view_name === "classic") {
+            view_info_classic_elm.style.display = "block";
+            view_info_timeline_elm.style.display = "none";
+        } else {
+            view_info_classic_elm.style.display = "none";
+            view_info_timeline_elm.style.display = "block";
+        }
+        
+        show_current_trains_label_elm.style.display = "none";
+        show_comments_label_elm.style.display = "block";
+    }
+    
+    save_config();
+}
+
+function change_operation_table_options () {
+    config["show_start_end_times_on_operation_table"] = document.getElementById("operation_table_option_show_start_end_times").checked;
+    config["show_current_trains_on_operation_table"] = document.getElementById("operation_table_option_show_current_trains").checked;
+    config["show_comments_on_operation_table"] = document.getElementById("operation_table_option_show_comments").checked;
+    config["show_assigned_formations_on_operation_table"] = document.getElementById("operation_table_option_show_assigned_formations").checked;
+    
+    save_config();
     
     operation_table_list_number();
 }
 
-function operation_table_reverse_order () {
-    operation_table_ascending_order = !operation_table_ascending_order;
-    
-    operation_table_list_number();
+function update_operation_table_drop_down_status (elm) {
+    operation_table_drop_down_status[elm.id] = elm.checked;
 }
 
 function operation_table_change (diagram_revision, diagram_id) {
@@ -1897,21 +1990,37 @@ function operation_table_change (diagram_revision, diagram_id) {
 function operation_table_previous () {
     var list_index = diagram_info[operation_table["diagram_revision"]]["diagram_order"].indexOf(operation_table["diagram_id"]) - 1;
     
-    if (list_index < 0) {
-        list_index = diagram_info[operation_table["diagram_revision"]]["diagram_order"].length - 1;
+    if (list_index === -1) {
+        get_diagram_id (get_date_string(get_timestamp()), null ,function (diagram_data) {
+            if (diagram_data["diagram_revision"] === operation_table["diagram_revision"] && !diagram_info[operation_table["diagram_revision"]]["diagram_order"].includes(diagram_data["diagram_id"])) {
+                operation_table_change(operation_table["diagram_revision"], diagram_data["diagram_id"]);
+            } else {
+                operation_table_change(operation_table["diagram_revision"], diagram_info[operation_table["diagram_revision"]]["diagram_order"][diagram_info[operation_table["diagram_revision"]]["diagram_order"].length - 1]);
+            }
+        });
+    } else {
+        if (list_index === -2) {
+            list_index = diagram_info[operation_table["diagram_revision"]]["diagram_order"].length - 1;
+        }
+        
+        operation_table_change(operation_table["diagram_revision"], diagram_info[operation_table["diagram_revision"]]["diagram_order"][list_index]);
     }
-    
-    operation_table_change(operation_table["diagram_revision"], diagram_info[operation_table["diagram_revision"]]["diagram_order"][list_index]);
 }
 
 function operation_table_next () {
     var list_index = diagram_info[operation_table["diagram_revision"]]["diagram_order"].indexOf(operation_table["diagram_id"]) + 1;
     
     if (list_index >= diagram_info[operation_table["diagram_revision"]]["diagram_order"].length) {
-        list_index = 0;
+        get_diagram_id (get_date_string(get_timestamp()), null ,function (diagram_data) {
+            if (diagram_data["diagram_revision"] === operation_table["diagram_revision"] && !diagram_info[operation_table["diagram_revision"]]["diagram_order"].includes(diagram_data["diagram_id"])) {
+                operation_table_change(operation_table["diagram_revision"], diagram_data["diagram_id"]);
+            } else {
+                operation_table_change(operation_table["diagram_revision"], diagram_info[operation_table["diagram_revision"]]["diagram_order"][0]);
+            }
+        });
+    } else {
+        operation_table_change(operation_table["diagram_revision"], diagram_info[operation_table["diagram_revision"]]["diagram_order"][list_index]);
     }
-    
-    operation_table_change(operation_table["diagram_revision"], diagram_info[operation_table["diagram_revision"]]["diagram_order"][list_index]);
 }
 
 function operation_table_list_tables () {
@@ -1921,6 +2030,14 @@ function operation_table_list_tables () {
     for (var diagram_id of diagram_info[operation_table["diagram_revision"]]["diagram_order"]) {
         var bg_color = config["dark_mode"] ? convert_color_dark_mode(diagram_info[operation_table["diagram_revision"]]["diagrams"][diagram_id]["main_color"]) :diagram_info[operation_table["diagram_revision"]]["diagrams"][diagram_id]["main_color"];
         buf += "<button type='button' class='wide_button' onclick='close_square_popup(); operation_table_change(\"" + operation_table["diagram_revision"] + "\", \"" + diagram_id + "\");' style='background-color: " + bg_color + "; border-color: " + bg_color + ";'>"  + escape_html(diagram_info[operation_table["diagram_revision"]]["diagrams"][diagram_id]["diagram_name"]) + "</button>";
+    }
+    
+    if ("special_diagram_order" in diagram_info[operation_table["diagram_revision"]] && diagram_info[operation_table["diagram_revision"]]["special_diagram_order"].length >= 1) {
+        buf += "<h4>臨時ダイヤ</h4>";
+        for (var diagram_id of diagram_info[operation_table["diagram_revision"]]["special_diagram_order"]) {
+            var bg_color = config["dark_mode"] ? convert_color_dark_mode(diagram_info[operation_table["diagram_revision"]]["diagrams"][diagram_id]["main_color"]) :diagram_info[operation_table["diagram_revision"]]["diagrams"][diagram_id]["main_color"];
+            buf += "<button type='button' class='wide_button' onclick='close_square_popup(); operation_table_change(\"" + operation_table["diagram_revision"] + "\", \"" + diagram_id + "\");' style='background-color: " + bg_color + "; border-color: " + bg_color + ";'>"  + escape_html(diagram_info[operation_table["diagram_revision"]]["diagrams"][diagram_id]["diagram_name"]) + "</button>";
+        }
     }
     
     buf += "<button type='button' class='execute_button' onclick='close_square_popup(); operation_table_mode(null);'>他の改正版のダイヤ</button>";
@@ -2510,6 +2627,12 @@ function post_operation_data () {
                 
                 case 2:
                     operation_data_draw();
+                    break;
+                
+                case 4:
+                    if (config["show_assigned_formations_on_operation_table"]) {
+                        draw_operation_table(true);
+                    }
                     break;
             }
         } else {

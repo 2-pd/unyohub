@@ -58,7 +58,7 @@ if (empty($car_numbers)) {
 
 print "<h2>".htmlspecialchars($_GET["formation_name"])."</h2>";
 
-print "<div class='radio_area'><label onclick='if(confirm(\"車歴情報の編集を中断して編成基本情報の編集を行いますか？\\n保存していない内容があれば破棄されます。\")){ location.href = \"formations.php?railroad_id=".$railroad_id."&formation_name=".urlencode($_GET["formation_name"])."\"; }'>基本情報</label><label class='selected_label'>車歴情報</label></div>";
+print "<div class='radio_area'><label onclick='if(!data_edited || confirm(\"車歴情報の編集を中断して編成基本情報の編集を行いますか？\\n保存していない内容は破棄されます。\")){ location.href = \"formations.php?railroad_id=".$railroad_id."&formation_name=".urlencode($_GET["formation_name"])."\"; }'>基本情報</label><label class='selected_label'>車歴情報</label></div>";
 
 $histories_r = $db_obj->query("SELECT `record_number`, `event_year_month`, `event_type`, `event_content` FROM `unyohub_formation_histories` WHERE `formation_name` = '".$formation_name."' ORDER BY `event_year_month` ASC");
 
@@ -149,7 +149,7 @@ if (isset($_POST["one_time_token"])) {
         }
     }
     
-    $db_obj->querySingle("UPDATE `unyohub_formations` SET `updated_datetime` = '".date("Y-m-d H:i:s")."' WHERE `formation_name` = '".$formation_name."'");
+    $db_obj->querySingle("UPDATE `unyohub_formations` SET `updated_datetime` = '".date("Y-m-d H:i:s")."', `edited_user_id` = '".$user->get_id()."' WHERE `formation_name` = '".$formation_name."'");
     
     print "<script> alert('車歴情報を保存しました'); </script>";
     
@@ -206,15 +206,28 @@ for ($cnt_2 = 0; isset($car_numbers[$cnt_2]); $cnt_2++) {
 
 print <<< EOM
 <script>
+var data_edited = false;
+
 function add_history () {
     var cnt = document.getElementsByClassName("history_item").length;
     var dt = new Date();
     
     var history_item_elm = document.createElement("div");
+    history_item_elm.id = "related_cars_" + cnt;
     history_item_elm.className = "history_item";
-    history_item_elm.innerHTML = "<h5>変更年月 / 変更の種類</h5><div class='half_input_wrapper'><input type='number' name='event_year_" + cnt + "' value='" + dt.getFullYear() + "' max='2100' min='1901'>年<input type='number' name='event_month_" + cnt + "' max='12' min='0'>月 / <select name='event_type_" + cnt + "'>{$buf}</select></div><h5>該当車両</h5><div class='chip_wrapper'>{$buf_2}</div><h5>変更内容</h5><textarea name='event_content_" + cnt + "'></textarea>";
+    history_item_elm.innerHTML = "<h5>変更年月 / 変更の種類</h5><div class='half_input_wrapper'><input type='number' name='event_year_" + cnt + "' value='" + dt.getFullYear() + "' max='2100' min='1901'>年<input type='number' name='event_month_" + cnt + "' max='12' min='0'>月 / <select name='event_type_" + cnt + "'>{$buf}</select></div><h5>該当車両</h5><div class='chip_wrapper'>{$buf_2}<button type='button' onclick='select_all_cars(" + cnt + ");'>全選択</button></div><h5>変更内容</h5><textarea name='event_content_" + cnt + "'></textarea>";
     
     document.getElementById("histories_area").appendChild(history_item_elm);
+    
+    data_edited = true;
+}
+
+function select_all_cars (cnt) {
+    for (var input_elm of document.getElementById("related_cars_" + cnt).getElementsByTagName("input")) {
+        input_elm.checked = true;
+    }
+    
+    data_edited = true;
 }
 </script>
 EOM;
@@ -229,19 +242,20 @@ for ($cnt = 0; isset($histories_data[$cnt]); $cnt++) {
     print "<div class='history_item'>";
     print "<h5>変更年月 / 変更の種類</h5>";
     $event_month = intval(substr($histories_data[$cnt]["event_year_month"], 5));
-    print "<div class='half_input_wrapper'><input type='number' name='event_year_".$cnt."' value='".intval(substr($histories_data[$cnt]["event_year_month"], 0, 4))."' max='2100' min='1901'>年<input type='number' name='event_month_".$cnt."' value='".($event_month >= 1 ? $event_month : "")."' max='12' min='0'>月 / <select name='event_type_".$cnt."'>";
+    print "<div class='half_input_wrapper'><input type='number' name='event_year_".$cnt."' value='".intval(substr($histories_data[$cnt]["event_year_month"], 0, 4))."' max='2100' min='1901' onkeyup='data_edited = true;'>年<input type='number' name='event_month_".$cnt."' value='".($event_month >= 1 ? $event_month : "")."' max='12' min='0' onkeyup='data_edited = true;'>月 / <select name='event_type_".$cnt."' onchange='data_edited = true;'>";
     foreach ($event_types as $event_type) {
         print "<option value='".$event_type."'".($histories_data[$cnt]["event_type"] === $event_type ? " selected='selected'" : "").">".$event_types_ja[$event_type]."</option>";
     }
     print "</select></div>";
     print "<h5>該当車両</h5>";
-    print "<div class='chip_wrapper'>";
+    print "<div id='related_cars_".$cnt."' class='chip_wrapper'>";
     for ($cnt_2 = 0; isset($car_numbers[$cnt_2]); $cnt_2++) {
-        print "<input type='checkbox' name='related_car_".$cnt."_".$cnt_2."' id='related_car_".$cnt."_".$cnt_2."' class='chip' value='YES'".(isset($related_cars[$histories_data[$cnt]["record_number"]][$car_numbers[$cnt_2]]) ? " checked='checked'" : "")."><label for='related_car_".$cnt."_".$cnt_2."'>".htmlspecialchars($car_numbers[$cnt_2])."</label>";
+        print "<input type='checkbox' name='related_car_".$cnt."_".$cnt_2."' id='related_car_".$cnt."_".$cnt_2."' class='chip' value='YES'".(isset($related_cars[$histories_data[$cnt]["record_number"]][$car_numbers[$cnt_2]]) ? " checked='checked'" : "")." onchange='data_edited = true;'><label for='related_car_".$cnt."_".$cnt_2."'>".htmlspecialchars($car_numbers[$cnt_2])."</label>";
     }
+    print "<button type='button' onclick='select_all_cars(".$cnt.");'>全選択</button>";
     print "</div>";
     print "<h5>変更内容</h5>";
-    print "<textarea name='event_content_".$cnt."'>".htmlspecialchars($histories_data[$cnt]["event_content"])."</textarea>";
+    print "<textarea name='event_content_".$cnt."' onkeyup='data_edited = true;'>".htmlspecialchars($histories_data[$cnt]["event_content"])."</textarea>";
     print "</div>";
 }
 print "</div>";
@@ -255,7 +269,7 @@ for ($cnt = 0; isset($reference_books[$cnt]); $cnt++) {
     if (isset($formation_reference_books[$reference_books[$cnt]["publisher_name"]]) && in_array($reference_books[$cnt]["book_title"], $formation_reference_books[$reference_books[$cnt]["publisher_name"]])) {
         print " checked='checked'";
     }
-    print "><label for='reference_book_".$cnt."'>".htmlspecialchars($reference_books[$cnt]["publisher_name"])."『".htmlspecialchars($reference_books[$cnt]["book_title"])."』</label>";
+    print " onchange='data_edited = true;'><label for='reference_book_".$cnt."'>".htmlspecialchars($reference_books[$cnt]["publisher_name"])."『".htmlspecialchars($reference_books[$cnt]["book_title"])."』</label>";
 }
 
 print "<br><a class='execute_button' href='reference_books.php?railroad_id=".$railroad_id."' onclick='if(!confirm(\"車歴情報の編集を中断して参考書籍の追加・削除を行いますか？\\n保存していない内容があれば破棄されます。\")){ event.preventDefault(); }'>参考書籍の追加・削除</a>";

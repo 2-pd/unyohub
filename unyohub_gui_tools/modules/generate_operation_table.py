@@ -2,8 +2,6 @@
 
 import os
 import csv
-import hashlib
-import base64
 
 
 def shape_time_string (time_string, from_previous_day = False, run_through_next_day = False):
@@ -97,7 +95,6 @@ def generate_operation_table (mes, main_dir, diagram_revision, diagram_id, save_
     mes("列車情報を抽出しています...")
     
     operation_data = {}
-    operation_number_hashes = {}
     excluded_train_cnt = 0
     
     train_cnt = 2

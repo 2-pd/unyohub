@@ -229,8 +229,10 @@ def convert_operation_table_1 (mes, main_dir, file_name, json_file_name, digits_
         
         if operation[0].startswith("# ") or operation[0].startswith("◆"):
             if len(operation) >= 2 and color_regexp.match(operation[1]) is not None:
-                color = operation[1]
+                group_color = operation[1]
+                color = group_color
             else:
+                group_color = ""
                 color = "#ffffff"
             
             if len(operation) >= 3:
@@ -247,7 +249,7 @@ def convert_operation_table_1 (mes, main_dir, file_name, json_file_name, digits_
                 cell_styles.append([{"background-color" : color, "font-weight" : "bold"}])
                 cell_styles.append([{"font-size" : "small", "text-align" : "center"}, {"font-size" : "small", "text-align" : "center"}, {"font-size" : "small", "text-align" : "center"}] + ([{"font-size" : "small"}] * (max_columns - 3)))
             else:
-                output_data.append(["# " + operation[0][1:].strip()])
+                output_data.append(["# " + operation[0][1:].strip(), group_color])
         elif operation[0].startswith("* ") or operation[0].startswith("※"):
             if for_printing:
                 output_data[-1] = ["※ " + operation[0][1:].strip()]

@@ -57,6 +57,7 @@ if (isset($_POST["title"], $_POST["content"])) {
         $error_mes = "入力内容に空欄があります";
     } elseif (isset($_POST["one_time_token"]) && $user->check_one_time_token($_POST["one_time_token"])) {
         if (empty($_POST["publication_datetime"])) {
+            $publication_timestamp = $ts;
             $publication_datetime = $datetime_now;
         } else {
             $publication_timestamp = strtotime($_POST["publication_datetime"]);
@@ -70,7 +71,7 @@ if (isset($_POST["title"], $_POST["content"])) {
         
         $expiration_timestamp = strtotime($_POST["expiration_datetime"]);
         
-        if ($expiration_timestamp > $ts + 600) {
+        if ($expiration_timestamp > $publication_timestamp + 600) {
             $db_obj->exec("DELETE FROM `unyohub_announcements` WHERE `expiration_datetime` < '".$datetime_now."'");
             $db_obj->exec("DELETE FROM `unyohub_railroad_announcements` WHERE `announcement_id` NOT IN (SELECT `announcement_id` FROM `unyohub_announcements`)");
             
@@ -273,11 +274,12 @@ while ($announcement_data = $announcements_r->fetchArray(SQLITE3_ASSOC)) {
     
     $expiration_timestamp = strtotime($announcement_data["expiration_datetime"]);
     
-    print "<input type='checkbox' id='announcement_".$announcement_data["announcement_id"]."'><label for='announcement_".$announcement_data["announcement_id"]."' class='drop_down";
-    if ($announcement_data["is_important"]) {
-        print " important_announcement";
+    print "<input type='checkbox' id='announcement_".$announcement_data["announcement_id"]."'><label for='announcement_".$announcement_data["announcement_id"]."' class='drop_down".($announcement_data["is_important"] ? " important_announcement" : "")."'>";
+    if ($announcement_data["publication_datetime"] > $datetime_now) {
+        print "<small>(予)</small>";
     }
-    print "'>".htmlspecialchars($announcement_data["title"])."</label>";
+    print htmlspecialchars($announcement_data["title"]);
+    print "</label>";
     print "<div><div class='announcement'>";
     print nl2br(htmlspecialchars($announcement_data["content"]));
     print "<small>";
