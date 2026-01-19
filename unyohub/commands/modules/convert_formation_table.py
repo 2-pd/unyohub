@@ -33,11 +33,19 @@ def insert_series_data (mes, cur, series_title, series_name, min_car_count, max_
 def convert_formation_table (mes, main_dir):
     mes("編成表の変換", is_heading=True)
     
+    if not os.path.isdir(main_dir):
+        mes("指定された路線系統は存在しません", True)
+        return
+    
     mes("formations.csv を読み込んでいます...")
     
-    with open(main_dir + "/formations.csv", "r", encoding="utf-8-sig") as csv_f:
-        csv_reader = csv.reader(csv_f)
-        formation_data = [data_row for data_row in csv_reader]
+    try:
+        with open(main_dir + "/formations.csv", "r", encoding="utf-8-sig") as csv_f:
+            csv_reader = csv.reader(csv_f)
+            formation_data = [data_row for data_row in csv_reader]
+    except Exception:
+        mes("formations.csv の読み込みに失敗しました", True)
+        return
     
     mes("データベースに接続しています...")
     
@@ -394,6 +402,15 @@ def convert_formation_table (mes, main_dir):
             
             if prefixes[prefix]["max_car_count"] == 0:
                 mes(prefix + " には在籍中の編成が存在しませんが廃止済みの電算記号等として設定されていません", True)
+            
+            formation_names = {}
+            prefix_length = len(prefix)
+            for formation_name in prefixes[prefix]["formation_names"]:
+                formation_names[formation_name[prefix_length:].lstrip("-").zfill(4)] = formation_name
+            
+            prefixes[prefix]["formation_names"] = []
+            for formation_name_key in sorted(formation_names.keys()):
+                prefixes[prefix]["formation_names"].append(formation_names[formation_name_key])
             
             insert_series_data(mes, cur, prefix, prefix, prefixes[prefix].pop("min_car_count"), prefixes[prefix].pop("max_car_count"), prefixes[prefix].pop("coupling_group_set"))
         
