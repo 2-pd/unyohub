@@ -1,11 +1,21 @@
 #!/usr/bin/env python3
 # coding: utf-8
 
+import os
 import sqlite3
 import time
 
 def copy_formation_info (mes, source_main_dir, source_formation_name, target_main_dir, target_formation_name=None):
     mes("編成データをデータベース上でコピー", is_heading=True)
+    
+    
+    if not os.path.isdir(source_main_dir):
+        mes("コピー元として指定された路線系統は存在しません", True)
+        return
+    
+    if not os.path.isdir(target_main_dir):
+        mes("コピー先として指定された路線系統は存在しません", True)
+        return
     
     if target_formation_name is None:
         target_formation_name = source_formation_name

@@ -19,6 +19,11 @@ def do_nothing (*args):
 
 
 def get_railroad_gtfs_realtime (mes, main_dir, url):
+    if not os.path.isdir(main_dir):
+        mes("存在しない路線系統が指定されました", True)
+        return
+    
+    
     diagram = diagram_funcs.diagram(main_dir, mes=mes)
     
     mes(url + " に接続します...")

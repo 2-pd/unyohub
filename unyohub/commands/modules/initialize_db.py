@@ -6,6 +6,10 @@ import sqlite3
 def initialize_db (mes, main_dir):
     mes("データベースのセットアップ", is_heading=True)
     
+    if not os.path.isdir(main_dir):
+        mes("指定された路線系統は存在しません", True)
+        return
+    
     mes("データベースに接続しています...")
     
     db_file_path = main_dir + "/railroad.db"
