@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 # coding: utf-8
 
+import os
 import json
 import sqlite3
 
@@ -8,14 +9,33 @@ def write_operations_to_db (mes, main_dir, diagram_revision, diagram_id, options
     mes("運用表のデータベース書き込み", is_heading=True)
     
     
+    if not os.path.isdir(main_dir):
+        mes("指定された路線系統は存在しません", True)
+        return
+    
+    
     mes("データベースに接続しています...")
     conn = sqlite3.connect(main_dir + "/railroad.db")
     cur = conn.cursor()
     
+    
     if "-D" not in options:
-        mes("operation_table_" + diagram_id + ".json を読み込んでいます...")
-        with open(main_dir + "/" + diagram_revision + "/operation_table_" + diagram_id + ".json", "r", encoding="utf-8") as json_f:
-            operation_data = json.load(json_f)
+        diagram_revision_dir_path = main_dir + "/" + diagram_revision
+        
+        if not os.path.isdir(diagram_revision_dir_path):
+            mes("指定された改正日のフォルダは存在しません", True)
+            return
+        
+        operation_table_file_name = "operation_table_" + diagram_id + ".json"
+        
+        mes(operation_table_file_name + " を読み込んでいます...")
+        
+        try:
+            with open(diagram_revision_dir_path + "/" + operation_table_file_name, "r", encoding="utf-8") as json_f:
+                operation_data = json.load(json_f)
+        except Exception:
+            mes(operation_table_file_name + " の読み込みに失敗しました", True)
+            return
     
     
     mes("データベースから " + diagram_revision + " 改正ダイヤ " + diagram_id + " の古いデータを削除しています...")
