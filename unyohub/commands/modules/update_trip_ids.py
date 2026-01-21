@@ -1,11 +1,17 @@
 #!/usr/bin/env python3
 # coding: utf-8
 
+import os
 import csv
 import sqlite3
 
 def update_trip_ids (mes, main_dir, diagram_revision, diagram_id, options=set()):
     mes("便識別名と列車番号の対応表をデータベースに書き込み", is_heading=True)
+    
+    
+    if not os.path.isdir(main_dir):
+        mes("指定された路線系統は存在しません", True)
+        return
     
     
     mes("データベースに接続しています...")
@@ -14,10 +20,20 @@ def update_trip_ids (mes, main_dir, diagram_revision, diagram_id, options=set())
     
     
     if "-D" not in options:
-        mes("train_number_mappings_" + diagram_id + ".csv を読み込んでいます...")
-        with open(main_dir + "/" + diagram_revision + "/train_number_mappings_" + diagram_id + ".csv", "r", encoding="utf-8-sig") as csv_f:
-            csv_reader = csv.reader(csv_f)
-            train_number_mappings = [data_row for data_row in csv_reader]
+        diagram_revision_dir_path = main_dir + "/" + diagram_revision
+        
+        if not os.path.isdir(diagram_revision_dir_path):
+            mes("指定された改正日のフォルダは存在しません", True)
+            return
+        
+        try:
+            mes("train_number_mappings_" + diagram_id + ".csv を読み込んでいます...")
+            with open(diagram_revision_dir_path + "/train_number_mappings_" + diagram_id + ".csv", "r", encoding="utf-8-sig") as csv_f:
+                csv_reader = csv.reader(csv_f)
+                train_number_mappings = [data_row for data_row in csv_reader]
+        except Exception:
+            mes("train_number_mappings_" + diagram_id + ".csv の読み込みに失敗しました", True)
+            return
     
     
     mes("データベースから " + diagram_revision + " 改正ダイヤ " + diagram_id + " の古い便識別名データを削除します...")
