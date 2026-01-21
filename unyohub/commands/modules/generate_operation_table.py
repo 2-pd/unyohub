@@ -1,5 +1,6 @@
 # coding: utf-8
 
+import os
 import csv
 import json
 import sqlite3
@@ -8,6 +9,11 @@ from modules import diagram_funcs
 
 def generate_operation_table (mes, main_dir, date_string):
     mes("運用表の生成", is_heading=True)
+    
+    
+    if not os.path.isdir(main_dir):
+        mes("指定された路線系統は存在しません", True)
+        return
     
     
     diagram = diagram_funcs.diagram(main_dir, mes=mes)
@@ -20,12 +26,20 @@ def generate_operation_table (mes, main_dir, date_string):
     
     
     mes("railroad_info.json を読み込んでいます...")
-    with open(main_dir + "/railroad_info.json", "r", encoding="utf-8-sig") as json_f:
-        railroad_info = json.load(json_f)
+    try:
+        with open(main_dir + "/railroad_info.json", "r", encoding="utf-8-sig") as json_f:
+            railroad_info = json.load(json_f)
+    except Exception:
+        mes("railroad_info.json の読み込みに失敗しました", True)
+        return
     
     mes("timetable_" + diagram_id + ".json を読み込んでいます...")
-    with open(main_dir + "/" + diagram_revision + "/timetable_" + diagram_id + ".json", "r", encoding="utf-8-sig") as json_f:
-        timetable = json.load(json_f)
+    try:
+        with open(main_dir + "/" + diagram_revision + "/timetable_" + diagram_id + ".json", "r", encoding="utf-8-sig") as json_f:
+            timetable = json.load(json_f)
+    except Exception:
+        mes("timetable_" + diagram_id + ".json の読み込みに失敗しました", True)
+        return
     
     trains = {}
     
