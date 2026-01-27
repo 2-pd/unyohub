@@ -131,7 +131,7 @@ function get_default_config () {
         "show_comments_on_operation_table" : true,
         "show_assigned_formations_on_operation_table" : true,
         "operation_table_timeline_scale" : 2,
-        "show_formation_captions_on_operation_table" : false,
+        "show_formation_captions_on_operation_data" : false,
         "simplify_operation_details" : false,
         "show_favorite_railroads" : true,
         "show_favorite_stations" : true,
@@ -3698,6 +3698,7 @@ function get_operation_data_cell_html (operation_number, tag_name, days_before, 
             assigned_formations = operation_data["operations"][operation_number]["relieved_formations"].concat(assigned_formations);
         }
         
+        var formation_list = null;
         for (var cnt = 0; cnt < assigned_formations.length; cnt++) {
             buf += "<div" + (cnt + 1 < assigned_formations.length ? " class='relieved_formations'" : "") + ">";
             
@@ -3706,7 +3707,7 @@ function get_operation_data_cell_html (operation_number, tag_name, days_before, 
             }
             
             if (assigned_formations[cnt] !== "") {
-                var formation_list = assigned_formations[cnt].split("+");
+                formation_list = assigned_formations[cnt].split("+");
                 
                 for (var cnt_2 = 0; cnt_2 < formation_list.length; cnt_2++) {
                     if (highlighted_formation === null) {
@@ -3718,6 +3719,8 @@ function get_operation_data_cell_html (operation_number, tag_name, days_before, 
                     }
                 }
             } else {
+                formation_list = null;
+                
                 buf += (highlighted_formation === null ? "<img src='" + UNYOHUB_CANCELED_TRAIN_ICON + "' alt='' class='train_icon'>" : "") + "運休";
             }
             
@@ -3732,6 +3735,16 @@ function get_operation_data_cell_html (operation_number, tag_name, days_before, 
             }
             
             buf += "</div>";
+        }
+        
+        if (config["show_formation_captions_on_operation_data"] && formation_list !== null) {
+            for (var formation_name of formation_list) {
+                var overview = get_formation_overview(formation_name);
+                
+                if (overview["caption"].length >= 1) {
+                    buf += "<div class='operation_data_formation_caption'>" + escape_html((formation_list.length >= 2 ? formation_name + " : " : "") + overview["caption"]) + "</div>";
+                }
+            }
         }
     } else {
         buf += "><div>" + (highlighted_formation === null ? "<img src='" + (default_icon === null ? UNYOHUB_UNKNOWN_TRAIN_ICON : get_icon_base64(default_icon)) + "' alt='' class='train_icon'>" : "") + "?" + (additional_text !== null ? "<wbr> <small>" + additional_text + "</small>" : "") + "</div>";

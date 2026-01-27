@@ -2060,6 +2060,18 @@ input[type="checkbox"]:checked + :is(label.drop_down, label.formation_table_drop
     }
 }
 
+.operation_data_formation_caption {
+    line-height: 18px;
+    font-size: 14px;
+    
+    color: #666666;
+    font-weight: normal;
+    
+    .dark_mode & {
+        color: #cccccc;
+    }
+}
+
 #operation_data_area .train_icon, .formation_data_area .train_icon, section .train_icon {
     max-width: 24px;
     max-height: 24px;
