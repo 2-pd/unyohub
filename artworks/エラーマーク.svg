@@ -7,7 +7,7 @@
    viewBox="0 0 10.583333 10.583334"
    version="1.1"
    id="svg5"
-   inkscape:version="1.3 (0e150ed6c4, 2023-07-21)"
+   inkscape:version="1.4.3 (0d15f75042, 2025-12-25)"
    sodipodi:docname="エラーマーク.svg"
    inkscape:export-filename="エラーマーク.webp"
    inkscape:export-xdpi="96"
@@ -30,11 +30,11 @@
      showgrid="false"
      units="px"
      inkscape:zoom="5.8297418"
-     inkscape:cx="22.299444"
-     inkscape:cy="29.332345"
+     inkscape:cx="22.385211"
+     inkscape:cy="24.529388"
      inkscape:window-width="1920"
-     inkscape:window-height="1008"
-     inkscape:window-x="0"
+     inkscape:window-height="1052"
+     inkscape:window-x="1920"
      inkscape:window-y="0"
      inkscape:window-maximized="1"
      inkscape:current-layer="layer1"
@@ -47,9 +47,37 @@
      inkscape:groupmode="layer"
      id="layer1">
     <path
+       sodipodi:type="star"
+       style="fill:none;stroke:#ee3333;stroke-width:1.37694;stroke-linecap:round;stroke-linejoin:miter;stroke-opacity:1;paint-order:stroke markers fill"
        id="path1"
-       style="color:#000000;fill:#ee3333;stroke-linecap:square;stroke-linejoin:round;-inkscape-stroke:none;fill-opacity:1"
-       d="M 5.29115 -0.0010335287 C 4.9525496 -0.0010335337 4.6136349 0.12819456 4.3552898 0.38653972 L 0.38653972 4.3552898 C -0.1301506 4.8719801 -0.13015056 5.709803 0.38653972 6.2264934 L 4.3552898 10.195243 C 4.8719801 10.711934 5.7098031 10.711934 6.2264934 10.195243 L 10.195243 6.2264934 C 10.711934 5.7098031 10.711934 4.8719801 10.195243 4.3552898 L 6.2264934 0.38653972 C 5.9681482 0.12819458 5.6297504 -0.0010335237 5.29115 -0.0010335287 z M 4.7480307 2.3151042 L 5.8353028 2.3151042 L 5.8353028 6.6807293 L 4.7480307 6.6807293 L 4.7480307 2.3151042 z M 4.7480307 7.4744793 L 5.8353028 7.4744793 L 5.8353028 8.2682293 L 4.7480307 8.2682293 L 4.7480307 7.4744793 z " />
+       inkscape:flatsided="true"
+       sodipodi:sides="6"
+       sodipodi:cx="5.2916665"
+       sodipodi:cy="5.2916665"
+       sodipodi:r1="6.089725"
+       sodipodi:r2="5.2738566"
+       sodipodi:arg1="0.52359878"
+       sodipodi:arg2="1.0471976"
+       inkscape:rounded="0"
+       inkscape:randomized="0"
+       d="m 10.565523,8.336529 -5.2738565,3.044863 -5.27385657,-3.044863 2e-8,-6.089725 L 5.2916665,-0.79805851 10.565523,2.246804 Z"
+       transform="matrix(0.76861233,0,0,0.76861233,1.2244266,1.2244266)" />
+    <rect
+       style="fill:#ee3333;fill-opacity:1;stroke:none;stroke-width:1.05833;stroke-linecap:round;paint-order:stroke markers fill"
+       id="rect1"
+       width="1.3229166"
+       height="5.291667"
+       x="-0.61982125"
+       y="4.7960763"
+       transform="rotate(-45)" />
+    <rect
+       style="fill:#ee3333;fill-opacity:1;stroke:none;stroke-width:1.05833;stroke-linecap:round;paint-order:stroke markers fill"
+       id="rect2"
+       width="1.3229167"
+       height="5.291667"
+       x="6.8220887"
+       y="-2.6458335"
+       transform="rotate(45)" />
   </g>
   <metadata
      id="metadata824">
