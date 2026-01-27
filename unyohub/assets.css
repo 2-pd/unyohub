@@ -2919,7 +2919,6 @@ input[type="checkbox"] + label.operation_table_drop_down {
 .timeline_hour {
     display: inline-block;
     
-    width: 118px;
     height: 100%;
     
     border-left: 2px solid #dddddd;

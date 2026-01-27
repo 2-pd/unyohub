@@ -5045,11 +5045,11 @@ function draw_operation_table (is_today) {
                 
                 if (config["operation_table_view"] === "timeline") {
                     for (var hour = 4; hour <= 27; hour++) {
-                        buf_3 += "<div class='timeline_hour'></div>";
+                        buf_3 += "<div class='timeline_hour' style='width: " + (60 * config["operation_table_timeline_scale"] - 2) + "px;'></div>";
                     }
                     
                     if (is_today) {
-                        buf_3 += "<div class='timeline_now' style='left: " + (hh_mm_to_minutes(now_hh_mm) * 2 - 481) + "px;'></div>";
+                        buf_3 += "<div class='timeline_now' style='left: " + ((hh_mm_to_minutes(now_hh_mm) - 240) * config["operation_table_timeline_scale"] - 1) + "px;'></div>";
                     }
                 }
                 
@@ -5063,7 +5063,7 @@ function draw_operation_table (is_today) {
                         } else {
                             var first_departure_time_minutes = hh_mm_to_minutes(train["first_departure_time"]);
                             
-                            buf_3 += "<div class='timeline_deposited_train' style='left: " + (first_departure_time_minutes * 2 - 480) + "px; width: " + ((hh_mm_to_minutes(train["final_arrival_time"]) - first_departure_time_minutes) * 2 - 4)  + "px;'><div>" + escape_html(train["train_number"].substring(1).split("__")[0]) + "</div></div>";
+                            buf_3 += "<div class='timeline_deposited_train' style='left: " + ((first_departure_time_minutes - 240) * config["operation_table_timeline_scale"]) + "px; width: " + ((hh_mm_to_minutes(train["final_arrival_time"]) - first_departure_time_minutes) * config["operation_table_timeline_scale"] - 4)  + "px;'><div>" + escape_html(train["train_number"].substring(1).split("__")[0]) + "</div></div>";
                         }
                         
                         previous_final_arrival_time = train["final_arrival_time"];
@@ -5126,9 +5126,9 @@ function draw_operation_table (is_today) {
                             var first_departure_time_minutes = hh_mm_to_minutes(train["first_departure_time"]);
                             
                             if (train_data !== null) {
-                                buf_3 += "<div class='timeline_train' onclick='train_detail(\"" + train["line_id"] + "\", \"" + train["train_number"] + "\", \"" + train["starting_station"] + "\", \"" + train["direction"] + "_trains\", " + is_today + ", " + is_today + ");' style='left: " + (first_departure_time_minutes * 2 - 480) + "px; width: " + ((hh_mm_to_minutes(final_arrival_time) - first_departure_time_minutes) * 2)  + "px;'><div style='background-color: " + (config["dark_mode"] ? convert_color_dark_mode(get_train_color(train_title, train_data["train_type"], "#333333")) : get_train_color(train_title, train_data["train_type"], "#333333")) + ";'><small>" + escape_html(train_data["train_type"].substring(0, 1)) + "</small> " + train_title_html + (operations_list.length >= 2 ? "<small>(" + train["position_forward"] + (train["position_rear"] > train["position_forward"] ? "-" + train["position_rear"] : "") + ")</small>" : "") + "</div><div>" + starting_station + "</div></div>";
+                                buf_3 += "<div class='timeline_train' onclick='train_detail(\"" + train["line_id"] + "\", \"" + train["train_number"] + "\", \"" + train["starting_station"] + "\", \"" + train["direction"] + "_trains\", " + is_today + ", " + is_today + ");' style='left: " + ((first_departure_time_minutes - 240) * config["operation_table_timeline_scale"]) + "px; width: " + ((hh_mm_to_minutes(final_arrival_time) - first_departure_time_minutes) * config["operation_table_timeline_scale"])  + "px;'><div style='background-color: " + (config["dark_mode"] ? convert_color_dark_mode(get_train_color(train_title, train_data["train_type"], "#333333")) : get_train_color(train_title, train_data["train_type"], "#333333")) + ";'><small>" + escape_html(train_data["train_type"].substring(0, 1)) + "</small> " + train_title_html + (operations_list.length >= 2 ? "<small>(" + train["position_forward"] + (train["position_rear"] > train["position_forward"] ? "-" + train["position_rear"] : "") + ")</small>" : "") + "</div><div>" + starting_station + "</div></div>";
                             } else {
-                                buf_3 += "<div class='timeline_train' onclick='train_detail(\"" + train["line_id"] + "\", \"" + train["train_number"] + "\", \"" + train["starting_station"] + "\", \"" + train["direction"] + "_trains\", " + is_today + ", " + is_today + ");' style='left: " + (first_departure_time_minutes * 2 - 480) + "px; width: " + ((hh_mm_to_minutes(final_arrival_time) - first_departure_time_minutes) * 2)  + "px;'><div style='background-color: " + (config["dark_mode"] ? convert_color_dark_mode(get_train_color(train_title, "", "#333333")) : get_train_color(train_title, "", "#333333")) + ";'>" + train_title_html + (operations_list.length >= 2 ? "<small>(" + train["position_forward"] + (train["position_rear"] > train["position_forward"] ? "-" + train["position_rear"] : "") + ")</small>" : "") + "</div>" + starting_station + "</div>";
+                                buf_3 += "<div class='timeline_train' onclick='train_detail(\"" + train["line_id"] + "\", \"" + train["train_number"] + "\", \"" + train["starting_station"] + "\", \"" + train["direction"] + "_trains\", " + is_today + ", " + is_today + ");' style='left: " + ((first_departure_time_minutes - 240) * config["operation_table_timeline_scale"]) + "px; width: " + ((hh_mm_to_minutes(final_arrival_time) - first_departure_time_minutes) * config["operation_table_timeline_scale"])  + "px;'><div style='background-color: " + (config["dark_mode"] ? convert_color_dark_mode(get_train_color(train_title, "", "#333333")) : get_train_color(train_title, "", "#333333")) + ";'>" + train_title_html + (operations_list.length >= 2 ? "<small>(" + train["position_forward"] + (train["position_rear"] > train["position_forward"] ? "-" + train["position_rear"] : "") + ")</small>" : "") + "</div>" + starting_station + "</div>";
                             }
                         }
                         
@@ -5156,7 +5156,7 @@ function draw_operation_table (is_today) {
                 } else {
                     var buf_3 = "";
                     for (var hour = 4; hour <= 27; hour++) {
-                        buf_3 += "<div class='timeline_hour'>" + hour + "時</div>";
+                        buf_3 += "<div class='timeline_hour' style='width: " + (60 * config["operation_table_timeline_scale"] - 2) + "px;'>" + hour + "時</div>";
                     }
                 }
                 buf_2 = "<tr><th>運用番号</th>" + (config["show_start_end_times_on_operation_table"]  ? "<th>出入庫</th>" : "") + "<th>" + buf_3 + "</th></tr>" + buf_2;
