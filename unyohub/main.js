@@ -130,6 +130,8 @@ function get_default_config () {
         "show_current_trains_on_operation_table" : true,
         "show_comments_on_operation_table" : true,
         "show_assigned_formations_on_operation_table" : true,
+        "operation_table_timeline_scale" : 2,
+        "show_formation_captions_on_operation_table" : false,
         "simplify_operation_details" : false,
         "show_favorite_railroads" : true,
         "show_favorite_stations" : true,
