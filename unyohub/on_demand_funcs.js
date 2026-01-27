@@ -1891,9 +1891,11 @@ function get_operation_data_history (formation_name, operation_number, yyyy_mm =
 
 
 function customize_operation_table () {
+    const view_list = [["simple", "シンプル", "スマートフォン向けに最適化されており、狭い画面でも多くの運用を一度に表示することができます。"], ["classic", "クラシック", "各列車の列車番号と始発・終着時刻を運用ごとに表形式で順に記載した、PC・タブレット端末向けの表示方式です。"], ["timeline", "タイムライン", "各運用の列車を運転時刻を基準として横方向にプロットした、PC・タブレット端末向けの表示方式です。"]];
+    const timeline_scale_titles = ["狭め", "標準", "やや広め", "広め"];
+    
     var popup_inner_elm = open_square_popup("customize_operation_table_popup", true, "運用表のカスタマイズ");
     
-    const view_list = [["simple", "シンプル", "スマートフォン向けに最適化されており、狭い画面でも多くの運用を一度に表示することができます。"], ["classic", "クラシック", "各列車の列車番号と始発・終着時刻を運用ごとに表形式で順に記載した、PC・タブレット端末向けの表示方式です。"], ["timeline", "タイムライン", "各運用の列車を運転時刻を基準として横方向にプロットした、PC・タブレット端末向けの表示方式です。"]];
     var buf = "<h4>ビュー</h4>";
     var buf_2 = "";
     var buf_3 = "";
@@ -1908,6 +1910,11 @@ function customize_operation_table () {
     buf += "<input type='checkbox' id='operation_table_option_show_current_trains' class='toggle' onchange='change_operation_table_options();'" + (config["show_current_trains_on_operation_table"] ? " checked='checked'" : "") + "><label for='operation_table_option_show_current_trains' id='label_show_current_trains'>出入庫の代わりに現時刻の列車を表示</label>";
     buf += "<input type='checkbox' id='operation_table_option_show_comments' class='toggle' onchange='change_operation_table_options();'" + (config["show_comments_on_operation_table"] ? " checked='checked'" : "") + "><label for='operation_table_option_show_comments' id='label_show_comments'>備考を表示</label>";
     buf += "<input type='checkbox' id='operation_table_option_show_assigned_formations' class='toggle' onchange='change_operation_table_options();'" + (config["show_assigned_formations_on_operation_table"] ? " checked='checked'" : "") + "><label for='operation_table_option_show_assigned_formations'>充当編成を表示(当日の運用表のみ)</label>";
+    buf += "<div id='timeline_scale_wrapper' class='select_wrapper'>時間軸の表示幅 :<select id='operation_table_option_timeline_scale' onchange='change_operation_table_options();'>";
+    for (var cnt = 1; cnt <= 4; cnt++) {
+        buf += "<option value='" + cnt + "'" + (cnt === config["operation_table_timeline_scale"] ? " selected='selected'" : "") + ">" + timeline_scale_titles[cnt - 1] + "</option>";
+    }
+    buf += "</select></div>";
     
     popup_inner_elm.innerHTML = buf;
     
@@ -1928,6 +1935,7 @@ function change_operation_table_view (view_name = null) {
     var view_info_timeline_elm = document.getElementById("operation_table_view_info_timeline");
     var show_current_trains_label_elm = document.getElementById("label_show_current_trains");
     var show_comments_label_elm = document.getElementById("label_show_comments");
+    var timeline_scale_wrapper_elm = document.getElementById("timeline_scale_wrapper");
     
     if (view_name === "simple") {
         view_info_simple_elm.style.display = "block";
@@ -1936,15 +1944,20 @@ function change_operation_table_view (view_name = null) {
         
         show_current_trains_label_elm.style.display = "block";
         show_comments_label_elm.style.display = "none";
+        timeline_scale_wrapper_elm.style.display = "none";
     } else {
         view_info_simple_elm.style.display = "none";
         
         if (view_name === "classic") {
             view_info_classic_elm.style.display = "block";
             view_info_timeline_elm.style.display = "none";
+            
+            timeline_scale_wrapper_elm.style.display = "none";
         } else {
             view_info_classic_elm.style.display = "none";
             view_info_timeline_elm.style.display = "block";
+            
+            timeline_scale_wrapper_elm.style.display = "block";
         }
         
         show_current_trains_label_elm.style.display = "none";
@@ -1959,6 +1972,7 @@ function change_operation_table_options () {
     config["show_current_trains_on_operation_table"] = document.getElementById("operation_table_option_show_current_trains").checked;
     config["show_comments_on_operation_table"] = document.getElementById("operation_table_option_show_comments").checked;
     config["show_assigned_formations_on_operation_table"] = document.getElementById("operation_table_option_show_assigned_formations").checked;
+    config["operation_table_timeline_scale"] = Number(document.getElementById("operation_table_option_timeline_scale").value);
     
     save_config();
     
@@ -3065,6 +3079,7 @@ function edit_config () {
     buf += "<input type='checkbox' id='colorize_corrected_posts_check' class='toggle' onchange='change_config();'" + (config["colorize_corrected_posts"] ? " checked='checked'" : "") + "><label for='colorize_corrected_posts_check'>訂正された投稿を区別する</label>";
     buf += "<input type='checkbox' id='colorize_beginners_posts_check' class='toggle' onchange='change_config();'" + (config["colorize_beginners_posts"] ? " checked='checked'" : "") + "><label for='colorize_beginners_posts_check'>ビギナーの方の投稿を区別する</label>";
     buf += "<input type='checkbox' id='force_arrange_west_side_car_on_left_check' class='toggle' onchange='change_config();'" + (config["force_arrange_west_side_car_on_left"] ? " checked='checked'" : "") + "><label for='force_arrange_west_side_car_on_left_check'>西向き先頭車を編成表左側に表示</label>";
+    buf += "<input type='checkbox' id='show_formation_captions_on_operation_data_check' class='toggle' onchange='change_config();'" + (config["show_formation_captions_on_operation_data"] ? " checked='checked'" : "") + "><label for='show_formation_captions_on_operation_data_check'>運用データ等に編成の説明を表示</label>";
     buf += "<h5>運用情報の自動更新間隔</h5>";
     buf += "<input type='number' id='refresh_interval' min='1' max='60' onchange='change_config();' value='" + config["refresh_interval"] + "'>分ごと";
     buf += "<h5>運用情報のキャッシュ保管日数</h5>";
@@ -3091,6 +3106,7 @@ function change_config () {
     config["colorize_corrected_posts"] = document.getElementById("colorize_corrected_posts_check").checked;
     config["colorize_beginners_posts"] = document.getElementById("colorize_beginners_posts_check").checked;
     config["force_arrange_west_side_car_on_left"] = document.getElementById("force_arrange_west_side_car_on_left_check").checked;
+    config["show_formation_captions_on_operation_data"] = document.getElementById("show_formation_captions_on_operation_data_check").checked;
     
     var refresh_interval_elm = document.getElementById("refresh_interval");
     if (Number(refresh_interval_elm.value) > 60) {

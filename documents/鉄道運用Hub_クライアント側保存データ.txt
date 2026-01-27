@@ -38,6 +38,8 @@ _/_/_/_/ クライアント側ローカルストレージ _/_/_/_/
     "show_current_trains_on_operation_table" : 運用表画面で各運用の現時刻の列車を表示するか(BOOL値),
     "show_comments_on_operation_table" : 運用表画面で各運用の備考を表示するか(BOOL値),
     "show_assigned_formations_on_operation_table" : 運用表画面で各運用の当日の充当編成を表示するか(BOOL値),
+    "operation_table_timeline_scale" : 運用表のタイムラインビューにおいて1分を何pxで表示するか(1〜4の整数値),
+    "show_formation_captions_on_operation_data" : 運用データ画面と運用表画面で編成の一行見出しを表示するか(BOOL値),
     "simplify_operation_details" : 運用表の各運用詳細情報閲覧時に列車情報を簡略表示するか(BOOL値),
     "show_favorite_railroads" : 路線系統選択画面にお気に入り路線系統を表示するか(BOOL値),
     "show_favorite_stations" : 路線系統選択画面にお気に入り駅を表示するか(BOOL値),
