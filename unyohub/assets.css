@@ -1978,7 +1978,7 @@ input[type="checkbox"]:checked + :is(label.drop_down, label.formation_table_drop
         
         max-width: 500px;
     }
-
+    
     table {
         width: calc(100% - 10px);
         
@@ -2000,7 +2000,7 @@ input[type="checkbox"]:checked + :is(label.drop_down, label.formation_table_drop
             }
         }
     }
-
+    
     th, td {
         height: 24px;
         
@@ -2011,20 +2011,25 @@ input[type="checkbox"]:checked + :is(label.drop_down, label.formation_table_drop
         white-space: pre-wrap;
         word-break: keep-all;
     }
-
+    
     tr td:first-child {
         width: 100px;
     }
-
+    
     th {
         width: 100px;
         height: 20px;
         
+        max-width: 100px;
+        
         padding: 8px 0;
         
         line-height: 20px;
+        white-space: nowrap;
+        
+        overflow: hidden;
     }
-
+    
     .operation_data_3_columns th {
         width: 80px;
     }
@@ -2633,6 +2638,12 @@ input[type="checkbox"] + label.operation_table_drop_down {
         
         th:first-child {
             width: 100px;
+            
+            max-width: 100px;
+            
+            white-space: nowrap;
+            
+            overflow: hidden;
         }
     }
     
@@ -2759,6 +2770,8 @@ input[type="checkbox"] + label.operation_table_drop_down {
             position: relative;
             
             padding: 0;
+            
+            overflow: hidden;
         }
     }
     
@@ -2814,6 +2827,8 @@ input[type="checkbox"] + label.operation_table_drop_down {
     }
     
     .start_end_location {
+        width: 140px;
+        
         min-width: 140px;
         max-width: 140px;
         

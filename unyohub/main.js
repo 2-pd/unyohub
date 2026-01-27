@@ -4823,7 +4823,7 @@ function get_start_end_time_html (time_str, is_starting_time, override_text = nu
     }
     
     if (!is_starting_time && time_str < "12:00") {
-        return "<span style='color: " + (config["dark_mode"] ? "#ff9999" : "#cc0000") + ";'>" + inner_text + "</span>";
+        return "<span style='color: " + (config["dark_mode"] ? "#ff99cc" : "#cc0066") + ";'>" + inner_text + "</span>";
     }
     
     return inner_text;
