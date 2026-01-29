@@ -6,9 +6,8 @@ if (!$user->check_permission("instance_administrator")) {
     exit;
 }
 
-print_header();
 
-
+$result_text = NULL;
 if (isset($_POST["instance_name"], $_POST["instance_introduction"], $_POST["instance_explanation"], $_POST["manual_url"], $_POST["administrator_name"], $_POST["administrator_url"], $_POST["administrator_introduction"], $_POST["available_days_ahead"], $_POST["quotation_guidelines"], $_POST["sender_email_address"])) {
     $config_str = "instance_name = \"".addslashes($_POST["instance_name"])."\"\n";
     $config_str .= "\n";
@@ -37,15 +36,21 @@ if (isset($_POST["instance_name"], $_POST["instance_introduction"], $_POST["inst
     if (isset($_POST["one_time_token"]) && $user->check_one_time_token($_POST["one_time_token"])) {
         file_put_contents("../config/main.ini", $config_str);
         
-        print "<script> alert('インスタンスの基本設定を保存しました'); </script>";
+        $result_text = "インスタンスの基本設定を保存しました";
     } else {
-        print "<script> alert('【!】ワンタイムトークンが無効です。処理はキャンセルされました。'); </script>";
+        $result_text = "【!】ワンタイムトークンが無効です。処理はキャンセルされました。";
     }
-} else {
-    $config_str = file_get_contents("../config/main.ini");
+    
+    $config = parse_ini_string($config_str);
 }
 
-$config = parse_ini_string($config_str);
+
+print_header();
+
+
+if (!empty($result_text)) {
+    print "<script> alert('".$result_text."'); </script>";
+}
 
 
 print "<article>";
