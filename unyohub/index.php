@@ -225,7 +225,7 @@ print "    <script src=\"/main.js?v=".UNYOHUB_VERSION."\" defer=\"defer\"></scri
     <link rel="shortcut icon" href="/favicon.ico">
     <link rel="apple-touch-icon" href="/apple-touch-icon.webp">
     <link rel="preload" href="/splash_screen_image.webp" as="image">
-    <link rel="manifest" href="/manifest.json">
+    <link rel="manifest" href="/manifest.php">
 <?php
 print "    <link rel=\"canonical\" href=\"".$root_url.$path_info_str."\">\n";
 print "    <meta name=\"description\" content=\"".$page_description."\">\n";
