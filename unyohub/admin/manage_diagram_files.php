@@ -85,6 +85,12 @@ if (isset($_GET["diagram_revision"])) {
     
     print <<< EOM
     <script>
+    function upload_file (extension = null) {
+        var new_file_elm = document.getElementById("new_file");
+        new_file_elm.accept = extension === null ? "" : "." + extension;
+        new_file_elm.click();
+    }
+    
     function delete_file (file_name) {
         if (confirm(file_name + " を削除しますか？")) {
             document.getElementById("delete_file_name").value = file_name;
@@ -243,7 +249,7 @@ if (isset($_GET["diagram_revision"])) {
         print "<div class='informational_text'>ファイルなし</div>";
     }
     
-    print "<br><button type='button' class='wide_button' onclick='document.getElementById(\"new_file\").click();'>新しいファイルのアップロード</button>";
+    print "<br><button type='button' class='wide_button' onclick='upload_file(\"json\");'>JSONファイルのアップロード</button><button type='button' class='wide_button' onclick='upload_file(\"csv\");'>CSVファイルのアップロード</button>";
     print "<div class='informational_text'>アップロードされたファイルと同じ名前のファイルが既にサーバ上で存在している場合、そのファイルはアップロードされたファイルで上書きされます。</div>";
 } elseif (!empty($_GET["new_dir"])) {
     if (isset($_POST["diagram_revision"])) {

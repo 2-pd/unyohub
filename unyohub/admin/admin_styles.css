@@ -297,6 +297,7 @@ table {
         line-height: 30px;
         font-size: 18px;
         font-weight: bold;
+        word-break: break-all;
         
         a {
             display: block;
