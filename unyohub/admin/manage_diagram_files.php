@@ -57,7 +57,7 @@ print_header();
 
 print "<article>";
 
-print "<nav><a href='railroads.php?railroad_id=".$railroad_id."'>".htmlspecialchars($railroad_info["railroad_name"])."</a> &gt; <a href='manage_files.php?railroad_id=".$railroad_id."'>データファイルの管理</a> &gt;";
+print "<nav><a href='railroads.php?railroad_id=".$railroad_id."'>".htmlspecialchars($railroad_info["railroad_name"])."</a> &gt; <a href='manage_files.php?railroad_id=".$railroad_id."'>データファイルの管理</a> &gt;</nav>";
 
 $diagram_revision_reg_exp = "/\A[0-9]{4}-(0[1-9]|1[0-2])-(0[1-9]|[12][0-9]|3[01])\z/";
 
@@ -69,7 +69,7 @@ if (isset($_GET["diagram_revision"])) {
         goto end_of_article;
     }
     
-    print "<h2>".intval(substr($_GET["diagram_revision"], 0, 4))."年".intval(substr($_GET["diagram_revision"], 5, 2))."月".intval(substr($_GET["diagram_revision"], 8))."日改正ダイヤのデータ</h2>";
+    print "<h2 style='border-color: ".addslashes($railroad_info["main_color"])."'>".intval(substr($_GET["diagram_revision"], 0, 4))."年".intval(substr($_GET["diagram_revision"], 5, 2))."月".intval(substr($_GET["diagram_revision"], 8))."日改正ダイヤのデータ</h2>";
     
     $token_html = "<input type='hidden' name='one_time_token' value='".$user->create_one_time_token()."'>";
     
@@ -280,7 +280,7 @@ if (isset($_GET["diagram_revision"])) {
         new_dir_on_error:
     }
     
-    print "<h2>新しいダイヤ改正日別フォルダ</h2>";
+    print "<h2 style='border-color: ".addslashes($railroad_info["main_color"])."'>新しいダイヤ改正日別フォルダ</h2>";
     
     print "<form action='manage_diagram_files.php?railroad_id=".$railroad_id."&new_dir=yes' method='post'>";
     print "<input type='hidden' name='one_time_token' value='".$user->create_one_time_token()."'>";
