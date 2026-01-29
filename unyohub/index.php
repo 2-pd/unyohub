@@ -259,7 +259,7 @@ print "    <meta property=\"twitter:card\" content=\"summary_large_image\">\n";
         <hr>
         <button type="button" id="menu_announcements" onclick="show_announcements();">お知らせ</button>
         <hr>
-        <button type="button" onclick="edit_config();">アプリの設定</button>
+        <button type="button" id="menu_config" onclick="edit_config();">アプリの設定</button>
         <hr>
         <button type="button" onclick="show_about();"><span id="menu_instance_name"><?php print UNYOHUB_APP_NAME; ?></span>について</button>
         <button type="button" onclick="show_rules();">ルールとポリシー</button>
@@ -277,7 +277,9 @@ if ($path_info_str === "/") {
             <div id="splash_screen_inner" class="wait_icon"></div>
             <button type="button" id="splash_screen_announcement" onclick="show_announcements();" aria-label="お知らせ"></button>
             <div id="splash_screen_bottom">
-                <u onclick="show_about();"><span id="splash_screen_instance_name">{$unyohub_app_name}</span>について</u><a href="/user/rules.php" onclick="event.preventDefault(); show_rules();">ルールとポリシー</a><span id="splash_screen_app_version">v{$unyohub_version}</span>
+                <u id="splash_screen_update_info" onclick="edit_config();">新しいバージョンが利用可能です</u>
+                <u onclick="show_about();"><span id="splash_screen_instance_name">{$unyohub_app_name}</span>について</u><a href="/user/rules.php" onclick="event.preventDefault(); show_rules();">ルールとポリシー</a>
+                <span id="splash_screen_app_version">v{$unyohub_version}</span>
             </div>
     EOM."\n";
 }

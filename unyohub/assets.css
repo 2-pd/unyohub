@@ -815,8 +815,8 @@ header {
     
     z-index: 1;
     
-    a, u {
-         display: inline-block;
+    a, u:not(#splash_screen_update_info) {
+        display: inline-block;
         
         margin-left: 20px;
         
@@ -828,11 +828,19 @@ header {
     }
 }
 
+#splash_screen_update_info {
+    display: none;
+    
+    margin-left: 10px;
+    
+    font-weight: bold;
+}
+
 #splash_screen_app_version {
     position: absolute;
     
     bottom: 0;
-    right: 20px;
+    right: 15px;
     
     color: #999999;
     
@@ -3468,7 +3476,7 @@ footer {
     }
 }
 
-.warning_text, .warning_sentence, .unregistered_formation {
+.warning_text, .warning_sentence, .unregistered_formation, #splash_screen_update_info {
     color: #ee3333 !important;
     
     .dark_mode & {
