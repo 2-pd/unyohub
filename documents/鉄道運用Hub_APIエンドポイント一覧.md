@@ -11,12 +11,12 @@
 
 ### 引数
 **$_POST["last_modified_timestamp"]** : タイムスタンプ(UTC、省略可能)  
-**$_POST["client_app_version"]** : クライアント側のアプリバージョン文字列(省略可能)
+**$_POST["client_unyohub_version"]** : クライアント側のアプリバージョン文字列(省略可能)
 
 ### 応答
 **タイムスタンプが省略されるか、main.iniの変更日時がタイムスタンプより新しいか、クライアント側のアプリバージョンにサーバー側のアプリバージョンと異なる文字列が指定された場合** :  
 {  
-    "app_version" : アプリバージョン文字列,  
+    "unyohub_version" : アプリバージョン文字列,  
     "instance_name" : 鉄道運用Hubインスタンスの表示名,  
     "instance_introduction" : インスタンスの紹介文(未設定なら省略),  
     "instance_explanation" : インスタンスについての説明(未設定なら省略),  
@@ -32,7 +32,7 @@
   
 ※上記の他、**Last-Modified**レスポンスヘッダーにインスタンス情報の最終更新日時が出力される  
   
-**main.iniの変更日時がタイムスタンプ以前だった場合** :  
+**それ以外の場合** :  
 文字列「NO_UPDATES_AVAILABLE」
 
 
