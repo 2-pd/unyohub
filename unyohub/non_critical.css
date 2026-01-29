@@ -2065,6 +2065,41 @@ textarea {
     }
 }
 
+#update_info_area {
+    margin: 20px 0 40px 0;
+    
+    padding: 20px;
+    
+    background-color: #ccffee;
+    
+    line-height: 30px;
+    font-size: 18px;
+    color: #009966;
+    text-align: center;
+    
+    .dark_mode & {
+        background-color: #336655;
+        
+        color: #ccffee;
+    }
+    
+    .wide_button {
+        margin-top: 20px;
+        
+        padding: 5px 10px;
+        
+        border-color: currentColor !important;
+        
+        background-image: linear-gradient(315deg, currentColor 10px, transparent 10px) !important;
+        
+        color: inherit !important;
+        
+        .dark_mode & {
+            background-color: #444444;
+        }
+    }
+}
+
 #unyohub_icon {
     display: block;
     

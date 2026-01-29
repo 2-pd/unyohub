@@ -270,7 +270,7 @@ function update_instance_info () {
     }
     
     if (instance_info["unyohub_version"] > UNYOHUB_VERSION) {
-        document.getElementById("menu_config").className = "new_icon";
+        document.getElementById("menu_about").className = "new_icon";
         if (location.pathname === "/") {
             document.getElementById("splash_screen_update_info").style.display = "block";
         }

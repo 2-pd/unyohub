@@ -833,7 +833,12 @@ header {
     
     margin-left: 10px;
     
+    color: #33cc99;
     font-weight: bold;
+    
+    .dark_mode & {
+        color: #ccffee;
+    }
 }
 
 #splash_screen_app_version {
@@ -3476,7 +3481,7 @@ footer {
     }
 }
 
-.warning_text, .warning_sentence, .unregistered_formation, #splash_screen_update_info {
+.warning_text, .warning_sentence, .unregistered_formation {
     color: #ee3333 !important;
     
     .dark_mode & {
