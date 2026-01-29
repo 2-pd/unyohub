@@ -3358,7 +3358,12 @@ function accept_rules () {
 function show_about () {
     var popup_inner_elm = open_popup("about_popup");
     
-    var buf = "<img src='/apple-touch-icon.webp' alt='" + UNYOHUB_APP_NAME + "' id='unyohub_icon'>";
+    var buf = "";
+    if (instance_info["unyohub_version"] > UNYOHUB_VERSION) {
+        buf += "<div id='update_info_area'><b>v" + instance_info["unyohub_version"] + "</b> が利用可能です<button type='button' class='wide_button' onclick='reload_app(true);'>アプリを再起動して更新</button></div>";
+    }
+    
+    buf += "<img src='/apple-touch-icon.webp' alt='" + UNYOHUB_APP_NAME + "' id='unyohub_icon'>";
     buf += "<h2>" + escape_html(instance_info["instance_name"]) + "</h2>";
     
     if ("instance_introduction" in instance_info) {
@@ -3398,11 +3403,18 @@ function show_about () {
 }
 
 
-function reload_app () {
+function reload_app (force_update = false) {
+    if (force_update && !navigator.onLine) {
+        mes("端末をネットワークに接続してください", true);
+        return;
+    }
+    
     open_wait_screen();
     
     setTimeout(function () {
-        if (location.pathname === "/") {
+        if (force_update) {
+            location.href = "/?ts=" + Date.now();
+        } else if (location.pathname === "/") {
             location.reload();
         } else {
             location.pathname = "/";

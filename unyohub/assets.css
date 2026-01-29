@@ -815,8 +815,8 @@ header {
     
     z-index: 1;
     
-    a, u {
-         display: inline-block;
+    a, u:not(#splash_screen_update_info) {
+        display: inline-block;
         
         margin-left: 20px;
         
@@ -828,11 +828,23 @@ header {
     }
 }
 
+#splash_screen_update_info {
+    display: none;
+    
+    color: #33cc99;
+    font-weight: bold;
+    text-indent: 10px;
+    
+    .dark_mode & {
+        color: #ccffee;
+    }
+}
+
 #splash_screen_app_version {
     position: absolute;
     
     bottom: 0;
-    right: 20px;
+    right: 15px;
     
     color: #999999;
     
