@@ -21,7 +21,7 @@ class diagram:
         if ts is None:
             ts = int(time.time())
         
-        return time.strftime("%Y-%m-%d", time.localtime(ts - 10800))
+        return time.strftime("%Y-%m-%d", time.localtime(ts - 14400))
     
     def get_diagram_revision (self, date_string=None):
         if self.diagram_revisions is None:
