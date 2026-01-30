@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 # coding: utf-8
 
+import os
 import csv
 import json
 import sqlite3
@@ -9,10 +10,18 @@ import time
 def clean_formation_db_table (mes, main_dir):
     mes("編成表データベースから不要なデータを削除", is_heading=True)
     
-    mes("formations.jsonを読み込んでいます...")
+    if not os.path.isdir(main_dir):
+        mes("指定された路線系統は存在しません", True)
+        return
     
-    with open(main_dir + "/formations.json", "r", encoding="utf-8") as json_f:
-        formation_data = json.load(json_f)
+    mes("formations.json を読み込んでいます...")
+    
+    try:
+        with open(main_dir + "/formations.json", "r", encoding="utf-8") as json_f:
+            formation_data = json.load(json_f)
+    except Exception:
+        mes("formations.json の読み込みに失敗しました", True)
+        return
     
     mes("データベースに接続しています...")
     

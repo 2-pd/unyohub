@@ -7,7 +7,7 @@
    viewBox="0 0 10.583333 10.583334"
    version="1.1"
    id="svg5"
-   inkscape:version="1.3 (0e150ed6c4, 2023-07-21)"
+   inkscape:version="1.4.3 (0d15f75042, 2025-12-25)"
    sodipodi:docname="情報マーク.svg"
    inkscape:export-filename="情報マーク.webp"
    inkscape:export-xdpi="96"
@@ -33,8 +33,8 @@
      inkscape:cx="22.213677"
      inkscape:cy="29.332345"
      inkscape:window-width="1920"
-     inkscape:window-height="1008"
-     inkscape:window-x="0"
+     inkscape:window-height="1052"
+     inkscape:window-x="1920"
      inkscape:window-y="0"
      inkscape:window-maximized="1"
      inkscape:current-layer="layer1"
@@ -46,10 +46,27 @@
      inkscape:label="レイヤー 1"
      inkscape:groupmode="layer"
      id="layer1">
-    <path
+    <ellipse
+       style="fill:none;fill-opacity:1;stroke:#55bbee;stroke-width:1.05833;stroke-linecap:round;stroke-linejoin:round;stroke-opacity:1;paint-order:stroke markers fill"
        id="path1"
-       style="color:#000000;fill:#6699ee;stroke-linecap:square;stroke-linejoin:round;-inkscape-stroke:none;fill-opacity:1"
-       d="M 5.29115 -0.0010335287 C 4.9525496 -0.0010335337 4.6136349 0.12819456 4.3552898 0.38653972 L 0.38653972 4.3552898 C -0.1301506 4.8719801 -0.13015056 5.709803 0.38653972 6.2264934 L 4.3552898 10.195243 C 4.8719801 10.711934 5.7098031 10.711934 6.2264934 10.195243 L 10.195243 6.2264934 C 10.711934 5.7098031 10.711934 4.8719801 10.195243 4.3552898 L 6.2264934 0.38653972 C 5.9681482 0.12819458 5.6297504 -0.0010335237 5.29115 -0.0010335287 z M 4.7480307 2.3151042 L 5.8353028 2.3151042 L 5.8353028 3.1088542 L 4.7480307 3.1088542 L 4.7480307 2.3151042 z M 4.7480307 4.2994792 L 5.8353028 4.2994792 L 5.8353028 8.2682293 L 4.7480307 8.2682293 L 4.7480307 4.2994792 z " />
+       cx="5.291667"
+       cy="5.291667"
+       rx="4.4979167"
+       ry="4.4979181" />
+    <rect
+       style="fill:#55bbee;fill-opacity:1;stroke:none;stroke-width:1.05833;stroke-linecap:round;stroke-linejoin:round;stroke-opacity:1;paint-order:stroke markers fill"
+       id="rect1"
+       width="1.3229166"
+       height="1.0583334"
+       x="4.6302085"
+       y="2.6458335" />
+    <rect
+       style="fill:#55bbee;fill-opacity:1;stroke:none;stroke-width:1.05833;stroke-linecap:round;stroke-linejoin:round;stroke-opacity:1;paint-order:stroke markers fill"
+       id="rect2"
+       width="1.3229166"
+       height="3.7041667"
+       x="4.6292787"
+       y="4.4979167" />
   </g>
   <metadata
      id="metadata824">

@@ -30,7 +30,7 @@ print "<article>";
 
 print "<nav><a href='railroads.php?railroad_id=".$railroad_id."'>".htmlspecialchars($railroad_info["railroad_name"])."</a> &gt; <a href='manage_files.php?railroad_id=".$railroad_id."'>データファイルの管理</a> &gt;</nav>";
 
-print "<h2>車両アイコン画像の管理</h2>";
+print "<h2 style='border-color: ".addslashes($railroad_info["main_color"])."'>車両アイコン画像の管理</h2>";
 
 
 $icon_dir_path = "../data/".$railroad_id."/icons/";

@@ -54,7 +54,7 @@ print "<nav><a href='railroads.php?railroad_id=".$railroad_id."'>".htmlspecialch
 if (empty($_GET["file_name"])) {
     print "</nav>";
     
-    print "<h2>データファイルの管理</h2>";
+    print "<h2 style='border-color: ".addslashes($railroad_info["main_color"])."'>データファイルの管理</h2>";
     
     print "<h3>ダイヤ改正別データ</h3>";
     
@@ -107,21 +107,22 @@ if (empty($_GET["file_name"])) {
     
     switch ($_GET["file_name"]) {
         case "railroad_info.json":
-            print "<h2>路線系統情報ファイルの管理</h2>";
+            $page_title = "路線系統情報ファイルの管理";
             break;
         case "formations.csv":
-            print "<h2>編成表元ファイルの管理</h2>";
+            $page_title = "編成表元ファイルの管理";
             break;
         case "diagram_revisions.txt":
-            print "<h2>ダイヤ改正日一覧ファイルの管理</h2>";
+            $page_title = "ダイヤ改正日一覧ファイルの管理";
             break;
         case "formation_name_mappings.json":
-            print "<h2>車両識別名対応表ファイルの管理</h2>";
+            $page_title = "車両識別名対応表ファイルの管理";
             break;
         default:
             print "【!】指定されたパスは編集可能なファイル名ではありません";
             goto invalid_file_name;
     }
+    print "<h2 style='border-color: ".addslashes($railroad_info["main_color"])."'>".$page_title."</h2>";
     
     $file_path = "../data/".$railroad_id."/".$_GET["file_name"];
     $trash_path = "../data/".$railroad_id."/trash";

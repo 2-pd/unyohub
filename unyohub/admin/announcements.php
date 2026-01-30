@@ -167,10 +167,15 @@ print "<article>";
 $railroads = json_decode(file_get_contents(RAILROADS_JSON_PATH), TRUE);
 
 if (!empty($railroad_id) && $railroad_id !== "/") {
+    $railroad_info = json_decode(file_get_contents("../data/".$railroad_id."/railroad_info.json"), TRUE);
+    
     print "<nav><a href='railroads.php?railroad_id=".addslashes($railroad_id)."'>".htmlspecialchars($railroads["railroads"][$railroad_id]["railroad_name"])."</a> &gt;</nav>";
+    print "<h2 style='border-color: ".addslashes($railroad_info["main_color"])."'>";
+} else {
+    print "<h2>";
 }
 
-print "<h2>お知らせの編集</h2>";
+print "お知らせの編集</h2>";
 
 if ($railroad_id === "/") {
     print "<div class='radio_area'><label class='selected_label'>全体のお知らせ</label><label onclick='location.href = \"announcements.php\";'>路線系統のお知らせ</label></div>";

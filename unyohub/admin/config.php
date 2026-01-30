@@ -6,10 +6,9 @@ if (!$user->check_permission("instance_administrator")) {
     exit;
 }
 
-print_header();
 
-
-if (isset($_POST["instance_name"], $_POST["instance_introduction"], $_POST["instance_explanation"], $_POST["manual_url"], $_POST["administrator_name"], $_POST["administrator_url"], $_POST["administrator_introduction"], $_POST["available_days_ahead"], $_POST["quotation_guidelines"], $_POST["sender_email_address"])) {
+$result_text = NULL;
+if (isset($_POST["instance_name"], $_POST["instance_introduction"], $_POST["instance_explanation"], $_POST["manual_url"], $_POST["administrator_name"], $_POST["administrator_url"], $_POST["administrator_introduction"], $_POST["comment_character_limit"], $_POST["available_days_ahead"], $_POST["quotation_guidelines"], $_POST["sender_email_address"])) {
     $config_str = "instance_name = \"".addslashes($_POST["instance_name"])."\"\n";
     $config_str .= "\n";
     $config_str .= "instance_introduction = \"".str_replace(array("\r\n", "\n", "\r"), "\\n", addslashes($_POST["instance_introduction"]))."\"\n";
@@ -26,6 +25,7 @@ if (isset($_POST["instance_name"], $_POST["instance_introduction"], $_POST["inst
     $config_str .= "require_email_address = ".(!empty($_POST["require_email_address"]) ? "true" : "false")."\n";
     $config_str .= "allow_guest_user = ".(!empty($_POST["allow_guest_user"]) ? "true" : "false")."\n";
     $config_str .= "validate_posted_formations = ".(!empty($_POST["validate_posted_formations"]) ? "true" : "false")."\n";
+    $config_str .= "comment_character_limit = ".intval($_POST["comment_character_limit"])."\n";
     $config_str .= "require_comments_on_speculative_posts = ".(!empty($_POST["require_comments_on_speculative_posts"]) ? "true" : "false")."\n";
     $config_str .= "\n";
     $config_str .= "quotation_guidelines = \"".str_replace(array("\r\n", "\n", "\r"), "\\n", addslashes($_POST["quotation_guidelines"]))."\"\n";
@@ -37,15 +37,21 @@ if (isset($_POST["instance_name"], $_POST["instance_introduction"], $_POST["inst
     if (isset($_POST["one_time_token"]) && $user->check_one_time_token($_POST["one_time_token"])) {
         file_put_contents("../config/main.ini", $config_str);
         
-        print "<script> alert('インスタンスの基本設定を保存しました'); </script>";
+        $result_text = "インスタンスの基本設定を保存しました";
     } else {
-        print "<script> alert('【!】ワンタイムトークンが無効です。処理はキャンセルされました。'); </script>";
+        $result_text = "【!】ワンタイムトークンが無効です。処理はキャンセルされました。";
     }
-} else {
-    $config_str = file_get_contents("../config/main.ini");
+    
+    $config = parse_ini_string($config_str);
 }
 
-$config = parse_ini_string($config_str);
+
+print_header();
+
+
+if (!empty($result_text)) {
+    print "<script> alert('".$result_text."'); </script>";
+}
 
 
 print "<article>";
@@ -107,7 +113,9 @@ print "<input type='checkbox' name='require_comments_on_speculative_posts' id='r
 if ($config["require_comments_on_speculative_posts"]) {
     print " checked='checked'";
 }
-print "><label for='require_comments_on_speculative_posts'>未出庫運用への情報投稿時にコメント入力を強制</label>";
+print "><label for='require_comments_on_speculative_posts'>未出庫運用の情報投稿時に補足情報入力を強制</label>";
+print "<h4>運用補足情報の上限文字数</h4>";
+print "<input type='number' name='comment_character_limit' value='".addslashes($config["comment_character_limit"])."'>文字";
 
 print "<h3>引用投稿のガイドライン</h3>";
 print "<textarea name='quotation_guidelines'>".htmlspecialchars(stripcslashes($config["quotation_guidelines"]))."</textarea>";

@@ -8,7 +8,7 @@ import subprocess
 
 
 UNYOHUB_COMMANDS_APP_NAME = "鉄道運用Hub コマンドラインツール"
-UNYOHUB_COMMANDS_VERSION = "26.01-1"
+UNYOHUB_COMMANDS_VERSION = "26.01-2"
 
 UNYOHUB_DATA_DIR = "../data"
 

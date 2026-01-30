@@ -13,7 +13,7 @@
 4. 同じくunyohubフォルダ内の「robots.txt」とunyohubフォルダの子フォルダである「config」に含まれる「main.ini」を使用環境に合わせて編集し、configフォルダの「rules.txt」には利用者のためのルールとポリシーを記述してください。
 5. ユーザー情報に使い捨てメールアドレスを登録できないようにする場合は、configフォルダの「wakarana_email_domain_blacklist.conf」に使用禁止対象ドメインを各行1つずつ入力します。
 6. unyohubフォルダとそこに含まれるファイルを全てサーバにアップロードします。
-7. GNU/Linuxの場合、鉄道運用Hubのメンテナンスに使用するOSアカウントのhomeフォルダにある「.bash_profile」ファイル(隠しファイル)に以下の内容(パスは使用環境に合わせて読み替えてください)を追記して、unyohubフォルダ内の「commands」フォルダを環境変数PATHに追加します。.bash_profileの編集後はサーバの再起動またはsourceコマンドによる.bash_profileの再読み込みを行ってください。  
+7. GNU/Linuxの場合、本アプリケーションのメンテナンスに使用するOSアカウントのhomeフォルダにある「.bash_profile」ファイル(隠しファイル)に以下の内容(パスは使用環境に合わせて読み替えてください)を追記して、unyohubフォルダ内の「commands」フォルダを環境変数PATHに追加します。.bash_profileの編集後はサーバの再起動またはsourceコマンドによる.bash_profileの再読み込みを行ってください。  
     `export PATH=$PATH:/サーバ上でのunyohubフォルダの絶対パス/commands`
 8. commandsフォルダ内のファイル「unyohub」にchmodコマンド等で実行権限を追加します。
 9. 端末エミュレーターで以下のコマンド(ユーザーIDには半角英数字とアンダーバーが使用可能です)を順にサーバ上で実行します。1つ目のコマンドの実行時には管理者ユーザーの初期パスワードが表示されるため、これをメモしておいてください。  
@@ -59,9 +59,8 @@
 
 ## カスタマイズ
 
-鉄道運用Hubのアプリ名やアイコンは以下のファイルを編集することで変更可能です。
+本アプリケーションのアイコン等は以下のファイルを編集することで変更可能です。
 
-- manifest.json の変数値 name 及び short_name
 - favicon.ico (同名のアイコンファイルに差し替え)
 - apple-touch-icon.webp、maskable_icon.webp、splash_screen_image.webp (それぞれ同名のWebPファイルに差し替え)
 

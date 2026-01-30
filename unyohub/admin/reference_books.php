@@ -28,7 +28,7 @@ print "<article>";
 
 print "<nav><a href='railroads.php?railroad_id=".$railroad_id."'>".htmlspecialchars($railroad_info["railroad_name"])."</a> &gt;</nav>";
 
-print "<h2>参考書籍の追加・削除</h2>";
+print "<h2 style='border-color: ".addslashes($railroad_info["main_color"])."'>参考書籍の追加・削除</h2>";
 
 $db_obj = new SQLite3("../data/".$railroad_id."/railroad.db");
 $db_obj->busyTimeout(5000);

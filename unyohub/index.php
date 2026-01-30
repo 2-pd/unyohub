@@ -225,7 +225,7 @@ print "    <script src=\"/main.js?v=".UNYOHUB_VERSION."\" defer=\"defer\"></scri
     <link rel="shortcut icon" href="/favicon.ico">
     <link rel="apple-touch-icon" href="/apple-touch-icon.webp">
     <link rel="preload" href="/splash_screen_image.webp" as="image">
-    <link rel="manifest" href="/manifest.json">
+    <link rel="manifest" href="/manifest.php">
 <?php
 print "    <link rel=\"canonical\" href=\"".$root_url.$path_info_str."\">\n";
 print "    <meta name=\"description\" content=\"".$page_description."\">\n";
@@ -261,7 +261,7 @@ print "    <meta property=\"twitter:card\" content=\"summary_large_image\">\n";
         <hr>
         <button type="button" onclick="edit_config();">アプリの設定</button>
         <hr>
-        <button type="button" onclick="show_about();"><span id="menu_instance_name"><?php print UNYOHUB_APP_NAME; ?></span>について</button>
+        <button type="button" id="menu_about" onclick="show_about();"><span id="menu_instance_name"><?php print UNYOHUB_APP_NAME; ?></span>について</button>
         <button type="button" onclick="show_rules();">ルールとポリシー</button>
         <a id="menu_manual_button" href="#" target="_blank">このアプリの使い方</a>
         <hr>
@@ -277,7 +277,9 @@ if ($path_info_str === "/") {
             <div id="splash_screen_inner" class="wait_icon"></div>
             <button type="button" id="splash_screen_announcement" onclick="show_announcements();" aria-label="お知らせ"></button>
             <div id="splash_screen_bottom">
-                <u onclick="show_about();"><span id="splash_screen_instance_name">{$unyohub_app_name}</span>について</u><a href="/user/rules.php" onclick="event.preventDefault(); show_rules();">ルールとポリシー</a><span id="splash_screen_app_version">v{$unyohub_version}</span>
+                <u id="splash_screen_update_info" onclick="show_about();">新しいバージョンが利用可能です</u>
+                <u onclick="show_about();"><span id="splash_screen_instance_name">{$unyohub_app_name}</span>について</u><a href="/user/rules.php" onclick="event.preventDefault(); show_rules();">ルールとポリシー</a>
+                <span id="splash_screen_app_version">v{$unyohub_version}</span>
             </div>
     EOM."\n";
 }
@@ -319,7 +321,7 @@ if ($path_info_str === "/") {
     <article>
         <div id="operation_search_area">
             <div class='search_wrapper'><label for="train_number_search" class="search_icon">運用・列車番号で検索</label><input type="search" id="train_number_search" onkeyup="operation_table_list_number();" onsearch="operation_table_list_number();" placeholder="運用・列車番号で検索" autocomplete="off"></div>
-        <div class="radio_area"><input type="radio" name="operation_table_sorting_criteria" id="sort_by_operation_groups" value="operation_groups" checked="checked" onchange="operation_table_list_number();"><label for="sort_by_operation_groups">系統別</label><input type="radio" name="operation_table_sorting_criteria" id="sort_by_starting_location" value="starting_location" onchange="operation_table_list_number();"><label for="sort_by_starting_location">出庫別</label><input type="radio" name="operation_table_sorting_criteria" id="sort_by_terminal_location" value="terminal_location" onchange="operation_table_list_number();"><label for="sort_by_terminal_location">入庫別</label><button type="button" class="customize_button" onclick="customize_operation_table();" aria-label="運用表のカスタマイズ"></button></div>
+        <div class="radio_area"><input type="radio" name="operation_table_sorting_criteria" id="sort_by_operation_groups" value="operation_groups" checked="checked" onchange="operation_table_list_number();"><label for="sort_by_operation_groups">系統別</label><input type="radio" name="operation_table_sorting_criteria" id="sort_by_starting_location" value="starting_location" onchange="operation_table_list_number();"><label for="sort_by_starting_location">出庫別</label><input type="radio" name="operation_table_sorting_criteria" id="sort_by_terminal_location" value="terminal_location" onchange="operation_table_list_number();"><label for="sort_by_terminal_location">入庫別</label><button type="button" class="customize_button" onclick="customize_operation_table();">カスタム</button></div>
         </div>
         <h2 id="operation_table_heading"></h2>
         <div id="operation_table_area" class="wait_icon"></div>

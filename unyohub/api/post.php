@@ -112,8 +112,8 @@ if (!empty($_POST["train_number"])) {
 }
 
 
-if (mb_strlen($_POST["comment"]) > 140) {
-    print "ERROR: コメントの最大文字数は140文字です";
+if (mb_strlen($_POST["comment"]) > $config["comment_character_limit"]) {
+    print "ERROR: 運用補足情報の文字数が制限を超過しています";
     exit;
 }
 

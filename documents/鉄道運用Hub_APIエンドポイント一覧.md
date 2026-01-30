@@ -10,11 +10,13 @@
 鉄道運用Hubのインスタンス情報を取得する
 
 ### 引数
-**$_POST["last_modified_timestamp"]** : タイムスタンプ(UTC、省略可能)
+**$_POST["last_modified_timestamp"]** : タイムスタンプ(UTC、省略可能)  
+**$_POST["client_unyohub_version"]** : クライアント側のアプリバージョン文字列(省略可能)
 
 ### 応答
-**タイムスタンプが省略されるか、main.iniの変更日時がタイムスタンプより新しかった場合** :  
+**タイムスタンプが省略されるか、main.iniの変更日時がタイムスタンプより新しいか、クライアント側のアプリバージョンにサーバー側のアプリバージョンと異なる文字列が指定された場合** :  
 {  
+    "unyohub_version" : アプリバージョン文字列,  
     "instance_name" : 鉄道運用Hubインスタンスの表示名,  
     "instance_introduction" : インスタンスの紹介文(未設定なら省略),  
     "instance_explanation" : インスタンスについての説明(未設定なら省略),  
@@ -24,13 +26,14 @@
     "administrator_introduction" : インスタンス運営者の紹介文(未設定なら省略),  
     "available_days_ahead" : 何日先の日付まで運用情報の閲覧と投稿が可能か,  
     "allow_guest_user" : ログインしていないユーザーの投稿を認めるか(BOOL値),  
+    "comment_character_limit" コメント(運用補足情報)の最大文字数,  
     "require_comments_on_speculative_posts" : 未出庫の運用への情報投稿時にコメント入力を強制するか(BOOL値),  
     "quotation_guidelines" : 引用情報を投稿する際に表示される案内文(未設定なら省略)  
 }  
   
 ※上記の他、**Last-Modified**レスポンスヘッダーにインスタンス情報の最終更新日時が出力される  
   
-**main.iniの変更日時がタイムスタンプ以前だった場合** :  
+**それ以外の場合** :  
 文字列「NO_UPDATES_AVAILABLE」
 
 
