@@ -222,8 +222,6 @@ function mes (message_text, is_error = false, display_time = 10) {
     if (is_error) {
         box_elm.className = "error_message";
         
-        console.error(UNYOHUB_APP_NAME + ": " + message_text);
-        
         if (message_elm_list.length >= 1 && message_elm_list[message_elm_list.length - 1].innerText === message_text) {
             delete_mes(message_elm_list[message_elm_list.length - 1]);
         }
