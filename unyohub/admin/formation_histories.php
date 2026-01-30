@@ -26,14 +26,12 @@ print_header();
 
 print "<article>";
 
-print "<nav><a href='railroads.php?railroad_id=".$railroad_id."'>".htmlspecialchars($railroad_info["railroad_name"])."</a> &gt;";
+print "<nav><a href='railroads.php?railroad_id=".$railroad_id."'>".htmlspecialchars($railroad_info["railroad_name"])."</a> &gt; <a href='formations.php?railroad_id=".$railroad_id."'>編成情報の編集</a> &gt;</nav>";
 
 if (empty($_GET["formation_name"])) {
     print "【!】 編成が指定されていません";
     goto article_end;
 }
-
-print " <a href='formations.php?railroad_id=".$railroad_id."'>編成情報の編集</a> &gt;</nav>";
 
 
 $event_types = array("construct", "modify", "repaint", "renewal", "transfer", "rearrange", "unregister", "other");
@@ -56,7 +54,7 @@ if (empty($car_numbers)) {
     goto article_end;
 }
 
-print "<h2>".htmlspecialchars($_GET["formation_name"])."</h2>";
+print "<h2 style='border-color: ".addslashes($railroad_info["main_color"])."'>".htmlspecialchars($_GET["formation_name"])."</h2>";
 
 print "<div class='radio_area'><label onclick='if(!data_edited || confirm(\"車歴情報の編集を中断して編成基本情報の編集を行いますか？\\n保存していない内容は破棄されます。\")){ location.href = \"formations.php?railroad_id=".$railroad_id."&formation_name=".urlencode($_GET["formation_name"])."\"; }'>基本情報</label><label class='selected_label'>車歴情報</label></div>";
 
@@ -272,7 +270,7 @@ for ($cnt = 0; isset($reference_books[$cnt]); $cnt++) {
     print " onchange='data_edited = true;'><label for='reference_book_".$cnt."'>".htmlspecialchars($reference_books[$cnt]["publisher_name"])."『".htmlspecialchars($reference_books[$cnt]["book_title"])."』</label>";
 }
 
-print "<br><a class='execute_button' href='reference_books.php?railroad_id=".$railroad_id."' onclick='if(!confirm(\"車歴情報の編集を中断して参考書籍の追加・削除を行いますか？\\n保存していない内容があれば破棄されます。\")){ event.preventDefault(); }'>参考書籍の追加・削除</a>";
+print "<br><a class='execute_button' href='reference_books.php?railroad_id=".$railroad_id."' onclick='if(data_edited && !confirm(\"車歴情報の編集を中断して参考書籍の追加・削除を行いますか？\\n保存していない内容があれば破棄されます。\")){ event.preventDefault(); }'>参考書籍の追加・削除</a>";
 
 print "<button type='submit' class='save_button'>上書き保存</button>";
 

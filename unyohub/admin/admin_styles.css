@@ -173,12 +173,17 @@ nav {
 }
 
 h2 {
-    max-width: 480px;
+    min-height: 26px;
+    max-width: 436px;
     
     margin: 10px auto 20px auto;
     
-    line-height: 40px;
-    font-size: 22px;
+    padding: 5px 0;
+    
+    border: 2px solid transparent;
+    
+    line-height: 26px;
+    font-size: 20px;
     text-align: center;
     
     &:has(img) {
@@ -297,6 +302,7 @@ table {
         line-height: 30px;
         font-size: 18px;
         font-weight: bold;
+        word-break: break-all;
         
         a {
             display: block;
