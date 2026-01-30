@@ -607,13 +607,13 @@ textarea {
     
     box-sizing: content-box;
     
-    width: calc(100% - 60px);
-    height: 60px;
+    width: calc(100% - 50px);
+    height: 70px;
     
-    max-width: 440px;
+    max-width: 450px;
     
     margin: 10px auto;
-    padding: 9px;
+    padding: 4px;
     
     border: 1px solid #cccccc;
     border-radius: 5px;

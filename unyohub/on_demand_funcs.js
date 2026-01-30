@@ -2105,6 +2105,21 @@ function save_screenshot () {
 }
 
 
+function scroll_textarea_background (textarea_elm, background_elm) {
+    background_elm.scrollTop = textarea_elm.scrollTop;
+}
+
+function update_textarea_background (textarea_elm, background_elm, character_limit) {
+    const lf_regexp = /\n/g;
+    
+    var comment_text = textarea_elm.value;
+    
+    background_elm.innerHTML = comment_text.length >= character_limit ? escape_html(comment_text.substring(0, character_limit)).replace(lf_regexp, "<br>") + "<span class='textarea_background_highlight'>" + escape_html(comment_text.substring(character_limit)).replace(lf_regexp, "<br>") + "</span>" : escape_html(comment_text).replace(lf_regexp, "<br>");
+    
+    scroll_textarea_background(textarea_elm, background_elm);
+}
+
+
 var one_time_token = null;
 
 function get_one_time_token () {
@@ -2197,7 +2212,7 @@ function write_operation_data (railroad_id, yyyy_mm_dd, operation_number, train_
     buf += "</div>";
     
     buf += "<h4>運用補足情報</h4>";
-    buf += "<textarea id='operation_data_comment'></textarea>";
+    buf += "<div class='textarea_wrapper'><div id='operation_data_comment_background'></div><textarea id='operation_data_comment' onscroll='scroll_textarea_background(this, document.getElementById(\"operation_data_comment_background\"));' onkeyup='update_textarea_background(this, document.getElementById(\"operation_data_comment_background\"), " + instance_info["comment_character_limit"] + ");'></textarea></div>";
     
     if (speculative_post && instance_info["require_comments_on_speculative_posts"]) {
         buf += "<div class='warning_text' id='comment_guide'>お手数ですが、この運用に充当される編成を確認した方法を補足情報にご入力ください。</div>";
@@ -2571,11 +2586,14 @@ function check_post_operation_data () {
 }
 
 function post_operation_data () {
-    open_wait_screen();
+    var comment_text = document.getElementById("operation_data_comment").value;
+    if (comment_text.length > instance_info["comment_character_limit"]) {
+        mes("運用補足情報が" + instance_info["comment_character_limit"] + "文字を超過しているため投稿できません", true);
+        
+        return;
+    }
     
     if ((user_data !== null && one_time_token === null) || !(post_operation_number in assign_order_maxima)) {
-        close_wait_screen();
-        
         mes("内部処理が完了していないため、数秒待ってから再送信してください", true);
         
         return;
@@ -2583,8 +2601,6 @@ function post_operation_data () {
     
     if (document.getElementById("operation_data_type_reassign").checked) {
         if (assign_order_maxima[post_operation_number] === 0) {
-            close_wait_screen();
-            
             mes("他の情報が投稿されていない運用に差し替え情報を投稿することはできません", true);
             
             return;
@@ -2599,7 +2615,9 @@ function post_operation_data () {
         }
     }
     
-    var send_data = "railroad_id=" + escape_form_data(post_railroad_id) + "&date=" + escape_form_data(post_yyyy_mm_dd) + "&operation_number=" + escape_form_data(post_operation_number) + "&assign_order=" + assign_order + "&formations=" + escape_form_data(document.getElementById("operation_data_formation").value) + "&comment=" + escape_form_data(document.getElementById("operation_data_comment").value);
+    open_wait_screen();
+    
+    var send_data = "railroad_id=" + escape_form_data(post_railroad_id) + "&date=" + escape_form_data(post_yyyy_mm_dd) + "&operation_number=" + escape_form_data(post_operation_number) + "&assign_order=" + assign_order + "&formations=" + escape_form_data(document.getElementById("operation_data_formation").value) + "&comment=" + escape_form_data(comment_text);
     
     if (document.getElementById("identify_method_quote").checked) {
         send_data += "&is_quotation=YES";
