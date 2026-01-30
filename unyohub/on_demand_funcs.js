@@ -3093,6 +3093,18 @@ function edit_config () {
     popup_inner_elm.innerHTML = buf;
     
     get_railroad_list(function () {
+        for (var cnt = 0; cnt < config["favorite_railroads"].length; cnt++) {
+            if (!(config["favorite_railroads"][cnt] in railroads["railroads"])) {
+                config["favorite_railroads"].splice(cnt, 1);
+            }
+        }
+        
+        for (var cnt = 0; cnt < config["favorite_stations"].length; cnt++) {
+            if (!(config["favorite_stations"][cnt]["railroad_id"] in railroads["railroads"])) {
+                config["favorite_stations"].splice(cnt, 1);
+            }
+        }
+        
         config_draw_favorite_railroads();
         config_draw_favorite_stations();
     });
@@ -3137,6 +3149,39 @@ function change_config () {
     save_config();
 }
 
+function railroad_icon_context_menu (railroad_id, redraw_railroad_list = true) {
+    railroad_icon_touch_start_time = null;
+    
+    var railroad_index = config["favorite_railroads"].indexOf(railroad_id);
+    if (railroad_index !== -1) {
+        if (confirm(railroads["railroads"][railroad_id]["railroad_name"] + " をお気に入りから削除しますか？")) {
+            config["favorite_railroads"].splice(railroad_index, 1);
+            save_config();
+            
+            if (redraw_railroad_list) {
+                update_railroad_list(railroads);
+            }
+            
+            mes("路線系統をお気に入りから削除しました");
+            
+            return true;
+        }
+    } else if (confirm(railroads["railroads"][railroad_id]["railroad_name"] + " をお気に入りに追加しますか？")) {
+        config["favorite_railroads"].push(railroad_id);
+        save_config();
+        
+        if (redraw_railroad_list) {
+            update_railroad_list(railroads);
+        }
+        
+        mes("路線系統をお気に入りに追加しました");
+        
+        return true;
+    }
+    
+    return false;
+}
+
 function config_draw_favorite_railroads () {
     var buf = "";
     for (var cnt = 0; cnt < config["favorite_railroads"].length; cnt++) {
@@ -3147,7 +3192,7 @@ function config_draw_favorite_railroads () {
 }
 
 function config_remove_favorite_railroad (railroad_id) {
-    if (railroad_icon_context_menu(railroad_id)) {
+    if (railroad_icon_context_menu(railroad_id, false)) {
         config_draw_favorite_railroads();
     }
 }
