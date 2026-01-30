@@ -59,7 +59,7 @@ if (empty($railroad_id)) {
     $railroad_info = json_decode(file_get_contents("../data/".$railroad_id."/railroad_info.json"), TRUE);
     
     print "<nav><a href='railroads.php?railroad_id=".addslashes($railroad_id)."'>".htmlspecialchars($railroad_info["railroad_name"])."</a> &gt;</nav>";
-    print "<h2>投稿ルールの編集</h2>";
+    print "<h2 style='border-color: ".addslashes($railroad_info["main_color"])."'>投稿ルールの編集</h2>";
 }
 
 print "<form action='edit_rules.php?railroad_id=".$railroad_id."' method='post'>";
