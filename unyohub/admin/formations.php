@@ -38,7 +38,7 @@ print "<nav><a href='railroads.php?railroad_id=".$railroad_id."'>".htmlspecialch
 if (empty($_GET["formation_name"])) {
     print "</nav>";
     
-    print "<h2>編成情報の編集</h2>";
+    print "<h2 style='border-color: ".addslashes($railroad_info["main_color"])."'>編成情報の編集</h2>";
     
     for ($cnt = 0; isset($formations["series_names"][$cnt]); $cnt++) {
         $checkbox_id = "series_".$cnt;
@@ -86,7 +86,7 @@ if (empty($_GET["formation_name"])) {
 } else {
     print " <a href='formations.php?railroad_id=".$railroad_id."'>編成情報の編集</a> &gt;</nav>";
     
-    print "<h2>".htmlspecialchars($_GET["formation_name"])."</h2>";
+    print "<h2 style='border-color: ".addslashes($railroad_info["main_color"])."'>".htmlspecialchars($_GET["formation_name"])."</h2>";
     
     $db_obj = new SQLite3("../data/".$railroad_id."/railroad.db");
     $db_obj->busyTimeout(5000);
