@@ -29,6 +29,7 @@ $instance_info = array(
     "instance_name" => $main_config["instance_name"],
     "available_days_ahead" => $main_config["available_days_ahead"],
     "allow_guest_user" => $main_config["allow_guest_user"],
+    "comment_character_limit" => $main_config["comment_character_limit"],
     "require_comments_on_speculative_posts" => $main_config["require_comments_on_speculative_posts"]
 );
 
