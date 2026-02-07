@@ -40,6 +40,7 @@ def convert_gtfs_to_timetable (mes, main_dir, diagram_revision, generate_train_n
     lines_inbound = []
     stop_info_inbound = {}
     last_departure_time_indexes = {}
+    last_stop_name = None
     for stop_info in stops_inbound:
         stop_info_inbound[stop_info[0]] = { "stop_name" : stop_info[1], "row_index" : len(inbound_timetable_t[0]) }
         
@@ -47,6 +48,10 @@ def convert_gtfs_to_timetable (mes, main_dir, diagram_revision, generate_train_n
             stop_info_inbound[stop_info[0]]["stop_symbol"] = stop_info[3].strip()
         else:
             stop_info_inbound[stop_info[0]]["stop_symbol"] = ""
+        
+        if stop_info[1] == last_stop_name:
+            stop_info_inbound[stop_info[0]]["row_index"] -= 2
+            continue
         
         line_ids = []
         for line_id in stop_info[2].split():
@@ -61,8 +66,9 @@ def convert_gtfs_to_timetable (mes, main_dir, diagram_revision, generate_train_n
         inbound_timetable_t[1].append(" ".join(line_ids))
         inbound_timetable_t[0].append(stop_info[1] + "[発]")
         inbound_timetable_t[1].append(stop_info[2])
+        
+        last_stop_name = stop_info[1]
     
-    inbound_timetable_t[1][0] = " ".join(lines_inbound)
     inbound_timetable_t[0].append("")
     inbound_timetable_t[1].append("")
     
@@ -74,6 +80,7 @@ def convert_gtfs_to_timetable (mes, main_dir, diagram_revision, generate_train_n
     lines_outbound = []
     stop_info_outbound = {}
     last_departure_time_indexes = {}
+    last_stop_name = None
     for stop_info in stops_outbound:
         stop_info_outbound[stop_info[0]] = { "stop_name" : stop_info[1], "row_index" : len(outbound_timetable_t[0]) }
         
@@ -81,6 +88,10 @@ def convert_gtfs_to_timetable (mes, main_dir, diagram_revision, generate_train_n
             stop_info_outbound[stop_info[0]]["stop_symbol"] = stop_info[3].strip()
         else:
             stop_info_outbound[stop_info[0]]["stop_symbol"] = ""
+        
+        if stop_info[1] == last_stop_name:
+            stop_info_outbound[stop_info[0]]["row_index"] -= 2
+            continue
         
         line_ids = []
         for line_id in stop_info[2].split():
@@ -95,8 +106,9 @@ def convert_gtfs_to_timetable (mes, main_dir, diagram_revision, generate_train_n
         outbound_timetable_t[1].append(" ".join(line_ids))
         outbound_timetable_t[0].append(stop_info[1] + "[発]")
         outbound_timetable_t[1].append(stop_info[2])
+        
+        last_stop_name = stop_info[1]
     
-    outbound_timetable_t[1][0] = " ".join(lines_outbound)
     outbound_timetable_t[0].append("")
     outbound_timetable_t[1].append("")
     
@@ -145,6 +157,10 @@ def convert_gtfs_to_timetable (mes, main_dir, diagram_revision, generate_train_n
             row_index_outbound = None
             stop_symbol_outbound = None
         
+        if row_index_inbound is None and row_index_outbound is None:
+            mes("stop_id " + stop_time["stop_id"] + " に対応する停留所が見つかりません", True)
+            return
+        
         if last_trip_id != stop_time["trip_id"]:
             if generate_train_number and last_trip_id is not None:
                 last_train_number = starting_stop_symbol + first_departure_time[:2] + first_departure_time[3:5]
@@ -177,7 +193,7 @@ def convert_gtfs_to_timetable (mes, main_dir, diagram_revision, generate_train_n
             direction = None
             first_departure_time = stop_time["departure_time"]
         elif last_stop_is_starting_stop:
-            if last_row_index_inbound is not None and row_index_inbound is not None and row_index_inbound > last_row_index_inbound:
+            if last_row_index_inbound is not None and row_index_inbound is not None and row_index_inbound >= last_row_index_inbound:
                 direction = "inbound"
                 
                 if last_row_index_outbound is not None and (row_index_outbound is None or row_index_outbound < last_row_index_outbound):
@@ -198,29 +214,37 @@ def convert_gtfs_to_timetable (mes, main_dir, diagram_revision, generate_train_n
         else:
             if direction == "inbound" and (row_index_inbound is None or row_index_inbound < last_row_index_inbound):
                 outbound_timetables_t[trip_info[stop_time["trip_id"]]["diagram_id"]].append([stop_time["trip_id"], "普通", trip_info[stop_time["trip_id"]]["destination"]] + [""] * (len(outbound_timetable_t[0]) - 3))
-                outbound_timetables_t[trip_info[stop_time["trip_id"]]["diagram_id"]][-1][last_row_index_outbound + 1] = last_departure_time[:5]
-                
-                line_id = list(set(outbound_timetable_t[1][last_row_index_outbound + 1].split()) & set(outbound_timetable_t[1][row_index_outbound].split()))[0]
+                if last_row_index_outbound is not None:
+                    outbound_timetables_t[trip_info[stop_time["trip_id"]]["diagram_id"]][-1][last_row_index_outbound + 1] = last_departure_time[:5]
+                    
+                    line_id = list(set(outbound_timetable_t[1][last_row_index_outbound + 1].split()) & set(outbound_timetable_t[1][row_index_outbound].split()))[0]
+                else:
+                    line_id = list(set(inbound_timetable_t[1][last_row_index_inbound + 1].split()) & set(outbound_timetable_t[1][row_index_outbound].split()))[0]
                 
                 inbound_timetables_t[trip_info[stop_time["trip_id"]]["diagram_id"]][-1][-1] = "@" + line_id + ".outbound"
                 
                 direction = "outbound"
             elif direction == "outbound" and (row_index_outbound is None or row_index_outbound < last_row_index_outbound):
                 inbound_timetables_t[trip_info[stop_time["trip_id"]]["diagram_id"]].append([stop_time["trip_id"], "普通", trip_info[stop_time["trip_id"]]["destination"]] + [""] * (len(inbound_timetable_t[0]) - 3))
-                inbound_timetables_t[trip_info[stop_time["trip_id"]]["diagram_id"]][-1][last_row_index_inbound + 1] = last_departure_time[:5]
-                
-                line_id = list(set(inbound_timetable_t[1][last_row_index_inbound + 1].split()) & set(inbound_timetable_t[1][row_index_inbound].split()))[0]
+                if last_row_index_inbound is not None:
+                    inbound_timetables_t[trip_info[stop_time["trip_id"]]["diagram_id"]][-1][last_row_index_inbound + 1] = last_departure_time[:5]
+                    
+                    line_id = list(set(inbound_timetable_t[1][last_row_index_inbound + 1].split()) & set(inbound_timetable_t[1][row_index_inbound].split()))[0]
+                else:
+                    line_id = list(set(outbound_timetable_t[1][last_row_index_outbound + 1].split()) & set(inbound_timetable_t[1][row_index_inbound].split()))[0]
                 
                 outbound_timetables_t[trip_info[stop_time["trip_id"]]["diagram_id"]][-1][-1] = "@" + line_id + ".inbound"
                 
                 direction = "inbound"
         
         if (direction is None or direction == "inbound") and row_index_inbound is not None:
-            inbound_timetables_t[trip_info[stop_time["trip_id"]]["diagram_id"]][-1][row_index_inbound] = stop_time["arrival_time"][:5]
+            if len(inbound_timetables_t[trip_info[stop_time["trip_id"]]["diagram_id"]][-1][row_index_inbound]) == 0:
+                inbound_timetables_t[trip_info[stop_time["trip_id"]]["diagram_id"]][-1][row_index_inbound] = stop_time["arrival_time"][:5]
             inbound_timetables_t[trip_info[stop_time["trip_id"]]["diagram_id"]][-1][row_index_inbound + 1] = stop_time["departure_time"][:5]
         
         if (direction is None or direction == "outbound") and row_index_outbound is not None:
-            outbound_timetables_t[trip_info[stop_time["trip_id"]]["diagram_id"]][-1][row_index_outbound] = stop_time["arrival_time"][:5]
+            if len(outbound_timetables_t[trip_info[stop_time["trip_id"]]["diagram_id"]][-1][row_index_outbound]) == 0:
+                outbound_timetables_t[trip_info[stop_time["trip_id"]]["diagram_id"]][-1][row_index_outbound] = stop_time["arrival_time"][:5]
             outbound_timetables_t[trip_info[stop_time["trip_id"]]["diagram_id"]][-1][row_index_outbound + 1] = stop_time["departure_time"][:5]
         
         last_diagram_id = trip_info[stop_time["trip_id"]]["diagram_id"]
