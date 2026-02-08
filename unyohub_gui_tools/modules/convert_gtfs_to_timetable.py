@@ -142,7 +142,9 @@ def convert_gtfs_to_timetable (mes, main_dir, diagram_revision, generate_train_n
     mes("時刻表を生成しています...")
     
     last_trip_id = None
-    for stop_time in stop_times:
+    for cnt in range(len(stop_times)):
+        stop_time = stop_times[cnt]
+        
         if stop_time["stop_id"] in stop_info_inbound:
             row_index_inbound = stop_info_inbound[stop_time["stop_id"]]["row_index"]
             stop_symbol_inbound = stop_info_inbound[stop_time["stop_id"]]["stop_symbol"]
@@ -219,7 +221,8 @@ def convert_gtfs_to_timetable (mes, main_dir, diagram_revision, generate_train_n
                     
                     line_id = list(set(outbound_timetable_t[1][last_row_index_outbound + 1].split()) & set(outbound_timetable_t[1][row_index_outbound].split()))[0]
                 else:
-                    line_id = list(set(inbound_timetable_t[1][last_row_index_inbound + 1].split()) & set(outbound_timetable_t[1][row_index_outbound].split()))[0]
+                    next_stop_time = stop_times[cnt + 1]
+                    line_id = list(set(outbound_timetable_t[1][row_index_outbound + 1].split()) & set(outbound_timetable_t[1][stop_info_outbound[next_stop_time["stop_id"]]["row_index"]].split()))[0]
                 
                 inbound_timetables_t[trip_info[stop_time["trip_id"]]["diagram_id"]][-1][-1] = "@" + line_id + ".outbound"
                 
@@ -231,7 +234,8 @@ def convert_gtfs_to_timetable (mes, main_dir, diagram_revision, generate_train_n
                     
                     line_id = list(set(inbound_timetable_t[1][last_row_index_inbound + 1].split()) & set(inbound_timetable_t[1][row_index_inbound].split()))[0]
                 else:
-                    line_id = list(set(outbound_timetable_t[1][last_row_index_outbound + 1].split()) & set(inbound_timetable_t[1][row_index_inbound].split()))[0]
+                    next_stop_time = stop_times[cnt + 1]
+                    line_id = list(set(inbound_timetable_t[1][row_index_inbound + 1].split()) & set(inbound_timetable_t[1][stop_info_inbound[next_stop_time["stop_id"]]["row_index"]].split()))[0]
                 
                 outbound_timetables_t[trip_info[stop_time["trip_id"]]["diagram_id"]][-1][-1] = "@" + line_id + ".inbound"
                 
