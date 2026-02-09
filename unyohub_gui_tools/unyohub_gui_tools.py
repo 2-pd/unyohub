@@ -359,8 +359,14 @@ def convert_gtfs_to_timetable_exec (diagram_revision, generate_train_number):
 
 
 def generate_operation_table ():
+    global config
+    
     if not os.path.isfile("modules/generate_operation_table.py"):
         messagebox.showinfo("処理モジュールがありません", "generate_operation_table.py が本ツールの modules フォルダに存在しないためこの機能は使用できません")
+        return
+    
+    if not os.path.isfile(config["main_dir"] + "/railroad_info.json"):
+        messagebox.showwarning("運用情報付き時刻表を変換できません", "現在の作業フォルダには運用情報付き時刻表ファイルの変換に必要な railroad_info.json が存在しません")
         return
     
     select_diagram(generate_operation_table_exec, enable_save_operation_table_check=True, enable_generate_number_check=True)

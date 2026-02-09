@@ -53,9 +53,8 @@ def correct_train_number (train_number):
     return "".join(train_number)
 
 
-def get_train_style (train_name):
-    global train_color_regexp_list
-    global train_color_list
+def get_train_style (train_name, train_type = None):
+    global train_color_rules
     
     if "(" in train_name:
         train_name = train_name[:train_name.find("(")]
@@ -63,9 +62,16 @@ def get_train_style (train_name):
     bg_color = "#000000"
     fg_color = "#ffffff"
     
-    for cnt in range(len(train_color_regexp_list)):
-        if train_color_regexp_list[cnt].search(train_name) is not None:
-            bg_color = train_color_list[cnt]
+    for train_color_rule in train_color_rules:
+        if train_color_rule["subject"] == "train_number":
+            subject = train_name
+        elif train_type is not None:
+            subject = train_type
+        else:
+            continue
+        
+        if train_color_rule["regexp"].search(subject) is not None:
+            bg_color = train_color_rule["color"]
             
             r = int(bg_color[1:3], 16)
             g = int(bg_color[3:5], 16)
@@ -104,8 +110,8 @@ def get_cell_html (data_str, style_data=None, colspan=1):
 
 
 def convert_operation_table_1 (mes, main_dir, file_name, json_file_name, digits_count, file_name_for_printing=None, max_columns=16):
-    global train_color_regexp_list
-    global train_color_list
+    global train_color_rules
+    
     
     if file_name_for_printing is not None:
         mes("運用表を印刷用に変換", is_heading=True)
@@ -123,19 +129,28 @@ def convert_operation_table_1 (mes, main_dir, file_name, json_file_name, digits_
         
         for_printing = False
     
-    error_occurred = False
     
     mes("railroad_info.json を読み込んでいます...")
-    with open(main_dir + "/railroad_info.json", "r", encoding="utf-8") as json_f:
+    
+    railroad_info_path = main_dir + "/railroad_info.json"
+    
+    if not os.path.isfile(railroad_info_path):
+        mes("railroad_info.json が見つかりません", True)
+        return False
+    
+    with open(railroad_info_path, "r", encoding="utf-8") as json_f:
         railroad_info = json.load(json_f)
     
     if for_printing:
-        train_color_regexp_list = []
-        train_color_list = []
+        train_color_rules = []
         
         for train_color_rule in railroad_info["train_color_rules"]:
-            train_color_regexp_list.append(re.compile(train_color_rule["pattern"]))
-            train_color_list.append(train_color_rule["color"])
+            if "subject" in train_color_rule:
+                rule_subject = train_color_rule["subject"]
+            else:
+                rule_subject = "train_number"
+            
+            train_color_rules.append({"regexp" : re.compile(train_color_rule["pattern"]), "color" : train_color_rule["color"], "subject" : rule_subject})
     
     lines = railroad_info["lines_order"]
     
@@ -158,11 +173,15 @@ def convert_operation_table_1 (mes, main_dir, file_name, json_file_name, digits_
         
         station_name_list_r[line] = list(reversed(station_name_list[line]))
     
+    
     mes(os.path.basename(json_file_name) + " を読み込んでいます...")
     with open(json_file_name, "r", encoding="utf-8") as json_f:
         timetable = json.load(json_f)
     
+    
     mes("時刻表データを整理しています...")
+    
+    error_occurred = False
     
     train_number_list = {}
     for line in lines:
@@ -207,10 +226,14 @@ def convert_operation_table_1 (mes, main_dir, file_name, json_file_name, digits_
                             stations[starting_station_index]["station_initial"] + first_departure_time[-5:],
                             stations[terminal_station_index]["station_initial"] + final_arrival_time[-5:]
                         ]
+                    
+                    if for_printing:
+                        train_number_list[train_number][first_departure_time].append(train_data["train_type"])
     
     if error_occurred:
         mes("エラー発生のため処理が中断されました")
         return False
+    
     
     mes(os.path.basename(file_name) + " を読み込んでいます...")
     with open(file_name, "r", encoding="utf-8-sig") as csv_f:
@@ -323,6 +346,8 @@ def convert_operation_table_1 (mes, main_dir, file_name, json_file_name, digits_
                             error_occurred = True
                             continue
                         
+                        train_type = None
+                        
                         train_rows = train_time[1][:-1].split("-")
                         
                         if len(train_rows[0]) == 1 and len(train_rows[1]) == 1:
@@ -343,6 +368,9 @@ def convert_operation_table_1 (mes, main_dir, file_name, json_file_name, digits_
                                     else:
                                         output_row_3[-1] = train_number_list[corrected_train_name][first_departure_time][1]
                                     
+                                    if for_printing:
+                                        train_type = train_number_list[corrected_train_name][first_departure_time][2]
+                                    
                                     if train_number_list[corrected_train_name][first_departure_time][1][0] == train_rows[1]:
                                         break
                                     
@@ -360,7 +388,7 @@ def convert_operation_table_1 (mes, main_dir, file_name, json_file_name, digits_
                             output_row_3.append(convert_time_style(train_rows[1]))
                         
                         if for_printing:
-                            output_cell_styles_1.append(get_train_style(corrected_train_name))
+                            output_cell_styles_1.append(get_train_style(corrected_train_name, train_type))
                             output_cell_styles_2.append(None)
                             output_cell_styles_3.append(None)
                     else:
@@ -384,7 +412,7 @@ def convert_operation_table_1 (mes, main_dir, file_name, json_file_name, digits_
                             output_row_2.append(train_number_list[corrected_train_name][first_departure_times[0]][0])
                             output_row_3.append(train_number_list[corrected_train_name][first_departure_times[-1]][1])
                             
-                            output_cell_styles_1.append(get_train_style(corrected_train_name))
+                            output_cell_styles_1.append(get_train_style(corrected_train_name, train_number_list[corrected_train_name][first_departure_times[0]][2]))
                             output_cell_styles_2.append({"text-align" : "center"})
                             output_cell_styles_3.append({"text-align" : "center"})
                         
@@ -476,6 +504,7 @@ def convert_operation_table_1 (mes, main_dir, file_name, json_file_name, digits_
         mes("エラー発生のため処理が中断されました")
         return False
     
+    
     if for_printing:
         new_file_name = file_name_for_printing
     else:
@@ -502,6 +531,7 @@ def convert_operation_table_1 (mes, main_dir, file_name, json_file_name, digits_
         else:
             csv_writer = csv.writer(csv_f, lineterminator="\n")
             csv_writer.writerows(output_data)
+    
     
     mes("処理が完了しました")
     
