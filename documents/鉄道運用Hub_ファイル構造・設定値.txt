@@ -197,6 +197,12 @@ log_ip_address 投稿者のIPアドレスを記録するか(BOOL値)
         }...
     },
     "series_names" : 形式名を配列で,
+    "series_divisions" : { 系列区分の情報(系列区分がない場合は省略)
+        系列区分名 : {
+            "series_names" : 形式名を配列で
+        }
+    }
+    "series_division_names" : 系列区分名を配列で(系列区分がない場合は省略),
     "prefixes" : { 電算記号等の情報(電算記号やそれに類するものがない場合は省略)
         電算記号等 : {
             "formation_names" : 編成名を配列で,
