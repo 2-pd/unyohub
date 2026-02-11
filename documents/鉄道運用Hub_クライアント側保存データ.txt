@@ -160,7 +160,19 @@ _/_/_/_/ クライアント側IndexedDB "unyohub_caches" _/_/_/_/
             operation_group_name : 運用系統タイトル,
             operation_numbers : 運用番号を配列で
         }
-    ]
+    ],
+    group_divisions : [ 系統区分の情報(系統区分がない場合は省略される)
+        {
+            group_division_name : 系統区分タイトル,
+            operation_groups : [
+                {
+                    operation_group_name : 運用系統タイトル,
+                    operation_numbers : 運用番号を配列で
+                }
+            ]
+        }
+    ],
+    group_division_names : 系統区分タイトルを配列で(系統区分がない場合は省略される)
 }
 
 
