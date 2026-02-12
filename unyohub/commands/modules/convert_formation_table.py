@@ -162,6 +162,12 @@ def convert_formation_table (mes, main_dir):
             if not currently_registered:
                 prefixes[prefix]["unregistered"] = True
             
+            if len(series_division_names) >= 1:
+                if "prefix_order" not in series_divisions[series_division_names[-1]]:
+                    series_divisions[series_division_names[-1]]["prefix_order"] = []
+                
+                series_divisions[series_division_names[-1]]["prefix_order"].append(prefix)
+            
             cnt += 2
         elif formation_name.startswith("# "):
             if subseries_name is not None:
