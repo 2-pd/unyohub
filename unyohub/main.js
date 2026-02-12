@@ -4038,6 +4038,7 @@ var formation_table_area_elm = document.getElementById("formation_table_area");
 
 var selected_formation_name = null;
 
+var formation_table_active_tab;
 var formation_table_drop_down_status;
 var formation_table_wrapper_scroll_amount;
 
@@ -4052,6 +4053,7 @@ function formations_mode (formation_name = null) {
     
     car_number_search_elm.value = "";
     formation_table_area_elm.innerHTML = "";
+    formation_table_active_tab = null;
     formation_table_drop_down_status = {};
     formation_table_wrapper_scroll_amount = 0;
     
@@ -4211,34 +4213,76 @@ function draw_formation_table (update_title = true) {
     
     var [groups, group_names] = get_formation_groups();
     
-    var buf = ""
-    for (var group_name of group_names) {
-        if ("subseries_names" in groups[group_name]) {
-            var buf_2 = "";
-            var search_hit_formation_count = 0;
-            var search_hit_formations_car_count = 0;
-            
-            for (var subseries_name of groups[group_name]["subseries_names"]) {
-                var [buf_3, subseries_search_hit_formation_count, subseries_search_hit_formations_car_count] = get_formation_table_html(groups[group_name]["subseries"][subseries_name]["formation_names"], reverse_formations, search_keyword);
-                
-                if (buf_3.length >= 1) {
-                    buf_2 += "<tr><th colspan='2'>" + escape_html(subseries_name) + "</th></tr>" + buf_3;
-                    search_hit_formation_count += subseries_search_hit_formation_count;
-                    search_hit_formations_car_count += subseries_search_hit_formations_car_count;
+    if ("series_division_names" in formations && search_keyword.length === 0) {
+        var divisions = [];
+        var buf = "<div class='inner_tab_area'>";
+        
+        for (var series_division_name of formations["series_division_names"]) {
+            if (config["group_formations_by_prefix"] && "prefixes" in formations) {
+                if (!("prefix_order" in formations["series_divisions"][series_division_name])) {
+                    continue;
                 }
+                
+                divisions.push({ "division_name" : series_division_name, "group_names" : formations["series_divisions"][series_division_name]["prefix_order"] });
+            } else {
+                divisions.push({ "division_name" : series_division_name, "group_names" : formations["series_divisions"][series_division_name]["series_names"] });
             }
-        } else {
-            var [buf_2, search_hit_formation_count, search_hit_formations_car_count] = get_formation_table_html(groups[group_name]["formation_names"], reverse_formations, search_keyword);
+            
+            if (formation_table_active_tab === null) {
+                formation_table_active_tab = series_division_name;
+            }
+            
+            buf += "<button type='button'" + (series_division_name === formation_table_active_tab ? " class='active_tab'" : "") + " id='formation_division_tab_" + series_division_name + "' onclick='activate_formation_table_tab(\"" + series_division_name + "\");'>" + escape_html(series_division_name) + "</a>";
         }
         
-        if (buf_2.length >= 1) {
-            var checkbox_id = "series_" + group_name;
+        if (config["group_formations_by_prefix"] && "prefixes" in formations && "no_prefix_formation_names" in formations) {
+            divisions.push({ "division_name" : "その他", "group_names" : ["その他"] });
             
-            var unregistered = ("unregistered" in groups[group_name] && groups[group_name]["unregistered"]);
+            buf += "<button type='button'" + ("その他" === formation_table_active_tab ? " class='active_tab'" : "") + " id='formation_division_tab_その他' onclick='activate_formation_table_tab(\"その他\");'>" + escape_html(series_division_name) + "</a>";
+        }
+        
+        buf += "</div>";
+    } else {
+        var divisions = [{ "division_name" : null, "group_names" : group_names }];
+        var buf = "";
+    }
+        
+    for (var division_info of divisions) {
+        var buf_2 = "";
+        for (var group_name of division_info["group_names"]) {
+            if ("subseries_names" in groups[group_name]) {
+                var buf_3 = "";
+                var search_hit_formation_count = 0;
+                var search_hit_formations_car_count = 0;
+                
+                for (var subseries_name of groups[group_name]["subseries_names"]) {
+                    var [buf_4, subseries_search_hit_formation_count, subseries_search_hit_formations_car_count] = get_formation_table_html(groups[group_name]["subseries"][subseries_name]["formation_names"], reverse_formations, search_keyword);
+                    
+                    if (buf_4.length >= 1) {
+                        buf_3 += "<tr><th colspan='2'>" + escape_html(subseries_name) + "</th></tr>" + buf_4;
+                        search_hit_formation_count += subseries_search_hit_formation_count;
+                        search_hit_formations_car_count += subseries_search_hit_formations_car_count;
+                    }
+                }
+            } else {
+                var [buf_3, search_hit_formation_count, search_hit_formations_car_count] = get_formation_table_html(groups[group_name]["formation_names"], reverse_formations, search_keyword);
+            }
             
-            buf += "<input type='checkbox' id='" + checkbox_id + "'" + (checkbox_id in formation_table_drop_down_status && formation_table_drop_down_status[checkbox_id] ? " checked='checked'" : "") + " onclick='update_formation_table_drop_down_status(this);'>";
-            buf += "<label for='" + checkbox_id + "' class='formation_table_drop_down'><span><img src='" + (unregistered ? UNYOHUB_GENERIC_TRAIN_ICON + "' style='opacity: 0.5;" : get_icon(group_name)) + "' alt='' class='train_icon'></span>" + escape_html(group_name) + (search_keyword.length >= 1 ? " (" + search_hit_formation_count + "編成該当)" : (unregistered ? "<small>(除籍済み)</small>" : "")) + "</label>";
-            buf += "<div id='formation_table_" + checkbox_id + "'><h3 class='formation_table_series_name'>" + escape_html(group_name) + "</h3><button type='button' class='screenshot_button' onclick='take_screenshot(\"formation_table_" + checkbox_id + "\");' aria-label='スクリーンショット'></button><table class='" + (reverse_formations ? "reversed_formation_table" : "formation_table") + "'><tr><td colspan='2'>" + search_hit_formation_count + "編成 " + search_hit_formations_car_count + "両 " + (search_keyword.length >= 1 ? "該当" : "在籍中") + "" + buf_2 + "</td></tr></table></div>";
+            if (buf_3.length >= 1) {
+                var checkbox_id = "series_" + group_name;
+                
+                var unregistered = ("unregistered" in groups[group_name] && groups[group_name]["unregistered"]);
+                
+                buf_2 += "<input type='checkbox' id='" + checkbox_id + "'" + (checkbox_id in formation_table_drop_down_status && formation_table_drop_down_status[checkbox_id] ? " checked='checked'" : "") + " onclick='update_formation_table_drop_down_status(this);'>";
+                buf_2 += "<label for='" + checkbox_id + "' class='formation_table_drop_down'><span><img src='" + (unregistered ? UNYOHUB_GENERIC_TRAIN_ICON + "' style='opacity: 0.5;" : get_icon(group_name)) + "' alt='' class='train_icon'></span>" + escape_html(group_name) + (search_keyword.length >= 1 ? " (" + search_hit_formation_count + "編成該当)" : (unregistered ? "<small>(除籍済み)</small>" : "")) + "</label>";
+                buf_2 += "<div id='formation_table_" + checkbox_id + "'><h3 class='formation_table_series_name'>" + escape_html(group_name) + "</h3><button type='button' class='screenshot_button' onclick='take_screenshot(\"formation_table_" + checkbox_id + "\");' aria-label='スクリーンショット'></button><table class='" + (reverse_formations ? "reversed_formation_table" : "formation_table") + "'><tr><td colspan='2'>" + search_hit_formation_count + "編成 " + search_hit_formations_car_count + "両 " + (search_keyword.length >= 1 ? "該当" : "在籍中") + "" + buf_3 + "</td></tr></table></div>";
+            }
+        }
+        
+        if (division_info["division_name"] !== null) {
+            buf += "<div id='formation_division_" + division_info["division_name"] + "'" + (division_info["division_name"] === formation_table_active_tab ? "" : " style='display: none;'") + " class='formation_division_area'>" + buf_2 + "</div>";
+        } else {
+            buf += buf_2;
         }
     }
     
@@ -4259,6 +4303,20 @@ function draw_formation_table (update_title = true) {
     selected_formation_name = null;
     
     article_elms[3].scrollTop = formation_table_wrapper_scroll_amount;
+}
+
+function activate_formation_table_tab (division_name) {
+    for (var area_elm of document.getElementsByClassName("formation_division_area")) {
+        if (area_elm.id === "formation_division_" + division_name) {
+            area_elm.style.display = "block";
+            document.getElementById("formation_division_tab_" + division_name).classList.add("active_tab");
+        } else {
+            area_elm.style.display = "none";
+            document.getElementById("formation_division_tab_" + area_elm.id.substring(19)).classList.remove("active_tab");
+        }
+    }
+    
+    formation_table_active_tab = division_name;
 }
 
 function get_operation_data_html (data, ts, clickable = true, no_data_text = "情報がありません") {

@@ -1966,6 +1966,109 @@ input[type="checkbox"]:checked + :is(label.drop_down, label.formation_table_drop
     }
 }
 
+.inner_tab_area {
+    display: flex;
+    
+    position: relative;
+    
+    width: min(100%, 500px);
+    height: 44px;
+    
+    margin: 8px auto 28px auto;
+    
+    padding: 0 max(calc(50% - 250px), 0px);
+    
+    justify-content: space-between;
+    
+    overflow-y: hidden;
+    
+    button {
+        position: relative;
+        
+        width: 100%;
+        height: 42px;
+        
+        padding-bottom: 1px;
+        
+        border: 1px solid #cccccc;
+        border-bottom: none;
+        
+        background-color: #eeeeee;
+        
+        line-height: 42px;
+        font-size: 17px;
+        color: #666666;
+        text-align: center;
+        text-decoration: none;
+        
+        .dark_mode & {
+            border-color: #808080;
+            
+            background-color: #444444 !important;
+            
+            color: #cccccc;
+        }
+        
+        &.active_tab {
+            padding-bottom: 2px;
+            
+            border-color: #999999;
+            
+            background-color: #ffffff;
+            
+            color: #333333;
+            
+            z-index: 1;
+            
+            .dark_mode & {
+                border-color: #cccccc;
+                
+                color: #ffffff;
+            }
+            
+            &:after {
+                content: "";
+                
+                display: block;
+                
+                position: absolute;
+                bottom: 1px;
+                left: 10%;
+                
+                width: 80%;
+                height: 3px;
+                
+                background-color: currentColor;
+            }
+        }
+    }
+    
+    button:not(:first-child) {
+        margin-left: -1px;
+    }
+    
+    &:after {
+        content: "";
+        
+        display: block;
+        
+        position: absolute;
+        bottom: 0;
+        left: 0;
+        
+        width: 100%;
+        height: 1px;
+        
+        margin: 0 auto;
+        
+        background-color: #999999;
+        
+        .dark_mode &{
+            background-color: #cccccc;
+        }
+    }
+}
+
 #operation_data_heading {
     width: calc(100% - 64px);
     
