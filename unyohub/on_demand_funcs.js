@@ -1398,6 +1398,20 @@ function remove_favorite_station (railroad_id, line_id, station_name, redraw_rai
 }
 
 
+function activate_operation_data_tab (division_name) {
+    for (var area_elm of document.getElementsByClassName("operation_data_division_area")) {
+        if (area_elm.id === "operation_data_division_" + division_name) {
+            area_elm.style.display = "block";
+            document.getElementById("operation_data_division_tab_" + division_name).classList.add("active_tab");
+        } else {
+            area_elm.style.display = "none";
+            document.getElementById("operation_data_division_tab_" + area_elm.id.substring(24)).classList.remove("active_tab");
+        }
+    }
+    
+    operation_data_active_tab = division_name;
+}
+
 function operation_date_button_change () {
     if (operation_date_button_elm.valueAsDate !== null) {
         operation_data_change_date(operation_date_button_elm.value);
@@ -1781,6 +1795,20 @@ function next_operation_number (operation_number_or_index, operation_data_date_t
 }
 
 
+function activate_formation_table_tab (division_name) {
+    for (var area_elm of document.getElementsByClassName("formation_division_area")) {
+        if (area_elm.id === "formation_division_" + division_name) {
+            area_elm.style.display = "block";
+            document.getElementById("formation_division_tab_" + division_name).classList.add("active_tab");
+        } else {
+            area_elm.style.display = "none";
+            document.getElementById("formation_division_tab_" + area_elm.id.substring(19)).classList.remove("active_tab");
+        }
+    }
+    
+    formation_table_active_tab = division_name;
+}
+
 function change_colorize_formation_table (bool_val) {
     config["colorize_formation_table"] = bool_val;
     
@@ -2063,7 +2091,7 @@ function operation_table_list_tables () {
 function take_screenshot (elm_id, is_popup = false) {
     var popup_inner_elm = open_popup("screenshot_popup", "スクリーンショット");
     
-    popup_inner_elm.innerHTML = "<div id='screenshot_preview'></div><button type='button' id='save_screenshot_button' class='wide_button' onclick='save_screenshot();' style='display: none;'>画像として保存</button><br><u class='bottom_link' onclick='about_railroad_data();'>データのご利用条件</u>";
+    popup_inner_elm.innerHTML = "<div id='screenshot_preview'></div><button type='button' id='save_screenshot_button' class='wide_button' onclick='save_screenshot();' style='display: none;'>画像として保存</button><br><a href='#about_railroad_data_popup' class='bottom_link' onclick='event.preventDefault(); about_railroad_data();'>データのご利用条件</a>";
     
     var screenshot_area_elm = document.createElement("div");
     screenshot_area_elm.classList.add("screenshot_area");
