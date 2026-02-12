@@ -1,4 +1,3 @@
-#!/usr/bin/env python3
 # coding: utf-8
 
 import os
@@ -33,9 +32,11 @@ def insert_series_data (mes, cur, series_title, series_name, min_car_count, max_
 def convert_formation_table (mes, main_dir):
     mes("編成表の変換", is_heading=True)
     
+    
     if not os.path.isdir(main_dir):
         mes("指定された路線系統は存在しません", True)
         return
+    
     
     mes("formations.csv を読み込んでいます...")
     
@@ -47,6 +48,7 @@ def convert_formation_table (mes, main_dir):
         mes("formations.csv の読み込みに失敗しました", True)
         return
     
+    
     mes("データベースに接続しています...")
     
     conn = sqlite3.connect(main_dir + "/railroad.db")
@@ -56,6 +58,7 @@ def convert_formation_table (mes, main_dir):
     
     cur.execute("DELETE FROM `unyohub_series_caches`")
     cur.execute("DELETE FROM `unyohub_coupling_groups`")
+    
     
     mes("データを変換しています...")
     
@@ -69,13 +72,18 @@ def convert_formation_table (mes, main_dir):
     
     cnt = 0
     
+    
+    mes("車体塗装情報を検出しています...")
+    
     body_colorings = {}
     for coloring in formation_data:
-        if coloring[0].startswith("# ") or coloring[0].endswith("*"):
+        coloring_id = coloring[0].strip()
+        
+        if coloring_id.startswith("[") or coloring_id.startswith("【") or coloring_id.startswith("# ") or coloring_id.endswith("*"):
             break
         
-        if len(coloring[0]) >= 1:
-            body_colorings[coloring[0]] = {"font_color" : coloring[1]}
+        if len(coloring_id) >= 1:
+            body_colorings[coloring_id] = {"font_color" : coloring[1]}
             
             stripes = []
             for stripe_str in coloring[2:]:
@@ -86,9 +94,9 @@ def convert_formation_table (mes, main_dir):
                 
                 if stripe_str.endswith("W"):
                     if stripe_str.endswith("MW"):
-                        body_colorings[coloring[0]]["driving_wheel_color"] = stripe_str[:-2].strip()
+                        body_colorings[coloring_id]["driving_wheel_color"] = stripe_str[:-2].strip()
                     else:
-                        body_colorings[coloring[0]]["wheel_color"] = stripe_str[:-1].strip()
+                        body_colorings[coloring_id]["wheel_color"] = stripe_str[:-1].strip()
                     
                     continue
                 
@@ -104,20 +112,24 @@ def convert_formation_table (mes, main_dir):
                     if len(stripe_data) >= 3 and stripe_data[2] == "V":
                         stripes[-1]["verticalize"] = True
             
-            body_colorings[coloring[0]]["base_color"] = stripes.pop(-1)["color"]
+            body_colorings[coloring_id]["base_color"] = stripes.pop(-1)["color"]
             
             if len(stripes) >= 1:
-                body_colorings[coloring[0]]["stripes"] = stripes
+                body_colorings[coloring_id]["stripes"] = stripes
         
         cnt += 1
     
     if len(body_colorings) >= 1:
         json_data["body_colorings"] = body_colorings
     
+    
     formation_list = set()
     unregistered_formation_list = set()
     car_numbers = set()
     abbr_numbers = set()
+    
+    series_divisions = {}
+    series_division_names = []
     
     prefixes = {}
     no_prefix_formation_names = []
@@ -128,6 +140,13 @@ def convert_formation_table (mes, main_dir):
         formation_name = formation_data[cnt][0].strip()
         
         if len(formation_name) == 0:
+            cnt += 1
+        elif formation_name.startswith("[") or formation_name.startswith("【"):
+            series_division_name = formation_name[1:-1].strip()
+            
+            series_divisions[series_division_name] = { "series_names" : [] }
+            series_division_names.append(series_division_name)
+            
             cnt += 1
         elif formation_name.endswith("*"):
             prefix = formation_name[:-1]
@@ -169,6 +188,8 @@ def convert_formation_table (mes, main_dir):
             
             json_data["series"][series_name] = {}
             json_data["series_names"].append(series_name)
+            if len(series_division_names) >= 1:
+                series_divisions[series_division_names[-1]]["series_names"].append(series_name)
             
             subseries_name = None
             coupling_group_set = set()
@@ -386,6 +407,11 @@ def convert_formation_table (mes, main_dir):
     elif not unregistered_series:
         mes(series_name + " には在籍中の編成が存在しませんが廃系列として設定されていません", True)
     
+    if len(series_division_names) >= 1:
+        json_data["series_divisions"] = series_divisions
+        json_data["series_division_names"] = series_division_names
+    
+    
     if len(prefixes) >= 1:
         mes("電算記号等の情報を整理しています...")
         
@@ -419,6 +445,7 @@ def convert_formation_table (mes, main_dir):
         if len(no_prefix_formation_names) >= 1:
             json_data["no_prefix_formation_names"] = no_prefix_formation_names
     
+    
     mes("編成表から除外された編成を検出しています...")
     
     deleted_formations = formation_list_old - formation_list
@@ -431,15 +458,18 @@ def convert_formation_table (mes, main_dir):
         for row_data in cur.execute("SELECT `semifixed_formation` FROM `unyohub_formations` WHERE `formation_name` = :formation_name", {"formation_name" : deleted_formation_name}):
             uncoupled_formations.add(row_data[0])
     
+    
     mes("半固定編成の情報を整理しています...")
     
     for uncoupled_formation in list(uncoupled_formations):
         cur.execute("UPDATE `unyohub_formations` SET `semifixed_formation` = NULL, `overview_updated` = :overview_updated WHERE `semifixed_formation` = :semifixed_formation", {"semifixed_formation" : uncoupled_formation, "overview_updated" : datetime_now})
     
+    
     mes("データベースの書き込み処理を完了しています...")
     
     conn.commit()
     conn.close()
+    
     
     mes("formations.json を作成しています...")
     
