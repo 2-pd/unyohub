@@ -293,7 +293,7 @@ if ($path_info_str === "/") {
         <div id="position_area_supplement" class="radio_area">
             <div><input type="radio" name="show_train_numbers_or_final_destinations" id="show_train_numbers_radio" onchange="change_show_final_destinations(!this.checked);"><label for="show_train_numbers_radio">列車番号を表示</label><input type="radio" name="show_train_numbers_or_final_destinations" id="show_final_destinations_radio" onchange="change_show_final_destinations(this.checked);"><label for="show_final_destinations_radio">行き先を表示</label></div>
             <div class="informational_text">列車の走行位置は時刻表に基づく推定であり、遅延や不定期列車の情報は反映されません</div>
-            <u class="bottom_link" onclick="about_railroad_data();">使用しているデータについて</u>
+            <a href="#about_railroad_data_popup" class="bottom_link" onclick="event.preventDefault(); about_railroad_data();">使用しているデータについて</a>
         </div>
     </article>
     <article onscroll="timetable_wrapper_onscroll();">
@@ -307,7 +307,7 @@ if ($path_info_str === "/") {
     </article>
     <article>
         <h2 id="operation_data_heading"></h2>
-        <div class="radio_area"><input type="radio" name="operation_data_radio" id="radio_operation_groups" value="operation_groups" checked="checked" onchange="operation_data_draw();"><label for="radio_operation_groups">系統別</label><input type="radio" name="operation_data_radio" id="radio_formations" value="formations" onchange="operation_data_draw();"><label for="radio_formations">編成別</label><input type="radio" name="operation_data_radio" id="radio_starting_location" value="starting_location" onchange="operation_data_draw();"><label for="radio_starting_location">出庫別</label><input type="radio" name="operation_data_radio" id="radio_terminal_location" value="terminal_location" onchange="operation_data_draw();"><label for="radio_terminal_location">入庫別</label></div>
+        <div class="radio_area"><input type="radio" name="operation_data_radio" id="radio_operation_groups" value="operation_groups" checked="checked" onchange="operation_data_draw(true);"><label for="radio_operation_groups">系統別</label><input type="radio" name="operation_data_radio" id="radio_formations" value="formations" onchange="operation_data_draw(true);"><label for="radio_formations">編成別</label><input type="radio" name="operation_data_radio" id="radio_starting_location" value="starting_location" onchange="operation_data_draw(true);"><label for="radio_starting_location">出庫別</label><input type="radio" name="operation_data_radio" id="radio_terminal_location" value="terminal_location" onchange="operation_data_draw(true);"><label for="radio_terminal_location">入庫別</label></div>
         <div id="operation_data_area" class="wait_icon"></div>
     </article>
     <article onscroll="formation_table_wrapper_onscroll();">
