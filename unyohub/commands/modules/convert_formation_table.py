@@ -416,6 +416,9 @@ def convert_formation_table (mes, main_dir):
     if len(series_division_names) >= 1:
         json_data["series_divisions"] = series_divisions
         json_data["series_division_names"] = series_division_names
+        
+        if len(series_division_names) > 4:
+            mes("《注意》系列区分は4つ以下とすることが推奨されています")
     
     
     if len(prefixes) >= 1:

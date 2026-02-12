@@ -1666,7 +1666,7 @@ button:has(abbr:empty) {
     margin: 0 auto;
 }
 
-#timetable_area a, .timetable_train {
+#timetable_area a:not(.bottom_link), .timetable_train {
     display: block;
     
     margin: 0 12px;
@@ -1974,13 +1974,17 @@ input[type="checkbox"]:checked + :is(label.drop_down, label.formation_table_drop
     width: min(100%, 500px);
     height: 44px;
     
-    margin: 8px auto 28px auto;
+    margin: 8px auto 18px auto;
     
     padding: 0 max(calc(50% - 250px), 0px);
     
     justify-content: space-between;
     
     overflow-y: hidden;
+    
+    #formation_table_area & {
+        margin-bottom: 28px;
+    }
     
     button {
         position: relative;
