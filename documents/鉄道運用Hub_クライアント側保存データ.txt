@@ -7,6 +7,7 @@
 _/_/_/_/ クライアント側ローカルストレージ _/_/_/_/
 
 ███ unyohub_instance_info ███
+APIエンドポイント instance_info.php から配信される鉄道運用Hubインスタンスの情報のキャッシュ(JSON)
 
 {
     "last_modified_timestamp" : このデータの元となったINIファイルが更新された日時のタイムスタンプ値(UTC、秒単位),
@@ -15,6 +16,7 @@ _/_/_/_/ クライアント側ローカルストレージ _/_/_/_/
 
 
 ███ unyohub_config ███
+ユーザーが変更可能な各種設定値(JSON)
 
 {
     "unyohub_version" : 最終実行時のアプリバージョン文字列,
@@ -55,6 +57,7 @@ _/_/_/_/ クライアント側ローカルストレージ _/_/_/_/
 
 
 ███ unyohub_railroads_caches ███
+APIエンドポイント railroads.php から配信される路線系統一覧情報のキャッシュ(JSON)
 
 {
     "last_modified_timestamp" : このデータの元になったJSONファイルが更新された日時のタイムスタンプ値(UTC、秒単位),
@@ -64,9 +67,12 @@ _/_/_/_/ クライアント側ローカルストレージ _/_/_/_/
 
 _/_/_/_/ クライアント側IndexedDB "unyohub_caches" _/_/_/_/
 
+◆ データベースバージョン値(main.js の定数 UNYOHUB_INDEXEDDB_VERSION に指定) : 2602001
+
 ※「・」のある項目はKeyPathに指定する
 
 ███ railroads ███
+APIエンドポイント railroad_info.php から配信される各路線系統の設定情報のキャッシュ
 
 {
     ・railroad_id : 路線系統識別名,
@@ -76,6 +82,7 @@ _/_/_/_/ クライアント側IndexedDB "unyohub_caches" _/_/_/_/
 
 
 ███ train_icons ███
+APIエンドポイント train_icons.php から配信される各路線系統の車両アイコンデータのキャッシュ
 
 {
     ・railroad_id : 路線系統識別名,
@@ -85,6 +92,7 @@ _/_/_/_/ クライアント側IndexedDB "unyohub_caches" _/_/_/_/
 
 
 ███ formations ███
+APIエンドポイント formations.php から配信される各路線系統の編成表のキャッシュ
 
 {
     ・railroad_id : 路線系統識別名,
@@ -94,6 +102,7 @@ _/_/_/_/ クライアント側IndexedDB "unyohub_caches" _/_/_/_/
 
 
 ███ formation_overviews ███
+APIエンドポイント formation_overviews.php から配信される各路線系統の編成概要データのキャッシュ
 
 {
     ・railroad_id : 路線系統識別名,
@@ -103,6 +112,7 @@ _/_/_/_/ クライアント側IndexedDB "unyohub_caches" _/_/_/_/
 
 
 ███ diagram_revisions ███
+APIエンドポイント diagram_revisions.php から配信される各路線系統のダイヤ改正日リストのキャッシュ
 
 {
     ・railroad_id : 路線系統識別名,
@@ -112,6 +122,7 @@ _/_/_/_/ クライアント側IndexedDB "unyohub_caches" _/_/_/_/
 
 
 ███ diagrams ███
+APIエンドポイント diagram_info.php から配信される各路線系統のダイヤ改正日別ダイヤ情報のキャッシュ
 
 {
     ・railroad_id : 路線系統識別名,
@@ -121,7 +132,8 @@ _/_/_/_/ クライアント側IndexedDB "unyohub_caches" _/_/_/_/
 }
 
 
-███ operation_tables ███
+███ operations ███
+APIエンドポイント operation_table.php から受信したデータよりクライアント側で生成する各路線系統のダイヤ別運用表のキャッシュ
 
 {
     ・railroad_id : 路線系統識別名,
@@ -177,6 +189,7 @@ _/_/_/_/ クライアント側IndexedDB "unyohub_caches" _/_/_/_/
 
 
 ███ line_operations ███
+APIエンドポイント operation_table.php から受信した運用表データよりクライアント側で生成する各路線系統のダイヤ別の各列車担当運用のキャッシュ
 
 {
     ・railroad_id : 路線系統識別名,
@@ -213,6 +226,7 @@ _/_/_/_/ クライアント側IndexedDB "unyohub_caches" _/_/_/_/
 
 
 ███ timetables ███
+APIエンドポイント timetables.php から配信される各路線系統の各時刻表のキャッシュ
 
 {
     ・railroad_id : 路線系統識別名,
@@ -224,6 +238,7 @@ _/_/_/_/ クライアント側IndexedDB "unyohub_caches" _/_/_/_/
 
 
 ███ operation_data ███
+APIエンドポイント operation_data.php から配信される各路線系統の日付別運用情報のキャッシュ
 
 {
     ・railroad_id : 路線系統識別名,
@@ -245,10 +260,21 @@ index "idx_od1" keyPath : "operation_date"
 
 
 ███ announcements ███
+APIエンドポイント announcements.php から配信される各路線系統及びアプリ全体のお知らせのキャッシュ
 
 {
     ・railroad_id : 路線系統識別名(アプリ全体のお知らせの場合は「/」を指定),
     last_modified_timestamp : このデータの元になったJSONデータが更新された日時のタイムスタンプ値(UTC、秒単位),
     last_read_timestamp : 既読にしたJSONデータが更新された日時のタイムスタンプ(UTC、秒単位、存在しない場合有),
     announcements : announcements.phpのレスポンスをパースしてそのまま格納
+}
+
+
+███ user_data ███
+路線系統別に記録されるユーザーデータ
+
+{
+    ・railroad_id : 路線系統識別名,
+    position_selected_line : 走行位置画面で最後に開いていた路線の路線識別名,
+    position_scroll_amount : 走行位置画面のスクロール量数値
 }
