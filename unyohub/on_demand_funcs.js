@@ -36,6 +36,20 @@ function get_guest_id () {
 }
 
 
+function save_railroad_user_data (railroad_id) {
+    var scroll_amount = article_elms[0].scrollTop;
+    
+    idb_start_transaction("user_data", true, function (transaction) {
+        var user_data_store = transaction.objectStore("user_data");
+        user_data_store.put({
+            railroad_id : railroad_id,
+            position_selected_line : position_selected_line,
+            position_scroll_amount : scroll_amount
+        });
+    });
+}
+
+
 var menu_elm = document.getElementById("menu");
 var menu_button_elm = document.getElementById("menu_button");
 
@@ -3521,6 +3535,13 @@ function show_welcome_message () {
 function close_welcome_message () {
     document.getElementById("welcome_message_box").remove();
 }
+
+
+window.onbeforeunload = function () {
+    if (railroad_info !== null) {
+        save_railroad_user_data(railroad_info["railroad_id"]);
+    }
+};
 
 
 (function () {
