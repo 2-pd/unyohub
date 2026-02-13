@@ -77,7 +77,7 @@ def get_train_style (train_name, train_type = None):
             g = int(bg_color[3:5], 16)
             b = int(bg_color[5:], 16)
             
-            if r + g + b >= 383:
+            if r + g + b >= 460:
                 fg_color = "#000000"
             
             break
@@ -250,7 +250,27 @@ def convert_operation_table_1 (mes, main_dir, file_name, json_file_name, digits_
         if len(operation[0].strip()) == 0:
             continue
         
-        if operation[0].startswith("# ") or operation[0].startswith("◆"):
+        if operation[0].startswith("[") or operation[0].startswith("【"):
+            division_name = operation[0][1:-1].strip()
+            
+            if for_printing:
+                if len(output_data) >= 1:
+                    output_data.append([""] * max_columns)
+                    cell_styles.append([{"height" : "20px"}] * max_columns)
+                
+                output_data.append(["【 " + division_name + " 】"])
+                merged_cell_row_indexes.add(len(output_data) - 1)
+                output_data.append([""] * max_columns)
+                
+                cell_styles.append([{"font-size" : "large"}])
+                cell_styles.append([{"height" : "10px"}] * max_columns)
+            else:
+                if len(output_data) >= 1:
+                    output_data.append([])
+                
+                output_data.append(["[ " + division_name + " ]"])
+                output_data.append([])
+        elif operation[0].startswith("# ") or operation[0].startswith("◆"):
             if len(operation) >= 2 and color_regexp.match(operation[1]) is not None:
                 group_color = operation[1]
                 color = group_color
@@ -279,7 +299,7 @@ def convert_operation_table_1 (mes, main_dir, file_name, json_file_name, digits_
                 merged_cell_row_indexes.add(len(output_data) - 1)
                 
                 output_data.append([""] * max_columns)
-                cell_styles.append([None] * max_columns)
+                cell_styles.append([{"height" : "10px"}] * max_columns)
             else:
                 output_data[-1].append(operation[0][1:].strip())
         else:
@@ -498,7 +518,7 @@ def convert_operation_table_1 (mes, main_dir, file_name, json_file_name, digits_
                 cell_styles.append(output_cell_styles_1)
                 cell_styles.append(output_cell_styles_2)
                 cell_styles.append(output_cell_styles_3)
-                cell_styles.append([None] * max_columns)
+                cell_styles.append([{"height" : "10px"}] * max_columns)
     
     if error_occurred:
         mes("エラー発生のため処理が中断されました")

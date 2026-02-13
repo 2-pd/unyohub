@@ -1,6 +1,6 @@
 /* 鉄道運用Hub main.js */
 
-const UNYOHUB_INDEXEDDB_VERSION = 2412001;
+const UNYOHUB_INDEXEDDB_VERSION = 2602001;
 
 
 const UNYOHUB_GENERIC_TRAIN_ICON = "data:image/webp;base64,UklGRo4CAABXRUJQVlA4TIICAAAvT8AdEJVIkiRJkaR+ukUtMzxjvplZnV2RIXvd8GYoiIADybZp69nvfdu2bdtm/CMboW3bNmLbtm2bewLyX/0z3aCFs7lMugxa0Hx9ZKGKD2Dy4/Zw9E6MC7nkHFE30NiRWLcwXM1llpiYD/iS5vlyXaT70QvFEp1/8TtEZkq05gEFKDNzpkui2IkZ8S8OjzldfiOzpwvmLo4c6WJm6SExvIhT6D0QJ1GSPvIunT0QIw6g1QY5iQvGbJldO+eR182+AT22jYflxBJjF2mQq0G7afYAxixgzcwZbZLYAibkiGKz+YvfITJhNQswHkps6eAFmPx0vqZfUFwCLrl6Q/tBG3A6aPkhxQvJftj0wrYbxOX2nZgXi/BDuBfG/DDq5AOH/fqxv/dc0zwHJXMhkhL6mOecXzlenuvrfp0HJejb3tDm9eJOXc/0msey1zsR5hQgM++E9kCUSyBEzueRv3iWFCRrEGqEAmESWOMgDvYriCvQtcAyEswLc4lk/j8DnCNZCmwjMZvCTCLBuBh0Ihm0CpQjQbFAOpJ3EsU7oUjgL2CNBOYCFN9x8LVDFslxHBxmlck4GK/REQdtNfLiIKdGdBxrzbziwLOGehyDWu0jSxww15KnKOYcZSEK5sdoi4LWMZKjIGkMnyiOY5lJRX+UZyPx/RHXYn794duCc3/m1DJo9YdmC4L9vRNo+UnsD1JL8tQbjztEM5u9sdHGQG/0t9HQG/VtZPRGepuF9UZoG969mVebGfWGYdsg1dvWBmNvMLbtkHz0xeerLTnsi4M8IBN9MX4Ii6Bl7+IyaXHZez1EY5GTFuk6Hl4lXqbZpJMv0iVSp1mlm69E/ZgTH4/5rw4=";
@@ -325,43 +325,69 @@ var db_open_promise = new Promise(function (resolve, reject) {
     };
     
     open_request.onupgradeneeded = function () {
+        const DB_TABLES = {
+            railroads : {
+                keyPath : "railroad_id"
+            },
+            train_icons : {
+                keyPath : "railroad_id"
+            },
+            formations : {
+                keyPath : "railroad_id"
+            },
+            formation_overviews : {
+                keyPath : "railroad_id"
+            },
+            diagram_revisions : {
+                keyPath : "railroad_id"
+            },
+            diagrams : {
+                keyPath : ["railroad_id", "diagram_revision"]
+            },
+            operations : {
+                keyPath : ["railroad_id", "diagram_revision", "diagram_id"]
+            },
+            line_operations : {
+                keyPath : ["railroad_id", "diagram_revision", "diagram_id"]
+            },
+            timetables : {
+                keyPath : ["railroad_id", "diagram_revision", "timetable_id"]
+            },
+            operation_data : {
+                keyPath : ["railroad_id", "operation_date"],
+                indexes : {
+                    idx_od1 : {
+                        keyPath : "operation_date"
+                    }
+                }
+            },
+            announcements : {
+                keyPath : "railroad_id"
+            },
+            user_data : {
+                keyPath : "railroad_id"
+            }
+        };
+        
         var db = open_request.result;
         
-        var object_store_names = [...db.objectStoreNames];
+        var existing_tables = new Set(db.objectStoreNames);
+        var required_tables = new Set(Object.keys(DB_TABLES));
         
-        if (!object_store_names.includes("railroads")) {
-            db.createObjectStore("railroads", {keyPath : "railroad_id"});
+        var tables_to_add = required_tables.difference(existing_tables);
+        var tables_to_delete = existing_tables.difference(required_tables);
+        
+        for (var table_name of tables_to_add) {
+            var obj_store = db.createObjectStore(table_name, {keyPath : DB_TABLES[table_name]["keyPath"]});
+            
+            if ("indexes" in DB_TABLES[table_name]) {
+                for (var index_name of Object.keys(DB_TABLES[table_name]["indexes"]))
+                obj_store.createIndex(index_name, DB_TABLES[table_name]["indexes"][index_name]["keyPath"]);
+            }
         }
-        if (!object_store_names.includes("train_icons")) {
-            db.createObjectStore("train_icons", {keyPath : "railroad_id"});
-        }
-        if (!object_store_names.includes("formations")) {
-            db.createObjectStore("formations", {keyPath : "railroad_id"});
-        }
-        if (!object_store_names.includes("formation_overviews")) {
-            db.createObjectStore("formation_overviews", {keyPath : "railroad_id"});
-        }
-        if (!object_store_names.includes("diagram_revisions")) {
-            db.createObjectStore("diagram_revisions", {keyPath : "railroad_id"});
-        }
-        if (!object_store_names.includes("diagrams")) {
-            db.createObjectStore("diagrams", {keyPath : ["railroad_id", "diagram_revision"]});
-        }
-        if (!object_store_names.includes("operation_tables")) {
-            db.createObjectStore("operation_tables", {keyPath : ["railroad_id", "diagram_revision", "diagram_id"]});
-        }
-        if (!object_store_names.includes("line_operations")) {
-            db.createObjectStore("line_operations", {keyPath : ["railroad_id", "diagram_revision", "diagram_id"]});
-        }
-        if (!object_store_names.includes("timetables")) {
-            db.createObjectStore("timetables", {keyPath : ["railroad_id", "diagram_revision", "timetable_id"]});
-        }
-        if (!object_store_names.includes("operation_data")) {
-            var operation_data_store = db.createObjectStore("operation_data", {keyPath : ["railroad_id", "operation_date"]});
-            operation_data_store.createIndex("idx_od1", "operation_date");
-        }
-        if (!object_store_names.includes("announcements")) {
-            db.createObjectStore("announcements", {keyPath : "railroad_id"});
+        
+        for (table_name of tables_to_delete) {
+            db.deleteObjectStore(table_name);
         }
     };
     
@@ -1865,9 +1891,9 @@ function load_operation_table (resolve_func_1, reject_func_1, resolve_func_2, re
                 var data = null;
                 var last_modified_timestamp = 0;
                 
-                idb_start_transaction(["operation_tables", "line_operations"], false, function (transaction) {
-                    var operation_tables = transaction.objectStore("operation_tables");
-                    var operations_get_request = operation_tables.get([railroad_id, diagram_revision, diagram_ids[railroad_id]]);
+                idb_start_transaction(["operations", "line_operations"], false, function (transaction) {
+                    var operations_store = transaction.objectStore("operations");
+                    var operations_get_request = operations_store.get([railroad_id, diagram_revision, diagram_ids[railroad_id]]);
                     
                     var line_operations_store = transaction.objectStore("line_operations");
                     var line_operations_get_request = line_operations_store.get([railroad_id, diagram_revision, diagram_ids[railroad_id]]);
@@ -1946,16 +1972,28 @@ function update_operation_table (resolve_func, reject_func, railroad_id_or_null,
             operation_response["diagram_id"] = diagram_id;
             operation_response["last_modified_timestamp"] = last_modified_timestamp;
             
-            var line_operations_data = {railroad_id : railroad_id, diagram_revision : diagram_revision, diagram_id : diagram_id, last_modified_timestamp : last_modified_timestamp, lines : {}};
+            var line_operations_data = { railroad_id : railroad_id, diagram_revision : diagram_revision, diagram_id : diagram_id, last_modified_timestamp : last_modified_timestamp, lines : {} };
             
             var operations_stopped_trains = {};
             
+            var operation_groups = {};
+            var operation_group_names = [];
             var operation_group_mapping = {};
             for (var operation_group of operation_response["operation_groups"]) {
+                operation_groups[operation_group["operation_group_name"]] = { operation_numbers : operation_group["operation_numbers"] };
+                operation_group_names.push(operation_group["operation_group_name"]);
+                
+                if ("main_color" in operation_group) {
+                    operation_groups[operation_group["operation_group_name"]]["main_color"] = operation_group["main_color"];
+                }
+                
                 for (var operation_number of operation_group["operation_numbers"]) {
                     operation_group_mapping[operation_number] = operation_group["operation_group_name"];
                 }
             }
+            
+            operation_response["operation_groups"] = operation_groups;
+            operation_response["operation_group_names"] = operation_group_names;
             
             for (var operation_number of Object.keys(operation_response["operations"])) {
                 operation_response["operations"][operation_number]["operation_group_name"] = operation_group_mapping[operation_number];
@@ -2028,12 +2066,24 @@ function update_operation_table (resolve_func, reject_func, railroad_id_or_null,
                 }
             }
             
+            if ("group_divisions" in operation_response) {
+                var group_divisions = {};
+                var group_division_names = [];
+                for (var group_division of operation_response["group_divisions"]) {
+                    group_divisions[group_division["group_division_name"]] = { operation_group_names : group_division["operation_group_names"] };
+                    group_division_names.push(group_division["group_division_name"]);
+                }
+                
+                operation_response["group_divisions"] = group_divisions;
+                operation_response["group_division_names"] = group_division_names;
+            }
+            
             set_operation_table(railroad_id_or_null, operation_response);
             set_line_operations(railroad_id_or_null, structuredClone(line_operations_data));
             
-            idb_start_transaction(["operation_tables", "line_operations"], true, function (transaction) {
-                var operation_tables_store = transaction.objectStore("operation_tables");
-                operation_tables_store.put(operation_response);
+            idb_start_transaction(["operations", "line_operations"], true, function (transaction) {
+                var operations_store = transaction.objectStore("operations");
+                operations_store.put(operation_response);
                 
                 var line_operations_store = transaction.objectStore("line_operations");
                 line_operations_store.put(line_operations_data);
@@ -3811,8 +3861,8 @@ function operation_data_draw (reset_active_tab = false) {
     
     if (!document.getElementById("radio_operation_groups").checked) {
         var operation_numbers = [];
-        for (var operation_group of operation_table["operation_groups"]) {
-            operation_numbers.push(...operation_group["operation_numbers"]);
+        for (var operation_group_name of operation_table["operation_group_names"]) {
+            operation_numbers.push(...operation_table["operation_groups"][operation_group_name]["operation_numbers"]);
         }
     }
     
@@ -3825,6 +3875,25 @@ function operation_data_draw (reset_active_tab = false) {
             var sorting_criteria = "operation_groups";
             
             var groups = operation_table["operation_groups"];
+            
+            if ("group_division_names" in operation_table) {
+                var divisions = [];
+                buf += "<div class='inner_tab_area'>";
+                
+                for (var group_division_name of operation_table["group_division_names"]) {
+                    divisions.push({ "division_name" : group_division_name, "group_names" : operation_table["group_divisions"][group_division_name]["operation_group_names"] });
+                    
+                    if (operation_data_active_tab === null) {
+                        operation_data_active_tab = group_division_name;
+                    }
+                    
+                    buf += "<button type='button'" + (group_division_name === operation_data_active_tab ? " class='active_tab'" : "") + " id='operation_data_division_tab_" + group_division_name + "' onclick='activate_operation_data_tab(\"" + add_slashes(group_division_name) + "\");'>" + escape_html(group_division_name) + "</a>";
+                }
+                
+                buf += "</div>";
+            } else {
+                var divisions = [{ "division_name" : null, "group_names" : operation_table["operation_group_names"] }];
+            }
         } else {
             if (document.getElementById("radio_starting_location").checked) {
                 var sorting_criteria = "starting_location";
@@ -3867,38 +3936,51 @@ function operation_data_draw (reset_active_tab = false) {
                 }
             }
             
-            var groups = [];
+            var groups = {};
+            var group_names = [];
             for (var location of sort_station_names(locations)) {
-                groups.push({operation_group_name: location, operation_numbers: operations_list[location]});
+                groups[location] = { operation_numbers: operations_list[location] };
+                group_names.push(location);
             }
+            
+            var divisions = [{ "division_name" : null, "group_names" : group_names }];
         }
         
-        for (var group of groups) {
-            buf += "<h3>" + group["operation_group_name"] + "</h3>";
-            
-            buf += "<table>";
-            for (var operation_number of group["operation_numbers"]) {
-                buf += "<tr onclick='operation_detail(" + operation_number_order.length + ", " + operation_data_date + ", " + show_write_operation_data_button + ");'><th style='background-color: " + (config["dark_mode"] ? convert_color_dark_mode(operation_table["operations"][operation_number]["main_color"]) : operation_table["operations"][operation_number]["main_color"]) + ";'>";
-                if (sorting_criteria === "starting_location" && operation_table["operations"][operation_number]["starting_track"] !== null) {
-                    buf += "<small>" + operation_table["operations"][operation_number]["starting_track"] + "停泊</small><br>";
-                } else if (sorting_criteria === "terminal_location" && operation_table["operations"][operation_number]["terminal_track"] !== null) {
-                    buf += "<small>" + operation_table["operations"][operation_number]["terminal_track"] + "停泊</small><br>";
+        for (var division_info of divisions) {
+            var buf_2 = "";
+            for (var group_name of division_info["group_names"]) {
+                buf_2 += "<h3>" + escape_html(group_name) + "</h3>";
+                
+                buf_2 += "<table>";
+                for (var operation_number of groups[group_name]["operation_numbers"]) {
+                    buf_2 += "<tr onclick='operation_detail(" + operation_number_order.length + ", " + operation_data_date + ", " + show_write_operation_data_button + ");'><th style='background-color: " + (config["dark_mode"] ? convert_color_dark_mode(operation_table["operations"][operation_number]["main_color"]) : operation_table["operations"][operation_number]["main_color"]) + ";'>";
+                    if (sorting_criteria === "starting_location" && operation_table["operations"][operation_number]["starting_track"] !== null) {
+                        buf_2 += "<small>" + operation_table["operations"][operation_number]["starting_track"] + "停泊</small><br>";
+                    } else if (sorting_criteria === "terminal_location" && operation_table["operations"][operation_number]["terminal_track"] !== null) {
+                        buf_2 += "<small>" + operation_table["operations"][operation_number]["terminal_track"] + "停泊</small><br>";
+                    }
+                    buf_2 += "<u>" + operation_number + "</u><small>(" + operation_table["operations"][operation_number]["car_count"] + ")</small>";
+                    if (sorting_criteria === "starting_location" && operation_table["operations"][operation_number]["starting_time"] >= "12:00") {
+                        buf_2 += "<br><small>午後出庫</small><br>";
+                    } else if (sorting_criteria === "terminal_location" && operation_table["operations"][operation_number]["ending_time"] < "12:00") {
+                        buf_2 += "<br><small>午前入庫</small><br>";
+                    }
+                    buf_2 += "</th>";
+                    
+                    buf_2 += get_operation_data_cell_html(operation_number, "td", days_before, now_str, null, (sorting_criteria === "terminal_location" && reoperated_operation_numbers.has(operation_number) ? "(再出庫有)" : null));
+                    
+                    buf_2 += "</tr>";
+                    
+                    operation_number_order.push(operation_number);
                 }
-                buf += "<u>" + operation_number + "</u><small>(" + operation_table["operations"][operation_number]["car_count"] + ")</small>";
-                if (sorting_criteria === "starting_location" && operation_table["operations"][operation_number]["starting_time"] >= "12:00") {
-                    buf += "<br><small>午後出庫</small><br>";
-                } else if (sorting_criteria === "terminal_location" && operation_table["operations"][operation_number]["ending_time"] < "12:00") {
-                    buf += "<br><small>午前入庫</small><br>";
-                }
-                buf += "</th>";
-                
-                buf += get_operation_data_cell_html(operation_number, "td", days_before, now_str, null, (sorting_criteria === "terminal_location" && reoperated_operation_numbers.has(operation_number) ? "(再出庫有)" : null));
-                
-                buf += "</tr>";
-                
-                operation_number_order.push(operation_number);
+                buf_2 += "</table>";
             }
-            buf += "</table>";
+            
+            if (division_info["division_name"] !== null) {
+                buf += "<div id='operation_data_division_" + division_info["division_name"] + "'" + (division_info["division_name"] === operation_data_active_tab ? "" : " style='display: none;'") + " class='operation_data_division_area'>" + buf_2 + "</div>";
+            } else {
+                buf += buf_2;
+            }
         }
     } else {
         var formation_list = Object.keys(formations["formations"]);
@@ -3995,7 +4077,7 @@ function operation_data_draw (reset_active_tab = false) {
                     operation_data_active_tab = series_division_name;
                 }
                 
-                buf += "<button type='button'" + (series_division_name === operation_data_active_tab ? " class='active_tab'" : "") + " id='operation_data_division_tab_" + series_division_name + "' onclick='activate_operation_data_tab(\"" + series_division_name + "\");'>" + escape_html(series_division_name) + "</a>";
+                buf += "<button type='button'" + (series_division_name === operation_data_active_tab ? " class='active_tab'" : "") + " id='operation_data_division_tab_" + series_division_name + "' onclick='activate_operation_data_tab(\"" + add_slashes(series_division_name) + "\");'>" + escape_html(series_division_name) + "</a>";
             }
             
             if (formation_operation_data["運休"].size >= 1 || formation_operation_data["不明"].size >= 1) {
@@ -4278,7 +4360,7 @@ function draw_formation_table (update_title = true) {
                 formation_table_active_tab = series_division_name;
             }
             
-            buf += "<button type='button'" + (series_division_name === formation_table_active_tab ? " class='active_tab'" : "") + " id='formation_division_tab_" + series_division_name + "' onclick='activate_formation_table_tab(\"" + series_division_name + "\");'>" + escape_html(series_division_name) + "</a>";
+            buf += "<button type='button'" + (series_division_name === formation_table_active_tab ? " class='active_tab'" : "") + " id='formation_division_tab_" + series_division_name + "' onclick='activate_formation_table_tab(\"" + add_slashes(series_division_name) + "\");'>" + escape_html(series_division_name) + "</a>";
         }
         
         if (config["group_formations_by_prefix"] && "prefixes" in formations && "no_prefix_formation_names" in formations) {
@@ -4947,10 +5029,11 @@ function draw_operation_table (is_today) {
         var sorting_criteria = "operation_groups";
         
         var groups = operation_table["operation_groups"];
+        var group_names = operation_table["operation_group_names"];
     } else {
         var operation_numbers = [];
-        for (var operation_group of operation_table["operation_groups"]) {
-            operation_numbers.push(...operation_group["operation_numbers"]);
+        for (var operation_group_name of operation_table["operation_group_names"]) {
+            operation_numbers.push(...operation_table["operation_groups"][operation_group_name]["operation_numbers"]);
         }
         
         if (document.getElementById("sort_by_starting_location").checked) {
@@ -4971,18 +5054,20 @@ function draw_operation_table (is_today) {
             operations_list[operation_table["operations"][operation_number][sorting_criteria]].push(operation_number);
         }
         
-        var groups = [];
+        var groups = {};
+        var group_names = [];
         for (var location of sort_station_names(locations)) {
-            groups.push({operation_group_name: location, operation_numbers: operations_list[location]});
+            groups[location] = { operation_numbers: operations_list[location] };
+            group_names.push(location);
         }
     }
     
-    for (var group of groups) {
+    for (var group_name of group_names) {
         var buf_2 = "";
         var search_hit_count = 0;
         
         if (config["operation_table_view"] === "simple") {
-            for (var operation_number of group["operation_numbers"]) {
+            for (var operation_number of groups[group_name]["operation_numbers"]) {
                 var operation_search_hit = false;
                 
                 if (search_keyword.length >= 1 && operation_number.includes(search_keyword)) {
@@ -5114,7 +5199,7 @@ function draw_operation_table (is_today) {
                 buf_2 = "<tr><th>運用番号</th><th>" + (search_keyword.length >= 1 ? "列車番号" : (config["show_current_trains_on_operation_table"] && is_today ? "現時刻の列車" : "出庫 / 入庫")) + "</th></tr>" + buf_2;
             }
         } else {
-            for (var operation_number of group["operation_numbers"]) {
+            for (var operation_number of groups[group_name]["operation_numbers"]) {
                 var operation_search_hit = false;
                 
                 if (search_keyword.length >= 1 && operation_number.includes(search_keyword)) {
@@ -5265,9 +5350,9 @@ function draw_operation_table (is_today) {
         }
         
         if (buf_2.length >= 1) {
-            var checkbox_id = "operation_group_" + group["operation_group_name"];
+            var checkbox_id = "operation_group_" + group_name;
             buf += "<input type='checkbox' id='" + checkbox_id + "'" + (checkbox_id in operation_table_drop_down_status && operation_table_drop_down_status[checkbox_id] ? " checked='checked'" : "") + " onclick='update_operation_table_drop_down_status(this);'>";
-            buf += "<label for='" + checkbox_id + "' class='operation_table_drop_down" + (config["operation_table_view"] === "simple" ? "" : " wide_drop_down") + "'" + ("main_color" in group ? " style='background-color: " + (config["dark_mode"] ? convert_color_dark_mode(group["main_color"]) : group["main_color"]) + ";'" : "") + ">" + escape_html(group["operation_group_name"]) + (search_keyword.length >= 1 ? "<small>(" + search_hit_count + ")</small>" : "") + "</label>";
+            buf += "<label for='" + checkbox_id + "' class='operation_table_drop_down" + (config["operation_table_view"] === "simple" ? "" : " wide_drop_down") + "'" + ("main_color" in groups[group_name] ? " style='background-color: " + (config["dark_mode"] ? convert_color_dark_mode(groups[group_name]["main_color"]) : groups[group_name]["main_color"]) + ";'" : "") + ">" + escape_html(group_name) + (search_keyword.length >= 1 ? "<small>(" + search_hit_count + ")</small>" : "") + "</label>";
             buf += "<div><table class='operation_table_" + config["operation_table_view"] + "'>" + buf_2 + "</table></div>";
         }
     }

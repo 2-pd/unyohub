@@ -318,6 +318,12 @@ log_ip_address 投稿者のIPアドレスを記録するか(BOOL値)
             "main_color" : 運用系統テーマカラー(省略可能),
             "operation_numbers" : 運用番号を配列で
         }
+    ],
+    "group_divisions" : [ 系統区分の情報(系統区分がない場合は省略)
+        {
+            "group_division_name" : 系統区分タイトル,
+            "operation_group_names" : 運用系統タイトルを配列で
+        }
     ]
 }
 

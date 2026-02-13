@@ -1742,21 +1742,16 @@ function change_simplify_operation_details (bool_val, operation_number, operatio
 
 function previous_operation_number (operation_number_or_index, operation_data_date_ts_or_operation_name) {
     if (typeof operation_number_or_index === "string") {
-        for (var group_index = 0; group_index < operation_table["operation_groups"].length; group_index++) {
-            if (operation_table["operation_groups"][group_index]["operation_group_name"] === operation_table["operations"][operation_number_or_index]["operation_group_name"]) {
-                break;
-            }
-        }
-        
-        var operation_numbers = operation_table["operation_groups"][group_index]["operation_numbers"];
+        var operation_numbers = operation_table["operation_groups"][operation_table["operations"][operation_number_or_index]["operation_group_name"]]["operation_numbers"];
         var operation_number_index = operation_numbers.indexOf(operation_number_or_index);
         
         if (operation_number_index >= 1) {
             operation_detail(operation_numbers[operation_number_index - 1], operation_data_date_ts_or_operation_name);
         } else {
-            group_index = group_index >= 1 ? group_index - 1 : operation_table["operation_groups"].length - 1;
+            var group_index = operation_table["operation_group_names"].indexOf(operation_table["operations"][operation_number_or_index]["operation_group_name"]);
+            var previous_group = operation_table["operation_groups"][operation_table["operation_group_names"][group_index >= 1 ? group_index - 1 : operation_table["operation_group_names"].length - 1]];
             
-            operation_detail(operation_table["operation_groups"][group_index]["operation_numbers"][operation_table["operation_groups"][group_index]["operation_numbers"].length - 1], operation_data_date_ts_or_operation_name);
+            operation_detail(previous_group["operation_numbers"][previous_group["operation_numbers"].length - 1], operation_data_date_ts_or_operation_name);
         }
     } else {
         if (operation_number_or_index >= 1) {
@@ -1769,21 +1764,16 @@ function previous_operation_number (operation_number_or_index, operation_data_da
 
 function next_operation_number (operation_number_or_index, operation_data_date_ts_or_operation_name) {
     if (typeof operation_number_or_index === "string") {
-        for (var group_index = 0; group_index < operation_table["operation_groups"].length; group_index++) {
-            if (operation_table["operation_groups"][group_index]["operation_group_name"] === operation_table["operations"][operation_number_or_index]["operation_group_name"]) {
-                break;
-            }
-        }
-        
-        var operation_numbers = operation_table["operation_groups"][group_index]["operation_numbers"];
+        var operation_numbers = operation_table["operation_groups"][operation_table["operations"][operation_number_or_index]["operation_group_name"]]["operation_numbers"];
         var operation_number_index = operation_numbers.indexOf(operation_number_or_index);
         
         if (operation_number_index < operation_numbers.length - 1) {
             operation_detail(operation_numbers[operation_number_index + 1], operation_data_date_ts_or_operation_name);
         } else {
-            group_index = group_index < operation_table["operation_groups"].length - 1 ? group_index + 1 : 0;
+            var group_index = operation_table["operation_group_names"].indexOf(operation_table["operations"][operation_number_or_index]["operation_group_name"]);
+            var next_group = operation_table["operation_groups"][operation_table["operation_group_names"][group_index < operation_table["operation_group_names"].length - 1 ? group_index + 1 : 0]];
             
-            operation_detail(operation_table["operation_groups"][group_index]["operation_numbers"][0], operation_data_date_ts_or_operation_name);
+            operation_detail(next_group["operation_numbers"][0], operation_data_date_ts_or_operation_name);
         }
     } else {
         if (operation_number_or_index < operation_number_order.length - 1) {
