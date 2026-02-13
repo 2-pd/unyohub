@@ -1891,9 +1891,9 @@ function load_operation_table (resolve_func_1, reject_func_1, resolve_func_2, re
                 var data = null;
                 var last_modified_timestamp = 0;
                 
-                idb_start_transaction(["operation_tables", "line_operations"], false, function (transaction) {
-                    var operation_tables = transaction.objectStore("operation_tables");
-                    var operations_get_request = operation_tables.get([railroad_id, diagram_revision, diagram_ids[railroad_id]]);
+                idb_start_transaction(["operations", "line_operations"], false, function (transaction) {
+                    var operations_store = transaction.objectStore("operations");
+                    var operations_get_request = operations_store.get([railroad_id, diagram_revision, diagram_ids[railroad_id]]);
                     
                     var line_operations_store = transaction.objectStore("line_operations");
                     var line_operations_get_request = line_operations_store.get([railroad_id, diagram_revision, diagram_ids[railroad_id]]);
@@ -1972,16 +1972,28 @@ function update_operation_table (resolve_func, reject_func, railroad_id_or_null,
             operation_response["diagram_id"] = diagram_id;
             operation_response["last_modified_timestamp"] = last_modified_timestamp;
             
-            var line_operations_data = {railroad_id : railroad_id, diagram_revision : diagram_revision, diagram_id : diagram_id, last_modified_timestamp : last_modified_timestamp, lines : {}};
+            var line_operations_data = { railroad_id : railroad_id, diagram_revision : diagram_revision, diagram_id : diagram_id, last_modified_timestamp : last_modified_timestamp, lines : {} };
             
             var operations_stopped_trains = {};
             
+            var operation_groups = {}
+            var operation_group_names = [];
             var operation_group_mapping = {};
             for (var operation_group of operation_response["operation_groups"]) {
+                operation_groups[operation_group["operation_group_name"]] = { operation_numbers : operation_group["operation_numbers"] };
+                operation_group_names.push(operation_group["operation_group_name"]);
+                
+                if ("main_color" in operation_group) {
+                    operation_groups[operation_group["operation_group_name"]]["main_color"] = operation_group["main_color"];
+                }
+                
                 for (var operation_number of operation_group["operation_numbers"]) {
                     operation_group_mapping[operation_number] = operation_group["operation_group_name"];
                 }
             }
+            
+            operation_response["operation_groups"] = operation_groups;
+            operation_response["operation_group_names"] = operation_group_names;
             
             for (var operation_number of Object.keys(operation_response["operations"])) {
                 operation_response["operations"][operation_number]["operation_group_name"] = operation_group_mapping[operation_number];
@@ -2054,12 +2066,24 @@ function update_operation_table (resolve_func, reject_func, railroad_id_or_null,
                 }
             }
             
+            if ("group_divisions" in operation_response) {
+                var group_divisions = {};
+                var group_division_names = [];
+                for (var group_division of operation_response["group_divisions"]) {
+                    group_divisions[group_division["group_division_name"]] = { operation_group_names : group_division["operation_group_names"] };
+                    group_division_names.push(group_division["group_division_name"]);
+                }
+                
+                operation_response["group_divisions"] = group_divisions;
+                operation_response["group_division_names"] = group_division_names;
+            }
+            
             set_operation_table(railroad_id_or_null, operation_response);
             set_line_operations(railroad_id_or_null, structuredClone(line_operations_data));
             
-            idb_start_transaction(["operation_tables", "line_operations"], true, function (transaction) {
-                var operation_tables_store = transaction.objectStore("operation_tables");
-                operation_tables_store.put(operation_response);
+            idb_start_transaction(["operations", "line_operations"], true, function (transaction) {
+                var operations_store = transaction.objectStore("operations");
+                operations_store.put(operation_response);
                 
                 var line_operations_store = transaction.objectStore("line_operations");
                 line_operations_store.put(line_operations_data);
