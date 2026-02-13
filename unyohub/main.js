@@ -3875,7 +3875,25 @@ function operation_data_draw (reset_active_tab = false) {
             var sorting_criteria = "operation_groups";
             
             var groups = operation_table["operation_groups"];
-            var group_names = operation_table["operation_group_names"];
+            
+            if ("group_division_names" in operation_table) {
+                var divisions = [];
+                buf += "<div class='inner_tab_area'>";
+                
+                for (var group_division_name of operation_table["group_division_names"]) {
+                    divisions.push({ "division_name" : group_division_name, "group_names" : operation_table["group_divisions"][group_division_name]["operation_group_names"] });
+                    
+                    if (operation_data_active_tab === null) {
+                        operation_data_active_tab = group_division_name;
+                    }
+                    
+                    buf += "<button type='button'" + (group_division_name === operation_data_active_tab ? " class='active_tab'" : "") + " id='operation_data_division_tab_" + group_division_name + "' onclick='activate_operation_data_tab(\"" + add_slashes(group_division_name) + "\");'>" + escape_html(group_division_name) + "</a>";
+                }
+                
+                buf += "</div>";
+            } else {
+                var divisions = [{ "division_name" : null, "group_names" : operation_table["operation_group_names"] }];
+            }
         } else {
             if (document.getElementById("radio_starting_location").checked) {
                 var sorting_criteria = "starting_location";
@@ -3924,34 +3942,45 @@ function operation_data_draw (reset_active_tab = false) {
                 groups[location] = { operation_numbers: operations_list[location] };
                 group_names.push(location);
             }
+            
+            var divisions = [{ "division_name" : null, "group_names" : group_names }];
         }
         
-        for (var group_name of group_names) {
-            buf += "<h3>" + escape_html(group_name) + "</h3>";
-            
-            buf += "<table>";
-            for (var operation_number of groups[group_name]["operation_numbers"]) {
-                buf += "<tr onclick='operation_detail(" + operation_number_order.length + ", " + operation_data_date + ", " + show_write_operation_data_button + ");'><th style='background-color: " + (config["dark_mode"] ? convert_color_dark_mode(operation_table["operations"][operation_number]["main_color"]) : operation_table["operations"][operation_number]["main_color"]) + ";'>";
-                if (sorting_criteria === "starting_location" && operation_table["operations"][operation_number]["starting_track"] !== null) {
-                    buf += "<small>" + operation_table["operations"][operation_number]["starting_track"] + "停泊</small><br>";
-                } else if (sorting_criteria === "terminal_location" && operation_table["operations"][operation_number]["terminal_track"] !== null) {
-                    buf += "<small>" + operation_table["operations"][operation_number]["terminal_track"] + "停泊</small><br>";
+        for (var division_info of divisions) {
+            var buf_2 = "";
+            for (var group_name of division_info["group_names"]) {
+                buf_2 += "<h3>" + escape_html(group_name) + "</h3>";
+                
+                buf_2 += "<table>";
+                for (var operation_number of groups[group_name]["operation_numbers"]) {
+                    buf_2 += "<tr onclick='operation_detail(" + operation_number_order.length + ", " + operation_data_date + ", " + show_write_operation_data_button + ");'><th style='background-color: " + (config["dark_mode"] ? convert_color_dark_mode(operation_table["operations"][operation_number]["main_color"]) : operation_table["operations"][operation_number]["main_color"]) + ";'>";
+                    if (sorting_criteria === "starting_location" && operation_table["operations"][operation_number]["starting_track"] !== null) {
+                        buf_2 += "<small>" + operation_table["operations"][operation_number]["starting_track"] + "停泊</small><br>";
+                    } else if (sorting_criteria === "terminal_location" && operation_table["operations"][operation_number]["terminal_track"] !== null) {
+                        buf_2 += "<small>" + operation_table["operations"][operation_number]["terminal_track"] + "停泊</small><br>";
+                    }
+                    buf_2 += "<u>" + operation_number + "</u><small>(" + operation_table["operations"][operation_number]["car_count"] + ")</small>";
+                    if (sorting_criteria === "starting_location" && operation_table["operations"][operation_number]["starting_time"] >= "12:00") {
+                        buf_2 += "<br><small>午後出庫</small><br>";
+                    } else if (sorting_criteria === "terminal_location" && operation_table["operations"][operation_number]["ending_time"] < "12:00") {
+                        buf_2 += "<br><small>午前入庫</small><br>";
+                    }
+                    buf_2 += "</th>";
+                    
+                    buf_2 += get_operation_data_cell_html(operation_number, "td", days_before, now_str, null, (sorting_criteria === "terminal_location" && reoperated_operation_numbers.has(operation_number) ? "(再出庫有)" : null));
+                    
+                    buf_2 += "</tr>";
+                    
+                    operation_number_order.push(operation_number);
                 }
-                buf += "<u>" + operation_number + "</u><small>(" + operation_table["operations"][operation_number]["car_count"] + ")</small>";
-                if (sorting_criteria === "starting_location" && operation_table["operations"][operation_number]["starting_time"] >= "12:00") {
-                    buf += "<br><small>午後出庫</small><br>";
-                } else if (sorting_criteria === "terminal_location" && operation_table["operations"][operation_number]["ending_time"] < "12:00") {
-                    buf += "<br><small>午前入庫</small><br>";
-                }
-                buf += "</th>";
-                
-                buf += get_operation_data_cell_html(operation_number, "td", days_before, now_str, null, (sorting_criteria === "terminal_location" && reoperated_operation_numbers.has(operation_number) ? "(再出庫有)" : null));
-                
-                buf += "</tr>";
-                
-                operation_number_order.push(operation_number);
+                buf_2 += "</table>";
             }
-            buf += "</table>";
+            
+            if (division_info["division_name"] !== null) {
+                buf += "<div id='operation_data_division_" + division_info["division_name"] + "'" + (division_info["division_name"] === operation_data_active_tab ? "" : " style='display: none;'") + " class='operation_data_division_area'>" + buf_2 + "</div>";
+            } else {
+                buf += buf_2;
+            }
         }
     } else {
         var formation_list = Object.keys(formations["formations"]);
@@ -4048,7 +4077,7 @@ function operation_data_draw (reset_active_tab = false) {
                     operation_data_active_tab = series_division_name;
                 }
                 
-                buf += "<button type='button'" + (series_division_name === operation_data_active_tab ? " class='active_tab'" : "") + " id='operation_data_division_tab_" + series_division_name + "' onclick='activate_operation_data_tab(\"" + series_division_name + "\");'>" + escape_html(series_division_name) + "</a>";
+                buf += "<button type='button'" + (series_division_name === operation_data_active_tab ? " class='active_tab'" : "") + " id='operation_data_division_tab_" + series_division_name + "' onclick='activate_operation_data_tab(\"" + add_slashes(series_division_name) + "\");'>" + escape_html(series_division_name) + "</a>";
             }
             
             if (formation_operation_data["運休"].size >= 1 || formation_operation_data["不明"].size >= 1) {
@@ -4331,7 +4360,7 @@ function draw_formation_table (update_title = true) {
                 formation_table_active_tab = series_division_name;
             }
             
-            buf += "<button type='button'" + (series_division_name === formation_table_active_tab ? " class='active_tab'" : "") + " id='formation_division_tab_" + series_division_name + "' onclick='activate_formation_table_tab(\"" + series_division_name + "\");'>" + escape_html(series_division_name) + "</a>";
+            buf += "<button type='button'" + (series_division_name === formation_table_active_tab ? " class='active_tab'" : "") + " id='formation_division_tab_" + series_division_name + "' onclick='activate_formation_table_tab(\"" + add_slashes(series_division_name) + "\");'>" + escape_html(series_division_name) + "</a>";
         }
         
         if (config["group_formations_by_prefix"] && "prefixes" in formations && "no_prefix_formation_names" in formations) {
