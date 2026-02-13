@@ -1,6 +1,6 @@
 /* 鉄道運用Hub main.js */
 
-const UNYOHUB_INDEXEDDB_VERSION = 2412001;
+const UNYOHUB_INDEXEDDB_VERSION = 2602001;
 
 
 const UNYOHUB_GENERIC_TRAIN_ICON = "data:image/webp;base64,UklGRo4CAABXRUJQVlA4TIICAAAvT8AdEJVIkiRJkaR+ukUtMzxjvplZnV2RIXvd8GYoiIADybZp69nvfdu2bdtm/CMboW3bNmLbtm2bewLyX/0z3aCFs7lMugxa0Hx9ZKGKD2Dy4/Zw9E6MC7nkHFE30NiRWLcwXM1llpiYD/iS5vlyXaT70QvFEp1/8TtEZkq05gEFKDNzpkui2IkZ8S8OjzldfiOzpwvmLo4c6WJm6SExvIhT6D0QJ1GSPvIunT0QIw6g1QY5iQvGbJldO+eR182+AT22jYflxBJjF2mQq0G7afYAxixgzcwZbZLYAibkiGKz+YvfITJhNQswHkps6eAFmPx0vqZfUFwCLrl6Q/tBG3A6aPkhxQvJftj0wrYbxOX2nZgXi/BDuBfG/DDq5AOH/fqxv/dc0zwHJXMhkhL6mOecXzlenuvrfp0HJejb3tDm9eJOXc/0msey1zsR5hQgM++E9kCUSyBEzueRv3iWFCRrEGqEAmESWOMgDvYriCvQtcAyEswLc4lk/j8DnCNZCmwjMZvCTCLBuBh0Ihm0CpQjQbFAOpJ3EsU7oUjgL2CNBOYCFN9x8LVDFslxHBxmlck4GK/REQdtNfLiIKdGdBxrzbziwLOGehyDWu0jSxww15KnKOYcZSEK5sdoi4LWMZKjIGkMnyiOY5lJRX+UZyPx/RHXYn794duCc3/m1DJo9YdmC4L9vRNo+UnsD1JL8tQbjztEM5u9sdHGQG/0t9HQG/VtZPRGepuF9UZoG969mVebGfWGYdsg1dvWBmNvMLbtkHz0xeerLTnsi4M8IBN9MX4Ii6Bl7+IyaXHZez1EY5GTFuk6Hl4lXqbZpJMv0iVSp1mlm69E/ZgTH4/5rw4=";
@@ -325,43 +325,69 @@ var db_open_promise = new Promise(function (resolve, reject) {
     };
     
     open_request.onupgradeneeded = function () {
+        const DB_TABLES = {
+            railroads : {
+                keyPath : "railroad_id"
+            },
+            train_icons : {
+                keyPath : "railroad_id"
+            },
+            formations : {
+                keyPath : "railroad_id"
+            },
+            formation_overviews : {
+                keyPath : "railroad_id"
+            },
+            diagram_revisions : {
+                keyPath : "railroad_id"
+            },
+            diagrams : {
+                keyPath : ["railroad_id", "diagram_revision"]
+            },
+            operations : {
+                keyPath : ["railroad_id", "diagram_revision", "diagram_id"]
+            },
+            line_operations : {
+                keyPath : ["railroad_id", "diagram_revision", "diagram_id"]
+            },
+            timetables : {
+                keyPath : ["railroad_id", "diagram_revision", "timetable_id"]
+            },
+            operation_data : {
+                keyPath : ["railroad_id", "operation_date"],
+                indexes : {
+                    idx_od1 : {
+                        keyPath : "operation_date"
+                    }
+                }
+            },
+            announcements : {
+                keyPath : "railroad_id"
+            },
+            user_data : {
+                keyPath : "railroad_id"
+            }
+        };
+        
         var db = open_request.result;
         
-        var object_store_names = [...db.objectStoreNames];
+        var existing_tables = new Set(db.objectStoreNames);
+        var required_tables = new Set(Object.keys(DB_TABLES));
         
-        if (!object_store_names.includes("railroads")) {
-            db.createObjectStore("railroads", {keyPath : "railroad_id"});
+        var tables_to_add = required_tables.difference(existing_tables);
+        var tables_to_delete = existing_tables.difference(required_tables);
+        
+        for (var table_name of tables_to_add) {
+            var obj_store = db.createObjectStore(table_name, {keyPath : DB_TABLES[table_name]["keyPath"]});
+            
+            if ("indexes" in DB_TABLES[table_name]) {
+                for (var index_name of Object.keys(DB_TABLES[table_name]["indexes"]))
+                obj_store.createIndex(index_name, DB_TABLES[table_name]["indexes"][index_name]["keyPath"]);
+            }
         }
-        if (!object_store_names.includes("train_icons")) {
-            db.createObjectStore("train_icons", {keyPath : "railroad_id"});
-        }
-        if (!object_store_names.includes("formations")) {
-            db.createObjectStore("formations", {keyPath : "railroad_id"});
-        }
-        if (!object_store_names.includes("formation_overviews")) {
-            db.createObjectStore("formation_overviews", {keyPath : "railroad_id"});
-        }
-        if (!object_store_names.includes("diagram_revisions")) {
-            db.createObjectStore("diagram_revisions", {keyPath : "railroad_id"});
-        }
-        if (!object_store_names.includes("diagrams")) {
-            db.createObjectStore("diagrams", {keyPath : ["railroad_id", "diagram_revision"]});
-        }
-        if (!object_store_names.includes("operation_tables")) {
-            db.createObjectStore("operation_tables", {keyPath : ["railroad_id", "diagram_revision", "diagram_id"]});
-        }
-        if (!object_store_names.includes("line_operations")) {
-            db.createObjectStore("line_operations", {keyPath : ["railroad_id", "diagram_revision", "diagram_id"]});
-        }
-        if (!object_store_names.includes("timetables")) {
-            db.createObjectStore("timetables", {keyPath : ["railroad_id", "diagram_revision", "timetable_id"]});
-        }
-        if (!object_store_names.includes("operation_data")) {
-            var operation_data_store = db.createObjectStore("operation_data", {keyPath : ["railroad_id", "operation_date"]});
-            operation_data_store.createIndex("idx_od1", "operation_date");
-        }
-        if (!object_store_names.includes("announcements")) {
-            db.createObjectStore("announcements", {keyPath : "railroad_id"});
+        
+        for (table_name of tables_to_delete) {
+            db.deleteObjectStore(table_name);
         }
     };
     
