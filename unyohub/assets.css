@@ -1763,6 +1763,8 @@ label.formation_table_drop_down {
     
     width: calc(100% - 80px) !important;
     
+    max-width: 420px !important;
+    
     margin-top: 20px !important;
     
     padding-left: 70px !important;
@@ -3767,7 +3769,7 @@ input[type="radio"] {
     & + label {
         margin: 6px 0 6px -1px;
         
-        padding: 8px 12px;
+        padding: 7px 12px 9px 12px;
         
         border-radius: 0;
         
@@ -3787,13 +3789,26 @@ input[type="radio"] {
     }
     
     &:checked + label {
-        padding-top: 5px;
-        
-        border-top-width: 4px;
+        position: relative;
         
         font-weight: bold;
         
         z-index: 1;
+        
+        &:after {
+            content: "";
+            
+            display: block;
+            
+            position: absolute;
+            bottom: 2px;
+            left: 12.5%;
+            
+            width: 75%;
+            height: 3px;
+            
+            background-color: currentColor;
+        }
     }
 }
 
