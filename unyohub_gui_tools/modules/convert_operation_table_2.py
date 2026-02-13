@@ -84,6 +84,7 @@ def convert_operation_table_2 (mes, main_dir, file_name):
     operation_groups = []
     group_divisions = []
     
+    operation_group_names = set()
     starting_locations = set()
     terminal_locations = set()
     
@@ -114,6 +115,12 @@ def convert_operation_table_2 (mes, main_dir, file_name):
                 mes("・運用の存在しない運用系統 " + last_operation_group["operation_group_name"] + " は運用表に含まれません")
             
             operation_groups.append({"operation_group_name" : operation_group_name, "operation_numbers": []})
+            
+            if operation_group_name in operation_group_names:
+                mes("同一名の運用系統 " + operation_group_name + " が複数存在しています", True)
+                error_occurred = True
+            else:
+                operation_group_names.add(operation_group_name)
             
             group_color = operation_data[cnt][1].strip()
             if len(group_color) >= 1:
