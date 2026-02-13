@@ -82,7 +82,9 @@ def convert_operation_table_2 (mes, main_dir, file_name):
     
     operations = {}
     operation_groups = []
+    group_divisions = []
     
+    operation_group_names = set()
     starting_locations = set()
     terminal_locations = set()
     
@@ -90,16 +92,42 @@ def convert_operation_table_2 (mes, main_dir, file_name):
     id_cnt = 1
     stopped_train_list = {}
     while cnt < len(operation_data):
+        if len(operation_data[cnt]) == 0:
+            cnt += 1
+            continue
+        
         operation_number = operation_data[cnt][0].strip()
         
         if len(operation_number) == 0:
             cnt += 1
-        elif operation_number.startswith("# "):
-            operation_groups.append({"operation_group_name" : operation_number[2:].strip(), "operation_numbers": []})
+        elif operation_number.startswith("[") or operation_number.startswith("【"):
+            division_name = operation_number[1:-1].strip()
+            
+            group_divisions.append({"group_division_name" : division_name, "operation_group_names" : []})
+            
+            cnt += 1
+        elif operation_number.startswith("# ") or operation_number.startswith("◆"):
+            operation_group_name = operation_number[1:].strip()
+            
+            if len(operation_groups) >= 1 and len(operation_groups[-1]["operation_numbers"]) == 0:
+                last_operation_group = operation_groups.pop(-1)
+                
+                mes("・運用の存在しない運用系統 " + last_operation_group["operation_group_name"] + " は運用表に含まれません")
+            
+            operation_groups.append({"operation_group_name" : operation_group_name, "operation_numbers": []})
+            
+            if operation_group_name in operation_group_names:
+                mes("同一名の運用系統 " + operation_group_name + " が複数存在しています", True)
+                error_occurred = True
+            else:
+                operation_group_names.add(operation_group_name)
             
             group_color = operation_data[cnt][1].strip()
             if len(group_color) >= 1:
                 operation_groups[-1]["main_color"] = group_color
+            
+            if len(group_divisions) >= 1:
+                group_divisions[-1]["operation_group_names"].append(operation_group_name)
             
             cnt += 1
         else:
@@ -338,6 +366,9 @@ def convert_operation_table_2 (mes, main_dir, file_name):
         mes("エラー発生のため処理が中断されました")
     else:
         output_data = {"operations" : operations, "operation_groups" : operation_groups}
+        
+        if len(group_divisions) >= 1:
+            output_data["group_divisions"] = group_divisions
         
         if file_name[-19:] == "_unyohub-format.csv":
             json_file_name = file_name[0:-19] + ".json"
