@@ -1976,7 +1976,7 @@ function update_operation_table (resolve_func, reject_func, railroad_id_or_null,
             
             var operations_stopped_trains = {};
             
-            var operation_groups = {}
+            var operation_groups = {};
             var operation_group_names = [];
             var operation_group_mapping = {};
             for (var operation_group of operation_response["operation_groups"]) {
@@ -3861,8 +3861,8 @@ function operation_data_draw (reset_active_tab = false) {
     
     if (!document.getElementById("radio_operation_groups").checked) {
         var operation_numbers = [];
-        for (var operation_group of operation_table["operation_groups"]) {
-            operation_numbers.push(...operation_group["operation_numbers"]);
+        for (var operation_group_name of operation_table["operation_group_names"]) {
+            operation_numbers.push(...operation_table["operation_groups"][operation_group_name]["operation_numbers"]);
         }
     }
     
@@ -3875,6 +3875,7 @@ function operation_data_draw (reset_active_tab = false) {
             var sorting_criteria = "operation_groups";
             
             var groups = operation_table["operation_groups"];
+            var group_names = operation_table["operation_group_names"];
         } else {
             if (document.getElementById("radio_starting_location").checked) {
                 var sorting_criteria = "starting_location";
@@ -3917,17 +3918,19 @@ function operation_data_draw (reset_active_tab = false) {
                 }
             }
             
-            var groups = [];
+            var groups = {};
+            var group_names = [];
             for (var location of sort_station_names(locations)) {
-                groups.push({operation_group_name: location, operation_numbers: operations_list[location]});
+                groups[location] = { operation_numbers: operations_list[location] };
+                group_names.push(location);
             }
         }
         
-        for (var group of groups) {
-            buf += "<h3>" + group["operation_group_name"] + "</h3>";
+        for (var group_name of group_names) {
+            buf += "<h3>" + escape_html(group_name) + "</h3>";
             
             buf += "<table>";
-            for (var operation_number of group["operation_numbers"]) {
+            for (var operation_number of groups[group_name]["operation_numbers"]) {
                 buf += "<tr onclick='operation_detail(" + operation_number_order.length + ", " + operation_data_date + ", " + show_write_operation_data_button + ");'><th style='background-color: " + (config["dark_mode"] ? convert_color_dark_mode(operation_table["operations"][operation_number]["main_color"]) : operation_table["operations"][operation_number]["main_color"]) + ";'>";
                 if (sorting_criteria === "starting_location" && operation_table["operations"][operation_number]["starting_track"] !== null) {
                     buf += "<small>" + operation_table["operations"][operation_number]["starting_track"] + "停泊</small><br>";
@@ -4997,10 +5000,11 @@ function draw_operation_table (is_today) {
         var sorting_criteria = "operation_groups";
         
         var groups = operation_table["operation_groups"];
+        var group_names = operation_table["operation_group_names"];
     } else {
         var operation_numbers = [];
-        for (var operation_group of operation_table["operation_groups"]) {
-            operation_numbers.push(...operation_group["operation_numbers"]);
+        for (var operation_group_name of operation_table["operation_group_names"]) {
+            operation_numbers.push(...operation_table["operation_groups"][operation_group_name]["operation_numbers"]);
         }
         
         if (document.getElementById("sort_by_starting_location").checked) {
@@ -5021,18 +5025,20 @@ function draw_operation_table (is_today) {
             operations_list[operation_table["operations"][operation_number][sorting_criteria]].push(operation_number);
         }
         
-        var groups = [];
+        var groups = {};
+        var group_names = [];
         for (var location of sort_station_names(locations)) {
-            groups.push({operation_group_name: location, operation_numbers: operations_list[location]});
+            groups[location] = { operation_numbers: operations_list[location] };
+            group_names.push(location);
         }
     }
     
-    for (var group of groups) {
+    for (var group_name of group_names) {
         var buf_2 = "";
         var search_hit_count = 0;
         
         if (config["operation_table_view"] === "simple") {
-            for (var operation_number of group["operation_numbers"]) {
+            for (var operation_number of groups[group_name]["operation_numbers"]) {
                 var operation_search_hit = false;
                 
                 if (search_keyword.length >= 1 && operation_number.includes(search_keyword)) {
@@ -5164,7 +5170,7 @@ function draw_operation_table (is_today) {
                 buf_2 = "<tr><th>運用番号</th><th>" + (search_keyword.length >= 1 ? "列車番号" : (config["show_current_trains_on_operation_table"] && is_today ? "現時刻の列車" : "出庫 / 入庫")) + "</th></tr>" + buf_2;
             }
         } else {
-            for (var operation_number of group["operation_numbers"]) {
+            for (var operation_number of groups[group_name]["operation_numbers"]) {
                 var operation_search_hit = false;
                 
                 if (search_keyword.length >= 1 && operation_number.includes(search_keyword)) {
@@ -5315,9 +5321,9 @@ function draw_operation_table (is_today) {
         }
         
         if (buf_2.length >= 1) {
-            var checkbox_id = "operation_group_" + group["operation_group_name"];
+            var checkbox_id = "operation_group_" + group_name;
             buf += "<input type='checkbox' id='" + checkbox_id + "'" + (checkbox_id in operation_table_drop_down_status && operation_table_drop_down_status[checkbox_id] ? " checked='checked'" : "") + " onclick='update_operation_table_drop_down_status(this);'>";
-            buf += "<label for='" + checkbox_id + "' class='operation_table_drop_down" + (config["operation_table_view"] === "simple" ? "" : " wide_drop_down") + "'" + ("main_color" in group ? " style='background-color: " + (config["dark_mode"] ? convert_color_dark_mode(group["main_color"]) : group["main_color"]) + ";'" : "") + ">" + escape_html(group["operation_group_name"]) + (search_keyword.length >= 1 ? "<small>(" + search_hit_count + ")</small>" : "") + "</label>";
+            buf += "<label for='" + checkbox_id + "' class='operation_table_drop_down" + (config["operation_table_view"] === "simple" ? "" : " wide_drop_down") + "'" + ("main_color" in groups[group_name] ? " style='background-color: " + (config["dark_mode"] ? convert_color_dark_mode(groups[group_name]["main_color"]) : groups[group_name]["main_color"]) + ";'" : "") + ">" + escape_html(group_name) + (search_keyword.length >= 1 ? "<small>(" + search_hit_count + ")</small>" : "") + "</label>";
             buf += "<div><table class='operation_table_" + config["operation_table_view"] + "'>" + buf_2 + "</table></div>";
         }
     }
