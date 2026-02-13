@@ -1063,6 +1063,17 @@ function update_formation_styles (railroad_id = null) {
 }
 
 
+function set_railroad_user_data (user_data) {
+    if (user_data !== null) {
+        position_selected_line = user_data["position_selected_line"] in railroad_info["lines"] ? user_data["position_selected_line"] : railroad_info["lines_order"][0];
+        position_scroll_amount = user_data["position_scroll_amount"];
+    } else {
+        position_selected_line = railroad_info["lines_order"][0];
+        position_scroll_amount = 0;
+    }
+}
+
+
 function load_railroad_data (railroad_id, is_main_railroad, resolve_func_1, resolve_func_2, reject_func) {
     var joined_railroads = [];
     var added_railroads = [];
@@ -1344,6 +1355,8 @@ function load_railroad_data (railroad_id, is_main_railroad, resolve_func_1, reso
     }));
     
     if (is_main_railroad) {
+        var user_data = null;
+        
         promise_list_1.push(new Promise(function (resolve_1, reject_1) {
             promise_list_2.push(new Promise(function (resolve_2, reject_2) {
                 var tmp_diagram_revision = null;
@@ -1401,6 +1414,23 @@ function load_railroad_data (railroad_id, is_main_railroad, resolve_func_1, reso
             }));
         }));
         
+        promise_list_1.push(new Promise(function (resolve_1, reject_1) {
+            idb_start_transaction("user_data", false, function (transaction) {
+                var user_data_store = transaction.objectStore("user_data");
+                var get_request = user_data_store.get(railroad_id);
+                
+                get_request.onsuccess = function (evt) {
+                    if (evt.target.result !== undefined) {
+                        user_data = evt.target.result;
+                    } else {
+                        user_data = null;
+                    }
+                    
+                    resolve_1();
+                }
+            });
+        }));
+        
         if (!location.pathname.startsWith("/railroad_" + railroad_id + "/")) {
             document.getElementById("tab_position_mode").setAttribute("href", "/railroad_" + railroad_id + "/");
             document.getElementById("tab_timetable_mode").setAttribute("href", "/railroad_" + railroad_id + "/timetable/");
@@ -1413,6 +1443,10 @@ function load_railroad_data (railroad_id, is_main_railroad, resolve_func_1, reso
     }
     
     Promise.all(promise_list_1).then(function () {
+        if (is_main_railroad) {
+            set_railroad_user_data(user_data);
+        }
+        
         if (joined_railroads.length >= 1) {
             var joined_railroads_promise_list = [];
             
@@ -1434,6 +1468,10 @@ function load_railroad_data (railroad_id, is_main_railroad, resolve_func_1, reso
     Promise.allSettled(promise_list_1).then(function () {
         Promise.all(promise_list_2).then(function (update_exists_list) {
             if (update_exists_list.includes(true)) {
+                if (is_main_railroad) {
+                    set_railroad_user_data(user_data);
+                }
+                
                 if (added_railroads.length >= 1) {
                     var joined_railroads_promise_list = [];
                     
@@ -1498,6 +1536,10 @@ function select_railroad (railroad_id, mode_name = "position_mode", mode_option_
         popup_close();
     }
     
+    if (railroad_info !== null && railroad_id !== railroad_info["railroad_id"]) {
+        save_railroad_user_data(railroad_info["railroad_id"]);
+    }
+    
     change_mode(-1);
     
     header_elm.className = "";
@@ -1512,12 +1554,8 @@ function select_railroad (railroad_id, mode_name = "position_mode", mode_option_
     timetable_selected_line = null;
     
     load_railroad_data(railroad_id, true, function () {
-        position_selected_line = railroad_info["lines_order"][0];
-        
         select_mode(mode_name, mode_option_1, mode_option_2, mode_option_3);
     }, function () {
-        position_selected_line = railroad_info["lines_order"][0];
-        
         select_mode(mode_name, mode_option_1, mode_option_2, mode_option_3);
     }, function () {
         mes("選択された路線系統はデータが利用できません", true);
@@ -2341,6 +2379,7 @@ function load_data (callback_1, callback_2, reject_func, diagram_revision, diagr
 
 
 var position_selected_line = null;
+var position_scroll_amount = null;
 
 var position_line_select_elm = document.getElementById("position_line_select");
 var position_area_elm = document.getElementById("position_area");
@@ -2356,7 +2395,8 @@ function position_mode (line_id = null, date_str = "__today__", scroll_target_st
         position_selected_line = line_id;
     }
     
-    var position_scroll_amount = article_elms[0].scrollTop;
+    var scroll_amount = position_scroll_amount !== null ? position_scroll_amount : article_elms[0].scrollTop;
+    position_scroll_amount = null;
     
     position_area_elm.innerHTML = "";
     position_line_select_elm.style.display = "none";
@@ -2412,13 +2452,13 @@ function position_mode (line_id = null, date_str = "__today__", scroll_target_st
         var data_loaded = false;
         load_data(function () {
             position_line_select_elm.style.display = "block";
-            position_change_lines(position_selected_line, scroll_target_station !== null ? scroll_target_station : position_scroll_amount);
+            position_change_lines(position_selected_line, scroll_target_station !== null ? scroll_target_station : scroll_amount);
             
             data_loaded = true;
         }, function (updates_exist) {
             if (!data_loaded) {
                 position_line_select_elm.style.display = "block";
-                position_change_lines(position_selected_line, scroll_target_station !== null ? scroll_target_station : position_scroll_amount);
+                position_change_lines(position_selected_line, scroll_target_station !== null ? scroll_target_station : scroll_amount);
             } else if (updates_exist) {
                 position_change_time(0);
             }
