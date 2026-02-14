@@ -190,7 +190,7 @@ def convert_timetable_1 (mes, file_name, digits_count):
                         train[cnt] = ""
             
             if starting_station is not None and starting_station != station_name_list[line_str][last_stopped_station_index]:
-                using_lines[departure_time] = line_str
+                using_lines[next((departure_time for departure_time in train if len(departure_time) >= 5), "99:99")[-5:]] = line_str
                 line_starting_stations[line_str] = starting_station
                 
                 if station_list[line_str][last_stopped_station_index].endswith("[発]"):
