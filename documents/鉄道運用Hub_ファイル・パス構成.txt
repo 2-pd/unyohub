@@ -96,8 +96,15 @@ _/_/_/_/ ファイル構成 _/_/_/_/
    └ unyohub ・・・コマンドラインやcronから実行可能なPythonファイル(詳細は別記、拡張子なし)
    └ modules/
       └ ****.py ・・・unyohubから呼び出される各種処理の本体となるPythonファイル
+└ integration/
+   └ integration_common.php ・・・外部アプリ連携用ページ共通関数等
+   └ login.php ・・・外部アプリ連携用ログインページ
+   └ succeeded.php ・・・外部アプリ連携用の各種処理完了メッセージ表示ページ
+   └ ****.php ・・・外部アプリ連携用ページ(詳細は別記)
+   └ integration_funcs.js ・・・外部アプリ連携用ページスクリプト
+   └ integration_styles.css ・・・外部アプリ連携用ページスタイルシート
 └ service_worker.php ・・・サービスワーカースクリプトを出力するPHPファイル
-└ manifest.json ・・・PWAマニフェスト
+└ manifest.php ・・・PWAマニフェスト
 └ version.php ・・・アプリ本体のバージョン番号等を記載するPHPファイル
 └ sitemap.php ・・・XML形式のサイトマップを表示するPHPファイル
 └ robots.txt ・・・検索エンジンのクローラーに対する指示ファイル
