@@ -1,0 +1,59 @@
+@charset "utf-8";
+
+* {
+    font-family: "Noto Sans CJK JP", "Noto Sans JP", "Hiragino Kaku Gothic ProN", sans-serif;
+    
+    outline: 0 !important;
+    
+    cursor: default;
+    
+    touch-action: manipulation;
+}
+
+html, body {
+    position: relative;
+    
+    height: 100%;
+    margin: 0;
+    
+    color: #333333;
+    
+    overscroll-behavior-y: none;
+}
+
+body {
+    background-color: #f7f7f7;
+}
+
+article {
+    width: min(460px, calc(100% - 40px));
+    
+    margin: 10px auto;
+    
+    padding: 9px;
+    
+    border: 1px solid #dddddd;
+    
+    background-color: #ffffff;
+}
+
+*[onclick], a, :is(*[onclick], a) *, button, label {
+    cursor: pointer;
+    
+    -webkit-tap-highlight-color: rgba(153, 153, 153, 0.2);
+}
+
+*[onclick]:hover, *[onclick]:hover *, a:hover, a:hover *, button:hover, label:hover {
+    text-decoration: none !important;
+}
+
+input, textarea {
+    cursor: text;
+}
+
+footer {
+    line-height: 40px;
+    font-size: 14px;
+    color: #cccccc;
+    text-align: center;
+}
