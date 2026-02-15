@@ -25,12 +25,12 @@ function print_header ($title = "", $load_captcha_js = FALSE) {
         <title>{$title}</title>
         <link rel="stylesheet" href="/integration/integration_styles.css?v={$version}">
         <link rel="shortcut icon" href="/favicon.ico">
-        <script src="/integration/integration_funcs.js?v={$version}"></script>
+        <script src="/integration/integration_funcs.js?v={$version}" defer="defer"></script>
     
     EOM;
     
     if ($load_captcha_js) {
-        print "    <script src=\"/libs/zizai_captcha/captcha.js\"></script>\n";
+        print "    <script src=\"/libs/zizai_captcha/captcha.js\" async=\"async\"></script>\n";
     }
     
     print <<< EOM
@@ -45,6 +45,11 @@ function print_footer () {
     
     print "    <footer><b>".htmlspecialchars($main_config["instance_name"])."</b> v".UNYOHUB_VERSION."</footer>\n";
     print <<< EOM
+        <div id="popup_screen">
+            <div id="popup_screen_blank_area" onclick="close_square_popup();"></div>
+        </div>
+        <div id="wait_screen"></div>
+        <div id="message_area"></div>
     </body>
     </html>
     EOM;

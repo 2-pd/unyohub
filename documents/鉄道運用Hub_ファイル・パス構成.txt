@@ -98,7 +98,6 @@ _/_/_/_/ ファイル構成 _/_/_/_/
       └ ****.py ・・・unyohubから呼び出される各種処理の本体となるPythonファイル
 └ integration/
    └ integration_common.php ・・・外部アプリ連携用ページ共通関数等
-   └ login.php ・・・外部アプリ連携用ログインページ
    └ succeeded.php ・・・外部アプリ連携用の各種処理完了メッセージ表示ページ
    └ ****.php ・・・外部アプリ連携用ページ(詳細は別記)
    └ integration_funcs.js ・・・外部アプリ連携用ページスクリプト
