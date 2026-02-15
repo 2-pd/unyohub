@@ -23,8 +23,9 @@ function print_header ($title = "", $load_captcha_js = FALSE) {
         <meta name="viewport" content="width=device-width,initial-scale=1,interactive-widget=resizes-content">
         <meta name="robots" content="noindex">
         <title>{$title}</title>
-        <link rel="stylesheet" href="integration_styles.css?v={$version}">
+        <link rel="stylesheet" href="/integration/integration_styles.css?v={$version}">
         <link rel="shortcut icon" href="/favicon.ico">
+        <script src="/integration/integration_funcs.js?v={$version}"></script>
     
     EOM;
     

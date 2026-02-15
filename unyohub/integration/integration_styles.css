@@ -23,12 +23,24 @@ html, body {
 
 body {
     background-color: #f7f7f7;
+    
+    height: calc(100% - 20px);
+    
+    padding-top: 10px;
+}
+
+h1 {
+    margin: 0;
+    
+    line-height: 50px;
+    font-size: 20px;
+    text-align: center;
 }
 
 article {
     width: min(460px, calc(100% - 40px));
     
-    margin: 10px auto;
+    margin: 0 auto 10px auto;
     
     padding: 9px;
     
@@ -52,7 +64,7 @@ input, textarea {
 }
 
 footer {
-    line-height: 40px;
+    line-height: 50px;
     font-size: 14px;
     color: #cccccc;
     text-align: center;
