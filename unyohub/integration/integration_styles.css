@@ -49,6 +49,16 @@ article {
     background-color: #ffffff;
 }
 
+h2 {
+    margin: 15px 0 10px 0;
+    
+    border-bottom: 2px solid #dddddd;
+    
+    line-height: 30px;
+    font-size: 18px;
+    text-align: center;
+}
+
 h4 {
     margin: 15px 0 10px 0;
 }
@@ -77,10 +87,6 @@ button {
 
 a {
     color: #999999;
-    
-    .dark_mode & {
-        color: #cccccc;
-    }
 }
 
 #login_status {
@@ -202,6 +208,20 @@ input[type="radio"] {
     overflow: hidden;
 }
 
+.informational_text, .warning_text {
+    max-width: 480px;
+    
+    margin: 10px auto;
+    padding: 0 10px 10px 15px;
+    
+    color: #666666;
+    text-align: left;
+}
+
+.warning_text {
+    color: #ee3333 !important;
+}
+
 footer {
     line-height: 50px;
     font-size: 14px;
@@ -263,14 +283,6 @@ footer {
     
     text-align: center;
     
-    .dark_mode & {
-        background-color: #666666;
-        
-        .operation_data_detail button {
-            background-color: rgba(102, 102, 102, 0.85) !important;
-        }
-    }
-    
     input {
         display: block;
         
@@ -287,12 +299,6 @@ footer {
     
     button {
         line-height: 22px;
-        
-        .dark_mode & {
-            background-color: rgba(102, 102, 102, 0.85);
-            
-            color: #ffffff;
-        }
     }
     
     .popup_close_button {
@@ -349,10 +355,6 @@ footer {
     
     background-size: 30px;
     background-color: rgba(255, 255, 255, 0.9);
-    
-    .dark_mode & {
-        background-color: rgba(68, 68, 68, 0.85);
-    }
 }
 
 #popup_background, #popup_screen, #wait_screen {
@@ -406,17 +408,9 @@ footer {
         
         animation: fade_in_out 10s ease-out;
         
-        .dark_mode & {
-            background-color: #666666;
-        }
-        
         &.error_message {
             background-image: url(data:image/webp;base64,UklGRkgCAABXRUJQVlA4TDsCAAAvJ8AJEN/CoJEkRXX4b+BVvH91dCiCQSNJiupAyPu3x7jDoG0kR777SuBRPH90LW5j21aqQS6RRRTAUA7leyrf3fW+u1N48G53eDqxypRM+WMEAMDABgP4QgEAMADwhsLBQaEAihdM81ZeuGoEN41ggrVk+GOtEc0F1yZP7Js8XHR5NElZzO+PFJlOWlKkLcVNt1bV0SQYaXubn/54X/+8Yx4DFnAawVWsoxkJ0RzEGpWuaCLXWuZa+a9fj+/AQi8XBggCwKZRnHPcHc7d3d39Dlv//xCaZNn4AI3ovwO3bSNJsfc+PJNJHiEYVfBOK8KEyodcFuVYHhhFi19aQP3HNUPUni1EPbb45Hzwuw8K/sF/jkdvdWKRnK6+9yLnIIIz8KnPTvMeRLL6sjJGe2kDMa7juzqk3+AhvtQFqswYJllXKToo9RWdeqd5h47sCLIfuUBn4UP/TB2DQGerb0kSHpi3JMMrnSrPYKYkwVMKXATvCUwxDBqcetLBrQFPLE6kwo1l/gOuDDfNAln9ClkhLRgELbJcDaGK0kqFufTd8G8TBejbIgtSjg02C1rYPLBIM8EaQbZFYZDCNcSRMADRL/Q/TChT4kF7+IrEhmgr0WguYYvkpijU4B1MRozLrp/ol3xojQoGbg0KtBUKWXOz5kMLE20dNAU5H/S8HQqlFHve6Pl16M9vn5pfvA/sxvZBmdwv7/z9Mqmatq+M7L8vcv+ZtU/N2s9/vO+J/q9csoV5YUJ1ParLSKMAAA==);
             background-color: #ffcccc;
-            
-            .dark_mode & {
-                background-color: #996666;
-            }
         }
     }
 }

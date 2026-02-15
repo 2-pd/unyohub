@@ -1,5 +1,4 @@
 <?php
-include "../libs/wakarana/main.php";
 include "../version.php";
 
 $main_config = parse_ini_file("../config/main.ini", FALSE, INI_SCANNER_TYPED);
