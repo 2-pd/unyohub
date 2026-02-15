@@ -9,8 +9,16 @@ function load_railroad_data ($id) {
     
     $railroad_id = basename($id);
     
-    $db_obj = new SQLite3("../data/".$railroad_id."/railroad.db");
+    $db_path = "../data/".$railroad_id."/railroad.db";
+    if (empty($railroad_id) || !file_exists($db_path)) {
+        print "ERROR: 利用可能な路線系統が指定されていません";
+        return FALSE;
+    }
+    
+    $db_obj = new SQLite3($db_path);
     $db_obj->busyTimeout(5000);
+    
+    return TRUE;
 }
 
 $moderation_db_obj = NULL;
@@ -115,8 +123,8 @@ function get_operation_info ($ts, $operation_number) {
     $operation_data = $db_obj->querySingle("SELECT * FROM `unyohub_operations` WHERE `diagram_revision` = '".$diagram_revision."' AND `diagram_id` = '".$diagram_id."' AND `operation_number` = '".$db_obj->escapeString($operation_number)."'", TRUE);
     
     if (empty($operation_data)) {
-        print "ERROR: 運用番号が不正です";
-        exit;
+        print "ERROR: 正しい運用番号ではありません";
+        return NULL;
     }
     
     return $operation_data;
@@ -422,6 +430,10 @@ function revoke_post ($operation_date_ts, $operation_number, $assign_order, $pos
     update_diagram_revision($operation_date_ts);
     
     $operation_data = get_operation_info($operation_date_ts, $operation_number);
+    
+    if (empty($operation_data)) {
+        exit;
+    }
     
     $posted_datetime = date("Y-m-d H:i:s");
     

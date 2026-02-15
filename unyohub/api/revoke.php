@@ -31,7 +31,9 @@ if (is_object($user)) {
     exit;
 }
 
-load_railroad_data($_POST["railroad_id"]);
+if (!load_railroad_data($_POST["railroad_id"])) {
+    exit;
+}
 
 $ts = strtotime($_POST["date"]);
 
