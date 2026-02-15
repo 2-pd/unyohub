@@ -45,7 +45,7 @@ function print_header ($title = "", $noindex = TRUE, $load_captcha_js = FALSE, $
     EOM;
     
     if ($show_close_button) {
-        print "    <a href=\"/\" class=\"popup_close_button\" onclick=\"event.preventDefault(); window.close();\">".$instance_name."</a>\n";
+        print "    <a href=\"/\" class=\"popup_close_button\" onclick=\"event.preventDefault(); ".(empty($_GET["is_child_page"]) ? "window.close();" : "window.parent.close_child_page();")."\">".$instance_name."</a>\n";
     }
 }
 

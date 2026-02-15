@@ -77,6 +77,19 @@ function delete_mes (box_elm) {
 }
 
 
+function open_child_page (url) {
+    var iframe_elm = document.createElement("iframe");
+    
+    iframe_elm.src = url;
+    
+    document.getElementsByTagName("body")[0].appendChild(iframe_elm);
+}
+
+function close_child_page () {
+    document.getElementsByTagName("iframe")[0].remove();
+}
+
+
 var screen_elm = document.getElementById("popup_screen");
 var wait_screen_elm = document.getElementById("wait_screen");
 
@@ -151,7 +164,7 @@ function show_login_form (callback_func) {
     buf += "<input type='text' id='login_user_id' autocomplete='username'>";
     buf += "<h4>パスワード</h4>";
     buf += "<input type='password' id='login_password' autocomplete='current-password'>";
-    buf += "<div class='link_block'><a href='/user/send_password_reset_email.php' target='_blank' rel='opener'>パスワードを忘れた場合</a></div>";
+    buf += "<div class='link_block'><a href='javascript:void(0);' onclick='open_child_page(\"/user/send_password_reset_email.php?is_child_page=yes\");'>パスワードを忘れた場合</a></div>";
     buf += "<button type='button' class='wide_button' onclick='challenge_login();'>ログイン</button>";
     
     popup_inner_elm.innerHTML = buf;
