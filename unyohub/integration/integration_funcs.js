@@ -141,6 +141,21 @@ function close_wait_screen () {
 }
 
 
+function scroll_textarea_background (textarea_elm, background_elm) {
+    background_elm.scrollTop = textarea_elm.scrollTop;
+}
+
+function update_textarea_background (textarea_elm, background_elm, character_limit) {
+    const lf_regexp = /\n/g;
+    
+    var comment_text = textarea_elm.value;
+    
+    background_elm.innerHTML = comment_text.length >= character_limit ? escape_html(comment_text.substring(0, character_limit)).replace(lf_regexp, "<br>") + "<span class='textarea_background_highlight'>" + escape_html(comment_text.substring(character_limit)).replace(lf_regexp, "<br>") + "</span>" : escape_html(comment_text).replace(lf_regexp, "<br>");
+    
+    scroll_textarea_background(textarea_elm, background_elm);
+}
+
+
 function check_logged_in (logged_in_callback, not_logged_in_callback, on_error_callback) {
     ajax_post("check_logged_in.php", null, function (response) {
         if (response !== false) {
