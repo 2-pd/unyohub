@@ -22,7 +22,7 @@ if (!load_railroad_data($railroad_id)) {
 $railroad_info = json_decode(file_get_contents("../data/".$railroad_id."/railroad_info.json"), TRUE);
 
 
-$ts = strtotime($_GET["date"]);
+$ts = convert_date_to_timestamp($_GET["date"]);
 
 if ($ts === FALSE) {
     print "ERROR: 日付が不正です";
