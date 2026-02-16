@@ -68,6 +68,12 @@ if (!is_null($operation_data["starting_time"])) {
 } else {
     $starting_time_ts = $ts;
 }
+
+
+$assign_order_maxima = $db_obj->querySingle("SELECT `assign_order` FROM `unyohub_data_caches` WHERE `operation_date` = '".$db_obj->escapeString($_GET["date"])."' AND `operation_number` = '".$db_obj->escapeString($_GET["operation_number"])."' ORDER BY `assign_order` DESC LIMIT 1");
+if (empty($assign_order_maxima)) {
+    $assign_order_maxima = 0;
+}
 ?>
         <div id="login_status">サーバに接続しています...</div>
         <div id="form_area">
@@ -85,13 +91,11 @@ $alias_of_forward_direction = htmlspecialchars($railroad_info["alias_of_forward_
             <input type="text" id="operation_data_formation" autocomplete="off" oninput="suggest_formation(formation_data, this.value);" onblur="clear_formation_suggestion();"><div class="suggestion_area"><div id="formation_suggestion"></div></div>
             <div class="informational_text">複数の編成が連結している場合は、<?php print $alias_of_forward_direction; ?>の編成から順に「+」で区切って入力してください。<br>不明な編成には「不明」、運休情報は「運休」を入力可能です。</div>
             
-            <input type="checkbox" id="operation_data_details"<?php if ($main_config["require_comments_on_speculative_posts"] && $ts_now < $starting_time_ts) { print " checked='checked'"; } ?>><label for="operation_data_details" class="drop_down">詳細情報</label><div>
+            <input type="checkbox" id="operation_data_details"<?php if ($assign_order_maxima >= 1 || ($main_config["require_comments_on_speculative_posts"] && $ts_now < $starting_time_ts)) { print " checked='checked'"; } ?>><label for="operation_data_details" class="drop_down">詳細情報</label><div>
                 <h3>情報の種類</h3>
                 <div class="radio_area"><input type="radio" name="operation_data_type" id="operation_data_type_normal" checked="checked"><label for="operation_data_type_normal">通常・訂正の情報</label><input type="radio" name="operation_data_type" id="operation_data_type_reassign"><label for="operation_data_type_reassign">新しい差し替え情報</label></div>
 <?php
-$assign_order_maxima = $db_obj->querySingle("SELECT `assign_order` FROM `unyohub_data_caches` WHERE `operation_date` = '".$db_obj->escapeString($_GET["date"])."' AND `operation_number` = '".$db_obj->escapeString($_GET["operation_number"])."' ORDER BY `assign_order` DESC LIMIT 1");
-
-if (!empty($assign_order_maxima)) {
+if ($assign_order_maxima >= 1) {
     print "                <div class=\"warning_text\">既にこの運用に対して投稿されている情報と同じ編成を投稿する場合や、既に投稿されている運用情報が見間違いであると思われる場合に正しい編成の情報で上書きをする場合は「通常・訂正の情報」を、<br>既に投稿されている編成がダイヤ乱れや車両トラブルにより別の編成に取り替えられたことを最初に報告する場合は「新しい差し替え情報」を選択してください。</div>\n";
 }
 ?>
@@ -137,7 +141,7 @@ if ($main_config["require_comments_on_speculative_posts"] && $ts_now < $starting
             
             <a href="javascript:void(0);" onclick="open_child_page('/user/rules.php?railroad_id=<?php print addslashes($railroad_id); ?>&is_child_page=yes');" class="bottom_link"><?php print htmlspecialchars($railroad_info["railroad_name"]); ?>の投稿ルール</a>
             
-            <button type="button" class="wide_button" onclick="check_post_operation_data();">投稿する</button>
+            <button type="button" class="wide_button" onclick="submit_operation_data();">投稿する</button>
         </div>
         <div id="require_login_text" class="warning_text" style="display: none;">情報投稿にはログインが必要です。<br>ユーザーアカウントをまだ作成されていない場合は新規登録してください。</div>
     </article>
@@ -150,6 +154,8 @@ if (!$main_config["allow_guest_user"]) {
     print "            document.getElementById(\"require_login_text\").style.display = \"none\";\n";
 }
 ?>
+            
+            get_one_time_token();
         }
         
         function on_guest_mode () {
@@ -160,24 +166,6 @@ if (!$main_config["allow_guest_user"]) {
     print "            document.getElementById(\"require_login_text\").style.display = \"block\";\n";
 }
 ?>
-        }
-        
-        function switch_identify_method (direct) {
-            var train_number_data_elm = document.getElementById("train_number_data");
-            var comment_guide_elm = document.getElementById("comment_guide");
-            var quote_guide_elm = document.getElementById("quote_guide");
-            
-            if (direct) {
-                train_number_data_elm.style.display = "block";
-                comment_guide_elm.style.display = "block";
-                quote_guide_elm.style.display = "none";
-            } else {
-                train_number_data_elm.style.display = "none";
-                comment_guide_elm.style.display = "none";
-                quote_guide_elm.style.display = "block";
-                
-                document.getElementById("operation_data_details").checked = true;
-            }
         }
         
 <?php
@@ -194,9 +182,42 @@ while ($formation_info = $formation_info_r->fetchArray(SQLITE3_ASSOC)) {
 }
 
 print "        var formation_data = ".json_encode($formation_data, JSON_UNESCAPED_UNICODE).";\n";
+print "        var assign_order_maxima = ".$assign_order_maxima.";\n";
 print "        var comment_character_limit = ".$main_config["comment_character_limit"].";\n";
-print "        var assign_order = ".(empty($assign_order_maxima) ? 1 : $assign_order_maxima + 1).";\n";
 ?>
+        
+        function submit_operation_data () {
+            if (assign_order_maxima === 0) {
+                if (document.getElementById("operation_data_type_reassign").checked) {
+                    mes("他の情報が投稿されていない運用に差し替え情報を投稿することはできません", true);
+                    
+                    return;
+                }
+                
+                var assign_order = 1;
+            } else {
+                var assign_order = document.getElementById("operation_data_type_reassign").checked ? assign_order_maxima + 1 : assign_order_maxima;
+            }
+            
+            var comment_text = document.getElementById("operation_data_comment").value;
+            if (comment_text.length > comment_character_limit) {
+                mes("運用補足情報が" + comment_character_limit + "文字を超過しているため投稿できません", true);
+                
+                return;
+            }
+            
+            if (document.getElementById("identify_method_quote").checked) {
+                var train_number = null;
+                var is_quotation = true;
+            } else {
+                var train_number = document.getElementById("train_number_select").value;
+                var is_quotation = false;
+            }
+            
+            var url_obj = new URL(location.href);
+            
+            check_post_operation_data (url_obj.searchParams.get("railroad_id"), url_obj.searchParams.get("date"), url_obj.searchParams.get("operation_number"), assign_order, document.getElementById("operation_data_formation").value, train_number, is_quotation, comment_text);
+        }
         
         window.addEventListener("load", function () { check_logged_in(update_user_data, on_guest_mode, function () {  document.getElementById("login_status").innerHTML = "ログイン状態の確認に失敗しました"; }); });
     </script>

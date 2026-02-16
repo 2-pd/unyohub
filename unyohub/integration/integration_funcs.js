@@ -242,16 +242,39 @@ function clear_formation_suggestion () {
 }
 
 
+function switch_identify_method (direct) {
+    var train_number_data_elm = document.getElementById("train_number_data");
+    var comment_guide_elm = document.getElementById("comment_guide");
+    var quote_guide_elm = document.getElementById("quote_guide");
+    
+    if (direct) {
+        train_number_data_elm.style.display = "block";
+        comment_guide_elm.style.display = "block";
+        quote_guide_elm.style.display = "none";
+    } else {
+        train_number_data_elm.style.display = "none";
+        comment_guide_elm.style.display = "none";
+        quote_guide_elm.style.display = "block";
+        
+        document.getElementById("operation_data_details").checked = true;
+    }
+}
+
+
+var one_time_token = false;
 
 function check_logged_in (logged_in_callback, not_logged_in_callback, on_error_callback) {
     ajax_post("check_logged_in.php", null, function (response) {
         if (response !== false) {
             if (response !== "NOT_LOGGED_IN") {
+                one_time_token = null;
                 logged_in_callback(JSON.parse(response));
             } else {
+                one_time_token = false;
                 not_logged_in_callback();
             }
         } else {
+            one_time_token = false;
             on_error_callback();
         }
     });
@@ -286,6 +309,8 @@ function challenge_login () {
         if (response !== false) {
             mes("ログインしました");
             
+            one_time_token = null;
+            
             login_callback_func(JSON.parse(response));
             close_square_popup();
         }
@@ -302,8 +327,62 @@ function user_logout (callback_func) {
             if (response !== false) {
                 mes("ログアウトしました");
                 
+                one_time_token = false;
+                
                 callback_func();
             }
         });
     }
+}
+
+function get_one_time_token () {
+    if (one_time_token === false) {
+        mes("ログインしていないユーザーがワンタイムトークンを要求することはできません", ture);
+        return false;
+    }
+    
+    ajax_post("one_time_token.php", null, function (response) {
+        if (response !== false) {
+            var data = JSON.parse(response);
+            
+            one_time_token = data["token"];
+        }
+    });
+}
+
+
+function check_post_operation_data (railroad_id, date, operation_number, assign_order, formations, train_number, is_quotation, comment_text) {
+    if (one_time_token === false) {
+        
+    } else {
+        post_operation_data(railroad_id, date, operation_number, assign_order, formations, train_number, is_quotation, comment_text);
+    }
+}
+
+function post_operation_data (railroad_id, date, operation_number, assign_order, formations, train_number, is_quotation, comment_text) {
+    if (one_time_token === null) {
+        mes("内部処理が完了していないため、数秒待ってから再送信してください", true);
+        
+        return;
+    }
+    
+    open_wait_screen();
+    
+    var send_data = "railroad_id=" + escape_form_data(railroad_id) + "&date=" + escape_form_data(date) + "&operation_number=" + escape_form_data(operation_number) + "&assign_order=" + assign_order + "&formations=" + escape_form_data(formations) + "&comment=" + escape_form_data(comment_text) + "&one_time_token=" + escape_form_data(one_time_token);
+    
+    if (is_quotation) {
+        send_data += "&is_quotation=YES";
+    } else {
+        send_data += "&train_number=" + escape_form_data(train_number);
+    }
+    
+    ajax_post("post.php", send_data, function (response) {
+        if (response !== false) {
+            location.href = "/integration/succeeded.php";
+        } else {
+            close_wait_screen();
+            
+            get_one_time_token();
+        }
+    });
 }

@@ -37,7 +37,7 @@ function convert_date_to_timestamp ($date_str) {
         return FALSE;
     }
     
-    return strtotime($_GET["date"]);
+    return strtotime($date_str);
 }
 
 $diagram_revisions = NULL;
