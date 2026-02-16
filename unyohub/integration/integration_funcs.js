@@ -8,6 +8,16 @@ function escape_form_data (data) {
     return encodeURIComponent(data).replace(/%20/g, "+");
 }
 
+function add_slashes (text) {
+    return text.replace(/\\/g, "\\\\").replace(/'/g, "\\'").replace(/"/g, "\\\"");
+}
+
+function str_to_halfwidth (str) {
+    return str.replace(/[Ａ-Ｚａ-ｚ０-９]/g, function (char) {
+        return String.fromCharCode(char.charCodeAt(0) - 0xFEE0);
+    });
+}
+
 
 function ajax_post (end_point_name, query_str, callback_func, timeout = 30) {
     var ajax_request = new XMLHttpRequest();
@@ -154,6 +164,83 @@ function update_textarea_background (textarea_elm, background_elm, character_lim
     
     scroll_textarea_background(textarea_elm, background_elm);
 }
+
+
+function suggest_formation (formation_data, formations_text) {
+    var formations_splitted = formations_text.split("+");
+    var formation_text = str_to_halfwidth(formations_splitted[formations_splitted.length - 1]).toUpperCase();
+    
+    var buf = "";
+    
+    if (formation_text.length >= 1) {
+        var formation_names = Object.keys(formation_data).toSorted();
+        var suggestion_list = formation_names.filter(function (formation_name) {
+            return formation_name.toUpperCase().startsWith(formation_text);
+        });
+        
+        for (var suggestion of suggestion_list) {
+            buf += "<button type='button' onclick='complete_formation(\"";
+            
+            if (formation_data[suggestion]["semifixed_formation"] !== null) {
+                buf += add_slashes(formation_data[suggestion]["semifixed_formation"]) + "\");'>";
+                
+                var suggestion_formations = formation_data[suggestion]["semifixed_formation"].split("+");
+                for (var cnt = 0; cnt < suggestion_formations.length; cnt++) {
+                    buf += (cnt >= 1 ? " + " : "") + (suggestion_formations[cnt] === suggestion ? "<b>" : "") + escape_html(suggestion_formations[cnt]) + (suggestion_formations[cnt] === suggestion ? "</b>" : "");
+                }
+                
+                if (formation_data[suggestion]["unavailable"]) {
+                    buf += "<small class='warning_sentence'>(離脱中)</small>";
+                } else {
+                    buf += "<small>(半固定)</small>";
+                }
+            } else {
+                buf += add_slashes(suggestion) + "\");'>";
+                
+                if (formation_data[suggestion]["unavailable"]) {
+                    buf += escape_html(suggestion) + "<small class='warning_sentence'>(運用離脱中)</small>";
+                } else {
+                    buf += "<b>" + escape_html(suggestion) + "</b>";
+                    if (formation_data[suggestion]["caption"] !== null && formation_data[suggestion]["caption"].length >= 1) {
+                        buf += "<small>(" + escape_html(formation_data[suggestion]["caption"]) + ")</small>";
+                    }
+                }
+            }
+            
+            buf += "</button>";
+        }
+    }
+    
+    document.getElementById("formation_suggestion").innerHTML = buf;
+}
+
+function complete_formation (formation_text) {
+    var operation_data_formation_elm = document.getElementById("operation_data_formation");
+    
+    if (formation_text !== "+") {
+        var formations_splitted = operation_data_formation_elm.value.split("+");
+        formations_splitted[formations_splitted.length - 1] = formation_text;
+        
+        operation_data_formation_elm.value = formations_splitted.join("+");
+        
+        setTimeout(function () {
+            document.getElementById("formation_suggestion").innerHTML = "<button type='button' onclick='complete_formation(\"+\");'>＋</button>";
+        }, 200);
+    } else {
+        operation_data_formation_elm.value += "+";
+    }
+    
+    if (window.navigator.userAgent.includes("Chrome") || !window.navigator.userAgent.includes("Safari")) {
+        operation_data_formation_elm.focus();
+    }
+}
+
+function clear_formation_suggestion () {
+    setTimeout(function () {
+        document.getElementById("formation_suggestion").innerHTML = "";
+    }, 100);
+}
+
 
 
 function check_logged_in (logged_in_callback, not_logged_in_callback, on_error_callback) {

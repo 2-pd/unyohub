@@ -51,9 +51,9 @@ if (empty($operation_data)) {
 }
 
 if (!is_null($operation_data["starting_time"])) {
-    $starting_time_ts = $ts;
-} else {
     $starting_time_ts = $ts + (intval(substr($operation_data["starting_time"], 0, 2)) * 3600) + (intval(substr($operation_data["starting_time"], 3)) * 60);
+} else {
+    $starting_time_ts = $ts;
 }
 ?>
         <div id="login_status">サーバに接続しています...</div>
@@ -69,10 +69,10 @@ $alias_of_forward_direction = htmlspecialchars($railroad_info["alias_of_forward_
             
             <h3>編成名または車両形式</h3>
             <div class="informational_text"><b>◀ <?php print $alias_of_forward_direction; ?></b></div>
-            <input type="text" id="operation_data_formation" autocomplete="off" oninput="suggest_formation(this.value);" onblur="clear_formation_suggestion();"><div class="suggestion_area"><div id="formation_suggestion"></div></div>
+            <input type="text" id="operation_data_formation" autocomplete="off" oninput="suggest_formation(formation_data, this.value);" onblur="clear_formation_suggestion();"><div class="suggestion_area"><div id="formation_suggestion"></div></div>
             <div class="informational_text">複数の編成が連結している場合は、<?php print $alias_of_forward_direction; ?>の編成から順に「+」で区切って入力してください。<br>不明な編成には「不明」、運休情報は「運休」を入力可能です。</div>
             
-            <input type="checkbox" id="operation_data_details"<?php if ($main_config["require_comments_on_speculative_posts"] && $ts_now > $starting_time_ts) { print " checked='checked'"; } ?>><label for="operation_data_details" class="drop_down">詳細情報</label><div>
+            <input type="checkbox" id="operation_data_details"<?php if ($main_config["require_comments_on_speculative_posts"] && $ts_now < $starting_time_ts) { print " checked='checked'"; } ?>><label for="operation_data_details" class="drop_down">詳細情報</label><div>
                 <h3>情報の種類</h3>
                 <div class="radio_area"><input type="radio" name="operation_data_type" id="operation_data_type_normal" checked="checked"><label for="operation_data_type_normal">通常・訂正の情報</label><input type="radio" name="operation_data_type" id="operation_data_type_reassign"><label for="operation_data_type_reassign">新しい差し替え情報</label></div>
                 
@@ -81,7 +81,7 @@ $alias_of_forward_direction = htmlspecialchars($railroad_info["alias_of_forward_
                 <h3>運用補足情報</h3>
                 <div class="textarea_wrapper"><div id="operation_data_comment_background"></div><textarea id="operation_data_comment" onscroll="scroll_textarea_background(this, document.getElementById('operation_data_comment_background'));" onkeyup="update_textarea_background(this, document.getElementById('operation_data_comment_background'), <?php print $main_config["comment_character_limit"]; ?>);"></textarea></div>
 <?php
-if ($main_config["require_comments_on_speculative_posts"] && $ts_now > $starting_time_ts) {
+if ($main_config["require_comments_on_speculative_posts"] && $ts_now < $starting_time_ts) {
     print "                <div class=\"warning_text\" id=\"comment_guide\">お手数ですが、この運用に充当される編成を確認した方法を補足情報にご入力ください。</div>\n";
 } else {
     print "                <div class=\"informational_text\" id=\"comment_guide\">差し替え等の特記事項がない場合は省略可能です。</div>\n";
@@ -134,6 +134,22 @@ if (!$main_config["allow_guest_user"]) {
                 document.getElementById("operation_data_details").checked = true;
             }
         }
+        
+<?php
+$formation_data = array();
+
+$series_info_r = $db_obj->query("SELECT `series_title` FROM `unyohub_series_caches` ORDER BY `series_title` ASC");
+while ($series_info = $series_info_r->fetchArray(SQLITE3_ASSOC)) {
+    $formation_data[$series_info["series_title"]] = array("caption" => "", "semifixed_formation" => NULL);
+}
+
+$formation_info_r = $db_obj->query("SELECT `formation_name`, `caption`, `semifixed_formation` FROM `unyohub_formations` WHERE `currently_registered` = 1 ORDER BY `formation_name` ASC");
+while ($formation_info = $formation_info_r->fetchArray(SQLITE3_ASSOC)) {
+    $formation_data[$formation_info["formation_name"]] = array("caption" => $formation_info["caption"], "semifixed_formation" => $formation_info["semifixed_formation"]);
+}
+
+print "        var formation_data = ".json_encode($formation_data, JSON_UNESCAPED_UNICODE).";\n";
+?>
         
         window.addEventListener("load", function () { check_logged_in(update_user_data, on_guest_mode, function () {  document.getElementById("login_status").innerHTML = "ログイン状態の確認に失敗しました"; }); });
     </script>
