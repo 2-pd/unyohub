@@ -1,5 +1,51 @@
 /* 鉄道運用Hub integration_funcs.js */
 
+function bin_to_int (uint8_bin, start, length) {
+    var end = start + length;
+    var byte_start = Math.floor(start / 8);
+    
+    if (end % 8 >= 1) {
+        var bin_int = uint8_bin[byte_start] << 8;
+        if (uint8_bin.length > byte_start + 1) {
+            bin_int += uint8_bin[byte_start + 1];
+        }
+        
+        return bin_int >> (8 - end % 8) & (2**length - 1);
+    } else {
+        return uint8_bin[byte_start] & (2**length - 1);
+    }
+}
+
+function get_guest_id () {
+    var config_json = localStorage.getItem("unyohub_config");
+    
+    if (config_json !== null) {
+        config = JSON.parse(config_json);
+    } else {
+        config = {
+            "unyohub_version" : null,
+            "guest_id" : null
+        };
+    }
+    
+    if (config["guest_id"] === null) {
+        const BASE32_TABLE = ["A", "B", "C", "D", "E", "F", "G", "H", "I", "J", "K", "L", "M", "N", "O", "P", "Q", "R", "S", "T", "U", "V", "W", "X", "Y", "Z", "2", "3", "4", "5", "6", "7"];
+        
+        var random_bytes = crypto.getRandomValues(new Uint8Array(8));
+        var guest_id = "*"
+        for (var cnt = 0; cnt < 12; cnt++) {
+            guest_id += BASE32_TABLE[bin_to_int(random_bytes, cnt * 5, 5)];
+        }
+        
+        config["guest_id"] = guest_id;
+        
+        localStorage.setItem("unyohub_config", JSON.stringify(config));
+    }
+    
+    return config["guest_id"];
+}
+
+
 function escape_html (text) {
     return text.replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;");
 }
@@ -337,7 +383,7 @@ function user_logout (callback_func) {
 
 function get_one_time_token () {
     if (one_time_token === false) {
-        mes("ログインしていないユーザーがワンタイムトークンを要求することはできません", ture);
+        mes("ログインしていないユーザーがワンタイムトークンを要求することはできません", true);
         return false;
     }
     
@@ -351,9 +397,32 @@ function get_one_time_token () {
 }
 
 
+function show_captcha (callback_func) {
+    var popup_inner_elm = open_square_popup("captcha_popup", "画像認証");
+    
+    var buf = "<div id='captcha_info' class='informational_text' style='display: none;'>画像に表示されている文字を入力してください。</div>";
+    buf += "<div id='captcha_area' class='wait_icon'></div>";
+    buf += "<button type='button' id='captcha_submit_button' class='wide_button' style='display: none;'>送信</button>";
+    
+    popup_inner_elm.innerHTML = buf;
+    
+    zizai_captcha_get_html(function (html) {
+        var captcha_submit_button_elm = document.getElementById("captcha_submit_button");
+        
+        document.getElementById("captcha_area").innerHTML = html;
+        document.getElementById("captcha_info").style.display = "block";
+        captcha_submit_button_elm.style.display = "block";
+        
+        captcha_submit_button_elm.onclick = callback_func;
+    }, "#eeeeee");
+}
+
+
 function check_post_operation_data (railroad_id, date, operation_number, assign_order, formations, train_number, is_quotation, comment_text) {
     if (one_time_token === false) {
-        
+        show_captcha(function () {
+            post_operation_data(railroad_id, date, operation_number, assign_order, formations, train_number, is_quotation, comment_text);
+        });
     } else {
         post_operation_data(railroad_id, date, operation_number, assign_order, formations, train_number, is_quotation, comment_text);
     }
@@ -368,7 +437,13 @@ function post_operation_data (railroad_id, date, operation_number, assign_order,
     
     open_wait_screen();
     
-    var send_data = "railroad_id=" + escape_form_data(railroad_id) + "&date=" + escape_form_data(date) + "&operation_number=" + escape_form_data(operation_number) + "&assign_order=" + assign_order + "&formations=" + escape_form_data(formations) + "&comment=" + escape_form_data(comment_text) + "&one_time_token=" + escape_form_data(one_time_token);
+    var send_data = "railroad_id=" + escape_form_data(railroad_id) + "&date=" + escape_form_data(date) + "&operation_number=" + escape_form_data(operation_number) + "&assign_order=" + assign_order + "&formations=" + escape_form_data(formations) + "&comment=" + escape_form_data(comment_text);
+    
+    if (one_time_token !== false) {
+        send_data += "&one_time_token=" + escape_form_data(one_time_token);
+    } else {
+        send_data += "&guest_id=" + escape_form_data(get_guest_id()) + "&zizai_captcha_id=" + escape_form_data(document.getElementById("zizai_captcha_id").value) + "&zizai_captcha_characters=" + escape_form_data(document.getElementById("zizai_captcha_characters").value);
+    }
     
     if (is_quotation) {
         send_data += "&is_quotation=YES";
@@ -382,7 +457,11 @@ function post_operation_data (railroad_id, date, operation_number, assign_order,
         } else {
             close_wait_screen();
             
-            get_one_time_token();
+            if (one_time_token !== false) {
+                get_one_time_token();
+            } else {
+                zizai_captcha_reload_image("zizai_captcha_image", "zizai_captcha_id");
+            }
         }
     });
 }

@@ -2,7 +2,7 @@
 include "integration_common.php";
 include "../api/__operation_data_functions.php";
 
-print_header("運用情報の投稿");
+print_header("運用情報の投稿", TRUE);
 ?>
     <h1>運用情報の投稿</h1>
     <article>
