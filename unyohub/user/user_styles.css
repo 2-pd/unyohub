@@ -341,3 +341,19 @@ input[type="text"], input[type="number"], input[type="password"] {
         transform: rotate(360deg);
     }
 }
+
+iframe {
+    position: fixed;
+    
+    top: 0;
+    left: 0;
+    
+    width: 100vw;
+    height: 100vh;
+    
+    border: none;
+    
+    background-color: #ffffff;
+    
+    z-index: 500;
+}

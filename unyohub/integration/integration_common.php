@@ -1,10 +1,9 @@
 <?php
-include "../libs/wakarana/main.php";
-include "../libs/zizai_captcha/main.php";
+include "../version.php";
 
 $main_config = parse_ini_file("../config/main.ini", FALSE, INI_SCANNER_TYPED);
 
-function print_header ($title = "", $noindex = TRUE, $load_captcha_js = FALSE, $show_close_button = TRUE) {
+function print_header ($title = "", $load_captcha_js = FALSE) {
     global $main_config;
     
     $instance_name = htmlspecialchars($main_config["instance_name"]);
@@ -15,27 +14,22 @@ function print_header ($title = "", $noindex = TRUE, $load_captcha_js = FALSE, $
         $title = htmlspecialchars($title)." | ".$instance_name;
     }
     
+    $version = UNYOHUB_VERSION;
     print <<< EOM
     <html>
     <head lang="ja">
         <meta charset="utf-8">
         <meta name="viewport" content="width=device-width,initial-scale=1,interactive-widget=resizes-content">
-    
-    EOM;
-    
-    if ($noindex) {
-        print "    <meta name=\"robots\" content=\"noindex\">\n";
-    }
-    
-    print <<< EOM
+        <meta name="robots" content="noindex">
         <title>{$title}</title>
-        <link rel="stylesheet" href="user_styles.css">
+        <link rel="stylesheet" href="/integration/integration_styles.css?v={$version}">
         <link rel="shortcut icon" href="/favicon.ico">
+        <script src="/integration/integration_funcs.js?v={$version}" defer="defer"></script>
     
     EOM;
     
     if ($load_captcha_js) {
-        print "    <script src=\"/libs/zizai_captcha/captcha.js\"></script>\n";
+        print "    <script src=\"/libs/zizai_captcha/captcha.js\" async=\"async\"></script>\n";
     }
     
     print <<< EOM
@@ -43,14 +37,18 @@ function print_header ($title = "", $noindex = TRUE, $load_captcha_js = FALSE, $
     <body>
     
     EOM;
-    
-    if ($show_close_button) {
-        print "    <a href=\"/\" class=\"popup_close_button\" onclick=\"event.preventDefault(); ".(empty($_GET["is_child_page"]) ? "window.close();" : "window.parent.close_child_page();")."\">".$instance_name."</a>\n";
-    }
 }
 
 function print_footer () {
+    global $main_config;
+    
+    print "    <footer><b>".htmlspecialchars($main_config["instance_name"])."</b> v".UNYOHUB_VERSION."</footer>\n";
     print <<< EOM
+        <div id="popup_screen">
+            <div id="popup_screen_blank_area" onclick="close_square_popup();"></div>
+        </div>
+        <div id="wait_screen"></div>
+        <div id="message_area"></div>
     </body>
     </html>
     EOM;

@@ -1,7 +1,7 @@
 <?php
 include "user_common.php";
 
-if (isset($_POST["user_id"], $_POST["password"], $_POST["user_name"], $_POST["zizai_captcha_id"], $_POST["zizai_captcha_characters"], $_POST["accept_rules"]) && $_POST["accept_rules"] === "YES") {
+if (isset($_POST["user_id"], $_POST["password"], $_POST["user_name"], $_POST["zizai_captcha_id"], $_POST["zizai_captcha_characters"], $_POST["i_accept_rules"]) && $_POST["i_accept_rules"] === "YES") {
     $wakarana = new wakarana("../config");
     $zizai_captcha = new zizai_captcha("../../config/zizai_captcha_config.json");
     
@@ -58,10 +58,16 @@ if (isset($_POST["user_id"], $_POST["password"], $_POST["user_name"], $_POST["zi
             
             print "<script>\n";
             print "var user_data = ".json_encode($data, JSON_UNESCAPED_UNICODE).";\n";
-            print "window.opener.update_user_data(user_data);\n";
-            print "window.opener.popup_close(true);\n";
-            print "window.opener.mes('ユーザー登録が完了しました');\n";
-            print "window.close();\n";
+            if (empty($_GET["is_child_page"])) {
+                print "window.opener.update_user_data(user_data);\n";
+                print "window.opener.popup_close(true);\n";
+                print "window.opener.mes('ユーザー登録が完了しました');\n";
+                print "window.close();\n";
+            } else {
+                print "window.parent.update_user_data(user_data);\n";
+                print "window.parent.mes('ユーザー登録が完了しました');\n";
+                print "window.parent.close_child_page();\n";
+            }
             print "</script>\n";
             print "ユーザー登録が完了しました。\n";
             
@@ -88,6 +94,25 @@ print_header("新規ユーザー登録", TRUE, TRUE);
 
 ?>
     <script>
+<?php
+if (!empty($_GET["is_child_page"])) {
+    print <<<EOM
+            function open_child_page (url) {
+                var iframe_elm = document.createElement("iframe");
+                
+                iframe_elm.src = url;
+                
+                document.getElementsByTagName("body")[0].appendChild(iframe_elm);
+            }
+
+            function close_child_page () {
+                document.getElementsByTagName("iframe")[0].remove();
+            }
+            
+    
+    EOM;
+}
+?>
         function accept_rules () {
             document.getElementById("accept_rules_input").value = "YES";
             submit_form();
@@ -200,8 +225,8 @@ print_header("新規ユーザー登録", TRUE, TRUE);
             ajax_request.send("email_address=" + encodeURIComponent(document.getElementById("email_address").value).replace(/%20/g, "+"));
         }
     </script>
-    <form action="sign_up.php" method="post" id="sign_up_form" onsubmit="return false;">
-        <input type="hidden" name="accept_rules" id="accept_rules_input" value="<?php if (!empty($_POST["accept_rules"]) && $_POST["accept_rules"] === "YES") { print "YES"; } ?>">
+    <form action="sign_up.php<?php if (!empty($_GET["is_child_page"])) { print "?is_child_page=yes"; } ?>" method="post" id="sign_up_form" onsubmit="return false;">
+        <input type="hidden" name="i_accept_rules" id="accept_rules_input" value="<?php if (isset($_POST["i_accept_rules"]) && $_POST["i_accept_rules"] === "YES") { print "YES"; } ?>">
         
         <h2>新規ユーザー登録</h2>
         
@@ -216,7 +241,6 @@ if (!empty($error_list)) {
     print "        </div>\n";
 }
 ?>
-        
         <h3>ユーザーID</h3>
         <div class="informational_text">半角英数字とアンダーバーが利用可能です。</div>
         <input type="text" name="user_id" autocomplete="username" value="<?php if (isset($_POST["user_id"])) { print addslashes($_POST["user_id"]); } ?>" onkeyup="check_user_id(this.value);">
@@ -263,7 +287,15 @@ if ($main_config["require_email_address"]) {
         <script> zizai_captcha_get_html(function (html) { document.getElementById("zizai_captcha_area").innerHTML = html; }); </script>
         
         <br>
-        <button type="button" id="submit_button" class="wide_button" onclick="<?php print empty($_POST["accept_rules"]) ? "window.open('rules.php?show_accept_button=yes')" : "submit_form()" ?>;">ユーザー登録</button>
+
+<?php
+if (empty($_GET["is_child_page"])) {
+    print "        <button type=\"button\" id=\"submit_button\" class=\"wide_button\" onclick=\"".(empty($_POST["i_accept_rules"]) ? "window.open('/user/rules.php?show_accept_button=yes');" : "submit_form();")."\">ユーザー登録</button>\n";
+} else {
+    print "        <div class=\"informational_text\">ユーザー登録すると<a href=\"javascript:void(0);\" onclick=\"open_child_page('/user/rules.php?is_child_page=yes');\">".htmlspecialchars($main_config["instance_name"])."のルールとポリシー</a>に同意されたものとみなします。</div>\n";
+    print "        <button type=\"button\" id=\"submit_button\" class=\"wide_button\" onclick=\"".(empty($_POST["i_accept_rules"]) ? "if (confirm('".addslashes($main_config["instance_name"])."のルールとポリシーに同意しますか？')) { accept_rules(); }" : "submit_form();")."\">ユーザー登録</button>\n";
+}
+?>
     </form>
 <?php
 
