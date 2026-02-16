@@ -10,6 +10,10 @@
     touch-action: manipulation;
 }
 
+*::-webkit-scrollbar {
+    display: none;
+}
+
 html, body {
     position: relative;
     
@@ -33,7 +37,7 @@ h1 {
     margin: 0;
     
     line-height: 50px;
-    font-size: 20px;
+    font-size: 22px;
     text-align: center;
 }
 
@@ -113,7 +117,7 @@ input, textarea {
     cursor: text;
 }
 
-input[type="text"], input[type="password"] {
+input[type="text"], input[type="password"], select {
     background-color: #ffffff;
     
     border: none;
@@ -302,7 +306,7 @@ input[type="checkbox"]:checked + label.drop_down {
     overflow: hidden;
 }
 
-#operation_data_formation {
+#operation_data_formation, select {
     display: block;
     
     width: calc(100% - 40px);
@@ -358,10 +362,6 @@ input[type="checkbox"]:checked + label.drop_down {
                 line-height: 40px;
                 color: #999999;
             }
-        }
-        
-        &::-webkit-scrollbar {
-            display: none;
         }
         
         button {
@@ -431,10 +431,6 @@ input[type="checkbox"]:checked + label.drop_down {
         overflow-y: scroll;
         
         resize: none;
-        
-        &::-webkit-scrollbar {
-            display: none;
-        }
     }
     
     textarea {
@@ -458,7 +454,7 @@ input[type="checkbox"]:checked + label.drop_down {
     text-align: left;
 }
 
-.warning_text {
+.warning_text, .warning_sentence {
     color: #ee3333 !important;
 }
 

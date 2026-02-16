@@ -114,7 +114,7 @@ function get_diagram_id ($ts) {
     }
 }
 
-function get_operation_info ($ts, $operation_number) {
+function get_operation_info ($ts, $operation_number, $require_trains = FALSE) {
     global $db_obj;
     global $diagram_revision;
     
@@ -125,6 +125,17 @@ function get_operation_info ($ts, $operation_number) {
     if (empty($operation_data)) {
         print "ERROR: 正しい運用番号ではありません";
         return NULL;
+    }
+    
+    if ($require_trains) {
+        $train_info_r = $db_obj->query("SELECT `train_number`, `first_departure_time`, `final_arrival_time` FROM `unyohub_trains` WHERE `diagram_revision` = '".$diagram_revision."' AND `diagram_id` = '".$diagram_id."' AND `operation_number` = '".$db_obj->escapeString($operation_number)."' ORDER BY `first_departure_time` ASC");
+        
+        $trains = array();
+        while ($train_info = $train_info_r->fetchArray(SQLITE3_ASSOC)) {
+            $trains[] = array("train_number" => $train_info["train_number"], "first_departure_time" => $train_info["first_departure_time"], "final_arrival_time" => $train_info["final_arrival_time"]);
+        }
+        
+        $operation_data["trains"] = $trains;
     }
     
     return $operation_data;
