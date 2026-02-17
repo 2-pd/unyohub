@@ -567,37 +567,37 @@ var popup_history = [];
 var square_popup_is_open = false;
 
 
-var user_data = null;
+var user_info = null;
 
 var menu_admin_elm = document.getElementById("menu_admin");
 var menu_logged_in_elm = document.getElementById("menu_logged_in");
 var menu_not_logged_in_elm = document.getElementById("menu_not_logged_in");
 
-function update_user_data (user_data_next = null) {
-    user_data = user_data_next;
+function update_user_info (user_info_next = null) {
+    user_info = user_info_next;
     
     menu_admin_elm.style.display = "none";
     
-    if (user_data !== null) {
+    if (user_info !== null) {
         menu_logged_in_elm.style.display = "block";
         menu_not_logged_in_elm.style.display = "none";
         
         var menu_user_name_elm = document.getElementById("menu_user_name");
         menu_user_name_elm.className = "";
         
-        var user_name = user_data["user_name"] !== null ? user_data["user_name"] : "ハンドルネーム未設定";
+        var user_name = user_info["user_name"] !== null ? user_info["user_name"] : "ハンドルネーム未設定";
         
-        if (user_data["is_management_member"]) {
+        if (user_info["is_management_member"]) {
             menu_admin_elm.style.display = "block";
             var honorific = "(管)";
         } else {
-            if (user_data["is_control_panel_user"]) {
+            if (user_info["is_control_panel_user"]) {
                 menu_admin_elm.style.display = "block";
             }
             
             var honorific = "さん";
             
-            if (user_data["is_beginner"]) {
+            if (user_info["is_beginner"]) {
                 menu_user_name_elm.className = "beginner";
             }
         }
@@ -621,9 +621,9 @@ function check_logged_in () {
     ajax_post("check_logged_in.php", null, function (response) {
         if (response !== false) {
             if (response !== "NOT_LOGGED_IN") {
-                update_user_data(JSON.parse(response));
+                update_user_info(JSON.parse(response));
             } else {
-                update_user_data();
+                update_user_info();
             }
         } else if (location.pathname === "/") {
             splash_screen_login_status_elm.innerText = "【!】ログイン状態の確認に失敗しました";
@@ -3877,7 +3877,7 @@ function operation_data_draw (reset_active_tab = false) {
         if (days_before === 1) {
             buf_h2 += "(昨日)";
         } else {
-            if (user_data === null || !user_data["is_control_panel_user"]) {
+            if (user_info === null || !user_info["is_control_panel_user"]) {
                 show_write_operation_data_button = "false";
             }
             
