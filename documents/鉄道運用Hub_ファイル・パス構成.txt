@@ -32,7 +32,8 @@ _/_/_/_/ ファイル構成 _/_/_/_/
    └ announcements.db ・・・お知らせを格納するデータベース
    └ moderation.db ・・・モデレーションログを格納するデータベース
 └ config/
-   └ main.ini ・・・運用観察Hub基本設定ファイル
+   └ app_manifest.json ・・・webアプリマニフェスト設定ファイル
+   └ main.ini ・・・鉄道運用Hub基本設定ファイル
    └ railroads.json ・・・路線系統設定ファイル
    └ rules.txt ・・・ルールとポリシーを記載するテキストファイル
    └ wakarana_config.ini ・・・Wakarana設定ファイル
@@ -103,7 +104,7 @@ _/_/_/_/ ファイル構成 _/_/_/_/
    └ integration_funcs.js ・・・外部アプリ連携用ページスクリプト
    └ integration_styles.css ・・・外部アプリ連携用ページスタイルシート
 └ service_worker.php ・・・サービスワーカースクリプトを出力するPHPファイル
-└ manifest.php ・・・PWAマニフェスト
+└ manifest.php ・・・PWAマニフェストの配信エンドポイント
 └ version.php ・・・アプリ本体のバージョン番号等を記載するPHPファイル
 └ sitemap.php ・・・XML形式のサイトマップを表示するPHPファイル
 └ robots.txt ・・・検索エンジンのクローラーに対する指示ファイル
