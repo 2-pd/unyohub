@@ -2543,7 +2543,7 @@ function select_operation_to_write_data (line_id, train_number, starting_station
         return;
     }
     
-    var popup_inner_elm = open_square_popup("select_operation_popup", false, "情報を投稿する運用の選択");
+    var popup_inner_elm = open_square_popup("select_operation_popup", train_operations.length >= 4, "情報を投稿する運用の選択");
     
     var position_operations = {};
     for (var train_operation of train_operations) {

@@ -409,6 +409,10 @@ input, textarea {
         background-color: transparent;
         
         font-size: 18px;
+        
+        .dark_mode & {
+            border-color: #999999;
+        }
     }
 }
 
@@ -651,6 +655,10 @@ a.connecting_railroad_link h5, .connecting_railroad_link a {
         line-height: 24px;
         font-size: 18px;
         text-align: center;
+        
+        .dark_mode & {
+            border-color: #999999 !important;
+        }
     }
     
     button {
@@ -836,16 +844,16 @@ a.connecting_railroad_link h5, .connecting_railroad_link a {
 }
 
 .announcement {
-    padding: 15px;
+    padding: 14px;
     
-    background-color: #eeeeee;
+    border: 1px solid #dddddd;
     
     font-size: 18px;
     text-align: left;
     word-break: break-all;
     
     .dark_mode & {
-        background-color: #777777;
+        border-color: #808080;
     }
     
     small {
@@ -1809,7 +1817,7 @@ input[type="search"]::-webkit-search-cancel-button {
         color: #333333;
         
         .dark_mode & {
-            border-color: #808080;
+            border-color: #999999;
             
             color: #ffffff;
         }

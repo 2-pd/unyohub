@@ -955,9 +955,9 @@ input[type="checkbox"]:checked + label.drop_down {
 }
 
 .announcement {
-    padding: 15px;
+    padding: 14px;
     
-    background-color: #eeeeee;
+    border: 1px solid #dddddd;
     
     font-size: 18px;
     text-align: left;

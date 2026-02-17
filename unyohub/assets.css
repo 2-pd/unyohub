@@ -2068,10 +2068,10 @@ input[type="checkbox"]:checked + :is(label.drop_down, label.formation_table_drop
         margin: 0 auto;
         
         background-color: #999999;
-        
-        .dark_mode &{
-            background-color: #cccccc;
-        }
+    }
+    
+    .dark_mode &:after {
+        background-color: #cccccc;
     }
 }
 
