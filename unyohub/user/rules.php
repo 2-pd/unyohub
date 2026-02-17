@@ -46,14 +46,14 @@ $heading_cnt = 0;
 if (!empty($rule_content)) {
     $buf = "";
     
-    $rules_split = explode("\n", preg_replace("/(https?:\/\/[^\s\\\\`\|\[\]\{\}\^]+)/u", "<a href='$1' target='_blank' class='external_link'>$1</a>", htmlspecialchars($rule_content)));
+    $rules_split = explode("\n", preg_replace("/(https?:\/\/[^\s\\\\`\|\[\]\{\}\^]+)/u", "<a href=\"$1\" target=\"_blank\" class=\"external_link\">$1</a>", htmlspecialchars($rule_content)));
     foreach ($rules_split as $rules_line) {
         if (substr($rules_line, 0, 2) === "# ") {
-            $heading_list[] = substr($rules_line, 2);
-            $buf .= "    <h4 id='heading_".$heading_cnt."'>".$heading_list[$heading_cnt]."</h4>\n";
+            $heading_list[] = rtrim(substr($rules_line, 2));
+            $buf .= "    <h4 id=\"heading_".$heading_cnt."\">".$heading_list[$heading_cnt]."</h4>\n";
             $heading_cnt++;
         } else {
-            $buf .= "    ".$rules_line."<br>\n";
+            $buf .= "    ".rtrim($rules_line)."<br>\n";
         }
     }
 } else {
@@ -65,7 +65,7 @@ if ($heading_cnt >= 1) {
     print "    <ul>\n";
     
     for ($cnt = 0; $cnt < $heading_cnt; $cnt++) {
-        print "        <li><a href='#heading_".$cnt."'>".$heading_list[$cnt]."</a></li>\n";
+        print "        <li><a href=\"#heading_".$cnt."\">".$heading_list[$cnt]."</a></li>\n";
     }
     
     print "    </ul>\n";

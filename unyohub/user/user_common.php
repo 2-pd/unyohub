@@ -1,4 +1,5 @@
 <?php
+include "../version.php";
 include "../libs/wakarana/main.php";
 include "../libs/zizai_captcha/main.php";
 
@@ -27,12 +28,9 @@ function print_header ($title = "", $noindex = TRUE, $load_captcha_js = FALSE, $
         print "    <meta name=\"robots\" content=\"noindex\">\n";
     }
     
-    print <<< EOM
-        <title>{$title}</title>
-        <link rel="stylesheet" href="user_styles.css">
-        <link rel="shortcut icon" href="/favicon.ico">
-    
-    EOM;
+    print "    <title>{$title}</title>\n";
+    print "    <link rel=\"stylesheet\" href=\"user_styles.css?v=".UNYOHUB_VERSION."\">\n";
+    print "    <link rel=\"shortcut icon\" href=\"/favicon.ico\">\n";
     
     if ($load_captcha_js) {
         print "    <script src=\"/libs/zizai_captcha/captcha.js\"></script>\n";

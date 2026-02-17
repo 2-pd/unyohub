@@ -1,6 +1,7 @@
 <?php
 define("RAILROADS_JSON_PATH", "../config/railroads.json");
 
+include "../version.php";
 include "../libs/wakarana/main.php";
 
 $wakarana = new wakarana("../config");
@@ -21,13 +22,14 @@ function print_header () {
     global $config;
     
     $instance_name = $config["instance_name"];
+    $unyohub_version = UNYOHUB_VERSION;
     print <<< EOM
     <html>
     <head lang="ja">
         <meta charset="utf-8">
         <meta name="viewport" content="width=device-width,initial-scale=1,interactive-widget=resizes-content">
         <title>{$instance_name} 管理画面</title>
-        <link rel="stylesheet" href="admin_styles.css">
+        <link rel="stylesheet" href="admin_styles.css?v={$unyohub_version}">
         <link rel="shortcut icon" href="/favicon.ico">
     </head>
     <body>
