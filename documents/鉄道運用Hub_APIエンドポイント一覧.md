@@ -75,6 +75,7 @@
     "user_name" : ハンドルネーム,  
     "is_control_panel_user" : 管理画面にアクセス可能か否か,  
     "is_management_member" : 運営メンバーか否か,   
+    "is_announcement_editor" : お知らせの編集権限を有するか否か,  
     "is_beginner" : ビギナーユーザーか否か,  
     "created" : YYYY-MM-DD HH:MM:SS形式のユーザー登録日時,  
     "website_url" : ユーザーのwebサイトのURL  
