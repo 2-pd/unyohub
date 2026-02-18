@@ -279,7 +279,7 @@ function fetch_announcements (railroad_id, mark_read, callback_func) {
             
             if (navigator.onLine) {
                 ajax_post("announcements.php", railroad_id_q + "last_modified_timestamp=" + announcements_data["last_modified_timestamp"], function (response, last_modified) {
-                    if (response === "NEW_ANNOUNCEMENTS_NOT_EXIST") {
+                    if (response === "NEW_ANNOUNCEMENTS_NOT_EXIST" || response === false) {
                         if (mark_read) {
                             mark_announcements_read(announcements_data);
                         }

@@ -176,14 +176,27 @@ function ajax_post (end_point_name, query_str, callback_func, timeout = 30) {
         if (ajax_request.responseText.substring(0, 6) === "ERROR:") {
             mes(ajax_request.responseText, true);
             callback_func(false, null);
-        } else if (ajax_request.status === 0) {
-            mes("ERROR: ネットワークが不安定です", true);
-            callback_func(false, null);
-        } else if (ajax_request.status !== 200) {
-            mes("ERROR: データの取得に失敗しました(" + ajax_request.status + ")", true);
-            callback_func(false, null);
         } else {
-            callback_func(ajax_request.responseText, ajax_request.getResponseHeader("last-modified"));
+            switch (ajax_request.status) {
+                case 0:
+                    mes("ERROR: ネットワークが不安定です", true);
+                    callback_func(false, null);
+                    break;
+                
+                case 200:
+                case 201:
+                    callback_func(ajax_request.responseText, ajax_request.getResponseHeader("last-modified"));
+                    break;
+                
+                case 304:
+                    callback_func(ajax_request.responseText, false);
+                    break;
+                
+                default:
+                    mes("ERROR: データの取得に失敗しました(" + ajax_request.status + ")", true);
+                    callback_func(false, null);
+                    break;
+            }
         }
     };
     
