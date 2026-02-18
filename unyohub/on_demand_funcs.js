@@ -1543,7 +1543,7 @@ function draw_operation_detail (operation_number_or_index, diagram_revision, dia
     
     if (operation_number in operation_table["operations"]) {
         if (navigator.onLine) {
-            buf += "<button type='button' class='execute_button' onclick='operation_data_history(null, \"" + add_slashes(operation_number) + "\");'>これまでの充当編成</button>";
+            buf += "<button type='button' class='history_button' onclick='operation_data_history(null, \"" + add_slashes(operation_number) + "\");'>これまでの充当編成</button>";
         }
         
         buf += "<div><input type='radio' name='switch_simplify_operation_details' id='simplify_operation_details' onchange='change_simplify_operation_details(!this.checked, \"" + add_slashes(operation_number) + "\", " + diagram_id_or_ts + ", " + is_today + ", " + (search_keyword === null ? "null" : "\"" + add_slashes(search_keyword) + "\"") + ");'" + (config["simplify_operation_details"] ? "" : " checked='checked'") + "><label for='simplify_operation_details'>詳細表示</label><input type='radio'  name='switch_simplify_operation_details' id='not_simplify_operation_details' onchange='change_simplify_operation_details(this.checked, \"" + add_slashes(operation_number) + "\", " + diagram_id_or_ts + ", " + is_today + ", " + (search_keyword === null ? "null" : "\"" + add_slashes(search_keyword) + "\"") + ");'" + (config["simplify_operation_details"] ? " checked='checked'" : "") + "><label for='not_simplify_operation_details'>簡略表示</label></div>";
