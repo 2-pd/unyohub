@@ -1683,6 +1683,28 @@ button:has(abbr) {
     }
 }
 
+.announcement_with_notification, .announcement_with_important_notification {
+    &:before {
+        content: "";
+        
+        display: block;
+        
+        position: absolute;
+        top: 3px;
+        left: 24px;
+        
+        padding: 6px;
+        
+        background-color: #33cc99;
+        
+        border-radius: 6px;
+    }
+    
+    &:not(:empty):before {
+        top: 10px;
+    }
+}
+
 #wait_screen {
     background-color: rgba(0, 0, 0, 0.9);
     
