@@ -333,7 +333,7 @@ function check_announcements (show_important_announcements = false) {
                     if (show_important_announcements) {
                         show_announcements(null, true);
                     } else {
-                        menu_button_elm.classList.add("menu_button_with_notification");
+                        menu_button_elm.classList.add("menu_button_with_important_notification");
                         menu_announcements_elm.className = "new_icon_red";
                     }
                     
@@ -345,18 +345,14 @@ function check_announcements (show_important_announcements = false) {
         }
         
         if (new_announcement_exists) {
-            if (location.pathname === "/") {
-                splash_screen_announcement_elm.classList.add("announcement_with_notification");
-            }
+            menu_button_elm.classList.add("menu_button_with_notification");
             menu_announcements_elm.className = "new_icon";
         } else {
-            if (location.pathname === "/") {
-                splash_screen_announcement_elm.classList.remove("announcement_with_notification");
-            }
+            menu_button_elm.classList.remove("menu_button_with_notification");
             menu_announcements_elm.className = "";
         }
         
-        menu_button_elm.classList.remove("menu_button_with_notification");
+        menu_button_elm.classList.remove("menu_button_with_important_notification");
     });
 }
 
@@ -412,11 +408,8 @@ function show_announcements (railroad_id = null, important_announcements_exist =
     var popup_inner_elm = open_square_popup("announcements_popup", true);
     
     menu_button_elm.classList.remove("menu_button_with_notification");
+    menu_button_elm.classList.remove("menu_button_with_important_notification");
     menu_announcements_elm.className = "";
-    
-    if (location.pathname === "/") {
-        splash_screen_announcement_elm.classList.remove("announcement_with_notification");
-    }
     
     if (railroad_id === null) {
         if (important_announcements_exist) {
@@ -425,7 +418,7 @@ function show_announcements (railroad_id = null, important_announcements_exist =
             var buf = "<h3 id='announcements_heading'>お知らせ</h3>";
         }
     } else {
-        var buf = "<h3 id='railroad_announcements_heading' style='background-color: " + (config["dark_mode"] ? convert_color_dark_mode(railroad_info["main_color"]) : railroad_info["main_color"]) + ";'>" + escape_html(railroad_info["railroad_name"]) + "のお知らせ</h3>";
+        var buf = "<h3 id='announcements_heading' class='railroad_announcements_heading' style='background-color: " + (config["dark_mode"] ? convert_color_dark_mode(railroad_info["main_color"]) : railroad_info["main_color"]) + ";'>" + escape_html(railroad_info["railroad_name"]) + "のお知らせ</h3>";
     }
     
     buf += "<div id='announcements_area' class='wait_icon'></div>";

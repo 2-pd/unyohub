@@ -257,11 +257,10 @@ print "    <meta property=\"twitter:card\" content=\"summary_large_image\">\n";
             <b class="off_line_message" onclick="show_off_line_message();">オフラインモード</b>
         </div>
         <hr>
-        <button type="button" id="menu_announcements" onclick="show_announcements();">お知らせ</button>
-        <hr>
         <button type="button" onclick="edit_config();">アプリの設定</button>
         <hr>
         <button type="button" id="menu_about" onclick="show_about();"><span id="menu_instance_name"><?php print UNYOHUB_APP_NAME; ?></span>について</button>
+        <button type="button" id="menu_announcements" onclick="show_announcements();">お知らせ</button>
         <button type="button" onclick="show_rules();">ルールとポリシー</button>
         <a id="menu_manual_button" href="#" target="_blank">このアプリの使い方</a>
         <hr>
@@ -275,7 +274,6 @@ if ($path_info_str === "/") {
     print <<<EOM
             <div id="splash_screen_login_status">サーバに接続しています...</div>
             <div id="splash_screen_inner" class="wait_icon"></div>
-            <button type="button" id="splash_screen_announcement" onclick="show_announcements();" aria-label="お知らせ"></button>
             <div id="splash_screen_bottom">
                 <u id="splash_screen_update_info" onclick="show_about();">新しいバージョンが利用可能です</u>
                 <u onclick="show_about();"><span id="splash_screen_instance_name">{$unyohub_app_name}</span>について</u><a href="/user/rules.php" onclick="event.preventDefault(); show_rules();">ルールとポリシー</a>

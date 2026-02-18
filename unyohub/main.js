@@ -553,7 +553,6 @@ update_display_settings();
 
 if (location.pathname === "/") {
     var splash_screen_login_status_elm = document.getElementById("splash_screen_login_status");
-    var splash_screen_announcement_elm = document.getElementById("splash_screen_announcement");
 }
 
 splash_screen_elm.classList.remove("splash_screen_loading");

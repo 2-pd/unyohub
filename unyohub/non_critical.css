@@ -22,7 +22,7 @@ input, textarea {
     }
 }
 
-.menu_button_with_notification:before {
+.menu_button_with_notification:before, .menu_button_with_important_notification:before {
     content: "";
     
     display: block;
@@ -35,7 +35,11 @@ input, textarea {
     
     border-radius: 6px;
     
-    background-color: #ee3333;
+    background-color: #33cc99;
+}
+
+:is(.menu_button_with_important_notification, .new_icon_red, .announcement_with_important_notification):before, .announcements_heading_important {
+    background-color: #ee3333 !important;
 }
 
 #menu {
@@ -785,7 +789,7 @@ a.connecting_railroad_link h5, .connecting_railroad_link a {
     }
 }
 
-#announcements_heading, #railroad_announcements_heading, #off_line_message_popup h3 {
+#announcements_heading, #off_line_message_popup h3 {
     width: calc(100% - 40px);
     height: 32px;
     
@@ -802,11 +806,7 @@ a.connecting_railroad_link h5, .connecting_railroad_link a {
     color: #ffffff;
 }
 
-.announcements_heading_important {
-    background-color: #ee3333 !important;
-}
-
-#railroad_announcements_heading {
+.railroad_announcements_heading {
     font-size: 16px;
 }
 
@@ -837,10 +837,6 @@ a.connecting_railroad_link h5, .connecting_railroad_link a {
     background-color: #33cc99;
     
     vertical-align: top;
-}
-
-.new_icon_red:before {
-    background-color: #ee3333;
 }
 
 .announcement {
