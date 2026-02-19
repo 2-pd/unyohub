@@ -2089,6 +2089,20 @@ function operation_table_list_tables () {
 }
 
 
+function show_tips () {
+    document.getElementById("tips").className = "tips_active";
+    
+    var buf = "";
+    
+    document.getElementById("tips_area").innerHTML = "<button type='button' class='tips_close_button' onclick='hide_tips();'></button>" + buf;
+}
+
+function hide_tips () {
+    document.getElementById("tips").className = "tips_inactive";
+    document.getElementById("tips_area").innerHTML = "";
+}
+
+
 function take_screenshot (elm_id, is_popup = false) {
     var popup_inner_elm = open_popup("screenshot_popup", "スクリーンショット");
     

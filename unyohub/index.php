@@ -326,6 +326,7 @@ if ($path_info_str === "/") {
         <br>
         <div id="operation_table_info" class="informational_text"></div>
     </article>
+    <div id="tips"><button type="button" id="tips_button" onclick="show_tips();">Tips</button><div id="tips_area"></div></div>
     <button type="button" id="railroad_announcement" onclick="show_railroad_announcements();" aria-label="お知らせ"></button>
     <footer>
         <div>
