@@ -16,7 +16,7 @@ import webbrowser
 
 
 UNYOHUB_GUI_TOOLS_APP_NAME = "鉄道運用Hub用データ編集ツール"
-UNYOHUB_GUI_TOOLS_VERSION = "26.01-1"
+UNYOHUB_GUI_TOOLS_VERSION = "26.02-1"
 UNYOHUB_GUI_TOOLS_LICENSE_TEXT = "このアプリケーションは無権利創作宣言に準拠して著作権放棄されています"
 UNYOHUB_GUI_TOOLS_LICENSE_URL = "https://www.2pd.jp/license/"
 UNYOHUB_GUI_TOOLS_REPOSITORY_URL = "https://fossil.2pd.jp/unyohub/"
@@ -359,8 +359,14 @@ def convert_gtfs_to_timetable_exec (diagram_revision, generate_train_number):
 
 
 def generate_operation_table ():
+    global config
+    
     if not os.path.isfile("modules/generate_operation_table.py"):
         messagebox.showinfo("処理モジュールがありません", "generate_operation_table.py が本ツールの modules フォルダに存在しないためこの機能は使用できません")
+        return
+    
+    if not os.path.isfile(config["main_dir"] + "/railroad_info.json"):
+        messagebox.showwarning("運用情報付き時刻表を変換できません", "現在の作業フォルダには運用情報付き時刻表ファイルの変換に必要な railroad_info.json が存在しません")
         return
     
     select_diagram(generate_operation_table_exec, enable_save_operation_table_check=True, enable_generate_number_check=True)

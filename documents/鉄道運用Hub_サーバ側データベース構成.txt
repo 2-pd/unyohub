@@ -122,6 +122,7 @@ _/_/_/_/ データベース _/_/_/_/
 
   PRIMARY KEY(`diagram_revision`, `diagram_id`, `operation_number`, `train_number`)
   INDEX `unyohub_idx_t1`(`diagram_revision`, `diagram_id`, `train_number`)
+  INDEX `unyohub_idx_t2`(`diagram_revision`, `diagram_id`, `operation_number`, `first_departure_time`)
 
 
 `unyohub_trip_ids` 列車番号と便識別名の対応表

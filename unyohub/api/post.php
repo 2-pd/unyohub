@@ -55,10 +55,12 @@ if ($moderation_db_obj->querySingle("SELECT COUNT(`user_id`) FROM `unyohub_moder
 }
 
 
-load_railroad_data($_POST["railroad_id"]);
+if (!load_railroad_data($_POST["railroad_id"])) {
+    exit;
+}
 
 
-$ts = strtotime($_POST["date"]);
+$ts = convert_date_to_timestamp($_POST["date"]);
 
 if ($ts === FALSE) {
     print "ERROR: 日付が不正です";
@@ -80,6 +82,10 @@ $operation_date = date("Y-m-d", $ts);
 update_diagram_revision($ts);
 
 $operation_data = get_operation_info($ts, $_POST["operation_number"]);
+
+if (empty($operation_data)) {
+    exit;
+}
 
 
 if (!empty($_POST["assign_order"])) {

@@ -24,14 +24,11 @@ if (isset($_POST["user_id"], $_POST["email_address"], $_POST["zizai_captcha_id"]
         
         print_header();
         
-        print <<< EOM
-            パスワードリセットメールを送信しました。<br>
-            メールを確認し、本文に記載のURLにアクセスしてください。
-            <div class="link_block">
-                <a href="javascript:void(0);" onclick="window.close();">閉じる</a>
-            </div>
-        
-        EOM;
+        print "            パスワードリセットメールを送信しました。<br>\n";
+        print "            メールを確認し、本文に記載のURLにアクセスしてください。\n";
+        print "            <div class=\"link_block\">\n";
+        print "                <a href=\"javascript:void(0);\" onclick=\"".(empty($_GET["is_child_page"]) ? "window.close();" : "window.parent.close_child_page();")."\">閉じる</a>\n";
+        print "            </div>\n";
         
         goto footer;
     }
@@ -49,7 +46,7 @@ print_header("パスワードのリセット", TRUE, TRUE);
             }, 10);
         }
     </script>
-    <form action="send_password_reset_email.php" method="post" id="send_email_form" onsubmit="return false;">
+    <form action="send_password_reset_email.php<?php if (!empty($_GET["is_child_page"])) { print "?is_child_page=yes"; } ?>" method="post" id="send_email_form" onsubmit="return false;">
         <input type="hidden" name="accept_rules" id="accept_rules_input" value="<?php if (!empty($_POST["accept_rules"]) && $_POST["accept_rules"] === "YES") { print "YES"; } ?>">
         
         <h2>パスワードのリセット</h2>

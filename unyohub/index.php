@@ -257,11 +257,10 @@ print "    <meta property=\"twitter:card\" content=\"summary_large_image\">\n";
             <b class="off_line_message" onclick="show_off_line_message();">オフラインモード</b>
         </div>
         <hr>
-        <button type="button" id="menu_announcements" onclick="show_announcements();">お知らせ</button>
-        <hr>
         <button type="button" onclick="edit_config();">アプリの設定</button>
         <hr>
         <button type="button" id="menu_about" onclick="show_about();"><span id="menu_instance_name"><?php print UNYOHUB_APP_NAME; ?></span>について</button>
+        <button type="button" id="menu_announcements" onclick="show_announcements();">お知らせ</button>
         <button type="button" onclick="show_rules();">ルールとポリシー</button>
         <a id="menu_manual_button" href="#" target="_blank">このアプリの使い方</a>
         <hr>
@@ -275,7 +274,6 @@ if ($path_info_str === "/") {
     print <<<EOM
             <div id="splash_screen_login_status">サーバに接続しています...</div>
             <div id="splash_screen_inner" class="wait_icon"></div>
-            <button type="button" id="splash_screen_announcement" onclick="show_announcements();" aria-label="お知らせ"></button>
             <div id="splash_screen_bottom">
                 <u id="splash_screen_update_info" onclick="show_about();">新しいバージョンが利用可能です</u>
                 <u onclick="show_about();"><span id="splash_screen_instance_name">{$unyohub_app_name}</span>について</u><a href="/user/rules.php" onclick="event.preventDefault(); show_rules();">ルールとポリシー</a>
@@ -293,7 +291,7 @@ if ($path_info_str === "/") {
         <div id="position_area_supplement" class="radio_area">
             <div><input type="radio" name="show_train_numbers_or_final_destinations" id="show_train_numbers_radio" onchange="change_show_final_destinations(!this.checked);"><label for="show_train_numbers_radio">列車番号を表示</label><input type="radio" name="show_train_numbers_or_final_destinations" id="show_final_destinations_radio" onchange="change_show_final_destinations(this.checked);"><label for="show_final_destinations_radio">行き先を表示</label></div>
             <div class="informational_text">列車の走行位置は時刻表に基づく推定であり、遅延や不定期列車の情報は反映されません</div>
-            <u class="bottom_link" onclick="about_railroad_data();">使用しているデータについて</u>
+            <a href="#about_railroad_data_popup" class="bottom_link" onclick="event.preventDefault(); about_railroad_data();">使用しているデータについて</a>
         </div>
     </article>
     <article onscroll="timetable_wrapper_onscroll();">
@@ -307,7 +305,7 @@ if ($path_info_str === "/") {
     </article>
     <article>
         <h2 id="operation_data_heading"></h2>
-        <div class="radio_area"><input type="radio" name="operation_data_radio" id="radio_operation_groups" value="operation_groups" checked="checked" onchange="operation_data_draw();"><label for="radio_operation_groups">系統別</label><input type="radio" name="operation_data_radio" id="radio_formations" value="formations" onchange="operation_data_draw();"><label for="radio_formations">編成別</label><input type="radio" name="operation_data_radio" id="radio_starting_location" value="starting_location" onchange="operation_data_draw();"><label for="radio_starting_location">出庫別</label><input type="radio" name="operation_data_radio" id="radio_terminal_location" value="terminal_location" onchange="operation_data_draw();"><label for="radio_terminal_location">入庫別</label></div>
+        <div class="radio_area"><input type="radio" name="operation_data_radio" id="radio_operation_groups" value="operation_groups" checked="checked" onchange="operation_data_draw(true);"><label for="radio_operation_groups">系統別</label><input type="radio" name="operation_data_radio" id="radio_formations" value="formations" onchange="operation_data_draw(true);"><label for="radio_formations">編成別</label><input type="radio" name="operation_data_radio" id="radio_starting_location" value="starting_location" onchange="operation_data_draw(true);"><label for="radio_starting_location">出庫別</label><input type="radio" name="operation_data_radio" id="radio_terminal_location" value="terminal_location" onchange="operation_data_draw(true);"><label for="radio_terminal_location">入庫別</label></div>
         <div id="operation_data_area" class="wait_icon"></div>
     </article>
     <article onscroll="formation_table_wrapper_onscroll();">
@@ -328,6 +326,7 @@ if ($path_info_str === "/") {
         <br>
         <div id="operation_table_info" class="informational_text"></div>
     </article>
+    <div id="tips"><button type="button" id="tips_button" onclick="show_tips();">Tips</button><div id="tips_area"></div></div>
     <button type="button" id="railroad_announcement" onclick="show_railroad_announcements();" aria-label="お知らせ"></button>
     <footer>
         <div>

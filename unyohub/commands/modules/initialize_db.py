@@ -62,6 +62,7 @@ def initialize_db (mes, main_dir):
     mes("テーブル「unyohub_trains」を作成しています...")
     cur.execute("CREATE TABLE IF NOT EXISTS `unyohub_trains`(`diagram_revision` TEXT NOT NULL, `diagram_id` TEXT NOT NULL, `operation_number` TEXT NOT NULL, `train_number` TEXT NOT NULL, `first_departure_time` TEXT NOT NULL, `final_arrival_time` TEXT NOT NULL, PRIMARY KEY(`diagram_revision`, `diagram_id`, `operation_number`, `train_number`))")
     cur.execute("CREATE INDEX IF NOT EXISTS `unyohub_idx_t1` ON `unyohub_trains`(`diagram_revision`, `diagram_id`, `train_number`)")
+    cur.execute("CREATE INDEX IF NOT EXISTS `unyohub_idx_t2` ON `unyohub_trains`(`diagram_revision`, `diagram_id`, `operation_number`, `first_departure_time`)")
     
     mes("テーブル「unyohub_trip_ids」を作成しています...")
     cur.execute("CREATE TABLE IF NOT EXISTS `unyohub_trip_ids`(`diagram_revision` TEXT NOT NULL, `diagram_id` TEXT NOT NULL, `train_number` TEXT NOT NULL, `trip_id` TEXT NOT NULL, PRIMARY KEY(`diagram_revision`, `diagram_id`, `train_number`))")

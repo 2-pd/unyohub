@@ -22,7 +22,9 @@ if (is_object($user)) {
     exit;
 }
 
-load_railroad_data($_POST["railroad_id"]);
+if (!load_railroad_data($_POST["railroad_id"])) {
+    exit;
+}
 
 $post_data_r = $db_obj->query("SELECT `operation_date`, `operation_number`, `assign_order`, `user_id` FROM `unyohub_data` WHERE `user_id` = '".$db_obj->escapeString($_POST["user_id"])."' AND `posted_datetime` > '".date("Y-m-d H:i:s", time() - 86400)."'");
 

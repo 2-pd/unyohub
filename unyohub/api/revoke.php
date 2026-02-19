@@ -31,9 +31,11 @@ if (is_object($user)) {
     exit;
 }
 
-load_railroad_data($_POST["railroad_id"]);
+if (!load_railroad_data($_POST["railroad_id"])) {
+    exit;
+}
 
-$ts = strtotime($_POST["date"]);
+$ts = convert_date_to_timestamp($_POST["date"]);
 
 if ($ts === FALSE) {
     print "ERROR: 日付が不正です";

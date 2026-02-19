@@ -2,14 +2,14 @@
 <!-- Created with Inkscape (http://www.inkscape.org/) -->
 
 <svg
-   width="20"
+   width="40"
    height="40"
-   viewBox="0 0 5.2916665 10.583334"
+   viewBox="0 0 10.583333 10.583334"
    version="1.1"
    id="svg5"
    inkscape:version="1.4.3 (0d15f75042, 2025-12-25)"
-   sodipodi:docname="実行.svg"
-   inkscape:export-filename="実行.webp"
+   sodipodi:docname="履歴.svg"
+   inkscape:export-filename="履歴.webp"
    inkscape:export-xdpi="96"
    inkscape:export-ydpi="96"
    xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
@@ -30,8 +30,8 @@
      showgrid="false"
      units="px"
      inkscape:zoom="11.659484"
-     inkscape:cx="6.9042507"
-     inkscape:cy="22.642511"
+     inkscape:cx="23.971901"
+     inkscape:cy="21.784841"
      inkscape:window-width="1920"
      inkscape:window-height="1052"
      inkscape:window-x="1920"
@@ -49,9 +49,13 @@
      inkscape:groupmode="layer"
      id="layer1">
     <path
+       id="path1"
+       style="fill:#666666;stroke-width:1.32292;stroke-linecap:square;stroke-opacity:0.4;paint-order:stroke markers fill;fill-opacity:1"
+       d="M 5.2916667 0 A 5.291667 5.291667 0 0 0 1.5497762 1.5497762 L 0.39687501 0.39687501 L 0.39687501 3.4395834 L 3.4395834 3.4395834 L 2.298051 2.298051 A 4.2333336 4.2333336 0 0 1 5.2916667 1.0583333 A 4.2333336 4.2333336 0 0 1 9.5250001 5.2916667 A 4.2333336 4.2333336 0 0 1 5.2916667 9.5250001 A 4.2333336 4.2333336 0 0 1 2.298051 8.2852825 L 1.5497762 9.0335573 A 5.291667 5.291667 0 0 0 5.2916667 10.583333 A 5.291667 5.291667 0 0 0 10.583333 5.2916667 A 5.291667 5.291667 0 0 0 5.2916667 0 z M 0 5.2916667 A 5.291667 5.291667 0 0 0 0.065112306 6.1195232 L 1.1105265 5.9541586 A 4.2333336 4.2333336 0 0 1 1.0583333 5.2916667 L 0 5.2916667 z M 1.3394531 6.8088868 L 0.35139975 7.1881918 A 5.291667 5.291667 0 0 0 1.0102743 8.4020713 L 1.8665528 7.779887 A 4.2333336 4.2333336 0 0 1 1.3394531 6.8088868 z " />
+    <path
        id="path2"
        style="fill:#666666;fill-opacity:1;stroke-width:1.05833;stroke-linecap:round;stroke-linejoin:round"
-       d="M 0.5291667,0.52916667 V 2.1166664 l 3.175,3.1750001 -3.175,3.175 -3e-8,1.5875005 4.76250013,-4.7625005 z"
+       d="M 5.8208334,1.5875 H 4.7625001 v 4.2333334 h 3.175 V 4.7625001 H 5.8208334 Z"
        sodipodi:nodetypes="ccccccc" />
   </g>
   <metadata

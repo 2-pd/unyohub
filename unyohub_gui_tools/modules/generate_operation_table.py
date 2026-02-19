@@ -1,6 +1,7 @@
 # coding: utf-8
 
 import os
+import json
 import csv
 
 
@@ -21,8 +22,45 @@ def shape_time_string (time_string, from_previous_day = False, run_through_next_
     return time_string.zfill(5)
 
 
+def get_train_info (train_column):
+    first_departure_time = "99:99"
+    starting_station_index = None
+    terminal_station_index = None
+    
+    for cnt in range(4, len(train_column) - 1):
+        if train_column[cnt].isdecimal():
+            if starting_station_index is None:
+                first_departure_time = shape_time_string(train_column[cnt])
+                starting_station_index = cnt - 4
+            
+            terminal_station_index = cnt - 4
+    
+    return first_departure_time, starting_station_index, terminal_station_index
+
+
+def extract_train_number (train_number_str):
+    if "(" in train_number_str:
+        train_number_str = train_number_str[:train_number_str.find("(")]
+    elif "[" in train_number_str:
+        train_number_str = train_number_str[:train_number_str.find("[")]
+    
+    return train_number_str
+
+
 def generate_operation_table (mes, main_dir, diagram_revision, diagram_id, save_operation_table=True, generate_train_number=False):
     mes("運用情報付き時刻表から運用表と変換用時刻表を生成", is_heading=True)
+    
+
+    mes("railroad_info.json を読み込んでいます...")
+    
+    railroad_info_path = main_dir + "/railroad_info.json"
+    
+    if not os.path.isfile(railroad_info_path):
+        mes("railroad_info.json が見つかりません", True)
+        return False
+    
+    with open(railroad_info_path, "r", encoding="utf-8") as json_f:
+        railroad_info = json.load(json_f)
     
     
     inbound_file_base_name = diagram_id + ".inbound.csv"
@@ -44,6 +82,17 @@ def generate_operation_table (mes, main_dir, diagram_revision, diagram_id, save_
     if inbound_timetable[-1][1].strip() != "":
         inbound_timetable.append([""] * len(inbound_timetable[0]))
     
+    inbound_timetable_t = [list(x) for x in zip(*inbound_timetable)]
+    
+    if save_operation_table or not generate_train_number:
+        inbound_station_names = []
+        
+        for station_name in inbound_timetable_t[0][4:-1]:
+            if "[" in station_name:
+                inbound_station_names.append(station_name[:station_name.find("[")])
+            else:
+                inbound_station_names.append(station_name)
+    
     
     outbound_file_base_name = diagram_id + ".outbound.csv"
     file_path = main_dir + "/" + diagram_revision + "/" + outbound_file_base_name
@@ -64,9 +113,16 @@ def generate_operation_table (mes, main_dir, diagram_revision, diagram_id, save_
     if outbound_timetable[-1][1].strip() != "":
         outbound_timetable.append([""] * len(outbound_timetable[0]))
     
-    
-    inbound_timetable_t = [list(x) for x in zip(*inbound_timetable)]
     outbound_timetable_t = [list(x) for x in zip(*outbound_timetable)]
+    
+    if save_operation_table or not generate_train_number:
+        outbound_station_names = []
+        
+        for station_name in outbound_timetable_t[0][4:-1]:
+            if "[" in station_name:
+                outbound_station_names.append(station_name[:station_name.find("[")])
+            else:
+                outbound_station_names.append(station_name)
     
     
     if generate_train_number:
@@ -90,22 +146,31 @@ def generate_operation_table (mes, main_dir, diagram_revision, diagram_id, save_
                 
                 symbols_outbound.append({"station" : cnt, "symbol" : outbound_timetable_t[1][cnt][symbol_start:symbol_end]})
                 outbound_timetable_t[1][cnt] = outbound_timetable_t[1][cnt][0:symbol_start - 1] + outbound_timetable_t[1][cnt][symbol_end + 1:]
+    else:
+        mes("各駅の1文字表記を確認しています...")
+        
+        station_initials = {}
+        
+        for line_id in railroad_info["lines_order"]:
+            for station_info in railroad_info["lines"][line_id]["stations"]:
+                if ("station_initial" in station_info) and (station_info["station_initial"] is not None):
+                    station_initials[station_info["station_name"]] = station_info["station_initial"]
     
     
     mes("列車情報を抽出しています...")
     
     operation_data = {}
+    train_number_counts = {}
     excluded_train_cnt = 0
     
     train_cnt = 2
     for cnt in range(2, len(inbound_timetable_t)):
         operation_number = inbound_timetable_t[cnt][1].strip()
         
-        if operation_number != "" and operation_number not in operation_data:
-            operation_data[operation_number] = {}
-        
         from_previous_day = False
         run_through_next_day = False
+        
+        first_departure_time, starting_station_index, terminal_station_index = get_train_info(inbound_timetable_t[cnt])
         
         if generate_train_number:
             if operation_number == "":
@@ -128,21 +193,57 @@ def generate_operation_table (mes, main_dir, diagram_revision, diagram_id, save_
                         inbound_timetable_t[cnt][0] += symbol_data["symbol"]
                         
                         symbol_set.add(symbol_data["symbol"])
+            
+            starting_station = None
+            terminal_station = None
         else:
             train_number = inbound_timetable_t[cnt][0].strip()
             
             if train_number == "":
                 continue
             
+            if starting_station_index is None:
+                mes("《注意》時刻が読み取れない列車 " + train_number + " は運用表に含まれません")
+                continue
+            
             if train_number.startswith("~"):
                 from_previous_day = True
             elif train_number.endswith("~"):
                 run_through_next_day = True
+            
+            if train_number in train_number_counts:
+                train_number_counts[train_number] += 1
+            else:
+                train_number_counts[train_number] = 1
+            
+            starting_station = inbound_station_names[starting_station_index]
+            terminal_station = inbound_station_names[terminal_station_index]
         
         if operation_number != "":
-            operation_data[operation_number][shape_time_string(next((item for item in inbound_timetable_t[cnt][2:-1] if item.isdecimal()), "99:99"), from_previous_day, run_through_next_day)] = inbound_timetable_t[cnt][0]
+            if "+" in operation_number:
+                operation_numbers = operation_number.split("+")
+                
+                operation_count = len(operation_numbers)
+                if operation_count == 2:
+                    positions = ["前", "後"]
+                elif operation_count == 3:
+                    positions = ["前", "中", "後"]
+                else:
+                    mes("《注意》4運用以上が組成した列車を含む運用表の生成はサポートされていません")
+                    continue
+                
+                for cnt_2 in range(len(operation_numbers)):
+                    if operation_numbers[cnt_2] not in operation_data:
+                        operation_data[operation_numbers[cnt_2]] = {}
+                    
+                    operation_data[operation_numbers[cnt_2]][shape_time_string(first_departure_time, from_previous_day, run_through_next_day)] = [inbound_timetable_t[cnt][0], positions[cnt_2], starting_station, terminal_station]
+            else:
+                if operation_number not in operation_data:
+                    operation_data[operation_number] = {}
+                
+                operation_data[operation_number][shape_time_string(first_departure_time, from_previous_day, run_through_next_day)] = [inbound_timetable_t[cnt][0], None, starting_station, terminal_station]
         else:
-            excluded_train_cnt += 1
+            mes("《注意》運用番号が指定されていない列車 " + inbound_timetable_t[cnt][0] + " は運用表に含まれません")
         
         train_cnt += 2
     
@@ -150,11 +251,10 @@ def generate_operation_table (mes, main_dir, diagram_revision, diagram_id, save_
     for cnt in range(2, len(outbound_timetable_t)):
         operation_number = outbound_timetable_t[cnt][1].strip()
         
-        if operation_number != "" and operation_number not in operation_data:
-            operation_data[operation_number] = {}
-        
         from_previous_day = False
         run_through_next_day = False
+        
+        first_departure_time, starting_station_index, terminal_station_index = get_train_info(outbound_timetable_t[cnt])
         
         if generate_train_number:
             if operation_number == "":
@@ -177,36 +277,77 @@ def generate_operation_table (mes, main_dir, diagram_revision, diagram_id, save_
                         outbound_timetable_t[cnt][0] += symbol_data["symbol"]
                         
                         symbol_set.add(symbol_data["symbol"])
+            
+            starting_station = None
+            terminal_station = None
         else:
             train_number = outbound_timetable_t[cnt][0].strip()
             
             if train_number == "":
                 continue
             
+            if starting_station_index is None:
+                mes("《注意》時刻が読み取れない列車 " + train_number + " は運用表に含まれません")
+                continue
+            
             if train_number.startswith("~"):
                 from_previous_day = True
             elif train_number.endswith("~"):
                 run_through_next_day = True
+            
+            if train_number in train_number_counts:
+                train_number_counts[train_number] += 1
+            else:
+                train_number_counts[train_number] = 1
+            
+            starting_station = outbound_station_names[starting_station_index]
+            terminal_station = outbound_station_names[terminal_station_index]
         
         if operation_number != "":
-            operation_data[operation_number][shape_time_string(next((item for item in outbound_timetable_t[cnt][2:-1] if item.isdecimal()), "99:99"), from_previous_day, run_through_next_day)] = outbound_timetable_t[cnt][0]
+            if "+" in operation_number:
+                operation_numbers = operation_number.split("+")
+                
+                operation_count = len(operation_numbers)
+                if operation_count == 2:
+                    positions = ["後", "前"]
+                elif operation_count == 3:
+                    positions = ["後", "中", "前"]
+                else:
+                    mes("《注意》4運用以上が組成した列車を含む運用表の生成はサポートされていません")
+                    continue
+                
+                for cnt_2 in range(len(operation_numbers)):
+                    if operation_numbers[cnt_2] not in operation_data:
+                        operation_data[operation_numbers[cnt_2]] = {}
+                    
+                    operation_data[operation_numbers[cnt_2]][shape_time_string(first_departure_time, from_previous_day, run_through_next_day)] = [outbound_timetable_t[cnt][0], positions[cnt_2], starting_station, terminal_station]
+            else:
+                if operation_number not in operation_data:
+                    operation_data[operation_number] = {}
+                
+                operation_data[operation_number][shape_time_string(first_departure_time, from_previous_day, run_through_next_day)] = [outbound_timetable_t[cnt][0], None, starting_station, terminal_station]
         else:
-            excluded_train_cnt += 1
+            mes("《注意》運用番号が指定されていない列車 " + inbound_timetable_t[cnt][0] + " は運用表に含まれません")
         
         train_cnt += 2
     
-    if excluded_train_cnt >= 1:
-        if generate_train_number:
-            mes("《注意》運用番号のない列車を " + str(excluded_train_cnt) + "件 時刻表から除外しました")
-        elif save_operation_table:
-            mes("《注意》運用番号のない列車 " + str(excluded_train_cnt) + "件 が運用表に含まれません")
+    if excluded_train_cnt >= 1 and generate_train_number:
+        mes("《注意》運用番号のない列車を " + str(excluded_train_cnt) + "件 時刻表から除外しました")
     
     
     mes("運用表を生成しています...")
     
-    operation_numbers = sorted(operation_data.keys())
-    if "" in operation_numbers:
-        del operation_numbers[""]
+    operation_data_keys = {}
+    for operation_number in operation_data.keys():
+        if "-" in operation_number:
+            hyphen_pos = operation_number.find("-")
+            operation_data_keys[operation_number[:hyphen_pos].zfill(5) + operation_number[hyphen_pos:]] = operation_number
+        else:
+            operation_data_keys[operation_number.zfill(5)] = operation_number
+    
+    operation_numbers = []
+    for padded_operation_number in sorted(operation_data_keys.keys()):
+        operation_numbers.append(operation_data_keys[padded_operation_number])
     
     if len(operation_numbers) >= 1:
         operation_table = [["# 全ての運用"]]
@@ -215,7 +356,27 @@ def generate_operation_table (mes, main_dir, diagram_revision, diagram_id, save_
             operation = [operation_number, "", "", "", "", ""]
             
             for time_key in sorted(operation_data[operation_number].keys()):
-                operation.append(operation_data[operation_number][time_key])
+                train_number = operation_data[operation_number][time_key][0]
+                
+                if operation_data[operation_number][time_key][1] is not None:
+                    position_str = "(" + operation_data[operation_number][time_key][1] + ")"
+                else:
+                    position_str = ""
+                
+                if (not generate_train_number) and (train_number_counts[train_number] >= 2):
+                    if operation_data[operation_number][time_key][2] in station_initials:
+                        starting_station = station_initials[operation_data[operation_number][time_key][2]]
+                    else:
+                        starting_station = operation_data[operation_number][time_key][2]
+                    
+                    if operation_data[operation_number][time_key][3] in station_initials:
+                        terminal_station = station_initials[operation_data[operation_number][time_key][3]]
+                    else:
+                        terminal_station = operation_data[operation_number][time_key][3]
+                    
+                    operation.append(train_number + position_str + "[" + starting_station + "-" + terminal_station + "]")
+                else:
+                    operation.append(train_number + position_str)
             
             operation_table.append(operation)
     else:
@@ -284,24 +445,9 @@ def generate_operation_table (mes, main_dir, diagram_revision, diagram_id, save_
         if save_operation_table:
             mes("出入庫情報をまとめています...")
             
-            inbound_station_names = []
-            outbound_station_names = []
-            
-            for station_name in inbound_timetable_t[0][4:]:
-                if "[" in station_name:
-                    inbound_station_names.append(station_name[:station_name.find("[")])
-                else:
-                    inbound_station_names.append(station_name)
-            
-            for station_name in outbound_timetable_t[0][4:]:
-                if "[" in station_name:
-                    outbound_station_names.append(station_name[:station_name.find("[")])
-                else:
-                    outbound_station_names.append(station_name)
-            
             for cnt in range(1, len(operation_table)):
-                first_train_number = operation_table[cnt][6]
-                last_train_number = next((train_number for train_number in reversed(operation_table[cnt][6:]) if train_number != ""), None)
+                first_train_number = extract_train_number(operation_table[cnt][6])
+                last_train_number = extract_train_number(next((train_number for train_number in reversed(operation_table[cnt][6:]) if train_number != ""), None))
                 
                 if first_train_number in inbound_timetable[0]:
                     first_train_index = inbound_timetable[0].index(first_train_number)

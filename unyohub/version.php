@@ -1,2 +1,2 @@
 <?php
-define("UNYOHUB_VERSION", "26.01-2");
+define("UNYOHUB_VERSION", "26.02-1");

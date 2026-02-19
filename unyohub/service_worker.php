@@ -2,25 +2,33 @@
 include "./version.php";
 
 define("UNYOHUB_APP_ID", "unyohub");
+define("MANIFEST_PATH", "config/app_manifest.json");
 
 header("Content-Type: text/javascript");
+
+$manifest_modified = date("YmdHis", filemtime(MANIFEST_PATH));
+$app_manifest = json_decode(file_get_contents(MANIFEST_PATH), TRUE);
+
 ?>
 var files_to_cache = [
-        "/",
-        "/main.js?v=<?php print UNYOHUB_VERSION ?>",
-        "/assets.css?v=<?php print UNYOHUB_VERSION ?>",
-        "/on_demand_funcs.js?v=<?php print UNYOHUB_VERSION ?>",
-        "/non_critical.css?v=<?php print UNYOHUB_VERSION ?>",
-        "/libs/zizai_captcha/captcha.js",
-        "/libs/elem2img.js",
-        "/apple-touch-icon.webp",
-        "/maskable_icon.webp",
-        "/monochrome_icon.webp",
-        "/favicon.ico",
-        "/splash_screen_image.webp"
-    ];
+    "/",
+    "/main.js?v=<?php print UNYOHUB_VERSION; ?>",
+    "/assets.css?v=<?php print UNYOHUB_VERSION; ?>",
+    "/on_demand_funcs.js?v=<?php print UNYOHUB_VERSION; ?>",
+    "/non_critical.css?v=<?php print UNYOHUB_VERSION; ?>",
+    "/libs/zizai_captcha/captcha.js",
+    "/libs/elem2img.js",
+<?php
+foreach ($app_manifest["icons"] as $icon_info) {
+    print "    \"/".$icon_info["src"]."\",\n";
+}
+?>
+    "/favicon.ico",
+    "/splash_screen_image.webp",
+    "/manifest.php?mod=<?php print $manifest_modified; ?>"
+];
 
-var new_cache_name = "<?php print UNYOHUB_APP_ID."_v".UNYOHUB_VERSION ?>";
+var new_cache_name = "<?php print UNYOHUB_APP_ID."_v".UNYOHUB_VERSION."_".$manifest_modified; ?>";
 
 self.addEventListener("install", function (evt) {
     evt.waitUntil(

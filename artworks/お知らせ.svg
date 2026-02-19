@@ -7,7 +7,7 @@
    viewBox="0 0 19.05 19.05"
    version="1.1"
    id="svg5"
-   inkscape:version="1.4 (e7c3feb100, 2024-10-09)"
+   inkscape:version="1.4.3 (0d15f75042, 2025-12-25)"
    sodipodi:docname="お知らせ.svg"
    inkscape:export-filename="お知らせ.webp"
    inkscape:export-xdpi="96"
@@ -30,7 +30,7 @@
      showgrid="false"
      units="px"
      inkscape:zoom="8"
-     inkscape:cx="37.125"
+     inkscape:cx="37.1875"
      inkscape:cy="36.5"
      inkscape:window-width="1920"
      inkscape:window-height="1052"
@@ -43,7 +43,7 @@
      showguides="true"
      inkscape:lockguides="true">
     <sodipodi:guide
-       position="0,10.583333"
+       position="0,10.054167"
        orientation="0,1"
        id="guide2"
        inkscape:locked="true"
@@ -58,19 +58,27 @@
      id="layer1">
     <path
        id="path1"
-       style="fill:#ffffff;fill-opacity:1;stroke-width:2.64583;stroke-linecap:round;stroke-linejoin:round;paint-order:stroke fill markers"
-       d="M 9.525 0 A 4.7624998 4.7624998 0 0 0 4.7625 4.7625 C 4.7625 8.4666673 2.1166667 12.7 2.1166667 12.7 L 16.933333 12.7 C 16.933333 12.7 14.2875 8.4666673 14.2875 4.7625 A 4.7624998 4.7624998 0 0 0 9.525 0 z " />
+       style="fill:#ffffff;stroke-width:1.32292;stroke-linecap:square;stroke-opacity:0.4;paint-order:stroke markers fill"
+       d="m 17.4625,13.758333 c 0,0 -1.5875,-4.7625 -1.5875,-7.408333 C 15.875,2.8429918 13.032008,-5.5228476e-8 9.525,0 6.0179918,-5.5228477e-8 3.1750002,2.8429918 3.175,6.35 c -10e-8,2.645833 -1.5874999,7.408333 -1.5874999,7.408333 h 1.8520832 c 0,0 1.3229166,-4.7625 1.3229167,-7.408333 10e-8,-2.630256 2.1322438,-4.7624998 4.7625,-4.7625 2.630256,2e-7 4.7625,2.132244 4.7625,4.7625 0,2.645833 1.322916,7.408333 1.322916,7.408333 z"
+       sodipodi:nodetypes="csssccssscc" />
     <rect
        style="fill:#ffffff;fill-opacity:1;stroke-width:2.64583;stroke-linecap:round;stroke-linejoin:round;paint-order:stroke fill markers"
        id="rect1"
-       width="14.816667"
+       width="15.875"
        height="1.5875001"
-       x="2.1166666"
+       x="1.5875001"
        y="13.758333" />
     <path
        id="path2"
        style="fill:#ffffff;fill-opacity:1;stroke-width:2.64583;stroke-linecap:round;stroke-linejoin:round;paint-order:stroke fill markers"
-       d="M 6.35 15.875 A 3.175 3.175 0 0 0 9.525 19.05 A 3.175 3.175 0 0 0 12.7 15.875 L 6.35 15.875 z " />
+       d="M 6.35 15.875 A 3.175 3.175 0 0 0 9.525 19.05 A 3.175 3.175 0 0 0 12.7 15.875 L 11.1125 15.875 A 1.5875 1.5875 0 0 1 9.525 17.4625 A 1.5875 1.5875 0 0 1 7.9375 15.875 L 6.35 15.875 z " />
+    <rect
+       style="fill:#ffffff;fill-opacity:1;stroke-width:1.32292;stroke-linecap:square;stroke-opacity:0.4;paint-order:stroke markers fill"
+       id="rect2"
+       width="8.9958334"
+       height="1.5875"
+       x="6.3500004"
+       y="10.31875" />
   </g>
   <metadata
      id="metadata824">

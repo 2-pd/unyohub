@@ -9,8 +9,16 @@ function load_railroad_data ($id) {
     
     $railroad_id = basename($id);
     
-    $db_obj = new SQLite3("../data/".$railroad_id."/railroad.db");
+    $db_path = "../data/".$railroad_id."/railroad.db";
+    if (empty($railroad_id) || !file_exists($db_path)) {
+        print "ERROR: 利用可能な路線系統が指定されていません";
+        return FALSE;
+    }
+    
+    $db_obj = new SQLite3($db_path);
     $db_obj->busyTimeout(5000);
+    
+    return TRUE;
 }
 
 $moderation_db_obj = NULL;
@@ -22,6 +30,14 @@ function connect_moderation_db () {
         $moderation_db_obj = new SQLite3("../common_dbs/moderation.db");
         $moderation_db_obj->busyTimeout(5000);
     }
+}
+
+function convert_date_to_timestamp ($date_str) {
+    if (!preg_match("/\A[0-9]{4}-(0[1-9]|1[0-2])-(0[1-9]|[12][0-9]|3[01])\z/u", $date_str)) {
+        return FALSE;
+    }
+    
+    return strtotime($date_str);
 }
 
 $diagram_revisions = NULL;
@@ -106,7 +122,7 @@ function get_diagram_id ($ts) {
     }
 }
 
-function get_operation_info ($ts, $operation_number) {
+function get_operation_info ($ts, $operation_number, $require_trains = FALSE) {
     global $db_obj;
     global $diagram_revision;
     
@@ -115,8 +131,19 @@ function get_operation_info ($ts, $operation_number) {
     $operation_data = $db_obj->querySingle("SELECT * FROM `unyohub_operations` WHERE `diagram_revision` = '".$diagram_revision."' AND `diagram_id` = '".$diagram_id."' AND `operation_number` = '".$db_obj->escapeString($operation_number)."'", TRUE);
     
     if (empty($operation_data)) {
-        print "ERROR: 運用番号が不正です";
-        exit;
+        print "ERROR: 正しい運用番号ではありません";
+        return NULL;
+    }
+    
+    if ($require_trains) {
+        $train_info_r = $db_obj->query("SELECT `train_number`, `first_departure_time`, `final_arrival_time` FROM `unyohub_trains` WHERE `diagram_revision` = '".$diagram_revision."' AND `diagram_id` = '".$diagram_id."' AND `operation_number` = '".$db_obj->escapeString($operation_number)."' ORDER BY `first_departure_time` ASC");
+        
+        $trains = array();
+        while ($train_info = $train_info_r->fetchArray(SQLITE3_ASSOC)) {
+            $trains[] = array("train_number" => $train_info["train_number"], "first_departure_time" => $train_info["first_departure_time"], "final_arrival_time" => $train_info["final_arrival_time"]);
+        }
+        
+        $operation_data["trains"] = $trains;
     }
     
     return $operation_data;
@@ -422,6 +449,10 @@ function revoke_post ($operation_date_ts, $operation_number, $assign_order, $pos
     update_diagram_revision($operation_date_ts);
     
     $operation_data = get_operation_info($operation_date_ts, $operation_number);
+    
+    if (empty($operation_data)) {
+        exit;
+    }
     
     $posted_datetime = date("Y-m-d H:i:s");
     

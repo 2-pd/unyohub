@@ -6,9 +6,17 @@
 
 _/_/_/_/ 設定ファイル設定値 _/_/_/_/
 
-███ manifest.json ███
+███ app_manifest.json ███
 
-ウェブアプリマニフェストの仕様に従い、アプリケーション名等を設定可能
+W3Cで公開されているウェブアプリマニフェストの仕様に従い、JSON形式で以下の項目を設定する
+※ウェブアプリマニフェストの必須項目のうち以下にないものはエンドユーザーへの配信時に自動付加されるため設定不要
+
+{
+    "name" : アプリケーション名,
+    "theme_color" : テーマカラー,
+    "icons" : アプリケーションのアイコン(「/apple-touch-icon.webp」を必ず含める),
+    "screenshots" : アプリケーションのスクリーンショット等
+}
 
 
 ███ main.ini ███
@@ -197,6 +205,13 @@ log_ip_address 投稿者のIPアドレスを記録するか(BOOL値)
         }...
     },
     "series_names" : 形式名を配列で,
+    "series_divisions" : { 系列区分の情報(系列区分がない場合は省略)
+        系列区分名 : {
+            "series_names" : 形式名を配列で,
+            "prefix_order" : 電算記号等を配列で(電算記号やそれに類するものが属していない系列区分の場合は省略)
+        }
+    }
+    "series_division_names" : 系列区分名を配列で(系列区分がない場合は省略),
     "prefixes" : { 電算記号等の情報(電算記号やそれに類するものがない場合は省略)
         電算記号等 : {
             "formation_names" : 編成名を配列で,
@@ -310,6 +325,12 @@ log_ip_address 投稿者のIPアドレスを記録するか(BOOL値)
             "operation_group_name" : 運用系統タイトル,
             "main_color" : 運用系統テーマカラー(省略可能),
             "operation_numbers" : 運用番号を配列で
+        }
+    ],
+    "group_divisions" : [ 系統区分の情報(系統区分がない場合は省略)
+        {
+            "group_division_name" : 系統区分タイトル,
+            "operation_group_names" : 運用系統タイトルを配列で
         }
     ]
 }
