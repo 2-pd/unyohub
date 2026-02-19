@@ -2092,7 +2092,54 @@ function operation_table_list_tables () {
 function show_tips () {
     document.getElementById("tips").className = "tips_active";
     
-    var buf = "";
+    if (mode_val <= 2 || (mode_val === 4 && config["show_assigned_formations_on_operation_table"])) {
+        var buf = "<h5>投稿内容による編成名の表示色等</h5>";
+        buf += "<table>";
+        buf += "<tr><th><b style='color: " + (!config["dark_mode"] ? "#cc0000" : "#ff9999") + ";'>●赤色</b> :</th><td>運用途中での差し替えが報告されています</td><tr>";
+        if (config["colorize_corrected_posts"]) {
+            buf += "<tr><th><b  style='color: " + (!config["dark_mode"] ? "#ee7700" : "#ffcc99") + ";'>●橙色</b> :</th><td>別々のユーザー様から異なる情報が寄せられています</td><tr>";
+        }
+        buf += "<tr><th><b  style='color: " + (!config["dark_mode"] ? "#0099cc" : "#33ccff") + ";'>●水色</b> :</th><td>前日運用からの推定であり、当日の目撃情報はまだありません</td><tr>";
+        buf += "<tr><th><b  style='color: " + (!config["dark_mode"] ? "#9966ff" : "#cc99ff") + ";'>●紫色</b> :</th><td>外部からの引用に基づく情報です</td><tr>";
+        if (config["colorize_beginners_posts"]) {
+            buf += "<tr><th><b  style='color: #33cc99;'>●緑色</b> :</th><td>ビギナーユーザー様、またはゲストユーザー様が投稿された情報です</td><tr>";
+        }
+        buf += "<tr><th><b>* 印</b> :</th><td>補足説明付きの情報です</td><tr>";
+        buf += "</table>";
+    } else {
+        var buf = "";
+    }
+    
+    switch (mode_val) {
+        case 0:
+            buf += "<h5>走行位置の機能</h5>";
+            buf += "<ul>";
+            buf += "<li><b>駅名</b>をタップするとその駅の時刻表が表示されます。</li>";
+            buf += "<li><b>時刻</b>を上下にスワイプすると、「時」は6時間、「分」は10分単位で増減可能です。</li>";
+            buf += "</ul>";
+            break;
+        case 1:
+            buf += "<h5>時刻表の機能</h5>";
+            buf += "発車済みの列車は背景がグレーで表示されます。";
+            break;
+        case 4:
+            buf += "<h5>出入庫の表示色</h5>";
+            buf += "午前入庫は<b style='color: " + (config["dark_mode"] ? "#ff99cc" : "#cc0066") + ";'>紅色</b>、午後出庫は<b style='color: " + (config["dark_mode"] ? "#99ccff" : "#0066cc") + ";'>青色</b>で出入庫情報が表示されます。";
+            if (!config["show_assigned_formations_on_operation_table"]) {
+                break;
+            }
+        case 2:
+            buf += "<h5>充当編成情報の機能</h5>";
+            buf += "<ul>";
+            buf += "<li>出庫前の編成は背景が斜線で、入庫済みの編成は背景がグレーで表示されます。</li>";
+            buf += "<li><a href='javascript:void(0);' onclick='edit_config();'>アプリの設定</a>から「運用データ等に編成の説明を表示」を有効化すると、特記事項のある編成では編成名のあとに一行説明が表示されます。</li>";
+            buf += "</ul>";
+            break;
+        case 3:
+            buf += "<h5>編成表の機能</h5>";
+            buf += "<a href='javascript:void(0);' onclick='edit_config();'>アプリの設定</a>から「西向き先頭車を編成表左側に表示」を有効化すると、編成表の左右と編成の西東を合わせて表示することが可能です。";
+            break;
+    }
     
     document.getElementById("tips_area").innerHTML = "<button type='button' class='tips_close_button' onclick='hide_tips();'></button>" + buf;
 }
