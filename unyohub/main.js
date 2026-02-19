@@ -115,6 +115,7 @@ function get_default_config () {
         "enlarge_display_size" : false,
         "refresh_interval" : 5,
         "operation_data_cache_period" : 7,
+        "show_tips" : true,
         "position_mode_minute_step" : 1,
         "show_final_destinations_in_position_mode" : false,
         "show_deadhead_trains_on_timetable" : true,
@@ -543,6 +544,16 @@ function update_display_settings (redraw = false) {
                 }
                 break;
         }
+    }
+    
+    var tips_elm = document.getElementById("tips");
+    if (config["show_tips"]) {
+        tips_elm.style.display = "block";
+        if (tips_elm.classList.contains("tips_active")) {
+            show_tips();
+        }
+    } else {
+        tips_elm.style.display = "none";
     }
 }
 
@@ -1861,6 +1872,10 @@ function change_mode (num) {
             tabs[cnt].className = "";
             footer_boxes[cnt].style.display = "none";
         }
+    }
+    
+    if (document.getElementById("tips").classList.contains("tips_active")) {
+        show_tips();
     }
 }
 

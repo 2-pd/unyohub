@@ -2090,6 +2090,10 @@ function operation_table_list_tables () {
 
 
 function show_tips () {
+    if (mode_val === -1) {
+        return;
+    }
+    
     document.getElementById("tips").className = "tips_active";
     
     if (mode_val <= 2 || (mode_val === 4 && config["show_assigned_formations_on_operation_table"])) {
@@ -3186,6 +3190,7 @@ function edit_config () {
     buf += "<input type='checkbox' id='enlarge_display_size_check' class='toggle' onchange='change_config();'" + (config["enlarge_display_size"] ? " checked='checked'" : "") + "><label for='enlarge_display_size_check'>各種表示サイズの拡大</label>";
     buf += "<input type='checkbox' id='colorize_corrected_posts_check' class='toggle' onchange='change_config();'" + (config["colorize_corrected_posts"] ? " checked='checked'" : "") + "><label for='colorize_corrected_posts_check'>訂正された投稿を区別する</label>";
     buf += "<input type='checkbox' id='colorize_beginners_posts_check' class='toggle' onchange='change_config();'" + (config["colorize_beginners_posts"] ? " checked='checked'" : "") + "><label for='colorize_beginners_posts_check'>ビギナーの方の投稿を区別する</label>";
+    buf += "<input type='checkbox' id='show_tips_check' class='toggle' onchange='change_config();'" + (config["show_tips"] ? " checked='checked'" : "") + "><label for='show_tips_check'>Tips表示ボタンを有効化する</label>";
     buf += "<input type='checkbox' id='force_arrange_west_side_car_on_left_check' class='toggle' onchange='change_config();'" + (config["force_arrange_west_side_car_on_left"] ? " checked='checked'" : "") + "><label for='force_arrange_west_side_car_on_left_check'>西向き先頭車を編成表左側に表示</label>";
     buf += "<input type='checkbox' id='show_formation_captions_on_operation_data_check' class='toggle' onchange='change_config();'" + (config["show_formation_captions_on_operation_data"] ? " checked='checked'" : "") + "><label for='show_formation_captions_on_operation_data_check'>運用データ等に編成の説明を表示</label>";
     buf += "<h5>運用情報の自動更新間隔</h5>";
@@ -3225,6 +3230,7 @@ function change_config () {
     config["enlarge_display_size"] = document.getElementById("enlarge_display_size_check").checked;
     config["colorize_corrected_posts"] = document.getElementById("colorize_corrected_posts_check").checked;
     config["colorize_beginners_posts"] = document.getElementById("colorize_beginners_posts_check").checked;
+    config["show_tips"] = document.getElementById("show_tips_check").checked;
     config["force_arrange_west_side_car_on_left"] = document.getElementById("force_arrange_west_side_car_on_left_check").checked;
     config["show_formation_captions_on_operation_data"] = document.getElementById("show_formation_captions_on_operation_data_check").checked;
     
