@@ -61,10 +61,10 @@
 
 本アプリケーションのPWA(プログレッシブウェブアプリ)としての情報は、configフォルダ内の「app_manifest.json」を編集することで変更可能です。
 
-また、アイコン等を変更する場合は、以下のファイルを同名・同形式のファイルに差し替えてください。
+また、アイコン等を変更する場合は、以下のファイルを所定の形式で作成した同名のファイルに差し替えてください。
 
-- favicon.ico
-- apple-touch-icon.webp、maskable_icon.webp、splash_screen_image.webp
+- favicon.ico (アイコン形式)
+- apple-touch-icon.webp、maskable_icon.webp、splash_screen_image.webp (WebP形式)
 
 
 ## このリポジトリについて
