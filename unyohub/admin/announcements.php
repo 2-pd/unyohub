@@ -58,7 +58,7 @@ if (isset($_POST["title"], $_POST["content"])) {
     } elseif (isset($_POST["one_time_token"]) && $user->check_one_time_token($_POST["one_time_token"])) {
         if (empty($_POST["publication_datetime"])) {
             $publication_timestamp = $ts;
-            $publication_datetime = $datetime_now;
+            $publication_datetime_str = $datetime_now;
         } else {
             $publication_timestamp = strtotime($_POST["publication_datetime"]);
             
@@ -66,7 +66,7 @@ if (isset($_POST["title"], $_POST["content"])) {
                 $publication_timestamp = $ts;
             }
             
-            $publication_datetime = date("Y-m-d H:i:s", $publication_timestamp);
+            $publication_datetime_str = date("Y-m-d H:i:s", $publication_timestamp);
         }
         
         $expiration_timestamp = strtotime($_POST["expiration_datetime"]);
@@ -77,7 +77,7 @@ if (isset($_POST["title"], $_POST["content"])) {
             
             $announcement_id = date("Ymd", $ts)."_".mt_rand();
             
-            $db_obj->exec("INSERT INTO `unyohub_announcements`(`announcement_id`, `title`, `is_important`, `content`, `user_id`, `publication_datetime`, `expiration_datetime`) VALUES ('".$announcement_id."', '".$db_obj->escapeString($_POST["title"])."', ".(empty($_POST["is_important"]) ? "0" : "1").", '".$db_obj->escapeString($_POST["content"])."', '".$user->get_id()."', '".$publication_datetime."', '".date("Y-m-d H:i:s", $expiration_timestamp)."')");
+            $db_obj->exec("INSERT INTO `unyohub_announcements`(`announcement_id`, `title`, `is_important`, `content`, `user_id`, `publication_datetime`, `expiration_datetime`) VALUES ('".$announcement_id."', '".$db_obj->escapeString($_POST["title"])."', ".(empty($_POST["is_important"]) ? "0" : "1").", '".$db_obj->escapeString($_POST["content"])."', '".$user->get_id()."', '".$publication_datetime_str."', '".date("Y-m-d H:i:s", $expiration_timestamp)."')");
             
             foreach ($railroad_ids as $railroad) {
                 $resource_id = $railroad === "/" ? "railroads" : "railroads/".$railroad;
@@ -89,11 +89,11 @@ if (isset($_POST["title"], $_POST["content"])) {
                 
                 $db_obj->exec("INSERT INTO `unyohub_railroad_announcements`(`announcement_id`, `railroad_id`) VALUES ('".$announcement_id."', '".$railroad."')");
                 
-                if ($publication_datetime === $datetime_now) {
+                if ($publication_datetime_str === $datetime_now) {
                     $db_obj->exec("DELETE FROM `unyohub_announcement_datetimes` WHERE `railroad_id` = '".$railroad."' AND `publication_or_deletion_datetime` < '".$datetime_now."'");
                 }
                 
-                $db_obj->exec("INSERT INTO `unyohub_announcement_datetimes`(`railroad_id`, `publication_or_deletion_datetime`, `is_publication_datetime`) VALUES ('".$railroad."', '".$publication_datetime."', 1)");
+                $db_obj->exec("INSERT INTO `unyohub_announcement_datetimes`(`railroad_id`, `publication_or_deletion_datetime`, `is_publication_datetime`) VALUES ('".$railroad."', '".$publication_datetime_str."', 1)");
             }
             
             print "<script> alert('お知らせを追加しました'); </script>";

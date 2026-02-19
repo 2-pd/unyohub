@@ -19,13 +19,13 @@ if (isset($_POST["instance_name"], $_POST["instance_introduction"], $_POST["inst
     $config_str .= "administrator_url = \"".addslashes($_POST["administrator_url"])."\"\n";
     $config_str .= "administrator_introduction = \"".str_replace(array("\r\n", "\n", "\r"), "\\n", addslashes($_POST["administrator_introduction"]))."\"\n";
     $config_str .= "\n";
-    $config_str .= "available_days_ahead = ".intval($_POST["available_days_ahead"])."\n";
+    $config_str .= "available_days_ahead = ".min(max(intval($_POST["available_days_ahead"]), 1), 30)."\n";
     $config_str .= "\n";
     $config_str .= "require_invite_code = ".(!empty($_POST["require_invite_code"]) ? "true" : "false")."\n";
     $config_str .= "require_email_address = ".(!empty($_POST["require_email_address"]) ? "true" : "false")."\n";
     $config_str .= "allow_guest_user = ".(!empty($_POST["allow_guest_user"]) ? "true" : "false")."\n";
     $config_str .= "validate_posted_formations = ".(!empty($_POST["validate_posted_formations"]) ? "true" : "false")."\n";
-    $config_str .= "comment_character_limit = ".intval($_POST["comment_character_limit"])."\n";
+    $config_str .= "comment_character_limit = ".min(max(intval($_POST["comment_character_limit"]), 0), 1000)."\n";
     $config_str .= "require_comments_on_speculative_posts = ".(!empty($_POST["require_comments_on_speculative_posts"]) ? "true" : "false")."\n";
     $config_str .= "\n";
     $config_str .= "quotation_guidelines = \"".str_replace(array("\r\n", "\n", "\r"), "\\n", addslashes($_POST["quotation_guidelines"]))."\"\n";
@@ -115,7 +115,8 @@ if ($config["require_comments_on_speculative_posts"]) {
 }
 print "><label for='require_comments_on_speculative_posts'>未出庫運用の情報投稿時に補足情報入力を強制</label>";
 print "<h4>運用補足情報の上限文字数</h4>";
-print "<input type='number' name='comment_character_limit' value='".addslashes($config["comment_character_limit"])."'>文字";
+print "<div class='informational_text'>0〜1000の範囲で設定してください。</div>";
+print "<input type='number' name='comment_character_limit' min='0' max='1000' value='".addslashes($config["comment_character_limit"])."'>文字";
 
 print "<h3>引用投稿のガイドライン</h3>";
 print "<textarea name='quotation_guidelines'>".htmlspecialchars(stripcslashes($config["quotation_guidelines"]))."</textarea>";

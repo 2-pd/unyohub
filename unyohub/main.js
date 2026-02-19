@@ -115,6 +115,7 @@ function get_default_config () {
         "enlarge_display_size" : false,
         "refresh_interval" : 5,
         "operation_data_cache_period" : 7,
+        "show_tips" : true,
         "position_mode_minute_step" : 1,
         "show_final_destinations_in_position_mode" : false,
         "show_deadhead_trains_on_timetable" : true,
@@ -557,6 +558,16 @@ function update_display_settings (redraw = false) {
                 break;
         }
     }
+    
+    var tips_elm = document.getElementById("tips");
+    if (config["show_tips"]) {
+        tips_elm.style.display = "block";
+        if (tips_elm.classList.contains("tips_active")) {
+            show_tips();
+        }
+    } else {
+        tips_elm.style.display = "none";
+    }
 }
 
 
@@ -566,7 +577,6 @@ update_display_settings();
 
 if (location.pathname === "/") {
     var splash_screen_login_status_elm = document.getElementById("splash_screen_login_status");
-    var splash_screen_announcement_elm = document.getElementById("splash_screen_announcement");
 }
 
 splash_screen_elm.classList.remove("splash_screen_loading");
@@ -580,37 +590,37 @@ var popup_history = [];
 var square_popup_is_open = false;
 
 
-var user_data = null;
+var user_info = null;
 
 var menu_admin_elm = document.getElementById("menu_admin");
 var menu_logged_in_elm = document.getElementById("menu_logged_in");
 var menu_not_logged_in_elm = document.getElementById("menu_not_logged_in");
 
-function update_user_data (user_data_next = null) {
-    user_data = user_data_next;
+function update_user_info (user_info_next = null) {
+    user_info = user_info_next;
     
     menu_admin_elm.style.display = "none";
     
-    if (user_data !== null) {
+    if (user_info !== null) {
         menu_logged_in_elm.style.display = "block";
         menu_not_logged_in_elm.style.display = "none";
         
         var menu_user_name_elm = document.getElementById("menu_user_name");
         menu_user_name_elm.className = "";
         
-        var user_name = user_data["user_name"] !== null ? user_data["user_name"] : "ハンドルネーム未設定";
+        var user_name = user_info["user_name"] !== null ? user_info["user_name"] : "ハンドルネーム未設定";
         
-        if (user_data["is_management_member"]) {
+        if (user_info["is_management_member"]) {
             menu_admin_elm.style.display = "block";
             var honorific = "(管)";
         } else {
-            if (user_data["is_control_panel_user"]) {
+            if (user_info["is_control_panel_user"]) {
                 menu_admin_elm.style.display = "block";
             }
             
             var honorific = "さん";
             
-            if (user_data["is_beginner"]) {
+            if (user_info["is_beginner"]) {
                 menu_user_name_elm.className = "beginner";
             }
         }
@@ -634,9 +644,9 @@ function check_logged_in () {
     ajax_post("check_logged_in.php", null, function (response) {
         if (response !== false) {
             if (response !== "NOT_LOGGED_IN") {
-                update_user_data(JSON.parse(response));
+                update_user_info(JSON.parse(response));
             } else {
-                update_user_data();
+                update_user_info();
             }
         } else if (location.pathname === "/") {
             splash_screen_login_status_elm.innerText = "【!】ログイン状態の確認に失敗しました";
@@ -1875,6 +1885,10 @@ function change_mode (num) {
             tabs[cnt].className = "";
             footer_boxes[cnt].style.display = "none";
         }
+    }
+    
+    if (document.getElementById("tips").classList.contains("tips_active")) {
+        show_tips();
     }
 }
 
@@ -3890,7 +3904,7 @@ function operation_data_draw (reset_active_tab = false) {
         if (days_before === 1) {
             buf_h2 += "(昨日)";
         } else {
-            if (user_data === null || !user_data["is_control_panel_user"]) {
+            if (user_info === null || !user_info["is_control_panel_user"]) {
                 show_write_operation_data_button = "false";
             }
             
@@ -4682,7 +4696,7 @@ function formation_detail (formation_name) {
     
     buf += "<div id='formation_operations_area'></div>";
     if (navigator.onLine) {
-        buf += "<button type='button' class='execute_button' onclick='operation_data_history(\"" + add_slashes(formation_name) + "\");'>これまでの運用履歴</button>";
+        buf += "<button type='button' class='history_button' onclick='operation_data_history(\"" + add_slashes(formation_name) + "\");'>これまでの運用履歴</button>";
     }
     
     buf += "<div id='semifixed_formation_area'></div>";

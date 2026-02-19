@@ -28,9 +28,16 @@ if (is_object($user)) {
         } else {
             $data["is_management_member"] = FALSE;
         }
+        
+        if ($user->check_permission("railroads", "edit_announcement")) {
+            $data["is_announcement_editor"] = TRUE;
+        } else {
+            $data["is_announcement_editor"] = FALSE;
+        }
     } else {
         $data["is_control_panel_user"] = FALSE;
         $data["is_management_member"] = FALSE;
+        $data["is_announcement_editor"] = FALSE;
     }
     $days_posted = intval($user->get_value("days_posted"));
     $data["is_beginner"] = ($days_posted < 20 && ($days_posted < 10 || intval($user->get_value("post_count")) < 50));

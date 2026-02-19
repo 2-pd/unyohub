@@ -22,7 +22,7 @@ input, textarea {
     }
 }
 
-.menu_button_with_notification:before {
+.menu_button_with_notification:before, .menu_button_with_important_notification:before {
     content: "";
     
     display: block;
@@ -35,7 +35,11 @@ input, textarea {
     
     border-radius: 6px;
     
-    background-color: #ee3333;
+    background-color: #33cc99;
+}
+
+:is(.menu_button_with_important_notification, .new_icon_red, .announcement_with_important_notification):before, .announcements_heading_important {
+    background-color: #ee3333 !important;
 }
 
 #menu {
@@ -409,6 +413,10 @@ input, textarea {
         background-color: transparent;
         
         font-size: 18px;
+        
+        .dark_mode & {
+            border-color: #999999;
+        }
     }
 }
 
@@ -651,6 +659,10 @@ a.connecting_railroad_link h5, .connecting_railroad_link a {
         line-height: 24px;
         font-size: 18px;
         text-align: center;
+        
+        .dark_mode & {
+            border-color: #999999 !important;
+        }
     }
     
     button {
@@ -777,7 +789,7 @@ a.connecting_railroad_link h5, .connecting_railroad_link a {
     }
 }
 
-#announcements_heading, #railroad_announcements_heading, #off_line_message_popup h3 {
+#announcements_heading, #off_line_message_popup h3 {
     width: calc(100% - 40px);
     height: 32px;
     
@@ -794,11 +806,7 @@ a.connecting_railroad_link h5, .connecting_railroad_link a {
     color: #ffffff;
 }
 
-.announcements_heading_important {
-    background-color: #ee3333 !important;
-}
-
-#railroad_announcements_heading {
+.railroad_announcements_heading {
     font-size: 16px;
 }
 
@@ -831,21 +839,17 @@ a.connecting_railroad_link h5, .connecting_railroad_link a {
     vertical-align: top;
 }
 
-.new_icon_red:before {
-    background-color: #ee3333;
-}
-
 .announcement {
-    padding: 15px;
+    padding: 14px;
     
-    background-color: #eeeeee;
+    border: 1px solid #dddddd;
     
     font-size: 18px;
     text-align: left;
     word-break: break-all;
     
     .dark_mode & {
-        background-color: #777777;
+        border-color: #808080;
     }
     
     small {
@@ -1679,6 +1683,125 @@ button:has(abbr) {
     }
 }
 
+#tips {
+    &.tips_active, &.tips_inactive{
+        transition-duration: 0.5s;
+        transition-property: all;
+    }
+    
+    &.tips_active {
+        right: 10px;
+        bottom: 50px;
+        
+        width: min(460px, calc(100vw - 40px));
+        height: 220px;
+        
+        padding: 10px;
+        
+        border-radius: 10px;
+        
+        opacity: 1;
+        
+        #tips_button {
+            display: none;
+        }
+        
+        #tips_area {
+            animation: tips_fade_in 0.75s ease-out;
+        }
+    }
+
+    &.tips_inactive #tips_button {
+        animation: tips_fade_in 0.75s ease-out;
+    }
+    
+    h5 {
+        margin: 15px 0 10px 0;
+        
+        line-height: 20px;
+        font-size: 16px;
+        color: #444444;
+        
+        .dark_mode & {
+            color: #ffffff;
+        }
+    }
+    
+    h5:first-of-type {
+        margin-top: 0;
+    }
+    
+    th {
+        font-weight: normal;
+        vertical-align: top;
+        text-align: right;
+        white-space: nowrap;
+    }
+    
+    ul {
+        margin: 0;
+        
+        padding: 0;
+        
+        list-style: none;
+        
+        li {
+            margin-bottom: 5px;
+        }
+    }
+}
+
+@keyframes tips_fade_in {
+    0% {
+        opacity: 0;
+    }
+    
+    67% {
+        opacity: 0;
+    }
+    
+    100% {
+        opacity: 1;
+    }
+}
+
+.tips_close_button {
+    top: unset;
+    bottom: 254px;
+    right: 10px;
+    
+    width: 36px;
+    height: 36px;
+    
+    background-size: 30px;
+    
+    .dark_mode & {
+        background-color: rgba(85, 85, 85, 0.85);
+    }
+}
+
+.announcement_with_notification, .announcement_with_important_notification {
+    &:before {
+        content: "";
+        
+        display: block;
+        
+        position: absolute;
+        top: 3px;
+        left: 24px;
+        
+        padding: 6px;
+        
+        background-color: #33cc99;
+        
+        border-radius: 6px;
+    }
+    
+    &:not(:empty):before {
+        top: 10px;
+    }
+}
+
 #wait_screen {
     background-color: rgba(0, 0, 0, 0.9);
     
@@ -1809,7 +1932,7 @@ input[type="search"]::-webkit-search-cancel-button {
         color: #333333;
         
         .dark_mode & {
-            border-color: #808080;
+            border-color: #999999;
             
             color: #ffffff;
         }
