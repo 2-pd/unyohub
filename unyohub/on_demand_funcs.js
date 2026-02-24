@@ -3553,8 +3553,8 @@ function show_about () {
     }
     
     buf += "<h3>アプリケーション情報</h3>";
-    buf += "<h4>" + UNYOHUB_APP_NAME + " v" + UNYOHUB_VERSION + "</h4>";
-    buf += "<div class='link_block'><a href='" + UNYOHUB_APP_INFO_URL + "' target='_blank' class='external_link'>" + UNYOHUB_APP_NAME + "について</a></div>";
+    buf += "<h4>" + UNYOHUB_PROJECT_NAME + " v" + UNYOHUB_VERSION + "</h4>";
+    buf += "<div class='link_block'><a href='" + UNYOHUB_PROJECT_INFO_URL + "' target='_blank' class='external_link'>" + UNYOHUB_PROJECT_NAME + "について</a></div>";
     buf += "<h5>ライセンス</h5>";
     buf += "<div class='informational_text'>" + UNYOHUB_LICENSE_TEXT + "</div>";
     buf += "<h5>ソースコード</h5>";
