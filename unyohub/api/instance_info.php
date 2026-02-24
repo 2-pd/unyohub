@@ -3,22 +3,16 @@ include "../version.php";
 
 define("MAIN_CONFIG_PATH", "../config/main.ini");
 
-if (isset($_POST["client_unyohub_version"]) && $_POST["client_unyohub_version"] !== UNYOHUB_VERSION) {
-    goto output_start;
-}
-
 $last_modified = @filemtime(MAIN_CONFIG_PATH);
 if ($last_modified === FALSE) {
     print "ERROR: main.iniにアクセスできません";
     exit;
 }
 
-if (isset($_POST["last_modified_timestamp"]) && $last_modified <= intval($_POST["last_modified_timestamp"])) {
+if ((empty($_POST["client_unyohub_version"]) || $_POST["client_unyohub_version"] === UNYOHUB_VERSION) && isset($_POST["last_modified_timestamp"]) && $last_modified <= intval($_POST["last_modified_timestamp"])) {
     print "NO_UPDATES_AVAILABLE";
     exit;
 }
-
-output_start:
 
 header("Last-Modified: ".gmdate("D, d M Y H:i:s", $last_modified)." GMT");
 

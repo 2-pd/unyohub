@@ -461,7 +461,7 @@ function draw_announcements (railroad_id, announcements_data, last_read_timestam
         buf = "<div class='no_data'>お知らせはありません</div>";
     }
     
-    if (user_info["is_announcement_editor"]) {
+    if (user_info !== null && user_info["is_announcement_editor"]) {
         buf += "<a href='/admin/announcements.php?railroad_id=" + (railroad_id === null ? "/" : railroad_id) + "' target='_blank' class='execute_link'>お知らせの編集</a>";
     }
     
@@ -2005,6 +2005,10 @@ function change_operation_table_options () {
     
     save_config();
     
+    if (document.getElementById("tips").classList.contains("tips_active")) {
+        show_tips();
+    }
+    
     operation_table_list_number();
 }
 
@@ -2135,13 +2139,16 @@ function show_tips () {
         case 2:
             buf += "<h5>充当編成情報の機能</h5>";
             buf += "<ul>";
-            buf += "<li>出庫前の編成は背景が斜線で、入庫済みの編成は背景がグレーで表示されます。</li>";
-            buf += "<li><a href='javascript:void(0);' onclick='edit_config();'>アプリの設定</a>から「運用データ等に編成の説明を表示」を有効化すると、特記事項のある編成では編成名のあとに一行説明が表示されます。</li>";
+            buf += "<li>出庫前の編成は背景が<b>斜線</b>で、入庫済みの編成は背景が<b style='color: " + (config["dark_mode"] ? "#999999" : "#808080") + ";'>グレー</b>で表示されます。</li>";
+            buf += "<li><a href='javascript:void(0);' onclick='edit_config();'>アプリの設定</a>から「<b>運用データ等に編成の説明を表示</b>」を有効化すると、特記事項のある編成では編成名のあとに一行説明が表示されます。</li>";
             buf += "</ul>";
             break;
         case 3:
             buf += "<h5>編成表の機能</h5>";
-            buf += "<a href='javascript:void(0);' onclick='edit_config();'>アプリの設定</a>から「西向き先頭車を編成表左側に表示」を有効化すると、編成表の左右と編成の西東を合わせて表示することが可能です。";
+            buf += "<ul>";
+            buf += "<li><b>スクリーンショットボタン</b>(カメラのマーク)をタップすると、編成表や各編成の情報を画像として保存することができます。</li>";
+            buf += "<li><a href='javascript:void(0);' onclick='edit_config();'>アプリの設定</a>から「<b>西向き先頭車を編成表左側に表示</b>」を有効化すると、編成表の左右と編成の西東を合わせて表示することが可能です。</li>";
+            buf += "</ul>";
             break;
     }
     
@@ -3192,6 +3199,7 @@ function edit_config () {
     buf += "<input type='checkbox' id='colorize_beginners_posts_check' class='toggle' onchange='change_config();'" + (config["colorize_beginners_posts"] ? " checked='checked'" : "") + "><label for='colorize_beginners_posts_check'>ビギナーの方の投稿を区別する</label>";
     buf += "<input type='checkbox' id='show_tips_check' class='toggle' onchange='change_config();'" + (config["show_tips"] ? " checked='checked'" : "") + "><label for='show_tips_check'>Tips表示ボタンを有効化する</label>";
     buf += "<input type='checkbox' id='force_arrange_west_side_car_on_left_check' class='toggle' onchange='change_config();'" + (config["force_arrange_west_side_car_on_left"] ? " checked='checked'" : "") + "><label for='force_arrange_west_side_car_on_left_check'>西向き先頭車を編成表左側に表示</label>";
+    buf += "<input type='checkbox' id='use_group_divisions_on_operation_data_check' class='toggle' onchange='change_config();'" + (config["use_group_divisions_on_operation_data"] ? " checked='checked'" : "") + "><label for='use_group_divisions_on_operation_data_check'>運用データを系統区分別に表示する</label>";
     buf += "<input type='checkbox' id='show_formation_captions_on_operation_data_check' class='toggle' onchange='change_config();'" + (config["show_formation_captions_on_operation_data"] ? " checked='checked'" : "") + "><label for='show_formation_captions_on_operation_data_check'>運用データ等に編成の説明を表示</label>";
     buf += "<h5>運用情報の自動更新間隔</h5>";
     buf += "<input type='number' id='refresh_interval' min='1' max='60' onchange='change_config();' value='" + config["refresh_interval"] + "'>分ごと";
@@ -3232,6 +3240,7 @@ function change_config () {
     config["colorize_beginners_posts"] = document.getElementById("colorize_beginners_posts_check").checked;
     config["show_tips"] = document.getElementById("show_tips_check").checked;
     config["force_arrange_west_side_car_on_left"] = document.getElementById("force_arrange_west_side_car_on_left_check").checked;
+    config["use_group_divisions_on_operation_data"] = document.getElementById("use_group_divisions_on_operation_data_check").checked;
     config["show_formation_captions_on_operation_data"] = document.getElementById("show_formation_captions_on_operation_data_check").checked;
     
     var refresh_interval_elm = document.getElementById("refresh_interval");
@@ -3551,8 +3560,8 @@ function show_about () {
     }
     
     buf += "<h3>アプリケーション情報</h3>";
-    buf += "<h4>" + UNYOHUB_APP_NAME + " v" + UNYOHUB_VERSION + "</h4>";
-    buf += "<div class='link_block'><a href='" + UNYOHUB_APP_INFO_URL + "' target='_blank' class='external_link'>" + UNYOHUB_APP_NAME + "について</a></div>";
+    buf += "<h4>" + UNYOHUB_PROJECT_NAME + " v" + UNYOHUB_VERSION + "</h4>";
+    buf += "<div class='link_block'><a href='" + UNYOHUB_PROJECT_INFO_URL + "' target='_blank' class='external_link'>" + UNYOHUB_PROJECT_NAME + "について</a></div>";
     buf += "<h5>ライセンス</h5>";
     buf += "<div class='informational_text'>" + UNYOHUB_LICENSE_TEXT + "</div>";
     buf += "<h5>ソースコード</h5>";

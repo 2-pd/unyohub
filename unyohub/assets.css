@@ -2302,8 +2302,6 @@ input[type="checkbox"]:checked + :is(label.drop_down, label.formation_table_drop
     }
     
     .car_highlight {
-        border: 1px solid #ffcc00 !important;
-        
         outline: 2px solid #ffcc00 !important;
         outline-offset: -2px;
     }
