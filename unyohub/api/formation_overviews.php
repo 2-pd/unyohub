@@ -31,7 +31,7 @@ while ($formation_overview = $overviews_r->fetchArray(SQLITE3_ASSOC)) {
 
 header("Last-Modified: ".gmdate("D, d M Y H:i:s", strtotime($updated_datetime))." GMT");
 
-if (!empty($_SERVER["HTTP_ACCEPT_ENCODING"]) && strpos($_SERVER["HTTP_ACCEPT_ENCODING"], "gzip") !== FALSE) {
+if (!empty($_SERVER["HTTP_ACCEPT_ENCODING"]) && str_contains($_SERVER["HTTP_ACCEPT_ENCODING"], "gzip")) {
     header("Content-Encoding: gzip");
     
     print gzencode(json_encode($formation_overviews, JSON_UNESCAPED_UNICODE));

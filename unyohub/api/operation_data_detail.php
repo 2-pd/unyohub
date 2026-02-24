@@ -88,7 +88,7 @@ for ($cnt = 0; $cnt < count($operation_numbers); $cnt++) {
 }
 
 
-if (!empty($_SERVER["HTTP_ACCEPT_ENCODING"]) && strpos($_SERVER["HTTP_ACCEPT_ENCODING"], "gzip") !== FALSE) {
+if (!empty($_SERVER["HTTP_ACCEPT_ENCODING"]) && str_contains($_SERVER["HTTP_ACCEPT_ENCODING"], "gzip")) {
     header("Content-Encoding: gzip");
     
     print gzencode(json_encode($operation_data, JSON_UNESCAPED_UNICODE));

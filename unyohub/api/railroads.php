@@ -17,7 +17,7 @@ if ($last_modified <= intval($_POST["last_modified_timestamp"])) {
 } else {
     header("Last-Modified: ".gmdate("D, d M Y H:i:s", $last_modified)." GMT");
     
-    if (!empty($_SERVER["HTTP_ACCEPT_ENCODING"]) && strpos($_SERVER["HTTP_ACCEPT_ENCODING"], "gzip") !== FALSE) {
+    if (!empty($_SERVER["HTTP_ACCEPT_ENCODING"]) && str_contains($_SERVER["HTTP_ACCEPT_ENCODING"], "gzip")) {
         header("Content-Encoding: gzip");
         print gzencode(file_get_contents(JSON_PATH));
     } else {

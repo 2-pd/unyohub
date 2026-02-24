@@ -173,7 +173,7 @@ $formation_data["updated_timestamp"] = strtotime($formation_data["updated_dateti
 unset($formation_data["updated_datetime"]);
 
 
-if (!empty($_SERVER["HTTP_ACCEPT_ENCODING"]) && strpos($_SERVER["HTTP_ACCEPT_ENCODING"], "gzip") !== FALSE) {
+if (!empty($_SERVER["HTTP_ACCEPT_ENCODING"]) && str_contains($_SERVER["HTTP_ACCEPT_ENCODING"], "gzip")) {
     header("Content-Encoding: gzip");
     
     print gzencode(json_encode($formation_data, JSON_UNESCAPED_UNICODE));
