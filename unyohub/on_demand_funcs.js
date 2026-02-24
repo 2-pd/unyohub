@@ -461,7 +461,7 @@ function draw_announcements (railroad_id, announcements_data, last_read_timestam
         buf = "<div class='no_data'>お知らせはありません</div>";
     }
     
-    if (user_info["is_announcement_editor"]) {
+    if (user_info !== null && user_info["is_announcement_editor"]) {
         buf += "<a href='/admin/announcements.php?railroad_id=" + (railroad_id === null ? "/" : railroad_id) + "' target='_blank' class='execute_link'>お知らせの編集</a>";
     }
     
