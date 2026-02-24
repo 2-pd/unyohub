@@ -2005,6 +2005,10 @@ function change_operation_table_options () {
     
     save_config();
     
+    if (document.getElementById("tips").classList.contains("tips_active")) {
+        show_tips();
+    }
+    
     operation_table_list_number();
 }
 

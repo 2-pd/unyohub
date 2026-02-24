@@ -1773,6 +1773,8 @@ button:has(abbr) {
     width: 36px;
     height: 36px;
     
+    border-radius: 10px;
+    
     background-size: 30px;
     
     .dark_mode & {
