@@ -1773,6 +1773,8 @@ button:has(abbr) {
     width: 36px;
     height: 36px;
     
+    border-radius: 10px;
+    
     background-size: 30px;
     
     .dark_mode & {
@@ -1833,26 +1835,28 @@ button:has(abbr) {
         display: none !important;
     }
     
-    .search_highlight, .train_detail_departure_time_highlight {
+    mark, .search_highlight {
         background-color: inherit !important;
-        
-        font-weight: inherit !important;
     }
     
-    .train_detail_departure_time_highlight:before {
-        top: 14px;
-        left: -14px;
+    .train_detail_departure_time_highlight td {
+        font-weight: normal !important;
         
-        width: 8px;
-        height: 8px;
-        
-        background-color: #ffffff;
-        
-        border: none;
-        border-radius: 4px;
-        
-        .dark_mode & {
-            background-color: #eeeeee;
+        &:before {
+            top: 18px !important;
+            left: 6px !important;
+            
+            width: 8px !important;
+            height: 8px !important;
+            
+            background-color: #ffffff !important;
+            
+            border: none !important;
+            border-radius: 4px !important;
+            
+            .dark_mode & {
+                background-color: #eeeeee !important;
+            }
         }
     }
     
@@ -1871,6 +1875,10 @@ button:has(abbr) {
     
     .formation_table_series_name {
         display: block;
+    }
+    
+    .car_highlight {
+        outline: none !important;
     }
 }
 
