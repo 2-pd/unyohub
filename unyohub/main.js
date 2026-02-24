@@ -132,6 +132,7 @@ function get_default_config () {
         "show_comments_on_operation_table" : true,
         "show_assigned_formations_on_operation_table" : true,
         "operation_table_timeline_scale" : 2,
+        "use_group_divisions_on_operation_data" : true,
         "show_formation_captions_on_operation_data" : false,
         "simplify_operation_details" : false,
         "show_favorite_railroads" : true,
@@ -3943,7 +3944,7 @@ function operation_data_draw (reset_active_tab = false) {
             
             var groups = operation_table["operation_groups"];
             
-            if ("group_division_names" in operation_table) {
+            if (config["use_group_divisions_on_operation_data"] && "group_division_names" in operation_table) {
                 var divisions = [];
                 buf += "<div class='inner_tab_area'>";
                 
@@ -4133,7 +4134,7 @@ function operation_data_draw (reset_active_tab = false) {
             series_formation_list["不明"] = ["不明"];
         }
         
-        if ("series_division_names" in formations) {
+        if (config["use_group_divisions_on_operation_data"] && "series_division_names" in formations) {
             var divisions = [];
             buf += "<div class='inner_tab_area'>";
             
