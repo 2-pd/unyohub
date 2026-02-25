@@ -294,7 +294,7 @@ if ($path_info_str === "/") {
     <div id="blank_article" class="wait_icon"></div>
     <div id="tab_area"><a href="<?php print $railroad_root; ?>" onclick="event.preventDefault(); position_mode();" id="tab_position_mode">走行位置</a><a href="<?php print $railroad_root; ?>timetable/" onclick="event.preventDefault(); timetable_mode();" id="tab_timetable_mode">時刻表</a><a href="<?php print $railroad_root; ?>operation_data/" onclick="event.preventDefault(); operation_data_mode();" id="tab_operation_data_mode">運用データ</a><a href="<?php print $railroad_root; ?>formations/" onclick="event.preventDefault(); formations_mode();" id="tab_formations_mode">編成表</a><a href="<?php print $railroad_root; ?>operation_table/" onclick="event.preventDefault(); operation_table_mode();" id="tab_operation_table_mode">運用表</a></div>
     <article>
-        <div class='line_select_wrapper'><button type="button" id="position_line_select" onclick="select_lines();"></button></div>
+        <div class="line_select_wrapper"><button type="button" id="position_line_select" onclick="select_lines();"></button></div>
         <table id="position_area" class="wait_icon"></table>
         <div id="position_area_supplement" class="radio_area">
             <div><input type="radio" name="show_train_numbers_or_final_destinations" id="show_train_numbers_radio" onchange="change_show_final_destinations(!this.checked);"><label for="show_train_numbers_radio">列車番号を表示</label><input type="radio" name="show_train_numbers_or_final_destinations" id="show_final_destinations_radio" onchange="change_show_final_destinations(this.checked);"><label for="show_final_destinations_radio">行き先を表示</label></div>
@@ -303,7 +303,7 @@ if ($path_info_str === "/") {
         </div>
     </article>
     <article onscroll="timetable_wrapper_onscroll();">
-        <div class='line_select_wrapper'><button type="button" id="timetable_line_select" onclick="select_lines(timetable_selected_line, timetable_selected_station, false);"></button></div>
+        <div class="line_select_wrapper"><button type="button" id="timetable_line_select" onclick="select_lines(timetable_selected_line, timetable_selected_station, false);"></button></div>
         <div id="direction_radio_area" class="radio_area">
             <div id="timetable_station_name" class="heading_wrapper"></div>
             <div><input type="radio" name="direction_radio" id="radio_inbound" value="inbound" checked="checked" onchange="timetable_select_station(timetable_selected_station);"><label for="radio_inbound" id="radio_inbound_label">上り</label><input type="radio" name="direction_radio" id="radio_outbound" value="outbound" onchange="timetable_select_station(timetable_selected_station);"><label for="radio_outbound" id="radio_outbound_label">下り</label></div>
@@ -315,18 +315,22 @@ if ($path_info_str === "/") {
         <h2 id="operation_data_heading"></h2>
         <div class="radio_area"><input type="radio" name="operation_data_radio" id="radio_operation_groups" value="operation_groups" checked="checked" onchange="operation_data_draw(true);"><label for="radio_operation_groups">系統別</label><input type="radio" name="operation_data_radio" id="radio_formations" value="formations" onchange="operation_data_draw(true);"><label for="radio_formations">編成別</label><input type="radio" name="operation_data_radio" id="radio_starting_location" value="starting_location" onchange="operation_data_draw(true);"><label for="radio_starting_location">出庫別</label><input type="radio" name="operation_data_radio" id="radio_terminal_location" value="terminal_location" onchange="operation_data_draw(true);"><label for="radio_terminal_location">入庫別</label></div>
         <div id="operation_data_area" class="wait_icon"></div>
+        <div id="operation_data_area_supplement">
+            <div id="whether_use_group_divisions_area" class="radio_area"><input type="radio" name="whether_use_group_divisions" id="use_group_divisions_radio" value="use_group_divisions" checked="checked" onchange="change_use_group_divisions(this.checked);"><label for="use_group_divisions_radio">系統区分別表示</label><input type="radio" name="whether_use_group_divisions" id="not_use_group_divisions_radio" value="not_use_group_divisions" onchange="change_use_group_divisions(!this.checked);"><label for="not_use_group_divisions_radio">単一ページ表示</label></div>
+            <a href="#about_railroad_data_popup" class="bottom_link" onclick="event.preventDefault(); about_railroad_data();">使用しているデータについて</a>
+        </div>
     </article>
     <article onscroll="formation_table_wrapper_onscroll();">
         <button type="button" id="formation_screenshot_button" class="screenshot_button" onclick="take_screenshot('formation_table_area');" aria-label="スクリーンショット"></button>
         <div id="formation_search_area">
-            <div class='search_wrapper'><label for="car_number_search" class="search_icon">編成名・車両番号で検索</label><input type="search" id="car_number_search" onkeyup="draw_formation_table();" onsearch="draw_formation_table();" placeholder="編成名・車両番号で検索" autocomplete="off"></div>
+            <div class="search_wrapper"><label for="car_number_search" class="search_icon">編成名・車両番号で検索</label><input type="search" id="car_number_search" onkeyup="draw_formation_table();" onsearch="draw_formation_table();" placeholder="編成名・車両番号で検索" autocomplete="off"></div>
             <div class="radio_area"><input type="checkbox" id="colorize_formation_table" class="chip" onchange="change_colorize_formation_table(this.checked);"><label for="colorize_formation_table" id="colorize_formation_table_label">車体色</label><input type="checkbox" id="show_unregistered_formations" class="chip" onchange="change_show_unregistered_formations(this.checked);"><label for="show_unregistered_formations">除籍済み編成</label><input type="checkbox" id="group_formations_by_prefix" class="chip" onchange="change_group_formations_by_prefix(this.checked);"><label for="group_formations_by_prefix" id="group_formations_by_prefix_label">編成記号別</label></div>
         </div>
         <div id="formation_table_area" class="wait_icon"></div>
     </article>
     <article>
         <div id="operation_search_area">
-            <div class='search_wrapper'><label for="train_number_search" class="search_icon">運用・列車番号で検索</label><input type="search" id="train_number_search" onkeyup="operation_table_list_number();" onsearch="operation_table_list_number();" placeholder="運用・列車番号で検索" autocomplete="off"></div>
+            <div class="search_wrapper"><label for="train_number_search" class="search_icon">運用・列車番号で検索</label><input type="search" id="train_number_search" onkeyup="operation_table_list_number();" onsearch="operation_table_list_number();" placeholder="運用・列車番号で検索" autocomplete="off"></div>
         <div class="radio_area"><input type="radio" name="operation_table_sorting_criteria" id="sort_by_operation_groups" value="operation_groups" checked="checked" onchange="operation_table_list_number();"><label for="sort_by_operation_groups">系統別</label><input type="radio" name="operation_table_sorting_criteria" id="sort_by_starting_location" value="starting_location" onchange="operation_table_list_number();"><label for="sort_by_starting_location">出庫別</label><input type="radio" name="operation_table_sorting_criteria" id="sort_by_terminal_location" value="terminal_location" onchange="operation_table_list_number();"><label for="sort_by_terminal_location">入庫別</label><button type="button" class="customize_button" onclick="customize_operation_table();">カスタム</button></div>
         </div>
         <h2 id="operation_table_heading"></h2>

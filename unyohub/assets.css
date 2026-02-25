@@ -2117,6 +2117,10 @@ input[type="checkbox"]:checked + :is(label.drop_down, label.formation_table_drop
     .operation_data_3_columns th {
         width: 80px;
     }
+    
+    &:empty + #operation_data_area_supplement {
+        display: none;
+    }
 }
 
 .before_operation {

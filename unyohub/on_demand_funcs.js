@@ -44,7 +44,8 @@ function save_railroad_user_data (railroad_id) {
         user_data_store.put({
             railroad_id : railroad_id,
             position_selected_line : position_selected_line,
-            position_scroll_amount : scroll_amount
+            position_scroll_amount : scroll_amount,
+            use_group_divisions_on_operation_data : use_group_divisions_on_operation_data
         });
     });
 }
@@ -1421,6 +1422,12 @@ function activate_operation_data_tab (division_name) {
     }
     
     operation_data_active_tab = division_name;
+}
+
+function change_use_group_divisions (bool_val) {
+    use_group_divisions_on_operation_data = bool_val;
+    
+    operation_data_draw();
 }
 
 function operation_date_button_change () {
