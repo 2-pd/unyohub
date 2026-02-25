@@ -115,7 +115,6 @@ function get_default_config () {
         "enlarge_display_size" : false,
         "refresh_interval" : 5,
         "operation_data_cache_period" : 7,
-        "show_tips" : true,
         "position_mode_minute_step" : 1,
         "show_final_destinations_in_position_mode" : false,
         "show_deadhead_trains_on_timetable" : true,
@@ -132,7 +131,6 @@ function get_default_config () {
         "show_comments_on_operation_table" : true,
         "show_assigned_formations_on_operation_table" : true,
         "operation_table_timeline_scale" : 2,
-        "use_group_divisions_on_operation_data" : true,
         "show_formation_captions_on_operation_data" : false,
         "simplify_operation_details" : false,
         "show_favorite_railroads" : true,
@@ -392,8 +390,9 @@ var db_open_promise = new Promise(function (resolve, reject) {
             var obj_store = db.createObjectStore(table_name, {keyPath : DB_TABLES[table_name]["keyPath"]});
             
             if ("indexes" in DB_TABLES[table_name]) {
-                for (var index_name of Object.keys(DB_TABLES[table_name]["indexes"]))
-                obj_store.createIndex(index_name, DB_TABLES[table_name]["indexes"][index_name]["keyPath"]);
+                for (var index_name of Object.keys(DB_TABLES[table_name]["indexes"])) {
+                    obj_store.createIndex(index_name, DB_TABLES[table_name]["indexes"][index_name]["keyPath"]);
+                }
             }
         }
         
@@ -556,14 +555,8 @@ function update_display_settings (redraw = false) {
         }
     }
     
-    var tips_elm = document.getElementById("tips");
-    if (config["show_tips"]) {
-        tips_elm.style.display = "block";
-        if (tips_elm.classList.contains("tips_active")) {
-            show_tips();
-        }
-    } else {
-        tips_elm.style.display = "none";
+    if (document.getElementById("tips").classList.contains("tips_active")) {
+        show_tips();
     }
 }
 
