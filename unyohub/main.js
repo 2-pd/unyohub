@@ -504,6 +504,10 @@ function convert_font_color_dark_mode (color_hex) {
 function update_display_settings (redraw = false) {
     var body_elm = document.getElementsByTagName("body")[0];
     
+    if (/(iPhone|iPad)/i.test(navigator.userAgent)) {
+        body_elm.classList.add("ios");
+    }
+    
     if (config["dark_mode"]) {
         body_elm.classList.add("dark_mode");
     } else {

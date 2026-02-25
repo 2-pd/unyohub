@@ -933,6 +933,10 @@ article {
     .dark_mode & {
         background-color: #444444;
     }
+    
+    .ios & {
+        height: calc(100% - 280px);
+    }
 }
 
 .wide_button, .write_button {
@@ -3292,6 +3296,10 @@ h2, .heading_wrapper {
         
         color: #eeeeee;
     }
+    
+    .ios & {
+        bottom: 150px;
+    }
 }
 
 #tips_button {
@@ -3372,6 +3380,10 @@ h2, .heading_wrapper {
         font-weight: normal;
         text-align: center;
     }
+    
+    .ios & {
+        bottom: 90px;
+    }
 }
 
 footer {
@@ -3396,6 +3408,10 @@ footer {
         background-color: #555555;
         
         color: #eeeeee;
+    }
+    
+    .ios & {
+        height: 75px;
     }
     
     div {

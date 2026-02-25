@@ -1702,6 +1702,10 @@ button:has(abbr) {
         
         opacity: 1;
         
+        .ios & {
+            bottom: 80px;
+        }
+        
         #tips_button {
             display: none;
         }
@@ -1779,6 +1783,10 @@ button:has(abbr) {
     
     .dark_mode & {
         background-color: rgba(85, 85, 85, 0.85);
+    }
+    
+    .ios & {
+        bottom: 284px;
     }
 }
 
