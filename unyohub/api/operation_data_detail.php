@@ -1,6 +1,8 @@
 <?php
 include "../libs/wakarana/main.php";
 
+header("Access-Control-Allow-Origin: *");
+
 if (!isset($_POST["railroad_id"], $_POST["date"], $_POST["operation_numbers"])) {
     print "ERROR: 送信値が不正です";
     exit;
@@ -8,7 +10,12 @@ if (!isset($_POST["railroad_id"], $_POST["date"], $_POST["operation_numbers"])) 
 
 $wakarana = new wakarana("../config");
 
-$access_user = $wakarana->check();
+if (isset($_SERVER["HTTP_ORIGIN"]) && str_ends_with($_SERVER["HTTP_ORIGIN"], "://".$_SERVER["HTTP_HOST"])) {
+    $access_user = $wakarana->check();
+} else {
+    $access_user = FALSE;
+}
+
 if (is_object($access_user) && $access_user->check_permission("railroads/".$_POST["railroad_id"], "moderate")) {
     $access_user_is_moderator = TRUE;
 } else {
@@ -88,7 +95,7 @@ for ($cnt = 0; $cnt < count($operation_numbers); $cnt++) {
 }
 
 
-if (!empty($_SERVER["HTTP_ACCEPT_ENCODING"]) && strpos($_SERVER["HTTP_ACCEPT_ENCODING"], "gzip") !== FALSE) {
+if (!empty($_SERVER["HTTP_ACCEPT_ENCODING"]) && str_contains($_SERVER["HTTP_ACCEPT_ENCODING"], "gzip")) {
     header("Content-Encoding: gzip");
     
     print gzencode(json_encode($operation_data, JSON_UNESCAPED_UNICODE));

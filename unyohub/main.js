@@ -190,10 +190,6 @@ function ajax_post (end_point_name, query_str, callback_func, timeout = 30) {
                     callback_func(ajax_request.responseText, ajax_request.getResponseHeader("last-modified"));
                     break;
                 
-                case 304:
-                    callback_func(ajax_request.responseText, false);
-                    break;
-                
                 default:
                     mes("ERROR: データの取得に失敗しました(" + ajax_request.status + ")", true);
                     callback_func(false, null);

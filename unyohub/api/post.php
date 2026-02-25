@@ -208,4 +208,6 @@ if (!$data_cache_values["is_quotation"]) {
     unset($data_cache_values["is_quotation"]);
 }
 
+header("HTTP/1.1 201 Created");
+
 print json_encode(array($_POST["operation_number"] => $data_cache_values), JSON_UNESCAPED_UNICODE);

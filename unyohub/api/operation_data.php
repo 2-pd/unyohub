@@ -1,4 +1,6 @@
 <?php
+header("Access-Control-Allow-Origin: *");
+
 if (!isset($_POST["railroad_id"], $_POST["date"], $_POST["last_modified_timestamp"])) {
     print "ERROR: 送信値が不正です";
     exit;
@@ -50,7 +52,7 @@ if (empty($operation_data)) {
 } else {
     header("Last-Modified: ".gmdate("D, d M Y H:i:s", strtotime($updated_datetime))." GMT");
     
-    if (!empty($_SERVER["HTTP_ACCEPT_ENCODING"]) && strpos($_SERVER["HTTP_ACCEPT_ENCODING"], "gzip") !== FALSE) {
+    if (!empty($_SERVER["HTTP_ACCEPT_ENCODING"]) && str_contains($_SERVER["HTTP_ACCEPT_ENCODING"], "gzip")) {
         header("Content-Encoding: gzip");
         
         print gzencode(json_encode($operation_data, JSON_UNESCAPED_UNICODE));

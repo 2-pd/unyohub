@@ -1,4 +1,6 @@
 <?php
+header("Access-Control-Allow-Origin: *");
+
 if (!isset($_POST["railroad_id"], $_POST["last_modified_timestamp"])) {
     print "ERROR: 送信値が不正です";
     exit;
@@ -20,7 +22,7 @@ if (intval($_POST["last_modified_timestamp"]) >= $last_modified) {
     
     $diagram_revisions_json = json_encode(file($path, FILE_IGNORE_NEW_LINES | FILE_SKIP_EMPTY_LINES), JSON_UNESCAPED_UNICODE);
     
-    if (!empty($_SERVER["HTTP_ACCEPT_ENCODING"]) && strpos($_SERVER["HTTP_ACCEPT_ENCODING"], "gzip") !== FALSE) {
+    if (!empty($_SERVER["HTTP_ACCEPT_ENCODING"]) && str_contains($_SERVER["HTTP_ACCEPT_ENCODING"], "gzip")) {
         header("Content-Encoding: gzip");
         print gzencode($diagram_revisions_json);
     } else {
