@@ -3580,14 +3580,14 @@ function reload_app (force_update = false) {
     
     open_wait_screen();
     
+    if (force_update) {
+        history.pushState(null, "", "/?ts=" + Date.now());
+    } else if (location.pathname !== "/") {
+        history.pushState(null, "", "/");
+    }
+    
     setTimeout(function () {
-        if (force_update) {
-            location.href = "/?ts=" + Date.now();
-        } else if (location.pathname === "/") {
-            location.reload();
-        } else {
-            location.pathname = "/";
-        }
+        location.reload();
     }, 100);
 }
 
