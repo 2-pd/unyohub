@@ -1,6 +1,8 @@
 <?php
 include "../version.php";
 
+header("Access-Control-Allow-Origin: *");
+
 define("MAIN_CONFIG_PATH", "../config/main.ini");
 
 $last_modified = @filemtime(MAIN_CONFIG_PATH);

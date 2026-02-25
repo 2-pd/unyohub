@@ -1,4 +1,6 @@
 <?php
+header("Access-Control-Allow-Origin: *");
+
 if (!isset($_POST["railroad_id"], $_POST["diagram_revision"], $_POST["timetable_id"], $_POST["last_modified_timestamp"])) {
     print "ERROR: 送信値が不正です";
     exit;

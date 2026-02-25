@@ -1,6 +1,8 @@
 <?php
 include "../libs/wakarana/main.php";
 
+header("Access-Control-Allow-Origin: *");
+
 $db_obj = new SQLite3("../common_dbs/announcements.db");
 $db_obj->busyTimeout(5000);
 

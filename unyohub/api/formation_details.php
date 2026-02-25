@@ -43,6 +43,9 @@ function shape_operation_data ($sql_r) {
 }
 
 
+header("Access-Control-Allow-Origin: *");
+
+
 if (!isset($_POST["railroad_id"], $_POST["formation_name"])) {
     print "ERROR: 送信値が不正です";
     exit;
@@ -150,7 +153,12 @@ if (!$formation_data["currently_registered"]) {
 unset($formation_data["currently_registered"]);
 
 
-$user = $wakarana->check();
+if (isset($_SERVER["HTTP_ORIGIN"]) && str_ends_with($_SERVER["HTTP_ORIGIN"], "://".$_SERVER["HTTP_HOST"])) {
+    $user = $wakarana->check();
+} else {
+    $user = FALSE;
+}
+
 if (is_object($user)) {
     if (!empty($formation_data["edited_user_id"]) && $user->check_permission("control_panel_user")) {
         $edited_user = $wakarana->get_user($formation_data["edited_user_id"]);

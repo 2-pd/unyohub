@@ -1,4 +1,6 @@
 <?php
+header("Access-Control-Allow-Origin: *");
+
 define("JSON_PATH", "../config/railroads.json");
 
 if (!isset($_POST["last_modified_timestamp"])) {
