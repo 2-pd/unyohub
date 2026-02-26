@@ -933,6 +933,10 @@ article {
     .dark_mode & {
         background-color: #444444;
     }
+    
+    .ios & {
+        height: calc(100% - 280px);
+    }
 }
 
 .wide_button, .write_button {
@@ -2113,6 +2117,10 @@ input[type="checkbox"]:checked + :is(label.drop_down, label.formation_table_drop
     .operation_data_3_columns th {
         width: 80px;
     }
+    
+    &:empty + #operation_data_area_supplement {
+        display: none;
+    }
 }
 
 .before_operation {
@@ -3292,6 +3300,10 @@ h2, .heading_wrapper {
         
         color: #eeeeee;
     }
+    
+    .ios & {
+        bottom: 150px;
+    }
 }
 
 #tips_button {
@@ -3372,6 +3384,10 @@ h2, .heading_wrapper {
         font-weight: normal;
         text-align: center;
     }
+    
+    .ios & {
+        bottom: 90px;
+    }
 }
 
 footer {
@@ -3396,6 +3412,10 @@ footer {
         background-color: #555555;
         
         color: #eeeeee;
+    }
+    
+    .ios & {
+        height: 75px;
     }
     
     div {

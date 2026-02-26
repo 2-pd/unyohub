@@ -115,7 +115,6 @@ function get_default_config () {
         "enlarge_display_size" : false,
         "refresh_interval" : 5,
         "operation_data_cache_period" : 7,
-        "show_tips" : true,
         "position_mode_minute_step" : 1,
         "show_final_destinations_in_position_mode" : false,
         "show_deadhead_trains_on_timetable" : true,
@@ -132,7 +131,6 @@ function get_default_config () {
         "show_comments_on_operation_table" : true,
         "show_assigned_formations_on_operation_table" : true,
         "operation_table_timeline_scale" : 2,
-        "use_group_divisions_on_operation_data" : true,
         "show_formation_captions_on_operation_data" : false,
         "simplify_operation_details" : false,
         "show_favorite_railroads" : true,
@@ -392,8 +390,9 @@ var db_open_promise = new Promise(function (resolve, reject) {
             var obj_store = db.createObjectStore(table_name, {keyPath : DB_TABLES[table_name]["keyPath"]});
             
             if ("indexes" in DB_TABLES[table_name]) {
-                for (var index_name of Object.keys(DB_TABLES[table_name]["indexes"]))
-                obj_store.createIndex(index_name, DB_TABLES[table_name]["indexes"][index_name]["keyPath"]);
+                for (var index_name of Object.keys(DB_TABLES[table_name]["indexes"])) {
+                    obj_store.createIndex(index_name, DB_TABLES[table_name]["indexes"][index_name]["keyPath"]);
+                }
             }
         }
         
@@ -505,6 +504,10 @@ function convert_font_color_dark_mode (color_hex) {
 function update_display_settings (redraw = false) {
     var body_elm = document.getElementsByTagName("body")[0];
     
+    if (/(iPhone|iPad)/i.test(navigator.userAgent)) {
+        body_elm.classList.add("ios");
+    }
+    
     if (config["dark_mode"]) {
         body_elm.classList.add("dark_mode");
     } else {
@@ -556,14 +559,8 @@ function update_display_settings (redraw = false) {
         }
     }
     
-    var tips_elm = document.getElementById("tips");
-    if (config["show_tips"]) {
-        tips_elm.style.display = "block";
-        if (tips_elm.classList.contains("tips_active")) {
-            show_tips();
-        }
-    } else {
-        tips_elm.style.display = "none";
+    if (document.getElementById("tips").classList.contains("tips_active")) {
+        show_tips();
     }
 }
 
@@ -1083,13 +1080,17 @@ function update_formation_styles (railroad_id = null) {
 }
 
 
+var use_group_divisions_on_operation_data;
+
 function set_railroad_user_data (user_data) {
     if (user_data !== null) {
         position_selected_line = user_data["position_selected_line"] in railroad_info["lines"] ? user_data["position_selected_line"] : railroad_info["lines_order"][0];
         position_scroll_amount = user_data["position_scroll_amount"];
+        use_group_divisions_on_operation_data = "use_group_divisions_on_operation_data" in user_data ? user_data["use_group_divisions_on_operation_data"] : true;//2026-08末まで暫定
     } else {
         position_selected_line = railroad_info["lines_order"][0];
         position_scroll_amount = 0;
+        use_group_divisions_on_operation_data = true;
     }
 }
 
@@ -3723,6 +3724,12 @@ function operation_data_change_date (date_additions) {
     operation_data_heading_elm.innerText = "";
     operation_data_area_elm.innerHTML = "";
     
+    if (use_group_divisions_on_operation_data) {
+        document.getElementById("use_group_divisions_radio").checked = true;
+    } else {
+        document.getElementById("not_use_group_divisions_radio").checked = true;
+    }
+    
     var date_string = get_date_string(operation_data_date);
     operation_date_button_elm.value = date_string;
     
@@ -3940,7 +3947,7 @@ function operation_data_draw (reset_active_tab = false) {
             
             var groups = operation_table["operation_groups"];
             
-            if (config["use_group_divisions_on_operation_data"] && "group_division_names" in operation_table) {
+            if (use_group_divisions_on_operation_data && "group_division_names" in operation_table) {
                 var divisions = [];
                 buf += "<div class='inner_tab_area'>";
                 
@@ -4130,7 +4137,7 @@ function operation_data_draw (reset_active_tab = false) {
             series_formation_list["不明"] = ["不明"];
         }
         
-        if (config["use_group_divisions_on_operation_data"] && "series_division_names" in formations) {
+        if (use_group_divisions_on_operation_data && "series_division_names" in formations) {
             var divisions = [];
             buf += "<div class='inner_tab_area'>";
             
@@ -4219,9 +4226,14 @@ function operation_data_draw (reset_active_tab = false) {
     }
     
     buf += "<br><div class='informational_text'>最新の投稿: " + get_date_and_time(operation_data["last_modified_timestamp"]) + "</div>";
-    buf += "<a href='#about_railroad_data_popup' class='bottom_link' onclick='event.preventDefault(); about_railroad_data();'>使用しているデータについて</a>";
     
     operation_data_area_elm.innerHTML = buf;
+    
+    if (!document.getElementById("radio_formations").checked ? "group_division_names" in operation_table : "series_division_names" in formations) {
+        document.getElementById("whether_use_group_divisions_area").style.display = "block";
+    } else {
+        document.getElementById("whether_use_group_divisions_area").style.display = "none";
+    }
 }
 
 

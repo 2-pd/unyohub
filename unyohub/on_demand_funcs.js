@@ -44,7 +44,8 @@ function save_railroad_user_data (railroad_id) {
         user_data_store.put({
             railroad_id : railroad_id,
             position_selected_line : position_selected_line,
-            position_scroll_amount : scroll_amount
+            position_scroll_amount : scroll_amount,
+            use_group_divisions_on_operation_data : use_group_divisions_on_operation_data
         });
     });
 }
@@ -1421,6 +1422,12 @@ function activate_operation_data_tab (division_name) {
     }
     
     operation_data_active_tab = division_name;
+}
+
+function change_use_group_divisions (bool_val) {
+    use_group_divisions_on_operation_data = bool_val;
+    
+    operation_data_draw();
 }
 
 function operation_date_button_change () {
@@ -3197,9 +3204,7 @@ function edit_config () {
     buf += "<input type='checkbox' id='enlarge_display_size_check' class='toggle' onchange='change_config();'" + (config["enlarge_display_size"] ? " checked='checked'" : "") + "><label for='enlarge_display_size_check'>各種表示サイズの拡大</label>";
     buf += "<input type='checkbox' id='colorize_corrected_posts_check' class='toggle' onchange='change_config();'" + (config["colorize_corrected_posts"] ? " checked='checked'" : "") + "><label for='colorize_corrected_posts_check'>訂正された投稿を区別する</label>";
     buf += "<input type='checkbox' id='colorize_beginners_posts_check' class='toggle' onchange='change_config();'" + (config["colorize_beginners_posts"] ? " checked='checked'" : "") + "><label for='colorize_beginners_posts_check'>ビギナーの方の投稿を区別する</label>";
-    buf += "<input type='checkbox' id='show_tips_check' class='toggle' onchange='change_config();'" + (config["show_tips"] ? " checked='checked'" : "") + "><label for='show_tips_check'>Tips表示ボタンを有効化する</label>";
     buf += "<input type='checkbox' id='force_arrange_west_side_car_on_left_check' class='toggle' onchange='change_config();'" + (config["force_arrange_west_side_car_on_left"] ? " checked='checked'" : "") + "><label for='force_arrange_west_side_car_on_left_check'>西向き先頭車を編成表左側に表示</label>";
-    buf += "<input type='checkbox' id='use_group_divisions_on_operation_data_check' class='toggle' onchange='change_config();'" + (config["use_group_divisions_on_operation_data"] ? " checked='checked'" : "") + "><label for='use_group_divisions_on_operation_data_check'>運用データを系統区分別に表示する</label>";
     buf += "<input type='checkbox' id='show_formation_captions_on_operation_data_check' class='toggle' onchange='change_config();'" + (config["show_formation_captions_on_operation_data"] ? " checked='checked'" : "") + "><label for='show_formation_captions_on_operation_data_check'>運用データ等に編成の説明を表示</label>";
     buf += "<h5>運用情報の自動更新間隔</h5>";
     buf += "<input type='number' id='refresh_interval' min='1' max='60' onchange='change_config();' value='" + config["refresh_interval"] + "'>分ごと";
@@ -3207,7 +3212,7 @@ function edit_config () {
     buf += "<input type='number' id='operation_data_cache_period' min='1' max='30' onchange='change_config();' value='" + config["operation_data_cache_period"] + "'>日前以降のキャッシュを保管";
     buf += "<h5>走行位置表示時刻調節ボタンの動作</h5>";
     buf += "<input type='number' id='position_mode_minute_step' min='1' max='10' onchange='change_config();' value='" + config["position_mode_minute_step"] + "'>分単位で増減";
-    buf += "<u class='execute_link' onclick='reset_config_value();'>デフォルト値に戻す</u>";
+    buf += "<a href='javascript:void(0);' class='execute_link' onclick='reset_config_value();'>デフォルト値に戻す</a>";
     buf += "<a href='/user/clear_caches.php' class='execute_link' target='_blank' rel='opener'>設定・キャッシュデータの削除</a>";
     buf += "<div class='informational_text'>変更内容は自動で保存されます</div>";
     
@@ -3238,9 +3243,7 @@ function change_config () {
     config["enlarge_display_size"] = document.getElementById("enlarge_display_size_check").checked;
     config["colorize_corrected_posts"] = document.getElementById("colorize_corrected_posts_check").checked;
     config["colorize_beginners_posts"] = document.getElementById("colorize_beginners_posts_check").checked;
-    config["show_tips"] = document.getElementById("show_tips_check").checked;
     config["force_arrange_west_side_car_on_left"] = document.getElementById("force_arrange_west_side_car_on_left_check").checked;
-    config["use_group_divisions_on_operation_data"] = document.getElementById("use_group_divisions_on_operation_data_check").checked;
     config["show_formation_captions_on_operation_data"] = document.getElementById("show_formation_captions_on_operation_data_check").checked;
     
     var refresh_interval_elm = document.getElementById("refresh_interval");
@@ -3485,9 +3488,14 @@ function reset_config_value () {
     if (confirm("設定をリセットしますか？")) {
         var dafault_config = get_default_config();
         
+        document.getElementById("show_favorite_railroads_check").checked = dafault_config["show_favorite_railroads"];
+        document.getElementById("show_favorite_stations_check").checked = dafault_config["show_favorite_stations"];
         document.getElementById("dark_mode_check").checked = dafault_config["dark_mode"];
+        document.getElementById("enlarge_display_size_check").checked = dafault_config["enlarge_display_size"];
         document.getElementById("colorize_corrected_posts_check").checked = dafault_config["colorize_corrected_posts"];
         document.getElementById("colorize_beginners_posts_check").checked = dafault_config["colorize_beginners_posts"];
+        document.getElementById("force_arrange_west_side_car_on_left_check").checked = dafault_config["force_arrange_west_side_car_on_left"];
+        document.getElementById("show_formation_captions_on_operation_data_check").checked = dafault_config["show_formation_captions_on_operation_data"];
         document.getElementById("refresh_interval").value = dafault_config["refresh_interval"];
         document.getElementById("operation_data_cache_period").value = dafault_config["operation_data_cache_period"];
         document.getElementById("position_mode_minute_step").value = dafault_config["position_mode_minute_step"];
@@ -3579,14 +3587,14 @@ function reload_app (force_update = false) {
     
     open_wait_screen();
     
+    if (force_update) {
+        history.pushState(null, "", "/?ts=" + Date.now());
+    } else if (location.pathname !== "/") {
+        history.pushState(null, "", "/");
+    }
+    
     setTimeout(function () {
-        if (force_update) {
-            location.href = "/?ts=" + Date.now();
-        } else if (location.pathname === "/") {
-            location.reload();
-        } else {
-            location.pathname = "/";
-        }
+        location.reload();
     }, 100);
 }
 
