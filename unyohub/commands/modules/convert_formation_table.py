@@ -15,6 +15,11 @@ equipment_2_end_pantographs = {"PL", "PL2", "PG", "PG2", "PX", "PX2", "PD", "PD2
 equipment_end_pantographs = equipment_1_end_pantographs | equipment_2_end_pantographs
 equipment_middle_pantographs = {"PLM", "PGM", "PXM", "PDM", "ZLM", "ZGM"}
 
+equipment_1_end_not_2_axles = {"2W", "2W1", "F"}
+equipment_2_end_not_2_axles = {"2W", "2W2", "F"}
+equipment_1_end_1_driving_axle = {"MO1", "OM1"}
+equipment_2_end_1_driving_axle = {"MO2", "OM2"}
+
 
 def replace_equipment_symbols (equipment_str):
     global equipment_symbols
@@ -344,6 +349,8 @@ def convert_formation_table (mes, main_dir):
                                         mes("《注意》" + car_number + " は同じ位置に複数のパンタグラフが設定されているため車両設備を表示できません")
                                     elif len(equipment_set & equipment_end_pantographs) >= 1 and len(equipment_set & equipment_middle_pantographs) >= 1:
                                         mes("《注意》" + car_number + " は車体中央と車体端の両方にパンタグラフが設定されているため車両設備を表示できません")
+                                    elif (len(equipment_set & equipment_1_end_not_2_axles) >= 1 and len(equipment_set & equipment_1_end_1_driving_axle) >= 1) or (len(equipment_set & equipment_2_end_not_2_axles) >= 1 and len(equipment_set & equipment_2_end_1_driving_axle) >= 1):
+                                        mes("《注意》" + car_number + " は二軸台車以外に片軸駆動が設定されているため車両設備を表示できません")
                                     else:
                                         json_data["formations"][formation_name]["cars"][-1]["equipment"] = equipment
                             
