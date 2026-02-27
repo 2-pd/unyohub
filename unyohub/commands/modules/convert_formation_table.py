@@ -10,6 +10,17 @@ import time
 equipment_symbols = ["<", ">", "◇", "⬠", "≦", "≧"]
 equipment_keywords = ["PL", "PG", "PX", "PD", "ZL", "ZG"]
 
+equipment_1_end_pantographs = {"PL", "PL1", "PG", "PG1", "PX", "PX1", "PD", "PD1", "ZL", "ZL1", "ZG", "ZG1"}
+equipment_2_end_pantographs = {"PL", "PL2", "PG", "PG2", "PX", "PX2", "PD", "PD2", "ZL", "ZL2", "ZG", "ZG2"}
+equipment_end_pantographs = equipment_1_end_pantographs | equipment_2_end_pantographs
+equipment_middle_pantographs = {"PLM", "PGM", "PXM", "PDM", "ZLM", "ZGM"}
+
+equipment_1_end_not_2_axles = {"2W", "2W1", "F"}
+equipment_2_end_not_2_axles = {"2W", "2W2", "F"}
+equipment_1_end_1_driving_axle = {"MO1", "OM1"}
+equipment_2_end_1_driving_axle = {"MO2", "OM2"}
+
+
 def replace_equipment_symbols (equipment_str):
     global equipment_symbols
     global equipment_keywords
@@ -30,6 +41,16 @@ def insert_series_data (mes, cur, series_title, series_name, min_car_count, max_
 
 
 def convert_formation_table (mes, main_dir):
+    global equipment_1_end_pantographs
+    global equipment_2_end_pantographs
+    global equipment_end_pantographs
+    global equipment_middle_pantographs
+    global equipment_1_end_not_2_axles
+    global equipment_2_end_not_2_axles
+    global equipment_1_end_1_driving_axle
+    global equipment_2_end_1_driving_axle
+    
+    
     mes("編成表の変換", is_heading=True)
     
     
@@ -325,8 +346,17 @@ def convert_formation_table (mes, main_dir):
                                     json_data["formations"][formation_name]["cars"][-1]["coloring_id"] = formation_data[cnt + 2][cnt_2].strip()
                                 
                                 equipment = replace_equipment_symbols(formation_data[cnt + 3][cnt_2].upper()).split()
+                                equipment_set = set(equipment)
+                                
                                 if len(equipment) >= 1:
-                                    json_data["formations"][formation_name]["cars"][-1]["equipment"] = equipment
+                                    if len(equipment_set & equipment_1_end_pantographs) >= 2 or len(equipment_set & equipment_2_end_pantographs) >= 2 or len(equipment_set & equipment_middle_pantographs) >= 2:
+                                        mes("《注意》" + car_number + " は同じ位置に複数のパンタグラフが設定されているため車両設備を表示できません")
+                                    elif len(equipment_set & equipment_end_pantographs) >= 1 and len(equipment_set & equipment_middle_pantographs) >= 1:
+                                        mes("《注意》" + car_number + " は車体中央と車体端の両方にパンタグラフが設定されているため車両設備を表示できません")
+                                    elif (len(equipment_set & equipment_1_end_not_2_axles) >= 1 and len(equipment_set & equipment_1_end_1_driving_axle) >= 1) or (len(equipment_set & equipment_2_end_not_2_axles) >= 1 and len(equipment_set & equipment_2_end_1_driving_axle) >= 1):
+                                        mes("《注意》" + car_number + " は二軸台車以外に片軸駆動が設定されているため車両設備を表示できません")
+                                    else:
+                                        json_data["formations"][formation_name]["cars"][-1]["equipment"] = equipment
                             
                             cur.execute("INSERT INTO `unyohub_cars`(`formation_name`, `car_number`, `car_order`, `manufacturer`, `constructed`, `description`) VALUES (:formation_name, :car_number, :car_order, '', '', '') ON CONFLICT(`formation_name`, `car_number`) DO UPDATE SET `car_order` = :car_order_2", {"formation_name" : formation_name, "car_number" : car_number, "car_order" : cnt_2, "car_order_2" : cnt_2})
                             
