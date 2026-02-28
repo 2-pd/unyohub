@@ -246,7 +246,14 @@ def convert_operation_table_2 (mes, main_dir, file_name):
                             "direction" : None
                         })
                     else:
-                        train_number = correct_train_number(operation_data[cnt][cnt_2].strip())
+                        train_number = operation_data[cnt][cnt_2].strip()
+                        
+                        if train_number.startswith("↔") or train_number.startswith("⇔"):
+                            train_number = correct_train_number(train_number[1:].lstrip("\uFE0E\uFE0F "))
+                            formation_reversed = True
+                        else:
+                            train_number = correct_train_number(train_number)
+                            formation_reversed = False
                         
                         if "(" in train_number:
                             bracket_pos = train_number.find("(")
@@ -344,6 +351,9 @@ def convert_operation_table_2 (mes, main_dir, file_name):
                                     "position_rear" : position_rear,
                                     "direction" : direction
                                 })
+                                
+                                if formation_reversed:
+                                    operations[operation_number]["trains"][-1]["formation_reversed"] = True
                         
                         
                         operations[operation_number]["trains"].append({
@@ -357,6 +367,9 @@ def convert_operation_table_2 (mes, main_dir, file_name):
                             "position_rear" : position_rear,
                             "direction" : direction
                         })
+                        
+                        if formation_reversed:
+                            operations[operation_number]["trains"][-1]["formation_reversed"] = True
                     
                     cnt_2 += 1
             
