@@ -1057,6 +1057,11 @@ button:has(abbr) {
     
     line-height: 18px;
     font-size: 18px;
+    
+    small {
+        font-size: 14px;
+        font-weight: normal;
+    }
 }
 
 .station_times {

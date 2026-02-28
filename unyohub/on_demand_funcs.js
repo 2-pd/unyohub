@@ -961,13 +961,23 @@ function train_detail (line_id, train_number, starting_station, train_direction,
     
     buf += "</span>";
     
+    var reversed_operations = new Set();
+    
     if (train_operations !== null) {
         if (railroad_info["lines"][line_id]["inbound_forward_direction"] !== (train_direction === "inbound_trains")) {
             train_operations.reverse();
         }
         
         var buf_2 = "";
-        for (var train_operation of train_operations) {
+        for (var cnt = 0; cnt < train_operations.length; cnt++) {
+            if (train_operations[cnt].startsWith("<=>")) {
+                train_operations[cnt] = train_operations[cnt].substring(3);
+                
+                reversed_operations.add(train_operations[cnt]);
+            }
+            
+            var train_operation = train_operations[cnt];
+            
             if (buf_2.length >= 1) {
                 buf_2 += "+";
             }
@@ -1034,8 +1044,14 @@ function train_detail (line_id, train_number, starting_station, train_direction,
             
             if (train_operation in data && data[train_operation] !== null) {
                 if (data[train_operation]["formations"] !== "") {
+                    var operation_formations = data[train_operation]["formations"].split("+");
+                    
+                    if (reversed_operations.has(train_operation)) {
+                        operation_formations.reverse()
+                    }
+                    
                     var buf_3 = "";
-                    for (var formation_name of data[train_operation]["formations"].split("+")) {
+                    for (var formation_name of operation_formations) {
                         if (buf_3.length >= 1) {
                             buf_3 += " +";
                         }
@@ -1152,6 +1168,14 @@ function train_detail (line_id, train_number, starting_station, train_direction,
                 
                 var buf_2 = "";
                 for (var train_operation of train_operations_2) {
+                    if (train_operation.startsWith("<=>")) {
+                        train_operation = train_operation.substring(3);
+                        
+                        var formation_reversed_html = "<small>(方反)</small>";
+                    } else {
+                        var formation_reversed_html = "";
+                    }
+                    
                     if (buf_2.length >= 1) {
                         buf_2 += "+";
                     }
@@ -1163,9 +1187,9 @@ function train_detail (line_id, train_number, starting_station, train_direction,
                         } else {
                             buf_2 += " \"" + operation_table["diagram_id"] + "\", false";
                         }
-                        buf_2 += ");'>" + train_operation + "運用</u>";
+                        buf_2 += ");'>" + train_operation + "運用" + formation_reversed_html + "</u>";
                     } else {
-                        buf_2 += train_operation.substring(0, train_operation.indexOf("@")) + "運用";
+                        buf_2 += train_operation.substring(0, train_operation.indexOf("@")) + "運用" + formation_reversed_html;
                     }
                 }
                 
@@ -1717,6 +1741,10 @@ function draw_operation_trains (operation_number, diagram_id_or_ts, is_today, se
                 if (!config["simplify_operation_details"] && operations_list.length >= 1) {
                     buf += "<div class='coupling_info'>併結:";
                     for (var coupling_operation of operations_list) {
+                        if (coupling_operation.startsWith("<=>")) {
+                            coupling_operation = coupling_operation.substring(3);
+                        }
+                        
                         buf += " <u onclick='operation_detail(\"" + coupling_operation + "\", " + diagram_id_or_ts + ");'>" + coupling_operation + "運用";
                         if (operation_data !== null) {
                             buf += "<small>(" + (coupling_operation in operation_data["operations"] && operation_data["operations"][coupling_operation] !== null ? escape_html(operation_data["operations"][coupling_operation]["formations"]) : "情報なし") + ")</small>";
@@ -2245,7 +2273,7 @@ var post_yyyy_mm_dd;
 var post_operation_number;
 var post_train_number;
 
-function write_operation_data (railroad_id, yyyy_mm_dd, operation_number, train_number = null) {
+function write_operation_data (railroad_id, yyyy_mm_dd, operation_number, train_number = null, formation_reversed = false) {
     var popup_inner_elm = open_popup("write_operation_data_popup", "運用情報の投稿");
     
     if (!instance_info["allow_guest_user"] && user_info === null) {
@@ -2290,7 +2318,11 @@ function write_operation_data (railroad_id, yyyy_mm_dd, operation_number, train_
     buf += "<div class='radio_area'><input type='radio' name='identify_method' id='identify_method_direct' checked='checked'><label for='identify_method_direct' onclick='switch_identify_method(true);'>直接確認</label><input type='radio' name='identify_method' id='identify_method_quote'><label for='identify_method_quote' onclick='switch_identify_method(false);'>引用情報</label></div>";
     
     buf += "<h4>編成名または車両形式</h4>";
-    buf += "<div class='informational_text'><b>◀ " + alias_of_forward_direction + "</b></div>";
+    if (!formation_reversed) {
+        buf += "<div class='informational_text'><b>◀ " + alias_of_forward_direction + "</b></div>";
+    } else {
+        buf += "<div class='informational_text' style='text-align: right;'><b>" + alias_of_forward_direction + " ▶</b></div>";
+    }
     buf += "<input type='text' id='operation_data_formation' autocomplete='off' oninput='suggest_formation(" + (post_railroad_id === railroad_info["railroad_id"] ? "null" : "\"" +  post_railroad_id + "\"") + ", this.value);' onblur='clear_formation_suggestion();'><button type='button' id='car_number_suggest_mode_button' onclick='switch_car_number_suggest_mode(!car_number_suggest_mode);'></button><div class='suggestion_area'><div id='formation_suggestion'></div></div>";
     buf += "<div id='car_number_suggest_mode_info'>車両番号から編成名をサジェストします</div>";
     buf += "<div class='informational_text'>複数の編成が連結している場合は、" + alias_of_forward_direction + "の編成から順に「+」で区切って入力してください。<br>不明な編成には「不明」、運休情報は「運休」を入力可能です。</div>";
@@ -2602,6 +2634,14 @@ function select_operation_to_write_data (line_id, train_number, starting_station
     var train_operations = get_operations(line_id, train_number, starting_station, train_direction);
     
     if (train_operations.length === 1) {
+        if (train_operations[0].startsWith("<=>")) {
+            train_operations[0] = train_operations[0].substring(3);
+            
+            var formation_reversed = true;
+        } else {
+            var formation_reversed = false;
+        }
+        
         var at_pos = train_operations[0].indexOf("@");
         if (at_pos === -1) {
             var railroad_id = null;
@@ -2610,7 +2650,7 @@ function select_operation_to_write_data (line_id, train_number, starting_station
             train_operations[0] = train_operations[0].substring(0, at_pos);
         }
         
-        write_operation_data(railroad_id, null, train_operations[0], train_number);
+        write_operation_data(railroad_id, null, train_operations[0], train_number, formation_reversed);
         
         return;
     }
@@ -2619,6 +2659,14 @@ function select_operation_to_write_data (line_id, train_number, starting_station
     
     var position_operations = {};
     for (var train_operation of train_operations) {
+        if (train_operation.startsWith("<=>")) {
+            train_operation = train_operation.substring(3);
+            
+            var formation_reversed = "true";
+        } else {
+            var formation_reversed = "false";
+        }
+        
         var at_pos = train_operation.indexOf("@");
         if (at_pos === -1) {
             var railroad_id = railroad_info["railroad_id"];
@@ -2661,7 +2709,7 @@ function select_operation_to_write_data (line_id, train_number, starting_station
             buf += "<td rowspan='" + position_keys.length + "'><span>進行方向</span></td>";
         }
         
-        buf += "<td onclick='write_operation_data(\"" + position_operations[position_keys[cnt]]["railroad_id"] + "\", null, \"" + add_slashes(position_operations[position_keys[cnt]]["operation_number"]) + "\", \"" + add_slashes(train_number) + "\");'><div><b>" + position_operations[position_keys[cnt]]["position_forward"];
+        buf += "<td onclick='write_operation_data(\"" + position_operations[position_keys[cnt]]["railroad_id"] + "\", null, \"" + add_slashes(position_operations[position_keys[cnt]]["operation_number"]) + "\", \"" + add_slashes(train_number) + "\", " + formation_reversed + ");'><div><b>" + position_operations[position_keys[cnt]]["position_forward"];
         
         if (position_operations[position_keys[cnt]]["position_forward"] !== position_operations[position_keys[cnt]]["position_rear"]) {
             buf += "-" + position_operations[position_keys[cnt]]["position_rear"];
