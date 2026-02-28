@@ -302,7 +302,8 @@ log_ip_address 投稿者のIPアドレスを記録するか(BOOL値)
                     "terminal_station" : 終着駅,
                     "position_forward" : 担当位置開始両数(進行方向から数えて何両目からがその運用か),
                     "position_rear" : 担当位置終了両数(進行方向から数えて何両目までがその運用か),
-                    "direction" : 上り列車か下り列車か(上り列車か上り方面発車待ちなら「inbound」、下り列車か下り方面発車待ちなら「outbound」)
+                    "direction" : 上り列車か下り列車か(上り列車か上り方面発車待ちなら「inbound」、下り列車か下り方面発車待ちなら「outbound」),
+                    "formation_reversed" : 方反か否か(方反でない場合は省略可能)
                 }...
             ],
             "starting_location" : 出庫場所(車庫または駅),
