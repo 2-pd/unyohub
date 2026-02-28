@@ -14,6 +14,10 @@ def embed_train_icon (mes, dir_path):
     icons_dir_path = dir_path + "/icons"
     files = []
     
+    if not os.path.isdir(dir_path):
+        mes("指定された路線系統は存在しません", True)
+        return
+    
     if not os.path.isdir(icons_dir_path):
         mes("フォルダ icons が存在しません", True)
         return

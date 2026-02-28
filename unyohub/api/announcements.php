@@ -1,6 +1,8 @@
 <?php
 include "../libs/wakarana/main.php";
 
+header("Access-Control-Allow-Origin: *");
+
 $db_obj = new SQLite3("../common_dbs/announcements.db");
 $db_obj->busyTimeout(5000);
 
@@ -47,7 +49,7 @@ while ($announcement_data = $announcements_r->fetchArray(SQLITE3_ASSOC)) {
 
 header("Last-Modified: ".gmdate("D, d M Y H:i:s", $last_modified_ts)." GMT");
 
-if (!empty($_SERVER["HTTP_ACCEPT_ENCODING"]) && strpos($_SERVER["HTTP_ACCEPT_ENCODING"], "gzip") !== FALSE) {
+if (!empty($_SERVER["HTTP_ACCEPT_ENCODING"]) && str_contains($_SERVER["HTTP_ACCEPT_ENCODING"], "gzip")) {
     header("Content-Encoding: gzip");
     print gzencode(json_encode($output_data, JSON_UNESCAPED_UNICODE));
 } else {

@@ -1,6 +1,8 @@
 <?php
 include "../version.php";
 
+header("Access-Control-Allow-Origin: *");
+
 define("MAIN_CONFIG_PATH", "../config/main.ini");
 
 $last_modified = @filemtime(MAIN_CONFIG_PATH);
@@ -55,4 +57,9 @@ if (!empty($main_config["quotation_guidelines"])) {
     $instance_info["quotation_guidelines"] = stripcslashes($main_config["quotation_guidelines"]);
 }
 
-print json_encode($instance_info, JSON_UNESCAPED_UNICODE);
+if (!empty($_SERVER["HTTP_ACCEPT_ENCODING"]) && str_contains($_SERVER["HTTP_ACCEPT_ENCODING"], "gzip")) {
+    header("Content-Encoding: gzip");
+    print gzencode(json_encode($instance_info, JSON_UNESCAPED_UNICODE));
+} else {
+    print json_encode($instance_info, JSON_UNESCAPED_UNICODE);
+}

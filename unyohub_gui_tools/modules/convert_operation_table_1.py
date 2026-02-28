@@ -353,6 +353,12 @@ def convert_operation_table_1 (mes, main_dir, file_name, json_file_name, digits_
                     else:
                         train_name = train_name_car_count[0]
                     
+                    if train_name.startswith("↔") or train_name.startswith("⇔"):
+                        reversed_symbol = "↔"
+                        train_name = train_name[1:].lstrip("\uFE0E\uFE0F ")
+                    else:
+                        reversed_symbol = ""
+                    
                     corrected_train_name = correct_train_number(train_name)
                     
                     if len(train_name_car_count) == 2:
@@ -382,7 +388,11 @@ def convert_operation_table_1 (mes, main_dir, file_name, json_file_name, digits_
                             for first_departure_time in first_departure_times:
                                 if train_number_list[corrected_train_name][first_departure_time][0][0] == train_rows[0] or within_segment:
                                     if not for_printing or not within_segment:
-                                        output_row_1.append(train_name + car_count)
+                                        if not for_printing:
+                                            output_row_1.append(reversed_symbol + train_name + car_count)
+                                        else:
+                                            output_row_1.append(train_name + car_count)
+                                        
                                         output_row_2.append(train_number_list[corrected_train_name][first_departure_time][0])
                                         output_row_3.append(train_number_list[corrected_train_name][first_departure_time][1])
                                     else:
@@ -397,7 +407,7 @@ def convert_operation_table_1 (mes, main_dir, file_name, json_file_name, digits_
                                     within_segment = True
                         else:
                             if not for_printing:
-                                output_row_1.append(train_name + car_count)
+                                output_row_1.append(reversed_symbol + train_name + car_count)
                             else:
                                 if corrected_train_name[0] == "?":
                                     corrected_train_name = corrected_train_name[1:]
@@ -421,7 +431,7 @@ def convert_operation_table_1 (mes, main_dir, file_name, json_file_name, digits_
                         
                         if not for_printing:
                             for first_departure_time in first_departure_times:
-                                output_row_1.append(train_name + car_count)
+                                output_row_1.append(reversed_symbol + train_name + car_count)
                                 output_row_2.append(train_number_list[corrected_train_name][first_departure_time][0])
                                 output_row_3.append(train_number_list[corrected_train_name][first_departure_time][1])
                         else:

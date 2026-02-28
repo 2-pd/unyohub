@@ -48,7 +48,7 @@ while ($data = $sql_r->fetchArray(SQLITE3_ASSOC)) {
     }
 }
 
-if (!empty($_SERVER["HTTP_ACCEPT_ENCODING"]) && strpos($_SERVER["HTTP_ACCEPT_ENCODING"], "gzip") !== FALSE) {
+if (!empty($_SERVER["HTTP_ACCEPT_ENCODING"]) && str_contains($_SERVER["HTTP_ACCEPT_ENCODING"], "gzip")) {
     header("Content-Encoding: gzip");
     
     print gzencode(json_encode($data_history, JSON_UNESCAPED_UNICODE));

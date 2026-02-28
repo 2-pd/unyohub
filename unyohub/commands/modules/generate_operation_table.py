@@ -98,6 +98,11 @@ def generate_operation_table (mes, main_dir, date_string):
             operation_logs[log_data[0]] = {}
             starting_times[log_data[0]] = None
         
+        if log_data[1] not in trains:
+            mes("《注意》時刻表に記載されていない列車 " + log_data[1] + " は運用表に含まれません")
+            
+            continue
+        
         operation_logs[log_data[0]][trains[log_data[1]]["first_departure_time"]] = log_data[1]
         
         if starting_times[log_data[0]] is None or trains[log_data[1]]["first_departure_time"] < starting_times[log_data[0]]:

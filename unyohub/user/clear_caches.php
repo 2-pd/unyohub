@@ -10,6 +10,12 @@ print_header("設定とキャッシュデータの削除", FALSE);
                 
                 wait_screen_elm.style.display = "block";
                 
+                if (window.opener !== null && window.opener.location.hostname === location.hostname) {
+                    if (window.opener.location.pathname !== "/") {
+                        window.opener.location.href = "/";
+                    }
+                }
+                
                 var promise_1 = new Promise (function (resolve, reject) {
                     localStorage.clear();
                     
@@ -28,12 +34,8 @@ print_header("設定とキャッシュデータの削除", FALSE);
                     
                     alert("設定とキャッシュデータを削除しました");
                     
-                    if (window.opener !== null) {
-                        if (window.opener.location.pathname === "/") {
-                            window.opener.location.reload();
-                        } else {
-                            window.opener.location.pathname = "/";
-                        }
+                    if (window.opener !== null && window.opener.location.hostname === location.hostname) {
+                        window.opener.location.reload();
                         
                         window.close();
                     }
