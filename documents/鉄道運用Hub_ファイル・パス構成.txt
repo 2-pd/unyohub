@@ -131,8 +131,8 @@ _/_/_/_/ アプリケーション情報定数 _/_/_/_/
 ███ index.php ███
 
 ※鉄道運用Hubからフォークして新たなアプリケーションを開発する場合は必要に応じて以下の値を変更
-  UNYOHUB_APP_NAME  アプリケーション名
-  UNYOHUB_APP_INFO_URL  アプリ情報のURL
+  UNYOHUB_PROJECT_NAME  プロジェクト名
+  UNYOHUB_PROJECT_INFO_URL  プロジェクト情報のURL
   UNYOHUB_REPOSITORY_URL  ソースコードリポジトリのURL
   UNYOHUB_LICENSE_TEXT  ライセンス情報文
 
