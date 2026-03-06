@@ -32,6 +32,17 @@ def convert_time_style (time_data, with_station_initial=True):
         return time_str
 
 
+def adjust_time(time_str, addend_str):
+    hour = int(time_str[:2])
+    minute = int(time_str[3:])
+    
+    minute += int(addend_str)
+    hour += minute // 60
+    minute = minute % 60
+    
+    return str(hour).zfill(2) + ":" + str(minute).zfill(2)
+
+
 def convert_station_name_and_track (station_name):
     if ":" in station_name:
         station_name_and_track = station_name.split(":")
@@ -319,7 +330,7 @@ def convert_operation_table_1 (mes, main_dir, file_name, json_file_name, digits_
                 output_cell_styles_3 = [None, None, None, None]
             else:
                 output_row_1 = [operation[0], operation[1], operation[2], operation[4]]
-                output_row_2 = [color, "", convert_time_style(operation[3], False), convert_time_style(operation[5], False)]
+                output_row_2 = [color, "", operation[3], operation[5]]
                 output_row_3 = [icon_id, "", "", ""]
             
             previous_train_name = None
@@ -469,6 +480,12 @@ def convert_operation_table_1 (mes, main_dir, file_name, json_file_name, digits_
             if len(output_row_2[starting_time_row_index]) == 0:
                 if len(output_row_2) >= 5:
                     output_row_2[starting_time_row_index] = output_row_2[4][1:]
+                else:
+                    mes("出庫時刻が認識できません: " + output_row_1[0], True)
+                    error_occurred = True
+            elif output_row_2[starting_time_row_index].startswith("-"):
+                if len(output_row_2) >= 5:
+                    output_row_2[starting_time_row_index] = adjust_time(output_row_2[4][1:], output_row_2[starting_time_row_index])
                 else:
                     mes("出庫時刻が認識できません: " + output_row_1[0], True)
                     error_occurred = True
