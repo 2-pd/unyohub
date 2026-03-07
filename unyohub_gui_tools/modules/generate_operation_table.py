@@ -3,6 +3,7 @@
 import os
 import json
 import csv
+import re
 
 
 def shape_time_string (time_string, from_previous_day = False, run_through_next_day = False):
@@ -13,6 +14,8 @@ def shape_time_string (time_string, from_previous_day = False, run_through_next_
             time_string = str(int(time_string[:-2]) + 24) + ":" + time_string[-2:]
         else:
             time_string = "24:" + time_string.zfill(2)
+    elif int(time_string[:-3]) < 4:
+        time_string = str(int(time_string[:-3]) + 24) + ":" + time_string[-2:]
     
     if from_previous_day and int(time_string[:-3]) >= 24:
         time_string = str(int(time_string[:-3]) - 24) + ":" + time_string[-2:]
@@ -23,12 +26,14 @@ def shape_time_string (time_string, from_previous_day = False, run_through_next_
 
 
 def get_train_info (train_column):
+    time_regexp = re.compile("^[0-3]?[0-9]:[0-5][0-9]$")
+    
     first_departure_time = "99:99"
     starting_station_index = None
     terminal_station_index = None
     
     for cnt in range(4, len(train_column) - 1):
-        if train_column[cnt].isdecimal():
+        if train_column[cnt].isdecimal() or time_regexp.match(train_column[cnt]) is not None:
             if starting_station_index is None:
                 first_departure_time = shape_time_string(train_column[cnt])
                 starting_station_index = cnt - 4
@@ -172,7 +177,7 @@ def generate_operation_table (mes, main_dir, diagram_revision, diagram_id, save_
         first_departure_time, starting_station_index, terminal_station_index = get_train_info(inbound_timetable_t[cnt])
         
         if starting_station_index is None:
-            mes("《注意》時刻が読み取れない列車 " + train_number + " は運用表に含まれません")
+            mes("《注意》時刻が読み取れない列車 " + inbound_timetable_t[cnt][0] + " は運用表に含まれません")
             continue
         
         if generate_train_number:
@@ -237,7 +242,7 @@ def generate_operation_table (mes, main_dir, diagram_revision, diagram_id, save_
         first_departure_time, starting_station_index, terminal_station_index = get_train_info(outbound_timetable_t[cnt])
         
         if starting_station_index is None:
-            mes("《注意》時刻が読み取れない列車 " + train_number + " は運用表に含まれません")
+            mes("《注意》時刻が読み取れない列車 " + outbound_timetable_t[cnt][0] + " は運用表に含まれません")
             continue
         
         if generate_train_number:
@@ -288,7 +293,7 @@ def generate_operation_table (mes, main_dir, diagram_revision, diagram_id, save_
                 
                 operation_data[operation_number][shape_time_string(first_departure_time, from_previous_day, run_through_next_day)] = [outbound_timetable_t[cnt][0], None, starting_station, terminal_station]
         else:
-            mes("《注意》運用番号が指定されていない列車 " + inbound_timetable_t[cnt][0] + " は運用表に含まれません")
+            mes("《注意》運用番号が指定されていない列車 " + outbound_timetable_t[cnt][0] + " は運用表に含まれません")
         
         train_cnt += 2
     
