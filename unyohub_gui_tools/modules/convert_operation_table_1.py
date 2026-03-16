@@ -254,11 +254,15 @@ def convert_operation_table_1 (mes, main_dir, file_name, json_file_name, digits_
     mes("データを変換しています...")
     
     color_regexp = re.compile("^#[0-9A-Fa-f]{6}$")
+    car_count_regexp = re.compile("^([1-9]|1[0-9])(\(([1-9]|1[0-9])(-([1-9]|1[0-9]))?\))?$")
     
     output_data = []
     train_list = []
+    color = None
     for operation in operations:
-        if len(operation[0].strip()) == 0:
+        operation[0] = operation[0].strip()
+        
+        if len(operation[0]) == 0:
             continue
         
         if operation[0].startswith("[") or operation[0].startswith("【"):
@@ -314,11 +318,20 @@ def convert_operation_table_1 (mes, main_dir, file_name, json_file_name, digits_
             else:
                 output_data[-1].append(operation[0][1:].strip())
         else:
-            if len(operation[1].strip()) == 0:
-                mes("・両数が指定されていません: " + operation[0])
+            if color is None:
+                mes("運用系統を指定せずに運用を記載することはできません", True)
+                error_occurred = True
+            
+            operation[1] = operation[1].strip()
+            
+            if len(operation[1]) == 0:
+                mes("《注意》両数が指定されていません: " + operation[0])
+            elif car_count_regexp.match(operation[1]) is None:
+                mes("両数の指定が異常です: " + operation[0], True)
+                error_occurred = True
             
             if for_printing:
-                if operation[0][0] == "@":
+                if operation[0].startswith("@"):
                     operation[0] = operation[0][1:]
                 
                 output_row_1 = [correct_train_number(operation[0]), convert_station_name_and_track(operation[2]), convert_station_name_and_track(operation[4]), ""]
