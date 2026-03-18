@@ -746,12 +746,18 @@ input[type="checkbox"] {
     
     padding: 0 10px;
     
-    input, select {
+    &:has(.radio_area) {
+        text-align: center;
+    }
+    
+    input, select, .radio_area {
         display: inline-block;
         
         width: 40%;
         
         margin: 0 10px;
+        
+        vertical-align: middle;
     }
     
     input[type="number"] {
@@ -957,6 +963,61 @@ input[type="checkbox"]:checked + label.drop_down {
     
     h5:first-child {
         margin-top: 5px;
+    }
+}
+
+.user_list {
+    text-align: center !important;
+    
+    tr {
+        td {
+            padding: 5px 0;
+            
+            line-height: 28px;
+        }
+        
+        td:first-child {
+            width: calc(100% - 150px);
+        }
+        
+        td:nth-child(2) {
+            width: 100px;
+        }
+        
+        td:last-child {
+            width: 50px;
+        }
+    }
+    
+    th {
+        line-height: 24px;
+        font-size: 14px;
+    }
+    
+    b {
+        text-decoration: underline;
+        
+        small {
+            font-size: 14px;
+            color: #666666;
+            font-weight: normal;
+            text-decoration: none;
+        }
+    }
+}
+
+.page_link_area {
+    margin-top: 20px;
+    
+    font-size: 18px;
+    text-align: center;
+    
+    a, b {
+        display: inline-block;
+        
+        width: 50px;
+        
+        line-height: 40px;
     }
 }
 
