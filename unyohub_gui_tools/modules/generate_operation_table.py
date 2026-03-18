@@ -177,7 +177,10 @@ def generate_operation_table (mes, main_dir, diagram_revision, diagram_id, save_
         first_departure_time, starting_station_index, terminal_station_index = get_train_info(inbound_timetable_t[cnt])
         
         if starting_station_index is None:
-            mes("《注意》時刻が読み取れない列車 " + inbound_timetable_t[cnt][0] + " は運用表に含まれません")
+            train_number = inbound_timetable_t[cnt][0].strip()
+            if len(train_number) >= 1:
+                mes("《注意》時刻が読み取れない列車 " + train_number + " は運用表に含まれません")
+            
             continue
         
         if generate_train_number:
@@ -186,7 +189,8 @@ def generate_operation_table (mes, main_dir, diagram_revision, diagram_id, save_
             starting_station = None
             terminal_station = None
         else:
-            train_number = inbound_timetable_t[cnt][0].strip()
+            inbound_timetable_t[cnt][0] = inbound_timetable_t[cnt][0].strip()
+            train_number = inbound_timetable_t[cnt][0]
             
             if train_number == "":
                 continue
@@ -242,7 +246,9 @@ def generate_operation_table (mes, main_dir, diagram_revision, diagram_id, save_
         first_departure_time, starting_station_index, terminal_station_index = get_train_info(outbound_timetable_t[cnt])
         
         if starting_station_index is None:
-            mes("《注意》時刻が読み取れない列車 " + outbound_timetable_t[cnt][0] + " は運用表に含まれません")
+            train_number = outbound_timetable_t[cnt][0].strip()
+            if len(train_number) >= 1:
+                mes("《注意》時刻が読み取れない列車 " + train_number + " は運用表に含まれません")
             continue
         
         if generate_train_number:
@@ -251,7 +257,8 @@ def generate_operation_table (mes, main_dir, diagram_revision, diagram_id, save_
             starting_station = None
             terminal_station = None
         else:
-            train_number = outbound_timetable_t[cnt][0].strip()
+            outbound_timetable_t[cnt][0] = outbound_timetable_t[cnt][0].strip()
+            train_number = outbound_timetable_t[cnt][0]
             
             if train_number == "":
                 continue
@@ -372,7 +379,7 @@ def generate_operation_table (mes, main_dir, diagram_revision, diagram_id, save_
                         
                         operation_table[cnt][2] = inbound_station_names[cnt_2 - 4]
                         break
-                else:
+                elif first_train_number in outbound_timetable[0]:
                     first_train_index = outbound_timetable[0].index(first_train_number)
                     
                     for cnt_2 in range(4, len(outbound_timetable_t[first_train_index]) - 1):
@@ -391,7 +398,7 @@ def generate_operation_table (mes, main_dir, diagram_revision, diagram_id, save_
                         
                         operation_table[cnt][4] = inbound_station_names[cnt_2 - 4]
                         break
-                else:
+                elif last_train_number in outbound_timetable[0]:
                     last_train_index = outbound_timetable[0].index(last_train_number)
                     
                     for cnt_2 in reversed(range(4, len(outbound_timetable_t[last_train_index]) - 1)):
