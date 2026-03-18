@@ -47,6 +47,12 @@ foreach ($railroads["categories"] as $category) {
 
 print "</div>";
 
+if ($user->check_permission("railroads", "moderate")) {
+    print "<h3>ユーザーとロールの管理</h3>";
+    
+    print "<a href='user_list.php' class='wide_button'><img src='data:image/webp;base64,UklGRqABAABXRUJQVlA4TJQBAAAvNUANEJXAkSTJccP/v+0CPi2teVMLvEADO71U7mIOWkZA0rbtWJbtIZdQIy+gowU0smsB5gLcqB3YrcDut23bxjMB9S/ZgOM/a8AyMw02ea1r6snUZ84o9IlIkCdgLo8EumK+2GkaC7MAvxDjchqZnLScIp6IzEW2zdwRSkjhcMTXgGPWgMWTx7IHOrOE6y3oaPg8gY4dnw/Q8eKzqnInnnRpy4cNHXUfq+qSySfpdQMWjx489KCB/Kx69cDTQAGHXV6aHEqoLYeTHI6/2LWIuk2TxZiHf4MopB7wLeet8QzxteA+Mxmps8HLam+1ZEiMWixp1DXTVGSGyBJwA/zjGaIWuWw3QaCAVsJvRDBAMC8JGUYEfyaXDbEsAdMHmmY5Q0+Ms1lpHYBpVoY4lbnCGY/onWxXXtx+UjTrcDenZIjm1K87KEwZwrOCvIK84InIu2Lb+Z1Dago/S2lSwo9lDYtuT0R+NN0T0auVhLgVeeFQYfdKcRURL4oqcl4MVfS82FOx43VUce7Fs4pHL35UfHt9Qw==' alt=''>ユーザーの一覧</a>";
+}
+
 if ($user->check_permission("instance_administrator")) {
     print "<h3>インスタンスの管理</h3>";
     
