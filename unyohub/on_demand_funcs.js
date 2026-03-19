@@ -2897,10 +2897,10 @@ function show_moderation_info (railroad_id, user_id, ip_address) {
             
             var is_timed_out_user_elm = document.getElementById("edit_operation_data_is_timed_out_user");
             if (moderation_info["is_timed_out_user"]) {
-                is_timed_out_user_elm.innerText = "【!】タイムアウト中";
+                is_timed_out_user_elm.innerHTML = "【!】タイムアウト中<button type='button' onclick='window.open(\"/admin/time_out_user.php?user_id=" + add_slashes(user_id) + "\");'>解除</button>";
                 is_timed_out_user_elm.className = "warning_text";
             } else {
-                is_timed_out_user_elm.innerHTML = "<button type='button' onclick='time_out_setting(\"" + add_slashes(user_id) + "\", \"" + railroad_id + "\");'>タイムアウトを設定</button>";
+                is_timed_out_user_elm.innerHTML = "<button type='button' onclick='window.open(\"/admin/time_out_user.php?user_id=" + add_slashes(user_id) + "\");'>タイムアウトを設定</button>";
             }
             
             var buf = "";
@@ -2919,10 +2919,10 @@ function show_moderation_info (railroad_id, user_id, ip_address) {
             
             var is_timed_out_ip_address_elm = document.getElementById("edit_operation_data_is_timed_out_ip_address");
             if (moderation_info["is_timed_out_ip_address"]) {
-                is_timed_out_ip_address_elm.innerText = "【!】タイムアウト中";
+                is_timed_out_ip_address_elm.innerHTML = "【!】タイムアウト中<button type='button' onclick='window.open(\"/admin/time_out_user.php?ip_address=" + add_slashes(ip_address) + "\");'>解除</button>";
                 is_timed_out_ip_address_elm.className = "warning_text";
             } else {
-                is_timed_out_ip_address_elm.innerHTML = "<button type='button' onclick='time_out_setting(\"" + add_slashes(ip_address) + "\", \"" + railroad_id + "\");'>タイムアウトを設定</button>";
+                is_timed_out_ip_address_elm.innerHTML = "<button type='button' onclick='window.open(\"/admin/time_out_user.php?ip_address=" + add_slashes(ip_address) + "\");'>タイムアウトを設定</button>";
             }
             
             var buf = "";
@@ -3039,76 +3039,6 @@ function revoke_users_all_operation_data (railroad_id, user_id) {
             }
         });
     }
-}
-
-function time_out_setting (user_id_or_ip_address, railroad_id) {
-    var popup_inner_elm = open_square_popup("time_out_popup");
-    
-    if (!user_id_or_ip_address.includes(".") && !user_id_or_ip_address.includes(":")) {
-        var target_is_user_id = true;
-    } else {
-        var target_is_user_id = false;
-    }
-    
-    var buf = "<h4>タイムアウト対象の" + (target_is_user_id ? "ユーザーID" : "IPアドレス") + "</h4>";
-    buf += "<b>" + user_id_or_ip_address + "</b>";
-    buf += "<h4>タイムアウト期間</h4>";
-    buf += "<input type='number' id='timed_out_days' min='1' max='90' value='7'>日間<br>";
-    buf += "<br><br><button type='button' class='wide_button' onclick='time_out_" + (target_is_user_id ? "user" : "ip_address") + "(\"" + add_slashes(user_id_or_ip_address) + "\", \"" + railroad_id + "\");'>タイムアウトを設定</button>";
-    
-    popup_inner_elm.innerHTML = buf;
-}
-
-function time_out_user (user_id, railroad_id) {
-    open_wait_screen();
-    
-    if (one_time_token === null) {
-        close_wait_screen();
-        
-        mes("内部処理が完了していないため、数秒待ってから再送信してください", true);
-        
-        return;
-    }
-    
-    ajax_post("time_out_user.php", "railroad_id=" + escape_form_data(railroad_id) + "&user_id=" + escape_form_data(user_id) + "&timed_out_days=" + escape_form_data(document.getElementById("timed_out_days").value) + "&one_time_token=" + escape_form_data(one_time_token), function (response) {
-        close_wait_screen();
-        
-        if (response === "SUCCEEDED") {
-            mes("ユーザーをタイムアウトしました");
-            
-            close_square_popup();
-            
-            show_moderation_info(railroad_id, user_id, null);
-        }
-        
-        get_one_time_token();
-    });
-}
-
-function time_out_ip_address (ip_address, railroad_id) {
-    open_wait_screen();
-    
-    if (one_time_token === null) {
-        close_wait_screen();
-        
-        mes("内部処理が完了していないため、数秒待ってから再送信してください", true);
-        
-        return;
-    }
-    
-    ajax_post("time_out_ip_address.php", "railroad_id=" + escape_form_data(railroad_id) + "&ip_address=" + escape_form_data(ip_address) + "&timed_out_days=" + escape_form_data(document.getElementById("timed_out_days").value) + "&one_time_token=" + escape_form_data(one_time_token), function (response) {
-        close_wait_screen();
-        
-        if (response === "SUCCEEDED") {
-            mes("IPアドレスをタイムアウトしました");
-            
-            close_square_popup();
-            
-            show_moderation_info(railroad_id, null, ip_address);
-        }
-        
-        get_one_time_token();
-    });
 }
 
 

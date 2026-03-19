@@ -778,6 +778,8 @@ a.connecting_railroad_link h5, .connecting_railroad_link a {
 .warning_text {
     .key_and_value & {
         padding: 0;
+        
+        text-align: inherit;
     }
     
     a {
