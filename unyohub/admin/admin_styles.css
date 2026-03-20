@@ -939,13 +939,48 @@ input[type="checkbox"]:checked + label.drop_down {
     }
 }
 
-.informational_text {
+.informational_text, .warning_text {
     max-width: 480px;
     
     margin: 10px auto;
     padding: 0 10px 10px 15px;
     
     color: #666666;
+}
+
+.warning_text, .warning_sentence {
+    color: #ee3333 !important;
+}
+
+.key_and_value {
+    width: calc(100% - 60px);
+    
+    max-width: 440px;
+    
+    margin: 10px auto;
+    
+    border-bottom: 2px solid #dddddd;
+    
+    text-align: right;
+    font-size: 18px;
+    
+    &:after {
+        content: "";
+        
+        display: block;
+        
+        clear: both;
+    }
+    
+    b, u {
+        display: block;
+        
+        width: fit-content;
+        
+        float: left;
+        
+        font-weight: bold;
+    }
 }
 
 .history_item {

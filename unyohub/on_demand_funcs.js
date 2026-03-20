@@ -2897,10 +2897,10 @@ function show_moderation_info (railroad_id, user_id, ip_address) {
             
             var is_timed_out_user_elm = document.getElementById("edit_operation_data_is_timed_out_user");
             if (moderation_info["is_timed_out_user"]) {
-                is_timed_out_user_elm.innerHTML = "【!】タイムアウト中<button type='button' onclick='window.open(\"/admin/time_out_user.php?user_id=" + add_slashes(user_id) + "\");'>解除</button>";
-                is_timed_out_user_elm.className = "warning_text";
+                is_timed_out_user_elm.innerHTML = "【!】タイムアウト中<button type='button' onclick='window.open(\"/admin/time_out_user.php?user_id=" + add_slashes(user_id) + "&railroad_id=" + railroad_info["railroad_id"] + "\");'>解除</button>";
+                is_timed_out_user_elm.className = "warning_sentence";
             } else {
-                is_timed_out_user_elm.innerHTML = "<button type='button' onclick='window.open(\"/admin/time_out_user.php?user_id=" + add_slashes(user_id) + "\");'>タイムアウトを設定</button>";
+                is_timed_out_user_elm.innerHTML = "<button type='button' onclick='window.open(\"/admin/time_out_user.php?user_id=" + add_slashes(user_id) + "&railroad_id=" + railroad_info["railroad_id"] + "\");'>タイムアウトを設定</button>";
             }
             
             var buf = "";
@@ -2919,10 +2919,10 @@ function show_moderation_info (railroad_id, user_id, ip_address) {
             
             var is_timed_out_ip_address_elm = document.getElementById("edit_operation_data_is_timed_out_ip_address");
             if (moderation_info["is_timed_out_ip_address"]) {
-                is_timed_out_ip_address_elm.innerHTML = "【!】タイムアウト中<button type='button' onclick='window.open(\"/admin/time_out_user.php?ip_address=" + add_slashes(ip_address) + "\");'>解除</button>";
-                is_timed_out_ip_address_elm.className = "warning_text";
+                is_timed_out_ip_address_elm.innerHTML = "【!】タイムアウト中<button type='button' onclick='window.open(\"/admin/time_out_user.php?ip_address=" + add_slashes(ip_address) + "&railroad_id=" + railroad_info["railroad_id"] + "\");'>解除</button>";
+                is_timed_out_ip_address_elm.className = "warning_sentence";
             } else {
-                is_timed_out_ip_address_elm.innerHTML = "<button type='button' onclick='window.open(\"/admin/time_out_user.php?ip_address=" + add_slashes(ip_address) + "\");'>タイムアウトを設定</button>";
+                is_timed_out_ip_address_elm.innerHTML = "<button type='button' onclick='window.open(\"/admin/time_out_user.php?ip_address=" + add_slashes(ip_address) + "&railroad_id=" + railroad_info["railroad_id"] + "\");'>タイムアウトを設定</button>";
             }
             
             var buf = "";
