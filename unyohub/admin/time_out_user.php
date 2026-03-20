@@ -39,7 +39,7 @@ if (isset($_POST["timed_out_days"])) {
         } else {
             $moderation_db_obj->query("DELETE FROM `unyohub_moderation_timed_out_users` WHERE `expiration_datetime` < '".$now_datetime."'");
             
-            if ($moderation_db_obj->querySingle("SELECT COUNT(*) FROM `unyohub_moderation_timed_out_users` WHERE `user_id` = '".$user_id."' AND `expiration_datetime` >= '".$now_datetime."'")) {
+            if ($moderation_db_obj->querySingle("SELECT COUNT(`user_id`) FROM `unyohub_moderation_timed_out_users` WHERE `user_id` = '".$user_id."' AND `expiration_datetime` >= '".$now_datetime."'")) {
                 $result_text = "【!】指定されたユーザーは既にタイムアウトが設定されています";
                 goto on_error;
             }
@@ -54,6 +54,31 @@ if (isset($_POST["timed_out_days"])) {
             $moderation_db_obj->query("INSERT INTO `unyohub_moderation_user_timed_out_logs` (`user_id`, `timed_out_datetime`, `moderator_id`, `timed_out_days`) VALUES ('".$user_id."', '".$now_datetime."', '".$user->get_id()."', ".$timed_out_days.")");
             
             $result_text = "ユーザーをタイムアウトしました";
+        }
+    } else {
+        $ip_address = $moderation_db_obj->escapeString($_GET["ip_address"]);
+        
+        if ($_POST["timed_out_days"] === "0") {
+            $moderation_db_obj->query("DELETE FROM `unyohub_moderation_timed_out_ip_addresses` WHERE `ip_address` = '".$ip_address."'");
+            $result_text = "IPアドレスのタイムアウトを解除しました";
+        } else {
+            $moderation_db_obj->query("DELETE FROM `unyohub_moderation_timed_out_ip_addresses` WHERE `expiration_datetime` < '".$now_datetime."'");
+            
+            if ($moderation_db_obj->querySingle("SELECT COUNT(`ip_address`) FROM `unyohub_moderation_timed_out_ip_addresses` WHERE `ip_address` = '".$ip_address."' AND `expiration_datetime` >= '".$now_datetime."'")) {
+                $result_text = "【!】指定されたIPアドレスは既にタイムアウトが設定されています";
+                goto on_error;
+            }
+            
+            $timed_out_days = intval($_POST["timed_out_days"]);
+            if ($timed_out_days < 1 || $timed_out_days > 90) {
+                $result_text = "【!】タイムアウト日数が不正です";
+                goto on_error;
+            }
+            
+            $moderation_db_obj->query("INSERT INTO `unyohub_moderation_timed_out_ip_addresses` (`ip_address`, `expiration_datetime`) VALUES ('".$ip_address."', '".date("Y-m-d H:i:s", $timed_out_days * 86400 + $now_ts)."')");
+            $moderation_db_obj->query("INSERT INTO `unyohub_moderation_ip_address_timed_out_logs` (`ip_address`, `timed_out_datetime`, `moderator_id`, `timed_out_days`) VALUES ('".$ip_address."', '".$now_datetime."', '".$user->get_id()."', ".$timed_out_days.")");
+            
+            $result_text = "IPアドレスをタイムアウトしました";
         }
     }
 }
