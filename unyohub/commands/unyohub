@@ -23,61 +23,7 @@ def mes (log_text, is_error=False, is_heading=False):
 
 
 def print_usage ():
-    print("\n\x1b[94m_/_/_/_/\x1b[0m 使用可能なコマンド \x1b[94m_/_/_/_/\x1b[0m\n")
-    
-    print("\x1b[93msetup-libs\x1b[0m \x1b[90m<作成する管理者ユーザーのID>\x1b[0m")
-    print("  ライブラリの初期設定を行う\n")
-    
-    print("\x1b[93membed-icons\x1b[0m \x1b[90m<路線系統識別名>\x1b[0m")
-    print("  車両アイコン画像をJSONファイルに埋め込む\n")
-    
-    print("\x1b[93mconv-formations\x1b[0m \x1b[90m<路線系統識別名>\x1b[0m")
-    print("  編成表データを変換する\n")
-    
-    print("\x1b[93mcopy-formation-info\x1b[0m \x1b[90m<コピー元路線系統識別名> <コピー元編成名> <コピー先路線系統識別名> <コピー先編成名>\x1b[0m")
-    print("  データベース上で編成データをコピーする\n")
-    
-    print("\x1b[93mclean-formation-db\x1b[0m \x1b[90m<路線系統識別名>\x1b[0m")
-    print("  データベースから編成表にない編成・車両のデータを削除する\n")
-    
-    print("\x1b[93mupdate-operations\x1b[0m \x1b[90m<路線系統識別名> <ダイヤ改正識別名> <ダイヤ識別名>\x1b[0m")
-    print("  運用表をデータベースに書き込む\n")
-    
-    print("\x1b[93mrole-info\x1b[0m \x1b[90m<ロール識別名>\x1b[0m")
-    print("  ロールの情報を表示する\n")
-    
-    print("\x1b[93mcreate-role\x1b[0m \x1b[90m<ロール識別名> <ロール表示名>\x1b[0m")
-    print("  ロールを新規作成する\n")
-    
-    print("\x1b[93mdelete-role\x1b[0m \x1b[90m<ロール識別名>\x1b[0m")
-    print("  ロールを削除する\n")
-    
-    print("\x1b[93madd-permission\x1b[0m \x1b[90m<ロール識別名> <権限対象識別名> <動作識別名>\x1b[0m")
-    print("  ロールに権限を割り当てる\n")
-    
-    print("\x1b[93mremove-permission\x1b[0m \x1b[90m<ロール識別名> <権限対象識別名> <動作識別名>\x1b[0m")
-    print("  ロールから権限を剥奪する\n")
-    
-    print("\x1b[93massign-role\x1b[0m \x1b[90m<ユーザー識別名> <ロール識別名>\x1b[0m")
-    print("  ユーザーにロールを割り当てる\n")
-    
-    print("\x1b[93mremove-role\x1b[0m \x1b[90m<ユーザー識別名> <ロール識別名>\x1b[0m")
-    print("  ユーザーからロールを剥奪する\n")
-    
-    print("\x1b[93minit-db\x1b[0m \x1b[90m<路線系統識別名>\x1b[0m")
-    print("  各路線系統用データベースファイルを生成する\n")
-    
-    print("\x1b[93minit-common-dbs\x1b[0m")
-    print("  全路線系統共通データ用データベースファイル群を生成する\n")
-    
-    print("\x1b[93mget-gtfs-realtime\x1b[0m \x1b[90m<路線系統識別名>\x1b[0m")
-    print("  鉄道事業者の公開APIから在線情報を取得し、車両運用情報を更新する\n")
-    
-    print("\x1b[93mupdate-trip-ids\x1b[0m \x1b[90m<路線系統識別名> <ダイヤ改正識別名> <ダイヤ識別名>\x1b[0m")
-    print("  便識別名と列車番号の対応表をデータベースに書き込む\n")
-    
-    print("\x1b[93mgenerate-operation-table\x1b[0m \x1b[90m<路線系統識別名> <YYYY-MM-DD形式の日付>\x1b[0m")
-    print("  1日分の在線情報をもとに運用表を生成する\n")
+    print("\nヘルプを表示するには \x1b[93munyohub --help\x1b[0m を実行してください")
 
 
 args = []
@@ -92,6 +38,12 @@ for arg_index in range(1, len(sys.argv)):
 
 if "-s" not in options:
     print(UNYOHUB_COMMANDS_APP_NAME + " \x1b[90mv" + UNYOHUB_COMMANDS_VERSION + "\x1b[0m")
+
+    if "--help" in options or "-h" in options:
+        help_funcs = importlib.import_module("modules.help_funcs")
+        help_funcs.show_help(*args[:1])
+        
+        sys.exit()
 
 os.chdir(os.path.dirname(os.path.abspath(__file__)))
 data_dir = (os.path.abspath(UNYOHUB_DATA_DIR))
