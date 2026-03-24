@@ -99,10 +99,8 @@ data_dir = (os.path.abspath(UNYOHUB_DATA_DIR))
 if arg_count >= 1:
     match args[0]:
         case "setup-libs":
-            if arg_count == 2:
-                subprocess.run(["php", "modules/libs_setup.php", args[1]])
-            elif arg_count == 1:
-                subprocess.run(["php", "modules/libs_setup.php"])
+            if arg_count == 1 or arg_count == 2:
+                subprocess.run(["php", "modules/libs_setup.php", *args[1:]])
             else:
                 print("\x1b[31m引数の数が異常です\x1b[0m")
         case "embed-icons":
@@ -121,10 +119,8 @@ if arg_count >= 1:
                 print("\x1b[31m引数の数が異常です\x1b[0m")
         case "copy-formation-info":
             copy_formation_info = importlib.import_module("modules.copy_formation_info")
-            if arg_count == 5:
-                copy_formation_info.copy_formation_info(mes, data_dir + "/" + os.path.basename(args[1]), args[2], data_dir + "/" + os.path.basename(args[3]), args[4])
-            elif arg_count == 4:
-                copy_formation_info.copy_formation_info(mes, data_dir + "/" + os.path.basename(args[1]), args[2], data_dir + "/" + os.path.basename(args[3]), None)
+            if arg_count == 4 or arg_count == 5:
+                copy_formation_info.copy_formation_info(mes, data_dir + "/" + os.path.basename(args[1]), args[2], data_dir + "/" + os.path.basename(args[3]), *args[4:])
             else:
                 print("\x1b[31m引数の数が異常です\x1b[0m")
         case "clean-formation-db":
@@ -152,10 +148,8 @@ if arg_count >= 1:
         case "modify-user-info":
             subprocess.run(["php", "modules/modify_user_info.php", *sys.argv[2:]])
         case "role-info":
-            if arg_count == 2:
-                subprocess.run(["php", "modules/role_info.php", args[1]])
-            elif arg_count == 1:
-                subprocess.run(["php", "modules/role_info.php"])
+            if arg_count == 1 or arg_count == 2:
+                subprocess.run(["php", "modules/role_info.php", *args[1:]])
             else:
                 print("\x1b[31m引数の数が異常です\x1b[0m")
         case "create-role":
@@ -200,10 +194,7 @@ if arg_count >= 1:
         case "get-gtfs-realtime":
             if arg_count <= 2:
                 get_gtfs_realtime = importlib.import_module("modules.get_gtfs_realtime")
-                if arg_count == 1:
-                    get_gtfs_realtime.get_gtfs_realtime(mes, options=options)
-                else:
-                    get_gtfs_realtime.get_gtfs_realtime(mes, args[1], options=options)
+                get_gtfs_realtime.get_gtfs_realtime(mes, *args[1:], options=options)
             else:
                 print("\x1b[31m引数の数が異常です\x1b[0m")
         case "update-trip-ids":
