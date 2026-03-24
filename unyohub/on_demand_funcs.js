@@ -2905,7 +2905,7 @@ function show_moderation_info (railroad_id, user_id, ip_address) {
             
             var buf = "";
             for (var log_data of moderation_info["user_timed_out_logs"]) {
-                buf += log_data["timed_out_datetime"] + " から " + log_data["timed_out_days"] + "日間 (モデレーター: " + escape_html(log_data["moderator_name"]) + ")<br>";
+                buf += log_data["timed_out_datetime"] + " から " + log_data["timed_out_days"] + "日間 (" + (log_data["moderator_id"] !== "#" ? "モデレーター: " : "") + escape_html(log_data["moderator_name"]) + ")<br>";
             }
             
             document.getElementById("edit_operation_data_user_timed_out_logs").innerHTML = "<h5>ユーザーのタイムアウト履歴</h5><div class='descriptive_text'>" + (buf.length >= 1 ? buf : "ユーザーにタイムアウトの履歴はありません") + "</div>";
@@ -2927,7 +2927,7 @@ function show_moderation_info (railroad_id, user_id, ip_address) {
             
             var buf = "";
             for (var log_data of moderation_info["ip_address_timed_out_logs"]) {
-                buf += log_data["timed_out_datetime"] + " から " + log_data["timed_out_days"] + "日間 (モデレーター: " + escape_html(log_data["moderator_name"]) + ")<br>";
+                buf += log_data["timed_out_datetime"] + " から " + log_data["timed_out_days"] + "日間 (" + (log_data["moderator_id"] !== "#" ? "モデレーター: " : "") + escape_html(log_data["moderator_name"]) + ")<br>";
             }
             
             document.getElementById("edit_operation_data_ip_address_timed_out_logs").innerHTML = "<h5>IPアドレスのタイムアウト履歴</h5><div class='descriptive_text'>" + (buf.length >= 1 ? buf : "IPアドレスにタイムアウトの履歴はありません") + "</div>";
