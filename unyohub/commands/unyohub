@@ -144,6 +144,11 @@ if arg_count >= 1:
                 subprocess.run(["php", "modules/user_info.php", *args[1:]])
             else:
                 print("\x1b[31m引数の数が異常です\x1b[0m")
+        case "create-user":
+            if arg_count == 3 or arg_count == 4:
+                subprocess.run(["php", "modules/create_user.php", *args[1:]])
+            else:
+                print("\x1b[31m引数の数が異常です\x1b[0m")
         case "modify-user-info":
             subprocess.run(["php", "modules/modify_user_info.php", *sys.argv[2:]])
         case "role-info":
