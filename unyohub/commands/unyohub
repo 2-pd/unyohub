@@ -139,6 +139,11 @@ if arg_count >= 1:
                 write_operations_to_db.write_operations_to_db(mes, data_dir + "/" + os.path.basename(args[1]), os.path.basename(args[2]), os.path.basename(args[3]), options=options)
             else:
                 print("\x1b[31m引数の数が異常です\x1b[0m")
+        case "user-info":
+            if arg_count <= 2:
+                subprocess.run(["php", "modules/user_info.php", *args[1:]])
+            else:
+                print("\x1b[31m引数の数が異常です\x1b[0m")
         case "role-info":
             if arg_count == 2:
                 subprocess.run(["php", "modules/role_info.php", args[1]])
