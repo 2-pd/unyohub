@@ -34,8 +34,12 @@ if (!empty($_POST["user_id"])) {
     
     $user_timed_out_logs = array();
     while ($log_data = $logs_r->fetchArray(SQLITE3_ASSOC)) {
-        $user_obj = $wakarana->get_user($log_data["moderator_id"]);
-        $log_data["moderator_name"] = $user_obj->get_name();
+        if ($log_data["moderator_id"] !== "#") {
+            $moderator = $wakarana->get_user($log_data["moderator_id"]);
+            $log_data["moderator_name"] = is_object($moderator) ? $moderator->get_name() : "存在しないユーザー";
+        } else {
+            $log_data["moderator_name"] = "コマンドライン";
+        }
         
         $user_timed_out_logs[] = $log_data;
     }
@@ -57,8 +61,12 @@ if (!empty($_POST["ip_address"])) {
     
     $ip_address_timed_out_logs = array();
     while ($log_data = $logs_r->fetchArray(SQLITE3_ASSOC)) {
-        $user_obj = $wakarana->get_user($log_data["moderator_id"]);
-        $log_data["moderator_name"] = $user_obj->get_name();
+        if ($log_data["moderator_id"] !== "#") {
+            $moderator = $wakarana->get_user($log_data["moderator_id"]);
+            $log_data["moderator_name"] = is_object($moderator) ? $moderator->get_name() : "存在しないユーザー";
+        } else {
+            $log_data["moderator_name"] = "コマンドライン";
+        }
         
         $ip_address_timed_out_logs[] = $log_data;
     }
