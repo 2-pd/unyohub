@@ -108,50 +108,50 @@ def show_help (subcommand=""):
             print("\x1b[93munyohub role-info\x1b[0m  ロールの情報を表示する")
             
             print("\n引数")
-            print("  \x1b[33m第1引数\x1b[0m : ロールID(省略時はロールの一覧を表示)")
+            print("  \x1b[33m第1引数\x1b[0m : ロール識別名(省略時はロールの一覧を表示)")
         
         case "create-role":
             print("\x1b[93munyohub create-role\x1b[0m  ロールを新規作成する")
             
             print("\n引数")
-            print("  \x1b[33m第1引数\x1b[0m : ロールID")
-            print("  \x1b[33m第2引数\x1b[0m : ロール名")
+            print("  \x1b[33m第1引数\x1b[0m : ロール識別名")
+            print("  \x1b[33m第2引数\x1b[0m : ロール表示名")
         
         case "delete-role":
             print("\x1b[93munyohub delete-role\x1b[0m  ロールを削除する")
             
             print("\n引数")
-            print("  \x1b[33m第1引数\x1b[0m : ロールID")
+            print("  \x1b[33m第1引数\x1b[0m : ロール識別名")
         
         case "add-permission":
             print("\x1b[93munyohub add-permission\x1b[0m  ロールに権限を割り当てる")
             
             print("\n引数")
-            print("  \x1b[33m第1引数\x1b[0m : ロールID")
-            print("  \x1b[33m第2引数\x1b[0m : 権限識別名")
-            print("  \x1b[33m第3引数\x1b[0m : 権限のパラメータ(省略可能)")
+            print("  \x1b[33m第1引数\x1b[0m : ロール識別名")
+            print("  \x1b[33m第2引数\x1b[0m : 権限対象識別名")
+            print("  \x1b[33m第3引数\x1b[0m : 動作識別名(省略時は「any」)")
         
         case "remove-permission":
             print("\x1b[93munyohub remove-permission\x1b[0m  ロールから権限を剥奪する")
             
             print("\n引数")
-            print("  \x1b[33m第1引数\x1b[0m : ロールID")
-            print("  \x1b[33m第2引数\x1b[0m : 権限識別名")
-            print("  \x1b[33m第3引数\x1b[0m : 権限のパラメータ(省略可能)")
+            print("  \x1b[33m第1引数\x1b[0m : ロール識別名")
+            print("  \x1b[33m第2引数\x1b[0m : 権限対象識別名")
+            print("  \x1b[33m第3引数\x1b[0m : 動作識別名(省略時は「any」)")
         
         case "assign-role":
             print("\x1b[93munyohub assign-role\x1b[0m  ユーザーにロールを割り当てる")
             
             print("\n引数")
-            print("  \x1b[33m第1引数\x1b[0m : ユーザーID")
-            print("  \x1b[33m第2引数\x1b[0m : ロールID")
+            print("  \x1b[33m第1引数\x1b[0m : ユーザー識別名")
+            print("  \x1b[33m第2引数\x1b[0m : ロール識別名")
         
         case "remove-role":
             print("\x1b[93munyohub remove-role\x1b[0m  ユーザーからロールを剥奪する")
             
             print("\n引数")
-            print("  \x1b[33m第1引数\x1b[0m : ユーザーID")
-            print("  \x1b[33m第2引数\x1b[0m : ロールID")
+            print("  \x1b[33m第1引数\x1b[0m : ユーザー識別名")
+            print("  \x1b[33m第2引数\x1b[0m : ロール識別名")
         
         case "init-db":
             print("\x1b[93munyohub init-db\x1b[0m  各路線系統用データベースファイルを生成する")
@@ -166,10 +166,10 @@ def show_help (subcommand=""):
             print("\x1b[93munyohub get-gtfs-realtime\x1b[0m  鉄道事業者の公開APIから在線情報を取得し、車両運用情報を更新する")
             
             print("\n引数")
-            print("  \x1b[33m第1引数\x1b[0m : 路線系統識別名(省略時はすべての路線系統を処理)")
+            print("  \x1b[33m第1引数\x1b[0m : 路線系統識別名(省略時は公開APIエンドポイントが登録されている全路線系統の在線情報を取得)")
             
             print("\nオプション")
-            print("  \x1b[33m-s\x1b[0m : ログ出力を抑制し、ランダムな待機時間を挿入する")
+            print("  \x1b[33m-s\x1b[0m : 処理開始をランダムな秒数遅延し、コンソール出力も行わない")
         
         case "update-trip-ids":
             print("\x1b[93munyohub update-trip-ids\x1b[0m  便識別名と列車番号の対応表をデータベースに書き込む")
@@ -187,7 +187,7 @@ def show_help (subcommand=""):
             
             print("\n引数")
             print("  \x1b[33m第1引数\x1b[0m : 路線系統識別名")
-            print("  \x1b[33m第2引数\x1b[0m : 日付(YYYY-MM-DD)")
+            print("  \x1b[33m第2引数\x1b[0m : YYYY-MM-DD形式の日付")
         
         case _:
             print("\x1b[31mサブコマンド \x1b[1m" + subcommand + "\x1b[22m は存在しません\x1b[0m")

@@ -22,10 +22,6 @@ def mes (log_text, is_error=False, is_heading=False):
         print(str(log_text))
 
 
-def print_usage ():
-    print("\nヘルプを表示するには \x1b[93munyohub --help\x1b[0m を実行してください")
-
-
 args = []
 options = set()
 arg_count = 0
@@ -163,6 +159,6 @@ if arg_count >= 1:
                 print("\x1b[31m引数の数が異常です\x1b[0m")
         case _:
             print("\x1b[31mサブコマンド \x1b[1m" + args[0] + "\x1b[22m は存在しません\x1b[0m")
-            print_usage()
+            print("\nヘルプを表示するには \x1b[93munyohub --help\x1b[0m を実行してください")
 else:
-    print_usage()
+    print("\nヘルプを表示するには \x1b[93munyohub --help\x1b[0m を実行してください")
