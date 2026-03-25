@@ -981,6 +981,14 @@ input[type="checkbox"]:checked + label.drop_down {
         
         font-weight: bold;
     }
+    
+    div {
+        margin: 8px 0 4px 0 !important;
+    }
+    
+    button {
+        padding: 2px 10px !important;
+    }
 }
 
 .history_item {
