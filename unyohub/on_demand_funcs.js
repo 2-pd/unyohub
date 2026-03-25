@@ -2843,7 +2843,7 @@ function edit_operation_data (railroad_id, yyyy_mm_dd, operation_number, assign_
     
     if (user_id !== user_info["user_id"] && user_id !== "#") {
         buf += "<input type='checkbox' id='edit_operation_data_moderation_info'><label for='edit_operation_data_moderation_info' class='drop_down'>投稿者情報</label><div>";
-        buf += "<div class='key_and_value'><b>ユーザーID</b>" + escape_html(user_id) + "<div id='edit_operation_data_is_timed_out_user'></div></div>";
+        buf += "<div class='key_and_value'><b>ユーザーID</b>" + (!user_id.startsWith("*") ? "<a href='/admin/user_data.php?user_id=" + add_slashes(user_id) + "' target='_blank'>" + escape_html(user_id) + "</a>" : escape_html(user_id)) + "<div id='edit_operation_data_is_timed_out_user'></div></div>";
         buf += "<div id='edit_operation_data_user_info' class='loading_icon'></div>";
         if (ip_address !== null) {
             buf += "<div class='key_and_value'><b>IPアドレス</b>" + escape_html(ip_address) + "<div id='edit_operation_data_is_timed_out_ip_address'></div></div>";
