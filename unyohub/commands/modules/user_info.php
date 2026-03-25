@@ -30,7 +30,7 @@ if (empty($argv[1])) {
     
     print "ユーザー登録日時 :      ".$user->get_created()."\n";
     
-    print "ユーザー情報更新日時 :  ".$user->get_last_access()."\n";
+    print "ユーザー情報更新日時 :  ".$user->get_last_updated()."\n";
     
     print "最終アクセス日時 :      ".$user->get_last_access()."\n";
     
@@ -48,8 +48,7 @@ if (empty($argv[1])) {
     print "最終投稿日 :            ".(!empty($last_posted_date) ? $last_posted_date : "N/A")."\n\n";
     
     print "割り当て済みのロール :\n";
-    $roles = $user->get_roles();
-    foreach ($roles as $role) {
+    foreach ($user->get_roles() as $role) {
         print "  ".addslashes($role->get_name())." (".$role->get_id().")\n";
     }
     print "\n";

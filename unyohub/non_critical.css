@@ -493,7 +493,7 @@ h2 small {
     vertical-align: top;
 }
 
-:is(.popup, .square_popup) input[type="number"] {
+.popup input[type="number"] {
     display: inline-block;
     
     width: 50px;
@@ -775,17 +775,11 @@ a.connecting_railroad_link h5, .connecting_railroad_link a {
     }
 }
 
-.warning_text {
-    .key_and_value & {
-        padding: 0;
-    }
+.warning_text a {
+    color: #663333;
     
-    a {
-        color: #663333;
-        
-        .dark_mode & {
-             color: #ff9999;
-        }
+    .dark_mode & {
+            color: #ff9999;
     }
 }
 
