@@ -1009,6 +1009,10 @@ input[type="checkbox"]:checked + label.drop_down {
             padding: 5px 0;
             
             line-height: 28px;
+            
+            small {
+                font-size: 14px;
+            }
         }
         
         td:first-child {
