@@ -162,7 +162,7 @@ if arg_count >= 1:
             else:
                 print("\x1b[31m引数の数が異常です\x1b[0m")
         case _:
-            print("\x1b[31mコマンド \x1b[1m" + args[0] + "\x1b[22m は存在しません\x1b[0m")
+            print("\x1b[31mサブコマンド \x1b[1m" + args[0] + "\x1b[22m は存在しません\x1b[0m")
             print_usage()
 else:
     print_usage()
