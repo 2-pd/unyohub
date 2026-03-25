@@ -172,6 +172,12 @@ def get_gtfs_realtime (mes, railroad_id=None, options=set()):
         railroad_ids = [railroad_id]
     
     for railroad_id in railroad_ids:
+        if railroad_id not in endpoints:
+            if "-s" not in options:
+                mes("路線系統 " + railroad_id + " は運行情報を取得可能なURLが設定されていません", True)
+            
+            continue
+        
         if "-s" in options:
             get_railroad_gtfs_realtime(do_nothing, "../data/" + railroad_id, endpoints[railroad_id])
         else:

@@ -264,7 +264,7 @@ _/_/_/_/ データベース _/_/_/_/
 `unyohub_moderation_user_timed_out_logs` ユーザーに対するタイムアウト設定の履歴
   `user_id` TEXT NOT NULL タイムアウトされたユーザーのID(未登録ユーザーの場合、クライアント端末が生成する12桁の乱数値の頭に「*」を付加した文字列)
   `timed_out_datetime` TEXT NOT NULL 「YYYY-MM-DD HH:MM:SS」形式のタイムアウトが設定された日時
-  `moderator_id` TEXT NOT NULL モデレート作業を行ったモデレーターのユーザーID
+  `moderator_id` TEXT NOT NULL モデレート作業を行ったモデレーターのユーザーID(コマンドラインからのモデレートの場合は「#」)
   `timed_out_days` INTEGER NOT NULL タイムアウト日数
 
   PRIMARY KEY(`user_id`, `timed_out_datetime`)
@@ -282,7 +282,7 @@ _/_/_/_/ データベース _/_/_/_/
 `unyohub_moderation_ip_address_timed_out_logs` IPアドレスに対するタイムアウト設定の履歴
   `ip_address` TEXT NOT NULL タイムアウトされたIPアドレス
   `timed_out_datetime` TEXT NOT NULL 「YYYY-MM-DD HH:MM:SS」形式のタイムアウトが設定された日時
-  `moderator_id` TEXT NOT NULL モデレート作業を行ったモデレーターのユーザーID
+  `moderator_id` TEXT NOT NULL モデレート作業を行ったモデレーターのユーザーID(コマンドラインからのモデレートの場合は「#」)
   `timed_out_days` INTEGER NOT NULL タイムアウト日数
 
   PRIMARY KEY(`ip_address`, `timed_out_datetime`)

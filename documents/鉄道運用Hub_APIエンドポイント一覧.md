@@ -550,7 +550,7 @@ JSON化された時刻表の内容を返す
     "user_timed_out_logs" : [ ユーザーIDのタイムアウト指定履歴(直近5件を新しい順に。ユーザーIDが空の場合はNULL)  
         {  
             "timed_out_datetime" : YYYY-MM-DD HH:MM:SS形式のタイムアウト設定日時,  
-            "moderator_id" : タイムアウトを設定したモデレーターのユーザーID,  
+            "moderator_id" : タイムアウトを設定したモデレーターのユーザーID(コマンドラインからのタイムアウトの場合は「#」),  
             "moderator_name" : タイムアウトを設定したモデレーターのハンドルネーム,  
             "timed_out_days" : タイムアウトされた日数  
         }...  
@@ -560,7 +560,7 @@ JSON化された時刻表の内容を返す
     "ip_address_timed_out_logs" : [ IPアドレスのタイムアウト指定履歴(直近5件を新しい順に。IPアドレスが空の場合はNULL)  
         {  
             "timed_out_datetime" : YYYY-MM-DD HH:MM:SS形式のタイムアウト設定日時,  
-            "moderator_id" : タイムアウトを設定したモデレーターのユーザーID,  
+            "moderator_id" : タイムアウトを設定したモデレーターのユーザーID(コマンドラインからのタイムアウトの場合は「#」),  
             "moderator_name" : タイムアウトを設定したモデレーターのハンドルネーム,  
             "timed_out_days" : タイムアウトされた日数  
         }...  
