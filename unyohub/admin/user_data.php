@@ -82,6 +82,11 @@ print $token_html;
 print "<input type='hidden' name='disable_user' value='yes'>";
 print "</form>";
 
+print "<form action='email_domain_blacklist.php' method='post' id='email_domain_blacklist_form' style='display: none;'>";
+print $token_html;
+print "<input type='hidden' name='additional_email_domain' id='additional_email_domain'>";
+print "</form>";
+
 print <<< EOM
 <script>
 function enable_user (railroad_id, railroad_name) {
@@ -93,6 +98,13 @@ function enable_user (railroad_id, railroad_name) {
 function disable_user (railroad_id, railroad_name) {
     if (confirm("このユーザーのアカウントを停止しますか？")) {
         document.getElementById("disable_form").submit();
+    }
+}
+
+function add_email_domain_to_blacklist (email_domain) {
+    if (confirm("全ユーザーがドメイン " + email_domain + " のメールアドレスを登録できないよう設定しますか？")) {
+        document.getElementById("additional_email_domain").value = email_domain;
+        document.getElementById("email_domain_blacklist_form").submit();
     }
 }
 </script>
@@ -120,7 +132,19 @@ print "<div class='key_and_value'><b>ユーザー情報更新日時</b>".$user_o
 print "<div class='key_and_value'><b>最終アクセス日時</b>".$user_obj->get_last_access()."</div>";
 
 $email_address = $user_obj->get_primary_email_address();
-print "<div class='key_and_value'><b>メールアドレス</b>".(!empty($email_address) ? htmlspecialchars($email_address) : "(未設定)")."</div>";
+print "<div class='key_and_value'><b>メールアドレス</b>";
+if (!empty($email_address)) {
+    print htmlspecialchars($email_address);
+    $email_domain = substr($email_address, strpos($email_address, "@") + 1);
+    if (!$wakarana->check_email_domain($email_domain)) {
+        print "<div class='warning_sentence'>【!】メールドメインをブロック済み</div>";
+    } elseif ($moderator_is_admin) {
+        print "<div><button type='button' onclick='add_email_domain_to_blacklist(\"".addslashes($email_domain)."\");'>メールドメインのブロック</button></div>";
+    }
+} else {
+    print  "(未設定)";
+}
+print "</div>";
 
 $website_url = $user_obj->get_value("website_url");
 print "<div class='key_and_value'><b>webサイトのURL</b>".(!empty($website_url) ? "<a href='".addslashes($website_url)."' target='_blank'>".htmlspecialchars($website_url)."</a>" : "(未設定)")."</div>";
