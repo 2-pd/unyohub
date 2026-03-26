@@ -53,17 +53,17 @@ def convert_gtfs_to_timetable (mes, main_dir, diagram_revision, generate_train_n
             stop_info_inbound[stop_info[0]]["row_index"] -= 2
             continue
         
-        line_ids = []
-        for line_id in stop_info[2].split():
-            if line_id not in lines_inbound:
-                lines_inbound.append(line_id)
+        line_strs = []
+        for line_str in stop_info[2].split():
+            if line_str not in lines_inbound:
+                lines_inbound.append(line_str)
             else:
-                line_ids.append(line_id)
+                line_strs.append(line_str)
             
-            last_departure_time_indexes[line_id] = len(inbound_timetable_t[1])
+            last_departure_time_indexes[line_str] = len(inbound_timetable_t[1])
         
         inbound_timetable_t[0].append(stop_info[1] + "[着]")
-        inbound_timetable_t[1].append(" ".join(line_ids))
+        inbound_timetable_t[1].append(" ".join(line_strs))
         inbound_timetable_t[0].append(stop_info[1] + "[発]")
         inbound_timetable_t[1].append(stop_info[2])
         
@@ -72,10 +72,10 @@ def convert_gtfs_to_timetable (mes, main_dir, diagram_revision, generate_train_n
     inbound_timetable_t[0].append("")
     inbound_timetable_t[1].append("")
     
-    for line_id in last_departure_time_indexes.keys():
-        line_ids = inbound_timetable_t[1][last_departure_time_indexes[line_id] + 1].split()
-        line_ids.remove(line_id)
-        inbound_timetable_t[1][last_departure_time_indexes[line_id] + 1] = " ".join(line_ids)
+    for line_str in last_departure_time_indexes.keys():
+        line_strs = inbound_timetable_t[1][last_departure_time_indexes[line_str] + 1].split()
+        line_strs.remove(line_str)
+        inbound_timetable_t[1][last_departure_time_indexes[line_str] + 1] = " ".join(line_strs)
     
     lines_outbound = []
     stop_info_outbound = {}
@@ -93,17 +93,17 @@ def convert_gtfs_to_timetable (mes, main_dir, diagram_revision, generate_train_n
             stop_info_outbound[stop_info[0]]["row_index"] -= 2
             continue
         
-        line_ids = []
-        for line_id in stop_info[2].split():
-            if line_id not in lines_outbound:
-                lines_outbound.append(line_id)
+        line_strs = []
+        for line_str in stop_info[2].split():
+            if line_str not in lines_outbound:
+                lines_outbound.append(line_str)
             else:
-                line_ids.append(line_id)
+                line_strs.append(line_str)
             
-            last_departure_time_indexes[line_id] = len(outbound_timetable_t[1])
+            last_departure_time_indexes[line_str] = len(outbound_timetable_t[1])
         
         outbound_timetable_t[0].append(stop_info[1] + "[着]")
-        outbound_timetable_t[1].append(" ".join(line_ids))
+        outbound_timetable_t[1].append(" ".join(line_strs))
         outbound_timetable_t[0].append(stop_info[1] + "[発]")
         outbound_timetable_t[1].append(stop_info[2])
         
@@ -112,10 +112,10 @@ def convert_gtfs_to_timetable (mes, main_dir, diagram_revision, generate_train_n
     outbound_timetable_t[0].append("")
     outbound_timetable_t[1].append("")
     
-    for line_id in last_departure_time_indexes.keys():
-        line_ids = outbound_timetable_t[1][last_departure_time_indexes[line_id] + 1].split()
-        line_ids.remove(line_id)
-        outbound_timetable_t[1][last_departure_time_indexes[line_id] + 1] = " ".join(line_ids)
+    for line_str in last_departure_time_indexes.keys():
+        line_strs = outbound_timetable_t[1][last_departure_time_indexes[line_str] + 1].split()
+        line_strs.remove(line_str)
+        outbound_timetable_t[1][last_departure_time_indexes[line_str] + 1] = " ".join(line_strs)
     
     
     mes("列車情報を整理しています...")
@@ -219,12 +219,17 @@ def convert_gtfs_to_timetable (mes, main_dir, diagram_revision, generate_train_n
                 if last_row_index_outbound is not None:
                     outbound_timetables_t[trip_info[stop_time["trip_id"]]["diagram_id"]][-1][last_row_index_outbound + 1] = last_departure_time[:5]
                     
-                    line_id = list(set(outbound_timetable_t[1][last_row_index_outbound + 1].split()) & set(outbound_timetable_t[1][row_index_outbound].split()))[0]
+                    line_str = list(set(outbound_timetable_t[1][last_row_index_outbound + 1].split()) & set(outbound_timetable_t[1][row_index_outbound].split()))[0]
                 else:
                     next_stop_time = stop_times[cnt + 1]
-                    line_id = list(set(outbound_timetable_t[1][row_index_outbound + 1].split()) & set(outbound_timetable_t[1][stop_info_outbound[next_stop_time["stop_id"]]["row_index"]].split()))[0]
+                    line_str = list(set(outbound_timetable_t[1][row_index_outbound + 1].split()) & set(outbound_timetable_t[1][stop_info_outbound[next_stop_time["stop_id"]]["row_index"]].split()))[0]
                 
-                inbound_timetables_t[trip_info[stop_time["trip_id"]]["diagram_id"]][-1][-1] = "@" + line_id + ".outbound"
+                inbound_timetables_t[trip_info[stop_time["trip_id"]]["diagram_id"]][-1][last_row_index_inbound + 1] = ""
+                
+                if "." in line_str:
+                    inbound_timetables_t[trip_info[stop_time["trip_id"]]["diagram_id"]][-1][-1] = "@" + line_str
+                else:
+                    inbound_timetables_t[trip_info[stop_time["trip_id"]]["diagram_id"]][-1][-1] = "@" + line_str + ".outbound"
                 
                 direction = "outbound"
             elif direction == "outbound" and (row_index_outbound is None or row_index_outbound < last_row_index_outbound):
@@ -232,12 +237,17 @@ def convert_gtfs_to_timetable (mes, main_dir, diagram_revision, generate_train_n
                 if last_row_index_inbound is not None:
                     inbound_timetables_t[trip_info[stop_time["trip_id"]]["diagram_id"]][-1][last_row_index_inbound + 1] = last_departure_time[:5]
                     
-                    line_id = list(set(inbound_timetable_t[1][last_row_index_inbound + 1].split()) & set(inbound_timetable_t[1][row_index_inbound].split()))[0]
+                    line_str = list(set(inbound_timetable_t[1][last_row_index_inbound + 1].split()) & set(inbound_timetable_t[1][row_index_inbound].split()))[0]
                 else:
                     next_stop_time = stop_times[cnt + 1]
-                    line_id = list(set(inbound_timetable_t[1][row_index_inbound + 1].split()) & set(inbound_timetable_t[1][stop_info_inbound[next_stop_time["stop_id"]]["row_index"]].split()))[0]
+                    line_str = list(set(inbound_timetable_t[1][row_index_inbound + 1].split()) & set(inbound_timetable_t[1][stop_info_inbound[next_stop_time["stop_id"]]["row_index"]].split()))[0]
                 
-                outbound_timetables_t[trip_info[stop_time["trip_id"]]["diagram_id"]][-1][-1] = "@" + line_id + ".inbound"
+                outbound_timetables_t[trip_info[stop_time["trip_id"]]["diagram_id"]][-1][last_row_index_outbound + 1] = ""
+                
+                if "." in line_str:
+                    outbound_timetables_t[trip_info[stop_time["trip_id"]]["diagram_id"]][-1][-1] = "@" + line_str
+                else:
+                    outbound_timetables_t[trip_info[stop_time["trip_id"]]["diagram_id"]][-1][-1] = "@" + line_str + ".inbound"
                 
                 direction = "inbound"
         
