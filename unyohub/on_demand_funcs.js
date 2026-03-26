@@ -1699,10 +1699,11 @@ function draw_operation_trains (operation_number, diagram_id_or_ts, is_today, se
                     }
                 }
                 
-                buf += "<div onclick='train_detail(\"" + trains[cnt]["line_id"] + "\", \"" + trains[cnt]["train_number"] + "\", \"" + trains[cnt]["starting_station"] + "\", \"" + trains[cnt]["direction"] + "_trains\", false, " + is_today + ");'><b style='color: " + (config["dark_mode"] ? convert_font_color_dark_mode(get_train_color(trains[cnt]["train_number"], train_type)) : get_train_color(trains[cnt]["train_number"], train_type)) + ";'><u>";
+                var train_number_text = trains[cnt]["train_number"].split("__")[0];
+                
+                buf += "<div onclick='train_detail(\"" + trains[cnt]["line_id"] + "\", \"" + trains[cnt]["train_number"] + "\", \"" + trains[cnt]["starting_station"] + "\", \"" + trains[cnt]["direction"] + "_trains\", false, " + is_today + ");'><b style='color: " + (config["dark_mode"] ? convert_font_color_dark_mode(get_train_color(train_number_text, train_type)) : get_train_color(train_number_text, train_type)) + ";'><u>";
                 buf += config["simplify_operation_details"] ? train_type.substring(0, 1) + " " : train_type + "　";
                 
-                var train_number_text = trains[cnt]["train_number"].split("__")[0];
                 if (search_keyword !== null && train_number_text.toUpperCase().includes(search_keyword)) {
                     var search_keyword_index = train_number_text.toUpperCase().indexOf(search_keyword);
                     buf += escape_html(train_number_text.substring(0, search_keyword_index)) + "<mark>" + escape_html(train_number_text.substring(search_keyword_index, search_keyword_index + search_keyword.length)) + "</mark>" + escape_html(train_number_text.substring(search_keyword_index + search_keyword.length));
@@ -2843,7 +2844,7 @@ function edit_operation_data (railroad_id, yyyy_mm_dd, operation_number, assign_
     
     if (user_id !== user_info["user_id"] && user_id !== "#") {
         buf += "<input type='checkbox' id='edit_operation_data_moderation_info'><label for='edit_operation_data_moderation_info' class='drop_down'>投稿者情報</label><div>";
-        buf += "<div class='key_and_value'><b>ユーザーID</b>" + (!user_id.startsWith("*") ? "<a href='/admin/user_data.php?user_id=" + add_slashes(user_id) + "' target='_blank'>" + escape_html(user_id) + "</a>" : escape_html(user_id)) + "<div id='edit_operation_data_is_timed_out_user'></div></div>";
+        buf += "<div class='key_and_value'><b>ユーザーID</b>" + escape_html(user_id) + "<div id='edit_operation_data_is_timed_out_user'></div></div>";
         buf += "<div id='edit_operation_data_user_info' class='loading_icon'></div>";
         if (ip_address !== null) {
             buf += "<div class='key_and_value'><b>IPアドレス</b>" + escape_html(ip_address) + "<div id='edit_operation_data_is_timed_out_ip_address'></div></div>";

@@ -102,7 +102,7 @@ print "<form action='time_out_user.php?".(isset($_GET["user_id"]) ? "user_id=".a
 print "<input type='hidden' name='one_time_token' value='".$user->create_one_time_token()."'>";
 
 if (isset($_GET["user_id"])) {
-    print "<div class='key_and_value'><b>対象ユーザーID</b>".htmlspecialchars($_GET["user_id"])."</div>";
+    print "<div class='key_and_value'><b>対象ユーザーID</b>".(!str_starts_with($_GET["user_id"], "*") && $user->check_permission("railroads", "moderate") ? "<a href='user_data.php?user_id=".addslashes($_GET["user_id"])."''>".htmlspecialchars($_GET["user_id"])."</a>" : htmlspecialchars($_GET["user_id"]))."</div>";
     
     $expiration_datetime = $moderation_db_obj->querySingle("SELECT `expiration_datetime` FROM `unyohub_moderation_timed_out_users` WHERE `user_id` = '".$moderation_db_obj->escapeString($_GET["user_id"])."' AND `expiration_datetime` > '".$now_datetime."'");
 } else {

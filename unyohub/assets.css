@@ -2052,7 +2052,7 @@ input[type="checkbox"]:checked + :is(label.drop_down, label.formation_table_drop
     font-size: 20px;
     
     &:empty {
-        background-color: transparent !important;
+        border-color: transparent !important;
     }
 }
 
@@ -3183,7 +3183,7 @@ h2, .heading_wrapper {
     }
     
     b, u {
-         display: block;
+        display: block;
         
         width: fit-content;
         
