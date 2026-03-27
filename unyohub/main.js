@@ -2079,6 +2079,14 @@ function update_operation_table (resolve_func, reject_func, railroad_id_or_null,
                     } else if (train["direction"] === "outbound") {
                         var train_direction = "outbound_trains";
                     } else {
+                        if ("formations_can_changed" in train && train["formations_can_changed"]) {
+                            if (!("times_formations_can_changed" in operation_response["operations"][operation_number])) {
+                                operation_response["operations"][operation_number]["times_formations_can_changed"] = [];
+                            }
+                            
+                            operation_response["operations"][operation_number]["times_formations_can_changed"].push(train["final_arrival_time"]);
+                        }
+                        
                         continue;
                     }
                     

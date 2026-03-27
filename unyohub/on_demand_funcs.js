@@ -2347,10 +2347,8 @@ function write_operation_data (railroad_id, yyyy_mm_dd, operation_number, train_
         var now_hh_mm = "99:99";
     }
     
-    buf += "<div id='train_number_data'>";
-    buf += "<h4>目撃時の列車</h4>";
+    buf += "<h4>確認時の列車</h4>";
     buf += "<b id='operation_data_train_number'></b><button type='button' onclick='select_train_number(\"" + post_railroad_id + "\", \"" + add_slashes(operation_number) + "\", \"" + now_hh_mm + "\");'>変更</button>";
-    buf += "</div>";
     
     buf += "<h4>運用補足情報</h4>";
     buf += "<div class='textarea_wrapper'><div id='operation_data_comment_background'></div><textarea id='operation_data_comment' onscroll='scroll_textarea_background(this, document.getElementById(\"operation_data_comment_background\"));' onkeyup='update_textarea_background(this, document.getElementById(\"operation_data_comment_background\"), " + instance_info["comment_character_limit"] + ");'></textarea></div>";
@@ -2474,16 +2472,13 @@ function set_train_number (train_number) {
 }
 
 function switch_identify_method (direct) {
-    var train_number_data_elm = document.getElementById("train_number_data");
     var comment_guide_elm = document.getElementById("comment_guide");
     var quote_guide_elm = document.getElementById("quote_guide");
     
     if (direct) {
-        train_number_data_elm.style.display = "block";
         comment_guide_elm.style.display = "block";
         quote_guide_elm.style.display = "none";
     } else {
-        train_number_data_elm.style.display = "none";
         comment_guide_elm.style.display = "none";
         quote_guide_elm.style.display = "block";
         
@@ -2774,12 +2769,10 @@ function post_operation_data () {
     
     open_wait_screen();
     
-    var send_data = "railroad_id=" + escape_form_data(post_railroad_id) + "&date=" + escape_form_data(post_yyyy_mm_dd) + "&operation_number=" + escape_form_data(post_operation_number) + "&assign_order=" + assign_order + "&formations=" + escape_form_data(document.getElementById("operation_data_formation").value) + "&comment=" + escape_form_data(comment_text);
+    var send_data = "railroad_id=" + escape_form_data(post_railroad_id) + "&date=" + escape_form_data(post_yyyy_mm_dd) + "&operation_number=" + escape_form_data(post_operation_number) + "&assign_order=" + assign_order + "&formations=" + escape_form_data(document.getElementById("operation_data_formation").value) + "&train_number=" + escape_form_data(post_train_number) + "&comment=" + escape_form_data(comment_text);
     
     if (document.getElementById("identify_method_quote").checked) {
         send_data += "&is_quotation=YES";
-    } else {
-        send_data += "&train_number=" + escape_form_data(post_train_number);
     }
     
     if (user_info !== null) {
