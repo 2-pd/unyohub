@@ -231,8 +231,8 @@ def convert_operation_table_2 (mes, main_dir, file_name):
             else:
                 cnt_2 = 4
                 while cnt_2 < len(operation_data[cnt]) and operation_data[cnt][cnt_2] != "":
-                    if operation_data[cnt][cnt_2][0:1] == ".":
-                        train_number = operation_data[cnt][cnt_2] + "__" + str(id_cnt)
+                    if operation_data[cnt][cnt_2].startswith(".") or operation_data[cnt][cnt_2].startswith("!"):
+                        train_number = "." + operation_data[cnt][cnt_2][1:].strip() + "__" + str(id_cnt)
                         id_cnt += 1
                         
                         operations[operation_number]["trains"].append({
@@ -246,6 +246,9 @@ def convert_operation_table_2 (mes, main_dir, file_name):
                             "position_rear" : None,
                             "direction" : None
                         })
+                        
+                        if operation_data[cnt][cnt_2].startswith("!"):
+                            operations[operation_number]["trains"][-1]["formations_can_changed"] = True
                     else:
                         train_number = operation_data[cnt][cnt_2].strip()
                         
