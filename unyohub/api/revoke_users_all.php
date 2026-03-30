@@ -30,8 +30,16 @@ $post_data_r = $db_obj->query("SELECT `operation_date`, `operation_number`, `ass
 
 $moderator_id = $user->get_id();
 
+connect_moderation_db();
+
+$db_obj->query("BEGIN");
+$moderation_db_obj->query("BEGIN");
+
 while ($post_data = $post_data_r->fetchArray(SQLITE3_ASSOC)) {
     revoke_post(strtotime($post_data["operation_date"]), $post_data["operation_number"], $post_data["assign_order"], $_POST["user_id"], $moderator_id);
 }
+
+$db_obj->query("COMMIT");
+$moderation_db_obj->query("COMMIT");
 
 print "SUCCESSFULLY_REVOKED";

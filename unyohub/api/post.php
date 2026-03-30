@@ -49,7 +49,7 @@ $posted_datetime = $posted_date." ".date("H:i:s", $ts_now);
 
 connect_moderation_db();
 
-if ($moderation_db_obj->querySingle("SELECT COUNT(`user_id`) FROM `unyohub_moderation_timed_out_users` WHERE `user_id` = '".$moderation_db_obj->escapeString($user_id)."' AND `expiration_datetime` > '".$posted_datetime."'") || $moderation_db_obj->querySingle("SELECT COUNT(`ip_address`) FROM `unyohub_moderation_timed_out_ip_addresses` WHERE `ip_address` = '".$moderation_db_obj->escapeString($_SERVER["REMOTE_ADDR"])."' AND `expiration_datetime` > '".$posted_datetime."'")) {
+if ($moderation_db_obj->querySingle("SELECT EXISTS(SELECT 1 FROM `unyohub_moderation_timed_out_users` WHERE `user_id` = '".$moderation_db_obj->escapeString($user_id)."' AND `expiration_datetime` > '".$posted_datetime."' LIMIT 1) OR EXISTS(SELECT 1 FROM `unyohub_moderation_timed_out_ip_addresses` WHERE `ip_address` = '".$moderation_db_obj->escapeString($_SERVER["REMOTE_ADDR"])."' AND `expiration_datetime` > '".$posted_datetime."' LIMIT 1)")) {
     print "ERROR: 投稿制限措置が実施されているため、現在は投稿機能をご利用いただくことができません";
     exit;
 }
@@ -79,9 +79,10 @@ if ($ts > $ts_now + (86400 * $config["available_days_ahead"]) - 14400) {
 
 $operation_date = date("Y-m-d", $ts);
 
-update_diagram_revision($ts);
+update_diagram_revision($operation_date);
 
-$operation_data = get_operation_info($ts, $_POST["operation_number"]);
+$diagram_id = get_diagram_id($ts);
+$operation_data = get_operation_info($diagram_id, $_POST["operation_number"]);
 
 if (empty($operation_data)) {
     exit;
@@ -106,15 +107,21 @@ if (!empty($_POST["is_quotation"]) && $_POST["is_quotation"] === "YES") {
 }
 
 
-if (!empty($_POST["train_number"])) {
-    $train_number_q = "'".$db_obj->escapeString($_POST["train_number"])."'";
-} else {
-    if (!$is_quotation) {
-        print "ERROR: 列車番号が指定されていません";
-        exit;
-    }
-    
-    $train_number_q = "NULL";
+$operation_number = $db_obj->escapeString($_POST["operation_number"]);
+
+
+if (empty($_POST["train_number"])) {
+    print "ERROR: 列車番号が指定されていません";
+    exit;
+}
+
+$train_number = $db_obj->escapeString($_POST["train_number"]);
+
+$final_arrival_time = get_train_final_arrival_time($diagram_id, $operation_number, $train_number);
+
+if ($final_arrival_time === FALSE) {
+    print "ERROR: 登録されていない列車番号が指定されました";
+    exit;
 }
 
 
@@ -137,8 +144,6 @@ if (strlen($comment) === 0) {
     }
 }
 
-
-$operation_number = $db_obj->escapeString($_POST["operation_number"]);
 
 $formations = preg_replace(array("/\s+/u", "/不明/u"), array("", "?"), mb_convert_kana($_POST["formations"], "KVa"));
 
@@ -185,13 +190,20 @@ if ($config["log_ip_address"]) {
 }
 
 
-$db_obj->query("INSERT OR REPLACE INTO `unyohub_data` (`operation_date`, `operation_number`, `assign_order`, `user_id`, `train_number`, `formations`, `is_quotation`, `posted_datetime`, `comment`, `ip_address`) VALUES ('".$operation_date."', '".$operation_number."', ".$assign_order.", '".$db_obj->escapeString($user_id)."', ".$train_number_q.", '".$db_obj->escapeString($formations)."', ".intval($is_quotation).", '".$posted_datetime."', '".$db_obj->escapeString($comment)."', ".$ip_address_q.")");
+$db_obj->query("BEGIN");
 
-$data_cache_values = update_data_cache($operation_date, $operation_number, $posted_datetime, array($assign_order => array("formation_pattern" => $formation_info["formation_pattern"], "formation_list" => $formation_info["formation_list"])));
+
+$db_obj->query("INSERT OR REPLACE INTO `unyohub_data` (`operation_date`, `operation_number`, `assign_order`, `user_id`, `train_number`, `formations`, `is_quotation`, `posted_datetime`, `comment`, `ip_address`) VALUES ('".$operation_date."', '".$operation_number."', ".$assign_order.", '".$db_obj->escapeString($user_id)."', '".$train_number."', '".$db_obj->escapeString($formations)."', ".intval($is_quotation).", '".$posted_datetime."', '".$db_obj->escapeString($comment)."', ".$ip_address_q.")");
+
+$data_cache_values = update_data_cache($operation_date, $operation_number, $posted_datetime, array($assign_order => array("formation_pattern" => $formation_info["formation_pattern"], "formation_list" => $formation_info["formation_list"], $final_arrival_time)));
 
 if (!empty($operation_data["terminal_track"])) {
     update_next_day_data($ts, $operation_data["terminal_location"], $operation_data["terminal_track"], $data_cache_values["formations"], $posted_datetime, $data_cache_values["formation_list"], $data_cache_values["from_beginner"], $data_cache_values["is_quotation"]);
 }
+
+
+$db_obj->query("COMMIT");
+
 
 unset($data_cache_values["formation_list"]);
 
