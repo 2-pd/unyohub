@@ -2653,7 +2653,7 @@ function position_change_lines (line_id, scroll_target = -1) {
     position_change_time(0);
 }
 
-function convert_train_position_data (train_data) {
+function convert_train_position_data (train_data, hh_and_mm) {
     train_data["train_title"] = train_data["train_number"].startsWith("_") ? train_data["train_number"].substring(1).split("__")[0] : train_data["train_number"].split("__")[0];
     
     train_data["formation_html"] = escape_html(train_data["formation_text"]).replace(/\+/g, "<wbr>+");
@@ -2662,14 +2662,14 @@ function convert_train_position_data (train_data) {
         train_data["formation_html"] += "*";
     }
     
-    if (train_data["posts_count"] === 0) {
-        train_data["formation_html"] = "<b style='color: " + (!config["dark_mode"] ? "#0099cc" : "#33ccff") + ";'>" + train_data["formation_html"] + "</b>";
-    } else if (train_data["reassigned"]) {
+    if (train_data["reassigned"]) {
         train_data["formation_html"] = "<b style='color: " + (!config["dark_mode"] ? "#cc0000" : "#ff9999") + ";'>" + train_data["formation_html"] + "</b>";
-    } else if (config["colorize_corrected_posts"] && train_data["variant_exists"]) {
-        train_data["formation_html"] = "<b style='color: " + (!config["dark_mode"] ? "#ee7700" : "#ffcc99") + ";'>" + train_data["formation_html"] + "</b>";
     } else if (train_data["is_quotation"]) {
         train_data["formation_html"] = "<b style='color: " + (!config["dark_mode"] ? "#9966ff" : "#cc99ff") + ";'>" + train_data["formation_html"] + "</b>";
+    } else if (train_data["posts_count"] === 0 || hh_and_mm >= train_data["time_formations_can_be_changed"]) {
+        train_data["formation_html"] = "<b style='color: " + (!config["dark_mode"] ? "#0099cc" : "#33ccff") + ";'>" + train_data["formation_html"] + "</b>";
+    } else if (config["colorize_corrected_posts"] && train_data["variant_exists"]) {
+        train_data["formation_html"] = "<b style='color: " + (!config["dark_mode"] ? "#ee7700" : "#ffcc99") + ";'>" + train_data["formation_html"] + "</b>";
     } else if (config["colorize_beginners_posts"] && train_data["from_beginner"]) {
         train_data["formation_html"] = "<b style='color: #33cc99;'>" + train_data["formation_html"] + "</b>";
     } else {
@@ -2699,7 +2699,7 @@ function draw_train_position (hh_and_mm) {
     for (var direction_cnt = 0; direction_cnt <= 1; direction_cnt++) {
         for (var cnt = 0; cnt < line_positions[direction_cnt].length; cnt++) {
             if (line_positions[direction_cnt][cnt].length === 1) {
-                var train = convert_train_position_data(line_positions[direction_cnt][cnt][0]);
+                var train = convert_train_position_data(line_positions[direction_cnt][cnt][0], hh_and_mm);
                 
                 if (railroad_info["deadhead_train_number_regexp"].test(train["train_title"])) {
                     train["train_type"] = "回送";
@@ -2725,7 +2725,7 @@ function draw_train_position (hh_and_mm) {
             } else if (line_positions[direction_cnt][cnt].length >= 2) {
                 var buf = "<div class='multiple_trains'>";
                 for (var line_train of line_positions[direction_cnt][cnt]) {
-                    var train = convert_train_position_data(line_train);
+                    var train = convert_train_position_data(line_train, hh_and_mm);
                     
                     if (railroad_info["deadhead_train_number_regexp"].test(train["train_title"])) {
                         train["train_type"] = "回送";
@@ -2916,6 +2916,7 @@ function get_train_positions (trains, line_id, hh_and_mm, is_inbound) {
                     comment_exists : formation_data["comment_exists"],
                     from_beginner : formation_data["from_beginner"],
                     is_quotation : formation_data["is_quotation"],
+                    time_formations_can_be_changed : formation_data["time_formations_can_be_changed"],
                     first_formation : formation_data["first_formation"],
                     default_icon : default_icon
                 });
@@ -2937,6 +2938,7 @@ function convert_formation_data (line_id, operation_list, is_inbound) {
     var comment_exists = false;
     var from_beginner = false;
     var is_quotation = false;
+    var time_formations_can_be_changed = "99:99";
     
     if (operation_list !== null) {
         var formation_text = "";
@@ -2999,6 +3001,20 @@ function convert_formation_data (line_id, operation_list, is_inbound) {
                     comment_exists = comment_exists || ("comment_exists" in data[operation_number] && data[operation_number]["comment_exists"]);
                     from_beginner = from_beginner || ("from_beginner" in data[operation_number] && data[operation_number]["from_beginner"]);
                     is_quotation = is_quotation || ("is_quotation" in data[operation_number] && data[operation_number]["is_quotation"]);
+                    
+                    if ("times_formations_can_changed" in operations[operation_number] && operations[operation_number]["times_formations_can_changed"].length >= 1) {
+                        if ("confirmed_train_final_arrival_time" in data[operation_number] && data[operation_number]["confirmed_train_final_arrival_time"] !== null) {//前半はv26.05-1以降のバージョンで削除
+                            for (var time_str of operations[operation_number]["times_formations_can_changed"]) {
+                                if (time_str >= data[operation_number]["confirmed_train_final_arrival_time"]) {
+                                    time_formations_can_be_changed = time_str;
+                                    
+                                    break;
+                                }
+                            }
+                        } else {
+                            time_formations_can_be_changed = operations[operation_number]["times_formations_can_changed"][0];
+                        }
+                    }
                 } else {
                     if ("hidden_by_default" in operations[operation_number] && operations[operation_number]["hidden_by_default"]) {
                         continue;
@@ -3032,6 +3048,7 @@ function convert_formation_data (line_id, operation_list, is_inbound) {
         comment_exists : comment_exists,
         from_beginner : from_beginner,
         is_quotation : is_quotation,
+        time_formations_can_be_changed : time_formations_can_be_changed,
         first_formation : first_formation
     };
 }
@@ -3627,14 +3644,14 @@ function draw_station_timetable (station_name) {
                         }
                         
                         buf_2 += direction_sign_left;
-                        if (formation_data["posts_count"] === 0) {
-                            buf_2 += "<span style='color: " + (!config["dark_mode"] ? "#0099cc" : "#33ccff") + ";'>" + escape_html(formation_data["formation_text"]) + "</span>";
-                        } else if (formation_data["reassigned"]) {
+                        if (formation_data["reassigned"]) {
                             buf_2 += "<span style='color: " + (!config["dark_mode"] ? "#cc0000" : "#ff9999") + ";'>" + escape_html(formation_data["formation_text"]) + "</span>";
-                        } else if (config["colorize_corrected_posts"] && formation_data["variant_exists"]) {
-                            buf_2 += "<span style='color: " + (!config["dark_mode"] ? "#ee7700" : "#ffcc99") + ";'>" + escape_html(formation_data["formation_text"]) + "</span>";
                         } else if (formation_data["is_quotation"]) {
                             buf_2 += "<span style='color: " + (!config["dark_mode"] ? "#9966ff" : "#cc99ff") + ";'>" + escape_html(formation_data["formation_text"]) + "</span>";
+                        } else if (formation_data["posts_count"] === 0 || hh + ":" + mm >= formation_data["time_formations_can_be_changed"]) {
+                            buf_2 += "<span style='color: " + (!config["dark_mode"] ? "#0099cc" : "#33ccff") + ";'>" + escape_html(formation_data["formation_text"]) + "</span>";
+                        } else if (config["colorize_corrected_posts"] && formation_data["variant_exists"]) {
+                            buf_2 += "<span style='color: " + (!config["dark_mode"] ? "#ee7700" : "#ffcc99") + ";'>" + escape_html(formation_data["formation_text"]) + "</span>";
                         } else if (config["colorize_beginners_posts"] && formation_data["from_beginner"]) {
                             buf_2 += "<span style='color: #33cc99;'>" + escape_html(formation_data["formation_text"]) + "</span>";
                         } else {
@@ -3839,18 +3856,41 @@ function get_operation_data_cell_html (operation_number, tag_name, days_before, 
     }
     
     if (operation_number in operation_data["operations"] && operation_data["operations"][operation_number] !== null) {
-        if (operation_data["operations"][operation_number]["posts_count"] === 0) {
-            buf += " style='color: " + (!config["dark_mode"] ? "#0099cc" : "#33ccff") + ";'>";
-        } else if ("relieved_formations" in operation_data["operations"][operation_number] && operation_data["operations"][operation_number]["relieved_formations"].length >= 1) {
+        if ("relieved_formations" in operation_data["operations"][operation_number] && operation_data["operations"][operation_number]["relieved_formations"].length >= 1) {
             buf += " style='color: " + (!config["dark_mode"] ? "#cc0000" : "#ff9999") + ";'>";
-        } else if (config["colorize_corrected_posts"] && "variant_exists" in operation_data["operations"][operation_number] && operation_data["operations"][operation_number]["variant_exists"]) {
-            buf += " style='color: " + (!config["dark_mode"] ? "#ee7700" : "#ffcc99") + ";'>";
         } else if ("is_quotation" in operation_data["operations"][operation_number] && operation_data["operations"][operation_number]["is_quotation"]) {
             buf += " style='color: " + (!config["dark_mode"] ? "#9966ff" : "#cc99ff") + ";'>";
-        } else if (config["colorize_beginners_posts"] && "from_beginner" in operation_data["operations"][operation_number] && operation_data["operations"][operation_number]["from_beginner"]) {
-            buf += " style='color: #33cc99;'>";
         } else {
-            buf += ">";
+            var time_formations_can_be_changed = null;
+            if ("times_formations_can_changed" in operation_table["operations"][operation_number] && operation_table["operations"][operation_number]["times_formations_can_changed"].length >= 1) {
+                if ("confirmed_train_final_arrival_time" in operation_data["operations"][operation_number] && operation_data["operations"][operation_number]["confirmed_train_final_arrival_time"] !== null) {//前半はv26.05-1以降のバージョンで削除
+                    for (var time_str of operation_table["operations"][operation_number]["times_formations_can_changed"]) {
+                        if (time_str >= operation_data["operations"][operation_number]["confirmed_train_final_arrival_time"]) {
+                            time_formations_can_be_changed = time_str;
+                        } else {
+                            break;
+                        }
+                    }
+                } else {
+                    time_formations_can_be_changed = operation_table["operations"][operation_number]["times_formations_can_changed"][0];
+                }
+            }
+            
+            if (days_before >= 1) {
+                now_str = "99:99";
+            } else if (days_before <= -1) {
+                now_str = "00:00";
+            }
+            
+            if (operation_data["operations"][operation_number]["posts_count"] === 0 || (time_formations_can_be_changed !== null && now_str >= time_formations_can_be_changed)) {
+                buf += " style='color: " + (!config["dark_mode"] ? "#0099cc" : "#33ccff") + ";'>";
+            } else if (config["colorize_corrected_posts"] && "variant_exists" in operation_data["operations"][operation_number] && operation_data["operations"][operation_number]["variant_exists"]) {
+                buf += " style='color: " + (!config["dark_mode"] ? "#ee7700" : "#ffcc99") + ";'>";
+            } else if (config["colorize_beginners_posts"] && "from_beginner" in operation_data["operations"][operation_number] && operation_data["operations"][operation_number]["from_beginner"]) {
+                buf += " style='color: #33cc99;'>";
+            } else {
+                buf += ">";
+            }
         }
         
         var assigned_formations = [operation_data["operations"][operation_number]["formations"]];
