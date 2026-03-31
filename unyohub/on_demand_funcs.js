@@ -1628,7 +1628,11 @@ function draw_operation_trains (operation_number, diagram_id_or_ts, is_today, se
         for (var cnt = 0; cnt < trains.length; cnt++) {
             if (trains[cnt]["train_number"].startsWith(".")) {
                 buf += "<div class='" + train_div_class_name + " operation_table_deposited_train'><div>";
-                buf += "<b>" + trains[cnt]["train_number"].substring(1).split("__")[0] + "<small>待機</small></b>";
+                if ("formations_can_changed" in trains[cnt] && trains[cnt]["formations_can_changed"]) {
+                    buf += "<b>" + trains[cnt]["train_number"].substring(1).split("__")[0] + "<small class='warning_sentence'>" + (!config["simplify_operation_details"] ? "差し替え注意" : "待機") + "</small></b>";
+                } else {
+                    buf += "<b>" + trains[cnt]["train_number"].substring(1).split("__")[0] + "<small>待機</small></b>";
+                }
                 
                 if (is_today && trains[cnt]["final_arrival_time"] < now_str) {
                     highlight_str = "";
@@ -2143,7 +2147,7 @@ function show_tips () {
         if (config["colorize_corrected_posts"]) {
             buf += "<tr><th><b  style='color: " + (!config["dark_mode"] ? "#ee7700" : "#ffcc99") + ";'>●橙色</b> :</th><td>別々のユーザー様から異なる情報が寄せられています</td><tr>";
         }
-        buf += "<tr><th><b  style='color: " + (!config["dark_mode"] ? "#0099cc" : "#33ccff") + ";'>●水色</b> :</th><td>前日運用からの推定であり、当日の目撃情報はまだありません</td><tr>";
+        buf += "<tr><th><b  style='color: " + (!config["dark_mode"] ? "#0099cc" : "#33ccff") + ";'>●水色</b> :</th><td>前日運用からの推定または一時入庫以前の情報であり、当日/再出庫後の目撃情報がまだありません</td><tr>";
         buf += "<tr><th><b  style='color: " + (!config["dark_mode"] ? "#9966ff" : "#cc99ff") + ";'>●紫色</b> :</th><td>外部からの引用に基づく情報です</td><tr>";
         if (config["colorize_beginners_posts"]) {
             buf += "<tr><th><b  style='color: #33cc99;'>●緑色</b> :</th><td>ビギナーユーザー様、またはゲストユーザー様が投稿された情報です</td><tr>";
@@ -2169,6 +2173,8 @@ function show_tips () {
         case 4:
             buf += "<h5>出入庫の表示色</h5>";
             buf += "午前入庫は<b style='color: " + (config["dark_mode"] ? "#ff99cc" : "#cc0066") + ";'>紅色</b>、午後出庫は<b style='color: " + (config["dark_mode"] ? "#99ccff" : "#0066cc") + ";'>青色</b>で出入庫情報が表示されます。";
+            buf += "<h5>途中待機の表示色</h5>";
+            buf += "車両の差し替えが行われる可能性のある途中待機では、待機場所名が<b class='warning_sentence'>赤色</b>で表示されます。";
             if (!config["show_assigned_formations_on_operation_table"]) {
                 break;
             }

@@ -5300,6 +5300,7 @@ function draw_operation_table (is_today) {
                             var current_train_is_inbound = null;
                             var current_train_number = null;
                             var current_train_starting_station = null;
+                            var formations_can_changed = null;
                             for (var train of operation_table["operations"][operation_number]["trains"]) {
                                 if (train["final_arrival_time"] < now_hh_mm) {
                                     continue;
@@ -5309,13 +5310,14 @@ function draw_operation_table (is_today) {
                                 current_train_is_inbound = "direction" in train ? train["direction"] === "inbound" : null; //v25.09-1以前の仕様で作成された時刻表データとの互換性維持
                                 current_train_number = train["train_number"];
                                 current_train_starting_station = train["starting_station"];
+                                formations_can_changed = "formations_can_changed" in train ? train["formations_can_changed"] : false;
                                 
                                 break;
                             }
                             
                             if (current_train_number !== null) {
                                 if (current_train_number.startsWith(".")) {
-                                    buf_3 += "<small>(待機)</small> " + escape_html(current_train_number.substring(1).split("__")[0]);
+                                    buf_3 += "<small>(待機)</small> <span" + (formations_can_changed ? " class='warning_sentence'" : "") + ">" + escape_html(current_train_number.substring(1).split("__")[0]) + "</span>";
                                 } else {
                                     var train_data = get_train(current_train_line_id, current_train_is_inbound, current_train_number, current_train_starting_station);
                                     var train_title = current_train_number.split("__")[0];
@@ -5399,11 +5401,11 @@ function draw_operation_table (is_today) {
                     
                     if (train["train_number"].startsWith(".")) {
                         if (config["operation_table_view"] === "classic") {
-                            buf_3 += "<div class='deposited_train_cell'><div>" + escape_html(train["train_number"].substring(1).split("__")[0]) + "</div><div" + (is_today && previous_final_arrival_time < now_hh_mm && train["final_arrival_time"] >= now_hh_mm ? " class='search_highlight'" : "") + ">" + train["first_departure_time"] + "<br>" + train["final_arrival_time"] + "</div></div>";
+                            buf_3 += "<div class='deposited_train_cell'><div" + ("formations_can_changed" in train && train["formations_can_changed"] ? " class='warning_sentence'" : "") + ">" + escape_html(train["train_number"].substring(1).split("__")[0]) + "</div><div" + (is_today && previous_final_arrival_time < now_hh_mm && train["final_arrival_time"] >= now_hh_mm ? " class='search_highlight'" : "") + ">" + train["first_departure_time"] + "<br>" + train["final_arrival_time"] + "</div></div>";
                         } else {
                             var first_departure_time_minutes = hh_mm_to_minutes(train["first_departure_time"]);
                             
-                            buf_3 += "<div class='timeline_deposited_train' style='left: " + ((first_departure_time_minutes - 240) * config["operation_table_timeline_scale"]) + "px; width: " + ((hh_mm_to_minutes(train["final_arrival_time"]) - first_departure_time_minutes) * config["operation_table_timeline_scale"] - 4)  + "px;'><div>" + escape_html(train["train_number"].substring(1).split("__")[0]) + "</div></div>";
+                            buf_3 += "<div class='timeline_deposited_train' style='left: " + ((first_departure_time_minutes - 240) * config["operation_table_timeline_scale"]) + "px; width: " + ((hh_mm_to_minutes(train["final_arrival_time"]) - first_departure_time_minutes) * config["operation_table_timeline_scale"] - 4)  + "px;'><div" + ("formations_can_changed" in train && train["formations_can_changed"] ? " class='warning_sentence'" : "") + ">" + escape_html(train["train_number"].substring(1).split("__")[0]) + "</div></div>";
                         }
                         
                         previous_final_arrival_time = train["final_arrival_time"];
