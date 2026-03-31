@@ -37,7 +37,7 @@ class diagram:
             date_string = self.get_date_string()
         
         for diagram_revision in self.diagram_revisions:
-            if diagram_revision < date_string:
+            if diagram_revision <= date_string:
                 return diagram_revision
         
         return None
@@ -118,7 +118,7 @@ class diagram:
         
         for diagram_schedule in self.diagram_info[diagram_revision]["diagram_schedules"]:
             for period in diagram_schedule["periods"]:
-                if period["start_date"] < date_string and (period["end_date"] is None or period["end_date"] > date_string):
+                if period["start_date"] <= date_string and (period["end_date"] is None or period["end_date"] >= date_string):
                     return diagram_revision, diagram_schedule["diagrams_by_day"][day_index]
         
         return diagram_revision, None

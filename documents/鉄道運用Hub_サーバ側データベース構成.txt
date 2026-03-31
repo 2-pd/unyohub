@@ -172,6 +172,7 @@ _/_/_/_/ データベース _/_/_/_/
   `from_beginner` INTEGER ビギナーの投稿か否か
   `is_quotation` INTEGER 引用情報か否か
   `updated_datetime` TEXT NOT NULL 「YYYY-MM-DD HH:MM:SS」形式の情報更新日時(同一日の同一運用番号のレコードは全て同じ更新日時とする)
+  `confirmed_train_final_arrival_time` TEXT 最終確認時の列車の終着時刻(HH:MM形式、最終確認が出庫前の場合はNULL)
 
   PRIMARY KEY(`operation_date`, `operation_number`, `assign_order`)
   INDEX `unyohub_idx_dc1`(`operation_date`, `updated_datetime`, `operation_number`, `assign_order`)
@@ -264,7 +265,7 @@ _/_/_/_/ データベース _/_/_/_/
 `unyohub_moderation_user_timed_out_logs` ユーザーに対するタイムアウト設定の履歴
   `user_id` TEXT NOT NULL タイムアウトされたユーザーのID(未登録ユーザーの場合、クライアント端末が生成する12桁の乱数値の頭に「*」を付加した文字列)
   `timed_out_datetime` TEXT NOT NULL 「YYYY-MM-DD HH:MM:SS」形式のタイムアウトが設定された日時
-  `moderator_id` TEXT NOT NULL モデレート作業を行ったモデレーターのユーザーID
+  `moderator_id` TEXT NOT NULL モデレート作業を行ったモデレーターのユーザーID(コマンドラインからのモデレートの場合は「#」)
   `timed_out_days` INTEGER NOT NULL タイムアウト日数
 
   PRIMARY KEY(`user_id`, `timed_out_datetime`)
@@ -282,7 +283,7 @@ _/_/_/_/ データベース _/_/_/_/
 `unyohub_moderation_ip_address_timed_out_logs` IPアドレスに対するタイムアウト設定の履歴
   `ip_address` TEXT NOT NULL タイムアウトされたIPアドレス
   `timed_out_datetime` TEXT NOT NULL 「YYYY-MM-DD HH:MM:SS」形式のタイムアウトが設定された日時
-  `moderator_id` TEXT NOT NULL モデレート作業を行ったモデレーターのユーザーID
+  `moderator_id` TEXT NOT NULL モデレート作業を行ったモデレーターのユーザーID(コマンドラインからのモデレートの場合は「#」)
   `timed_out_days` INTEGER NOT NULL タイムアウト日数
 
   PRIMARY KEY(`ip_address`, `timed_out_datetime`)

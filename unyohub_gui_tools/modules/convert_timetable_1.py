@@ -2,7 +2,6 @@
 
 import os
 import csv
-from operator import itemgetter
 
 
 def convert_timetable_1 (mes, file_name, digits_count):
@@ -46,11 +45,13 @@ def convert_timetable_1 (mes, file_name, digits_count):
     line_set = set()
     station_list = {}
     station_name_list = {}
-    line_stations = {}
+    row_info = [None, None, None]
     
     for cnt in range(3, len(timetable_data_t[1])):
         timetable_data_t[0][cnt] = timetable_data_t[0][cnt].strip()
         station_name = timetable_data_t[0][cnt]
+        
+        row_info.append({ "is_departure_time" : not station_name.endswith("[着]"), "is_arrival_time" : not station_name.endswith("[発]"), "station_lines" : set() })
         
         if station_name.endswith("]"):
             station_name = station_name[:-3].strip()
@@ -69,11 +70,10 @@ def convert_timetable_1 (mes, file_name, digits_count):
                 line_set.add(line_str)
                 station_list[line_str] = []
                 station_name_list[line_str] = []
-                line_stations[line_str] = []
             
             station_list[line_str].append(timetable_data_t[0][cnt])
             station_name_list[line_str].append(station_name)
-            line_stations[line_str].append(cnt)
+            row_info[-1]["station_lines"].add(line_str)
     
     new_timetable_t = {}
     
@@ -122,28 +122,23 @@ def convert_timetable_1 (mes, file_name, digits_count):
         else:
             decorated_train_number = temporary_train_symbol + train_number
         
-        using_lines = {}
-        line_starting_stations = {}
-        
+        line_departure_times = {}
         for line_str in line_set:
-            train = list(itemgetter(*line_stations[line_str])(timetable_column))
+            line_departure_times[line_str] = []
+        
+        last_departure_station_info = {}
+        for cnt in range(3, len(timetable_column) - 1):
+            timetable_column[cnt] = timetable_column[cnt].strip()
             
-            starting_station = None
-            last_stopped_station_index = None
-            for cnt in range(len(train)):
-                train[cnt] = train[cnt].strip()
-                
-                if train[cnt] == "||" or train[cnt] == "ﾚ":
-                    train[cnt] = ""
-                
-                if train[cnt] == "":
-                    continue
-                
-                if train[cnt][0] == "|":
-                    departure_time = train[cnt][1:].strip()
+            if timetable_column[cnt] == "||" or timetable_column[cnt] == "ﾚ":
+                timetable_column[cnt] = ""
+            
+            if len(timetable_column[cnt]) >= 1:
+                if timetable_column[cnt][0] == "|":
+                    departure_time = timetable_column[cnt][1:].strip()
                     before_departure_time = "|"
                 else:
-                    departure_time = train[cnt]
+                    departure_time = timetable_column[cnt]
                     before_departure_time = ""
                 
                 if departure_time[-1] == "?":
@@ -180,23 +175,45 @@ def convert_timetable_1 (mes, file_name, digits_count):
                 elif run_through_next_day and int(departure_time[:-3]) < 8:
                     departure_time = str(int(departure_time[:-3]) + 24) + ":" + departure_time[-2:]
                 
-                train[cnt] = before_departure_time + departure_time.zfill(5)
-                
-                last_stopped_station_index = cnt
-                if starting_station is None:
-                    starting_station = station_name_list[line_str][cnt]
-                    
-                    if station_list[line_str][cnt].endswith("[着]"):
-                        train[cnt] = ""
+                timetable_column[cnt] = before_departure_time + departure_time.zfill(5)
             
-            if starting_station is not None and starting_station != station_name_list[line_str][last_stopped_station_index]:
-                using_lines[next((departure_time for departure_time in train if len(departure_time) >= 5), "99:99")[-5:]] = line_str
-                line_starting_stations[line_str] = starting_station
+            if len(timetable_column[cnt]) >= 5:
+                for line_str in row_info[cnt]["station_lines"]:
+                    if row_info[cnt]["is_arrival_time"] and line_str in last_departure_station_info:
+                        line_departure_times[line_str][last_departure_station_info[line_str]["row_index"]] = last_departure_station_info[line_str]["departure_time"]
+                        
+                        line_departure_times[line_str].append(timetable_column[cnt])
+                    else:
+                        line_departure_times[line_str].append("")
                 
-                if station_list[line_str][last_stopped_station_index].endswith("[発]"):
-                    train[last_stopped_station_index] = ""
+                last_departure_station_info = {}
                 
-                new_timetable_t[line_str].append([decorated_train_number, timetable_column[1], timetable_column[2]] + train + ["", "", "", "", "", ""])
+                if row_info[cnt]["is_departure_time"]:
+                    for line_str in row_info[cnt]["station_lines"]:
+                        last_departure_station_info[line_str] = { "row_index" : len(line_departure_times[line_str]) - 1, "departure_time" : timetable_column[cnt] }
+            else:
+                for line_str in row_info[cnt]["station_lines"]:
+                    line_departure_times[line_str].append("")
+        
+        using_lines = {}
+        line_starting_stations = {}
+        
+        for line_str in line_set:
+            train = line_departure_times[line_str]
+            
+            starting_station = None
+            for row_index, departure_time in enumerate(train):
+                if len(departure_time) >= 5:
+                    starting_station = station_name_list[line_str][row_index]
+                    break
+            
+            if starting_station is None:
+                continue
+            
+            using_lines[next((departure_time for departure_time in train if len(departure_time) >= 5), "99:99")[-5:]] = line_str
+            line_starting_stations[line_str] = starting_station
+            
+            new_timetable_t[line_str].append([decorated_train_number, timetable_column[1], timetable_column[2]] + train + ["", "", "", "", "", ""])
         
         line_first_departure_times = sorted(using_lines.keys())
         

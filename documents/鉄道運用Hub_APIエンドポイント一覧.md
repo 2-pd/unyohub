@@ -439,12 +439,13 @@ JSON化された時刻表の内容を返す
 ### 引数
 **$_POST["railroad_id"]** : 路線系統識別名  
 **$_POST["date"]** : YYYY-MM-DD形式の日付  
-**$_POST["last_modified_timestamp"]** : タイムスタンプ(UTC、運用番号指定時は不要)
+**$_POST["last_modified_timestamp"]** : タイムスタンプ(UTC、省略可能)  
+**$_POST["require_last_posted_datetime"]** : 各運用の情報に最終投稿日時を含める場合は空でない文字列(「yes」など)を指定する(通常は省略)
 
 ### 応答
 **タイムスタンプの時刻より後に運用情報が投稿されていた場合** :  
 {  
-    "タイムスタンプの時刻より後に情報投稿のあった運用番号" : { 当該の運用番号に投稿された情報が全て取り消された場合、この連想配列ではなくnullが格納される  
+    "運用番号(タイムスタンプが指定された場合はその時刻より後に情報投稿のあったもののみ)" : { 当該の運用番号に投稿された情報が全て取り消された場合、この連想配列ではなくnullが格納される  
         "formations" : 編成名(最も新しい投稿の情報を前位側・奇数向きから順に各編成を「+」で区切った文字列。運休の場合は空文字列),  
         "relieved_formations" : 差し替え前の編成を充当順に配列で(差し替えがなければ省略),  
         "posts_count" : 情報の投稿数,  
@@ -452,6 +453,8 @@ JSON化された時刻表の内容を返す
         "comment_exists" : 運用補足情報の有無(なければ省略),  
         "from_beginner" : ビギナーの投稿か否か(ビギナーでなければ省略),  
         "is_quotation" : 引用情報か否か(引用情報でなければ省略)  
+        "confirmed_train_final_arrival_time" : 最終確認時の列車の終着時刻(HH:MM形式、最終確認が出庫前の場合はnull、入庫後の場合は「99:99」),  
+        "last_posted_datetime" : 最終投稿日時(YYYY-MM-DD HH:MM:SS形式、引数の$_POST["require_last_posted_datetime"]が空または省略された場合は省略)  
     }...  
 }  
 ▲クライアント端末からAccept-Encodingヘッダーが送信されていた場合、このデータは自動的にgzip圧縮される  
@@ -548,7 +551,7 @@ JSON化された時刻表の内容を返す
     "user_timed_out_logs" : [ ユーザーIDのタイムアウト指定履歴(直近5件を新しい順に。ユーザーIDが空の場合はNULL)  
         {  
             "timed_out_datetime" : YYYY-MM-DD HH:MM:SS形式のタイムアウト設定日時,  
-            "moderator_id" : タイムアウトを設定したモデレーターのユーザーID,  
+            "moderator_id" : タイムアウトを設定したモデレーターのユーザーID(コマンドラインからのタイムアウトの場合は「#」),  
             "moderator_name" : タイムアウトを設定したモデレーターのハンドルネーム,  
             "timed_out_days" : タイムアウトされた日数  
         }...  
@@ -558,7 +561,7 @@ JSON化された時刻表の内容を返す
     "ip_address_timed_out_logs" : [ IPアドレスのタイムアウト指定履歴(直近5件を新しい順に。IPアドレスが空の場合はNULL)  
         {  
             "timed_out_datetime" : YYYY-MM-DD HH:MM:SS形式のタイムアウト設定日時,  
-            "moderator_id" : タイムアウトを設定したモデレーターのユーザーID,  
+            "moderator_id" : タイムアウトを設定したモデレーターのユーザーID(コマンドラインからのタイムアウトの場合は「#」),  
             "moderator_name" : タイムアウトを設定したモデレーターのハンドルネーム,  
             "timed_out_days" : タイムアウトされた日数  
         }...  
@@ -616,7 +619,8 @@ _HTTPステータスコード : 201_
         "variant_exists" : 投稿情報のバリエーションの有無(なければ省略),  
         "comment_exists" : 運用補足情報の有無(なければ省略),  
         "from_beginner" : ビギナーの投稿か否か(ビギナーのものでなければ省略),  
-        "is_quotation" : 引用情報か否か(引用情報でなければ省略)  
+        "is_quotation" : 引用情報か否か(引用情報でなければ省略),  
+        "confirmed_train_final_arrival_time" : 最終確認時の列車の終着時刻(HH:MM形式、最終確認が出庫前の場合はnull、入庫後の場合は「99:99」)  
     }  
 }  
   
@@ -647,7 +651,8 @@ _HTTPステータスコード : 201_
         "variant_exists" : 投稿情報のバリエーションの有無(なければ省略),  
         "comment_exists" : 運用補足情報の有無(なければ省略),  
         "from_beginner" : ビギナーの投稿か否か(ビギナーのものでなければ省略),  
-        "is_quotation" : 引用情報か否か(引用情報でなければ省略)  
+        "is_quotation" : 引用情報か否か(引用情報でなければ省略),  
+        "confirmed_train_final_arrival_time" : 最終確認時の列車の終着時刻(HH:MM形式、最終確認が出庫前の場合はnull、入庫後の場合は「99:99」)  
     }  
 }  
   
@@ -668,44 +673,6 @@ _HTTPステータスコード : 201_
 ### 応答
 **取り消しに成功した場合** :  
 文字列「SUCCESSFULLY_REVOKED」  
-  
-**エラーの場合** :  
-文字列「ERROR: 」とそれに続くエラー内容文
-
-
-## time_out_user.php
-ユーザーをタイムアウトさせる
-
-### 引数
-**$_COOKIE["unyohub_login_token"]** : モデレーターユーザーのWakaranaのログイントークン  
-  
-**$_POST["railroad_id"]** : 路線系統識別名  
-**$_POST["user_id"]** :タイムアウト対象のユーザーID  
-**$_POST["timed_out_days"]** : タイムアウト日数  
-**$_POST["one_time_token"]** : ワンタイムトークン
-
-### 応答
-**標識に成功した場合** :  
-文字列「SUCCEEDED」  
-  
-**エラーの場合** :  
-文字列「ERROR: 」とそれに続くエラー内容文
-
-
-## time_out_ip_address.php
-IPアドレスをタイムアウトさせる
-
-### 引数
-**$_COOKIE["unyohub_login_token"]** : モデレーターユーザーのWakaranaのログイントークン  
-  
-**$_POST["railroad_id"]** : 路線系統識別名  
-**$_POST["ip_address"]** : タイムアウト対象のIPアドレス  
-**$_POST["timed_out_days"]** : タイムアウト日数  
-**$_POST["one_time_token"]** : ワンタイムトークン
-
-### 応答
-**標識に成功した場合** :  
-文字列「SUCCEEDED」  
   
 **エラーの場合** :  
 文字列「ERROR: 」とそれに続くエラー内容文

@@ -21,6 +21,8 @@ if (is_object($user)) {
             }
             
             $moderator_id = $user_id;
+            
+            connect_moderation_db();
         }
     } else {
         print "ERROR: ワンタイムトークンの認証に失敗しました。再度ご送信ください";
@@ -42,7 +44,11 @@ if ($ts === FALSE) {
     exit;
 }
 
+$db_obj->query("BEGIN");
+
 $data_cache_values = revoke_post($ts, $_POST["operation_number"], $_POST["assign_order"], $_POST["user_id"], $moderator_id);
+
+$db_obj->query("COMMIT");
 
 if (!empty($data_cache_values)) {
     if (!$data_cache_values["variant_exists"]) {

@@ -32,6 +32,17 @@ def convert_time_style (time_data, with_station_initial=True):
         return time_str
 
 
+def adjust_time(time_str, addend_str):
+    hour = int(time_str[:2])
+    minute = int(time_str[3:])
+    
+    minute += int(addend_str)
+    hour += minute // 60
+    minute = minute % 60
+    
+    return str(hour).zfill(2) + ":" + str(minute).zfill(2)
+
+
 def convert_station_name_and_track (station_name):
     if ":" in station_name:
         station_name_and_track = station_name.split(":")
@@ -243,11 +254,15 @@ def convert_operation_table_1 (mes, main_dir, file_name, json_file_name, digits_
     mes("データを変換しています...")
     
     color_regexp = re.compile("^#[0-9A-Fa-f]{6}$")
+    car_count_regexp = re.compile("^([1-9]|1[0-9])(\(([1-9]|1[0-9])(-([1-9]|1[0-9]))?\))?$")
     
     output_data = []
     train_list = []
+    color = None
     for operation in operations:
-        if len(operation[0].strip()) == 0:
+        operation[0] = operation[0].strip()
+        
+        if len(operation[0]) == 0:
             continue
         
         if operation[0].startswith("[") or operation[0].startswith("【"):
@@ -303,11 +318,20 @@ def convert_operation_table_1 (mes, main_dir, file_name, json_file_name, digits_
             else:
                 output_data[-1].append(operation[0][1:].strip())
         else:
-            if len(operation[1].strip()) == 0:
-                mes("・両数が指定されていません: " + operation[0])
+            if color is None:
+                mes("運用系統を指定せずに運用を記載することはできません", True)
+                error_occurred = True
+            
+            operation[1] = operation[1].strip()
+            
+            if len(operation[1]) == 0:
+                mes("《注意》両数が指定されていません: " + operation[0])
+            elif car_count_regexp.match(operation[1]) is None:
+                mes("両数の指定が異常です: " + operation[0], True)
+                error_occurred = True
             
             if for_printing:
-                if operation[0][0] == "@":
+                if operation[0].startswith("@"):
                     operation[0] = operation[0][1:]
                 
                 output_row_1 = [correct_train_number(operation[0]), convert_station_name_and_track(operation[2]), convert_station_name_and_track(operation[4]), ""]
@@ -319,7 +343,7 @@ def convert_operation_table_1 (mes, main_dir, file_name, json_file_name, digits_
                 output_cell_styles_3 = [None, None, None, None]
             else:
                 output_row_1 = [operation[0], operation[1], operation[2], operation[4]]
-                output_row_2 = [color, "", convert_time_style(operation[3], False), convert_time_style(operation[5], False)]
+                output_row_2 = [color, "", operation[3], operation[5]]
                 output_row_3 = [icon_id, "", "", ""]
             
             previous_train_name = None
@@ -327,8 +351,8 @@ def convert_operation_table_1 (mes, main_dir, file_name, json_file_name, digits_
             for train_cell in operation[6:]:
                 train_cell = train_cell.strip()
                 
-                if train_cell.startswith("."):
-                    if previous_train_name is None or previous_train_name.startswith("."):
+                if train_cell.startswith(".") or train_cell.startswith("!"):
+                    if previous_train_name is None or previous_train_name.startswith(".") or previous_train_name.startswith("!"):
                         mes("《注意》無効な留置指定「" + train_cell + "」をスキップします")
                         continue
                     
@@ -469,6 +493,12 @@ def convert_operation_table_1 (mes, main_dir, file_name, json_file_name, digits_
             if len(output_row_2[starting_time_row_index]) == 0:
                 if len(output_row_2) >= 5:
                     output_row_2[starting_time_row_index] = output_row_2[4][1:]
+                else:
+                    mes("出庫時刻が認識できません: " + output_row_1[0], True)
+                    error_occurred = True
+            elif output_row_2[starting_time_row_index].startswith("-"):
+                if len(output_row_2) >= 5:
+                    output_row_2[starting_time_row_index] = adjust_time(output_row_2[4][1:], output_row_2[starting_time_row_index])
                 else:
                     mes("出庫時刻が認識できません: " + output_row_1[0], True)
                     error_occurred = True

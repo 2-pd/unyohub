@@ -77,6 +77,7 @@ def convert_operation_table_2 (mes, main_dir, file_name):
     
     time_regexp = re.compile("^[0-3][0-9]:[0-5][0-9]$")
     car_count_regexp = re.compile("^[1-9][0-9]?(-[1-9][0-9]?)?$")
+    coupling_position_regexp = re.compile(r"^\(([1-9]|1[0-9])(-([1-9]|1[0-9]))?\)$")
     
     error_occurred = False
     
@@ -230,8 +231,8 @@ def convert_operation_table_2 (mes, main_dir, file_name):
             else:
                 cnt_2 = 4
                 while cnt_2 < len(operation_data[cnt]) and operation_data[cnt][cnt_2] != "":
-                    if operation_data[cnt][cnt_2][0:1] == ".":
-                        train_number = operation_data[cnt][cnt_2] + "__" + str(id_cnt)
+                    if operation_data[cnt][cnt_2].startswith(".") or operation_data[cnt][cnt_2].startswith("!"):
+                        train_number = "." + operation_data[cnt][cnt_2][1:].strip() + "__" + str(id_cnt)
                         id_cnt += 1
                         
                         operations[operation_number]["trains"].append({
@@ -245,6 +246,9 @@ def convert_operation_table_2 (mes, main_dir, file_name):
                             "position_rear" : None,
                             "direction" : None
                         })
+                        
+                        if operation_data[cnt][cnt_2].startswith("!"):
+                            operations[operation_number]["trains"][-1]["formations_can_changed"] = True
                     else:
                         train_number = operation_data[cnt][cnt_2].strip()
                         
@@ -257,14 +261,22 @@ def convert_operation_table_2 (mes, main_dir, file_name):
                         
                         if "(" in train_number:
                             bracket_pos = train_number.find("(")
-                            hyphen_pos = train_number.rfind("-")
                             
-                            if hyphen_pos != -1:
-                                position_forward = int(train_number[bracket_pos + 1:hyphen_pos])
-                                position_rear = int(train_number[hyphen_pos + 1:-1])
+                            if coupling_position_regexp.match(train_number[bracket_pos:]) is not None:
+                                hyphen_pos = train_number.rfind("-")
+                                
+                                if hyphen_pos != -1:
+                                    position_forward = int(train_number[bracket_pos + 1:hyphen_pos])
+                                    position_rear = int(train_number[hyphen_pos + 1:-1])
+                                else:
+                                    position_forward = int(train_number[bracket_pos + 1:-1])
+                                    position_rear = position_forward
                             else:
-                                position_forward = int(train_number[bracket_pos + 1:-1])
-                                position_rear = position_forward
+                                mes(train_number[0:bracket_pos] + " の組成位置指定が正しい数値ではありません: " + str(cnt + 1) + "行目 " + str(cnt_2 + 1) + "列目", True)
+                                error_occurred = True
+                                
+                                position_forward = 0
+                                position_rear = 0
                             
                             train_number = train_number[0:bracket_pos]
                         else:

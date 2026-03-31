@@ -47,12 +47,20 @@ foreach ($railroads["categories"] as $category) {
 
 print "</div>";
 
+if ($user->check_permission("railroads", "moderate")) {
+    print "<h3>ユーザーとロールの管理</h3>";
+    
+    print "<a href='user_list.php' class='wide_button'><img src='data:image/webp;base64,UklGRqABAABXRUJQVlA4TJQBAAAvNUANEJXAkSTJccP/v+0CPi2teVMLvEADO71U7mIOWkZA0rbtWJbtIZdQIy+gowU0smsB5gLcqB3YrcDut23bxjMB9S/ZgOM/a8AyMw02ea1r6snUZ84o9IlIkCdgLo8EumK+2GkaC7MAvxDjchqZnLScIp6IzEW2zdwRSkjhcMTXgGPWgMWTx7IHOrOE6y3oaPg8gY4dnw/Q8eKzqnInnnRpy4cNHXUfq+qSySfpdQMWjx489KCB/Kx69cDTQAGHXV6aHEqoLYeTHI6/2LWIuk2TxZiHf4MopB7wLeet8QzxteA+Mxmps8HLam+1ZEiMWixp1DXTVGSGyBJwA/zjGaIWuWw3QaCAVsJvRDBAMC8JGUYEfyaXDbEsAdMHmmY5Q0+Ms1lpHYBpVoY4lbnCGY/onWxXXtx+UjTrcDenZIjm1K87KEwZwrOCvIK84InIu2Lb+Z1Dago/S2lSwo9lDYtuT0R+NN0T0auVhLgVeeFQYfdKcRURL4oqcl4MVfS82FOx43VUce7Fs4pHL35UfHt9Qw==' alt=''>ユーザーの一覧</a>";
+}
+
 if ($user->check_permission("instance_administrator")) {
     print "<h3>インスタンスの管理</h3>";
     
     print "<a href='config.php' class='wide_button'><img src='data:image/webp;base64,UklGRo4CAABXRUJQVlA4TIICAAAvWUAWEJVI0La3bZve/6hR+SPjAJMCAYrdC/7lVSGPFQFn27bjTbglo5Pa7k+wbdu27W79Cd9e29bU4/hUt+/ROcbHeAKiXQrCVKqfuWErvvBUM7qcgssVbYgXRNpIXW3vQnJhohXBlCaTAtWiB0ySdiSWLfBfu3YgM/QhltrEl7PpVkrpxb1pn9u9phAQfqBKREuB5sIL5/Qjbluuc1cnZLEHSo4uqUwf3PSBG53UaXaXh0C4+zgfVAXShEvpZx+UXtVVc3WRrV5kQwVYky74UtyJLCaxAp8q6dN8uECvkDiL+wQFdKonCexzl7PLRYEDCxwpLqrA7twhXKFVEBNtMkVl0egkb07yfPChIQ4l/qa53Sd8UAtc9yyEtrY9C33KjspVNnRR1mtr+Ep3L2hrkNja1WkK7gTu+4CGqIV3ueoDp7EIZPVRUpcRctEDzmIh4gvSD9S9/1ICVXB7nVERiwmZ9sJ4LChkCm6P8xqLCpSDtgNVSmNhce8vF1a4n0I+cRYXz9z/wCyAouyZGwOIeOYive3jmRvmvUW0hePPZJKLO5BUB26RPQys0RDLgzjTdB/DZoObMYCwgXUMNB7DpMQobG2JkcsYIjDaltFlH3fytkkxjs+qtss4MNaG0VFMyoStLTF6GQONf9DALCgwMZOEVuBtPMDkNW8kBcl7ZDyZmSQz808fYgMAnPIHZki3LTNTYLGNCCCrMSLANYG/rq41AW7AMvFBckvBO1oFfreJzU3MwPAOGh4S2nsEpk5AkKTYAAS+CRAbScJqAWJOD0sPuH2nLdcWN5u1B2S3INMibY49BJZ1ZTFMDxbn6BNZuAFRO67IDOMdNyB0xxWZ0Qw=' alt=''>インスタンスの基本設定</a>";
     
     print "<a href='edit_rules.php' class='wide_button'><img src='data:image/webp;base64,UklGRrYAAABXRUJQVlA4TKoAAAAvO8AOEC9AkG3T+aud6RwE2Tadv9qZHoJsm85f7UwPmYDF9qkurQgCbDuKVfkv3Na2rUQXyzlIAWM5LbwO3vRfDvYeFkf0fwK03rKx0OYWoNjWAhTXIEnbJOlK9t/QL8cpU0ZeGQ4W9JuNUMc4peRgihl5SSPUQT2UDqYgh/8ITZR6AFPYNKvj1IMpYYI6Q70pxZuc7XfB7vuIfAbsvo/IZ8Du+4h8AsHnAw==' alt=''>ルールとポリシーの編集</a>";
+    
+    print "<a href='email_domain_blacklist.php' class='wide_button'><img src='data:image/webp;base64,UklGRu4BAABXRUJQVlA4TOEBAAAvO8AOEJVIbiTJkaTTX7bW4X6806v3FBjSrKqWPvN8OUUEHGrbjjex7WSyU9v2ZLerbdvu2NPZ7dwtp5Nt27b1TkBWvFB85qU9YEo6r3xExQF3SYpJzAAqS6PVZfhLpZkfYPGeps/eDliS4grY+E7SAdvTAVmCyhawXIZnymYJPCB7OeBKHCvAehLA4Uxju6R/J/QwMSng3K2ZfyhRwctM354/m0X7g9szM/8K6eJnpg/R3oovK2SOGvr4mclXK57rZBZxdPKm8tSK61qZk0SNq1ac1PsrUjmeDbB7Czv1LuRqbLdiol5xVRlrRX+9EqfS14rGeqVUpWHWkvh6DKhfrUbrehyok2WrA54v5f8fJ9fdzudrq4wZlYhaZTqbU6fSU4uadmGvcn/AVwq72QD7Nx3QXKufdeLqgG6XpU0NQ52v7GBUP6mjTZXQ9pCMqozUCEN2ObmrElChuPSRXyq7v8i7vrJTjPhRS/cefotpLxkdqsTviPbs9geJdZW/CN3E2ms/iTGvgPIRvht4xfgbIjMHqLwvJw8+VX7JX+Ebv+wqiXpTpXfh7TE7S+L5dfWL+Owuw5fHpf+feRlHDbOz5/e8nAdMZMbVe2Q95aX9RX7PG/QAXd8O7s4H6Pp2cFsGAA==' alt=''>メールドメインブロック設定</a>";
     
     print "<a href='categorize_railroads.php' class='wide_button'><img src='data:image/webp;base64,UklGRpgAAABXRUJQVlA4TIwAAAAvO8AOECcgICHk/zSf3BCQEPJ/mk8EJIT8n+YTgQDhv8KaEgFQDfinBseJJMlRj5ABncgBMRYI2gEd479T0/TOsdczov8TIF+rAqRXFCCNZME2BD+N2QZWtxFREH+caKTtL3eWUsraTgHScFZ3cD+S1R3E77XnnPPSru3/QgHScFZ3cD/PYX6r6FyfHw==' alt=''>路線系統グループの編集</a>";
     

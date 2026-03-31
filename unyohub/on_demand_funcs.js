@@ -1628,7 +1628,11 @@ function draw_operation_trains (operation_number, diagram_id_or_ts, is_today, se
         for (var cnt = 0; cnt < trains.length; cnt++) {
             if (trains[cnt]["train_number"].startsWith(".")) {
                 buf += "<div class='" + train_div_class_name + " operation_table_deposited_train'><div>";
-                buf += "<b>" + trains[cnt]["train_number"].substring(1).split("__")[0] + "<small>待機</small></b>";
+                if ("formations_can_changed" in trains[cnt] && trains[cnt]["formations_can_changed"]) {
+                    buf += "<b>" + trains[cnt]["train_number"].substring(1).split("__")[0] + "<small class='warning_sentence'>" + (!config["simplify_operation_details"] ? "差し替え注意" : "待機") + "</small></b>";
+                } else {
+                    buf += "<b>" + trains[cnt]["train_number"].substring(1).split("__")[0] + "<small>待機</small></b>";
+                }
                 
                 if (is_today && trains[cnt]["final_arrival_time"] < now_str) {
                     highlight_str = "";
@@ -1699,10 +1703,11 @@ function draw_operation_trains (operation_number, diagram_id_or_ts, is_today, se
                     }
                 }
                 
-                buf += "<div onclick='train_detail(\"" + trains[cnt]["line_id"] + "\", \"" + trains[cnt]["train_number"] + "\", \"" + trains[cnt]["starting_station"] + "\", \"" + trains[cnt]["direction"] + "_trains\", false, " + is_today + ");'><b style='color: " + (config["dark_mode"] ? convert_font_color_dark_mode(get_train_color(trains[cnt]["train_number"], train_type)) : get_train_color(trains[cnt]["train_number"], train_type)) + ";'><u>";
+                var train_number_text = trains[cnt]["train_number"].split("__")[0];
+                
+                buf += "<div onclick='train_detail(\"" + trains[cnt]["line_id"] + "\", \"" + trains[cnt]["train_number"] + "\", \"" + trains[cnt]["starting_station"] + "\", \"" + trains[cnt]["direction"] + "_trains\", false, " + is_today + ");'><b style='color: " + (config["dark_mode"] ? convert_font_color_dark_mode(get_train_color(train_number_text, train_type)) : get_train_color(train_number_text, train_type)) + ";'><u>";
                 buf += config["simplify_operation_details"] ? train_type.substring(0, 1) + " " : train_type + "　";
                 
-                var train_number_text = trains[cnt]["train_number"].split("__")[0];
                 if (search_keyword !== null && train_number_text.toUpperCase().includes(search_keyword)) {
                     var search_keyword_index = train_number_text.toUpperCase().indexOf(search_keyword);
                     buf += escape_html(train_number_text.substring(0, search_keyword_index)) + "<mark>" + escape_html(train_number_text.substring(search_keyword_index, search_keyword_index + search_keyword.length)) + "</mark>" + escape_html(train_number_text.substring(search_keyword_index + search_keyword.length));
@@ -2142,7 +2147,7 @@ function show_tips () {
         if (config["colorize_corrected_posts"]) {
             buf += "<tr><th><b  style='color: " + (!config["dark_mode"] ? "#ee7700" : "#ffcc99") + ";'>●橙色</b> :</th><td>別々のユーザー様から異なる情報が寄せられています</td><tr>";
         }
-        buf += "<tr><th><b  style='color: " + (!config["dark_mode"] ? "#0099cc" : "#33ccff") + ";'>●水色</b> :</th><td>前日運用からの推定であり、当日の目撃情報はまだありません</td><tr>";
+        buf += "<tr><th><b  style='color: " + (!config["dark_mode"] ? "#0099cc" : "#33ccff") + ";'>●水色</b> :</th><td>前日運用からの推定または一時入庫以前の情報であり、当日/再出庫後の目撃情報がまだありません</td><tr>";
         buf += "<tr><th><b  style='color: " + (!config["dark_mode"] ? "#9966ff" : "#cc99ff") + ";'>●紫色</b> :</th><td>外部からの引用に基づく情報です</td><tr>";
         if (config["colorize_beginners_posts"]) {
             buf += "<tr><th><b  style='color: #33cc99;'>●緑色</b> :</th><td>ビギナーユーザー様、またはゲストユーザー様が投稿された情報です</td><tr>";
@@ -2168,6 +2173,8 @@ function show_tips () {
         case 4:
             buf += "<h5>出入庫の表示色</h5>";
             buf += "午前入庫は<b style='color: " + (config["dark_mode"] ? "#ff99cc" : "#cc0066") + ";'>紅色</b>、午後出庫は<b style='color: " + (config["dark_mode"] ? "#99ccff" : "#0066cc") + ";'>青色</b>で出入庫情報が表示されます。";
+            buf += "<h5>途中待機の表示色</h5>";
+            buf += "車両の差し替えが行われる可能性のある途中待機では、待機場所名が<b class='warning_sentence'>赤色</b>で表示されます。";
             if (!config["show_assigned_formations_on_operation_table"]) {
                 break;
             }
@@ -2346,10 +2353,8 @@ function write_operation_data (railroad_id, yyyy_mm_dd, operation_number, train_
         var now_hh_mm = "99:99";
     }
     
-    buf += "<div id='train_number_data'>";
-    buf += "<h4>目撃時の列車</h4>";
+    buf += "<h4>確認時の列車</h4>";
     buf += "<b id='operation_data_train_number'></b><button type='button' onclick='select_train_number(\"" + post_railroad_id + "\", \"" + add_slashes(operation_number) + "\", \"" + now_hh_mm + "\");'>変更</button>";
-    buf += "</div>";
     
     buf += "<h4>運用補足情報</h4>";
     buf += "<div class='textarea_wrapper'><div id='operation_data_comment_background'></div><textarea id='operation_data_comment' onscroll='scroll_textarea_background(this, document.getElementById(\"operation_data_comment_background\"));' onkeyup='update_textarea_background(this, document.getElementById(\"operation_data_comment_background\"), " + instance_info["comment_character_limit"] + ");'></textarea></div>";
@@ -2473,16 +2478,13 @@ function set_train_number (train_number) {
 }
 
 function switch_identify_method (direct) {
-    var train_number_data_elm = document.getElementById("train_number_data");
     var comment_guide_elm = document.getElementById("comment_guide");
     var quote_guide_elm = document.getElementById("quote_guide");
     
     if (direct) {
-        train_number_data_elm.style.display = "block";
         comment_guide_elm.style.display = "block";
         quote_guide_elm.style.display = "none";
     } else {
-        train_number_data_elm.style.display = "none";
         comment_guide_elm.style.display = "none";
         quote_guide_elm.style.display = "block";
         
@@ -2773,12 +2775,10 @@ function post_operation_data () {
     
     open_wait_screen();
     
-    var send_data = "railroad_id=" + escape_form_data(post_railroad_id) + "&date=" + escape_form_data(post_yyyy_mm_dd) + "&operation_number=" + escape_form_data(post_operation_number) + "&assign_order=" + assign_order + "&formations=" + escape_form_data(document.getElementById("operation_data_formation").value) + "&comment=" + escape_form_data(comment_text);
+    var send_data = "railroad_id=" + escape_form_data(post_railroad_id) + "&date=" + escape_form_data(post_yyyy_mm_dd) + "&operation_number=" + escape_form_data(post_operation_number) + "&assign_order=" + assign_order + "&formations=" + escape_form_data(document.getElementById("operation_data_formation").value) + "&train_number=" + escape_form_data(post_train_number) + "&comment=" + escape_form_data(comment_text);
     
     if (document.getElementById("identify_method_quote").checked) {
         send_data += "&is_quotation=YES";
-    } else {
-        send_data += "&train_number=" + escape_form_data(post_train_number);
     }
     
     if (user_info !== null) {
@@ -2897,15 +2897,15 @@ function show_moderation_info (railroad_id, user_id, ip_address) {
             
             var is_timed_out_user_elm = document.getElementById("edit_operation_data_is_timed_out_user");
             if (moderation_info["is_timed_out_user"]) {
-                is_timed_out_user_elm.innerText = "【!】タイムアウト中";
-                is_timed_out_user_elm.className = "warning_text";
+                is_timed_out_user_elm.innerHTML = "【!】タイムアウト中<button type='button' onclick='window.open(\"/admin/time_out_user.php?user_id=" + add_slashes(user_id) + "&railroad_id=" + railroad_info["railroad_id"] + "\");'>解除</button>";
+                is_timed_out_user_elm.className = "warning_sentence";
             } else {
-                is_timed_out_user_elm.innerHTML = "<button type='button' onclick='time_out_setting(\"" + add_slashes(user_id) + "\", \"" + railroad_id + "\");'>タイムアウトを設定</button>";
+                is_timed_out_user_elm.innerHTML = "<button type='button' onclick='window.open(\"/admin/time_out_user.php?user_id=" + add_slashes(user_id) + "&railroad_id=" + railroad_info["railroad_id"] + "\");'>タイムアウトを設定</button>";
             }
             
             var buf = "";
             for (var log_data of moderation_info["user_timed_out_logs"]) {
-                buf += log_data["timed_out_datetime"] + " から " + log_data["timed_out_days"] + "日間 (モデレーター: " + escape_html(log_data["moderator_name"]) + ")<br>";
+                buf += log_data["timed_out_datetime"] + " から " + log_data["timed_out_days"] + "日間 (" + (log_data["moderator_id"] !== "#" ? "モデレーター: " : "") + escape_html(log_data["moderator_name"]) + ")<br>";
             }
             
             document.getElementById("edit_operation_data_user_timed_out_logs").innerHTML = "<h5>ユーザーのタイムアウト履歴</h5><div class='descriptive_text'>" + (buf.length >= 1 ? buf : "ユーザーにタイムアウトの履歴はありません") + "</div>";
@@ -2919,15 +2919,15 @@ function show_moderation_info (railroad_id, user_id, ip_address) {
             
             var is_timed_out_ip_address_elm = document.getElementById("edit_operation_data_is_timed_out_ip_address");
             if (moderation_info["is_timed_out_ip_address"]) {
-                is_timed_out_ip_address_elm.innerText = "【!】タイムアウト中";
-                is_timed_out_ip_address_elm.className = "warning_text";
+                is_timed_out_ip_address_elm.innerHTML = "【!】タイムアウト中<button type='button' onclick='window.open(\"/admin/time_out_user.php?ip_address=" + add_slashes(ip_address) + "&railroad_id=" + railroad_info["railroad_id"] + "\");'>解除</button>";
+                is_timed_out_ip_address_elm.className = "warning_sentence";
             } else {
-                is_timed_out_ip_address_elm.innerHTML = "<button type='button' onclick='time_out_setting(\"" + add_slashes(ip_address) + "\", \"" + railroad_id + "\");'>タイムアウトを設定</button>";
+                is_timed_out_ip_address_elm.innerHTML = "<button type='button' onclick='window.open(\"/admin/time_out_user.php?ip_address=" + add_slashes(ip_address) + "&railroad_id=" + railroad_info["railroad_id"] + "\");'>タイムアウトを設定</button>";
             }
             
             var buf = "";
             for (var log_data of moderation_info["ip_address_timed_out_logs"]) {
-                buf += log_data["timed_out_datetime"] + " から " + log_data["timed_out_days"] + "日間 (モデレーター: " + escape_html(log_data["moderator_name"]) + ")<br>";
+                buf += log_data["timed_out_datetime"] + " から " + log_data["timed_out_days"] + "日間 (" + (log_data["moderator_id"] !== "#" ? "モデレーター: " : "") + escape_html(log_data["moderator_name"]) + ")<br>";
             }
             
             document.getElementById("edit_operation_data_ip_address_timed_out_logs").innerHTML = "<h5>IPアドレスのタイムアウト履歴</h5><div class='descriptive_text'>" + (buf.length >= 1 ? buf : "IPアドレスにタイムアウトの履歴はありません") + "</div>";
@@ -3039,76 +3039,6 @@ function revoke_users_all_operation_data (railroad_id, user_id) {
             }
         });
     }
-}
-
-function time_out_setting (user_id_or_ip_address, railroad_id) {
-    var popup_inner_elm = open_square_popup("time_out_popup");
-    
-    if (!user_id_or_ip_address.includes(".") && !user_id_or_ip_address.includes(":")) {
-        var target_is_user_id = true;
-    } else {
-        var target_is_user_id = false;
-    }
-    
-    var buf = "<h4>タイムアウト対象の" + (target_is_user_id ? "ユーザーID" : "IPアドレス") + "</h4>";
-    buf += "<b>" + user_id_or_ip_address + "</b>";
-    buf += "<h4>タイムアウト期間</h4>";
-    buf += "<input type='number' id='timed_out_days' min='1' max='90' value='7'>日間<br>";
-    buf += "<br><br><button type='button' class='wide_button' onclick='time_out_" + (target_is_user_id ? "user" : "ip_address") + "(\"" + add_slashes(user_id_or_ip_address) + "\", \"" + railroad_id + "\");'>タイムアウトを設定</button>";
-    
-    popup_inner_elm.innerHTML = buf;
-}
-
-function time_out_user (user_id, railroad_id) {
-    open_wait_screen();
-    
-    if (one_time_token === null) {
-        close_wait_screen();
-        
-        mes("内部処理が完了していないため、数秒待ってから再送信してください", true);
-        
-        return;
-    }
-    
-    ajax_post("time_out_user.php", "railroad_id=" + escape_form_data(railroad_id) + "&user_id=" + escape_form_data(user_id) + "&timed_out_days=" + escape_form_data(document.getElementById("timed_out_days").value) + "&one_time_token=" + escape_form_data(one_time_token), function (response) {
-        close_wait_screen();
-        
-        if (response === "SUCCEEDED") {
-            mes("ユーザーをタイムアウトしました");
-            
-            close_square_popup();
-            
-            show_moderation_info(railroad_id, user_id, null);
-        }
-        
-        get_one_time_token();
-    });
-}
-
-function time_out_ip_address (ip_address, railroad_id) {
-    open_wait_screen();
-    
-    if (one_time_token === null) {
-        close_wait_screen();
-        
-        mes("内部処理が完了していないため、数秒待ってから再送信してください", true);
-        
-        return;
-    }
-    
-    ajax_post("time_out_ip_address.php", "railroad_id=" + escape_form_data(railroad_id) + "&ip_address=" + escape_form_data(ip_address) + "&timed_out_days=" + escape_form_data(document.getElementById("timed_out_days").value) + "&one_time_token=" + escape_form_data(one_time_token), function (response) {
-        close_wait_screen();
-        
-        if (response === "SUCCEEDED") {
-            mes("IPアドレスをタイムアウトしました");
-            
-            close_square_popup();
-            
-            show_moderation_info(railroad_id, null, ip_address);
-        }
-        
-        get_one_time_token();
-    });
 }
 
 
