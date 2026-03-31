@@ -453,6 +453,7 @@ JSON化された時刻表の内容を返す
         "comment_exists" : 運用補足情報の有無(なければ省略),  
         "from_beginner" : ビギナーの投稿か否か(ビギナーでなければ省略),  
         "is_quotation" : 引用情報か否か(引用情報でなければ省略)  
+        "confirmed_train_final_arrival_time" : 最終確認時の列車の終着時刻(HH:MM形式、最終確認が出庫前の場合はnull、入庫後の場合は「99:99」),  
         "last_posted_datetime" : 最終投稿日時(YYYY-MM-DD HH:MM:SS形式、引数の$_POST["require_last_posted_datetime"]が空または省略された場合は省略)  
     }...  
 }  
@@ -618,7 +619,8 @@ _HTTPステータスコード : 201_
         "variant_exists" : 投稿情報のバリエーションの有無(なければ省略),  
         "comment_exists" : 運用補足情報の有無(なければ省略),  
         "from_beginner" : ビギナーの投稿か否か(ビギナーのものでなければ省略),  
-        "is_quotation" : 引用情報か否か(引用情報でなければ省略)  
+        "is_quotation" : 引用情報か否か(引用情報でなければ省略),  
+        "confirmed_train_final_arrival_time" : 最終確認時の列車の終着時刻(HH:MM形式、最終確認が出庫前の場合はnull、入庫後の場合は「99:99」)  
     }  
 }  
   
@@ -649,7 +651,8 @@ _HTTPステータスコード : 201_
         "variant_exists" : 投稿情報のバリエーションの有無(なければ省略),  
         "comment_exists" : 運用補足情報の有無(なければ省略),  
         "from_beginner" : ビギナーの投稿か否か(ビギナーのものでなければ省略),  
-        "is_quotation" : 引用情報か否か(引用情報でなければ省略)  
+        "is_quotation" : 引用情報か否か(引用情報でなければ省略),  
+        "confirmed_train_final_arrival_time" : 最終確認時の列車の終着時刻(HH:MM形式、最終確認が出庫前の場合はnull、入庫後の場合は「99:99」)  
     }  
 }  
   

@@ -78,7 +78,7 @@ def initialize_db (mes, main_dir):
     cur.execute("CREATE INDEX IF NOT EXISTS `unyohub_idx_d3` ON `unyohub_data`(`ip_address`, `posted_datetime`)")
     
     mes("テーブル「unyohub_data_caches」を作成しています...")
-    cur.execute("CREATE TABLE IF NOT EXISTS `unyohub_data_caches`(`operation_date` TEXT NOT NULL, `operation_number` TEXT NOT NULL, `assign_order` INTEGER NOT NULL, `formations` TEXT, `posts_count` INTEGER, `variant_exists` INTEGER, `comment_exists` INTEGER, `from_beginner` INTEGER, `is_quotation` INTEGER, `updated_datetime` TEXT NOT NULL, PRIMARY KEY(`operation_date`, `operation_number`, `assign_order`))")
+    cur.execute("CREATE TABLE IF NOT EXISTS `unyohub_data_caches`(`operation_date` TEXT NOT NULL, `operation_number` TEXT NOT NULL, `assign_order` INTEGER NOT NULL, `formations` TEXT, `posts_count` INTEGER, `variant_exists` INTEGER, `comment_exists` INTEGER, `from_beginner` INTEGER, `is_quotation` INTEGER, `updated_datetime` TEXT NOT NULL, `confirmed_train_final_arrival_time` TEXT, PRIMARY KEY(`operation_date`, `operation_number`, `assign_order`))")
     cur.execute("CREATE INDEX IF NOT EXISTS `unyohub_idx_dc1` ON `unyohub_data_caches`(`operation_date`, `updated_datetime`, `operation_number`, `assign_order`)")
     cur.execute("CREATE INDEX IF NOT EXISTS `unyohub_idx_dc2` ON `unyohub_data_caches`(`operation_number`, `operation_date`, `assign_order`)")
     

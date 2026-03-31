@@ -351,8 +351,8 @@ def convert_operation_table_1 (mes, main_dir, file_name, json_file_name, digits_
             for train_cell in operation[6:]:
                 train_cell = train_cell.strip()
                 
-                if train_cell.startswith("."):
-                    if previous_train_name is None or previous_train_name.startswith("."):
+                if train_cell.startswith(".") or train_cell.startswith("!"):
+                    if previous_train_name is None or previous_train_name.startswith(".") or previous_train_name.startswith("!"):
                         mes("《注意》無効な留置指定「" + train_cell + "」をスキップします")
                         continue
                     
