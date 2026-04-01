@@ -338,7 +338,7 @@ function update_data_cache ($operation_date, $operation_number, $updated_datetim
     $posts_count = 0;
     
     if ($confirmed_train_final_arrival_time !== "") {
-        $confirmed_train_final_arrival_time_q !== NULL ? "'".$confirmed_train_final_arrival_time."'" : "NULL";
+        $confirmed_train_final_arrival_time_q = $confirmed_train_final_arrival_time !== NULL ? "'".$confirmed_train_final_arrival_time."'" : "NULL";
     } else {
         $confirmed_train_final_arrival_time_q = FALSE;
     }
@@ -432,7 +432,7 @@ function update_data_cache ($operation_date, $operation_number, $updated_datetim
     return $data_cache_values;
 }
 
-function update_next_day_data ($today_ts, $starting_location, $starting_track, $formations, $updated_datetime, $formation_list = NULL, $from_beginner = NULL, $is_quotation = NULL) {
+function update_next_day_data ($today_ts, $starting_location, $starting_track, $formations, $updated_datetime, $formation_list = NULL, $from_beginner = NULL) {
     global $db_obj;
     global $diagram_revision;
     
@@ -447,12 +447,14 @@ function update_next_day_data ($today_ts, $starting_location, $starting_track, $
     if (!empty($operation_number)) {
         if (!is_null($formations)) {
             $formations_q = "'".$db_obj->escapeString($formations)."'";
+            $from_beginner_q = intval($from_beginner);
         } else {
             $formations_q = "NULL";
+            $from_beginner_q = "NULL";
         }
         
         if (empty($db_obj->querySingle("SELECT `posts_count` FROM `unyohub_data_caches` WHERE `operation_date` = '".$operation_date."' AND `operation_number` = '".$operation_number."' AND `assign_order` >= 1 LIMIT 1"))) {
-            $db_obj->query("INSERT OR REPLACE INTO `unyohub_data_caches` (`operation_date`, `operation_number`, `assign_order`, `formations`, `posts_count`, `variant_exists`, `comment_exists`, `from_beginner`, `is_quotation`, `updated_datetime`, `confirmed_train_final_arrival_time`) VALUES ('".$operation_date."', '".$db_obj->escapeString($operation_number)."', 0, ".$formations_q.", 0, NULL, NULL, ".intval($from_beginner).", ".intval($is_quotation).", '".$updated_datetime."', NULL)");
+            $db_obj->query("INSERT OR REPLACE INTO `unyohub_data_caches` (`operation_date`, `operation_number`, `assign_order`, `formations`, `posts_count`, `variant_exists`, `comment_exists`, `from_beginner`, `is_quotation`, `updated_datetime`, `confirmed_train_final_arrival_time`) VALUES ('".$operation_date."', '".$db_obj->escapeString($operation_number)."', 0, ".$formations_q.", 0, NULL, NULL, ".$from_beginner_q.", NULL, '".$updated_datetime."', NULL)");
             
             $db_obj->query("DELETE FROM `unyohub_data_each_formation` WHERE `operation_date` = '".$operation_date."' AND `operation_number` = '".$operation_number."'");
             
@@ -502,7 +504,7 @@ function revoke_post ($operation_date_ts, $operation_number, $assign_order, $pos
     if (!empty($operation_data["terminal_track"])) {
         if (!empty($data_cache_values)) {
             update_next_day_data($operation_date_ts, $operation_data["terminal_location"], $operation_data["terminal_track"], $data_cache_values["formations"], $posted_datetime, $data_cache_values["formation_list"]
-            , $data_cache_values["from_beginner"], $data_cache_values["is_quotation"]);
+            , $data_cache_values["from_beginner"]);
         } else {
             update_next_day_data($operation_date_ts, $operation_data["terminal_location"], $operation_data["terminal_track"], NULL, $posted_datetime);
         }
