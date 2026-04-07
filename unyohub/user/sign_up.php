@@ -35,7 +35,7 @@ if (isset($_POST["user_id"], $_POST["password"], $_POST["user_name"], $_POST["zi
     }
     
     if (empty($error_list)) {
-        $user = $wakarana->add_user($_POST["user_id"], $_POST["password"], $_POST["user_name"]);
+        $user = $wakarana->create_user($_POST["user_id"], $_POST["password"], $_POST["user_name"]);
         
         if (is_object($user)) {
             if ($main_config["require_email_address"]) {

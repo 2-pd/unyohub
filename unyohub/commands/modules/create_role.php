@@ -19,7 +19,7 @@ print "ロール ".$role_id." を作成しています...\n";
 
 $wakarana = new wakarana(__DIR__."/../../".$wakarana_base_dir);
 
-$role = $wakarana->add_role($role_id, $role_name);
+$role = $wakarana->create_role($role_id, $role_name);
 if (!is_object($role)) {
     print "ロールの作成に失敗しました\n";
 }

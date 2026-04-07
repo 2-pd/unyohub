@@ -19,8 +19,8 @@ if (isset($_POST["enabling_railroad"])) {
         if (!empty($railroad_info)) {
             $railroads["railroads"][$_POST["enabling_railroad"]] = array("railroad_name" => $railroad_info["railroad_name"], "main_color" => $railroad_info["main_color"], "railroad_icon" => $railroad_info["railroad_icon"]);
             
-            $wakarana->add_permission("railroads/".$_POST["enabling_railroad"], $railroad_info["railroad_name"]."の編集・管理");
-            $wakarana->add_permission("railroads/".$_POST["enabling_railroad"]."/formation", $railroad_info["railroad_name"]."の編成情報編集");
+            $wakarana->create_permission("railroads/".$_POST["enabling_railroad"], $railroad_info["railroad_name"]."の編集・管理");
+            $wakarana->create_permission("railroads/".$_POST["enabling_railroad"]."/formation", $railroad_info["railroad_name"]."の編成情報編集");
             
             file_put_contents(RAILROADS_JSON_PATH, json_encode($railroads, JSON_UNESCAPED_UNICODE));
             

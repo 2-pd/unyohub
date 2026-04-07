@@ -13,7 +13,7 @@ $wakarana = new wakarana(__DIR__."/../../".$wakarana_base_dir);
 
 $password = wakarana::create_random_password();
 
-$user = $wakarana->add_user($argv[1], $password, $argv[2]);
+$user = $wakarana->create_user($argv[1], $password, $argv[2]);
 if (!is_object($user)) {
     switch ($wakarana->get_rejection_reason()) {
         case "invalid_user_id":
