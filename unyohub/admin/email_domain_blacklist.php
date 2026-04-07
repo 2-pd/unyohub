@@ -33,9 +33,13 @@ if (isset($_POST["email_domain_blacklist"])) {
     $blacklist = $_POST["email_domain_blacklist"];
     
     if (isset($_POST["one_time_token"]) && $user->check_one_time_token($_POST["one_time_token"])) {
-        file_put_contents("../config/wakarana_email_domain_blacklist.conf", $blacklist);
-        
-        print "<script> alert('ブロック対象のメールドメインを更新しました'); </script>";
+        if ($wakarana_config->replace_email_domain_blacklist($blacklist) !== FALSE) {
+            print "<script> alert('ブロック対象のメールドメインを更新しました'); </script>";
+            
+            $blacklist = implode("\n", $wakarana_config->get_email_domain_blacklist());
+        } else {
+            print "<script> alert('【!】ブロック対象メールドメインの更新に失敗しました'); </script>";
+        }
     } else {
         print "<script> alert('【!】ワンタイムトークンが無効です。処理はキャンセルされました。'); </script>";
     }
@@ -46,14 +50,14 @@ if (isset($_POST["email_domain_blacklist"])) {
 
 print "<h2>メールドメインのブロック設定</h2>";
 
-print "<div class='informational_text'>ブロック対象のメールドメインを1行に1件ずつ入力してください。<br>ここに記載されたドメインのメールアドレスはユーザーアカウントのメールアドレスとして登録できなくなります。</div>";
+print "<div class='informational_text'>ブロック対象のメールドメインを1行に1件ずつ入力してください。<br>ここに記載されたドメインのメールアドレスはユーザーアカウントのメールアドレスとして登録できなくなります。<br><br>なお、重複するドメインやメールドメインとして使用できないものは保存時に除外されます。</div>";
 
 print "<form action='email_domain_blacklist.php' method='post'>";
 print "<input type='hidden' name='one_time_token' value='".$user->create_one_time_token()."'>";
 
 print "<textarea name='email_domain_blacklist' class='rule_content'>".htmlspecialchars($blacklist)."</textarea>";
 
-print "<button type='submit' class='wide_button'>上書き保存</button>";
+print "<button type='submit' class='save_button'>上書き保存</button>";
 
 print "</form>";
 
