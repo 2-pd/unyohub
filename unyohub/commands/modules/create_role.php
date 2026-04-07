@@ -7,25 +7,30 @@ $wakarana_base_dir = "config";
 
 print "\n_/_/_/_/ ロールの新規作成 _/_/_/_/\n\n";
 
-$role_id = $argv[1];
-$role_name = $argv[2];
-
-if (!wakarana::check_id_string($role_id)) {
-    print "【エラー】ロールIDとして使用できない文字列が指定されました\n";
-    exit;
-}
-
-print "ロール ".$role_id." を作成しています...\n";
+print "ロール ".addslashes($argv[1])." を作成しています...\n";
 
 $wakarana = new wakarana(__DIR__."/../../".$wakarana_base_dir);
 
-$role = $wakarana->create_role($role_id, $role_name);
+$role = $wakarana->create_role($argv[1], $argv[2]);
 if (!is_object($role)) {
-    print "ロールの作成に失敗しました\n";
+    switch ($wakarana->get_rejection_reason()) {
+        case "invalid_role_id":
+            print "【エラー】ロールIDに使用できない文字が含まれています\n";
+            break;
+        case "role_already_exists":
+            print "【エラー】指定されたIDのロールが既に存在しています\n";
+            break;
+        default:
+            print "【エラー】ロールの作成に失敗しました\n";
+    }
+    
+    exit;
 }
+
+print "ロールを作成しました\n";
 
 print "作成したロールにコントロールパネル表示権限を割り当てています...\n";
 
 $role->add_permission("control_panel_user");
 
-print "ロールの作成が完了しました\n";
+print "処理が完了しました\n";
