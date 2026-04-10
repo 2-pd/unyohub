@@ -164,8 +164,8 @@ _/_/_/_/ データベース _/_/_/_/
 `unyohub_assigned_formation_caches` 充当編成キャッシュ
   `operation_date` TEXT NOT NULL 「YYYY-MM-DD」形式の日付
   `operation_number` TEXT NOT NULL 運用番号(アルファベットなどを含む場合があるため文字列型)
-  `assign_order` INTEGER NOT NULL 当該運用に何番目に充当された編成の情報か(1から始まり、差し替えのたびに1ずつ増える。前日運用からの予測や削除済みの場合は0)
-  `formations` TEXT 充当組成(最も新しい投稿の情報を格納、複数編成併結による運用の場合も「+」で区切って1レコードに格納、運休の場合は空文字列、削除済みの場合はNULL)
+  `assign_order` INTEGER NOT NULL 当該運用に何番目に充当された編成の情報か(1から始まり、差し替えのたびに1ずつ増える。前日運用からの予測の場合は0)
+  `formations` TEXT 充当組成(最も新しい投稿の情報を格納、複数編成併結による運用の場合も「+」で区切って1レコードに格納、運休の場合はNULL)
   `updated_datetime` TEXT NOT NULL 「YYYY-MM-DD HH:MM:SS」形式の情報更新日時(同一日の同一運用番号のレコードは全て同じ更新日時とする)
 
   PRIMARY KEY(`operation_date`, `operation_number`, `assign_order`)
@@ -176,11 +176,11 @@ _/_/_/_/ データベース _/_/_/_/
 `unyohub_metadata_caches` 運用データ付帯情報キャッシュ
   `operation_date` TEXT NOT NULL 「YYYY-MM-DD」形式の日付
   `operation_number` TEXT NOT NULL 運用番号(アルファベットなどを含む場合があるため文字列型)
-  `posts_count` INTEGER 投稿の個数(前日運用からの推測データの場合は「0」)
-  `variant_exists` INTEGER 投稿情報に異なる情報が存在するかどうか
-  `comment_exists` INTEGER 運用補足情報の有無
-  `from_beginner` INTEGER ビギナーの投稿か否か
-  `is_quotation` INTEGER 引用情報か否か
+  `posts_count` INTEGER 投稿の個数(前日運用からの推測データの場合は「0」、投稿が全て取り消された場合はNULL)
+  `variant_exists` INTEGER 投稿情報に異なる情報が存在するかどうか(投稿が全て取り消された場合はNULL)
+  `comment_exists` INTEGER 運用補足情報の有無(投稿が全て取り消された場合はNULL)
+  `from_beginner` INTEGER ビギナーの投稿か否か(投稿が全て取り消された場合はNULL)
+  `is_quotation` INTEGER 引用情報か否か(投稿が全て取り消された場合はNULL)
   `updated_datetime` TEXT NOT NULL 「YYYY-MM-DD HH:MM:SS」形式の情報更新日時(unyohub_assigned_formation_cachesに存在する同一日・同一運用番号のレコードと同一値を設定)
   `confirmed_train_final_arrival_time` TEXT 最終確認時の列車の終着時刻(HH:MM形式、最終確認が出庫前の場合はNULL)
 
