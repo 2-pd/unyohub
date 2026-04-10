@@ -72,7 +72,7 @@ def initialize_db (mes, main_dir):
     cur.execute("CREATE TABLE IF NOT EXISTS `unyohub_operation_logs`(`operation_date` TEXT NOT NULL, `trip_id` TEXT NOT NULL, `vehicle_id` TEXT NOT NULL, PRIMARY KEY(`operation_date`, `trip_id`))")
     
     mes("テーブル「unyohub_data」を作成しています...")
-    cur.execute("CREATE TABLE IF NOT EXISTS `unyohub_data`(`operation_date` TEXT NOT NULL, `operation_number` TEXT NOT NULL, `assign_order` INTEGER NOT NULL, `user_id` TEXT NOT NULL, `train_number` TEXT, `formations` TEXT NOT NULL, `is_quotation` INTEGER NOT NULL, `posted_datetime` TEXT NOT NULL, `comment` TEXT, `ip_address` TEXT, PRIMARY KEY(`operation_date`, `operation_number`, `assign_order`, `user_id`))")
+    cur.execute("CREATE TABLE IF NOT EXISTS `unyohub_data`(`operation_date` TEXT NOT NULL, `operation_number` TEXT NOT NULL, `assign_order` INTEGER NOT NULL, `user_id` TEXT NOT NULL, `train_number` TEXT, `formations` TEXT, `is_quotation` INTEGER NOT NULL, `posted_datetime` TEXT NOT NULL, `comment` TEXT, `ip_address` TEXT, PRIMARY KEY(`operation_date`, `operation_number`, `assign_order`, `user_id`))")
     cur.execute("CREATE INDEX IF NOT EXISTS `unyohub_idx_d1` ON `unyohub_data`(`user_id`, `posted_datetime`)")
     cur.execute("CREATE INDEX IF NOT EXISTS `unyohub_idx_d2` ON `unyohub_data`(`operation_date`, `operation_number`, `assign_order`, `posted_datetime`)")
     cur.execute("CREATE INDEX IF NOT EXISTS `unyohub_idx_d3` ON `unyohub_data`(`ip_address`, `posted_datetime`)")
