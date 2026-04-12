@@ -27,7 +27,7 @@ body {
     
     margin: 0;
     
-    padding: 50px max(10px, calc(50% - 240px));
+    padding: 50px max(10px, calc(50% - 240px)) 80px max(10px, calc(50% - 240px));
     
     color: #333333;
     word-break: break-all;
@@ -206,6 +206,35 @@ button, .popup_close_button {
         
         vertical-align: top;
     }
+}
+
+.back_button {
+    position: fixed;
+    
+    bottom: 10px;
+    left: max(50% - 250px, 10px);
+    
+    box-sizing: content-box;
+    
+    width: 50px;
+    height: 30px;
+    
+    padding: 10px 0 10px 50px;
+    
+    background-image: url(data:image/webp;base64,UklGRq4BAABXRUJQVlA4TKEBAAAvO8AOEC+iKJKkposn/lUgDA05m2AUSVKkDJ74V4EwNLBnMYokKVIGT/yrQBga2LMcR7atRHXfw90dUiAD8iYYl52uxqcq01oMLueI8/v+u8xdr/X/ARTY0HYRAngIdgFABIIOFYAPBoHBwIcIAiABIKgAAAMAIAAIYUNEhQDmrhvzLoKIcRdB3LXN76Pxvt84Z4sdDzzQhTFqiEjz3g1gSZJt2rq2bT6fera95j+oo7v78S+i/4zcRlKUqhpcOA28waJUN6HqSIM0SIM0a2W2bv6lcaaD3clb5SgqrtU/TQiB5YnUvDxErb1r21yp46vq2O9hJtpudPvu+Z4S2QorXzMt8mEXoGkiJ30uqXy4AhYJlS88oGwhenW7nNrAh2yPPQa8nEU2zZUmwJnsTKkBz7KzrAiMZWfoLbAtO7uzwJ7JBPAtuY/XkT5iTj80kt4vWjJmwJmKPOBdq3gCeqpcesC5iMwamCc0JB8BiqK2Lw3RG2uAQVry1w4Ai0NzzN1xsT4FXzsTc0m7USNtMuZFMxFe7/zTFOzvjJ7Pru0/LQMA);
+    background-repeat: no-repeat;
+    background-size: 30px;
+    background-position: 10px 10px;
+    background-color: #eeeeee;
+    
+    border: none;
+    
+    line-height: 30px;
+    font-size: 18px;
+    color: #666666;
+    text-align: left;
+    
+    box-shadow: 2px 4px 6px rgba(0, 0, 0, 0.25);
 }
 
 input[type="text"], input[type="number"], input[type="password"] {
