@@ -195,10 +195,10 @@ $db_obj->query("BEGIN");
 
 $db_obj->query("INSERT OR REPLACE INTO `unyohub_data` (`operation_date`, `operation_number`, `assign_order`, `user_id`, `train_number`, `formations`, `is_quotation`, `posted_datetime`, `comment`, `ip_address`) VALUES ('".$operation_date."', '".$operation_number."', ".$assign_order.", '".$db_obj->escapeString($user_id)."', '".$train_number."', ".(empty($formations) ? "NULL" : "'".$db_obj->escapeString($formations)."'").", ".intval($is_quotation).", '".$posted_datetime."', '".$db_obj->escapeString($comment)."', ".$ip_address_q.")");
 
-$data_cache_values = update_data_cache($operation_date, $operation_number, $posted_datetime, array($assign_order => array("formation_pattern" => $formation_info["formation_pattern"], "formation_list" => $formation_info["formation_list"], $final_arrival_time)));
+$data_cache_values = update_data_cache($operation_date, $operation_number, $posted_datetime, array($assign_order => array("formation_pattern" => $formation_info["formation_pattern"], "formation_list" => $formation_info["formation_list"])), $final_arrival_time);
 
 if (!empty($operation_data["terminal_track"])) {
-    update_next_day_data($ts, $operation_data["terminal_location"], $operation_data["terminal_track"], $data_cache_values["formations"], $posted_datetime, $data_cache_values["formation_list"], $data_cache_values["from_beginner"], $data_cache_values["is_quotation"]);
+    update_next_day_data($ts, $operation_data["terminal_location"], $operation_data["terminal_track"], $data_cache_values["formations"], $posted_datetime, $data_cache_values["formation_list"], $data_cache_values["from_beginner"]);
 }
 
 

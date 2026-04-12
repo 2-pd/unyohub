@@ -10,7 +10,7 @@ _/_/_/_/ データベース _/_/_/_/
 
 `unyohub_formations` 編成データ
   `formation_name` TEXT NOT NULL PRIMARY KEY 編成名
-  `currently_registered` INTEGER NOT NULL 現時点で在籍中の編成か否か(在籍中の場合は1、除籍済みの場合は0)
+  `currently_registered` INTEGER NOT NULL 現時点で在籍中の編成か否か(在籍中の編成では1、除籍済みの編成や編成表から除外された編成では0)
   `series_name` TEXT NOT NULL 車両形式
   `subseries_name` TEXT 番台名等(番台等がない場合はNULL)
   `prefix` TEXT 電算記号等(電算記号やそれに類するものがない場合はNULL)
@@ -177,10 +177,10 @@ _/_/_/_/ データベース _/_/_/_/
   `operation_date` TEXT NOT NULL 「YYYY-MM-DD」形式の日付
   `operation_number` TEXT NOT NULL 運用番号(アルファベットなどを含む場合があるため文字列型)
   `posts_count` INTEGER 投稿の個数(前日運用からの推測データの場合は「0」、投稿が全て取り消された場合はNULL)
-  `variant_exists` INTEGER 投稿情報に異なる情報が存在するかどうか(投稿が全て取り消された場合はNULL)
-  `comment_exists` INTEGER 運用補足情報の有無(投稿が全て取り消された場合はNULL)
+  `variant_exists` INTEGER 投稿情報に異なる情報が存在するかどうか(前日運用からの推測データの場合と投稿が全て取り消された場合ではNULL)
+  `comment_exists` INTEGER 運用補足情報の有無(前日運用からの推測データの場合と投稿が全て取り消された場合ではNULL)
   `from_beginner` INTEGER ビギナーの投稿か否か(投稿が全て取り消された場合はNULL)
-  `is_quotation` INTEGER 引用情報か否か(投稿が全て取り消された場合はNULL)
+  `is_quotation` INTEGER 引用情報か否か(前日運用からの推測データの場合と投稿が全て取り消された場合ではNULL)
   `updated_datetime` TEXT NOT NULL 「YYYY-MM-DD HH:MM:SS」形式の情報更新日時(unyohub_assigned_formation_cachesに存在する同一日・同一運用番号のレコードと同一値を設定)
   `confirmed_train_final_arrival_time` TEXT 最終確認時の列車の終着時刻(HH:MM形式、最終確認が出庫前の場合はNULL)
 

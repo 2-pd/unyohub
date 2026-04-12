@@ -298,16 +298,13 @@ function clear_formation_suggestion () {
 
 
 function switch_identify_method (direct) {
-    var train_number_data_elm = document.getElementById("train_number_data");
     var comment_guide_elm = document.getElementById("comment_guide");
     var quote_guide_elm = document.getElementById("quote_guide");
     
     if (direct) {
-        train_number_data_elm.style.display = "block";
         comment_guide_elm.style.display = "block";
         quote_guide_elm.style.display = "none";
     } else {
-        train_number_data_elm.style.display = "none";
         comment_guide_elm.style.display = "none";
         quote_guide_elm.style.display = "block";
         
@@ -446,18 +443,16 @@ function post_operation_data (railroad_id, date, operation_number, assign_order,
     
     open_wait_screen();
     
-    var send_data = "railroad_id=" + escape_form_data(railroad_id) + "&date=" + escape_form_data(date) + "&operation_number=" + escape_form_data(operation_number) + "&assign_order=" + assign_order + "&formations=" + escape_form_data(formations) + "&comment=" + escape_form_data(comment_text);
+    var send_data = "railroad_id=" + escape_form_data(railroad_id) + "&date=" + escape_form_data(date) + "&operation_number=" + escape_form_data(operation_number) + "&assign_order=" + assign_order + "&formations=" + escape_form_data(formations) + "&train_number=" + escape_form_data(train_number) + "&comment=" + escape_form_data(comment_text);
+    
+    if (is_quotation) {
+        send_data += "&is_quotation=YES";
+    }
     
     if (one_time_token !== false) {
         send_data += "&one_time_token=" + escape_form_data(one_time_token);
     } else {
         send_data += "&guest_id=" + escape_form_data(get_guest_id()) + "&zizai_captcha_id=" + escape_form_data(document.getElementById("zizai_captcha_id").value) + "&zizai_captcha_characters=" + escape_form_data(document.getElementById("zizai_captcha_characters").value);
-    }
-    
-    if (is_quotation) {
-        send_data += "&is_quotation=YES";
-    } else {
-        send_data += "&train_number=" + escape_form_data(train_number);
     }
     
     ajax_post("post.php", send_data, function (response) {

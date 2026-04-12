@@ -20,7 +20,7 @@ print_header();
 
 print "<article>";
 
-print "<nav><a href='user_list.php'>ユーザーの一覧</a> &gt;";
+print "<nav><a href='user_list.php'>ユーザーの一覧</a> &gt;</nav>";
 
 print "<h2>ユーザーの詳細</h2>";
 
