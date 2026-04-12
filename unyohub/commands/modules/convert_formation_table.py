@@ -178,18 +178,20 @@ def convert_formation_table (mes, main_dir):
             else:
                 currently_registered = True
             
-            prefixes[prefix] = { "formation_names" : [], "icon_id" : formation_data[cnt + 1][0].strip(), "max_car_count" : 0, "min_car_count" : None, "coupling_group_set" : set() }
-            
-            if not currently_registered:
-                prefixes[prefix]["unregistered"] = True
-            
             if len(series_division_names) >= 1:
                 if "prefix_order" not in series_divisions[series_division_names[-1]]:
                     series_divisions[series_division_names[-1]]["prefix_order"] = []
                 
                 series_divisions[series_division_names[-1]]["prefix_order"].append(prefix)
             
-            cnt += 2
+            prefixes[prefix] = { "formation_names" : [], "max_car_count" : 0, "min_car_count" : None, "coupling_group_set" : set() }
+            
+            if currently_registered:
+                prefixes[prefix]["icon_id"] = formation_data[cnt + 1][0].strip()
+                cnt += 2
+            else:
+                prefixes[prefix]["unregistered"] = True
+                cnt += 1
         elif formation_name.startswith("# "):
             if subseries_name is not None:
                 if subseries_max_car_count >= 1:
@@ -462,7 +464,11 @@ def convert_formation_table (mes, main_dir):
                 
                 continue
             
-            if "unregistered" in prefixes[prefix]:
+            if "unregistered" in prefixes[prefix] and prefixes[prefix]["unregistered"]:
+                del prefixes[prefix]["min_car_count"]
+                del prefixes[prefix]["max_car_count"]
+                del prefixes[prefix]["coupling_group_set"]
+                
                 continue
             
             if prefixes[prefix]["max_car_count"] == 0:
