@@ -85,9 +85,9 @@ def convert_formation_table (mes, main_dir):
     
     datetime_now = time.strftime("%Y-%m-%d %H:%M:%S")
     
-    formation_list_old = set()
+    formation_set_old = set()
     for row_data in cur.execute("SELECT `formation_name` FROM `unyohub_formations`"):
-        formation_list_old.add(row_data[0])
+        formation_set_old.add(row_data[0])
     
     json_data = {"formations" : {}, "series" : {}, "series_names" : []}
     
@@ -144,8 +144,8 @@ def convert_formation_table (mes, main_dir):
         json_data["body_colorings"] = body_colorings
     
     
-    formation_list = set()
-    unregistered_formation_list = set()
+    formation_set = set()
+    unregistered_formation_set = set()
     car_numbers = set()
     abbr_numbers = set()
     
@@ -289,7 +289,7 @@ def convert_formation_table (mes, main_dir):
             
             mes("  - " + formation_name + " のデータを処理しています...")
             
-            if formation_name in formation_list:
+            if formation_name in formation_set:
                 mes("同一の編成名が複数の編成に設定されています: " + formation_name, True)
             else:
                 json_data["formations"][formation_name] = {}
@@ -379,7 +379,7 @@ def convert_formation_table (mes, main_dir):
                 
                 cur.execute("INSERT INTO `unyohub_formations`(`formation_name`, `currently_registered`, `series_name`, `subseries_name`, `prefix`, `car_count`, `affiliation`, `caption`, `description`, `semifixed_formation`, `unavailable`, `inspection_information`, `overview_updated`, `updated_datetime`, `edited_user_id`) VALUES (:formation_name, :currently_registered, :series_name, :subseries_name, :prefix, :car_count, '', '', '', NULL, :unavailable, '', :overview_updated, :updated_datetime, NULL) ON CONFLICT(`formation_name`) DO UPDATE SET `currently_registered` = :currently_registered_2, `series_name` = :series_name_2, `subseries_name` = :subseries_name_2, `prefix` = :prefix_2, `car_count` = :car_count_2" + unavailable_q, {"formation_name" : formation_name, "currently_registered" : currently_registered, "series_name" : series_name, "subseries_name" : subseries_name, "prefix" : prefix, "car_count" : car_count, "unavailable" : unavailable_value, "overview_updated" : datetime_now, "updated_datetime" : datetime_now, "currently_registered_2" : currently_registered, "series_name_2" : series_name, "subseries_name_2" : subseries_name, "prefix_2" : prefix, "car_count_2" : car_count})
                 
-                formation_list.add(formation_name)
+                formation_set.add(formation_name)
                 
                 if subseries_name is None:
                     if "formation_names" not in json_data["series"][series_name]:
@@ -425,7 +425,7 @@ def convert_formation_table (mes, main_dir):
                             if prefix is not None:
                                 prefixes[prefix]["coupling_group_set"].add(coupling_group)
                 else:
-                    unregistered_formation_list.add(formation_name)
+                    unregistered_formation_set.add(formation_name)
             
             if currently_registered:
                 cnt += 4
@@ -487,12 +487,14 @@ def convert_formation_table (mes, main_dir):
     
     mes("編成表から除外された編成を検出しています...")
     
-    deleted_formations = formation_list_old - formation_list
+    deleted_formations = formation_set_old - formation_set
     uncoupled_formations = set()
     
-    for deleted_formation_name in list(deleted_formations | unregistered_formation_list):
+    for deleted_formation_name in list(deleted_formations | unregistered_formation_set):
         if deleted_formation_name in deleted_formations:
             mes("  - " + deleted_formation_name + " が編成表から除外されました")
+            
+            cur.execute("UPDATE `unyohub_formations` SET `currently_registered` = 0 WHERE `formation_name` = :formation_name", {"formation_name" : deleted_formation_name})
         
         for row_data in cur.execute("SELECT `semifixed_formation` FROM `unyohub_formations` WHERE `formation_name` = :formation_name", {"formation_name" : deleted_formation_name}):
             uncoupled_formations.add(row_data[0])
