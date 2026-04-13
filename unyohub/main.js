@@ -220,13 +220,30 @@ function mes (message_text, is_error = false, display_time = 10) {
     
     box_elm.innerText = message_text;
     
+    var box_elm_touch_start_x = 0;
+    var box_elm_move_distance_x = 0;
+    box_elm.addEventListener("touchstart", function (event) {
+        box_elm_touch_start_x = event.touches[0].pageX;
+    });
+    box_elm.addEventListener("touchmove", function (event) {
+        box_elm_move_distance_x = event.touches[0].pageX - box_elm_touch_start_x;
+        box_elm.style.transform = box_elm_move_distance_x > 0 ? "translateX(" + box_elm_move_distance_x + "px)" : "";
+    });
+    box_elm.addEventListener("touchend", function () {
+        if (box_elm_move_distance_x >= 50) {
+            delete_mes(box_elm);
+        } else {
+            box_elm.style.transform = "";
+        }
+    });
+    
     var close_button_elm = document.createElement("button");
     
     box_elm.appendChild(close_button_elm);
     close_button_elm.className = "message_close_button";
     close_button_elm.onclick = function () {
         delete_mes(box_elm);
-    }
+    };
     
     if (is_error) {
         box_elm.className = "error_message";
