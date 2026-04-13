@@ -132,7 +132,7 @@ if ($config["log_ip_address"]) {
 }
 print "><label for='log_ip_address'>投稿者のIPアドレスを記録する</label>";
 
-print "<br><br><button type='submit' class='wide_button'>上書き保存</button>";
+print "<br><br><button type='submit' class='save_button'>上書き保存</button>";
 print "</form>";
 
 print "</article>";
