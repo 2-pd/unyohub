@@ -5403,7 +5403,7 @@ function draw_operation_table (is_today) {
                     buf_3 += "</td>";
                 }
                 
-                buf_3 += "<td>";
+                buf_3 += "<td" + (operation_table["operations"][operation_number]["starting_time"] === null ? " class='after_operation'" : "") + ">";
                 
                 if (config["operation_table_view"] === "timeline") {
                     for (var hour = 4; hour <= 27; hour++) {
