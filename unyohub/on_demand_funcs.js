@@ -528,7 +528,7 @@ function background_updater () {
                             break;
                         
                         case 4:
-                            if (config["show_assigned_formations_on_operation_table"]) {
+                            if (operation_table !== null && config["show_assigned_formations_on_operation_table"]) {
                                 draw_operation_table(true);
                             }
                             break;
@@ -984,31 +984,31 @@ function train_detail (line_id, train_number, starting_station, train_direction,
             }
             
             if (!train_operation.includes("@")) {
-                buf_2 += "<u onclick='operation_detail(\"" + train_operation + "\",";
-                if (timetable_date === "__today__" || timetable_date === "__tomorrow__") {
-                    buf_2 += " " + diagram_id_or_ts + ", true";
-                } else {
-                    buf_2 += " \"" + operation_table["diagram_id"] + "\", false";
-                }
-                buf_2 += ");'>" + train_operation + "運用(";
-                if ("hidden_by_default" in operation_table["operations"][train_operation] && operation_table["operations"][train_operation]["hidden_by_default"]) {
-                    buf_2 += "臨時"
-                } else {
-                    buf_2 += operation_table["operations"][train_operation]["car_count"] + "両";
-                }
-                buf_2 += ")</u>";
+                var railroad_id = null;
+                var operation_info = operation_table["operations"][train_operation];
+                
+                var link_onclick_str = "operation_detail(\"" + train_operation + "\", " + (timetable_date === "__today__" || timetable_date === "__tomorrow__" ? diagram_id_or_ts + ", true" : "\"" + operation_table["diagram_id"] + "\", false") + ");";
             } else {
                 var at_pos = train_operation.indexOf("@");
                 var railroad_id = train_operation.substring(at_pos + 1);
                 train_operation = train_operation.substring(0, at_pos);
+                var operation_info = joined_operation_tables[railroad_id]["operations"][train_operation];
                 
-                buf_2 += train_operation + "運用(";
-                if ("hidden_by_default" in joined_operation_tables[railroad_id]["operations"][train_operation] && joined_operation_tables[railroad_id]["operations"][train_operation]["hidden_by_default"]) {
-                    buf_2 += "臨時"
+                if (timetable_date === "__today__") {
+                    var link_onclick_str = "close_square_popup(); select_railroad(\"" + railroad_id + "\", \"operation_table_mode\", \"__current__\", null, \"" + train_operation + "\");";
                 } else {
-                    buf_2 += joined_operation_tables[railroad_id]["operations"][train_operation]["car_count"] + "両";
+                    var link_onclick_str = null;
                 }
-                buf_2 += ")";
+            }
+            
+            if (link_onclick_str !== null) {
+                buf_2 += "<u onclick='" + link_onclick_str + "'>"
+            }
+            
+            buf_2 += train_operation + "運用(" + ("hidden_by_default" in operation_info && operation_info["hidden_by_default"] ? "臨時" : operation_info["car_count"] + "両") + ")";
+            
+            if (link_onclick_str !== null) {
+                buf_2 += "</u>";
             }
         }
     } else {

@@ -1537,7 +1537,7 @@ function load_railroad_data (railroad_id, is_main_railroad, resolve_func_1, reso
     });
 }
 
-function select_mode (mode_name, mode_option_1, mode_option_2, mode_option_3) {
+function select_mode (mode_name, mode_option_1 = null, mode_option_2 = null, mode_option_3 = null) {
     switch (mode_name) {
         case "position_mode":
             position_mode(mode_option_1, "__today__", mode_option_2);
@@ -1563,7 +1563,7 @@ function select_mode (mode_name, mode_option_1, mode_option_2, mode_option_3) {
             break;
         
         case "operation_table_mode":
-            operation_table_mode(mode_option_1);
+            operation_table_mode(mode_option_1, mode_option_2, mode_option_3);
             break;
     }
 }
@@ -5083,7 +5083,7 @@ var operation_table_footer_inner_elm = document.getElementById("operation_table_
 
 var operation_table_drop_down_status;
 
-function operation_table_mode (diagram_revision = "__current__") {
+function operation_table_mode (diagram_revision = "__current__", diagram_id = null, operation_number = null) { //第2引数は現在非対応
     change_mode(4);
     
     operation_search_area_elm.style.display = "none";
@@ -5129,7 +5129,7 @@ function operation_table_mode (diagram_revision = "__current__") {
             operation_table_wrapper_scroll_amount = 0;
             
             load_data(function () {
-                operation_table_list_number();
+                operation_table_list_number(operation_number);
             }, null, function () {
                 operation_table_area_elm.innerHTML = "<div class='no_data'>表示に必要なデータが利用できません</div>";
             }, diagram_data["diagram_revision"], diagram_data["diagram_id"], null, diagram_revision === "__current__" ? operation_data_date : null);
@@ -5154,7 +5154,7 @@ function operation_table_mode (diagram_revision = "__current__") {
     }
 }
 
-function operation_table_list_number () {
+function operation_table_list_number (operation_number = null) {
     operation_search_area_elm.style.display = "block";
     operation_table_area_elm.innerHTML = "";
     operation_table_info_elm.innerHTML = "";
@@ -5163,6 +5163,9 @@ function operation_table_list_number () {
         get_diagram_id(get_date_string(get_timestamp()), null, function (diagram_data) {
             if (diagram_data !== null) {
                 draw_operation_table(diagram_data["diagram_id"] === operation_table["diagram_id"]);
+                if (operation_number !== null) {
+                    operation_detail(operation_number, operation_table["diagram_id"], true);
+                }
             }
         });
     } else {
