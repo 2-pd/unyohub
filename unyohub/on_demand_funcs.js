@@ -45,7 +45,8 @@ function save_railroad_user_data (railroad_id) {
             railroad_id : railroad_id,
             position_selected_line : position_selected_line,
             position_scroll_amount : scroll_amount,
-            use_group_divisions_on_operation_data : use_group_divisions_on_operation_data
+            use_group_divisions_on_operation_data : use_group_divisions_on_operation_data,
+            rules_last_read : railroad_rules_last_read
         });
     });
 }
@@ -2373,7 +2374,7 @@ function write_operation_data (railroad_id, yyyy_mm_dd, operation_number, train_
     
     buf += "</div>";
     
-    buf += "<a href='/user/rules.php?railroad_id=" + railroad_info["railroad_id"] + "' target='_blank' class='bottom_link'>" + escape_html(railroad_info["railroad_name"]) + "の投稿ルール</a>";
+    buf += "<a href='/user/rules.php?railroad_id=" + railroad_info["railroad_id"] + "' onclick='event.preventDefault(); show_rules(\"" + railroad_info["railroad_id"] + "\");' class='bottom_link'>" + escape_html(railroad_info["railroad_name"]) + "の投稿ルール</a>";
     
     buf += "<button type='button' class='wide_button' onclick='check_post_operation_data();'>投稿する</button>";
     
@@ -2406,6 +2407,10 @@ function write_operation_data (railroad_id, yyyy_mm_dd, operation_number, train_
     }
     
     switch_car_number_suggest_mode();
+    
+    if (railroad_rules_last_read === null) {
+        show_rules(railroad_info["railroad_id"], function () { mes("ご確認ありがとうございました") });
+    }
 }
 
 function select_train_number (railroad_id, operation_number, now_hh_mm) {
@@ -2734,7 +2739,7 @@ function select_operation_to_write_data (line_id, train_number, starting_station
 function check_post_operation_data () {
     if (user_info === null) {
         if (config["guest_id"] === null) {
-            show_rules(function () { show_captcha(post_operation_data); });
+            show_rules(null, function () { show_captcha(post_operation_data); });
         } else {
             show_captcha(post_operation_data);
         }
@@ -3117,7 +3122,7 @@ function about_railroad_data () {
     
     var buf = "<h2 style='background-color: " + (config["dark_mode"] ? convert_color_dark_mode(railroad_info["main_color"]) : railroad_info["main_color"]) + ";'><img src='" + railroad_info["railroad_icon"] + "' alt=''>" + railroad_info["railroad_name"] + "</h2>";
     
-    buf += "<div class='long_text'>" + ("description" in railroad_info ? convert_to_html(railroad_info["description"]) : "") + "<a href='/user/rules.php?railroad_id=" + railroad_info["railroad_id"] + "' target='_blank' class='bottom_link'>" + escape_html(railroad_info["railroad_name"]) + "の投稿ルール</a></div>";
+    buf += "<div class='long_text'>" + ("description" in railroad_info ? convert_to_html(railroad_info["description"]) : "") + "<a href='/user/rules.php?railroad_id=" + railroad_info["railroad_id"] + "' onclick='event.preventDefault(); show_rules(\"" + railroad_info["railroad_id"] + "\");' class='bottom_link'>" + escape_html(railroad_info["railroad_name"]) + "の投稿ルール</a></div>";
     
     if ("editors" in railroad_info && railroad_info["editors"].length >= 1) {
         buf += "<h3>製作者</h3>";
@@ -3485,18 +3490,25 @@ function reset_config_value () {
 
 var rules_continue_func = null;
 
-function show_rules (continue_func = null) {
+function show_rules (railroad_id = null, continue_func = null) {
     if (!navigator.onLine) {
         mes("ルールの閲覧にはネットワーク接続が必要です", true);
         return;
     }
     
+    if (railroad_id === null) {
+        var get_param = "";
+    } else {
+        var get_param = "?railroad_id=" + railroad_id;
+        
+        railroad_rules_last_read = get_timestamp();
+    }
+    
     if (typeof continue_func === "function") {
         rules_continue_func = continue_func;
-        var get_param = "?show_accept_button=yes";
+        get_param += (railroad_id === null ? "?" : "&") + "show_accept_button=yes";
     } else {
         rules_continue_func = null;
-        var get_param = "";
     }
     
     window.open("/user/rules.php" + get_param);
@@ -3596,7 +3608,7 @@ function close_welcome_message () {
 }
 
 
-window.onbeforeunload = function () {
+window.onblur = function () {
     if (railroad_info !== null) {
         save_railroad_user_data(railroad_info["railroad_id"]);
     }

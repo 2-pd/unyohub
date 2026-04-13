@@ -25,7 +25,7 @@ if (empty($_GET["railroad_id"])) {
 }
 
 if (!empty($_GET["show_accept_button"])) {
-    if (empty($_GET["railroad_id"])) {
+    if (empty($railroad_info)) {
         print <<< EOM
             <div id="rules_info" class="warning_text">
                 本サービスでは新規のユーザー様にご利用ルールの確認をお願いしています。<br>
@@ -57,7 +57,9 @@ if (file_exists($rule_path)) {
 $heading_list = array();
 $heading_cnt = 0;
 if (!empty($rule_content)) {
-    print "    <div class=\"informational_text\">この路線系統では<a href=\"rules.php?show_back_button=yes\">".htmlspecialchars($main_config["instance_name"])."全体の投稿ルール</a>に加え、以下のルールが適用されます。</div>\n";
+    if (!empty($railroad_info)) {
+        print "    <div class=\"informational_text\">この路線系統では<a href=\"rules.php?show_back_button=yes\">".htmlspecialchars($main_config["instance_name"])."全体の投稿ルール</a>に加え、以下のルールが適用されます。</div>\n";
+    }
     
     $buf = "";
     
