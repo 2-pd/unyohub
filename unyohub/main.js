@@ -1081,16 +1081,19 @@ function update_formation_styles (railroad_id = null) {
 
 
 var use_group_divisions_on_operation_data;
+var railroad_rules_last_read;
 
 function set_railroad_user_data (user_data) {
     if (user_data !== null) {
         position_selected_line = user_data["position_selected_line"] in railroad_info["lines"] ? user_data["position_selected_line"] : railroad_info["lines_order"][0];
         position_scroll_amount = user_data["position_scroll_amount"];
-        use_group_divisions_on_operation_data = "use_group_divisions_on_operation_data" in user_data ? user_data["use_group_divisions_on_operation_data"] : true;//2026-08末まで暫定
+        use_group_divisions_on_operation_data = "use_group_divisions_on_operation_data" in user_data ? user_data["use_group_divisions_on_operation_data"] : true;//2027-04末まで暫定
+        railroad_rules_last_read = "rules_last_read" in user_data ? user_data["rules_last_read"] : null;//2027-04末まで暫定
     } else {
         position_selected_line = railroad_info["lines_order"][0];
         position_scroll_amount = 0;
         use_group_divisions_on_operation_data = true;
+        railroad_rules_last_read = null;
     }
 }
 
