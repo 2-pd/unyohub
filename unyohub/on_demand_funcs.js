@@ -134,11 +134,7 @@ function popup_close (close_all = false, update_url = true) {
     document.getElementById(id).classList.remove("popup_active");
     
     if (update_url) {
-        if (popup_history.length >= 1) {
-            history.replaceState(null, "", location.pathname + "#" + popup_history[popup_history.length - 1]);
-        } else {
-            history.replaceState(null, "", location.pathname);
-        }
+        history_popstate();
     }
     
     if (close_all && popup_history.length >= 1) {
@@ -204,11 +200,7 @@ function close_square_popup (update_url = true) {
     square_popup_is_open = false;
     
     if (update_url) {
-        if (popup_history.length >= 1) {
-            history.replaceState(null, "", location.pathname + "#" + popup_history[popup_history.length - 1]);
-        } else {
-            history.replaceState(null, "", location.pathname);
-        }
+        history_popstate();
     }
     
     menu_click(true);
@@ -3605,6 +3597,16 @@ function show_welcome_message () {
 
 function close_welcome_message () {
     document.getElementById("welcome_message_box").remove();
+}
+
+
+function history_popstate () {
+    history_back_promise = new Promise(function (resolve, reject) {
+        history_back_resolve = resolve;
+        
+        on_popstate_do_nothing = true;
+        history.back();
+    });
 }
 
 

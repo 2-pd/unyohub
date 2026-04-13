@@ -206,7 +206,13 @@ function ajax_post (end_point_name, query_str, callback_func, timeout = 30) {
 function change_title (title_text, url = null) {
     document.getElementsByTagName("title")[0].innerText = title_text;
     
-    if (url !== null && url !== location.pathname + location.hash) {
+    if (history_back_promise instanceof Promise) {
+        history_back_promise.then(function () {
+            if (url !== null && url !== location.pathname + location.hash) {
+                history.pushState(null, "", url);
+            }
+        });
+    } else if (url !== null && url !== location.pathname + location.hash) {
         history.pushState(null, "", url);
     }
 }
@@ -5546,7 +5552,22 @@ function draw_operation_table (is_today) {
 }
 
 
+var history_back_promise = null;
+var history_back_resolve = null;
+var on_popstate_do_nothing = false;
+
 window.onpopstate = function () {
+    if (history_back_promise instanceof Promise) {
+        history_back_resolve();
+        history_back_promise = null;
+        history_back_resolve = null;
+    }
+    
+    if (on_popstate_do_nothing) {
+        on_popstate_do_nothing = false;
+        return;
+    }
+    
     if (square_popup_is_open) {
         close_square_popup(false);
     } else if (popup_history.length >= 1) {
