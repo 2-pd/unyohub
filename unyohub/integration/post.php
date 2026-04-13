@@ -70,7 +70,7 @@ if (!is_null($operation_data["starting_time"])) {
 }
 
 
-$assign_order_maxima = $db_obj->querySingle("SELECT `assign_order` FROM `unyohub_data_caches` WHERE `operation_date` = '".$db_obj->escapeString($_GET["date"])."' AND `operation_number` = '".$db_obj->escapeString($_GET["operation_number"])."' ORDER BY `assign_order` DESC LIMIT 1");
+$assign_order_maxima = $db_obj->querySingle("SELECT `assign_order` FROM `unyohub_assigned_formation_caches` WHERE `operation_date` = '".$db_obj->escapeString($_GET["date"])."' AND `operation_number` = '".$db_obj->escapeString($_GET["operation_number"])."' ORDER BY `assign_order` DESC LIMIT 1");
 if (empty($assign_order_maxima)) {
     $assign_order_maxima = 0;
 }
