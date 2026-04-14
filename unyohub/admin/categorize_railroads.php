@@ -156,7 +156,7 @@ print "<div class='informational_text'>路線系統は識別名で、グルー�
 
 print "<textarea name='railroad_categories' class='rule_content'>".htmlspecialchars($railroad_categories)."</textarea>";
 
-print "<button type='submit' class='wide_button'>上書き保存</button>";
+print "<button type='submit' class='save_button'>上書き保存</button>";
 print "</form>";
 
 print "</article>";

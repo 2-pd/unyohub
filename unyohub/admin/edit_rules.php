@@ -67,7 +67,7 @@ print "<input type='hidden' name='one_time_token' value='".$user->create_one_tim
 
 print "<textarea name='rule_content' class='rule_content' placeholder='ここに利用者向けの".(empty($railroad_id) ? "ルールとポリシー" : "投稿ルール")."を入力'>".htmlspecialchars($rule_content)."</textarea>";
 
-print "<button type='submit' class='wide_button'>上書き保存</button>";
+print "<button type='submit' class='save_button'>上書き保存</button>";
 print "</form>";
 
 print "</article>";
