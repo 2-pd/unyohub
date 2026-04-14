@@ -200,18 +200,26 @@ _/_/_/_/ データベース _/_/_/_/
 
 `unyohub_transition_data_caches_same_day` 当日運用遷移データキャッシュ
   `operation_date` TEXT NOT NULL 「YYYY-MM-DD」形式の日付
+  `former_operation_number` TEXT NOT NULL 前の運用番号(アルファベットなどを含む場合があるため文字列型)
+  `former_formations` TEXT 前の運用時点での組成(差し替えがあった場合は差し替え完了後のもののみ記録、複数編成併結の場合は「+」で区切って1レコードに格納)
   `operation_number` TEXT NOT NULL 運用番号(アルファベットなどを含む場合があるため文字列型)
-  `later_operation_number` TEXT NOT NULL 後の運用番号(アルファベットなどを含む場合があるため文字列型)
+  `formations` TEXT 充当組成(差し替えがあった場合は差し替え前のもののみ記録、複数編成併結の場合は「+」で区切って1レコードに格納)
 
-  PRIMARY KEY(`operation_date`, `operation_number`, `later_operation_number`)
+  PRIMARY KEY(`operation_date`, `operation_number`, `former_operation_number`)
+  INDEX `unyohub_idx_ts1`(`operation_number`, `operation_date`, `former_operation_number`)
+  INDEX `unyohub_idx_ts2`(`former_operation_number`, `operation_date`, `operation_number`)
 
 
 `unyohub_transition_data_caches_from_previous_day` 前日からの運用遷移データキャッシュ
   `operation_date` TEXT NOT NULL 当日の「YYYY-MM-DD」形式の日付
   `previous_day_operation_number` TEXT NOT NULL 前日の運用番号(アルファベットなどを含む場合があるため文字列型)
+  `previous_day_formations` TEXT 前日時点での組成(差し替えがあった場合は差し替え完了後のもののみ記録、複数編成併結の場合は「+」で区切って1レコードに格納)
   `operation_number` TEXT NOT NULL 当日の運用番号(アルファベットなどを含む場合があるため文字列型)
+  `formations` TEXT 当日の充当組成(差し替えがあった場合は差し替え前のもののみ記録、複数編成併結の場合は「+」で区切って1レコードに格納)
 
   PRIMARY KEY(`operation_date`, `operation_number`, `previous_day_operation_number`)
+  INDEX `unyohub_idx_tp1`(`operation_number`, `operation_date`, `previous_day_operation_number`)
+  INDEX `unyohub_idx_tp2`(`previous_day_operation_number`, `operation_date`, `operation_number`)
 
 
 ███ announcements.db ███
