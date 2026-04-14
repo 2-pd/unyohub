@@ -675,6 +675,7 @@ function check_logged_in () {
 var railroads = null;
 
 var icon_area_elm = null;
+var icon_area_scroll_amount = null;
 
 function get_railroad_list (callback_func) {
     if (railroads !== null) {
@@ -815,13 +816,18 @@ function update_railroad_list (railroads, area_elm = null, loading_completed = t
         icons_html = "<div class='no_data'>利用可能なデータがありません</div>";
     }
     
-    area_elm.innerHTML = "<ul id='category_area'>" + categories_html + "</ul><div id='icon_area' onscroll='icon_area_onscroll();'>" + icons_html + "</div>";
+    area_elm.innerHTML = "<ul id='category_area'>" + categories_html + "</ul><div id='icon_area'>" + icons_html + "</div>";
     
     splash_screen_elm.className = "splash_screen_loaded";
     
     icon_area_elm = document.getElementById("icon_area");
+    icon_area_elm.addEventListener("scroll", icon_area_onscroll, { passive : true });
     
     railroad_list_active_index = null;
+    
+    if (icon_area_scroll_amount !== null) {
+        icon_area_elm.scrollTop = icon_area_scroll_amount;
+    }
     icon_area_onscroll();
 }
 
@@ -877,6 +883,10 @@ function icon_area_onscroll () {
             }
         }
     }
+    
+    setTimeout(function () {
+        icon_area_scroll_amount = icon_area_elm.scrollTop;
+    }, 500);
 }
 
 var railroad_icon_touch_start_time = null;
@@ -1578,7 +1588,6 @@ var blank_article_elm = document.getElementById("blank_article");
 
 function select_railroad (railroad_id, mode_name = "position_mode", mode_option_1 = null, mode_option_2 = null, mode_option_3 = null) {
     splash_screen_elm.style.display = "none";
-    splash_screen_elm.innerHTML = "";
     if (popup_history.length >= 1) {
         popup_close();
     }

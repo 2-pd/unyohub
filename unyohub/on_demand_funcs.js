@@ -220,6 +220,8 @@ function close_wait_screen () {
 function show_railroad_list () {
     var popup_inner_elm = open_popup("railroad_select_popup", "路線系統の切り替え");
     
+    splash_screen_elm.innerHTML = "";
+    
     get_railroad_list(function (railroads, loading_completed) {
         update_railroad_list(railroads, popup_inner_elm, loading_completed);
     });
