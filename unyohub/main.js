@@ -125,7 +125,7 @@ function get_default_config () {
         "group_formations_by_prefix" : false,
         "show_unregistered_formations_on_formation_table" : true,
         "colorize_formation_table" : true,
-        "operation_table_view" : "simple",
+        "operation_table_view" : window.innerWidth <= 500 ? "simple" : "timeline",
         "show_start_end_times_on_operation_table" : true,
         "show_current_trains_on_operation_table" : true,
         "show_comments_on_operation_table" : true,
