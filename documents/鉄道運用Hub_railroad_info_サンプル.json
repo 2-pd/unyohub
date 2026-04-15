@@ -51,12 +51,20 @@
                             ]
                         },
                         {
-                            "railroad_id" : "hankai",
+                            "railroad_id" : "kanjo",
                             "lines" : [
                                 {
-                                    "line_id" : "hankai",
-                                    "line_name" : "阪堺系統",
-                                    "station_name" : "新今宮駅前"
+                                    "line_id" : "kanjosen",
+                                    "line_name" : "大阪環状線"
+                                }
+                            ]
+                        },
+                        {
+                            "railroad_id" : "yamatoji",
+                            "lines" : [
+                                {
+                                    "line_id" : "yamatojisen",
+                                    "line_name" : "大和路線"
                                 }
                             ]
                         },
@@ -67,6 +75,16 @@
                                     "line_id" : "midosujisen",
                                     "line_name" : "御堂筋線",
                                     "station_name" : "動物園前"
+                                }
+                            ]
+                        },
+                        {
+                            "railroad_id" : "hankai",
+                            "lines" : [
+                                {
+                                    "line_id" : "hankai",
+                                    "line_name" : "阪堺系統",
+                                    "station_name" : "新今宮駅前"
                                 }
                             ]
                         }
@@ -312,6 +330,7 @@
                 {
                     "station_name" : "尾崎",
                     "station_name_kana" : "おざき",
+                    "station_initial" : "尾",
                     "is_major_station" : true
                 },
                 {
@@ -660,13 +679,14 @@
     "lines_order" : ["honsen", "kukosen", "shiomibashisen", "takashinohamasen", "tanagawasen", "kadasen", "wakayamakosen"],
     "train_color_rules" : [
         {"pattern": "^0", "color": "#ff0000"},
-        {"pattern": "^(1|2)", "color": "#ff6600"},
+        {"pattern": "^1", "color": "#ff6600"},
+        {"pattern": "^2", "color": "#cc6633"},
         {"pattern": "^3", "color": "#008000"},
         {"pattern": "^4", "color": "#0066ff"},
         {"pattern": "^7[0-2]", "color": "#660099"},
-        {"pattern": "^(8|9|回)", "color": "#999999"}
+        {"pattern": "^[89回]", "color": "#999999"}
     ],
-    "deadhead_train_number" : "^(8|9|回)",
+    "deadhead_train_number" : "^[89回]",
     "alias_of_forward_direction" : "難波方",
     "description" : "南海本線と空港線、高師浜線、多奈川線、加太線、和歌山港線、及び、高野線のうち南海本線と同じく住ノ江検車区所属編成で運行される汐見橋-岸里玉出間の運用表・時刻表データです。",
     "editors" : [
