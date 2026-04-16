@@ -139,6 +139,12 @@ if arg_count >= 1:
         case "init-common-dbs":
             initialize_common_dbs = importlib.import_module("modules.initialize_common_dbs")
             initialize_common_dbs.initialize_common_dbs(mes, os.path.dirname(data_dir) + "/common_dbs")
+        case "cache-transitions":
+            if arg_count <= 3:
+                cache_transition_data = importlib.import_module("modules.cache_transition_data")
+                cache_transition_data.cache_transition_data(mes, *args[1:], options=options)
+            else:
+                print("\x1b[31m引数の数が異常です\x1b[0m")
         case "get-gtfs-realtime":
             if arg_count <= 2:
                 get_gtfs_realtime = importlib.import_module("modules.get_gtfs_realtime")
