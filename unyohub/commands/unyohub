@@ -11,6 +11,7 @@ UNYOHUB_COMMANDS_APP_NAME = "鉄道運用Hub コマンドラインツール"
 UNYOHUB_COMMANDS_VERSION = "26.03-1"
 
 UNYOHUB_DATA_DIR = "../data"
+UNYOHUB_CONFIG_DIR = "../config"
 
 
 def mes (log_text, is_error=False, is_heading=False):
@@ -142,7 +143,7 @@ if arg_count >= 1:
         case "cache-transitions":
             if arg_count <= 3:
                 cache_transition_data = importlib.import_module("modules.cache_transition_data")
-                cache_transition_data.cache_transition_data(mes, *args[1:], options=options)
+                cache_transition_data.cache_transition_data(mes, data_dir, os.path.abspath(UNYOHUB_CONFIG_DIR), *args[1:], options=options)
             else:
                 print("\x1b[31m引数の数が異常です\x1b[0m")
         case "get-gtfs-realtime":
