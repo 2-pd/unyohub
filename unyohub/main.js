@@ -544,6 +544,10 @@ function update_display_settings (redraw = false) {
     }
     
     if (redraw) {
+        if (railroad_info !== null) {
+            update_formation_styles();
+        }
+        
         switch (mode_val) {
             case -1:
                 get_railroad_list(function (railroads, loading_completed) {
@@ -1086,7 +1090,15 @@ function update_formation_styles (railroad_id = null) {
                 if ("stripes" in formations["body_colorings"][coloring_ids[cnt]]) {
                     var gradient_code = "";
                     for (var stripe_data of formations["body_colorings"][coloring_ids[cnt]]["stripes"]) {
-                        gradient_code += (gradient_code.length >= 1 ? "," : "") + " linear-gradient(" + ("verticalize" in stripe_data && stripe_data["verticalize"] ? "to right, " : "to bottom, ") + "transparent 0% " + stripe_data["start"] + "%, " + stripe_data["color"] + " " + stripe_data["start"] + "% " + stripe_data["end"] + "%, transparent " + stripe_data["end"] + "% 100%)";
+                        if (!config["force_arrange_west_side_car_on_left"] || !("forward_direction_is_east" in railroad_info) || !railroad_info["forward_direction_is_east"] || !("verticalize" in stripe_data) || !stripe_data["verticalize"]) {
+                            var stripe_start = stripe_data["start"];
+                            var stripe_end = stripe_data["end"];
+                        } else {
+                            var stripe_start = 100 - stripe_data["end"];
+                            var stripe_end = 100 - stripe_data["start"];
+                        }
+                        
+                        gradient_code += (gradient_code.length >= 1 ? "," : "") + " linear-gradient(" + ("verticalize" in stripe_data && stripe_data["verticalize"] ? "to right, " : "to bottom, ") + "transparent 0% " + stripe_start + "%, " + stripe_data["color"] + " " + stripe_start + "% " + stripe_end + "%, transparent " + stripe_end + "% 100%)";
                     }
                     
                     css_code += " background-image:" + gradient_code + ";";
@@ -1316,8 +1328,6 @@ function load_railroad_data (railroad_id, is_main_railroad, resolve_func_1, reso
                                 
                                 if (is_main_railroad) {
                                     formations = formations_data;
-                                    
-                                    update_formation_styles();
                                 } else {
                                     joined_railroad_formations[railroad_id] = formations_data;
                                     
@@ -1501,6 +1511,7 @@ function load_railroad_data (railroad_id, is_main_railroad, resolve_func_1, reso
     
     Promise.all(promise_list_1).then(function () {
         if (is_main_railroad) {
+            update_formation_styles();
             set_railroad_user_data(user_data);
         }
         
@@ -1526,6 +1537,7 @@ function load_railroad_data (railroad_id, is_main_railroad, resolve_func_1, reso
         Promise.all(promise_list_2).then(function (update_exists_list) {
             if (update_exists_list.includes(true)) {
                 if (is_main_railroad) {
+                    update_formation_styles();
                     set_railroad_user_data(user_data);
                 }
                 
