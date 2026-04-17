@@ -1384,6 +1384,72 @@ button:has(abbr) {
     }
 }
 
+.previous_day_operation_data, .former_operation_data, .latter_operation_data, .next_day_operation_data {
+    position: relative;
+    
+    width: calc(100% - 140px);
+    
+    margin: 5px 10px;
+    
+    padding: 4px 9px 4px 59px;
+    
+    border: 1px solid #eeeeee;
+    border-radius: 4px;
+    
+    color: #666666;
+    
+    .dark_mode & {
+        border: 1px solid #666666;
+        
+        color: #cccccc;
+    }
+    
+    h5 {
+        position: absolute;
+        top: 9px;
+        left: 9px;
+        
+        width: fit-content;
+        
+        margin: 0;
+        
+        line-height: 24px;
+        font-size: 17px;
+        font-weight: normal;
+    }
+    
+    .key_and_value {
+        width: 100%;
+        margin: 5px 0;
+        
+        font-size: 16px;
+        
+        border-bottom-width: 1px;
+    }
+}
+
+.previous_day_operation_data, .former_operation_data {
+    margin-right: 60px;
+    
+    &:after {
+        content: "";
+        
+        top: 0;
+        left: calc(100% + 7px);
+    }
+}
+
+.latter_operation_data, .next_day_operation_data {
+    margin-left: 60px;
+    
+    &:before {
+        content: "";
+        
+        top: 0;
+        right: calc(100% + 7px);
+    }
+}
+
 #operation_data_formation {
     width: calc(100% - 90px);
     

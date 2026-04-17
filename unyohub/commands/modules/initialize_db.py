@@ -91,6 +91,16 @@ def initialize_db (mes, main_dir):
     cur.execute("CREATE TABLE IF NOT EXISTS `unyohub_data_each_formation`(`formation_name` TEXT NOT NULL, `operation_date` TEXT NOT NULL, `operation_number` TEXT NOT NULL, PRIMARY KEY(`formation_name`, `operation_date`, `operation_number`))")
     cur.execute("CREATE INDEX IF NOT EXISTS `unyohub_idx_df1` ON `unyohub_data_each_formation`(`operation_date`, `operation_number`)")
     
+    mes("テーブル「unyohub_transition_data_caches_same_day」を作成しています...")
+    cur.execute("CREATE TABLE IF NOT EXISTS `unyohub_transition_data_caches_same_day`(`operation_date` TEXT NOT NULL, `former_operation_number` TEXT NOT NULL, `former_formations` TEXT, `operation_number` TEXT NOT NULL, `formations` TEXT, PRIMARY KEY(`operation_date`, `operation_number`, `former_operation_number`))")
+    cur.execute("CREATE INDEX IF NOT EXISTS `unyohub_idx_ts1` ON `unyohub_transition_data_caches_same_day`(`operation_number`, `operation_date`, `former_operation_number`)")
+    cur.execute("CREATE INDEX IF NOT EXISTS `unyohub_idx_ts2` ON `unyohub_transition_data_caches_same_day`(`former_operation_number`, `operation_date`, `operation_number`)")
+    
+    mes("テーブル「unyohub_transition_data_caches_from_previous_day」を作成しています...")
+    cur.execute("CREATE TABLE IF NOT EXISTS `unyohub_transition_data_caches_from_previous_day`(`operation_date` TEXT NOT NULL, `previous_day_operation_number` TEXT NOT NULL, `previous_day_formations` TEXT, `operation_number` TEXT NOT NULL, `formations` TEXT, PRIMARY KEY(`operation_date`, `operation_number`, `previous_day_operation_number`))")
+    cur.execute("CREATE INDEX IF NOT EXISTS `unyohub_idx_tp1` ON `unyohub_transition_data_caches_from_previous_day`(`operation_number`, `operation_date`, `previous_day_operation_number`)")
+    cur.execute("CREATE INDEX IF NOT EXISTS `unyohub_idx_tp2` ON `unyohub_transition_data_caches_from_previous_day`(`previous_day_operation_number`, `operation_date`, `operation_number`)")
+    
     mes("変更を保存しています...")
     conn.commit()
     conn.close()

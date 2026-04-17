@@ -25,6 +25,7 @@ def show_help (subcommand=""):
             print("  \x1b[93mremove-role\x1b[0m                 ユーザーからロールを剥奪する")
             print("  \x1b[93minit-db\x1b[0m                     各路線系統用データベースファイルを生成する")
             print("  \x1b[93minit-common-dbs\x1b[0m             全路線系統共通データ用データベースファイル群を生成する")
+            print("  \x1b[93mcache-transitions\x1b[0m           運用データから運用遷移データのキャッシュを生成する")
             print("  \x1b[93mget-gtfs-realtime\x1b[0m           鉄道事業者の公開APIから在線情報を取得し、車両運用情報を更新する")
             print("  \x1b[93mupdate-trip-ids\x1b[0m             便識別名と列車番号の対応表をデータベースに書き込む")
             print("  \x1b[93mgenerate-operation-table\x1b[0m    1日分の在線情報をもとに運用表を生成する")
@@ -161,6 +162,16 @@ def show_help (subcommand=""):
         
         case "init-common-dbs":
             print("\x1b[93munyohub init-common-dbs\x1b[0m  全路線系統共通データ用データベースファイル群を生成する")
+        
+        case "cache-transitions":
+            print("\x1b[93munyohub cache-transitions\x1b[0m  運用データから運用遷移データのキャッシュを生成する")
+            
+            print("\n引数")
+            print("  \x1b[33m第1引数\x1b[0m : YYYY-MM-DD形式のキャッシュ対象範囲開始日(省略時は実行時の前日の日付を使用)")
+            print("  \x1b[33m第2引数\x1b[0m : YYYY-MM-DD形式のキャッシュ対象範囲終了日(省略時は第2引数の日付を使用)")
+            
+            print("\nオプション")
+            print("  \x1b[33m-s\x1b[0m : コンソール出力を行わない")
         
         case "get-gtfs-realtime":
             print("\x1b[93munyohub get-gtfs-realtime\x1b[0m  鉄道事業者の公開APIから在線情報を取得し、車両運用情報を更新する")

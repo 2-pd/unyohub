@@ -1873,6 +1873,10 @@ function update_formation_table_drop_down_status (elm) {
     formation_table_drop_down_status[elm.id] = elm.checked;
 }
 
+var show_previous_day_operation_data = false;
+var show_same_day_operation_data = false;
+var show_next_day_operation_data = false;
+
 function operation_data_history (formation_name, operation_number = null) {
     var popup_inner_elm = open_popup("data_history_popup", "運用履歴", true);
     
@@ -1925,6 +1929,10 @@ function get_operation_data_history (formation_name, operation_number, yyyy_mm =
                 var buf = "<h3>" + escape_html(h3_text) + "</h3>";
                 buf += "<div class='popup_subtitle'>" + (yyyy_mm === "" ? "過去30日間" : yyyy_mm.substring(0, 4) + "年" + Number(yyyy_mm.substring(5)) + "月") + "の運用履歴<input type='month' class='date_button' value='" + yyyy_mm + "' min='2000-01' max='" + dt.getFullYear() + "-" + ("0" + (dt.getMonth() + 1)).slice(-2) + "' onchange='get_operation_data_history(" + (formation_name === null ? "null" : "\"" + add_slashes(formation_name) + "\"") + ", " + (operation_number === null ? "null" : "\"" + add_slashes(operation_number) + "\"") + ", this.value);'></div>";
                 
+                if (operation_number !== null) {
+                    buf += "<div class='radio_area'><input type='checkbox' id='show_previous_day_operation_data' class='chip' onchange='change_show_previous_day_operation_data(this.checked);'" + (show_previous_day_operation_data ? " checked='checked'" : "") + "><label for='show_previous_day_operation_data'>前日遷移</label><input type='checkbox' id='show_same_day_operation_data' class='chip' onchange='change_show_same_day_operation_data(this.checked);'" + (show_same_day_operation_data ? " checked='checked'" : "") + "><label for='show_same_day_operation_data'>当日遷移</label><input type='checkbox' id='show_next_day_operation_data' class='chip' onchange='change_show_next_day_operation_data(this.checked);'" + (show_next_day_operation_data ? " checked='checked'" : "") + "><label for='show_next_day_operation_data'>翌日遷移</label></div>";
+                }
+                
                 var data = JSON.parse(response);
                 
                 var day_value = new Date((ts - 14400) * 1000).getDay();
@@ -1933,7 +1941,55 @@ function get_operation_data_history (formation_name, operation_number, yyyy_mm =
                     
                     buf += "<h4>" + Number(yyyy_mm_dd.substring(5, 7)) + "月" + Number(yyyy_mm_dd.substring(8)) + "日 (" + YOBI_LIST[day_value] + (holiday_list.includes(yyyy_mm_dd.substring(5)) ? "・祝" : "") + ")</h4>";
                     if (yyyy_mm_dd in data) {
+                        if (data[yyyy_mm_dd].length >= 1) {
+                            if ("previous_day_operation_data" in data[yyyy_mm_dd][0]) {
+                                var buf_2 = "";
+                                for (var previous_day_operation_data of data[yyyy_mm_dd][0]["previous_day_operation_data"]) {
+                                    buf_2 += "<div class='key_and_value'><b>" + escape_html(previous_day_operation_data["operation_number"]) + "</b>" + escape_html(previous_day_operation_data["formations"]) + "</div>";
+                                }
+                                
+                                if (buf_2.length >= 1) {
+                                    buf += "<div class='previous_day_operation_data' style='display: " + (show_previous_day_operation_data ? "block" : "none") + ";'><h5>前日</h5>" + buf_2 + "</div>";
+                                }
+                            }
+                            
+                            if ("former_operation_data" in data[yyyy_mm_dd][0]) {
+                                var buf_2 = "";
+                                for (var former_operation_data of data[yyyy_mm_dd][0]["former_operation_data"]) {
+                                    buf_2 += "<div class='key_and_value'><b>" + escape_html(former_operation_data["operation_number"]) + "</b>" + escape_html(former_operation_data["formations"]) + "</div>";
+                                }
+                                
+                                if (buf_2.length >= 1) {
+                                    buf += "<div class='former_operation_data' style='display: " + (show_same_day_operation_data ? "block" : "none") + ";'><h5>当日</h5>" + buf_2 + "</div>";
+                                }
+                            }
+                        }
+                        
                         buf += get_operation_data_html(data[yyyy_mm_dd], ts, (operation_table !== null && get_diagram_revision(yyyy_mm_dd) === operation_table["diagram_revision"]));
+                        
+                        if (data[yyyy_mm_dd].length >= 1) {
+                            if ("latter_operation_data" in data[yyyy_mm_dd][0]) {
+                                var buf_2 = "";
+                                for (var latter_operation_data of data[yyyy_mm_dd][0]["latter_operation_data"]) {
+                                    buf_2 += "<div class='key_and_value'><b>" + escape_html(latter_operation_data["operation_number"]) + "</b>" + escape_html(latter_operation_data["formations"]) + "</div>";
+                                }
+                                
+                                if (buf_2.length >= 1) {
+                                    buf += "<div class='latter_operation_data' style='display: " + (show_same_day_operation_data ? "block" : "none") + ";'><h5>当日</h5>" + buf_2 + "</div>";
+                                }
+                            }
+                            
+                            if ("next_day_operation_data" in data[yyyy_mm_dd][0]) {
+                                var buf_2 = "";
+                                for (var next_day_operation_data of data[yyyy_mm_dd][0]["next_day_operation_data"]) {
+                                    buf_2 += "<div class='key_and_value'><b>" + escape_html(next_day_operation_data["operation_number"]) + "</b>" + escape_html(next_day_operation_data["formations"]) + "</div>";
+                                }
+                                
+                                if (buf_2.length >= 1) {
+                                    buf += "<div class='next_day_operation_data' style='display: " + (show_next_day_operation_data ? "block" : "none") + ";'><h5>翌日</h5>" + buf_2 + "</div>";
+                                }
+                            }
+                        }
                     } else {
                         buf += "<div class='descriptive_text'>情報がありません</div>";
                     }
@@ -1947,10 +2003,39 @@ function get_operation_data_history (formation_name, operation_number, yyyy_mm =
                     }
                 }
                 
+                buf += "<br><div class='informational_text'>運用遷移情報は昨日以前のもののみご確認いただけます。</div>";
+                
                 popup_inner_elm.innerHTML = buf;
             }
         });
     });
+}
+
+function change_show_previous_day_operation_data (bool_val) {
+    show_previous_day_operation_data = bool_val;
+    
+    for (var data_area_elm of document.getElementById("data_history_popup_inner").getElementsByClassName("previous_day_operation_data")) {
+        data_area_elm.style.display = bool_val ? "block" : "none";
+    }
+}
+
+function change_show_same_day_operation_data (bool_val) {
+    show_same_day_operation_data = bool_val;
+    
+    for (var data_area_elm of document.getElementById("data_history_popup_inner").getElementsByClassName("former_operation_data")) {
+        data_area_elm.style.display = bool_val ? "block" : "none";
+    }
+    for (var data_area_elm of document.getElementById("data_history_popup_inner").getElementsByClassName("latter_operation_data")) {
+        data_area_elm.style.display = bool_val ? "block" : "none";
+    }
+}
+
+function change_show_next_day_operation_data (bool_val) {
+    show_next_day_operation_data = bool_val;
+    
+    for (var data_area_elm of document.getElementById("data_history_popup_inner").getElementsByClassName("next_day_operation_data")) {
+        data_area_elm.style.display = bool_val ? "block" : "none";
+    }
 }
 
 
