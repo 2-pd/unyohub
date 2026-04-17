@@ -2805,7 +2805,7 @@ input[type="checkbox"] + label.operation_table_drop_down {
     }
 }
 
-.two_headed_arrow {
+.two_headed_arrow, :is(.previous_day_operation_data, .former_operation_data):after, :is(.latter_operation_data, .next_day_operation_data):before {
     display: block;
     
     position: absolute;
