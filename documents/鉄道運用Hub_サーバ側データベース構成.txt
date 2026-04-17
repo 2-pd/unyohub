@@ -10,7 +10,7 @@ _/_/_/_/ データベース _/_/_/_/
 
 `unyohub_formations` 編成データ
   `formation_name` TEXT NOT NULL PRIMARY KEY 編成名
-  `currently_registered` INTEGER NOT NULL 現時点で在籍中の編成か否か(在籍中の場合は1、除籍済みの場合は0)
+  `currently_registered` INTEGER NOT NULL 現時点で在籍中の編成か否か(在籍中の編成では1、除籍済みの編成や編成表から除外された編成では0)
   `series_name` TEXT NOT NULL 車両形式
   `subseries_name` TEXT 番台名等(番台等がない場合はNULL)
   `prefix` TEXT 電算記号等(電算記号やそれに類するものがない場合はNULL)
@@ -149,7 +149,7 @@ _/_/_/_/ データベース _/_/_/_/
   `assign_order` INTEGER NOT NULL 当該運用に何番目に充当された編成の情報か(1から始まり、差し替えのたびに1ずつ増える)
   `user_id` TEXT NOT NULL 投稿者ID(未登録ユーザーの場合、クライアント端末が生成するランダムな英数字12文字の頭に「*」を付加した文字列を記録する。公開APIから自動取得された情報の場合は「#」となる)
   `train_number` TEXT 目撃時の列車番号または「○」(出庫時)、「△」(入庫時)、NULL(引用情報の場合)
-  `formations` TEXT NOT NULL 充当組成(複数編成併結による運用の場合も「+」で区切って1レコードに格納)
+  `formations` TEXT 充当組成(複数編成併結による運用の場合も「+」で区切って1レコードに格納、運休の場合はNULL)
   `is_quotation` INTEGER NOT NULL 引用情報か否か
   `posted_datetime` TEXT NOT NULL 「YYYY-MM-DD HH:MM:SS」形式の情報投稿日時
   `comment` TEXT 運用補足情報(コメント)
@@ -161,22 +161,32 @@ _/_/_/_/ データベース _/_/_/_/
   INDEX `unyohub_idx_d3`(`ip_address`, `posted_datetime`)
 
 
-`unyohub_data_caches` 運用データ概要キャッシュ
+`unyohub_assigned_formation_caches` 充当編成キャッシュ
   `operation_date` TEXT NOT NULL 「YYYY-MM-DD」形式の日付
   `operation_number` TEXT NOT NULL 運用番号(アルファベットなどを含む場合があるため文字列型)
-  `assign_order` INTEGER NOT NULL 当該運用に何番目に充当された編成の情報か(1から始まり、差し替えのたびに1ずつ増える。前日運用からの予測や削除済みの場合は0)
-  `formations` TEXT 充当組成(最も新しい投稿の情報を格納、複数編成併結による運用の場合も「+」で区切って1レコードに格納、運休の場合は空文字列、削除済みの場合はNULL)
-  `posts_count` INTEGER 投稿の個数(前日運用からの推測データの場合は「0」)
-  `variant_exists` INTEGER 投稿情報に異なる情報が存在するかどうか
-  `comment_exists` INTEGER 運用補足情報の有無
-  `from_beginner` INTEGER ビギナーの投稿か否か
-  `is_quotation` INTEGER 引用情報か否か
+  `assign_order` INTEGER NOT NULL 当該運用に何番目に充当された編成の情報か(1から始まり、差し替えのたびに1ずつ増える。前日運用からの予測の場合は0)
+  `formations` TEXT 充当組成(最も新しい投稿の情報を格納、複数編成併結による運用の場合も「+」で区切って1レコードに格納、運休の場合はNULL)
   `updated_datetime` TEXT NOT NULL 「YYYY-MM-DD HH:MM:SS」形式の情報更新日時(同一日の同一運用番号のレコードは全て同じ更新日時とする)
-  `confirmed_train_final_arrival_time` TEXT 最終確認時の列車の終着時刻(HH:MM形式、最終確認が出庫前の場合はNULL)
 
   PRIMARY KEY(`operation_date`, `operation_number`, `assign_order`)
-  INDEX `unyohub_idx_dc1`(`operation_date`, `updated_datetime`, `operation_number`, `assign_order`)
-  INDEX `unyohub_idx_dc2`(`operation_number`, `operation_date`, `assign_order`)
+  INDEX `unyohub_idx_af1`(`operation_date`, `updated_datetime`, `operation_number`, `assign_order`)
+  INDEX `unyohub_idx_af2`(`operation_number`, `operation_date`, `assign_order`)
+
+
+`unyohub_metadata_caches` 運用データ付帯情報キャッシュ
+  `operation_date` TEXT NOT NULL 「YYYY-MM-DD」形式の日付
+  `operation_number` TEXT NOT NULL 運用番号(アルファベットなどを含む場合があるため文字列型)
+  `posts_count` INTEGER 投稿の個数(前日運用からの推測データの場合は「0」、投稿が全て取り消された場合はNULL)
+  `variant_exists` INTEGER 投稿情報に異なる情報が存在するかどうか(前日運用からの推測データの場合と投稿が全て取り消された場合ではNULL)
+  `comment_exists` INTEGER 運用補足情報の有無(前日運用からの推測データの場合と投稿が全て取り消された場合ではNULL)
+  `from_beginner` INTEGER ビギナーの投稿か否か(投稿が全て取り消された場合はNULL)
+  `is_quotation` INTEGER 引用情報か否か(前日運用からの推測データの場合と投稿が全て取り消された場合ではNULL)
+  `updated_datetime` TEXT NOT NULL 「YYYY-MM-DD HH:MM:SS」形式の情報更新日時(unyohub_assigned_formation_cachesに存在する同一日・同一運用番号のレコードと同一値を設定)
+  `confirmed_train_final_arrival_time` TEXT 最終確認時の列車の終着時刻(HH:MM形式、最終確認が出庫前の場合はNULL)
+
+  PRIMARY KEY(`operation_date`, `operation_number`)
+  INDEX `unyohub_idx_mc1`(`operation_date`, `updated_datetime`, `operation_number`)
+  INDEX `unyohub_idx_mc2`(`operation_number`, `operation_date`)
 
 
 `unyohub_data_each_formation` 編成別運用データキャッシュ
@@ -190,18 +200,26 @@ _/_/_/_/ データベース _/_/_/_/
 
 `unyohub_transition_data_caches_same_day` 当日運用遷移データキャッシュ
   `operation_date` TEXT NOT NULL 「YYYY-MM-DD」形式の日付
+  `former_operation_number` TEXT NOT NULL 前の運用番号(アルファベットなどを含む場合があるため文字列型)
+  `former_formations` TEXT 前の運用時点での組成(差し替えがあった場合は差し替え完了後のもののみ記録、複数編成併結の場合は「+」で区切って1レコードに格納)
   `operation_number` TEXT NOT NULL 運用番号(アルファベットなどを含む場合があるため文字列型)
-  `later_operation_number` TEXT NOT NULL 後の運用番号(アルファベットなどを含む場合があるため文字列型)
+  `formations` TEXT 充当組成(差し替えがあった場合は差し替え前のもののみ記録、複数編成併結の場合は「+」で区切って1レコードに格納)
 
-  PRIMARY KEY(`operation_date`, `operation_number`, `later_operation_number`)
+  PRIMARY KEY(`operation_date`, `operation_number`, `former_operation_number`)
+  INDEX `unyohub_idx_ts1`(`operation_number`, `operation_date`, `former_operation_number`)
+  INDEX `unyohub_idx_ts2`(`former_operation_number`, `operation_date`, `operation_number`)
 
 
 `unyohub_transition_data_caches_from_previous_day` 前日からの運用遷移データキャッシュ
   `operation_date` TEXT NOT NULL 当日の「YYYY-MM-DD」形式の日付
   `previous_day_operation_number` TEXT NOT NULL 前日の運用番号(アルファベットなどを含む場合があるため文字列型)
+  `previous_day_formations` TEXT 前日時点での組成(差し替えがあった場合は差し替え完了後のもののみ記録、複数編成併結の場合は「+」で区切って1レコードに格納)
   `operation_number` TEXT NOT NULL 当日の運用番号(アルファベットなどを含む場合があるため文字列型)
+  `formations` TEXT 当日の充当組成(差し替えがあった場合は差し替え前のもののみ記録、複数編成併結の場合は「+」で区切って1レコードに格納)
 
   PRIMARY KEY(`operation_date`, `operation_number`, `previous_day_operation_number`)
+  INDEX `unyohub_idx_tp1`(`operation_number`, `operation_date`, `previous_day_operation_number`)
+  INDEX `unyohub_idx_tp2`(`previous_day_operation_number`, `operation_date`, `operation_number`)
 
 
 ███ announcements.db ███
@@ -243,7 +261,7 @@ _/_/_/_/ データベース _/_/_/_/
   `operation_date` TEXT NOT NULL 「YYYY-MM-DD」形式の日付
   `operation_number` TEXT NOT NULL 運用番号(アルファベットなどを含む場合があるため文字列型)
   `user_id` TEXT NOT NULL 投稿者ID(未登録ユーザーの場合、クライアント端末が生成する12桁の乱数値の頭に「*」を付加した文字列を記録する)
-  `formations` TEXT NOT NULL 充当組成(複数編成併結による運用の場合も「+」で区切って1レコードに格納)
+  `formations` TEXT 充当組成(複数編成併結による運用の場合も「+」で区切って1レコードに格納、運休の場合はNULL)
   `posted_datetime` TEXT NOT NULL 「YYYY-MM-DD HH:MM:SS」形式の情報投稿日時
   `comment` TEXT 運用補足情報(コメント)
   `ip_address` TEXT 投稿者のIPアドレス(IPアドレスを記録しない設定の場合はNULL)

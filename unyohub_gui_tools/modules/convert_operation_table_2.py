@@ -6,26 +6,6 @@ import json
 import re
 
 
-def get_lines_and_station(mes, railroad_info, station_initial, cnt, cnt_2):
-    line_list = []
-    
-    if "joined_lines_order" in railroad_info:
-        lines = railroad_info["lines_order"] + railroad_info["joined_lines_order"]
-    else:
-        lines = railroad_info["lines_order"]
-    
-    for line in lines:
-        for station in railroad_info["lines"][line]["stations"]:
-            if "station_initial" in station and station["station_initial"] == station_initial:
-                line_list.append(line)
-                station_name = station["station_name"]
-    
-    if len(line_list) == 0:
-        mes("「" + station_initial + "」に一致する駅がありません: " + str(cnt + 1) + "行目 " + str(cnt_2 + 1) + "列目", True)
-    
-    return line_list, station_name
-
-
 def split_station_name_and_track(station_name):
     if ":" in station_name:
         station_name_and_track = station_name.split(":")
@@ -61,11 +41,20 @@ def convert_operation_table_2 (mes, main_dir, file_name):
     if "joined_lines_order" in railroad_info:
         lines += railroad_info["joined_lines_order"]
     
+    station_initial_info = {}
     station_list = {}
     for line in lines:
         station_list[line] = []
         
         for station in railroad_info["lines"][line]["stations"]:
+            if "station_initial" in station:
+                if station["station_initial"] not in station_initial_info:
+                    station_initial_info[station["station_initial"]] = { "station_name" : station["station_name"], "line_set" : set() }
+                elif station["station_name"] != station_initial_info[station["station_initial"]]["station_name"]:
+                     mes("同一の1文字表記「" + station["station_initial"] + "」が異なる複数の駅に設定されています", True)
+                
+                station_initial_info[station["station_initial"]]["line_set"].add(line)
+            
             station_list[line].append(station["station_name"])
     
     mes(os.path.basename(file_name) + " を読み込んでいます...")
@@ -132,7 +121,7 @@ def convert_operation_table_2 (mes, main_dir, file_name):
             
             cnt += 1
         else:
-            if operation_number[0] == "@":
+            if operation_number.startswith("@"):
                 operation_number = correct_train_number(operation_number[1:].strip())
                 hidden_by_default = True
             else:
@@ -283,17 +272,28 @@ def convert_operation_table_2 (mes, main_dir, file_name):
                             position_forward = 1
                             position_rear = car_count
                         
-                        if train_number[0:1] == "?":
+                        if train_number.startswith("?"):
                             train_number = train_number[1:] + "__" + str(id_cnt)
                             id_cnt += 1
                         
-                        starting_line_list, starting_station = get_lines_and_station(mes, railroad_info, operation_data[cnt + 1][cnt_2][0:1], cnt, cnt_2)
-                        terminal_line_list, terminal_station = get_lines_and_station(mes, railroad_info, operation_data[cnt + 2][cnt_2][0:1], cnt, cnt_2)
+                        starting_station_initial = operation_data[cnt + 1][cnt_2][0]
+                        if starting_station_initial in station_initial_info:
+                            starting_station = station_initial_info[starting_station_initial]["station_name"]
+                            starting_line_set = station_initial_info[starting_station_initial]["line_set"]
+                        else:
+                            mes("「" + starting_station_initial + "」に一致する駅がありません: " + str(cnt + 2) + "行目 " + str(cnt_2 + 1) + "列目", True)
                         
-                        if len(operations[operation_number]["trains"]) >= 1 and operations[operation_number]["trains"][-1]["train_number"][0:1] != "." and operations[operation_number]["trains"][-1]["terminal_station"] != starting_station:
+                        terminal_station_initial = operation_data[cnt + 2][cnt_2][0]
+                        if terminal_station_initial in station_initial_info:
+                            terminal_station = station_initial_info[terminal_station_initial]["station_name"]
+                            terminal_line_set = station_initial_info[terminal_station_initial]["line_set"]
+                        else:
+                            mes("「" + terminal_station_initial + "」に一致する駅がありません: " + str(cnt + 3) + "行目 " + str(cnt_2 + 1) + "列目", True)
+                        
+                        if len(operations[operation_number]["trains"]) >= 1 and (not operations[operation_number]["trains"][-1]["train_number"].startswith(".")) and operations[operation_number]["trains"][-1]["terminal_station"] != starting_station:
                             mes("・" + train_number + " の始発駅が前の列車の終着駅と一致しません: " + str(cnt + 1) + "行目 " + str(cnt_2 + 1) + "列目")
                         
-                        line_list = list(set(starting_line_list) & set(terminal_line_list))
+                        line_list = list(starting_line_set & terminal_line_set)
                         
                         first_departure_time = operation_data[cnt + 1][cnt_2][1:].strip()
                         final_arrival_time = operation_data[cnt + 2][cnt_2][1:].strip()
@@ -310,7 +310,7 @@ def convert_operation_table_2 (mes, main_dir, file_name):
                             mes(train_number + " の走行範囲が複数の路線に跨っています: " + str(cnt + 1) + "行目 " + str(cnt_2 + 1) + "列目", True)
                             error_occurred = True
                             
-                            line_list = starting_line_list
+                            line_list = list(starting_line_set)
                             direction = "?"
                         else:
                             if (station_list[line_list[0]].index(starting_station) > station_list[line_list[0]].index(terminal_station)):

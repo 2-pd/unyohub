@@ -55,9 +55,9 @@ if ($ts > $ts_now + (86400 * $main_config["available_days_ahead"]) - 14400) {
 }
 
 
-update_diagram_revision($ts);
+update_diagram_revision($_GET["date"]);
 
-$operation_data = get_operation_info($ts, $_GET["operation_number"], TRUE);
+$operation_data = get_operation_info(get_diagram_id($ts), $_GET["operation_number"], TRUE);
 
 if (empty($operation_data)) {
     goto footer;
@@ -70,7 +70,7 @@ if (!is_null($operation_data["starting_time"])) {
 }
 
 
-$assign_order_maxima = $db_obj->querySingle("SELECT `assign_order` FROM `unyohub_data_caches` WHERE `operation_date` = '".$db_obj->escapeString($_GET["date"])."' AND `operation_number` = '".$db_obj->escapeString($_GET["operation_number"])."' ORDER BY `assign_order` DESC LIMIT 1");
+$assign_order_maxima = $db_obj->querySingle("SELECT `assign_order` FROM `unyohub_assigned_formation_caches` WHERE `operation_date` = '".$db_obj->escapeString($_GET["date"])."' AND `operation_number` = '".$db_obj->escapeString($_GET["operation_number"])."' ORDER BY `assign_order` DESC LIMIT 1");
 if (empty($assign_order_maxima)) {
     $assign_order_maxima = 0;
 }
@@ -100,7 +100,6 @@ if ($assign_order_maxima >= 1) {
 }
 ?>
                 
-                <div id="train_number_data">
                 <h3>目撃時の列車</h3>
 <?php
 $train_number = empty($_GET["train_number"]) ? NULL : $_GET["train_number"];
@@ -125,7 +124,6 @@ print "<option value=\"△\"".("△" === $train_number || (is_null($train_number
 
 print "</select>\n";
 ?>
-                </div>
                 
                 <h3>運用補足情報</h3>
                 <div class="textarea_wrapper"><div id="operation_data_comment_background"></div><textarea id="operation_data_comment" onscroll="scroll_textarea_background(this, document.getElementById('operation_data_comment_background'));" onkeyup="update_textarea_background(this, document.getElementById('operation_data_comment_background'), comment_character_limit);"></textarea></div>
@@ -206,17 +204,9 @@ print "        var comment_character_limit = ".$main_config["comment_character_l
                 return;
             }
             
-            if (document.getElementById("identify_method_quote").checked) {
-                var train_number = null;
-                var is_quotation = true;
-            } else {
-                var train_number = document.getElementById("train_number_select").value;
-                var is_quotation = false;
-            }
-            
             var url_obj = new URL(location.href);
             
-            check_post_operation_data (url_obj.searchParams.get("railroad_id"), url_obj.searchParams.get("date"), url_obj.searchParams.get("operation_number"), assign_order, document.getElementById("operation_data_formation").value, train_number, is_quotation, comment_text);
+            check_post_operation_data (url_obj.searchParams.get("railroad_id"), url_obj.searchParams.get("date"), url_obj.searchParams.get("operation_number"), assign_order, document.getElementById("operation_data_formation").value, document.getElementById("train_number_select").value, document.getElementById("identify_method_quote").checked, comment_text);
         }
         
         window.addEventListener("load", function () { check_logged_in(update_user_data, on_guest_mode, function () {  document.getElementById("login_status").innerHTML = "ログイン状態の確認に失敗しました"; }); });

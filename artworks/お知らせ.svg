@@ -30,8 +30,8 @@
      showgrid="false"
      units="px"
      inkscape:zoom="8"
-     inkscape:cx="37.1875"
-     inkscape:cy="36.5"
+     inkscape:cx="35.1875"
+     inkscape:cy="36.375"
      inkscape:window-width="1920"
      inkscape:window-height="1052"
      inkscape:window-x="1920"
@@ -43,7 +43,14 @@
      showguides="true"
      inkscape:lockguides="true">
     <sodipodi:guide
-       position="0,10.054167"
+       position="0,8.4666667"
+       orientation="0,1"
+       id="guide1"
+       inkscape:locked="true"
+       inkscape:label=""
+       inkscape:color="rgb(0,134,229)" />
+    <sodipodi:guide
+       position="0,7.4083333"
        orientation="0,1"
        id="guide2"
        inkscape:locked="true"
@@ -51,34 +58,55 @@
        inkscape:color="rgb(0,134,229)" />
   </sodipodi:namedview>
   <defs
-     id="defs2" />
+     id="defs2">
+    <inkscape:path-effect
+       effect="fillet_chamfer"
+       id="path-effect1"
+       is_visible="true"
+       lpeversion="1"
+       nodesatellites_param="F,0,0,1,0,0,0,1 @ F,0,0,1,0,4.7625,0,1 @ F,0,0,1,0,4.7625,0,1 @ F,0,0,1,0,0,0,1 @ F,0,0,1,0,0,0,1 @ F,0,1,1,0,3.4395833,0,1 @ F,0,1,1,0,3.4395833,0,1 @ F,0,0,1,0,0,0,1"
+       radius="13"
+       unit="px"
+       method="auto"
+       mode="F"
+       chamfer_steps="1"
+       flexible="false"
+       use_knot_distance="true"
+       apply_no_radius="true"
+       apply_with_radius="true"
+       only_selected="true"
+       hide_knots="false" />
+  </defs>
   <g
      inkscape:label="レイヤー 1"
      inkscape:groupmode="layer"
      id="layer1">
     <path
        id="path1"
-       style="fill:#ffffff;stroke-width:1.32292;stroke-linecap:square;stroke-opacity:0.4;paint-order:stroke markers fill"
-       d="m 17.4625,13.758333 c 0,0 -1.5875,-4.7625 -1.5875,-7.408333 C 15.875,2.8429918 13.032008,-5.5228476e-8 9.525,0 6.0179918,-5.5228477e-8 3.1750002,2.8429918 3.175,6.35 c -10e-8,2.645833 -1.5874999,7.408333 -1.5874999,7.408333 h 1.8520832 c 0,0 1.3229166,-4.7625 1.3229167,-7.408333 10e-8,-2.630256 2.1322438,-4.7624998 4.7625,-4.7625 2.630256,2e-7 4.7625,2.132244 4.7625,4.7625 0,2.645833 1.322916,7.408333 1.322916,7.408333 z"
-       sodipodi:nodetypes="csssccssscc" />
+       style="fill:#ffffff;paint-order:stroke markers fill"
+       d="m 17.4625,14.022917 c 0,0 -1.822729,-2.005003 -2.442445,-8.7381772 C 14.779118,2.6669728 12.684423,0.52916667 10.054167,0.52916667 H 8.9958333 c -2.6302561,0 -4.7249316,2.13822213 -4.9659725,4.75648933 -0.6197965,6.73244 -2.4423607,8.737261 -2.4423607,8.737261 H 3.175 c 0,0 1.7666567,-2.857413 2.1767813,-8.7338764 C 5.4839649,3.39505 6.9639123,1.8520833 8.8635417,1.8520833 h 1.3229163 c 1.899629,0 3.420746,1.5432736 3.578674,3.4357773 0.49045,5.8772614 2.109868,8.7350564 2.109868,8.7350564 z"
+       sodipodi:nodetypes="ccccccccc"
+       inkscape:path-effect="#path-effect1"
+       inkscape:original-d="m 17.4625,14.022917 c 0,0 -2.645833,-2.910417 -2.645833,-13.49375033 H 4.2333333 C 4.2333333,11.1125 1.5875001,14.022917 1.5875001,14.022917 H 3.175 c 0,0 2.4537646,-3.96875 2.2489584,-12.1708337 h 8.2020826 c 0,8.2020837 2.248959,12.1708337 2.248959,12.1708337 z"
+       transform="translate(0,0.52916666)" />
     <rect
-       style="fill:#ffffff;fill-opacity:1;stroke-width:2.64583;stroke-linecap:round;stroke-linejoin:round;paint-order:stroke fill markers"
+       style="fill:#ffffff;stroke-width:1;paint-order:stroke fill markers"
        id="rect1"
        width="15.875"
-       height="1.5875001"
+       height="1.3229166"
        x="1.5875001"
-       y="13.758333" />
+       y="14.552083" />
     <path
        id="path2"
-       style="fill:#ffffff;fill-opacity:1;stroke-width:2.64583;stroke-linecap:round;stroke-linejoin:round;paint-order:stroke fill markers"
-       d="M 6.35 15.875 A 3.175 3.175 0 0 0 9.525 19.05 A 3.175 3.175 0 0 0 12.7 15.875 L 11.1125 15.875 A 1.5875 1.5875 0 0 1 9.525 17.4625 A 1.5875 1.5875 0 0 1 7.9375 15.875 L 6.35 15.875 z " />
+       style="fill:#ffffff;paint-order:stroke fill markers"
+       d="m 6.35,15.345833 a 3.175,3.175 0 0 0 3.175,3.175 3.175,3.175 0 0 0 3.175,-3.175 H 11.377083 A 1.8520833,1.8520833 0 0 1 9.525,17.197917 1.8520833,1.8520833 0 0 1 7.6729167,15.345833 Z" />
     <rect
-       style="fill:#ffffff;fill-opacity:1;stroke-width:1.32292;stroke-linecap:square;stroke-opacity:0.4;paint-order:stroke markers fill"
+       style="fill:#ffffff;stroke-width:1;paint-order:stroke markers fill"
        id="rect2"
-       width="8.9958334"
-       height="1.5875"
-       x="6.3500004"
-       y="10.31875" />
+       width="11.1125"
+       height="1.3229166"
+       x="3.96875"
+       y="10.583333" />
   </g>
   <metadata
      id="metadata824">

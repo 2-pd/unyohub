@@ -7,7 +7,7 @@
    viewBox="0 0 15.875 15.875"
    version="1.1"
    id="svg5"
-   inkscape:version="1.4 (e7c3feb100, 2024-10-09)"
+   inkscape:version="1.4.3 (0d15f75042, 2025-12-25)"
    sodipodi:docname="ファイルアイコン.svg"
    inkscape:export-filename="ファイルアイコン.webp"
    inkscape:export-xdpi="96"
@@ -30,7 +30,7 @@
      showgrid="false"
      units="px"
      inkscape:zoom="8.2445002"
-     inkscape:cx="29.595487"
+     inkscape:cx="29.656134"
      inkscape:cy="23.166959"
      inkscape:window-width="1920"
      inkscape:window-height="1052"
@@ -48,7 +48,7 @@
      id="layer1">
     <path
        id="path1"
-       style="fill:#cccccc;fill-opacity:1;stroke-width:0.661458;stroke-linecap:round;stroke-linejoin:round;paint-order:stroke fill markers"
+       style="fill:#eeeeee;fill-opacity:1;stroke-width:0.661458;stroke-linecap:round;stroke-linejoin:round;paint-order:stroke fill markers"
        d="m 1.8520833,3.175 v 12.7 H 11.1125 V 5.8208333 L 8.4666667,3.175 Z m 0.79375,0.79375 H 7.9375 V 6.35 h 2.38125 v 8.73125 H 2.6458333 Z"
        sodipodi:nodetypes="ccccccccccccc" />
     <path

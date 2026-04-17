@@ -72,19 +72,34 @@ def initialize_db (mes, main_dir):
     cur.execute("CREATE TABLE IF NOT EXISTS `unyohub_operation_logs`(`operation_date` TEXT NOT NULL, `trip_id` TEXT NOT NULL, `vehicle_id` TEXT NOT NULL, PRIMARY KEY(`operation_date`, `trip_id`))")
     
     mes("テーブル「unyohub_data」を作成しています...")
-    cur.execute("CREATE TABLE IF NOT EXISTS `unyohub_data`(`operation_date` TEXT NOT NULL, `operation_number` TEXT NOT NULL, `assign_order` INTEGER NOT NULL, `user_id` TEXT NOT NULL, `train_number` TEXT, `formations` TEXT NOT NULL, `is_quotation` INTEGER NOT NULL, `posted_datetime` TEXT NOT NULL, `comment` TEXT, `ip_address` TEXT, PRIMARY KEY(`operation_date`, `operation_number`, `assign_order`, `user_id`))")
+    cur.execute("CREATE TABLE IF NOT EXISTS `unyohub_data`(`operation_date` TEXT NOT NULL, `operation_number` TEXT NOT NULL, `assign_order` INTEGER NOT NULL, `user_id` TEXT NOT NULL, `train_number` TEXT, `formations` TEXT, `is_quotation` INTEGER NOT NULL, `posted_datetime` TEXT NOT NULL, `comment` TEXT, `ip_address` TEXT, PRIMARY KEY(`operation_date`, `operation_number`, `assign_order`, `user_id`))")
     cur.execute("CREATE INDEX IF NOT EXISTS `unyohub_idx_d1` ON `unyohub_data`(`user_id`, `posted_datetime`)")
     cur.execute("CREATE INDEX IF NOT EXISTS `unyohub_idx_d2` ON `unyohub_data`(`operation_date`, `operation_number`, `assign_order`, `posted_datetime`)")
     cur.execute("CREATE INDEX IF NOT EXISTS `unyohub_idx_d3` ON `unyohub_data`(`ip_address`, `posted_datetime`)")
     
-    mes("テーブル「unyohub_data_caches」を作成しています...")
-    cur.execute("CREATE TABLE IF NOT EXISTS `unyohub_data_caches`(`operation_date` TEXT NOT NULL, `operation_number` TEXT NOT NULL, `assign_order` INTEGER NOT NULL, `formations` TEXT, `posts_count` INTEGER, `variant_exists` INTEGER, `comment_exists` INTEGER, `from_beginner` INTEGER, `is_quotation` INTEGER, `updated_datetime` TEXT NOT NULL, `confirmed_train_final_arrival_time` TEXT, PRIMARY KEY(`operation_date`, `operation_number`, `assign_order`))")
-    cur.execute("CREATE INDEX IF NOT EXISTS `unyohub_idx_dc1` ON `unyohub_data_caches`(`operation_date`, `updated_datetime`, `operation_number`, `assign_order`)")
-    cur.execute("CREATE INDEX IF NOT EXISTS `unyohub_idx_dc2` ON `unyohub_data_caches`(`operation_number`, `operation_date`, `assign_order`)")
+    mes("テーブル「unyohub_assigned_formation_caches」を作成しています...")
+    cur.execute("CREATE TABLE IF NOT EXISTS `unyohub_assigned_formation_caches`(`operation_date` TEXT NOT NULL, `operation_number` TEXT NOT NULL, `assign_order` INTEGER NOT NULL, `formations` TEXT, `updated_datetime` TEXT NOT NULL, PRIMARY KEY(`operation_date`, `operation_number`, `assign_order`))")
+    cur.execute("CREATE INDEX IF NOT EXISTS `unyohub_idx_af1` ON `unyohub_assigned_formation_caches`(`operation_date`, `updated_datetime`, `operation_number`, `assign_order`)")
+    cur.execute("CREATE INDEX IF NOT EXISTS `unyohub_idx_af2` ON `unyohub_assigned_formation_caches`(`operation_number`, `operation_date`, `assign_order`)")
+    
+    mes("テーブル「unyohub_metadata_caches」を作成しています...")
+    cur.execute("CREATE TABLE IF NOT EXISTS `unyohub_metadata_caches`(`operation_date` TEXT NOT NULL, `operation_number` TEXT NOT NULL, `posts_count` INTEGER, `variant_exists` INTEGER, `comment_exists` INTEGER, `from_beginner` INTEGER, `is_quotation` INTEGER, `updated_datetime` TEXT NOT NULL, `confirmed_train_final_arrival_time` TEXT, PRIMARY KEY(`operation_date`, `operation_number`))")
+    cur.execute("CREATE INDEX IF NOT EXISTS `unyohub_idx_mc1` ON `unyohub_metadata_caches`(`operation_date`, `updated_datetime`, `operation_number`)")
+    cur.execute("CREATE INDEX IF NOT EXISTS `unyohub_idx_mc2` ON `unyohub_metadata_caches`(`operation_number`, `operation_date`)")
     
     mes("テーブル「unyohub_data_each_formation」を作成しています...")
     cur.execute("CREATE TABLE IF NOT EXISTS `unyohub_data_each_formation`(`formation_name` TEXT NOT NULL, `operation_date` TEXT NOT NULL, `operation_number` TEXT NOT NULL, PRIMARY KEY(`formation_name`, `operation_date`, `operation_number`))")
     cur.execute("CREATE INDEX IF NOT EXISTS `unyohub_idx_df1` ON `unyohub_data_each_formation`(`operation_date`, `operation_number`)")
+    
+    mes("テーブル「unyohub_transition_data_caches_same_day」を作成しています...")
+    cur.execute("CREATE TABLE IF NOT EXISTS `unyohub_transition_data_caches_same_day`(`operation_date` TEXT NOT NULL, `former_operation_number` TEXT NOT NULL, `former_formations` TEXT, `operation_number` TEXT NOT NULL, `formations` TEXT, PRIMARY KEY(`operation_date`, `operation_number`, `former_operation_number`))")
+    cur.execute("CREATE INDEX IF NOT EXISTS `unyohub_idx_ts1` ON `unyohub_transition_data_caches_same_day`(`operation_number`, `operation_date`, `former_operation_number`)")
+    cur.execute("CREATE INDEX IF NOT EXISTS `unyohub_idx_ts2` ON `unyohub_transition_data_caches_same_day`(`former_operation_number`, `operation_date`, `operation_number`)")
+    
+    mes("テーブル「unyohub_transition_data_caches_from_previous_day」を作成しています...")
+    cur.execute("CREATE TABLE IF NOT EXISTS `unyohub_transition_data_caches_from_previous_day`(`operation_date` TEXT NOT NULL, `previous_day_operation_number` TEXT NOT NULL, `previous_day_formations` TEXT, `operation_number` TEXT NOT NULL, `formations` TEXT, PRIMARY KEY(`operation_date`, `operation_number`, `previous_day_operation_number`))")
+    cur.execute("CREATE INDEX IF NOT EXISTS `unyohub_idx_tp1` ON `unyohub_transition_data_caches_from_previous_day`(`operation_number`, `operation_date`, `previous_day_operation_number`)")
+    cur.execute("CREATE INDEX IF NOT EXISTS `unyohub_idx_tp2` ON `unyohub_transition_data_caches_from_previous_day`(`previous_day_operation_number`, `operation_date`, `operation_number`)")
     
     mes("変更を保存しています...")
     conn.commit()

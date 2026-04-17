@@ -51,6 +51,15 @@ $data_cache_values = revoke_post($ts, $_POST["operation_number"], $_POST["assign
 $db_obj->query("COMMIT");
 
 if (!empty($data_cache_values)) {
+    if (is_null($data_cache_values["formations"])) {
+        $data_cache_values["formations"] = "";
+    }
+    if (isset($data_cache_values["relieved_formations"])) {
+        $data_cache_values["relieved_formations"] = array_map(function ($data_item) {
+            return is_null($data_item) ? "" : $data_item;
+        }, $data_cache_values["relieved_formations"]);
+    }
+    
     if (!$data_cache_values["variant_exists"]) {
         unset($data_cache_values["variant_exists"]);
     }
