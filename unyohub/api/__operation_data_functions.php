@@ -384,14 +384,9 @@ function update_data_cache ($operation_date, $operation_number, $updated_datetim
         if (!empty($post_data)) {
             if ($assign_order !== $post_data["assign_order"]) {
                 $assign_order = $post_data["assign_order"];
-                
                 $corrected_formations = $post_data["formations"];
                 
-                if (isset($corrected_formation_info[$assign_order])) {
-                    $formation_info = $corrected_formation_info[$assign_order];
-                } else {
-                    $formation_info = get_formation_info($corrected_formations);
-                }
+                $formation_info = isset($corrected_formation_info[$assign_order]) ? $corrected_formation_info[$assign_order] : get_formation_info($post_data["formations"]);
                 
                 if ($posts_count === 0) {
                     $formation_list = $formation_info["formation_list"];
@@ -405,7 +400,7 @@ function update_data_cache ($operation_date, $operation_number, $updated_datetim
                 }
                 
                 $db_obj->query("INSERT INTO `unyohub_assigned_formation_caches` (`operation_date`, `operation_number`, `assign_order`, `formations`, `updated_datetime`) VALUES ('".$operation_date."', '".$operation_number."', ".$assign_order.", ".(empty($corrected_formations) ? "NULL" : "'".$db_obj->escapeString($corrected_formations)."'").", '".$updated_datetime."')");
-            } elseif ($assign_order === $assign_order_max && $corrected_formations !== $post_data["formations"]) {
+            } elseif ($assign_order === $assign_order_max && !$post_data["is_quotation"] && !in_array($post_data["formations"], $formation_info["formation_pattern"])) {
                 $variant_exists = TRUE;
             }
         }
