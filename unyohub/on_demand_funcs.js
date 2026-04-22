@@ -115,7 +115,13 @@ function open_popup (id, title = null, allow_screenshot = false) {
         menu_click(true);
     }
     
-    history.pushState(null, "", location.pathname + "#" + id);
+    if (history_back_promise instanceof Promise) {
+        history_back_promise.then(function () {
+            history.pushState(null, "", location.pathname + "#" + id);
+        });
+    } else {
+        history.pushState(null, "", location.pathname + "#" + id);
+    }
     
     return document.getElementById(id + "_inner");
 }
@@ -138,7 +144,13 @@ function popup_close (close_all = false, update_url = true) {
     }
     
     if (close_all && popup_history.length >= 1) {
-        popup_close(true);
+        if (history_back_promise instanceof Promise) {
+            history_back_promise.then(function () {
+                popup_close(true);
+            });
+        } else {
+            popup_close(true);
+        }
     }
 }
 
@@ -186,7 +198,13 @@ function open_square_popup (id, is_oblong_popup = false, title = null, allow_scr
     popup_history.push(id);
     square_popup_is_open = true;
     
-    history.pushState(null, "", location.pathname + "#" + id);
+    if (history_back_promise instanceof Promise) {
+        history_back_promise.then(function () {
+            history.pushState(null, "", location.pathname + "#" + id);
+        });
+    } else {
+        history.pushState(null, "", location.pathname + "#" + id);
+    }
     
     return document.getElementById(id + "_inner");
 }
