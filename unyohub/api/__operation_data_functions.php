@@ -436,7 +436,7 @@ function update_data_cache ($operation_date, $operation_number, $updated_datetim
     return $data_cache_values;
 }
 
-function update_next_day_data ($today_ts, $starting_location, $starting_track, $formations, $updated_datetime, $formation_list = NULL, $from_beginner = NULL) {
+function update_next_day_data ($today_ts, $starting_location, $starting_track, $formations, $updated_datetime, $formation_list = NULL) {
     global $db_obj;
     global $diagram_revision;
     
@@ -458,7 +458,7 @@ function update_next_day_data ($today_ts, $starting_location, $starting_track, $
                 $db_obj->query("DELETE FROM `unyohub_assigned_formation_caches` WHERE `operation_date` = '".$operation_date."' AND `operation_number` = '".$operation_number."'");
             }
             
-            $db_obj->query("REPLACE INTO `unyohub_metadata_caches` (`operation_date`, `operation_number`, `posts_count`, `variant_exists`, `comment_exists`, `from_beginner`, `is_quotation`, `updated_datetime`, `confirmed_train_final_arrival_time`) VALUES ('".$operation_date."', '".$db_obj->escapeString($operation_number)."', ".($formations !== FALSE ? "0" : "NULL").", NULL, NULL, ".intval($from_beginner).", NULL, '".$updated_datetime."', NULL)");
+            $db_obj->query("REPLACE INTO `unyohub_metadata_caches` (`operation_date`, `operation_number`, `posts_count`, `variant_exists`, `comment_exists`, `from_beginner`, `is_quotation`, `updated_datetime`, `confirmed_train_final_arrival_time`) VALUES ('".$operation_date."', '".$db_obj->escapeString($operation_number)."', ".($formations !== FALSE ? "0" : "NULL").", NULL, NULL, NULL, NULL, '".$updated_datetime."', NULL)");
             
             $db_obj->query("DELETE FROM `unyohub_data_each_formation` WHERE `operation_date` = '".$operation_date."' AND `operation_number` = '".$operation_number."'");
             
@@ -508,8 +508,7 @@ function revoke_post ($operation_date_ts, $operation_number, $assign_order, $pos
     
     if (!empty($operation_data["terminal_track"])) {
         if (!empty($data_cache_values)) {
-            update_next_day_data($operation_date_ts, $operation_data["terminal_location"], $operation_data["terminal_track"], $data_cache_values["formations"], $posted_datetime, $data_cache_values["formation_list"]
-            , $data_cache_values["from_beginner"]);
+            update_next_day_data($operation_date_ts, $operation_data["terminal_location"], $operation_data["terminal_track"], $data_cache_values["formations"], $posted_datetime, $data_cache_values["formation_list"]);
         } else {
             update_next_day_data($operation_date_ts, $operation_data["terminal_location"], $operation_data["terminal_track"], FALSE, $posted_datetime);
         }
