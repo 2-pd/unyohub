@@ -87,6 +87,14 @@ log_ip_address 投稿者のIPアドレスを記録するか(BOOL値)
     "railroad_name" : 路線系統表示名,
     "main_color" : 路線系統のテーマカラー,
     "railroad_icon" : BASE64エンコードされた路線系統のアイコンデータ,
+    "related_railroads" : { 関連する路線系統の情報(以下のキー joined_railroads の値に含まれる路線系統は全て記載。joined_railroads を省略する場合は省略可能)
+        路線系統識別名 : {
+            "railroad_name" : 表示名(当該路線系統の路線系統表示名と差異があってもよい),
+            "main_color" : テーマカラー,
+            "show_link_in_formation_table" : 編成表で「関連項目」欄に表示するか否か(表示しない場合は省略可能。BOOL値)
+        }...
+    },
+    "related_railroads_order" : 関連する路線系統の路線系統識別名を表示させたい順に配列で(キー related_railroads を省略する場合は省略),
     "joined_railroads" : 直通する路線系統の路線系統識別名を配列で列挙(他の路線系統に属する運用が乗り入れしていない場合は省略可能),
     "lines" : { 個々の路線の情報
         路線識別名 : {
