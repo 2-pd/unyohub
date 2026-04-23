@@ -60,16 +60,16 @@ if (!empty($data_cache_values)) {
         }, $data_cache_values["relieved_formations"]);
     }
     
-    if (!$data_cache_values["variant_exists"]) {
+    if (empty($data_cache_values["variant_exists"])) {
         unset($data_cache_values["variant_exists"]);
     }
-    if (!$data_cache_values["comment_exists"]) {
+    if (empty($data_cache_values["comment_exists"])) {
         unset($data_cache_values["comment_exists"]);
     }
-    if (!$data_cache_values["from_beginner"]) {
+    if (empty($data_cache_values["from_beginner"])) {
         unset($data_cache_values["from_beginner"]);
     }
-    if (!$data_cache_values["is_quotation"]) {
+    if (empty($data_cache_values["is_quotation"])) {
         unset($data_cache_values["is_quotation"]);
     }
 }
