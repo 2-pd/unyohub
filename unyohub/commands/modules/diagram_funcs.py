@@ -116,9 +116,14 @@ class diagram:
         else:
             day_index = int(time.strftime("%w", time.strptime(date_string, "%Y-%m-%d")))
         
-        for diagram_schedule in self.diagram_info[diagram_revision]["diagram_schedules"]:
-            for period in diagram_schedule["periods"]:
-                if period["start_date"] <= date_string and (period["end_date"] is None or period["end_date"] >= date_string):
-                    return diagram_revision, diagram_schedule["diagrams_by_day"][day_index]
+        try:
+            for diagram_schedule in self.diagram_info[diagram_revision]["diagram_schedules"]:
+                for period in diagram_schedule["periods"]:
+                    if period["start_date"] <= date_string and (period["end_date"] is None or period["end_date"] >= date_string):
+                        return diagram_revision, diagram_schedule["diagrams_by_day"][day_index]
+            
+            raise Exception("指定された日付はいずれの規則ブロックの有効期間にも含まれていません")
+        except Exception as e:
+            self.mes(f"ダイヤ判定エラー: {e}", True)
         
         return diagram_revision, None

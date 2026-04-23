@@ -41,7 +41,7 @@ if (isset($_POST["formation_name"])) {
 } elseif (isset($_POST["operation_number"])) {
     $operation_number = $db_obj->escapeString($_POST["operation_number"]);
     
-    $sql_r = $db_obj->query("SELECT `operation_date`, `operation_number`, `formations` FROM `unyohub_assigned_formation_caches` WHERE `operation_number` = '".$operation_number."' AND `operation_date` <= '".$end_date."' AND `operation_date` >= '".$start_date."' AND `formations` IS NOT NULL ORDER BY `operation_date` ASC, `assign_order` DESC");
+    $sql_r = $db_obj->query("SELECT `operation_date`, `operation_number`, `formations` FROM `unyohub_assigned_formation_caches` WHERE `operation_number` = '".$operation_number."' AND `operation_date` <= '".$end_date."' AND `operation_date` >= '".$start_date."' ORDER BY `operation_date` ASC, `assign_order` DESC");
     
     $previous_day_operation_data_r = $db_obj->query("SELECT `operation_date`, `previous_day_operation_number`, `previous_day_formations` FROM `unyohub_transition_data_caches_from_previous_day` WHERE `operation_number` = '".$operation_number."' AND `operation_date` <= '".$end_date."' AND `operation_date` >= '".$start_date."' ORDER BY `operation_date` ASC, `previous_day_operation_number` ASC");
     
@@ -98,6 +98,10 @@ while ($data = $sql_r->fetchArray(SQLITE3_ASSOC)) {
         $day_data_length = 0;
     } else {
         $day_data_length = count($data_history[$data["operation_date"]]);
+    }
+    
+    if (is_null($data["formations"])) {
+        $data["formations"] = "";
     }
     
     if ($day_data_length === 0 || $data["operation_number"] !== $data_history[$data["operation_date"]][$day_data_length - 1]["operation_number"]) {

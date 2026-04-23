@@ -65,11 +65,18 @@ function update_diagram_revision ($date_str) {
         }
     }
     
+    $diagram_revision = NULL;
+    $diagram_info = NULL;
+    
     return FALSE;
 }
 
 function get_diagram_id ($ts) {
     global $diagram_info;
+    
+    if (empty($diagram_info)) {
+        return NULL;
+    }
     
     $year = date("Y", $ts);
     $mm_dd = date("m-d", $ts);
@@ -119,6 +126,8 @@ function get_diagram_id ($ts) {
             }
         }
     }
+    
+    return NULL;
 }
 
 function get_operation_info ($diagram_id, $operation_number, $require_trains = FALSE) {
@@ -384,14 +393,9 @@ function update_data_cache ($operation_date, $operation_number, $updated_datetim
         if (!empty($post_data)) {
             if ($assign_order !== $post_data["assign_order"]) {
                 $assign_order = $post_data["assign_order"];
-                
                 $corrected_formations = $post_data["formations"];
                 
-                if (isset($corrected_formation_info[$assign_order])) {
-                    $formation_info = $corrected_formation_info[$assign_order];
-                } else {
-                    $formation_info = get_formation_info($corrected_formations);
-                }
+                $formation_info = isset($corrected_formation_info[$assign_order]) ? $corrected_formation_info[$assign_order] : get_formation_info($post_data["formations"]);
                 
                 if ($posts_count === 0) {
                     $formation_list = $formation_info["formation_list"];
@@ -405,7 +409,7 @@ function update_data_cache ($operation_date, $operation_number, $updated_datetim
                 }
                 
                 $db_obj->query("INSERT INTO `unyohub_assigned_formation_caches` (`operation_date`, `operation_number`, `assign_order`, `formations`, `updated_datetime`) VALUES ('".$operation_date."', '".$operation_number."', ".$assign_order.", ".(empty($corrected_formations) ? "NULL" : "'".$db_obj->escapeString($corrected_formations)."'").", '".$updated_datetime."')");
-            } elseif ($assign_order === $assign_order_max && $corrected_formations !== $post_data["formations"]) {
+            } elseif ($assign_order === $assign_order_max && !$post_data["is_quotation"] && !in_array($post_data["formations"], $formation_info["formation_pattern"])) {
                 $variant_exists = TRUE;
             }
         }
@@ -450,6 +454,8 @@ function update_next_day_data ($today_ts, $starting_location, $starting_track, $
         if (empty($db_obj->querySingle("SELECT `posts_count` FROM `unyohub_metadata_caches` WHERE `operation_date` = '".$operation_date."' AND `operation_number` = '".$operation_number."'"))) {
             if ($formations !== FALSE) {
                 $db_obj->query("REPLACE INTO `unyohub_assigned_formation_caches` (`operation_date`, `operation_number`, `assign_order`, `formations`, `updated_datetime`) VALUES ('".$operation_date."', '".$operation_number."', 0, ".(empty($formations) ? "NULL" : "'".$db_obj->escapeString($formations)."'").", '".$updated_datetime."')");
+            } else {
+                $db_obj->query("DELETE FROM `unyohub_assigned_formation_caches` WHERE `operation_date` = '".$operation_date."' AND `operation_number` = '".$operation_number."'");
             }
             
             $db_obj->query("REPLACE INTO `unyohub_metadata_caches` (`operation_date`, `operation_number`, `posts_count`, `variant_exists`, `comment_exists`, `from_beginner`, `is_quotation`, `updated_datetime`, `confirmed_train_final_arrival_time`) VALUES ('".$operation_date."', '".$db_obj->escapeString($operation_number)."', ".($formations !== FALSE ? "0" : "NULL").", NULL, NULL, ".intval($from_beginner).", NULL, '".$updated_datetime."', NULL)");
@@ -470,6 +476,7 @@ function revoke_post ($operation_date_ts, $operation_number, $assign_order, $pos
     global $railroad_id;
     global $db_obj;
     global $moderation_db_obj;
+    global $diagram_revision;
     
     $operation_date = date("Y-m-d", $operation_date_ts);
     
@@ -505,6 +512,32 @@ function revoke_post ($operation_date_ts, $operation_number, $assign_order, $pos
             , $data_cache_values["from_beginner"]);
         } else {
             update_next_day_data($operation_date_ts, $operation_data["terminal_location"], $operation_data["terminal_track"], FALSE, $posted_datetime);
+        }
+    }
+    
+    if (is_null($data_cache_values) && !empty($operation_data["starting_track"])) {
+        $previous_day_ts = $operation_date_ts - 86400;
+        $previous_day = date("Y-m-d", $previous_day_ts);
+        
+        update_diagram_revision($previous_day);
+        $previous_day_diagram_id = get_diagram_id($previous_day_ts);
+        
+        if (!empty($previous_day_diagram_id)) {
+            $previous_day_operation_number = $db_obj->querySingle("SELECT `operation_number` FROM `unyohub_operations` WHERE `diagram_revision` = '".$diagram_revision."' AND `diagram_id` = '".$db_obj->escapeString($previous_day_diagram_id)."' AND `terminal_location` = '".$db_obj->escapeString($operation_data["starting_location"])."' AND `terminal_track` = '".$db_obj->escapeString($operation_data["starting_track"])."'");
+            
+            if (!empty($previous_day_operation_number)) {
+                $previous_day_formations = $db_obj->querySingle("SELECT `formations` FROM `unyohub_assigned_formation_caches` WHERE `operation_date` = '".$previous_day."' AND `operation_number` = '".$db_obj->escapeString($previous_day_operation_number)."' ORDER BY `assign_order` DESC LIMIT 1");
+                
+                if (!empty($previous_day_formations)) {
+                    $operation_number = $db_obj->escapeString($operation_number);
+                    
+                    $db_obj->query("REPLACE INTO `unyohub_assigned_formation_caches` (`operation_date`, `operation_number`, `assign_order`, `formations`, `updated_datetime`) VALUES ('".$operation_date."', '".$operation_number."', 0, '".$db_obj->escapeString($previous_day_formations)."', '".$posted_datetime."')");
+                    
+                    $db_obj->query("UPDATE `unyohub_metadata_caches` SET `posts_count` = 0 WHERE `operation_date` = '".$operation_date."' AND `operation_number` = '".$operation_number."'");
+                    
+                    $data_cache_values = array("formations" => $previous_day_formations, "posts_count" => 0, "confirmed_train_final_arrival_time" => NULL);
+                }
+            }
         }
     }
     

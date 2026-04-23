@@ -52,7 +52,8 @@ def cache_railroad_transition_data (mes, main_dir, date_obj):
         
         operation_info = {}
         for operation in cur.fetchall():
-            operation_info[operation[0]] = operation[1:]
+            if (operation[1] is not None) and (operation[2] is not None):
+                operation_info[operation[0]] = operation[1:]
         
         
         cur.execute("SELECT `formations`, `operation_number` FROM ( SELECT *, RANK() OVER( PARTITION BY `operation_number` ORDER BY `assign_order` ASC ) as `rnk` FROM `unyohub_assigned_formation_caches` WHERE `operation_date` = :operation_date ) `t` WHERE `rnk` = 1", { "operation_date" : current_date_str })
