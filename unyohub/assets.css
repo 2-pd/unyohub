@@ -3260,6 +3260,65 @@ h2, .heading_wrapper {
     }
 }
 
+.related_link, .execute_link:after {
+    background-image: url(data:image/webp;base64,UklGRnQAAABXRUJQVlA4TGgAAAAvE8AJEC9AkG3Tyd6f4BwE2Tad7P0JHoJsm072/gQPmbRNLVTyXO9rgG1hqPp/wSqSZCdDEnBBABZwgAX8+xnyf0T/DSZt03bzF651kRySEEIIIYQW9j+yRmwAkBHTP0REREREZORWAQ==);
+    background-repeat: no-repeat;
+    background-size: 10px 20px;
+    
+    .dark_mode & {
+        background-image: url(data:image/webp;base64,UklGRnQAAABXRUJQVlA4TGgAAAAvE8AJEC9AkG3T+bse4RwE2Tadv+sRHoJsm87f9QgPmYDF9qkurQgCbDuKVfkvGEWSpKiWBKCAdXAWzsH5F1TH/4j+G0zapu3mL1xrlCxJFapQhSp0YfsjR607AMxa8z9ERERERKRwqw==);
+    }
+}
+
+.related_link {
+    display: block;
+    
+    position: relative;
+    
+    width: calc(100% - 20px);
+    
+    max-width: 480px;
+    
+    margin: 0 auto 20px auto;
+    
+    background-position: right;
+    
+    line-height: 36px;
+    font-size: 18px;
+    color: inherit !important;
+    text-decoration: none;
+    
+    &:before, &:after {
+        content: "";
+        
+        position: absolute;
+        bottom: 0;
+        left: 0;
+        
+        width: 100%;
+        
+        border-bottom: 3px solid #dddddd;
+    }
+    
+    .dark_mode &:before {
+        border-bottom-color: #808080;
+    }
+    
+    &:after {
+        width: 80px;
+        
+        border-bottom-color: inherit;
+    }
+    
+    &:hover:after {
+        width: 100%;
+        
+        opacity: 0.5;
+        
+        transition: all 0.5s;
+    }
+}
+
 .bottom_link {
     display: block;
     
@@ -3654,17 +3713,7 @@ footer {
         
         margin-left: 10px;
         
-        background-image: url(data:image/webp;base64,UklGRnQAAABXRUJQVlA4TGgAAAAvE8AJEC9AkG3Tyd6f4BwE2Tad7P0JHoJsm072/gQPmbRNLVTyXO9rgG1hqPp/wSqSZCdDEnBBABZwgAX8+xnyf0T/DSZt03bzF651kRySEEIIIYQW9j+yRmwAkBHTP0REREREZORWAQ==);
-        background-repeat: no-repeat;
-        background-size: 10px 20px;
-        
         vertical-align: top;
-    }
-
-    .dark_mode &:after {
-        background-image: url(data:image/webp;base64,UklGRnQAAABXRUJQVlA4TGgAAAAvE8AJEC9AkG3T+bse4RwE2Tadv+sRHoJsm87f9QgPmYDF9qkurQgCbDuKVfkvGEWSpKiWBKCAdXAWzsH5F1TH/4j+G0zapu3mL1xrlCxJFapQhSp0YfsjR607AMxa8z9ERERERKRwqw==);
-        
-        color: #cccccc;
     }
 }
 

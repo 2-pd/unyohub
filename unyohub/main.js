@@ -4492,7 +4492,9 @@ function get_formation_table_html (formation_names, reverse_formations, search_k
                     if (formations["formations"][formation_name]["new_railroad_id"] === null) {
                         buf += "<h5><a href='/railroad_" + railroad_info["railroad_id"] + "/formations/" + add_slashes(encodeURIComponent(formations["formations"][formation_name]["new_formation_name"])) + "/' onclick='event.preventDefault();'>" + formation_name_html + "</a></h5>" + escape_html(formations["formations"][formation_name]["new_formation_name"]) + " に改番";
                     } else {
-                        buf += "<h5><a href='/railroad_" + formations["formations"][formation_name]["new_railroad_id"] + "/formations/" + add_slashes(encodeURIComponent(formations["formations"][formation_name]["new_formation_name"])) + "/' onclick='event.preventDefault();'>" + formation_name_html + "</a></h5>転出済み";
+                        buf += "<h5><a href='/railroad_" + formations["formations"][formation_name]["new_railroad_id"] + "/formations/" + add_slashes(encodeURIComponent(formations["formations"][formation_name]["new_formation_name"])) + "/' onclick='event.preventDefault();'>" + formation_name_html + "</a></h5>";
+                        buf += ("related_railroads" in railroad_info && formations["formations"][formation_name]["new_railroad_id"] in railroad_info["related_railroads"]) ? escape_html(railroad_info["related_railroads"][formations["formations"][formation_name]["new_railroad_id"]]["railroad_name"]) + " へ転出" : "転出済み";
+                        
                         if (formations["formations"][formation_name]["new_formation_name"] !== formation_name) {
                             buf += " (→ " + escape_html(formations["formations"][formation_name]["new_formation_name"]) + ")";
                         }
@@ -4616,6 +4618,20 @@ function draw_formation_table (update_title = true) {
     }
     
     if (buf.length !== 0) {
+        if ("related_railroads_order" in railroad_info) {
+            var buf_2 = "";
+            
+            for (var railroad_id of railroad_info["related_railroads_order"]) {
+                if ("show_link_in_formation_table" in railroad_info["related_railroads"][railroad_id] && railroad_info["related_railroads"][railroad_id]["show_link_in_formation_table"]) {
+                    buf_2 += "<a class='related_link' href='/railroad_" + add_slashes(railroad_id) + "/formations/' onclick='event.preventDefault(); select_railroad(\"" + add_slashes(railroad_id) + "\", \"formations_mode\");' style='border-color: " + (config["dark_mode"] ? convert_color_dark_mode(railroad_info["related_railroads"][railroad_id]["main_color"]) : railroad_info["related_railroads"][railroad_id]["main_color"]) + ";'>" + escape_html(railroad_info["related_railroads"][railroad_id]["railroad_name"]) + "の編成表</a>";
+                }
+            }
+            
+            if (buf_2.length >= 1) {
+                buf += "<h3>関連項目</h3>" + buf_2;
+            }
+        }
+        
         buf += "<div class='informational_text'>";
         buf += "編成表更新日時: " + get_date_and_time(formations["last_modified_timestamp"]) + "<br>";
         buf += "車両アイコン更新日時: " + get_date_and_time(train_icons["last_modified_timestamp"]) + "<br>";
