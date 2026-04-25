@@ -1476,6 +1476,17 @@ function operation_date_button_change () {
 }
 
 
+function select_joined_railroads (operation_date = null) {
+    var popup_inner_elm = open_square_popup("joined_railroads_popup", true, "直通先路線系統");
+    
+    var buf = "";
+    for (var railroad_id of railroad_info["joined_railroads"]) {
+        buf += "<a class='related_link' href='javascript:void(0);' onclick='close_square_popup(); select_railroad(\"" + add_slashes(railroad_id) + "\", \"operation_data_mode\", \"" + operation_date + "\");' style='border-color: " + (config["dark_mode"] ? convert_color_dark_mode(railroad_info["related_railroads"][railroad_id]["main_color"]) : railroad_info["related_railroads"][railroad_id]["main_color"]) + ";'>" + escape_html(railroad_info["related_railroads"][railroad_id]["railroad_name"]) + "</a>";
+    }
+    popup_inner_elm.innerHTML = buf;
+}
+
+
 var operation_detail_write_button_enabled = false;
 
 function operation_detail (operation_number_or_index, operation_data_date_ts_or_diagram_id, show_write_operation_data_button = null, search_keyword = null) {

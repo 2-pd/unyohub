@@ -1583,7 +1583,7 @@ function select_mode (mode_name, mode_option_1 = null, mode_option_2 = null, mod
             break;
         
         case "operation_data_mode":
-            operation_data_mode();
+            operation_data_mode(mode_option_1);
             break;
         
         case "formations_mode":
@@ -3792,7 +3792,7 @@ var operation_all_data_loaded = false;
 
 var operation_data_active_tab = null;
 
-function operation_data_mode () {
+function operation_data_mode (operation_date = null) {
     change_title(railroad_info["railroad_name"] + "の運用履歴データ | " + instance_info["instance_name"], "/railroad_" + railroad_info["railroad_id"] + "/operation_data/");
     
     change_mode(2);
@@ -3801,7 +3801,7 @@ function operation_data_mode () {
     
     operation_data_active_tab = null;
     
-    operation_data_change_date(null);
+    operation_data_change_date(operation_date);
 }
 
 function operation_data_change_date (date_additions) {
@@ -4064,7 +4064,7 @@ function operation_data_draw (reset_active_tab = false) {
     
     operation_number_order = [];
     
-    var buf = "";
+    var buf = ("joined_railroads" in railroad_info && railroad_info["joined_railroads"].length >= 1) ? "<u class='railroad_select_link' onclick='select_joined_railroads(\"" + operation_data["operation_date"] + "\");'>直通先路線系統のデータ</u>" : "";
     
     if (!document.getElementById("radio_formations").checked) {
         if (document.getElementById("radio_operation_groups").checked) {
@@ -5032,7 +5032,7 @@ function formation_detail (formation_name) {
                     document.getElementById("formation_reference_books_area").innerHTML = reference_books_html;
                 }
                 
-                document.getElementById("formation_updated_area").innerHTML = "編成情報更新日時: " + get_date_and_time(data["updated_timestamp"]) + ("edited_user_name" in data ? " (" + escape_html(data["edited_user_name"]) + ")" : "") + "<a href='#about_railroad_data_popup' class='bottom_link' onclick='event.preventDefault(); about_railroad_data();'>使用しているデータについて</a>" + ("editable" in data && data["editable"] ? " <a href='/admin/formations.php?railroad_id=" + railroad_info["railroad_id"] + "&formation_name=" + escape_form_data(formation_name) + "' target='_blank' class='execute_link'>この編成の情報を編集</a>" : "");
+                document.getElementById("formation_updated_area").innerHTML = "編成情報更新日時: " + get_date_and_time(data["updated_timestamp"]) + ("edited_user_name" in data ? " (" + escape_html(data["edited_user_name"]) + ")" : "") + ("editable" in data && data["editable"] ? " <a href='/admin/formations.php?railroad_id=" + railroad_info["railroad_id"] + "&formation_name=" + escape_form_data(formation_name) + "' target='_blank' class='execute_link'>この編成の情報を編集</a>" : "") + "<a href='#about_railroad_data_popup' class='bottom_link' onclick='event.preventDefault(); about_railroad_data();'>使用しているデータについて</a>";
             }
         });
     }
