@@ -302,7 +302,7 @@ log_ip_address 投稿者のIPアドレスを記録するか(BOOL値)
         運用番号 : { 各運用の情報
             "trains" : [ 各区間組成の情報の情報(折り返し等の発車待ちの情報も含む)
                 {
-                    "train_number" : 列車番号(発車待ちや列車番号が不明な場合は仮ID),
+                    "train_number" : 列車番号(発車待ちや列車番号が不明な場合は仮ID。発車待ちの場合は「_」、一時入庫の場合は「.」が先頭に付く),
                     "line_id" : 走行路線の識別名,
                     "first_departure_time" : 「HH:MM」形式の始発時刻,
                     "final_arrival_time" : 「HH:MM」形式の終着時刻,
