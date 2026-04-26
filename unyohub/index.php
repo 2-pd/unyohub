@@ -323,20 +323,20 @@ if ($path_info_str === "/") {
     <article onscroll="formation_table_wrapper_onscroll();">
         <button type="button" id="formation_screenshot_button" class="screenshot_button" onclick="take_screenshot('formation_table_area');" aria-label="スクリーンショット"></button>
         <div id="formation_search_area">
-            <div class="search_wrapper"><label for="car_number_search" class="search_icon">編成名・車両番号で検索</label><input type="search" id="car_number_search" onkeyup="draw_formation_table();" onsearch="draw_formation_table();" placeholder="編成名・車両番号で検索" autocomplete="off"></div>
+            <div class="search_wrapper"><label for="car_number_search" class="search_icon">編成名・車両番号で検索</label><input type="search" id="car_number_search" onkeyup="draw_formation_table(false);" onsearch="draw_formation_table(false);" placeholder="編成名・車両番号で検索" autocomplete="off"></div>
             <div class="radio_area"><input type="checkbox" id="colorize_formation_table" class="chip" onchange="change_colorize_formation_table(this.checked);"><label for="colorize_formation_table" id="colorize_formation_table_label">車体色</label><input type="checkbox" id="show_unregistered_formations" class="chip" onchange="change_show_unregistered_formations(this.checked);"><label for="show_unregistered_formations">除籍済み編成</label><input type="checkbox" id="group_formations_by_prefix" class="chip" onchange="change_group_formations_by_prefix(this.checked);"><label for="group_formations_by_prefix" id="group_formations_by_prefix_label">編成記号別</label></div>
         </div>
         <div id="formation_table_area" class="wait_icon"></div>
+        <div id="formation_table_area_supplement"></div>
     </article>
     <article>
         <div id="operation_search_area">
-            <div class="search_wrapper"><label for="train_number_search" class="search_icon">運用・列車番号で検索</label><input type="search" id="train_number_search" onkeyup="operation_table_list_number();" onsearch="operation_table_list_number();" placeholder="運用・列車番号で検索" autocomplete="off"></div>
-        <div class="radio_area"><input type="radio" name="operation_table_sorting_criteria" id="sort_by_operation_groups" value="operation_groups" checked="checked" onchange="operation_table_list_number();"><label for="sort_by_operation_groups">系統別</label><input type="radio" name="operation_table_sorting_criteria" id="sort_by_starting_location" value="starting_location" onchange="operation_table_list_number();"><label for="sort_by_starting_location">出庫別</label><input type="radio" name="operation_table_sorting_criteria" id="sort_by_terminal_location" value="terminal_location" onchange="operation_table_list_number();"><label for="sort_by_terminal_location">入庫別</label><button type="button" class="customize_button" onclick="customize_operation_table();">カスタム</button></div>
+            <div class="search_wrapper"><label for="train_number_search" class="search_icon">運用・列車番号で検索</label><input type="search" id="train_number_search" onkeyup="operation_table_list_number(false);" onsearch="operation_table_list_number(false);" placeholder="運用・列車番号で検索" autocomplete="off"></div>
+        <div class="radio_area"><input type="radio" name="operation_table_sorting_criteria" id="sort_by_operation_groups" value="operation_groups" checked="checked" onchange="operation_table_list_number(false);"><label for="sort_by_operation_groups">系統別</label><input type="radio" name="operation_table_sorting_criteria" id="sort_by_starting_location" value="starting_location" onchange="operation_table_list_number(false);"><label for="sort_by_starting_location">出庫別</label><input type="radio" name="operation_table_sorting_criteria" id="sort_by_terminal_location" value="terminal_location" onchange="operation_table_list_number(false);"><label for="sort_by_terminal_location">入庫別</label><button type="button" class="customize_button" onclick="customize_operation_table();">カスタム</button></div>
         </div>
         <h2 id="operation_table_heading"></h2>
         <div id="operation_table_area" class="wait_icon"></div>
-        <br>
-        <div id="operation_table_info" class="informational_text"></div>
+        <div id="operation_table_area_supplement"></div>
     </article>
     <div id="tips"><button type="button" id="tips_button" onclick="show_tips();">Tips</button><div id="tips_area"></div></div>
     <button type="button" id="railroad_announcement" onclick="show_railroad_announcements();" aria-label="お知らせ"></button>

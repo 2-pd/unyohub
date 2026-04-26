@@ -937,6 +937,12 @@ article {
     .ios & {
         height: calc(100% - 280px);
     }
+    
+    h3 {
+        max-width: 500px;
+        
+        margin: 30px auto 20px auto;
+    }
 }
 
 .wide_button, .write_button {
@@ -2059,8 +2065,6 @@ input[type="checkbox"]:checked + :is(label.drop_down, label.formation_table_drop
 #operation_data_area {
     h3 {
         margin: 12px auto 3px auto;
-        
-        max-width: 500px;
     }
     
     table {
@@ -2685,6 +2689,10 @@ mark, .search_highlight {
     }
 }
 
+#formation_table_area_supplement, #operation_table_area_supplement {
+    margin-top: 20px;
+}
+
 #operation_table_heading {
     width: calc(100% - 40px);
     
@@ -3136,12 +3144,6 @@ h2, .heading_wrapper {
     .dark_mode & {
         color: #cccccc;
     }
-}
-
-#formation_table_area h3 {
-    margin: 30px auto 20px auto;
-    
-    max-width: 500px;
 }
 
 #semifixed_formation_area div {

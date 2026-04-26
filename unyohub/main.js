@@ -580,7 +580,7 @@ function update_display_settings (redraw = false) {
                 if (operation_table === null) {
                     operation_table_mode(null);
                 } else {
-                    operation_table_list_number();
+                    operation_table_list_number(false);
                 }
                 break;
         }
@@ -4364,6 +4364,7 @@ function operation_data_draw (reset_active_tab = false) {
 
 var car_number_search_elm = document.getElementById("car_number_search");
 var formation_table_area_elm = document.getElementById("formation_table_area");
+var formation_table_area_supplement_elm = document.getElementById("formation_table_area_supplement");
 
 var selected_formation_name = null;
 
@@ -4382,6 +4383,7 @@ function formations_mode (formation_name = null) {
     
     car_number_search_elm.value = "";
     formation_table_area_elm.innerHTML = "";
+    formation_table_area_supplement_elm.style.display = "none";
     formation_table_active_tab = null;
     formation_table_drop_down_status = {};
     formation_table_wrapper_scroll_amount = 0;
@@ -4534,6 +4536,30 @@ function get_formation_groups () {
 function draw_formation_table (update_title = true) {
     if (update_title) {
         change_title(railroad_info["railroad_name"] + "の編成表 | " + instance_info["instance_name"], "/railroad_" + railroad_info["railroad_id"] + "/formations/");
+        
+        var buf = "";
+        if ("related_railroads_order" in railroad_info) {
+            var buf_2 = "";
+            
+            for (var railroad_id of railroad_info["related_railroads_order"]) {
+                if ("show_link_in_formation_table" in railroad_info["related_railroads"][railroad_id] && railroad_info["related_railroads"][railroad_id]["show_link_in_formation_table"]) {
+                    buf_2 += "<a class='related_link' href='/railroad_" + add_slashes(railroad_id) + "/formations/' onclick='event.preventDefault(); select_railroad(\"" + add_slashes(railroad_id) + "\", \"formations_mode\");' style='border-color: " + (config["dark_mode"] ? convert_color_dark_mode(railroad_info["related_railroads"][railroad_id]["main_color"]) : railroad_info["related_railroads"][railroad_id]["main_color"]) + ";'>" + escape_html(railroad_info["related_railroads"][railroad_id]["railroad_name"]) + "の編成表</a>";
+                }
+            }
+            
+            if (buf_2.length >= 1) {
+                buf += "<h3>関連項目</h3>" + buf_2;
+            }
+        }
+        
+        buf += "<div class='informational_text'>";
+        buf += "編成表更新日時: " + get_date_and_time(formations["last_modified_timestamp"]) + "<br>";
+        buf += "車両アイコン更新日時: " + get_date_and_time(train_icons["last_modified_timestamp"]) + "<br>";
+        buf += "編成概要更新日時: " + get_date_and_time(formation_overviews["last_modified_timestamp"]);
+        buf += "</div>";
+        buf += "<a href='#about_railroad_data_popup' class='bottom_link' onclick='event.preventDefault(); about_railroad_data();'>使用しているデータについて</a>";
+        
+        formation_table_area_supplement_elm.innerHTML = buf;
     }
     
     document.getElementById("formation_screenshot_button").style.display = "none";
@@ -4618,30 +4644,13 @@ function draw_formation_table (update_title = true) {
     }
     
     if (buf.length !== 0) {
-        if ("related_railroads_order" in railroad_info) {
-            var buf_2 = "";
-            
-            for (var railroad_id of railroad_info["related_railroads_order"]) {
-                if ("show_link_in_formation_table" in railroad_info["related_railroads"][railroad_id] && railroad_info["related_railroads"][railroad_id]["show_link_in_formation_table"]) {
-                    buf_2 += "<a class='related_link' href='/railroad_" + add_slashes(railroad_id) + "/formations/' onclick='event.preventDefault(); select_railroad(\"" + add_slashes(railroad_id) + "\", \"formations_mode\");' style='border-color: " + (config["dark_mode"] ? convert_color_dark_mode(railroad_info["related_railroads"][railroad_id]["main_color"]) : railroad_info["related_railroads"][railroad_id]["main_color"]) + ";'>" + escape_html(railroad_info["related_railroads"][railroad_id]["railroad_name"]) + "の編成表</a>";
-                }
-            }
-            
-            if (buf_2.length >= 1) {
-                buf += "<h3>関連項目</h3>" + buf_2;
-            }
-        }
-        
-        buf += "<div class='informational_text'>";
-        buf += "編成表更新日時: " + get_date_and_time(formations["last_modified_timestamp"]) + "<br>";
-        buf += "車両アイコン更新日時: " + get_date_and_time(train_icons["last_modified_timestamp"]) + "<br>";
-        buf += "編成概要更新日時: " + get_date_and_time(formation_overviews["last_modified_timestamp"]);
-        buf += "</div>";
-        buf += "<a href='#about_railroad_data_popup' class='bottom_link' onclick='event.preventDefault(); about_railroad_data();'>使用しているデータについて</a>";
-        
         formation_table_area_elm.innerHTML = buf;
+        
+        formation_table_area_supplement_elm.style.display = "block";
     } else {
         formation_table_area_elm.innerHTML = "<div class='no_data'>検索キーワードを含む車両が見つかりません。" + (config["show_unregistered_formations_on_formation_table"] ? "<br>除籍・転出済みの車両は編成名でのみ検索可能です。" : "") + "</div>";
+        
+        formation_table_area_supplement_elm.style.display = "none";
     }
     
     document.getElementById("formation_search_area").style.display = "block";
@@ -4901,7 +4910,6 @@ function formation_detail (formation_name) {
     buf += "<div id='histories_area'><div class='descriptive_text'>車歴データがありません</div></div>";
     
     buf += "<div id='formation_reference_books_area' class='descriptive_text'></div>";
-    buf += "<div id='formation_updated_area' class='informational_text'></div>";
     
     formation_table_area_elm.innerHTML = buf;
     article_elms[3].scrollTop = 0;
@@ -5032,7 +5040,16 @@ function formation_detail (formation_name) {
                     document.getElementById("formation_reference_books_area").innerHTML = reference_books_html;
                 }
                 
-                document.getElementById("formation_updated_area").innerHTML = "編成情報更新日時: " + get_date_and_time(data["updated_timestamp"]) + ("edited_user_name" in data ? " (" + escape_html(data["edited_user_name"]) + ")" : "") + ("editable" in data && data["editable"] ? " <a href='/admin/formations.php?railroad_id=" + railroad_info["railroad_id"] + "&formation_name=" + escape_form_data(formation_name) + "' target='_blank' class='execute_link'>この編成の情報を編集</a>" : "") + "<a href='#about_railroad_data_popup' class='bottom_link' onclick='event.preventDefault(); about_railroad_data();'>使用しているデータについて</a>";
+                buf = "<div id='formation_updated_area' class='informational_text'>編成情報更新日時: " + get_date_and_time(data["updated_timestamp"]) + ("edited_user_name" in data ? " (" + escape_html(data["edited_user_name"]) + ")" : "") + "</div>";
+                
+                if ("editable" in data && data["editable"]) {
+                    buf += "<a href='/admin/formations.php?railroad_id=" + railroad_info["railroad_id"] + "&formation_name=" + escape_form_data(formation_name) + "' target='_blank' class='execute_link'>この編成の情報を編集</a>";
+                }
+                
+                buf += "<a href='#about_railroad_data_popup' class='bottom_link' onclick='event.preventDefault(); about_railroad_data();'>使用しているデータについて</a>";
+                
+                formation_table_area_supplement_elm.innerHTML = buf;
+                formation_table_area_supplement_elm.style.display = "block";
             }
         });
     }
@@ -5121,7 +5138,7 @@ function get_formation_overview (formation_name, railroad_id = null) {
 var operation_search_area_elm = document.getElementById("operation_search_area");
 var operation_table_heading_elm = document.getElementById("operation_table_heading");
 var operation_table_area_elm = document.getElementById("operation_table_area");
-var operation_table_info_elm = document.getElementById("operation_table_info");
+var operation_table_area_supplement_elm = document.getElementById("operation_table_area_supplement");
 var operation_table_footer_inner_elm = document.getElementById("operation_table_footer_inner");
 
 var operation_table_drop_down_status;
@@ -5132,7 +5149,7 @@ function operation_table_mode (diagram_revision = "__current__", diagram_id = nu
     operation_search_area_elm.style.display = "none";
     operation_table_heading_elm.innerHTML = "";
     operation_table_area_elm.innerHTML = "";
-    operation_table_info_elm.innerHTML = "";
+    operation_table_area_supplement_elm.innerHTML = "";
     operation_table_footer_inner_elm.style.display = "none";
     
     operation_table_drop_down_status = {};
@@ -5148,7 +5165,7 @@ function operation_table_mode (diagram_revision = "__current__", diagram_id = nu
         
         get_diagram_id(operation_data_date, null, function (diagram_data) {
             if (diagram_data === null) {
-                mes("指定された改正日のダイヤはデータがありません", true);
+                operation_table_area_elm.innerHTML = "<div class='no_data'>指定された改正日のダイヤはデータがありません</div>";
                 
                 return;
             }
@@ -5172,7 +5189,7 @@ function operation_table_mode (diagram_revision = "__current__", diagram_id = nu
             operation_table_wrapper_scroll_amount = 0;
             
             load_data(function () {
-                operation_table_list_number(operation_number);
+                operation_table_list_number(true, operation_number);
             }, null, function () {
                 operation_table_area_elm.innerHTML = "<div class='no_data'>表示に必要なデータが利用できません</div>";
             }, diagram_data["diagram_revision"], diagram_data["diagram_id"], null, diagram_revision === "__current__" ? operation_data_date : null);
@@ -5197,22 +5214,24 @@ function operation_table_mode (diagram_revision = "__current__", diagram_id = nu
     }
 }
 
-function operation_table_list_number (operation_number = null) {
+function operation_table_list_number (update_operation_table_info = true, operation_number = null) {
     operation_search_area_elm.style.display = "block";
     operation_table_area_elm.innerHTML = "";
-    operation_table_info_elm.innerHTML = "";
+    if (update_operation_table_info) {
+        operation_table_area_supplement_elm.innerHTML = "";
+    }
     
     if (operation_table["diagram_revision"] === get_diagram_revision()) {
         get_diagram_id(get_date_string(get_timestamp()), null, function (diagram_data) {
             if (diagram_data !== null) {
-                draw_operation_table(diagram_data["diagram_id"] === operation_table["diagram_id"]);
+                draw_operation_table(diagram_data["diagram_id"] === operation_table["diagram_id"], update_operation_table_info);
                 if (operation_number !== null) {
                     operation_detail(operation_number, operation_table["diagram_id"], true);
                 }
             }
         });
     } else {
-        draw_operation_table(null);
+        draw_operation_table(null, update_operation_table_info);
     }
 }
 
@@ -5234,7 +5253,7 @@ function get_start_end_time_html (time_str, is_starting_time, override_text = nu
     return inner_text;
 }
 
-function draw_operation_table (is_today) {
+function draw_operation_table (is_today, update_operation_table_info) {
     var search_keyword = str_to_halfwidth(document.getElementById("train_number_search").value).toUpperCase();
     if (is_today) {
         var today_ts = get_timestamp();
@@ -5585,7 +5604,23 @@ function draw_operation_table (is_today) {
         operation_table_area_elm.innerHTML = "<div class='no_data'>検索キーワードを含む運用・列車番号が見つかりません</div>";
     }
     
-    operation_table_info_elm.innerHTML = "ダイヤ情報更新日時: " + get_date_and_time(diagram_info[operation_table["diagram_revision"]]["last_modified_timestamp"]) + "<br>運用表更新日時: " + get_date_and_time(operation_table["last_modified_timestamp"]) + "<br>時刻表更新日時: " + get_date_and_time(timetable["last_modified_timestamp"]) + "<a href='#about_railroad_data_popup' class='bottom_link' onclick='event.preventDefault(); about_railroad_data();'>使用しているデータについて</a>";
+    if (update_operation_table_info) {
+        buf = "";
+        if ("joined_railroads" in railroad_info) {
+            for (var railroad_id of railroad_info["joined_railroads"]) {
+                buf += "<a class='related_link' href='/railroad_" + add_slashes(railroad_id) + "/operation_table/' onclick='event.preventDefault(); select_railroad(\"" + add_slashes(railroad_id) + "\", \"operation_table_mode\", \"" + operation_table["diagram_revision"] + "\");' style='border-color: " + (config["dark_mode"] ? convert_color_dark_mode(railroad_info["related_railroads"][railroad_id]["main_color"]) : railroad_info["related_railroads"][railroad_id]["main_color"]) + ";'>" + escape_html(railroad_info["related_railroads"][railroad_id]["railroad_name"]) + "の運用表</a>";
+            }
+            
+            if (buf.length >= 1) {
+                buf = "<h3>関連項目</h3>" + buf;
+            }
+        }
+        
+        buf += "<div class='informational_text'>ダイヤ情報更新日時: " + get_date_and_time(diagram_info[operation_table["diagram_revision"]]["last_modified_timestamp"]) + "<br>運用表更新日時: " + get_date_and_time(operation_table["last_modified_timestamp"]) + "<br>時刻表更新日時: " + get_date_and_time(timetable["last_modified_timestamp"]) + "</div>";
+        buf += "<a href='#about_railroad_data_popup' class='bottom_link' onclick='event.preventDefault(); about_railroad_data();'>使用しているデータについて</a>";
+        
+        operation_table_area_supplement_elm.innerHTML = buf;
+    }
 }
 
 
