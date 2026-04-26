@@ -303,14 +303,14 @@ log_ip_address 投稿者のIPアドレスを記録するか(BOOL値)
             "trains" : [ 各区間組成の情報の情報(折り返し等の発車待ちの情報も含む)
                 {
                     "train_number" : 列車番号(発車待ちや列車番号が不明な場合は仮ID。発車待ちの場合は「_」、一時入庫の場合は「.」が先頭に付く),
-                    "line_id" : 走行路線の識別名,
+                    "line_id" : 走行路線の識別名(一時入庫の場合はnull),
                     "first_departure_time" : 「HH:MM」形式の始発時刻,
                     "final_arrival_time" : 「HH:MM」形式の終着時刻,
-                    "starting_station" : 始発駅,
-                    "terminal_station" : 終着駅,
-                    "position_forward" : 担当位置開始両数(進行方向から数えて何両目からがその運用か),
-                    "position_rear" : 担当位置終了両数(進行方向から数えて何両目までがその運用か),
-                    "direction" : 上り列車か下り列車か(上り列車か上り方面発車待ちなら「inbound」、下り列車か下り方面発車待ちなら「outbound」),
+                    "starting_station" : 始発駅(一時入庫の場合はnull),
+                    "terminal_station" : 終着駅(一時入庫の場合はnull),
+                    "position_forward" : 担当位置開始両数(進行方向から数えて何両目からがその運用か。一時入庫の場合はnull),
+                    "position_rear" : 担当位置終了両数(進行方向から数えて何両目までがその運用か。一時入庫の場合はnull),
+                    "direction" : 上り列車か下り列車か(上り列車か上り方面発車待ちなら「inbound」、下り列車か下り方面発車待ちなら「outbound」、一時入庫ではnull),
                     "formation_reversed" : 方反か否か(方反でない場合は省略可能),
                     "formations_can_changed" : 差し替えの可能性がある留置か否か(差し替えの可能性がある留置でない場合は省略可能)
                 }...
