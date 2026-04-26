@@ -541,7 +541,7 @@ function background_updater () {
                         
                         case 4:
                             if (operation_table !== null && config["show_assigned_formations_on_operation_table"]) {
-                                draw_operation_table(true);
+                                draw_operation_table(true, false);
                             }
                             break;
                     }
@@ -1476,6 +1476,17 @@ function operation_date_button_change () {
 }
 
 
+function select_joined_railroads (operation_date = null) {
+    var popup_inner_elm = open_square_popup("joined_railroads_popup", true, "直通先路線系統");
+    
+    var buf = "";
+    for (var railroad_id of railroad_info["joined_railroads"]) {
+        buf += "<a class='related_link' href='javascript:void(0);' onclick='close_square_popup(); select_railroad(\"" + add_slashes(railroad_id) + "\", \"operation_data_mode\", \"" + operation_date + "\");' style='border-color: " + (config["dark_mode"] ? convert_color_dark_mode(railroad_info["related_railroads"][railroad_id]["main_color"]) : railroad_info["related_railroads"][railroad_id]["main_color"]) + ";'>" + escape_html(railroad_info["related_railroads"][railroad_id]["railroad_name"]) + "</a>";
+    }
+    popup_inner_elm.innerHTML = buf;
+}
+
+
 var operation_detail_write_button_enabled = false;
 
 function operation_detail (operation_number_or_index, operation_data_date_ts_or_diagram_id, show_write_operation_data_button = null, search_keyword = null) {
@@ -2092,7 +2103,7 @@ function change_operation_table_view (view_name = null) {
     if (view_name !== null) {
         config["operation_table_view"] = view_name;
         
-        operation_table_list_number();
+        operation_table_list_number(false);
     } else {
         view_name = config["operation_table_view"];
     }
@@ -2147,7 +2158,7 @@ function change_operation_table_options () {
         show_tips();
     }
     
-    operation_table_list_number();
+    operation_table_list_number(false);
 }
 
 function update_operation_table_drop_down_status (elm) {
@@ -2157,7 +2168,7 @@ function update_operation_table_drop_down_status (elm) {
 function operation_table_change (diagram_revision, diagram_id) {
     operation_search_area_elm.style.display = "none";
     operation_table_area_elm.innerHTML = "";
-    operation_table_info_elm.innerHTML = "";
+    operation_table_area_supplement_elm.innerHTML = "";
     
     document.getElementById("operation_table_name").innerText = diagram_info[diagram_revision]["diagrams"][diagram_id]["diagram_name"];
     
@@ -2921,7 +2932,7 @@ function post_operation_data () {
                 
                 case 4:
                     if (config["show_assigned_formations_on_operation_table"]) {
-                        draw_operation_table(true);
+                        draw_operation_table(true, false);
                     }
                     break;
             }
