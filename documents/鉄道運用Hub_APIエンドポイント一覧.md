@@ -556,6 +556,32 @@ JSON化された時刻表の内容を返す
 文字列「ERROR: 」とそれに続くエラー内容文
 
 
+## formations_last_operated.php
+全編成の最終運行情報を取得する
+
+### 引数
+**$_POST["railroad_id"]** : 路線系統識別名
+
+### 応答
+**正常時** :  
+{  
+    "編成名" : { 最終運行情報(一度も運行した記録がない場合はNULL)  
+        "last_operated_date" : 最終運行日(YYYY-MM-DD形式),  
+        "operations" : [ 最終運行日の運用情報  
+            {  
+                "operation_number" : 運用番号,  
+                "formations" : 組成情報,  
+                "relieved_formations" : 差し替え前の編成を充当順に配列で(差し替えがなければ省略)  
+            }...  
+        ]  
+    }..  
+}  
+▲クライアント端末からAccept-Encodingヘッダーが送信されていた場合、このデータは自動的にgzip圧縮される  
+  
+**エラーの場合** :  
+文字列「ERROR: 」とそれに続くエラー内容文
+
+
 ## moderation_info.php
 ユーザーIDとIPアドレスからモデレーション情報を取得する
 
