@@ -13,7 +13,7 @@ $sql_r = $db_obj->query("
     SELECT
         `unyohub_data_each_formation`.`formation_name`,
         `unyohub_data_each_formation`.`operation_date`,
-        `unyohub_assigned_formation_caches`.`assign_order`,
+        `unyohub_data_each_formation`.`operation_number`,
         `unyohub_assigned_formation_caches`.`formations`
     FROM `unyohub_data_each_formation`
     JOIN `unyohub_formations` ON `unyohub_data_each_formation`.`formation_name` = `unyohub_formations`.`formation_name`
@@ -25,7 +25,7 @@ $sql_r = $db_obj->query("
         GROUP BY `formation_name`
     ) AS `latest` ON `unyohub_data_each_formation`.`formation_name` = `latest`.`formation_name` AND `unyohub_data_each_formation`.`operation_date` = `latest`.`max_date`
     WHERE `unyohub_formations`.`currently_registered` = 1
-    ORDER BY `unyohub_data_each_formation`.`formation_name` ASC, `unyohub_assigned_formation_caches`.`assign_order` DESC
+    ORDER BY `unyohub_data_each_formation`.`formation_name` ASC, `unyohub_data_each_formation`.`operation_number` ASC, `unyohub_assigned_formation_caches`.`assign_order` DESC
 ");
 
 $operation_data = array();
@@ -33,14 +33,20 @@ while ($row = $sql_r->fetchArray(SQLITE3_ASSOC)) {
     $formation_name = $row["formation_name"];
     
     if (!isset($operation_data[$formation_name])) {
-        $operation_data[$formation_name] = array("operation_date" => $row["operation_date"], "formations" => is_null($row["formations"]) ? "" : $row["formations"]);
+        $operation_data[$formation_name] = array("last_operated_date" => $row["operation_date"], "operations" => array(array("operation_number" => $row["operation_number"], "formations" => is_null($row["formations"]) ? "" : $row["formations"])));
+    } elseif ($row["operation_number"] !== $last_operation_number) {
+        $operation_data[$formation_name]["operations"][] = array("operation_number" => $row["operation_number"], "formations" => is_null($row["formations"]) ? "" : $row["formations"]);
     } else {
-        if (!isset($operation_data[$formation_name]["relieved_formations"])) {
-            $operation_data[$formation_name]["relieved_formations"] = array();
+        $operation_index = count($operation_data[$formation_name]["operations"]) - 1;
+        
+        if (!isset($operation_data[$formation_name]["operations"][$operation_index]["relieved_formations"])) {
+            $operation_data[$formation_name]["operations"][$operation_index]["relieved_formations"] = array();
         }
         
-        array_unshift($operation_data[$formation_name]["relieved_formations"], is_null($row["formations"]) ? "" : $row["formations"]);
+        array_unshift($operation_data[$formation_name]["operations"][$operation_index]["relieved_formations"], is_null($row["formations"]) ? "" : $row["formations"]);
     }
+    
+    $last_operation_number = $row["operation_number"];
 }
 
 if (empty($operation_data)) {
