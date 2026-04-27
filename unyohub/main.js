@@ -2126,6 +2126,12 @@ function update_operation_table (resolve_func, reject_func, railroad_id_or_null,
                     } else if (train["direction"] === "outbound") {
                         var train_direction = "outbound_trains";
                     } else {
+                        if (!("temporary_garaged_times" in operation_response["operations"][operation_number])) {
+                            operation_response["operations"][operation_number]["temporary_garaged_times"] = [];
+                        }
+                        
+                        operation_response["operations"][operation_number]["temporary_garaged_times"].push([train["first_departure_time"], train["final_arrival_time"]]);
+                        
                         if ("formations_can_changed" in train && train["formations_can_changed"]) {
                             if (!("times_formations_can_changed" in operation_response["operations"][operation_number])) {
                                 operation_response["operations"][operation_number]["times_formations_can_changed"] = [];
@@ -3900,6 +3906,16 @@ function get_operation_data_cell_html (operation_number, tag_name, days_before, 
         var buf = "<" + tag_name + " class='before_operation'";
     } else {
         var buf = "<" + tag_name;
+        
+        if ("temporary_garaged_times" in operation_table["operations"][operation_number]) {
+            for (var temporary_garaged_time of operation_table["operations"][operation_number]["temporary_garaged_times"]) {
+                if (temporary_garaged_time[0] <= now_str && temporary_garaged_time[1] > now_str) {
+                    buf += " class='temporary_garaged'";
+                    
+                    break;
+                }
+            }
+        }
     }
     
     if (operation_number in operation_data["operations"] && operation_data["operations"][operation_number] !== null) {
