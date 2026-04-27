@@ -3906,6 +3906,16 @@ function get_operation_data_cell_html (operation_number, tag_name, days_before, 
         var buf = "<" + tag_name + " class='before_operation'";
     } else {
         var buf = "<" + tag_name;
+        
+        if ("temporary_garaged_times" in operation_table["operations"][operation_number]) {
+            for (var temporary_garaged_time of operation_table["operations"][operation_number]["temporary_garaged_times"]) {
+                if (temporary_garaged_time[0] <= now_str && temporary_garaged_time[1] > now_str) {
+                    buf += " class='temporary_garaged'";
+                    
+                    break;
+                }
+            }
+        }
     }
     
     if (operation_number in operation_data["operations"] && operation_data["operations"][operation_number] !== null) {
