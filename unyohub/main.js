@@ -4553,7 +4553,8 @@ function draw_formation_table (update_title = true) {
     if (update_title) {
         change_title(railroad_info["railroad_name"] + "の編成表 | " + instance_info["instance_name"], "/railroad_" + railroad_info["railroad_id"] + "/formations/");
         
-        var buf = "";
+        var buf = "<u class='execute_link' onclick='formations_last_operated();'>全編成の最終運行情報</u>";
+        
         if ("related_railroads_order" in railroad_info) {
             var buf_2 = "";
             

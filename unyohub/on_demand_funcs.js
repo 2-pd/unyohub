@@ -1902,6 +1902,7 @@ function update_formation_table_drop_down_status (elm) {
     formation_table_drop_down_status[elm.id] = elm.checked;
 }
 
+
 var show_previous_day_operation_data = false;
 var show_same_day_operation_data = false;
 var show_next_day_operation_data = false;
@@ -2065,6 +2066,103 @@ function change_show_next_day_operation_data (bool_val) {
     for (var data_area_elm of document.getElementById("data_history_popup_inner").getElementsByClassName("next_day_operation_data")) {
         data_area_elm.style.display = bool_val ? "block" : "none";
     }
+}
+
+
+function get_formation_last_operation_html (formation_name, data, now_ts) {
+    var buf = "<h4>" + escape_html(formation_name) + "</h4>";
+    
+    if (data != null) {
+        var last_operated_date = new Date(data["last_operated_date"] + " 04:00:00");
+        last_operated_date_ts = Math.floor(last_operated_date.getTime() / 1000);
+        
+        buf += "最終運行日: " + last_operated_date.getFullYear() + "/" + (last_operated_date.getMonth() + 1) + "/" + last_operated_date.getDate() + " ";
+        
+        var days_before = Math.floor((now_ts - last_operated_date_ts) / 86400);
+        if (days_before === 0) {
+            buf += "<span style='color: #33cc99;'>(今日)</span>";
+        } else if (days_before === 1) {
+            buf += "(昨日)";
+        } else if (days_before === 2) {
+            buf += "(一昨日)";
+        } else if (days_before <= 7) {
+            buf += "(" + days_before + "日前)";
+        } else {
+            buf += "<span style='color: " + (!config["dark_mode"] ? "#ee7700" : "#ffcc99") + ";'>(" + days_before + "日前)</span>";
+        }
+        
+        buf += get_operation_data_html(data["operations"], last_operated_date_ts, (operation_table !== null && get_diagram_revision(data["last_operated_date"]) === operation_table["diagram_revision"]));
+    } else {
+        buf += "<div class='descriptive_text'>この編成の運用情報が投稿されたことはありません</div>";
+    }
+    
+    return buf;
+}
+
+function formations_last_operated () {
+    var popup_inner_elm = open_popup("formations_last_operated_popup", "全編成の最終運行情報");
+    
+    popup_inner_elm.className = "wait_icon";
+    
+    var ts = get_timestamp();
+    
+    var operation_data_date = get_date_string(ts);
+    if (operation_table === null) {
+        var load_data_promise = new Promise(function (resolve, reject) {
+            get_diagram_id(operation_data_date, null, function (diagram_data) {
+                load_data(resolve, null, reject, diagram_data["diagram_revision"], diagram_data["diagram_id"], null, operation_data_date);
+            });
+        });
+    } else {
+        var load_data_promise = Promise.resolve();
+    }
+    
+    load_data_promise.then(function () {
+        ajax_post("formations_last_operated.php", "railroad_id=" + escape_form_data(railroad_info["railroad_id"]), function (response) {
+            if (response !== false) {
+                var data = JSON.parse(response);
+                
+                var buf = "";
+                for (var series_name of formations["series_names"]) {
+                    if ("unregistered" in formations["series"][series_name] && formations["series"][series_name]["unregistered"]) {
+                        continue;
+                    }
+                    
+                    var checkbox_id = "last_operated_popup_series_" + add_slashes(series_name);
+                    
+                    buf += "<input type='checkbox' id='" + checkbox_id + "'><label for='" + checkbox_id + "' class='formation_table_drop_down'><span><img src='" + get_icon(series_name) + "' alt='' class='train_icon'></span>" + escape_html(series_name) + "</label><div>";
+                    
+                    if ("subseries_names" in formations["series"][series_name]) {
+                        for (var subseries_name of formations["series"][series_name]["subseries_names"]) {
+                            if ("unregistered" in formations["series"][series_name]["subseries"][subseries_name] && formations["series"][series_name]["subseries"][subseries_name]["unregistered"]) {
+                                continue;
+                            }
+                            
+                            for (var formation_name of formations["series"][series_name]["subseries"][subseries_name]["formation_names"]) {
+                                if (!("cars" in formations["formations"][formation_name])) {
+                                    continue;
+                                }
+                                
+                                buf += get_formation_last_operation_html(formation_name, formation_name in data ? data[formation_name] : null, ts);
+                            }
+                        }
+                    } else {
+                        for (var formation_name of formations["series"][series_name]["formation_names"]) {
+                            if (!("cars" in formations["formations"][formation_name])) {
+                                continue;
+                            }
+                            
+                            buf += get_formation_last_operation_html(formation_name, formation_name in data ? data[formation_name] : null, ts);
+                        }
+                    }
+                    
+                    buf += "</div>";
+                }
+                
+                popup_inner_elm.innerHTML = buf;
+            }
+        });
+    });
 }
 
 
