@@ -966,6 +966,14 @@ window.onload = function () {
                     var mode_option_2 = null;
                 }
                 
+                if (path_info[2] === "operation_data") {
+                    var url_params = new URLSearchParams(window.location.search);
+                    
+                    if (url_params.has("date")) {
+                        mode_option_1 = url_params.get("date");
+                    }
+                }
+                
                 select_railroad(path_info[1].substring(9), path_info[2] + "_mode", mode_option_1, mode_option_2);
             } else {
                 select_railroad(path_info[1].substring(9));
@@ -3839,6 +3847,12 @@ function operation_data_mode (operation_date = null) {
     
     operation_data_active_tab = null;
     
+    if (operation_date !== null && !(/^[0-9]{4}-(0[1-9]|1[0-2])-(0[1-9]|[12][0-9]|3[01])$/.test(operation_date))) {
+        mes("日付の指定が異常です", true);
+        
+        operation_date = null;
+    }
+    
     operation_data_change_date(operation_date);
 }
 
@@ -3872,6 +3886,12 @@ function operation_data_change_date (date_additions) {
     
     var date_string = get_date_string(operation_data_date);
     operation_date_button_elm.value = date_string;
+    
+    if (date_string === get_date_string(ts)) {
+        history.replaceState(null, "", "/railroad_" + railroad_info["railroad_id"] + "/operation_data/");
+    } else {
+        history.replaceState(null, "", "/railroad_" + railroad_info["railroad_id"] + "/operation_data/?date=" + date_string);
+    }
     
     operation_all_data_loaded = false;
     
@@ -5719,6 +5739,7 @@ window.onpopstate = function () {
                     } else {
                         timetable_select_station(mode_option_2, mode_option_1);
                     }
+                    return;
                 }
                 
                 break;
@@ -5741,6 +5762,14 @@ window.onpopstate = function () {
                     return;
                 }
                 break;
+        }
+        
+        if (mode_name === "operation_data") {
+            var url_params = new URLSearchParams(window.location.search);
+            
+            if (url_params.has("date")) {
+                mode_option_1 = url_params.get("date");
+            }
         }
         
         select_mode(mode_name + "_mode", mode_option_1, mode_option_2);
