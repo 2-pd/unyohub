@@ -112,6 +112,8 @@ log_ip_address 投稿者のIPアドレスを記録するか(BOOL値)
                     "station_initial" : 駅頭文字(始発・終着列車のない非分岐駅では省略可能。このJSONに記載の他の駅と被る場合は別の文字を使用する),
                     "is_signal_station" : 信号場か否か(信号場でなければ省略可能。BOOL値),
                     "is_major_station" : 主要駅か否か(主要駅でなければ省略可能。BOOL値),
+                    "canonical_station_name" : 正規の駅名(環状路線の起終点駅でキー station_name の値に仮駅名を指定している場合以外では省略),
+                    "station_name_alias" : 仮の別駅名(環状路線の起終点駅で、別の駅情報のキー canonical_station_name の値にこの駅情報のキー station_name の値が指定されている場合、当該別駅情報のキー station_name の値を指定。それ以外の場合は省略),
                     "practically_same_stations" : 準同一駅とみなす駅の駅名を配列で列挙,
                     "connecting_lines" : [ 直通路線一覧(分岐駅でないか、乗り入れ先の駅である場合は省略可能)
                         {
