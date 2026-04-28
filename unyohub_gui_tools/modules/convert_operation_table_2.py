@@ -43,6 +43,7 @@ def convert_operation_table_2 (mes, main_dir, file_name):
     
     station_initial_info = {}
     station_list = {}
+    canonical_station_names = {}
     for line in lines:
         station_list[line] = []
         
@@ -56,6 +57,9 @@ def convert_operation_table_2 (mes, main_dir, file_name):
                 station_initial_info[station["station_initial"]]["line_set"].add(line)
             
             station_list[line].append(station["station_name"])
+            
+            if "canonical_station_name" in station:
+                canonical_station_names[station["station_name"]] = station["canonical_station_name"]
     
     mes(os.path.basename(file_name) + " を読み込んでいます...")
     with open(file_name, "r", encoding="utf-8-sig") as csv_f:
@@ -290,8 +294,17 @@ def convert_operation_table_2 (mes, main_dir, file_name):
                         else:
                             mes("「" + terminal_station_initial + "」に一致する駅がありません: " + str(cnt + 3) + "行目 " + str(cnt_2 + 1) + "列目", True)
                         
-                        if len(operations[operation_number]["trains"]) >= 1 and (not operations[operation_number]["trains"][-1]["train_number"].startswith(".")) and operations[operation_number]["trains"][-1]["terminal_station"] != starting_station:
-                            mes("・" + train_number + " の始発駅が前の列車の終着駅と一致しません: " + str(cnt + 1) + "行目 " + str(cnt_2 + 1) + "列目")
+                        if len(operations[operation_number]["trains"]) >= 1 and (not operations[operation_number]["trains"][-1]["train_number"].startswith(".")):
+                            canonical_starting_station_name = starting_station
+                            if canonical_starting_station_name in canonical_station_names:
+                                canonical_starting_station_name = canonical_station_names[canonical_starting_station_name]
+                            
+                            canonical_terminal_station_name = operations[operation_number]["trains"][-1]["terminal_station"]
+                            if canonical_terminal_station_name in canonical_station_names:
+                                canonical_terminal_station_name = canonical_station_names[canonical_terminal_station_name]
+                            
+                            if canonical_starting_station_name != canonical_terminal_station_name:
+                                mes("・" + train_number + " の始発駅が前の列車の終着駅と一致しません: " + str(cnt + 1) + "行目 " + str(cnt_2 + 1) + "列目")
                         
                         line_list = list(starting_line_set & terminal_line_set)
                         
