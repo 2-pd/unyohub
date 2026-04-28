@@ -1974,7 +1974,16 @@ function get_operation_data_history (formation_name, operation_number, yyyy_mm =
                 for (var cnt = 0; cnt < day_count; cnt++) {
                     var yyyy_mm_dd = get_date_string(ts);
                     
-                    buf += "<h4>" + Number(yyyy_mm_dd.substring(5, 7)) + "月" + Number(yyyy_mm_dd.substring(8)) + "日 (" + YOBI_LIST[day_value] + (holiday_list.includes(yyyy_mm_dd.substring(5)) ? "・祝" : "") + ")</h4>";
+                    buf += "<h4>" + Number(yyyy_mm_dd.substring(5, 7)) + "月" + Number(yyyy_mm_dd.substring(8)) + "日 (";
+                    if (day_value === 0 || holiday_list.includes(yyyy_mm_dd.substring(5))) {
+                        buf += "<span style='color: " + (config["dark_mode"] ? "#ff9999" : "#cc0000") + ";'>" + YOBI_LIST[day_value] + (holiday_list.includes(yyyy_mm_dd.substring(5)) ? "・祝" : "") + "</span>";
+                    } else if (day_value === 6) {
+                        buf += "<span style='color: " + (config["dark_mode"] ? "#99ccff" : "#0066cc") + ";'>土</span>";
+                    } else {
+                        buf += YOBI_LIST[day_value];
+                    }
+                    buf += ")</h4>";
+                    
                     if (yyyy_mm_dd in data) {
                         if (data[yyyy_mm_dd].length >= 1) {
                             if ("previous_day_operation_data" in data[yyyy_mm_dd][0]) {
