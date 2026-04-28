@@ -593,6 +593,10 @@ function select_lines (line_id = null, station_name = null, position_mode = true
             if (station_data["station_name"] === station_name) {
                 if ("connecting_lines" in station_data) {
                     for (var connecting_line of station_data["connecting_lines"]) {
+                        if (connecting_line["line_id"] === line_id) {
+                            continue;
+                        }
+                        
                         if (!("affiliated_railroad_id" in railroad_info["lines"][connecting_line["line_id"]])) {
                             lines.push(connecting_line["line_id"]);
                         } else {
@@ -1217,12 +1221,13 @@ function train_detail (line_id, train_number, starting_station, train_direction,
             for (var cnt = 0; cnt < train["departure_times"].length; cnt++) {
                 if (train["departure_times"][cnt] !== null && !train["departure_times"][cnt].startsWith("|")) {
                     var station_index = train["is_inbound"] ? stations.length - 1 - cnt : cnt;
+                    var station_name = "canonical_station_name" in stations[station_index] ? stations[station_index]["canonical_station_name"] : stations[station_index]["station_name"];
                     var highlight_str = is_today && ((previous_departure_time !== null && previous_departure_time < now_str && train["departure_times"][cnt] >= now_str) || train["departure_times"][cnt] === now_str) ? " train_detail_departure_time_highlight" : "";
-                    var onclick_func = "affiliated_railroad_id" in railroad_info["lines"][train["line_id"]] ? "close_square_popup(); select_railroad(\"" + railroad_info["lines"][train["line_id"]]["affiliated_railroad_id"] + "\", \"timetable_mode\", \"" + train["line_id"] + "\", \"" + add_slashes(stations[station_index]["station_name"]) + "\", " + train["is_inbound"] + ");" : "show_station_timetable(\"" + train["line_id"] + "\", \"" + stations[station_index]["station_name"] + "\", " + train["is_inbound"] + ");";
+                    var onclick_func = "affiliated_railroad_id" in railroad_info["lines"][train["line_id"]] ? "close_square_popup(); select_railroad(\"" + railroad_info["lines"][train["line_id"]]["affiliated_railroad_id"] + "\", \"timetable_mode\", \"" + train["line_id"] + "\", \"" + add_slashes(station_name) + "\", " + train["is_inbound"] + ");" : "show_station_timetable(\"" + train["line_id"] + "\", \"" + add_slashes(station_name) + "\", " + train["is_inbound"] + ");";
                     
                     buf += "<tr class='" + (is_deadhead_train ? "deadhead_train_departure_time" : "") + highlight_str + "'>";
                     if (("connecting_lines" in stations[station_index] && stations[station_index]["connecting_lines"].length >= 1) || ("connecting_railroads" in  stations[station_index] && stations[station_index]["connecting_railroads"].length >= 1)) {
-                        buf += "<td><button type='button' class='connecting_railroads_button' onclick='select_lines(\"" + train["line_id"] + "\", \"" + add_slashes(stations[station_index]["station_name"]) + "\", " + (mode_val === 0 ? "true" : "false") + ");'></button></td>";
+                        buf += "<td><button type='button' class='connecting_railroads_button' onclick='select_lines(\"" + train["line_id"] + "\", \"" + add_slashes(station_name) + "\", " + (mode_val === 0 ? "true" : "false") + ");'></button></td>";
                     } else {
                         buf += "<td></td>";
                     }
@@ -1233,7 +1238,7 @@ function train_detail (line_id, train_number, starting_station, train_direction,
                         buf += "<small>" + arrival_times[cnt] + " -</small>";
                     }
                     buf += "<time>" + train["departure_times"][cnt] + "</time></td>";
-                    buf += "<td>" + (diagram_is_current_revision && (!("is_signal_station" in stations[station_index]) || !stations[station_index]["is_signal_station"]) ? "<u onclick='" + onclick_func + "'>" + escape_html(stations[station_index]["station_name"]) + "</u>" : escape_html(stations[station_index]["station_name"])) + "</td>";
+                    buf += "<td>" + (diagram_is_current_revision && (!("is_signal_station" in stations[station_index]) || !stations[station_index]["is_signal_station"]) ? "<u onclick='" + onclick_func + "'>" + escape_html(station_name) + "</u>" : escape_html(station_name)) + "</td>";
                     buf += "</tr>";
                     
                     previous_departure_time = train["departure_times"][cnt];

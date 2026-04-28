@@ -96,7 +96,7 @@ if (empty($_SERVER["PATH_INFO"])) {
             print "    </url>\n";
             
             foreach ($railroad_info["lines"][$line_id]["stations"] as $station) {
-                if (empty($station["is_signal_station"])) {
+                if (empty($station["is_signal_station"]) && empty($station["canonical_station_name"])) {
                     print "    <url>\n";
                     print "        <loc>".$railroad_root."/timetable/".$line_id."/".urlencode($station["station_name"])."/</loc>\n";
                     print "        <changefreq>daily</changefreq>\n";
