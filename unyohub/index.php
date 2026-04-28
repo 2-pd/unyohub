@@ -93,6 +93,11 @@ if (empty($_SERVER["PATH_INFO"]) || $_SERVER["PATH_INFO"] === "/") {
                         } else {
                             foreach ($railroad_info["lines"][$path_info[3]]["stations"] as $station) {
                                 if ($station["station_name"] === $path_info[4] && empty($station["is_signal_station"])) {
+                                    if (!empty($station["canonical_station_name"])) {
+                                        header("Location: ".$path_info_str.urlencode($station["canonical_station_name"])."/", TRUE, 301);
+                                        exit;
+                                    }
+                                    
                                     goto station_exists;
                                 }
                             }
