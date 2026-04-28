@@ -3475,6 +3475,85 @@ function timetable_select_station (station_name, line_id = null, reset_scroll_am
     });
 }
 
+function get_station_trains_info (line_id, station_index, train_direction) {
+    if (train_direction === "inbound_trains") {
+        station_index = railroad_info["lines"][line_id]["stations"].length - 1 - station_index;
+    }
+    
+    var trains_info = {};
+    for (var train_number of Object.keys(timetable["timetable"][line_id][train_direction])) {
+        for (var train of timetable["timetable"][line_id][train_direction][train_number]) {
+            var departure_time = train["departure_times"][station_index];
+            
+            if (departure_time === null || departure_time.startsWith("|")) {
+                continue;
+            }
+            
+            var is_deadhead_train = (railroad_info["deadhead_train_number_regexp"].test(train_number) || train["train_type"] === "回送") ? true : false;
+            
+            var is_terminal_station = true;
+            
+            for (var cnt = station_index + 1; cnt < train["departure_times"].length; cnt++) {
+                if (train["departure_times"][cnt] !== null) {
+                    is_terminal_station = false;
+                    break;
+                }
+            }
+            
+            if (is_terminal_station) {
+                for (var next_train of train["next_trains"]) {
+                    if (next_train["line_id"] === line_id) {
+                        is_terminal_station = false;
+                        break;
+                    }
+                }
+            }
+            
+            if (!config["show_deadhead_trains_on_timetable"] && (is_deadhead_train || is_terminal_station)) {
+                continue;
+            }
+            
+            if (train["previous_trains"].length == 0) {
+                var is_starting_station = true;
+                
+                for (var cnt = 0; cnt < station_index; cnt++) {
+                    if (train["departure_times"][cnt] !== null) {
+                        is_starting_station = false;
+                        break;
+                    }
+                }
+            } else {
+                var is_starting_station = false;
+            }
+            
+            if (config["show_starting_trains_only_on_timetable"] && !is_starting_station) {
+                continue;
+            }
+            
+            hh_and_mm = departure_time.split(":");
+            
+            if (!(hh_and_mm[0] in trains_info)) {
+                trains_info[hh_and_mm[0]] = {};
+            }
+            if (!(hh_and_mm[1] in trains_info[hh_and_mm[0]])) {
+                trains_info[hh_and_mm[0]][hh_and_mm[1]] = [];
+            }
+            
+            trains_info[hh_and_mm[0]][hh_and_mm[1]].push({
+                train_number : train_number,
+                starting_station : train["starting_station"],
+                train_type : train["train_type"],
+                is_starting_station : is_starting_station,
+                is_terminal_station : is_terminal_station,
+                is_deadhead_train :  is_deadhead_train,
+                is_temporary_train : ("is_temporary_train" in train ? train["is_temporary_train"] : false)
+            });
+        }
+    }
+    
+    return trains_info;
+}
+
 function draw_station_timetable (station_name) {
     for (var station_index = 0; station_index < railroad_info["lines"][timetable_selected_line]["stations"].length; station_index++) {
         if (railroad_info["lines"][timetable_selected_line]["stations"][station_index]["station_name"] === station_name) {
@@ -3490,92 +3569,43 @@ function draw_station_timetable (station_name) {
         return;
     }
     
-    var previous_station = timetable_get_neighboring_station(timetable_selected_line, station_name, -1);
-    var next_station = timetable_get_neighboring_station(timetable_selected_line, station_name, 1);
-    
-    document.getElementById("timetable_station_name").innerHTML = "<a href='/railroad_" + railroad_info["railroad_id"] + "/timetable/" + timetable_selected_line + "/" + encodeURIComponent(previous_station) + "/' class='previous_button' onclick='event.preventDefault(); timetable_select_station(\"" + previous_station + "\", null, true);'>" + escape_html(previous_station) + "</a><h2>" + escape_html(station_name) + "</h2><a href='/railroad_" + railroad_info["railroad_id"] + "/timetable/" + timetable_selected_line + "/" + encodeURIComponent(next_station) + "/' class='next_button' onclick='event.preventDefault(); timetable_select_station(\"" + next_station + "\", null, true);'>" + escape_html(next_station) + "</a>";
-    
     if (document.getElementById("radio_inbound").checked) {
         var train_direction = "inbound_trains";
         var is_inbound = true;
-        var station_index = railroad_info["lines"][timetable_selected_line]["stations"].length - 1 - station_index;
     } else {
         var train_direction = "outbound_trains";
         var is_inbound = false;
     }
     
-    document.getElementById("show_deadhead_trains_check").checked = config["show_deadhead_trains_on_timetable"];
-    document.getElementById("show_starting_trains_only_check").checked = config["show_starting_trains_only_on_timetable"];
+    var trains_info = get_station_trains_info(timetable_selected_line, station_index, train_direction);
     
-    var train_infos = {};
-    
-    for (var train_number of Object.keys(timetable["timetable"][timetable_selected_line][train_direction])) {
-        for (var train of timetable["timetable"][timetable_selected_line][train_direction][train_number]) {
-            var departure_time = train["departure_times"][station_index];
-            
-            if (departure_time !== null && !departure_time.startsWith("|")) {
-                var is_deadhead_train = (railroad_info["deadhead_train_number_regexp"].test(train_number) || train["train_type"] === "回送") ? true : false;
-                
-                var is_terminal_station = true;
-                
-                for (var cnt = station_index + 1; cnt < train["departure_times"].length; cnt++) {
-                    if (train["departure_times"][cnt] !== null) {
-                        is_terminal_station = false;
-                        break;
-                    }
-                }
-                
-                if (is_terminal_station) {
-                    for (var next_train of train["next_trains"]) {
-                        if (next_train["line_id"] === timetable_selected_line) {
-                            is_terminal_station = false;
-                            break;
-                        }
-                    }
-                }
-                
-                if (!config["show_deadhead_trains_on_timetable"] && (is_deadhead_train || is_terminal_station)) {
-                    continue;
-                }
-                
-                if (train["previous_trains"].length == 0) {
-                    var is_starting_station = true;
-                    
-                    for (var cnt = 0; cnt < station_index; cnt++) {
-                        if (train["departure_times"][cnt] !== null) {
-                            is_starting_station = false;
-                            break;
-                        }
-                    }
-                } else {
-                    var is_starting_station = false;
-                }
-                
-                if (config["show_starting_trains_only_on_timetable"] && !is_starting_station) {
-                    continue;
-                }
-                
-                hh_and_mm = departure_time.split(":");
-                
-                if (!(hh_and_mm[0] in train_infos)) {
-                    train_infos[hh_and_mm[0]] = {};
-                }
-                if (!(hh_and_mm[1] in train_infos[hh_and_mm[0]])) {
-                    train_infos[hh_and_mm[0]][hh_and_mm[1]] = [];
-                }
-                
-                train_infos[hh_and_mm[0]][hh_and_mm[1]].push({
-                    train_number : train_number,
-                    starting_station : train["starting_station"],
-                    train_type : train["train_type"],
-                    is_starting_station : is_starting_station,
-                    is_terminal_station : is_terminal_station,
-                    is_deadhead_train :  is_deadhead_train,
-                    is_temporary_train : ("is_temporary_train" in train ? train["is_temporary_train"] : false)
-                });
+    if ("station_name_alias" in railroad_info["lines"][timetable_selected_line]["stations"][station_index]) {
+        var station_name_alias = railroad_info["lines"][timetable_selected_line]["stations"][station_index]["station_name_alias"];
+        
+        for (var station_index_2 = 0; station_index_2 < railroad_info["lines"][timetable_selected_line]["stations"].length; station_index_2++) {
+            if (railroad_info["lines"][timetable_selected_line]["stations"][station_index_2]["station_name"] === station_name_alias) {
+                break;
+            }
+        }
+        
+        var trains_info_2 = get_station_trains_info(timetable_selected_line, station_index_2, train_direction);
+        
+        for (var hh of Object.keys(trains_info_2)) {
+            if (hh in trains_info) {
+                Object.assign(trains_info[hh], trains_info_2[hh]);
+            } else {
+                trains_info[hh] = trains_info_2[hh];
             }
         }
     }
+    
+    var previous_station = timetable_get_neighboring_station(timetable_selected_line, station_name, -1);
+    var next_station = timetable_get_neighboring_station(timetable_selected_line, station_name, 1);
+    
+    document.getElementById("timetable_station_name").innerHTML = "<a href='/railroad_" + railroad_info["railroad_id"] + "/timetable/" + timetable_selected_line + "/" + encodeURIComponent(previous_station) + "/' class='previous_button' onclick='event.preventDefault(); timetable_select_station(\"" + previous_station + "\", null, true);'>" + escape_html(previous_station) + "</a><h2>" + escape_html(station_name) + "</h2><a href='/railroad_" + railroad_info["railroad_id"] + "/timetable/" + timetable_selected_line + "/" + encodeURIComponent(next_station) + "/' class='next_button' onclick='event.preventDefault(); timetable_select_station(\"" + next_station + "\", null, true);'>" + escape_html(next_station) + "</a>";
+    
+    document.getElementById("show_deadhead_trains_check").checked = config["show_deadhead_trains_on_timetable"];
+    document.getElementById("show_starting_trains_only_check").checked = config["show_starting_trains_only_on_timetable"];
     
     if (timetable_date === "__today__" || timetable_date === "__tomorrow__") {
         var show_operation_data = true;
@@ -3608,10 +3638,10 @@ function draw_station_timetable (station_name) {
     }
     
     var buf = "";
-    for (var hh of Object.keys(train_infos).toSorted()) {
+    for (var hh of Object.keys(trains_info).toSorted()) {
         var buf_2 = "";
-        for (var mm of Object.keys(train_infos[hh]).toSorted()) {
-            for (var train_info of train_infos[hh][mm]) {
+        for (var mm of Object.keys(trains_info[hh]).toSorted()) {
+            for (var train_info of trains_info[hh][mm]) {
                 var train_operations = get_operations(timetable_selected_line, train_info["train_number"], train_info["starting_station"], train_direction);
                 
                 if (train_operations === null && train_info["is_temporary_train"]) {
