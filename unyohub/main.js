@@ -117,6 +117,7 @@ function get_default_config () {
         "operation_data_cache_period" : 7,
         "position_mode_minute_step" : 1,
         "show_final_destinations_in_position_mode" : false,
+        "retain_position_mode_last_seen_line" : true,
         "show_deadhead_trains_on_timetable" : true,
         "show_starting_trains_only_on_timetable" : false,
         "colorize_corrected_posts" : false,
@@ -1138,8 +1139,8 @@ var railroad_rules_last_read;
 
 function set_railroad_user_data (user_data) {
     if (user_data !== null) {
-        position_selected_line = user_data["position_selected_line"] in railroad_info["lines"] ? user_data["position_selected_line"] : railroad_info["lines_order"][0];
-        position_scroll_amount = user_data["position_scroll_amount"];
+        position_selected_line = config["retain_position_mode_last_seen_line"] && (user_data["position_selected_line"] in railroad_info["lines"]) ? user_data["position_selected_line"] : railroad_info["lines_order"][0];
+        position_scroll_amount = config["retain_position_mode_last_seen_line"] ? user_data["position_scroll_amount"] : 0;
         use_group_divisions_on_operation_data = "use_group_divisions_on_operation_data" in user_data ? user_data["use_group_divisions_on_operation_data"] : true;//2027-04末まで暫定
         railroad_rules_last_read = "rules_last_read" in user_data ? user_data["rules_last_read"] : null;//2027-04末まで暫定
     } else {
