@@ -87,6 +87,14 @@ log_ip_address 投稿者のIPアドレスを記録するか(BOOL値)
     "railroad_name" : 路線系統表示名,
     "main_color" : 路線系統のテーマカラー,
     "railroad_icon" : BASE64エンコードされた路線系統のアイコンデータ,
+    "related_railroads" : { 関連する路線系統の情報(以下のキー joined_railroads の値に含まれる路線系統は全て記載。joined_railroads を省略する場合は省略可能)
+        路線系統識別名 : {
+            "railroad_name" : 表示名(当該路線系統の路線系統表示名と差異があってもよい),
+            "main_color" : テーマカラー,
+            "show_link_in_formation_table" : 編成表で「関連項目」欄に表示するか否か(表示しない場合は省略可能。BOOL値)
+        }...
+    },
+    "related_railroads_order" : 関連する路線系統の路線系統識別名を表示させたい順に配列で(キー related_railroads を省略する場合は省略),
     "joined_railroads" : 直通する路線系統の路線系統識別名を配列で列挙(他の路線系統に属する運用が乗り入れしていない場合は省略可能),
     "lines" : { 個々の路線の情報
         路線識別名 : {
@@ -104,6 +112,8 @@ log_ip_address 投稿者のIPアドレスを記録するか(BOOL値)
                     "station_initial" : 駅頭文字(始発・終着列車のない非分岐駅では省略可能。このJSONに記載の他の駅と被る場合は別の文字を使用する),
                     "is_signal_station" : 信号場か否か(信号場でなければ省略可能。BOOL値),
                     "is_major_station" : 主要駅か否か(主要駅でなければ省略可能。BOOL値),
+                    "canonical_station_name" : 正規の駅名(環状路線の起終点駅でキー station_name の値に仮駅名を指定している場合以外では省略),
+                    "station_name_alias" : 仮の別駅名(環状路線の起終点駅で、別の駅情報のキー canonical_station_name の値にこの駅情報のキー station_name の値が指定されている場合、当該別駅情報のキー station_name の値を指定。それ以外の場合は省略),
                     "practically_same_stations" : 準同一駅とみなす駅の駅名を配列で列挙,
                     "connecting_lines" : [ 直通路線一覧(分岐駅でないか、乗り入れ先の駅である場合は省略可能)
                         {
@@ -294,15 +304,15 @@ log_ip_address 投稿者のIPアドレスを記録するか(BOOL値)
         運用番号 : { 各運用の情報
             "trains" : [ 各区間組成の情報の情報(折り返し等の発車待ちの情報も含む)
                 {
-                    "train_number" : 列車番号(発車待ちや列車番号が不明な場合は仮ID),
-                    "line_id" : 走行路線の識別名,
+                    "train_number" : 列車番号(発車待ちや列車番号が不明な場合は仮ID。発車待ちの場合は「_」、一時入庫の場合は「.」が先頭に付く),
+                    "line_id" : 走行路線の識別名(一時入庫の場合はnull),
                     "first_departure_time" : 「HH:MM」形式の始発時刻,
                     "final_arrival_time" : 「HH:MM」形式の終着時刻,
-                    "starting_station" : 始発駅,
-                    "terminal_station" : 終着駅,
-                    "position_forward" : 担当位置開始両数(進行方向から数えて何両目からがその運用か),
-                    "position_rear" : 担当位置終了両数(進行方向から数えて何両目までがその運用か),
-                    "direction" : 上り列車か下り列車か(上り列車か上り方面発車待ちなら「inbound」、下り列車か下り方面発車待ちなら「outbound」),
+                    "starting_station" : 始発駅(一時入庫の場合はnull),
+                    "terminal_station" : 終着駅(一時入庫の場合はnull),
+                    "position_forward" : 担当位置開始両数(進行方向から数えて何両目からがその運用か。一時入庫の場合はnull),
+                    "position_rear" : 担当位置終了両数(進行方向から数えて何両目までがその運用か。一時入庫の場合はnull),
+                    "direction" : 上り列車か下り列車か(上り列車か上り方面発車待ちなら「inbound」、下り列車か下り方面発車待ちなら「outbound」、一時入庫ではnull),
                     "formation_reversed" : 方反か否か(方反でない場合は省略可能),
                     "formations_can_changed" : 差し替えの可能性がある留置か否か(差し替えの可能性がある留置でない場合は省略可能)
                 }...

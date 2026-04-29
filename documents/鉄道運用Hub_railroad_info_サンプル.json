@@ -2,6 +2,18 @@
     "railroad_name" : "南海 本線系統",
     "main_color" : "#3399ff",
     "railroad_icon" : "data:image/webp;base64,UklGRjICAABXRUJQVlA4TCYCAAAvO8AOEHVAkiRZqML9L50L4M34CPej0t8ISAIAlpEys7Zt27bPtvUD2zjZtm3btm17zEzAnNmpcAoNbvw6Uc52bsmbAx9oltwFc9955A+zmXl/Enh5DLAcYOOXoQL4xBfZA4y5xCON2Z7mJzEz7JL3Zx74/yZsVCTypp2aCONOxXWNAjDKnCb0m9Dzs51E6bQzAuMEKsHaw819kphC24c1+SSZTnKmwbMXvPOFuezgB5VLzrMfRvW51nmA/fBYyLVfgvuRcgbeSp3tiLvOLTS+7Yj/5l7W7PbvMovkd8NoKYt2ZjMIHeCq2N1EZJnaZiyQlvxB7oXXc5aNz15asy5zL/YpCtkKl7cK2y4G8hyqaJCbKpUeqsYTeKI1yoglUh0QQt8kWqdmKGUCDRg15sy1Rhu1hq2GwWDOMFhq+lNHV0JjGLw0MyWqqA1vSXau5dYUgo0kK3xzK7D0+u1gVqAPd8eoxDedwtYwOsk9+ZLOFj1rMsBFAhUM/lugsazQQFzBUGGTXh4LENayirkissnYAvssk6hoawq9G0i7aywr9rsM3HDJuoSKx66wvzJdsFSBbfOE60QKtRBqhS80h+kAM5JSVbNLDOE6wFgtoTDeJR5544Qqxcn/Ls1mMT0pdsk+KXDKmOJ5zrcP9SR/Tp/kWMWTlLF9Eusx+xzTM+R8g0H2tdsvSvJH9gAzzHzlkX/M5vwx8wTTZA9wy0aZY6idPn/KWM8Z",
+    "related_railroads" : {
+        "koya" : {
+            "railroad_name" : "高野線・泉北線系統",
+            "main_color" : "#33cc66",
+            "show_link_in_formation_table" : true
+        },
+        "choshi" : {
+            "railroad_name" : "銚子電鉄",
+            "main_color" : "#990033"
+        }
+    },
+    "related_railroads_order" : ["koya", "choshi"],
     "lines" : {
         "honsen" : {
             "line_name" : "南海本線",

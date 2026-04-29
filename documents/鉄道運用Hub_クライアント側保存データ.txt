@@ -27,6 +27,7 @@ APIエンドポイント instance_info.php から配信される鉄道運用Hub�
     "operation_data_cache_period" : 運用データのキャッシュ保管日数(整数値),
     "position_mode_minute_step" : 走行位置画面における表示時刻調節の変化量(分単位の整数値),
     "show_final_destinations_in_position_mode" : 走行位置画面で列車番号の代わりに種別(または行き先)を表示させるか(BOOL値),
+    "retain_position_mode_last_seen_line" : 各路線系統の走行位置画面で最後に閲覧していた路線を記憶しておくか(BOOL値),
     "show_deadhead_trains_on_timetable" : 時刻表閲覧時に回送と当駅止まりを表示するか(BOOL値),
     "show_starting_trains_only_on_timetable" : 時刻表閲覧時に当駅始発のみを表示するか(BOOL値),
     "colorize_corrected_posts" : 訂正のあった情報を色で区別して表示するか(BOOL値),
@@ -165,6 +166,9 @@ APIエンドポイント operation_table.php から受信したデータより�
             terminal_track : 入庫番線,
             ending_time : 「HH:MM」形式の入庫時刻,
             times_formations_can_changed : 差し替えの行われる可能性がある時刻を配列で(各時刻は「HH:MM」形式、省略の場合有),
+            temporary_garaged_times : [ 一時入庫時間の一覧
+                [「HH:MM」形式の開始時刻, 「HH:MM」形式の終了時刻]...
+            ],
             cars_count : 編成両数,
             main_color : 運用のテーマカラー,
             comment : コメント
