@@ -1223,7 +1223,7 @@ function train_detail (line_id, train_number, starting_station, train_direction,
                     var station_index = train["is_inbound"] ? stations.length - 1 - cnt : cnt;
                     var station_name = "canonical_station_name" in stations[station_index] ? stations[station_index]["canonical_station_name"] : stations[station_index]["station_name"];
                     var highlight_str = is_today && ((previous_departure_time !== null && previous_departure_time < now_str && train["departure_times"][cnt] >= now_str) || train["departure_times"][cnt] === now_str) ? " train_detail_departure_time_highlight" : "";
-                    var onclick_func = "affiliated_railroad_id" in railroad_info["lines"][train["line_id"]] ? "close_square_popup(); select_railroad(\"" + railroad_info["lines"][train["line_id"]]["affiliated_railroad_id"] + "\", \"timetable_mode\", \"" + train["line_id"] + "\", \"" + add_slashes(station_name) + "\", " + train["is_inbound"] + ");" : "show_station_timetable(\"" + train["line_id"] + "\", \"" + add_slashes(station_name) + "\", " + train["is_inbound"] + ");";
+                    var onclick_func = "affiliated_railroad_id" in railroad_info["lines"][train["line_id"]] ? "select_railroad(\"" + railroad_info["lines"][train["line_id"]]["affiliated_railroad_id"] + "\", \"timetable_mode\", \"" + train["line_id"] + "\", \"" + add_slashes(station_name) + "\", " + train["is_inbound"] + ");" : "show_station_timetable(\"" + train["line_id"] + "\", \"" + add_slashes(station_name) + "\", " + train["is_inbound"] + ");";
                     
                     buf += "<tr class='" + (is_deadhead_train ? "deadhead_train_departure_time" : "") + highlight_str + "'>";
                     if (("connecting_lines" in stations[station_index] && stations[station_index]["connecting_lines"].length >= 1) || ("connecting_railroads" in  stations[station_index] && stations[station_index]["connecting_railroads"].length >= 1)) {
@@ -1238,7 +1238,7 @@ function train_detail (line_id, train_number, starting_station, train_direction,
                         buf += "<small>" + arrival_times[cnt] + " -</small>";
                     }
                     buf += "<time>" + train["departure_times"][cnt] + "</time></td>";
-                    buf += "<td>" + (diagram_is_current_revision && (!("is_signal_station" in stations[station_index]) || !stations[station_index]["is_signal_station"]) ? "<u onclick='" + onclick_func + "'>" + escape_html(station_name) + "</u>" : escape_html(station_name)) + "</td>";
+                    buf += "<td>" + (diagram_is_current_revision && (!("is_signal_station" in stations[station_index]) || !stations[station_index]["is_signal_station"]) ? "<u onclick='close_square_popup(); history_back_promise.then(function () { " + onclick_func + " });'>" + escape_html(station_name) + "</u>" : escape_html(station_name)) + "</td>";
                     buf += "</tr>";
                     
                     previous_departure_time = train["departure_times"][cnt];
@@ -3831,6 +3831,94 @@ function close_welcome_message () {
 }
 
 
+window.onblur = function () {
+    if (railroad_info !== null) {
+        save_railroad_user_data(railroad_info["railroad_id"]);
+    }
+};
+
+
+var on_popstate_do_nothing = false;
+
+window.onpopstate = function () {
+    if (history_back_promise instanceof Promise) {
+        history_back_resolve();
+        history_back_promise = null;
+        history_back_resolve = null;
+    }
+    
+    if (on_popstate_do_nothing) {
+        on_popstate_do_nothing = false;
+        return;
+    }
+    
+    if (square_popup_is_open) {
+        close_square_popup(false);
+    } else if (popup_history.length >= 1) {
+        popup_close(false, false);
+    } else {
+        if (location.pathname === "/") {
+            reload_app();
+            return;
+        }
+        
+        var path_info = location.pathname.split("/");
+        
+        var railroad_id = path_info[1].substring(9);
+        var mode_name = path_info.length >= 3 && path_info[2].length >= 1 ? path_info[2] : "position";
+        var mode_option_1 = path_info.length >= 4 && path_info[3].length >= 1 ? decodeURIComponent(path_info[3]) : null;
+        var mode_option_2 = path_info.length >= 5 && path_info[4].length >= 1 ? decodeURIComponent(path_info[4]) : null;
+        
+        if (mode_name === "operation_data") {
+            var url_params = new URLSearchParams(window.location.search);
+            
+            if (url_params.has("date")) {
+                mode_option_1 = url_params.get("date");
+            }
+        }
+        
+        if (railroad_id !== railroad_info["railroad_id"]) {
+            select_railroad(railroad_id, mode_name + "_mode", mode_option_1, mode_option_2);
+            return;
+        }
+        
+        switch (mode_val) {
+            case 1:
+                if (mode_name === "timetable") {
+                    if (mode_option_2 === null) {
+                        timetable_change_lines(mode_option_1, true);
+                    } else {
+                        timetable_select_station(mode_option_2, mode_option_1);
+                    }
+                    return;
+                }
+                
+                break;
+            
+            case 3:
+                if (mode_name === "formations") {
+                    if (mode_option_1 === null) {
+                        draw_formation_table();
+                    } else {
+                        formation_detail(mode_option_1);
+                    }
+                    return;
+                }
+                
+                break;
+            
+            case 4:
+                if (mode_name === "operation_table") {
+                    operation_table_mode(mode_option_1);
+                    return;
+                }
+                break;
+        }
+        
+        select_mode(mode_name + "_mode", mode_option_1, mode_option_2);
+    }
+};
+
 function history_popstate () {
     history_back_promise = new Promise(function (resolve, reject) {
         history_back_resolve = resolve;
@@ -3839,13 +3927,6 @@ function history_popstate () {
         history.back();
     });
 }
-
-
-window.onblur = function () {
-    if (railroad_info !== null) {
-        save_railroad_user_data(railroad_info["railroad_id"]);
-    }
-};
 
 
 (function () {

@@ -3264,10 +3264,6 @@ function position_change_time (position_time_additions = null, multiply_step_val
 
 
 function show_station_timetable (line_id, station_name, is_inbound = null) {
-    if (square_popup_is_open) {
-        close_square_popup();
-    }
-    
     if (popup_history.length >= 1) {
         popup_close(true);
     }
@@ -5696,86 +5692,6 @@ function draw_operation_table (is_today, update_operation_table_info) {
 
 var history_back_promise = null;
 var history_back_resolve = null;
-var on_popstate_do_nothing = false;
-
-window.onpopstate = function () {
-    if (history_back_promise instanceof Promise) {
-        history_back_resolve();
-        history_back_promise = null;
-        history_back_resolve = null;
-    }
-    
-    if (on_popstate_do_nothing) {
-        on_popstate_do_nothing = false;
-        return;
-    }
-    
-    if (square_popup_is_open) {
-        close_square_popup(false);
-    } else if (popup_history.length >= 1) {
-        popup_close(false, false);
-    } else {
-        if (location.pathname === "/") {
-            reload_app();
-            return;
-        }
-        
-        var path_info = location.pathname.split("/");
-        
-        var railroad_id = path_info[1].substring(9);
-        var mode_name = path_info.length >= 3 && path_info[2].length >= 1 ? path_info[2] : "position";
-        var mode_option_1 = path_info.length >= 4 && path_info[3].length >= 1 ? decodeURIComponent(path_info[3]) : null;
-        var mode_option_2 = path_info.length >= 5 && path_info[4].length >= 1 ? decodeURIComponent(path_info[4]) : null;
-        
-        if (railroad_id !== railroad_info["railroad_id"]) {
-            select_railroad(railroad_id, mode_name + "_mode", mode_option_1, mode_option_2);
-            return;
-        }
-        
-        switch (mode_val) {
-            case 1:
-                if (mode_name === "timetable") {
-                    if (mode_option_2 === null) {
-                        timetable_change_lines(mode_option_1, true);
-                    } else {
-                        timetable_select_station(mode_option_2, mode_option_1);
-                    }
-                    return;
-                }
-                
-                break;
-            
-            case 3:
-                if (mode_name === "formations") {
-                    if (mode_option_1 === null) {
-                        draw_formation_table();
-                    } else {
-                        formation_detail(mode_option_1);
-                    }
-                    return;
-                }
-                
-                break;
-            
-            case 4:
-                if (mode_name === "operation_table") {
-                    operation_table_mode(mode_option_1);
-                    return;
-                }
-                break;
-        }
-        
-        if (mode_name === "operation_data") {
-            var url_params = new URLSearchParams(window.location.search);
-            
-            if (url_params.has("date")) {
-                mode_option_1 = url_params.get("date");
-            }
-        }
-        
-        select_mode(mode_name + "_mode", mode_option_1, mode_option_2);
-    }
-};
 
 
 (function () {
