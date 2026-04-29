@@ -117,6 +117,7 @@ function get_default_config () {
         "operation_data_cache_period" : 7,
         "position_mode_minute_step" : 1,
         "show_final_destinations_in_position_mode" : false,
+        "retain_position_mode_last_seen_line" : true,
         "show_deadhead_trains_on_timetable" : true,
         "show_starting_trains_only_on_timetable" : false,
         "colorize_corrected_posts" : false,
@@ -966,6 +967,14 @@ window.onload = function () {
                     var mode_option_2 = null;
                 }
                 
+                if (path_info[2] === "operation_data") {
+                    var url_params = new URLSearchParams(window.location.search);
+                    
+                    if (url_params.has("date")) {
+                        mode_option_1 = url_params.get("date");
+                    }
+                }
+                
                 select_railroad(path_info[1].substring(9), path_info[2] + "_mode", mode_option_1, mode_option_2);
             } else {
                 select_railroad(path_info[1].substring(9));
@@ -1130,8 +1139,8 @@ var railroad_rules_last_read;
 
 function set_railroad_user_data (user_data) {
     if (user_data !== null) {
-        position_selected_line = user_data["position_selected_line"] in railroad_info["lines"] ? user_data["position_selected_line"] : railroad_info["lines_order"][0];
-        position_scroll_amount = user_data["position_scroll_amount"];
+        position_selected_line = config["retain_position_mode_last_seen_line"] && (user_data["position_selected_line"] in railroad_info["lines"]) ? user_data["position_selected_line"] : railroad_info["lines_order"][0];
+        position_scroll_amount = config["retain_position_mode_last_seen_line"] ? user_data["position_scroll_amount"] : 0;
         use_group_divisions_on_operation_data = "use_group_divisions_on_operation_data" in user_data ? user_data["use_group_divisions_on_operation_data"] : true;//2027-04末まで暫定
         railroad_rules_last_read = "rules_last_read" in user_data ? user_data["rules_last_read"] : null;//2027-04末まで暫定
     } else {
@@ -3839,6 +3848,12 @@ function operation_data_mode (operation_date = null) {
     
     operation_data_active_tab = null;
     
+    if (operation_date !== null && !(/^[0-9]{4}-(0[1-9]|1[0-2])-(0[1-9]|[12][0-9]|3[01])$/.test(operation_date))) {
+        mes("日付の指定が異常です", true);
+        
+        operation_date = null;
+    }
+    
     operation_data_change_date(operation_date);
 }
 
@@ -3872,6 +3887,12 @@ function operation_data_change_date (date_additions) {
     
     var date_string = get_date_string(operation_data_date);
     operation_date_button_elm.value = date_string;
+    
+    if (date_string === get_date_string(ts)) {
+        history.replaceState(null, "", "/railroad_" + railroad_info["railroad_id"] + "/operation_data/");
+    } else {
+        history.replaceState(null, "", "/railroad_" + railroad_info["railroad_id"] + "/operation_data/?date=" + date_string);
+    }
     
     operation_all_data_loaded = false;
     
@@ -5719,6 +5740,7 @@ window.onpopstate = function () {
                     } else {
                         timetable_select_station(mode_option_2, mode_option_1);
                     }
+                    return;
                 }
                 
                 break;
@@ -5741,6 +5763,14 @@ window.onpopstate = function () {
                     return;
                 }
                 break;
+        }
+        
+        if (mode_name === "operation_data") {
+            var url_params = new URLSearchParams(window.location.search);
+            
+            if (url_params.has("date")) {
+                mode_option_1 = url_params.get("date");
+            }
         }
         
         select_mode(mode_name + "_mode", mode_option_1, mode_option_2);
