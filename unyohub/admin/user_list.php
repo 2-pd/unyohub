@@ -90,7 +90,7 @@ $start = $max - 100;
 
 if ($order_by !== "time_out_expiration") {
     $users = $wakarana->get_all_users($start, 100, $order_by, $asc);
-    $user_count = $wakarana->count_user();
+    $user_count = $wakarana->count_users();
 } else {
     $users = array();
     foreach (array_keys($time_out_expirations) as $user_id) {
@@ -110,7 +110,7 @@ print "<tr><th>ユーザーID<br>ハンドルネーム</th><th>登録日<br>最�
 foreach ($users as $user_obj) {
     $user_id = $user_obj->get_id();
     print "<tr onclick='location.href=\"user_data.php?user_id=".$user_id."\";'><td><b>".$user_id.($user_id === $moderator_id ? "<small>(自分)</small>" : "")."</b><br>".htmlspecialchars($user_obj->get_name())."</td><td>".substr($user_obj->get_created(), 0, 10)."<br>".substr($user_obj->get_last_access(), 0, 10)."</td><td><span style='color: ";
-    if ($user_obj->get_status() === WAKARANA_STATUS_NORMAL) {
+    if ($user_obj->get_status() === wakarana::STATUS_NORMAL) {
         print !array_key_exists($user_id, $time_out_expirations) ? "#33cc99;'>有効" : "#ee7700;'>TO中<br><small>残</small>".(ceil((strtotime($time_out_expirations[$user_id]) - $now_ts) / 86400))."日";
     } else {
         print "#ee3333;'>停止中";

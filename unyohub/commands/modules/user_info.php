@@ -10,7 +10,7 @@ $wakarana = new wakarana(__DIR__."/../../".$wakarana_base_dir);
 print "\n_/_/_/_/ ユーザー情報 _/_/_/_/\n\n";
 
 if (empty($argv[1])) {
-    print "ユーザー総数 : ".$wakarana->count_user()."\n";;
+    print "ユーザー総数 : ".$wakarana->count_users()."\n";;
 } else {
     $user = $wakarana->get_user($argv[1]);
     
@@ -26,7 +26,7 @@ if (empty($argv[1])) {
     $user_name = $user->get_name();
     print "ハンドルネーム :        ".(!empty($user_name) ? addslashes($user_name) : "(未設定)")."\n";
     
-    print "状態 :                  ".($user->get_status() === WAKARANA_STATUS_NORMAL ? "有効" : "停止中")."\n";
+    print "状態 :                  ".($user->get_status() === wakarana::STATUS_NORMAL ? "有効" : "停止中")."\n";
     
     print "ユーザー登録日時 :      ".$user->get_created()."\n";
     

@@ -1,6 +1,5 @@
 <?php
 include "admin_common.php";
-include "../libs/wakarana/config.php";
 
 if (!$user->check_permission("instance_administrator")) {
     print "【!】アクセス中のユーザーアカウントにはこのページにアクセスする権限がありません";
