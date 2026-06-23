@@ -166,6 +166,15 @@ foreach ($user_obj->get_roles() as $role) {
 print "</table>";
 
 
+print "<h3>ログイン中の端末(最終利用日の新しい順)</h3>";
+
+print "<table>";
+foreach ($user_obj->get_sessions() as $session_info) {
+    print "<tr><td>".htmlspecialchars($session_info["ip_address"])." (".$session_info["operating_system"]." ".$session_info["browser_name"].")<time>".$session_info["last_access"]."</time></td></tr>";
+}
+print "</table>";
+
+
 print "<h3>タイムアウト</h3>";
 
 $moderation_db_obj = new SQLite3("../common_dbs/moderation.db");
