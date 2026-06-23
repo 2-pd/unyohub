@@ -44,8 +44,11 @@ if (is_object($user)) {
             print "    <div class=\"warning_text\">ワンタイムトークンの認証に失敗しました。再度ご送信ください</div>\n";
         } elseif (!$user->check_password($_POST["password"])) {
             print "    <div class=\"warning_text\">パスワードが一致しません。パスワードを確認して再度お試しください</div>\n";
-        } elseif (!$user->email_address_verify($_POST["email_address"], $_POST["verification_code"], TRUE)) {
+        } elseif (!$user->verify_and_replace_primary_email_address($_POST["email_address"], $_POST["verification_code"], TRUE)) {
             switch ($user->get_rejection_reason()) {
+                case "currently_locked_out":
+                    print "    <div class=\"warning_text\">数十秒待ってから再度お試しください</div>\n";
+                    break;
                 case "invalid_email_address":
                     print "    <div class=\"warning_text\">正しいメールアドレスが入力されていません</div>\n";
                     break;
@@ -62,9 +65,6 @@ if (is_object($user)) {
                     print "    <div class=\"warning_text\">メースアドレス確認コードの照合に失敗しました</div>\n";
             }
         } else {
-            $user->remove_all_email_addresses();
-            $user->add_email_address($_POST["email_address"]);
-            
             print "    <script>\n";
             print "        window.opener.update_email_address(\"".$email_address."\");\n";
             print "        alert('メールアドレスを変更しました');\n";

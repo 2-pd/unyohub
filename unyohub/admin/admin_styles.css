@@ -284,6 +284,14 @@ table {
             
             line-height: 20px;
         }
+        
+        time {
+            width: fit-content;
+            
+            color: #999999;
+            
+            float: right;
+        }
     }
 }
 

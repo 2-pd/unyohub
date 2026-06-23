@@ -44,7 +44,7 @@ if (!empty($_POST["enable_user"])) {
         goto on_error;
     }
     
-    $user_obj->set_status(WAKARANA_STATUS_NORMAL);
+    $user_obj->set_status(wakarana::STATUS_NORMAL);
     $result_text = "ユーザーアカウントを有効化しました";
 } elseif (!empty($_POST["disable_user"])) {
     if (!$user->check_one_time_token($_POST["one_time_token"])) {
@@ -53,7 +53,7 @@ if (!empty($_POST["enable_user"])) {
     }
     
     if (!$user_obj->check_permission("control_panel_user") || ($moderator_is_admin && $user_id !== $moderator_id)) {
-        $user_obj->set_status(WAKARANA_STATUS_DISABLE);
+        $user_obj->set_status(wakarana::STATUS_DISABLE);
         $result_text = "ユーザーアカウントを停止しました";
     } else {
         $result_text = "【!】このユーザーのアカウントを停止することはできません。";
@@ -119,9 +119,9 @@ $user_name = $user_obj->get_name();
 print "<div class='key_and_value'><b>ハンドルネーム</b>".(!empty($user_name) ? htmlspecialchars($user_name) : "(未設定)")."</div>";
 
 $user_status = $user_obj->get_status();
-print "<div class='key_and_value'><b>状態</b><span style='color: ".($user_status === WAKARANA_STATUS_NORMAL ? "#33cc99;'>有効" : "#ee3333;'>停止中")."</span>";
+print "<div class='key_and_value'><b>状態</b><span style='color: ".($user_status === wakarana::STATUS_NORMAL ? "#33cc99;'>有効" : "#ee3333;'>停止中")."</span>";
 if (!$user_is_moderator || ($moderator_is_admin && $user_id !== $moderator_id)) {
-    print "<div><button type='button' onclick='".($user_status === WAKARANA_STATUS_NORMAL ? "disable_user(\"".$user_id."\");'>アカウントの停止" : "enable_user(\"".$user_id."\");'>アカウントの有効化")."</button></div>";
+    print "<div><button type='button' onclick='".($user_status === wakarana::STATUS_NORMAL ? "disable_user(\"".$user_id."\");'>アカウントの停止" : "enable_user(\"".$user_id."\");'>アカウントの有効化")."</button></div>";
 }
 print "</div>";
 
@@ -162,6 +162,15 @@ print "<h3>割り当て済みのロール</h3>";
 print "<table>";
 foreach ($user_obj->get_roles() as $role) {
     print "<tr><td>".htmlspecialchars($role->get_name())." (".$role->get_id().")</td></tr>";
+}
+print "</table>";
+
+
+print "<h3>ログイン中の端末(最終利用日の新しい順)</h3>";
+
+print "<table>";
+foreach ($user_obj->get_sessions() as $session_info) {
+    print "<tr><td>".htmlspecialchars($session_info["ip_address"])." (".$session_info["operating_system"]." ".$session_info["browser_name"].")<time>".$session_info["last_access"]."</time></td></tr>";
 }
 print "</table>";
 

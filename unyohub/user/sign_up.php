@@ -42,7 +42,7 @@ if (isset($_POST["user_id"], $_POST["password"], $_POST["user_name"], $_POST["zi
                 $user->add_email_address($_POST["email_address"]);
             }
             
-            $user->set_login_token();
+            $user->set_session_token();
             
             print_header();
             
