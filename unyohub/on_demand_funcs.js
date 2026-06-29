@@ -1638,7 +1638,7 @@ function draw_operation_trains (operation_number, diagram_id_or_ts, is_today, se
     } else {
         var train_div_class_name = "operation_table_train";
     }
-    var buf = "<div class='" + train_div_class_name + "'><b class='train_overview_location'>" + operation_table["operations"][operation_number]["starting_location"];
+    var buf = "<div class='" + train_div_class_name + "'" + (mode_val === 2 && operation_table["operations"][operation_number]["starting_track"] !== null ? "onclick=' show_previous_day_operation(\"" + add_slashes(operation_table["operations"][operation_number]["starting_location"]) + "\", \"" + add_slashes(operation_table["operations"][operation_number]["starting_track"]) + "\");'" : "") + "><b class='train_overview_location'>" + operation_table["operations"][operation_number]["starting_location"];
     if (operation_table["operations"][operation_number]["starting_track"] !== null) {
         buf += "<small>(" + operation_table["operations"][operation_number]["starting_track"] + ")</small>";
     }
@@ -1800,7 +1800,7 @@ function draw_operation_trains (operation_number, diagram_id_or_ts, is_today, se
             }
         }
         
-        buf += "<div class='" + train_div_class_name + "'><b class='train_overview_location'>" + operation_table["operations"][operation_number]["terminal_location"];
+        buf += "<div class='" + train_div_class_name + "'" + (mode_val === 2 && operation_table["operations"][operation_number]["terminal_track"] !== null ? "onclick=' show_next_day_operation(\"" + add_slashes(operation_table["operations"][operation_number]["terminal_location"]) + "\", \"" + add_slashes(operation_table["operations"][operation_number]["terminal_track"]) + "\");'" : "") + "><b class='train_overview_location'>" + operation_table["operations"][operation_number]["terminal_location"];
         if (operation_table["operations"][operation_number]["terminal_track"] !== null) {
             buf += "<small>(" + operation_table["operations"][operation_number]["terminal_track"] + ")</small>";
         }
@@ -1862,6 +1862,52 @@ function next_operation_number (operation_number_or_index, operation_data_date_t
             operation_detail(0, operation_data_date_ts_or_operation_name);
         }
     }
+}
+
+function show_previous_day_operation (starting_location, starting_track) {
+    popup_close();
+    
+    operation_data_change_date(-1, function (succeeded) {
+        if (!succeeded) {
+            return;
+        }
+        
+        for (var operation_number of Object.keys(operation_table["operations"])) {
+            if (operation_table["operations"][operation_number]["terminal_location"] === starting_location && operation_table["operations"][operation_number]["terminal_track"] === starting_track) {
+                var dt = new Date(operation_data["operation_date"] + " 04:00:00");
+                var operation_data_date = Math.floor(dt.getTime() / 1000);
+                
+                operation_detail(operation_number, operation_data_date, operation_data["operation_date"] === get_date_string(get_timestamp()));
+                
+                return;
+            }
+        }
+        
+        mes("前日運用はありません");
+    });
+}
+
+function show_next_day_operation (terminal_location, terminal_track) {
+    popup_close();
+    
+    operation_data_change_date(1, function (succeeded) {
+        if (!succeeded) {
+            return;
+        }
+        
+        for (var operation_number of Object.keys(operation_table["operations"])) {
+            if (operation_table["operations"][operation_number]["starting_location"] === terminal_location && operation_table["operations"][operation_number]["starting_track"] === terminal_track) {
+                var dt = new Date(operation_data["operation_date"] + " 04:00:00");
+                var operation_data_date = Math.floor(dt.getTime() / 1000);
+                
+                operation_detail(operation_number, operation_data_date, operation_data["operation_date"] === get_date_string(get_timestamp()));
+                
+                return;
+            }
+        }
+        
+        mes("翌日運用はありません");
+    });
 }
 
 

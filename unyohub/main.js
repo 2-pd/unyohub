@@ -3853,7 +3853,9 @@ function operation_data_mode (operation_date = null) {
     operation_data_change_date(operation_date);
 }
 
-function operation_data_change_date (date_additions) {
+function operation_data_change_date (date_additions, callback_func = null) {
+    var error_occurred = false;
+    
     var ts = get_timestamp();
     
     if (date_additions === null) {
@@ -3870,6 +3872,8 @@ function operation_data_change_date (date_additions) {
         operation_data_date = ts + (86400 * instance_info["available_days_ahead"]);
         
         mes((instance_info["available_days_ahead"] + 1) + "日以上先の運用情報は表示できません");
+        
+        error_occurred = true;
     }
     
     operation_data_heading_elm.innerText = "";
@@ -3896,6 +3900,10 @@ function operation_data_change_date (date_additions) {
         if (diagram_data === null) {
             operation_data_area_elm.innerHTML = "<div class='no_data'>指定された日付のデータは利用できません</div>";
             
+            if (typeof callback_func === "function") {
+                callback_func(false);
+            }
+            
             return;
         }
         
@@ -3905,8 +3913,16 @@ function operation_data_change_date (date_additions) {
             operation_all_data_loaded = true;
             
             operation_data_draw();
+            
+            if (typeof callback_func === "function") {
+                callback_func(!error_occurred);
+            }
         }, null, function () {
             operation_data_area_elm.innerHTML = "<div class='no_data'>表示に必要なデータが利用できません</div>";
+            
+            if (typeof callback_func === "function") {
+                callback_func(false);
+            }
         }, diagram_data["diagram_revision"], diagram_data["diagram_id"], null, date_string);
     });
     
