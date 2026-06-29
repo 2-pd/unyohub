@@ -3840,6 +3840,17 @@ function close_welcome_message () {
 }
 
 
+window.onkeydown = function (event) {
+    if (event.keyCode === 27) {
+        if (square_popup_is_open) {
+            close_square_popup(false);
+        } else if (popup_history.length >= 1) {
+            popup_close(false, false);
+        }
+    }
+}
+
+
 window.onblur = function () {
     if (railroad_info !== null) {
         save_railroad_user_data(railroad_info["railroad_id"]);
