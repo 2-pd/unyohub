@@ -392,6 +392,10 @@ input, textarea {
         .dark_mode & {
             border-left-color: #cccccc;
         }
+        
+        &[onclick] {
+            text-decoration: underline;
+        }
     }
     
     h5 {
@@ -1197,7 +1201,7 @@ button:has(abbr) {
     margin-bottom: 80px;
 }
 
-.train_overview, .operation_table_train, .location_overview {
+.train_overview, .operation_table_train {
     position: relative;
     
     margin-bottom: 14px;
@@ -1228,6 +1232,10 @@ button:has(abbr) {
     
     &:last-of-type:after {
         border-top: none;
+    }
+    
+    &[onclick] {
+        text-decoration: underline;
     }
 }
 
@@ -1330,6 +1338,8 @@ button:has(abbr) {
     
     .train_overview_location, time {
         width: fit-content !important;
+        
+        text-decoration: inherit;
     }
     
     span:not(.search_highlight), time {
@@ -1337,10 +1347,6 @@ button:has(abbr) {
         
         width: 26%;
     }
-}
-
-.location_overview b {
-    margin-right: 40px;
 }
 
 :is(.train_overview, .operation_table_train) b small {
