@@ -24,7 +24,7 @@ def shape_time_string (time_str, from_previous_day, run_through_next_day):
     
     if from_previous_day and int(time_str[:-3]) >= 24:
         time_str = str(int(time_str[:-3]) - 24) + ":" + time_str[-2:]
-    elif run_through_next_day and int(time_str[:-3]) <= 7:
+    elif run_through_next_day and int(time_str[:-3]) < 12:
         time_str = str(int(time_str[:-3]) + 24) + ":" + time_str[-2:]
     
     return time_str.zfill(5)
