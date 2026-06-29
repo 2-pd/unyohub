@@ -194,8 +194,8 @@ if (empty($_SERVER["PATH_INFO"]) || $_SERVER["PATH_INFO"] === "/") {
                         
                         $diagram_revision_year_month = substr($path_info[3], 0, 4)."年".intval(substr($path_info[3], 5, 2))."月";
                         
-                        $page_title = $railroad_info["railroad_name"]." ".$diagram_revision_year_month."改正ダイヤ運用表 | ".$app_manifest["name"];
-                        $page_description = $railroad_info["railroad_name"]." ".$diagram_revision_year_month.intval(substr($path_info[3], 8))."日改正版の平日・土休日ダイヤ車両運用表です。";
+                        $page_title = $railroad_info["railroad_name"]." ".$diagram_revision_year_month."改正・変更ダイヤ運用表 | ".$app_manifest["name"];
+                        $page_description = $railroad_info["railroad_name"]." ".$diagram_revision_year_month.intval(substr($path_info[3], 8))."日改正・変更版の平日・土休日ダイヤ車両運用表です。";
                     }
                     
                     break;

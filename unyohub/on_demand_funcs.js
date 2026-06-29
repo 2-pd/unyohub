@@ -2403,7 +2403,7 @@ function operation_table_list_tables () {
         }
     }
     
-    buf += "<u type='button' class='execute_link' onclick='close_square_popup(); operation_table_mode(null);'>他の改正版のダイヤ</u>";
+    buf += "<u type='button' class='execute_link' onclick='close_square_popup(); operation_table_mode(null);'>他の改正・変更版のダイヤ</u>";
     
     popup_inner_elm.innerHTML = buf;
 }

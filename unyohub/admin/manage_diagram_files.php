@@ -65,11 +65,11 @@ if (isset($_GET["diagram_revision"])) {
     $dir_path = "../data/".$railroad_id."/".$_GET["diagram_revision"]."/";
     
     if (!preg_match($diagram_revision_reg_exp, $_GET["diagram_revision"]) || !is_dir($dir_path)) {
-        print "<div class='informational_text'>指定されたダイヤ改正日が正しくありません</div>";
+        print "<div class='informational_text'>指定されたダイヤ改正・変更日が正しくありません</div>";
         goto end_of_article;
     }
     
-    print "<h2 style='border-color: ".addslashes($railroad_info["main_color"])."'>".intval(substr($_GET["diagram_revision"], 0, 4))."年".intval(substr($_GET["diagram_revision"], 5, 2))."月".intval(substr($_GET["diagram_revision"], 8))."日改正ダイヤのデータ</h2>";
+    print "<h2 style='border-color: ".addslashes($railroad_info["main_color"])."'>".intval(substr($_GET["diagram_revision"], 0, 4))."年".intval(substr($_GET["diagram_revision"], 5, 2))."月".intval(substr($_GET["diagram_revision"], 8))."日改正・変更ダイヤのデータ</h2>";
     
     $token_html = "<input type='hidden' name='one_time_token' value='".$user->create_one_time_token()."'>";
     
@@ -254,7 +254,7 @@ if (isset($_GET["diagram_revision"])) {
 } elseif (!empty($_GET["new_dir"])) {
     if (isset($_POST["diagram_revision"])) {
         if (!preg_match($diagram_revision_reg_exp, $_POST["diagram_revision"])) {
-            print "<script> alert('【!】ダイヤ改正日が正しく指定されていません。処理はキャンセルされました。'); </script>";
+            print "<script> alert('【!】ダイヤ改正・変更日が正しく指定されていません。処理はキャンセルされました。'); </script>";
             goto new_dir_on_error;
         }
         
@@ -273,7 +273,7 @@ if (isset($_GET["diagram_revision"])) {
         mkdir($new_dir_path);
         chmod($new_dir_path, 0o777);
         
-        print "<script> alert('フォルダを作成しました。\\n新しいダイヤの有効化にはダイヤ改正日一覧ファイルへの改正日情報追加が必要です。'); location.href = 'manage_diagram_files.php?railroad_id=".$railroad_id."&diagram_revision=".$_POST["diagram_revision"]."'; </script>";
+        print "<script> alert('フォルダを作成しました。\\n新しいダイヤの有効化にはダイヤ改正日一覧ファイルへの改正・変更日情報追加が必要です。'); location.href = 'manage_diagram_files.php?railroad_id=".$railroad_id."&diagram_revision=".$_POST["diagram_revision"]."'; </script>";
         
         goto end_of_article;
         
@@ -285,7 +285,7 @@ if (isset($_GET["diagram_revision"])) {
     print "<form action='manage_diagram_files.php?railroad_id=".$railroad_id."&new_dir=yes' method='post'>";
     print "<input type='hidden' name='one_time_token' value='".$user->create_one_time_token()."'>";
     
-    print "<h3>ダイヤ改正日</h3>";
+    print "<h3>ダイヤ改正・変更日</h3>";
     print "<input type='date' name='diagram_revision'><br><br>";
     
     print "<button type='submit' class='wide_button'>ダイヤ改正日別フォルダの追加</button>";

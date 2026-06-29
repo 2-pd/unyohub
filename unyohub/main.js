@@ -573,7 +573,7 @@ function update_display_settings (redraw = false) {
             
             case 3:
                 if (selected_formation_name === null) {
-                    draw_formation_table(false);
+                    draw_formation_table();
                 }
                 break;
             
@@ -581,7 +581,7 @@ function update_display_settings (redraw = false) {
                 if (operation_table === null) {
                     operation_table_mode(null);
                 } else {
-                    operation_table_list_number(false);
+                    operation_table_list_number();
                 }
                 break;
         }
@@ -5247,12 +5247,12 @@ function operation_table_mode (diagram_revision = "__current__", diagram_id = nu
         
         get_diagram_id(operation_data_date, null, function (diagram_data) {
             if (diagram_data === null) {
-                operation_table_area_elm.innerHTML = "<div class='no_data'>指定された改正日のダイヤはデータがありません</div>";
+                operation_table_area_elm.innerHTML = "<div class='no_data'>指定された改正・変更日のダイヤはデータがありません</div>";
                 
                 return;
             }
             
-            var diagram_revision_year_month = diagram_data["diagram_revision"].substring(0, 4) + "年" + Number(diagram_data["diagram_revision"].substring(5, 7)) + "月改正"
+            var diagram_revision_year_month = diagram_data["diagram_revision"].substring(0, 4) + "年" + Number(diagram_data["diagram_revision"].substring(5, 7)) + "月改正・変更"
             
             change_title(railroad_info["railroad_name"] + " " + diagram_revision_year_month + "ダイヤ運用表 | " + instance_info["instance_name"], "/railroad_" + railroad_info["railroad_id"] + "/operation_table/" + diagram_data["diagram_revision"] + "/");
             
@@ -5279,16 +5279,16 @@ function operation_table_mode (diagram_revision = "__current__", diagram_id = nu
     } else {
         change_title(railroad_info["railroad_name"] + "の運用表一覧 | " + instance_info["instance_name"], "/railroad_" + railroad_info["railroad_id"] + "/operation_table/");
         
-        operation_table_heading_elm.innerHTML = "改正別の運用表";
+        operation_table_heading_elm.innerHTML = "改正・変更別の運用表";
         
         operation_table = null;
         
         var buf = "";
         for (var diagram_revisions_item of diagram_revisions["diagram_revisions"]) {
             if (diagram_revisions_item === current_diagram_revision) {
-                buf += "<a href='/railroad_" + railroad_info["railroad_id"] + "/operation_table/" + current_diagram_revision + "/' class='wide_button' onclick='event.preventDefault(); operation_table_mode();'>" + current_diagram_revision.substring(0, 4) + "年" + Number(current_diagram_revision.substring(5, 7)) + "月改正ダイヤ<small>(現行)</small></a>";
+                buf += "<a href='/railroad_" + railroad_info["railroad_id"] + "/operation_table/" + current_diagram_revision + "/' class='wide_button' onclick='event.preventDefault(); operation_table_mode();'>" + current_diagram_revision.substring(0, 4) + "年" + Number(current_diagram_revision.substring(5, 7)) + "月改正・変更ダイヤ<small>(現行)</small></a>";
             } else {
-                buf += "<a href='/railroad_" + railroad_info["railroad_id"] + "/operation_table/" + diagram_revisions_item + "/' class='wide_button " + (diagram_revisions_item > current_diagram_revision ? "before_operation" : "after_operation") + "' onclick='event.preventDefault(); operation_table_mode(\"" + diagram_revisions_item + "\");'>" + diagram_revisions_item.substring(0, 4) + "年" + Number(diagram_revisions_item.substring(5, 7)) + "月改正ダイヤ</a>";
+                buf += "<a href='/railroad_" + railroad_info["railroad_id"] + "/operation_table/" + diagram_revisions_item + "/' class='wide_button " + (diagram_revisions_item > current_diagram_revision ? "before_operation" : "after_operation") + "' onclick='event.preventDefault(); operation_table_mode(\"" + diagram_revisions_item + "\");'>" + diagram_revisions_item.substring(0, 4) + "年" + Number(diagram_revisions_item.substring(5, 7)) + "月改正・変更ダイヤ</a>";
             }
         }
         
