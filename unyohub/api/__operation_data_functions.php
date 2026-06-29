@@ -451,6 +451,10 @@ function update_next_day_data ($today_ts, $starting_location, $starting_track, $
     if (!empty($operation_number)) {
         $operation_number = $db_obj->escapeString($operation_number);
         
+        if (empty($formations)) {
+            $formations = "?";
+        }
+        
         if (empty($db_obj->querySingle("SELECT `posts_count` FROM `unyohub_metadata_caches` WHERE `operation_date` = '".$operation_date."' AND `operation_number` = '".$operation_number."'"))) {
             if ($formations !== FALSE) {
                 $db_obj->query("REPLACE INTO `unyohub_assigned_formation_caches` (`operation_date`, `operation_number`, `assign_order`, `formations`, `updated_datetime`) VALUES ('".$operation_date."', '".$operation_number."', 0, ".(empty($formations) ? "NULL" : "'".$db_obj->escapeString($formations)."'").", '".$updated_datetime."')");
