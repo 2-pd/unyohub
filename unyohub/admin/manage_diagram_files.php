@@ -83,6 +83,11 @@ if (isset($_GET["diagram_revision"])) {
     print "<input type='hidden' name='delete_file_name' id='delete_file_name'>";
     print "</form>";
     
+    print "<form action='manage_diagram_files.php?railroad_id=".$railroad_id."&diagram_revision=".$_GET["diagram_revision"]."' method='post' id='delete_dir_form' style='display: none;'>";
+    print $token_html;
+    print "<input type='hidden' name='delete_dir' value='yes'>";
+    print "</form>";
+    
     print <<< EOM
     <script>
     function upload_file (extension = null) {
@@ -95,6 +100,12 @@ if (isset($_GET["diagram_revision"])) {
         if (confirm(file_name + " を削除しますか？")) {
             document.getElementById("delete_file_name").value = file_name;
             document.getElementById("delete_form").submit();
+        }
+    }
+    
+    function delete_dir () {
+        if (confirm("{$_GET["diagram_revision"]}改正・変更ダイヤのフォルダを削除しますか？") && confirm("このフォルダを削除すると現在ここに表示されているファイルは全て削除されます。\\n本当に削除しますか？")) {
+            document.getElementById("delete_dir_form").submit();
         }
     }
     </script>
@@ -162,6 +173,17 @@ if (isset($_GET["diagram_revision"])) {
         }
         
         print "<script> alert('".addslashes($delete_file_name)." を削除しました'); </script>";
+    } elseif (!empty($_POST["delete_dir"])) {
+        if (!isset($_POST["one_time_token"]) || !$user->check_one_time_token($_POST["one_time_token"])) {
+            print "<script> alert('【!】ワンタイムトークンが無効です。処理はキャンセルされました。'); </script>";
+            goto on_error;
+        }
+        
+        rename("../data/".$railroad_id."/".$_GET["diagram_revision"], "../data/".$railroad_id."/trash/".$_GET["diagram_revision"]."__".date("YmdHis"));
+        
+        print "<div class='warning_text'>このダイヤ改正日のフォルダは削除されました</div>";
+        
+        goto end_of_article;
     } else {
         $result = NULL;
     }
@@ -251,6 +273,8 @@ if (isset($_GET["diagram_revision"])) {
     
     print "<br><button type='button' class='wide_button' onclick='upload_file(\"json\");'><b style='color: #bb9911;'>JSONファイル</b>のアップロード</button><button type='button' class='wide_button' onclick='upload_file(\"csv\");'><b style='color: #228866;'>CSVファイル</b>のアップロード</button>";
     print "<div class='informational_text'>アップロードされたファイルと同じ名前のファイルが既にサーバ上で存在している場合、そのファイルはアップロードされたファイルで上書きされます。</div>";
+    
+    print "<a href='javascript:void(0);' onclick='delete_dir();' class='bottom_link'>このダイヤ改正日別フォルダを削除</a>";
 } elseif (!empty($_GET["new_dir"])) {
     if (isset($_POST["diagram_revision"])) {
         if (!preg_match($diagram_revision_reg_exp, $_POST["diagram_revision"])) {

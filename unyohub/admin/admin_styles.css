@@ -947,6 +947,16 @@ input[type="checkbox"]:checked + label.drop_down {
     }
 }
 
+.bottom_link {
+    display: block;
+    
+    margin-top: 30px;
+    
+    line-height: 30px;
+    color: #666666;
+    text-align: center;
+}
+
 .informational_text, .warning_text {
     max-width: 480px;
     
