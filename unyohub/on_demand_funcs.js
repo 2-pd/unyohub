@@ -2047,7 +2047,9 @@ function get_operation_data_history (formation_name, operation_number, yyyy_mm =
                     }
                 }
                 
-                buf += "<br><div class='informational_text'>運用遷移情報は昨日以前のもののみご確認いただけます。</div>";
+                if (operation_number !== null) {
+                    buf += "<br><div class='informational_text'>運用遷移情報は昨日以前のもののみご確認いただけます。</div>";
+                }
                 
                 popup_inner_elm.innerHTML = buf;
             }
@@ -2084,7 +2086,7 @@ function change_show_next_day_operation_data (bool_val) {
 
 
 function get_formation_last_operation_html (formation_name, data, now_ts) {
-    var buf = "<h4>" + escape_html(formation_name) + "</h4>";
+    var buf = "<h4 onclick='popup_close(); formation_detail(\"" + add_slashes(formation_name) + "\");'>" + escape_html(formation_name) + "</h4>";
     
     if (data != null) {
         var last_operated_date = new Date(data["last_operated_date"] + " 04:00:00");
@@ -2105,6 +2107,12 @@ function get_formation_last_operation_html (formation_name, data, now_ts) {
             buf += "<span style='color: " + (!config["dark_mode"] ? "#ee7700" : "#ffcc99") + ";'>(" + days_before + "日前)</span>";
         }
         
+        overview = get_formation_overview(formation_name);
+        
+        if (overview["unavailable"]) {
+            buf += " <b class='warning_sentence'>運用離脱中</b>";
+        }
+        
         buf += get_operation_data_html(data["operations"], last_operated_date_ts, (operation_table !== null && get_diagram_revision(data["last_operated_date"]) === operation_table["diagram_revision"]));
     } else {
         buf += "<div class='descriptive_text'>この編成の運用情報が投稿されたことはありません</div>";
@@ -2117,6 +2125,7 @@ function formations_last_operated () {
     var popup_inner_elm = open_popup("formations_last_operated_popup", "全編成の最終運行情報");
     
     popup_inner_elm.className = "wait_icon";
+    popup_inner_elm.innerHTML = "";
     
     var ts = get_timestamp();
     

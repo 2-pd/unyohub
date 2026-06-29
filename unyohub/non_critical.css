@@ -392,6 +392,10 @@ input, textarea {
         .dark_mode & {
             border-left-color: #cccccc;
         }
+        
+        &[onclick] {
+            text-decoration: underline;
+        }
     }
     
     h5 {
