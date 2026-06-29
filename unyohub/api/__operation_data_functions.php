@@ -451,7 +451,7 @@ function update_next_day_data ($today_ts, $starting_location, $starting_track, $
     if (!empty($operation_number)) {
         $operation_number = $db_obj->escapeString($operation_number);
         
-        if (empty($formations)) {
+        if (empty($formations) && $formations !== FALSE) {
             $formations = "?";
         }
         

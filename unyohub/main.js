@@ -2730,7 +2730,7 @@ function convert_train_position_data (train_data, hh_and_mm) {
         train_data["formation_html"] = "<b style='color: " + (!config["dark_mode"] ? "#cc0000" : "#ff9999") + ";'>" + train_data["formation_html"] + "</b>";
     } else if (train_data["is_quotation"]) {
         train_data["formation_html"] = "<b style='color: " + (!config["dark_mode"] ? "#9966ff" : "#cc99ff") + ";'>" + train_data["formation_html"] + "</b>";
-    } else if (train_data["posts_count"] === 0 || hh_and_mm >= train_data["time_formations_can_be_changed"]) {
+    } else if (train_data["min_posts_count"] === 0 || hh_and_mm >= train_data["time_formations_can_be_changed"]) {
         train_data["formation_html"] = "<b style='color: " + (!config["dark_mode"] ? "#0099cc" : "#33ccff") + ";'>" + train_data["formation_html"] + "</b>";
     } else if (config["colorize_corrected_posts"] && train_data["variant_exists"]) {
         train_data["formation_html"] = "<b style='color: " + (!config["dark_mode"] ? "#ee7700" : "#ffcc99") + ";'>" + train_data["formation_html"] + "</b>";
@@ -2975,7 +2975,7 @@ function get_train_positions (trains, line_id, hh_and_mm, is_inbound) {
                     operation_numbers : train["operation_numbers"],
                     formation_text : formation_data["formation_text"],
                     reassigned : formation_data["reassigned"],
-                    posts_count : formation_data["posts_count"],
+                    min_posts_count : formation_data["min_posts_count"],
                     variant_exists : formation_data["variant_exists"],
                     comment_exists : formation_data["comment_exists"],
                     from_beginner : formation_data["from_beginner"],
@@ -2997,7 +2997,7 @@ function convert_formation_data (line_id, operation_list, is_inbound) {
     var railroad_id = null;
     var first_formation = null;
     var reassigned = false;
-    var posts_count = null;
+    var min_posts_count = null;
     var variant_exists = false;
     var comment_exists = false;
     var from_beginner = false;
@@ -3060,14 +3060,14 @@ function convert_formation_data (line_id, operation_list, is_inbound) {
                     }
                     
                     reassigned = reassigned || ("relieved_formations" in data[operation_number] && data[operation_number]["relieved_formations"].length >= 1);
-                    posts_count = Number(posts_count) + data[operation_number]["posts_count"];
+                    min_posts_count = min_posts_count === null ? data[operation_number]["posts_count"] : Math.min(min_posts_count, data[operation_number]["posts_count"]);
                     variant_exists = variant_exists || ("variant_exists" in data[operation_number] && data[operation_number]["variant_exists"]);
                     comment_exists = comment_exists || ("comment_exists" in data[operation_number] && data[operation_number]["comment_exists"]);
                     from_beginner = from_beginner || ("from_beginner" in data[operation_number] && data[operation_number]["from_beginner"]);
                     is_quotation = is_quotation || ("is_quotation" in data[operation_number] && data[operation_number]["is_quotation"]);
                     
                     if ("times_formations_can_changed" in operations[operation_number] && operations[operation_number]["times_formations_can_changed"].length >= 1) {
-                        if ("confirmed_train_final_arrival_time" in data[operation_number] && data[operation_number]["confirmed_train_final_arrival_time"] !== null) {//前半はv26.05-1以降のバージョンで削除
+                        if (data[operation_number]["confirmed_train_final_arrival_time"] !== null) {
                             for (var time_str of operations[operation_number]["times_formations_can_changed"]) {
                                 if (time_str >= data[operation_number]["confirmed_train_final_arrival_time"]) {
                                     time_formations_can_be_changed = time_str;
@@ -3107,7 +3107,7 @@ function convert_formation_data (line_id, operation_list, is_inbound) {
         railroad_id : railroad_id,
         formation_text : formation_text,
         reassigned : reassigned,
-        posts_count : posts_count,
+        min_posts_count : min_posts_count,
         variant_exists : variant_exists,
         comment_exists : comment_exists,
         from_beginner : from_beginner,
@@ -3738,7 +3738,7 @@ function draw_station_timetable (station_name) {
                             buf_2 += "<span style='color: " + (!config["dark_mode"] ? "#cc0000" : "#ff9999") + ";'>" + escape_html(formation_data["formation_text"]) + "</span>";
                         } else if (formation_data["is_quotation"]) {
                             buf_2 += "<span style='color: " + (!config["dark_mode"] ? "#9966ff" : "#cc99ff") + ";'>" + escape_html(formation_data["formation_text"]) + "</span>";
-                        } else if (formation_data["posts_count"] === 0 || hh + ":" + mm >= formation_data["time_formations_can_be_changed"]) {
+                        } else if (formation_data["min_posts_count"] === 0 || hh + ":" + mm >= formation_data["time_formations_can_be_changed"]) {
                             buf_2 += "<span style='color: " + (!config["dark_mode"] ? "#0099cc" : "#33ccff") + ";'>" + escape_html(formation_data["formation_text"]) + "</span>";
                         } else if (config["colorize_corrected_posts"] && formation_data["variant_exists"]) {
                             buf_2 += "<span style='color: " + (!config["dark_mode"] ? "#ee7700" : "#ffcc99") + ";'>" + escape_html(formation_data["formation_text"]) + "</span>";
@@ -3991,7 +3991,7 @@ function get_operation_data_cell_html (operation_number, tag_name, days_before, 
         } else {
             var time_formations_can_be_changed = null;
             if ("times_formations_can_changed" in operation_table["operations"][operation_number] && operation_table["operations"][operation_number]["times_formations_can_changed"].length >= 1) {
-                if ("confirmed_train_final_arrival_time" in operation_data["operations"][operation_number] && operation_data["operations"][operation_number]["confirmed_train_final_arrival_time"] !== null) {//前半はv26.05-1以降のバージョンで削除
+                if (operation_data["operations"][operation_number]["confirmed_train_final_arrival_time"] !== null) {
                     for (var time_str of operation_table["operations"][operation_number]["times_formations_can_changed"]) {
                         if (time_str >= operation_data["operations"][operation_number]["confirmed_train_final_arrival_time"]) {
                             time_formations_can_be_changed = time_str;
