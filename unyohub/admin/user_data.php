@@ -187,17 +187,12 @@ $time_out_expiration = $moderation_db_obj->querySingle("SELECT `expiration_datet
 
 print "<div class='key_and_value'><b>現在の状態</b>".(empty($time_out_expiration) ? "タイムアウトなし" : "<span style='color: #ee7700;'>タイムアウト中 (残 ".(ceil((strtotime($time_out_expiration) - $now_ts) / 86400))."日)</span>").(!$user_is_moderator ? "<div><button type='button' onclick='location.href = \"/admin/time_out_user.php?user_id=".$user_id."\";'>タイムアウトの設定</button></div>" : "")."</div>";
 
-$logs_r = $moderation_db_obj->query("SELECT `timed_out_datetime`, `moderator_id`, `timed_out_days` FROM `unyohub_moderation_user_timed_out_logs` WHERE `user_id` = '".$user_id."' ORDER BY `timed_out_datetime` DESC LIMIT 5");
+$logs_r = $moderation_db_obj->query("SELECT `unyohub_moderation_user_timed_out_logs`.`timed_out_datetime`, `unyohub_moderation_user_timed_out_logs`.`moderator_id`, `unyohub_moderation_user_timed_out_logs`.`timed_out_days`, `unyohub_moderation_timeout_reasons`.`reason_text` FROM `unyohub_moderation_user_timed_out_logs` LEFT JOIN `unyohub_moderation_timeout_reasons` ON `unyohub_moderation_user_timed_out_logs`.`reason_id` = `unyohub_moderation_timeout_reasons`.`reason_id` WHERE `unyohub_moderation_user_timed_out_logs`.`user_id` = '".$user_id."' ORDER BY `unyohub_moderation_user_timed_out_logs`.`timed_out_datetime` DESC LIMIT 5");
 
 print "<h4>タイムアウト履歴</h4>";
 
 $time_out_log_exists = FALSE;
-print "<div class='informational_text'>";
 while ($log_data = $logs_r->fetchArray(SQLITE3_ASSOC)) {
-    if ($time_out_log_exists) {
-        print "<br>";
-    }
-    
     if ($log_data["moderator_id"] !== "#") {
         $moderator = $wakarana->get_user($log_data["moderator_id"]);
         
@@ -206,14 +201,13 @@ while ($log_data = $logs_r->fetchArray(SQLITE3_ASSOC)) {
         $moderator_info = "コマンドライン";
     }
     
-    print $log_data["timed_out_datetime"]." から ".$log_data["timed_out_days"]."日間 (".addslashes($moderator_info).")";
+    print "<div class='informational_text'><b>".$log_data["timed_out_datetime"]."</b> から ".$log_data["timed_out_days"]."日間<br>".addslashes($moderator_info)."<br>理由: ".(empty($log_data["reason_text"]) ? "(設定なし)" : $log_data["reason_text"])."</div>";
     
     $time_out_log_exists = TRUE;
 }
 if (!$time_out_log_exists) {
-    print "(なし)";
+    print "<div class='informational_text'>(なし)</div>";
 }
-print "</div>";
 
 non_existent_user:
 

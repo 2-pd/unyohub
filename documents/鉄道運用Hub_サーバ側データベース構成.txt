@@ -254,6 +254,12 @@ _/_/_/_/ データベース _/_/_/_/
 
 ███ moderation.db ███
 
+`unyohub_moderation_timeout_reasons` タイムアウトの理由となる行為
+  `reason_id` TEXT NOT NULL PRIMARY KEY タイムアウト理由ID(8文字のランダムな英数字)
+  `reason_order` INTEGER NOT NULL UNIQUE タイムアウト理由の表示順序(自然数を1から順に付番)
+  `reason_text` TEXT NOT NULL タイムアウト理由文
+
+
 `unyohub_moderation_deleted_data` モデレーターが削除したユーザー投稿データ
   `moderator_id` TEXT NOT NULL モデレーターのユーザーID
   `deleted_datetime` TEXT NOT NULL 「YYYY-MM-DD HH:MM:SS」形式の削除処理実施日時
@@ -275,6 +281,7 @@ _/_/_/_/ データベース _/_/_/_/
 
 `unyohub_moderation_timed_out_users` タイムアウト中ユーザーのリスト
   `user_id` TEXT NOT NULL PRIMARY KEY タイムアウト中ユーザーのID(未登録ユーザーの場合、クライアント端末が生成する12桁の乱数値の頭に「*」を付加した文字列)
+  `reason_id` TEXT タイムアウト理由のID(どの理由にも該当しない場合はNULL)
   `expiration_datetime` TEXT NOT NULL 「YYYY-MM-DD HH:MM:SS」形式のタイムアウト期間満了日時
 
   INDEX `unyohub_moderation_idx_tu1`(`expiration_datetime`)
@@ -283,6 +290,7 @@ _/_/_/_/ データベース _/_/_/_/
 `unyohub_moderation_user_timed_out_logs` ユーザーに対するタイムアウト設定の履歴
   `user_id` TEXT NOT NULL タイムアウトされたユーザーのID(未登録ユーザーの場合、クライアント端末が生成する12桁の乱数値の頭に「*」を付加した文字列)
   `timed_out_datetime` TEXT NOT NULL 「YYYY-MM-DD HH:MM:SS」形式のタイムアウトが設定された日時
+  `reason_id` TEXT タイムアウト理由のID(どの理由にも該当しない場合はNULL)
   `moderator_id` TEXT NOT NULL モデレート作業を行ったモデレーターのユーザーID(コマンドラインからのモデレートの場合は「#」)
   `timed_out_days` INTEGER NOT NULL タイムアウト日数
 
@@ -293,6 +301,7 @@ _/_/_/_/ データベース _/_/_/_/
 
 `unyohub_moderation_timed_out_ip_addresses` タイムアウト中IPアドレスのリスト
   `ip_address` TEXT NOT NULL PRIMARY KEY タイムアウト中IPアドレス
+  `reason_id` TEXT タイムアウト理由のID(どの理由にも該当しない場合はNULL)
   `expiration_datetime` TEXT NOT NULL 「YYYY-MM-DD HH:MM:SS」形式のタイムアウト期間満了日時
 
   INDEX `unyohub_moderation_idx_ti1`(`expiration_datetime`)
@@ -301,6 +310,7 @@ _/_/_/_/ データベース _/_/_/_/
 `unyohub_moderation_ip_address_timed_out_logs` IPアドレスに対するタイムアウト設定の履歴
   `ip_address` TEXT NOT NULL タイムアウトされたIPアドレス
   `timed_out_datetime` TEXT NOT NULL 「YYYY-MM-DD HH:MM:SS」形式のタイムアウトが設定された日時
+  `reason_id` TEXT タイムアウト理由のID(どの理由にも該当しない場合はNULL)
   `moderator_id` TEXT NOT NULL モデレート作業を行ったモデレーターのユーザーID(コマンドラインからのモデレートの場合は「#」)
   `timed_out_days` INTEGER NOT NULL タイムアウト日数
 
