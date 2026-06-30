@@ -61,6 +61,9 @@ def initialize_common_dbs (mes, db_dir_path):
     
     cur = conn.cursor()
     
+    mes("テーブル「unyohub_moderation_timeout_reasons」を作成しています...")
+    cur.execute("CREATE TABLE IF NOT EXISTS `unyohub_moderation_timeout_reasons`(`reason_id` TEXT NOT NULL PRIMARY KEY, `reason_order` INTEGER NOT NULL UNIQUE, `reason_text` TEXT NOT NULL)")
+    
     mes("テーブル「unyohub_moderation_deleted_data」を作成しています...")
     cur.execute("CREATE TABLE IF NOT EXISTS `unyohub_moderation_deleted_data`(`moderator_id` TEXT NOT NULL, `deleted_datetime` TEXT NOT NULL, `railroad_id` TEXT NOT NULL, `operation_date` TEXT NOT NULL, `operation_number` TEXT NOT NULL, `user_id` TEXT NOT NULL, `formations` TEXT, `posted_datetime` TEXT NOT NULL, `comment` TEXT, `ip_address` TEXT)")
     cur.execute("CREATE INDEX IF NOT EXISTS `unyohub_moderation_idx_d1` ON `unyohub_moderation_deleted_data`(`moderator_id`, `deleted_datetime`)")
@@ -70,20 +73,20 @@ def initialize_common_dbs (mes, db_dir_path):
     cur.execute("CREATE INDEX IF NOT EXISTS `unyohub_moderation_idx_d5` ON `unyohub_moderation_deleted_data`(`ip_address`, `posted_datetime`)")
     
     mes("テーブル「unyohub_moderation_timed_out_users」を作成しています...")
-    cur.execute("CREATE TABLE IF NOT EXISTS `unyohub_moderation_timed_out_users`(`user_id` TEXT NOT NULL PRIMARY KEY, `expiration_datetime` TEXT NOT NULL)")
+    cur.execute("CREATE TABLE IF NOT EXISTS `unyohub_moderation_timed_out_users`(`user_id` TEXT NOT NULL PRIMARY KEY, `reason_id` TEXT, `expiration_datetime` TEXT NOT NULL)")
     cur.execute("CREATE INDEX IF NOT EXISTS `unyohub_moderation_idx_tu1` ON `unyohub_moderation_timed_out_users`(`expiration_datetime`)")
     
     mes("テーブル「unyohub_moderation_user_timed_out_logs」を作成しています...")
-    cur.execute("CREATE TABLE IF NOT EXISTS `unyohub_moderation_user_timed_out_logs`(`user_id` TEXT NOT NULL, `timed_out_datetime` TEXT NOT NULL, `moderator_id` TEXT NOT NULL, `timed_out_days` INTEGER NOT NULL, PRIMARY KEY(`user_id`, `timed_out_datetime`))")
+    cur.execute("CREATE TABLE IF NOT EXISTS `unyohub_moderation_user_timed_out_logs`(`user_id` TEXT NOT NULL, `timed_out_datetime` TEXT NOT NULL, `reason_id` TEXT, `moderator_id` TEXT NOT NULL, `timed_out_days` INTEGER NOT NULL, PRIMARY KEY(`user_id`, `timed_out_datetime`))")
     cur.execute("CREATE INDEX IF NOT EXISTS `unyohub_moderation_idx_ul1` ON `unyohub_moderation_user_timed_out_logs`(`timed_out_datetime`)")
     cur.execute("CREATE INDEX IF NOT EXISTS `unyohub_moderation_idx_ul2` ON `unyohub_moderation_user_timed_out_logs`(`moderator_id`, `timed_out_datetime`)")
     
     mes("テーブル「unyohub_moderation_timed_out_ip_addresses」を作成しています...")
-    cur.execute("CREATE TABLE IF NOT EXISTS `unyohub_moderation_timed_out_ip_addresses`(`ip_address` TEXT NOT NULL PRIMARY KEY, `expiration_datetime` TEXT NOT NULL)")
+    cur.execute("CREATE TABLE IF NOT EXISTS `unyohub_moderation_timed_out_ip_addresses`(`ip_address` TEXT NOT NULL PRIMARY KEY, `reason_id` TEXT, `expiration_datetime` TEXT NOT NULL)")
     cur.execute("CREATE INDEX IF NOT EXISTS `unyohub_moderation_idx_ti1` ON `unyohub_moderation_timed_out_ip_addresses`(`expiration_datetime`)")
     
     mes("テーブル「unyohub_moderation_ip_address_timed_out_logs」を作成しています...")
-    cur.execute("CREATE TABLE IF NOT EXISTS `unyohub_moderation_ip_address_timed_out_logs`(`ip_address` TEXT NOT NULL, `timed_out_datetime` TEXT NOT NULL, `moderator_id` TEXT NOT NULL, `timed_out_days` INTEGER NOT NULL, PRIMARY KEY(`ip_address`, `timed_out_datetime`))")
+    cur.execute("CREATE TABLE IF NOT EXISTS `unyohub_moderation_ip_address_timed_out_logs`(`ip_address` TEXT NOT NULL, `timed_out_datetime` TEXT NOT NULL, `reason_id` TEXT, `moderator_id` TEXT NOT NULL, `timed_out_days` INTEGER NOT NULL, PRIMARY KEY(`ip_address`, `timed_out_datetime`))")
     cur.execute("CREATE INDEX IF NOT EXISTS `unyohub_moderation_idx_il1` ON `unyohub_moderation_ip_address_timed_out_logs`(`timed_out_datetime`)")
     cur.execute("CREATE INDEX IF NOT EXISTS `unyohub_moderation_idx_il2` ON `unyohub_moderation_ip_address_timed_out_logs`(`moderator_id`, `timed_out_datetime`)")
     

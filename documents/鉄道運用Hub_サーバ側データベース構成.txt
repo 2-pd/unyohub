@@ -256,10 +256,8 @@ _/_/_/_/ データベース _/_/_/_/
 
 `unyohub_moderation_timeout_reasons` タイムアウトの理由となる行為
   `reason_id` TEXT NOT NULL PRIMARY KEY タイムアウト理由ID(8文字のランダムな英数字)
-  `reason_order` INTEGER NOT NULL タイムアウト理由の表示順序(自然数を1から順に付番)
+  `reason_order` INTEGER NOT NULL UNIQUE タイムアウト理由の表示順序(自然数を1から順に付番)
   `reason_text` TEXT NOT NULL タイムアウト理由文
-
-  INDEX `unyohub_moderation_idx_tr1`(`reason_order`)
 
 
 `unyohub_moderation_deleted_data` モデレーターが削除したユーザー投稿データ
