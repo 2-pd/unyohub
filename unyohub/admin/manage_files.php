@@ -56,7 +56,7 @@ if (empty($_GET["file_name"])) {
     
     print "<h2 style='border-color: ".addslashes($railroad_info["main_color"])."'>データファイルの管理</h2>";
     
-    print "<h3>ダイヤ改正別データ</h3>";
+    print "<h3>ダイヤ改正・変更別データ</h3>";
     
     $dir_list = array_reverse(glob("../data/".$railroad_id."/[0-9][0-9][0-9][0-9]-[01][0-9]-[0-3][0-9]"));
     
@@ -67,7 +67,7 @@ if (empty($_GET["file_name"])) {
         }
         
         $diagram_revision = basename($dir_path);
-        $buf .= "<li><a href='manage_diagram_files.php?railroad_id=".$railroad_id."&diagram_revision=".$diagram_revision."' class='dir_link'>".$diagram_revision."<small> 改正</small></a></li>";
+        $buf .= "<li><a href='manage_diagram_files.php?railroad_id=".$railroad_id."&diagram_revision=".$diagram_revision."' class='dir_link'>".$diagram_revision."<small> 改正・変更</small></a></li>";
     }
     
     if (!empty($buf)) {

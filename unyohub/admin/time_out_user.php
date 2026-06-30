@@ -30,6 +30,15 @@ if (isset($_POST["timed_out_days"])) {
         goto on_error;
     }
     
+    if (empty($_POST["reason_id"]) || $_POST["reason_id"] === "NULL") {
+        $reason_id_q = "NULL";
+    } elseif (ctype_alnum($_POST["reason_id"])) {
+        $reason_id_q = "'".$_POST["reason_id"]."'";
+    } else {
+        $result_text = "【!】タイムアウト理由が不正です。処理はキャンセルされました。";
+        goto on_error;
+    }
+    
     if (isset($_GET["user_id"])) {
         $user_id = $moderation_db_obj->escapeString($_GET["user_id"]);
         
@@ -50,8 +59,8 @@ if (isset($_POST["timed_out_days"])) {
                 goto on_error;
             }
             
-            $moderation_db_obj->query("INSERT INTO `unyohub_moderation_timed_out_users` (`user_id`, `expiration_datetime`) VALUES ('".$user_id."', '".date("Y-m-d H:i:s", $timed_out_days * 86400 + $now_ts)."')");
-            $moderation_db_obj->query("INSERT INTO `unyohub_moderation_user_timed_out_logs` (`user_id`, `timed_out_datetime`, `moderator_id`, `timed_out_days`) VALUES ('".$user_id."', '".$now_datetime."', '".$user->get_id()."', ".$timed_out_days.")");
+            $moderation_db_obj->query("INSERT INTO `unyohub_moderation_timed_out_users` (`user_id`, `reason_id`, `expiration_datetime`) VALUES ('".$user_id."', ".$reason_id_q.", '".date("Y-m-d H:i:s", $timed_out_days * 86400 + $now_ts)."')");
+            $moderation_db_obj->query("INSERT INTO `unyohub_moderation_user_timed_out_logs` (`user_id`, `timed_out_datetime`, `reason_id`, `moderator_id`, `timed_out_days`) VALUES ('".$user_id."', '".$now_datetime."', ".$reason_id_q.", '".$user->get_id()."', ".$timed_out_days.")");
             
             $result_text = "ユーザーをタイムアウトしました";
         }
@@ -75,8 +84,8 @@ if (isset($_POST["timed_out_days"])) {
                 goto on_error;
             }
             
-            $moderation_db_obj->query("INSERT INTO `unyohub_moderation_timed_out_ip_addresses` (`ip_address`, `expiration_datetime`) VALUES ('".$ip_address."', '".date("Y-m-d H:i:s", $timed_out_days * 86400 + $now_ts)."')");
-            $moderation_db_obj->query("INSERT INTO `unyohub_moderation_ip_address_timed_out_logs` (`ip_address`, `timed_out_datetime`, `moderator_id`, `timed_out_days`) VALUES ('".$ip_address."', '".$now_datetime."', '".$user->get_id()."', ".$timed_out_days.")");
+            $moderation_db_obj->query("INSERT INTO `unyohub_moderation_timed_out_ip_addresses` (`ip_address`, `reason_id`, `expiration_datetime`) VALUES ('".$ip_address."', ".$reason_id_q.", '".date("Y-m-d H:i:s", $timed_out_days * 86400 + $now_ts)."')");
+            $moderation_db_obj->query("INSERT INTO `unyohub_moderation_ip_address_timed_out_logs` (`ip_address`, `timed_out_datetime`, `reason_id`, `moderator_id`, `timed_out_days`) VALUES ('".$ip_address."', '".$now_datetime."', ".$reason_id_q.", '".$user->get_id()."', ".$timed_out_days.")");
             
             $result_text = "IPアドレスをタイムアウトしました";
         }
@@ -116,7 +125,16 @@ if (empty($expiration_datetime)) {
     
     print "<h3>タイムアウトを設定</h3>";
     
-    print "<input type='number' name='timed_out_days' min='1' max='90' value='7'>日間タイムアウト<br><br>";
+    print "<h4>タイムアウト期間</h4>";
+    print "<input type='number' name='timed_out_days' min='1' max='90' value='7'>日間";
+    
+    print "<h4>タイムアウトの理由とする行為</h4>";
+    $reasons_r = $moderation_db_obj->query("SELECT `reason_id`, `reason_text` FROM `unyohub_moderation_timeout_reasons` ORDER BY `reason_order` ASC");
+    print "<select name='reason_id'><option value='NULL'>(設定なし)</option>";
+    while ($reason = $reasons_r->fetchArray(SQLITE3_ASSOC)) {
+        print "<option value='".$reason["reason_id"]."'>".htmlspecialchars($reason["reason_text"])."</option>";
+    }
+    print "</select><br><br>";
     
     print "<button type='submit' class='wide_button'>タイムアウト実行</button>";
 } else {

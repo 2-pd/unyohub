@@ -172,7 +172,7 @@ def convert_timetable_1 (mes, file_name, digits_count):
                 
                 if from_previous_day and int(departure_time[:-3]) >= 24:
                     departure_time = str(int(departure_time[:-3]) - 24) + ":" + departure_time[-2:]
-                elif run_through_next_day and int(departure_time[:-3]) < 8:
+                elif run_through_next_day and int(departure_time[:-3]) < 12:
                     departure_time = str(int(departure_time[:-3]) + 24) + ":" + departure_time[-2:]
                 
                 timetable_column[cnt] = before_departure_time + departure_time.zfill(5)

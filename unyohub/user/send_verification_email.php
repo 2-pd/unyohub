@@ -12,7 +12,7 @@ $user = $wakarana->check();
 
 $rejection_reason = NULL;
 if (is_object($user)) {
-    $verification_code = $user->create_email_address_verification_code($_POST["email_address"]);
+    $verification_code = $user->create_email_address_verification_code($_POST["email_address"], FALSE);
     
     if (empty($verification_code)) {
         $rejection_reason = $user->get_rejection_reason();
@@ -27,6 +27,9 @@ if (is_object($user)) {
 
 if (empty($verification_code)) {
     switch ($rejection_reason) {
+        case "currently_locked_out":
+            print "ERROR: 数十秒待ってから再度お試しください";
+            break;
         case "invalid_email_address":
             print "ERROR: 正しいメールアドレスが入力されていません";
             break;

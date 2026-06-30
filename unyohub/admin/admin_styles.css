@@ -284,6 +284,14 @@ table {
             
             line-height: 20px;
         }
+        
+        time {
+            width: fit-content;
+            
+            color: #999999;
+            
+            float: right;
+        }
     }
 }
 
@@ -937,6 +945,16 @@ input[type="checkbox"]:checked + label.drop_down {
         
         opacity: 1;
     }
+}
+
+.bottom_link {
+    display: block;
+    
+    margin-top: 30px;
+    
+    line-height: 30px;
+    color: #666666;
+    text-align: center;
 }
 
 .informational_text, .warning_text {

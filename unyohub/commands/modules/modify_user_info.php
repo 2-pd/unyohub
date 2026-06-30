@@ -73,7 +73,7 @@ for ($cnt = 0; isset($options[$cnt]); $cnt++) {
             break;
             
         case "--reset-password":
-            $new_password = wakarana::create_random_password();
+            $new_password = wakarana::generate_random_password();
             
             $user->set_password($new_password);
             
@@ -117,26 +117,26 @@ for ($cnt = 0; isset($options[$cnt]); $cnt++) {
             break;
             
         case "--enable":
-            if ($user->get_status() === WAKARANA_STATUS_NORMAL) {
+            if ($user->get_status() === wakarana::STATUS_NORMAL) {
                 print "ユーザーアカウントは既に有効化されています\n";
                 
                 break;
             }
             
-            $user->set_status(WAKARANA_STATUS_NORMAL);
+            $user->set_status(wakarana::STATUS_NORMAL);
             
             print "ユーザーアカウントを有効化しました\n";
             
             break;
             
         case "--disable":
-            if ($user->get_status() === WAKARANA_STATUS_DISABLE) {
+            if ($user->get_status() === wakarana::STATUS_DISABLE) {
                 print "ユーザーアカウントは既に無効化されています\n";
                 
                 break;
             }
             
-            $user->set_status(WAKARANA_STATUS_DISABLE);
+            $user->set_status(wakarana::STATUS_DISABLE);
             
             print "ユーザーアカウントを無効化しました\n";
             

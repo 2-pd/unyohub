@@ -30,7 +30,7 @@ if (!empty($_POST["user_id"])) {
     
     $is_timed_out_user = boolval($moderation_db_obj->querySingle("SELECT COUNT(`user_id`) FROM `unyohub_moderation_timed_out_users` WHERE `user_id` = '".$user_id."' AND `expiration_datetime` > '".$datetime_now."'"));
     
-    $logs_r = $moderation_db_obj->query("SELECT `timed_out_datetime`, `moderator_id`, `timed_out_days` FROM `unyohub_moderation_user_timed_out_logs` WHERE `user_id` = '".$user_id."' ORDER BY `timed_out_datetime` DESC LIMIT 5");
+    $logs_r = $moderation_db_obj->query("SELECT `unyohub_moderation_user_timed_out_logs`.`timed_out_datetime`, `unyohub_moderation_user_timed_out_logs`.`moderator_id`, `unyohub_moderation_user_timed_out_logs`.`timed_out_days`, `unyohub_moderation_timeout_reasons`.`reason_text` AS `timed_out_reason` FROM `unyohub_moderation_user_timed_out_logs` LEFT JOIN `unyohub_moderation_timeout_reasons` ON `unyohub_moderation_user_timed_out_logs`.`reason_id` = `unyohub_moderation_timeout_reasons`.`reason_id` WHERE `unyohub_moderation_user_timed_out_logs`.`user_id` = '".$user_id."' ORDER BY `unyohub_moderation_user_timed_out_logs`.`timed_out_datetime` DESC LIMIT 5");
     
     $user_timed_out_logs = array();
     while ($log_data = $logs_r->fetchArray(SQLITE3_ASSOC)) {
@@ -57,7 +57,7 @@ if (!empty($_POST["ip_address"])) {
     
     $is_timed_out_ip_address = boolval($moderation_db_obj->querySingle("SELECT COUNT(`ip_address`) FROM `unyohub_moderation_timed_out_ip_addresses` WHERE `ip_address` = '".$ip_address."' AND `expiration_datetime` > '".$datetime_now."'"));
     
-    $logs_r = $moderation_db_obj->query("SELECT `timed_out_datetime`, `moderator_id`, `timed_out_days` FROM `unyohub_moderation_ip_address_timed_out_logs` WHERE `ip_address` = '".$ip_address."' ORDER BY `timed_out_datetime` DESC LIMIT 5");
+    $logs_r = $moderation_db_obj->query("SELECT `unyohub_moderation_ip_address_timed_out_logs`.`timed_out_datetime`, `unyohub_moderation_ip_address_timed_out_logs`.`moderator_id`, `unyohub_moderation_ip_address_timed_out_logs`.`timed_out_days`, `unyohub_moderation_timeout_reasons`.`reason_text` AS `timed_out_reason` FROM `unyohub_moderation_ip_address_timed_out_logs` LEFT JOIN `unyohub_moderation_timeout_reasons` ON `unyohub_moderation_ip_address_timed_out_logs`.`reason_id` = `unyohub_moderation_timeout_reasons`.`reason_id` WHERE `unyohub_moderation_ip_address_timed_out_logs`.`ip_address` = '".$ip_address."' ORDER BY `unyohub_moderation_ip_address_timed_out_logs`.`timed_out_datetime` DESC LIMIT 5");
     
     $ip_address_timed_out_logs = array();
     while ($log_data = $logs_r->fetchArray(SQLITE3_ASSOC)) {

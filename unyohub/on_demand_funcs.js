@@ -1638,7 +1638,7 @@ function draw_operation_trains (operation_number, diagram_id_or_ts, is_today, se
     } else {
         var train_div_class_name = "operation_table_train";
     }
-    var buf = "<div class='" + train_div_class_name + "'><b class='train_overview_location'>" + operation_table["operations"][operation_number]["starting_location"];
+    var buf = "<div class='" + train_div_class_name + "'" + (mode_val === 2 && operation_table["operations"][operation_number]["starting_track"] !== null ? "onclick=' show_previous_day_operation(\"" + add_slashes(operation_table["operations"][operation_number]["starting_location"]) + "\", \"" + add_slashes(operation_table["operations"][operation_number]["starting_track"]) + "\");'" : "") + "><b class='train_overview_location'>" + operation_table["operations"][operation_number]["starting_location"];
     if (operation_table["operations"][operation_number]["starting_track"] !== null) {
         buf += "<small>(" + operation_table["operations"][operation_number]["starting_track"] + ")</small>";
     }
@@ -1800,7 +1800,7 @@ function draw_operation_trains (operation_number, diagram_id_or_ts, is_today, se
             }
         }
         
-        buf += "<div class='" + train_div_class_name + "'><b class='train_overview_location'>" + operation_table["operations"][operation_number]["terminal_location"];
+        buf += "<div class='" + train_div_class_name + "'" + (mode_val === 2 && operation_table["operations"][operation_number]["terminal_track"] !== null ? "onclick=' show_next_day_operation(\"" + add_slashes(operation_table["operations"][operation_number]["terminal_location"]) + "\", \"" + add_slashes(operation_table["operations"][operation_number]["terminal_track"]) + "\");'" : "") + "><b class='train_overview_location'>" + operation_table["operations"][operation_number]["terminal_location"];
         if (operation_table["operations"][operation_number]["terminal_track"] !== null) {
             buf += "<small>(" + operation_table["operations"][operation_number]["terminal_track"] + ")</small>";
         }
@@ -1862,6 +1862,52 @@ function next_operation_number (operation_number_or_index, operation_data_date_t
             operation_detail(0, operation_data_date_ts_or_operation_name);
         }
     }
+}
+
+function show_previous_day_operation (starting_location, starting_track) {
+    popup_close();
+    
+    operation_data_change_date(-1, function (succeeded) {
+        if (!succeeded) {
+            return;
+        }
+        
+        for (var operation_number of Object.keys(operation_table["operations"])) {
+            if (operation_table["operations"][operation_number]["terminal_location"] === starting_location && operation_table["operations"][operation_number]["terminal_track"] === starting_track) {
+                var dt = new Date(operation_data["operation_date"] + " 04:00:00");
+                var operation_data_date = Math.floor(dt.getTime() / 1000);
+                
+                operation_detail(operation_number, operation_data_date, operation_data["operation_date"] === get_date_string(get_timestamp()));
+                
+                return;
+            }
+        }
+        
+        mes("前日運用はありません");
+    });
+}
+
+function show_next_day_operation (terminal_location, terminal_track) {
+    popup_close();
+    
+    operation_data_change_date(1, function (succeeded) {
+        if (!succeeded) {
+            return;
+        }
+        
+        for (var operation_number of Object.keys(operation_table["operations"])) {
+            if (operation_table["operations"][operation_number]["starting_location"] === terminal_location && operation_table["operations"][operation_number]["starting_track"] === terminal_track) {
+                var dt = new Date(operation_data["operation_date"] + " 04:00:00");
+                var operation_data_date = Math.floor(dt.getTime() / 1000);
+                
+                operation_detail(operation_number, operation_data_date, operation_data["operation_date"] === get_date_string(get_timestamp()));
+                
+                return;
+            }
+        }
+        
+        mes("翌日運用はありません");
+    });
 }
 
 
@@ -2047,7 +2093,9 @@ function get_operation_data_history (formation_name, operation_number, yyyy_mm =
                     }
                 }
                 
-                buf += "<br><div class='informational_text'>運用遷移情報は昨日以前のもののみご確認いただけます。</div>";
+                if (operation_number !== null) {
+                    buf += "<br><div class='informational_text'>運用遷移情報は昨日以前のもののみご確認いただけます。</div>";
+                }
                 
                 popup_inner_elm.innerHTML = buf;
             }
@@ -2084,7 +2132,7 @@ function change_show_next_day_operation_data (bool_val) {
 
 
 function get_formation_last_operation_html (formation_name, data, now_ts) {
-    var buf = "<h4>" + escape_html(formation_name) + "</h4>";
+    var buf = "<h4 onclick='popup_close(); formation_detail(\"" + add_slashes(formation_name) + "\");'>" + escape_html(formation_name) + "</h4>";
     
     if (data != null) {
         var last_operated_date = new Date(data["last_operated_date"] + " 04:00:00");
@@ -2105,6 +2153,12 @@ function get_formation_last_operation_html (formation_name, data, now_ts) {
             buf += "<span style='color: " + (!config["dark_mode"] ? "#ee7700" : "#ffcc99") + ";'>(" + days_before + "日前)</span>";
         }
         
+        overview = get_formation_overview(formation_name);
+        
+        if (overview["unavailable"]) {
+            buf += " <b class='warning_sentence'>運用離脱中</b>";
+        }
+        
         buf += get_operation_data_html(data["operations"], last_operated_date_ts, (operation_table !== null && get_diagram_revision(data["last_operated_date"]) === operation_table["diagram_revision"]));
     } else {
         buf += "<div class='descriptive_text'>この編成の運用情報が投稿されたことはありません</div>";
@@ -2117,6 +2171,7 @@ function formations_last_operated () {
     var popup_inner_elm = open_popup("formations_last_operated_popup", "全編成の最終運行情報");
     
     popup_inner_elm.className = "wait_icon";
+    popup_inner_elm.innerHTML = "";
     
     var ts = get_timestamp();
     
@@ -2348,7 +2403,7 @@ function operation_table_list_tables () {
         }
     }
     
-    buf += "<u type='button' class='execute_link' onclick='close_square_popup(); operation_table_mode(null);'>他の改正版のダイヤ</u>";
+    buf += "<u type='button' class='execute_link' onclick='close_square_popup(); operation_table_mode(null);'>他の改正・変更版のダイヤ</u>";
     
     popup_inner_elm.innerHTML = buf;
 }
@@ -3130,10 +3185,18 @@ function show_moderation_info (railroad_id, user_id, ip_address) {
             
             var buf = "";
             for (var log_data of moderation_info["user_timed_out_logs"]) {
-                buf += log_data["timed_out_datetime"] + " から " + log_data["timed_out_days"] + "日間 (" + (log_data["moderator_id"] !== "#" ? "モデレーター: " : "") + escape_html(log_data["moderator_name"]) + ")<br>";
+                buf += "<div class='descriptive_text'><b>" + log_data["timed_out_datetime"] + "</b> から " + log_data["timed_out_days"] + "日間<br>";
+                
+                if (log_data["moderator_id"] !== "#") {
+                    buf += "モデレーター: " + escape_html(log_data["moderator_name"]) + "<br>";
+                } else {
+                    buf += escape_html(log_data["moderator_name"]) + "<br>";
+                }
+                
+                buf += "理由: " + (log_data["timed_out_reason"] !== null ? escape_html(log_data["timed_out_reason"]) : "(設定なし)") + "</div>";
             }
             
-            document.getElementById("edit_operation_data_user_timed_out_logs").innerHTML = "<h5>ユーザーのタイムアウト履歴</h5><div class='descriptive_text'>" + (buf.length >= 1 ? buf : "ユーザーにタイムアウトの履歴はありません") + "</div>";
+            document.getElementById("edit_operation_data_user_timed_out_logs").innerHTML = "<h5>ユーザーのタイムアウト履歴</h5>" + (buf.length >= 1 ? buf : "<div class='descriptive_text'>ユーザーにタイムアウトの履歴はありません</div>");
         } else {
             user_info_elm.classList.remove("loading_icon");
         }
@@ -3152,10 +3215,18 @@ function show_moderation_info (railroad_id, user_id, ip_address) {
             
             var buf = "";
             for (var log_data of moderation_info["ip_address_timed_out_logs"]) {
-                buf += log_data["timed_out_datetime"] + " から " + log_data["timed_out_days"] + "日間 (" + (log_data["moderator_id"] !== "#" ? "モデレーター: " : "") + escape_html(log_data["moderator_name"]) + ")<br>";
+                buf += "<div class='descriptive_text'><b>" + log_data["timed_out_datetime"] + "</b> から " + log_data["timed_out_days"] + "日間<br>";
+                
+                if (log_data["moderator_id"] !== "#") {
+                    buf += "モデレーター: " + escape_html(log_data["moderator_name"]) + "<br>";
+                } else {
+                    buf += escape_html(log_data["moderator_name"]) + "<br>";
+                }
+                
+                buf += "理由: " + (log_data["timed_out_reason"] !== null ? escape_html(log_data["timed_out_reason"]) : "(設定なし)") + "</div>";
             }
             
-            document.getElementById("edit_operation_data_ip_address_timed_out_logs").innerHTML = "<h5>IPアドレスのタイムアウト履歴</h5><div class='descriptive_text'>" + (buf.length >= 1 ? buf : "IPアドレスにタイムアウトの履歴はありません") + "</div>";
+            document.getElementById("edit_operation_data_ip_address_timed_out_logs").innerHTML = "<h5>IPアドレスのタイムアウト履歴</h5>" + (buf.length >= 1 ? buf : "<div class='descriptive_text'>IPアドレスにタイムアウトの履歴はありません</div>");
         } else {
             ip_address_info_elm.classList.remove("loading_icon");
         }
@@ -3828,6 +3899,17 @@ function show_welcome_message () {
 
 function close_welcome_message () {
     document.getElementById("welcome_message_box").remove();
+}
+
+
+window.onkeydown = function (event) {
+    if (event.keyCode === 27) {
+        if (square_popup_is_open) {
+            close_square_popup(false);
+        } else if (popup_history.length >= 1) {
+            popup_close(false, false);
+        }
+    }
 }
 
 

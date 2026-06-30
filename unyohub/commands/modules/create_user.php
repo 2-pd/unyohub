@@ -11,7 +11,7 @@ print "ユーザーアカウント ".addslashes($argv[1])." を作成してい�
 
 $wakarana = new wakarana(__DIR__."/../../".$wakarana_base_dir);
 
-$password = wakarana::create_random_password();
+$password = wakarana::generate_random_password();
 
 $user = $wakarana->create_user($argv[1], $password, $argv[2]);
 if (!is_object($user)) {

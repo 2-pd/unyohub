@@ -50,7 +50,18 @@ $posted_datetime = $posted_date." ".date("H:i:s", $ts_now);
 connect_moderation_db();
 
 if ($moderation_db_obj->querySingle("SELECT EXISTS(SELECT 1 FROM `unyohub_moderation_timed_out_users` WHERE `user_id` = '".$moderation_db_obj->escapeString($user_id)."' AND `expiration_datetime` > '".$posted_datetime."' LIMIT 1) OR EXISTS(SELECT 1 FROM `unyohub_moderation_timed_out_ip_addresses` WHERE `ip_address` = '".$moderation_db_obj->escapeString($_SERVER["REMOTE_ADDR"])."' AND `expiration_datetime` > '".$posted_datetime."' LIMIT 1)")) {
-    print "ERROR: 投稿制限措置が実施されているため、現在は投稿機能をご利用いただくことができません";
+    $reason_text  = $moderation_db_obj->querySingle("SELECT `unyohub_moderation_timeout_reasons`.`reason_text` FROM `unyohub_moderation_timed_out_users`, `unyohub_moderation_timeout_reasons` WHERE `unyohub_moderation_timed_out_users`.`user_id` = '".$moderation_db_obj->escapeString($user_id)."' AND `unyohub_moderation_timed_out_users`.`expiration_datetime` > '".$posted_datetime."' AND `unyohub_moderation_timeout_reasons`.`reason_id` = `unyohub_moderation_timed_out_users`.`reason_id` LIMIT 1");
+    
+    if (empty($reason_text)) {
+        $reason_text  = $moderation_db_obj->querySingle("SELECT `unyohub_moderation_timeout_reasons`.`reason_text` FROM `unyohub_moderation_timed_out_ip_addresses`, `unyohub_moderation_timeout_reasons` WHERE `unyohub_moderation_timed_out_ip_addresses`.`ip_address` = '".$moderation_db_obj->escapeString($_SERVER["REMOTE_ADDR"])."' AND `unyohub_moderation_timed_out_ip_addresses`.`expiration_datetime` > '".$posted_datetime."' AND `unyohub_moderation_timeout_reasons`.`reason_id` = `unyohub_moderation_timed_out_ip_addresses`.`reason_id` LIMIT 1");
+    }
+    
+    if (!empty($reason_text)) {
+        print "ERROR: ".$reason_text."により一時的な投稿制限措置が実施されています";
+    } else {
+        print "ERROR: 投稿制限措置が実施されているため、現在は投稿機能をご利用いただくことができません";
+    }
+    
     exit;
 }
 

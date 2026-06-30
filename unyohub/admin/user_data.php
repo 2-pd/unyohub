@@ -44,7 +44,7 @@ if (!empty($_POST["enable_user"])) {
         goto on_error;
     }
     
-    $user_obj->set_status(WAKARANA_STATUS_NORMAL);
+    $user_obj->set_status(wakarana::STATUS_NORMAL);
     $result_text = "ユーザーアカウントを有効化しました";
 } elseif (!empty($_POST["disable_user"])) {
     if (!$user->check_one_time_token($_POST["one_time_token"])) {
@@ -53,7 +53,7 @@ if (!empty($_POST["enable_user"])) {
     }
     
     if (!$user_obj->check_permission("control_panel_user") || ($moderator_is_admin && $user_id !== $moderator_id)) {
-        $user_obj->set_status(WAKARANA_STATUS_DISABLE);
+        $user_obj->set_status(wakarana::STATUS_DISABLE);
         $result_text = "ユーザーアカウントを停止しました";
     } else {
         $result_text = "【!】このユーザーのアカウントを停止することはできません。";
@@ -119,9 +119,9 @@ $user_name = $user_obj->get_name();
 print "<div class='key_and_value'><b>ハンドルネーム</b>".(!empty($user_name) ? htmlspecialchars($user_name) : "(未設定)")."</div>";
 
 $user_status = $user_obj->get_status();
-print "<div class='key_and_value'><b>状態</b><span style='color: ".($user_status === WAKARANA_STATUS_NORMAL ? "#33cc99;'>有効" : "#ee3333;'>停止中")."</span>";
+print "<div class='key_and_value'><b>状態</b><span style='color: ".($user_status === wakarana::STATUS_NORMAL ? "#33cc99;'>有効" : "#ee3333;'>停止中")."</span>";
 if (!$user_is_moderator || ($moderator_is_admin && $user_id !== $moderator_id)) {
-    print "<div><button type='button' onclick='".($user_status === WAKARANA_STATUS_NORMAL ? "disable_user(\"".$user_id."\");'>アカウントの停止" : "enable_user(\"".$user_id."\");'>アカウントの有効化")."</button></div>";
+    print "<div><button type='button' onclick='".($user_status === wakarana::STATUS_NORMAL ? "disable_user(\"".$user_id."\");'>アカウントの停止" : "enable_user(\"".$user_id."\");'>アカウントの有効化")."</button></div>";
 }
 print "</div>";
 
@@ -166,6 +166,15 @@ foreach ($user_obj->get_roles() as $role) {
 print "</table>";
 
 
+print "<h3>ログイン中の端末(最終利用日の新しい順)</h3>";
+
+print "<table>";
+foreach ($user_obj->get_sessions() as $session_info) {
+    print "<tr><td>".htmlspecialchars($session_info["ip_address"])." (".$session_info["operating_system"]." ".$session_info["browser_name"].")<time>".$session_info["last_access"]."</time></td></tr>";
+}
+print "</table>";
+
+
 print "<h3>タイムアウト</h3>";
 
 $moderation_db_obj = new SQLite3("../common_dbs/moderation.db");
@@ -178,17 +187,12 @@ $time_out_expiration = $moderation_db_obj->querySingle("SELECT `expiration_datet
 
 print "<div class='key_and_value'><b>現在の状態</b>".(empty($time_out_expiration) ? "タイムアウトなし" : "<span style='color: #ee7700;'>タイムアウト中 (残 ".(ceil((strtotime($time_out_expiration) - $now_ts) / 86400))."日)</span>").(!$user_is_moderator ? "<div><button type='button' onclick='location.href = \"/admin/time_out_user.php?user_id=".$user_id."\";'>タイムアウトの設定</button></div>" : "")."</div>";
 
-$logs_r = $moderation_db_obj->query("SELECT `timed_out_datetime`, `moderator_id`, `timed_out_days` FROM `unyohub_moderation_user_timed_out_logs` WHERE `user_id` = '".$user_id."' ORDER BY `timed_out_datetime` DESC LIMIT 5");
+$logs_r = $moderation_db_obj->query("SELECT `unyohub_moderation_user_timed_out_logs`.`timed_out_datetime`, `unyohub_moderation_user_timed_out_logs`.`moderator_id`, `unyohub_moderation_user_timed_out_logs`.`timed_out_days`, `unyohub_moderation_timeout_reasons`.`reason_text` FROM `unyohub_moderation_user_timed_out_logs` LEFT JOIN `unyohub_moderation_timeout_reasons` ON `unyohub_moderation_user_timed_out_logs`.`reason_id` = `unyohub_moderation_timeout_reasons`.`reason_id` WHERE `unyohub_moderation_user_timed_out_logs`.`user_id` = '".$user_id."' ORDER BY `unyohub_moderation_user_timed_out_logs`.`timed_out_datetime` DESC LIMIT 5");
 
 print "<h4>タイムアウト履歴</h4>";
 
 $time_out_log_exists = FALSE;
-print "<div class='informational_text'>";
 while ($log_data = $logs_r->fetchArray(SQLITE3_ASSOC)) {
-    if ($time_out_log_exists) {
-        print "<br>";
-    }
-    
     if ($log_data["moderator_id"] !== "#") {
         $moderator = $wakarana->get_user($log_data["moderator_id"]);
         
@@ -197,14 +201,13 @@ while ($log_data = $logs_r->fetchArray(SQLITE3_ASSOC)) {
         $moderator_info = "コマンドライン";
     }
     
-    print $log_data["timed_out_datetime"]." から ".$log_data["timed_out_days"]."日間 (".addslashes($moderator_info).")";
+    print "<div class='informational_text'><b>".$log_data["timed_out_datetime"]."</b> から ".$log_data["timed_out_days"]."日間<br>".addslashes($moderator_info)."<br>理由: ".(empty($log_data["reason_text"]) ? "(設定なし)" : $log_data["reason_text"])."</div>";
     
     $time_out_log_exists = TRUE;
 }
 if (!$time_out_log_exists) {
-    print "(なし)";
+    print "<div class='informational_text'>(なし)</div>";
 }
-print "</div>";
 
 non_existent_user:
 

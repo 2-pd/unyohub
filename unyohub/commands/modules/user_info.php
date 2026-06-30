@@ -10,7 +10,7 @@ $wakarana = new wakarana(__DIR__."/../../".$wakarana_base_dir);
 print "\n_/_/_/_/ ユーザー情報 _/_/_/_/\n\n";
 
 if (empty($argv[1])) {
-    print "ユーザー総数 : ".$wakarana->count_user()."\n";;
+    print "ユーザー総数 : ".$wakarana->count_users()."\n";;
 } else {
     $user = $wakarana->get_user($argv[1]);
     
@@ -26,7 +26,7 @@ if (empty($argv[1])) {
     $user_name = $user->get_name();
     print "ハンドルネーム :        ".(!empty($user_name) ? addslashes($user_name) : "(未設定)")."\n";
     
-    print "状態 :                  ".($user->get_status() === WAKARANA_STATUS_NORMAL ? "有効" : "停止中")."\n";
+    print "状態 :                  ".($user->get_status() === wakarana::STATUS_NORMAL ? "有効" : "停止中")."\n";
     
     print "ユーザー登録日時 :      ".$user->get_created()."\n";
     
@@ -63,20 +63,22 @@ if (empty($argv[1])) {
     
     print "タイムアウト :          ".(empty($time_out_expiration) ? "なし" : "タイムアウト中 (残 ".(ceil((strtotime($time_out_expiration) - $now_ts) / 86400))."日)")."\n\n";
     
-    $logs_r = $moderation_db_obj->query("SELECT `timed_out_datetime`, `moderator_id`, `timed_out_days` FROM `unyohub_moderation_user_timed_out_logs` WHERE `user_id` = '".$user_id."' ORDER BY `timed_out_datetime` DESC LIMIT 5");
+    $logs_r = $moderation_db_obj->query("SELECT `unyohub_moderation_user_timed_out_logs`.`timed_out_datetime`, `unyohub_moderation_user_timed_out_logs`.`moderator_id`, `unyohub_moderation_user_timed_out_logs`.`timed_out_days`, `unyohub_moderation_timeout_reasons`.`reason_text` FROM `unyohub_moderation_user_timed_out_logs` LEFT JOIN `unyohub_moderation_timeout_reasons` ON `unyohub_moderation_user_timed_out_logs`.`reason_id` = `unyohub_moderation_timeout_reasons`.`reason_id` WHERE `unyohub_moderation_user_timed_out_logs`.`user_id` = '".$user_id."' ORDER BY `unyohub_moderation_user_timed_out_logs`.`timed_out_datetime` DESC LIMIT 5");
     
     print "タイムアウト履歴 :\n";
     $time_out_log_exists = FALSE;
     while ($log_data = $logs_r->fetchArray(SQLITE3_ASSOC)) {
+        print ($time_out_log_exists ? "\n" : "")."  ".$log_data["timed_out_datetime"]." から ".$log_data["timed_out_days"]."日間\n";
+        
         if ($log_data["moderator_id"] !== "#") {
             $moderator = $wakarana->get_user($log_data["moderator_id"]);
             
-            $moderator_info = "モデレーター : ".(is_object($moderator) ? $moderator->get_name() : "存在しないユーザー");
+            print "  モデレーター : ".(is_object($moderator) ? addslashes($moderator->get_name()) : "存在しないユーザー")."\n";
         } else {
-            $moderator_info = "コマンドライン";
+            print "  コマンドライン\n";
         }
         
-        print "  ".$log_data["timed_out_datetime"]." から ".$log_data["timed_out_days"]."日間 (".addslashes($moderator_info).")\n";
+        print "  理由 : ".(empty($log_data["reason_text"]) ? "(設定なし)" : addslashes($log_data["reason_text"]))."\n";
         
         $time_out_log_exists = TRUE;
     }

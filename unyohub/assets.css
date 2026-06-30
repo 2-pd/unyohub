@@ -3717,6 +3717,10 @@ footer {
     color: #666666;
     text-indent: 10px;
     
+    .dark_mode & {
+        color: #cccccc;
+    }
+    
     div &:last-child {
         margin: 20px auto 10px auto;
     }

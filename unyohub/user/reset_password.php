@@ -8,7 +8,7 @@ print "    <h2>パスワードのリセット</h2>\n";
 if (isset($_GET["reset_token"])) {
     $wakarana = new wakarana("../config");
     
-    $new_password = wakarana::create_random_password();
+    $new_password = wakarana::generate_random_password();
     
     $user = $wakarana->reset_password($_GET["reset_token"], $new_password);
     

@@ -1,6 +1,5 @@
 <?php
 include __DIR__."/../../libs/wakarana/main.php";
-include __DIR__."/../../libs/wakarana/config.php";
 include __DIR__."/../../libs/zizai_captcha/setup.php";
 
 
@@ -69,9 +68,9 @@ if (empty($wakarana->get_permission("railroads"))) {
 }
 
 if (empty($wakarana->get_user($admin_user_id))) {
-    $password = wakarana::create_random_password();
+    $password = wakarana::generate_random_password();
     $admin_user = $wakarana->create_user($admin_user_id, $password, "管理人");
-    $admin_user->add_role(WAKARANA_ADMIN_ROLE);
+    $admin_user->add_role(wakarana::ADMIN_ROLE);
     
     print "\n【管理者ユーザー】\n";
     print "ID: ".$admin_user_id."\n";
