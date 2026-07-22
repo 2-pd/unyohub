@@ -3,22 +3,28 @@
         "is_numeric" : false,
         "maximum_length" : 500,
         "records_per_user" : 1,
-        "allow_nonunique_value" : true
+        "allow_nonunique_value" : true,
+        "trigger_user_last_updated" : true
     },
     "post_count" : {
         "is_numeric" : true,
+        "precision" : 0,
         "records_per_user" : 1,
-        "allow_nonunique_value" : true
+        "allow_nonunique_value" : true,
+        "trigger_user_last_updated" : false
     },
     "last_posted_date" : {
         "is_numeric" : false,
         "maximum_length" : 10,
         "records_per_user" : 1,
-        "allow_nonunique_value" : true
+        "allow_nonunique_value" : true,
+        "trigger_user_last_updated" : false
     },
     "days_posted" : {
         "is_numeric" : true,
+        "precision" : 0,
         "records_per_user" : 1,
-        "allow_nonunique_value" : true
+        "allow_nonunique_value" : true,
+        "trigger_user_last_updated" : false
     }
 }
