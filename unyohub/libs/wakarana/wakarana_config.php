@@ -6,6 +6,8 @@ class wakarana_config {
     
     
     const ORIGINAL_CONFIG = array(
+            "use_config_cache" => FALSE,
+            
             "display_errors" => TRUE,
             
             "use_sqlite" => TRUE,
@@ -80,13 +82,16 @@ class wakarana_config {
     }
     
     
-    protected function save () {
+    protected function save ($update_config_cache = FALSE) {
         $file_h = @fopen($this->profile->get_base_path()."/wakarana_config.ini", "w");
         
         if (empty($file_h)) {
             $this->print_error("設定ファイルを書き込みモードで開くことができませんでした。");
             return FALSE;
         }
+        
+        fwrite($file_h, "use_config_cache = ".($this->profile->get_config("use_config_cache") ? "true" : "false")."\n");
+        fwrite($file_h, "\n");
         
         fwrite($file_h, "display_errors = ".($this->profile->get_config("display_errors") ? "true" : "false")."\n");
         fwrite($file_h, "\n");
@@ -146,6 +151,10 @@ class wakarana_config {
         
         fclose($file_h);
         
+        if ($update_config_cache) {
+            return $this->profile->generate_config_cache();
+        }
+        
         return TRUE;
     }
     
@@ -158,8 +167,14 @@ class wakarana_config {
         
         $this->profile->set_config($key, $value);
         
+        if ($key === "use_config_cache" && !$value) {
+            if ($this->delete_config_cache() === FALSE) {
+                return FALSE;
+            }
+        }
+        
         if ($save_now) {
-            return $this->save();
+            return $this->save($this->profile->get_config("use_config_cache"));
         } else {
             return TRUE;
         }
@@ -173,6 +188,9 @@ class wakarana_config {
             $this->print_error("設定ファイルを書き込みモードで開くことができませんでした。");
             return FALSE;
         }
+        
+        fwrite($file_h, "use_config_cache = ".(self::ORIGINAL_CONFIG["use_config_cache"] ? "true" : "false")."\n");
+        fwrite($file_h, "\n");
         
         fwrite($file_h, "display_errors = ".(self::ORIGINAL_CONFIG["display_errors"] ? "true" : "false")."\n");
         fwrite($file_h, "\n");
@@ -239,6 +257,10 @@ class wakarana_config {
     function reset_config () {
         $config_path = $this->profile->get_base_path()."/wakarana_config.ini";
         
+        if ($this->delete_config_cache() === FALSE) {
+            return FALSE;
+        }
+        
         return $this->initialize_config($config_path) && $this->profile->load_config($config_path);
     }
     
@@ -248,8 +270,12 @@ class wakarana_config {
     }
     
     
-    protected function save_custom_fields () {
+    protected function save_custom_fields ($update_config_cache = FALSE) {
         if (@file_put_contents($this->profile->get_base_path()."/wakarana_custom_fields.json", json_encode($this->profile->get_custom_field_definition())) !== FALSE) {
+            if ($update_config_cache) {
+                return $this->profile->generate_config_cache();
+            }
+            
             return TRUE;
         } else {
             $this->print_error("カスタムフィールド設定ファイルへの書き込みに失敗しました。");
@@ -258,7 +284,7 @@ class wakarana_config {
     }
     
     
-    function create_custom_field ($custom_field_name, $maximum_length = 500, $records_per_user = 1, $allow_nonunique_value = TRUE, $save_now = TRUE) {
+    function create_custom_field ($custom_field_name, $maximum_length = 500, $records_per_user = 1, $allow_nonunique_value = TRUE, $trigger_user_last_updated = TRUE, $save_now = TRUE) {
         if (!self::check_id_string($custom_field_name)) {
             $this->print_error("指定されたカスタムフィールド名が異常です。");
             return FALSE;
@@ -283,18 +309,19 @@ class wakarana_config {
             "is_numeric" => FALSE,
             "maximum_length" => $maximum_length,
             "records_per_user" => $records_per_user,
-            "allow_nonunique_value" => $allow_nonunique_value
+            "allow_nonunique_value" => $allow_nonunique_value,
+            "trigger_user_last_updated" => $trigger_user_last_updated
         ));
         
         if ($save_now) {
-            return $this->save_custom_fields();
+            return $this->save_custom_fields($this->profile->get_config("use_config_cache"));
         } else {
             return TRUE;
         }
     }
     
     
-    function create_custom_numerical_field ($custom_field_name, $records_per_user = 1, $allow_nonunique_value = TRUE, $save_now = TRUE) {
+    function create_custom_numerical_field ($custom_field_name, $precision = 0, $records_per_user = 1, $allow_nonunique_value = TRUE, $trigger_user_last_updated = TRUE, $save_now = TRUE) {
         if (!self::check_id_string($custom_field_name)) {
             $this->print_error("指定されたカスタムフィールド名が異常です。");
             return FALSE;
@@ -312,12 +339,14 @@ class wakarana_config {
         
         $this->profile->set_custom_field_definition($custom_field_name, array(
             "is_numeric" => TRUE,
+            "precision" => $precision,
             "records_per_user" => $records_per_user,
-            "allow_nonunique_value" => $allow_nonunique_value
+            "allow_nonunique_value" => $allow_nonunique_value,
+            "trigger_user_last_updated" => $trigger_user_last_updated
         ));
         
         if ($save_now) {
-            return $this->save_custom_fields();
+            return $this->save_custom_fields($this->profile->get_config("use_config_cache"));
         } else {
             return TRUE;
         }
@@ -333,9 +362,20 @@ class wakarana_config {
         $this->profile->set_custom_field_definition($custom_field_name, NULL);
         
         if ($save_now) {
-            return $this->save_custom_fields();
+            return $this->save_custom_fields($this->profile->get_config("use_config_cache"));
         } else {
             return TRUE;
+        }
+    }
+    
+    
+    function delete_config_cache () {
+        $config_cache_path = $this->profile->get_base_path()."/wakarana_integrated_config_cache.php";
+        
+        if (file_exists($config_cache_path)) {
+            return unlink($config_cache_path);
+        } else {
+            return NULL;
         }
     }
     
@@ -422,6 +462,28 @@ class wakarana_config {
     }
     
     
+    function rebuild_user_permission_caches () {
+        $this->profile->connect_db();
+        
+        $this->profile->begin_transaction();
+        
+        try {
+            $this->profile->db_obj->exec('DELETE FROM "wakarana_user_permission_caches"');
+            $this->profile->db_obj->exec('INSERT INTO "wakarana_user_permission_caches"("user_id", "resource_id", "action") WITH "ur" AS (SELECT "user_id", "role_id" FROM "wakarana_user_roles" UNION ALL SELECT "user_id", \''.wakarana::BASE_ROLE.'\' AS "role_id" FROM "wakarana_users") SELECT DISTINCT "ur"."user_id", "wakarana_role_permissions"."resource_id", "wakarana_role_permissions"."action" FROM "ur", "wakarana_role_permissions" WHERE "wakarana_role_permissions"."role_id" = "ur"."role_id"');
+        } catch (PDOException $err) {
+            $this->print_error("権限キャッシュの再構築に失敗しました。".$err->getMessage());
+            
+            $this->profile->rollback_transaction();
+            
+            return FALSE;
+        }
+        
+        $this->profile->commit_transaction();
+        
+        return TRUE;
+    }
+    
+    
     function setup_db () {
         $this->profile->connect_db();
         
@@ -491,7 +553,7 @@ class wakarana_config {
         
         try {
             if ($this->profile->get_config("use_sqlite")) {
-                $this->profile->db_obj->exec("CREATE TABLE IF NOT EXISTS `wakarana_user_custom_numerical_fields`(`user_id` TEXT COLLATE NOCASE NOT NULL, `custom_field_name` TEXT NOT NULL, `value_number` INTEGER NOT NULL, `custom_field_value` REAL, PRIMARY KEY(`user_id`, `custom_field_name`, `value_number`))");
+                $this->profile->db_obj->exec("CREATE TABLE IF NOT EXISTS `wakarana_user_custom_numerical_fields`(`user_id` TEXT COLLATE NOCASE NOT NULL, `custom_field_name` TEXT NOT NULL, `value_number` INTEGER NOT NULL, `custom_field_value` NUMERIC, PRIMARY KEY(`user_id`, `custom_field_name`, `value_number`))");
             } else {
                 $this->profile->db_obj->exec('CREATE TABLE IF NOT EXISTS "wakarana_user_custom_numerical_fields"("user_id" varchar(60) NOT NULL, "custom_field_name" varchar(60) NOT NULL, "value_number" smallint NOT NULL, "custom_field_value" double precision, PRIMARY KEY("user_id", "custom_field_name", "value_number"))');
             }
@@ -851,10 +913,10 @@ class wakarana_config {
     
     
     function add_custom_field ($custom_field_name, $maximum_length = 500, $records_per_user = 1, $allow_nonunique_value = TRUE, $save_now = TRUE) { //2027年6月以降のバージョンで削除
-        return $this->create_custom_field($custom_field_name, $maximum_length, $records_per_user, $allow_nonunique_value, $save_now);
+        return $this->create_custom_field($custom_field_name, $maximum_length, $records_per_user, $allow_nonunique_value, TRUE, $save_now);
     }
     
     function add_custom_numerical_field ($custom_field_name, $records_per_user = 1, $allow_nonunique_value = TRUE, $save_now = TRUE) { //2027年6月以降のバージョンで削除
-        return $this->create_custom_numerical_field($custom_field_name, $records_per_user, $allow_nonunique_value, $save_now);
+        return $this->create_custom_numerical_field($custom_field_name, 0, $records_per_user, $allow_nonunique_value, TRUE, $save_now);
     }
 }

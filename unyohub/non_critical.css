@@ -671,11 +671,10 @@ a.connecting_railroad_link h5, .connecting_railroad_link a {
     
     button {
         line-height: 22px;
+        color: inherit;
         
         .dark_mode & {
             background-color: rgba(102, 102, 102, 0.85);
-            
-            color: #ffffff;
         }
     }
     
