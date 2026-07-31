@@ -271,8 +271,11 @@ if (isset($_GET["diagram_revision"])) {
         print "<div class='informational_text'>ファイルなし</div>";
     }
     
-    print "<br><button type='button' class='wide_button' onclick='upload_file(\"json\");'><b style='color: #bb9911;'>JSONファイル</b>のアップロード</button><button type='button' class='wide_button' onclick='upload_file(\"csv\");'><b style='color: #228866;'>CSVファイル</b>のアップロード</button>";
     print "<div class='informational_text'>アップロードされたファイルと同じ名前のファイルが既にサーバ上で存在している場合、そのファイルはアップロードされたファイルで上書きされます。</div>";
+    
+    print "<div class='upload_button_area'>";
+    print "<button type='button' class='wide_button' onclick='upload_file(\"json\");'><b style='color: #bb9911;'>JSONファイル</b>のアップロード</button><button type='button' class='wide_button' onclick='upload_file(\"csv\");'><b style='color: #228866;'>CSVファイル</b>のアップロード</button>";
+    print "</div>";
     
     print "<a href='javascript:void(0);' onclick='delete_dir();' class='bottom_link'>このダイヤ改正日別フォルダを削除</a>";
 } elseif (!empty($_GET["new_dir"])) {
