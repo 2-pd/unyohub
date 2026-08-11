@@ -38,7 +38,8 @@ while ($announcement_data = $announcements_r->fetchArray(SQLITE3_ASSOC)) {
     
     $output_data[] = array(
         "title" => $announcement_data["title"],
-        "is_important" => $announcement_data["is_important"],
+        "is_important" => boolval($announcement_data["is_important"]),
+        "show_on_post_screen" => boolval($announcement_data["show_on_post_screen"]),
         "content" => $announcement_data["content"],
         "user_id" => $announcement_data["user_id"],
         "user_name" => is_object($user) ? $user->get_name() : "不明な管理者",
