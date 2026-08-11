@@ -389,11 +389,6 @@ log_ip_address 投稿者のIPアドレスを記録するか(BOOL値)
 }
 
 
-███ railroad_announcements.json ███
-
-announcements.jsonと同様
-
-
 ███ icon_list.json ███
 
 ※このファイルは変換スクリプトにより自動生成されるものである

@@ -228,6 +228,7 @@ _/_/_/_/ データベース _/_/_/_/
   `announcement_id` TEXT NOT NULL PRIMARY KEY 「YYYYMMDD_」形式の年月日のあとに乱数値を付加したお知らせID
   `title` TEXT NOT NULL お知らせのタイトル
   `is_important` INTEGER NOT NULL 重要なお知らせか否か
+  `show_on_post_screen` INTEGER NOT NULL 投稿画面に表示するか否か
   `content` TEXT NOT NULL お知らせの本文
   `user_id` TEXT NOT NULL お知らせを編集したモデレーターのユーザーID
   `publication_datetime` TEXT NOT NULL 「YYYY-MM-DD HH:MM:SS」形式のお知らせ公開日時(予約投稿では未来の日時となる)
