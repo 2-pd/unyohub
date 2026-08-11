@@ -30,7 +30,7 @@ def initialize_common_dbs (mes, db_dir_path):
     cur = conn.cursor()
     
     mes("テーブル「unyohub_announcements」を作成しています...")
-    cur.execute("CREATE TABLE IF NOT EXISTS `unyohub_announcements`(`announcement_id` TEXT NOT NULL PRIMARY KEY, `title` TEXT NOT NULL, `is_important` INTEGER NOT NULL, `content` TEXT NOT NULL, `user_id` TEXT NOT NULL, `publication_datetime` TEXT NOT NULL, `expiration_datetime` TEXT NOT NULL)")
+    cur.execute("CREATE TABLE IF NOT EXISTS `unyohub_announcements`(`announcement_id` TEXT NOT NULL PRIMARY KEY, `title` TEXT NOT NULL, `is_important` INTEGER NOT NULL, `show_on_post_screen` INTEGER NOT NULL, `content` TEXT NOT NULL, `user_id` TEXT NOT NULL, `publication_datetime` TEXT NOT NULL, `expiration_datetime` TEXT NOT NULL)")
     cur.execute("CREATE INDEX IF NOT EXISTS `unyohub_announcements_idx_a1` ON `unyohub_announcements`(`expiration_datetime`)")
     
     mes("テーブル「unyohub_railroad_announcements」を作成しています...")
