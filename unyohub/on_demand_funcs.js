@@ -444,7 +444,7 @@ function show_announcements (railroad_id = null, important_announcements_exist =
     });
 }
 
-function draw_announcements (railroad_id, announcements_data, last_read_timestamp) {
+function draw_announcements (railroad_id, announcements_data, last_read_timestamp, area_id = "announcements_area") {
     var buf = "";
     
     var ts = get_timestamp();
@@ -454,13 +454,13 @@ function draw_announcements (railroad_id, announcements_data, last_read_timestam
             continue;
         }
         
-        buf += "<input type='checkbox' id='announcement_" + cnt + "'><label for='announcement_" + cnt + "' class='drop_down";
+        buf += "<input type='checkbox' id='" + area_id + "_announcement_" + cnt + "'><label for='" + area_id + "_announcement_" + cnt + "' class='drop_down";
         
         if (announcements_data[cnt]["is_important"]) {
             buf += " important_announcement";
         }
         
-        if (announcements_data[cnt]["last_modified_timestamp"] > last_read_timestamp) {
+        if (last_read_timestamp !== null && announcements_data[cnt]["last_modified_timestamp"] > last_read_timestamp) {
             buf += " new_icon";
         }
         
@@ -471,15 +471,17 @@ function draw_announcements (railroad_id, announcements_data, last_read_timestam
         buf += "<div><div class='announcement'>" + convert_to_html(announcements_data[cnt]["content"]) + "<small>" + escape_html(announcements_data[cnt]["user_name"]) + "　" + dt.getFullYear() + "/" + (dt.getMonth() + 1) + "/" + dt.getDate() + " " + dt.getHours() + ":" + ("0" + dt.getMinutes()).slice(-2) + "</small></div></div>";
     }
     
-    if (buf.length === 0) {
-        buf = "<div class='no_data'>お知らせはありません</div>";
+    if (railroad_id !== false) {
+        if (buf.length === 0 && last_read_timestamp !== null) {
+            buf = "<div class='no_data'>お知らせはありません</div>";
+        }
+        
+        if (user_info !== null && user_info["is_announcement_editor"]) {
+            buf += "<a href='/admin/announcements.php?railroad_id=" + (railroad_id === null ? "/" : railroad_id) + "' target='_blank' class='execute_link'>お知らせの編集</a>";
+        }
     }
     
-    if (user_info !== null && user_info["is_announcement_editor"]) {
-        buf += "<a href='/admin/announcements.php?railroad_id=" + (railroad_id === null ? "/" : railroad_id) + "' target='_blank' class='execute_link'>お知らせの編集</a>";
-    }
-    
-    document.getElementById("announcements_area").innerHTML = buf;
+    document.getElementById(area_id).innerHTML = buf;
 }
 
 function show_railroad_announcements () {
@@ -2582,6 +2584,8 @@ function write_operation_data (railroad_id, yyyy_mm_dd, operation_number, train_
         return;
     }
     
+    var buf = "<div id='write_operation_data_announcement_area' class='loading_icon'></div>";
+    
     var yyyy_mm_dd_today = get_date_string(get_timestamp());
     
     if (yyyy_mm_dd === null) {
@@ -2600,7 +2604,7 @@ function write_operation_data (railroad_id, yyyy_mm_dd, operation_number, train_
     
     var alias_of_forward_direction = escape_html(railroad_info["alias_of_forward_direction"]);
     
-    var buf = "<div id='write_operation_data_area'>";
+    buf += "<div id='write_operation_data_area'>";
     buf += "<h3>" + escape_html(operation_number) + "運用</h3>";
     
     if (post_yyyy_mm_dd > yyyy_mm_dd_today || (post_yyyy_mm_dd === yyyy_mm_dd_today && operation_info["starting_time"] > get_hh_mm())) {
@@ -2700,6 +2704,40 @@ function write_operation_data (railroad_id, yyyy_mm_dd, operation_number, train_
     if (railroad_rules_last_read === null) {
         show_rules(railroad_info["railroad_id"], function () { mes("ご確認ありがとうございました") });
     }
+    
+    var common_announcements_data = [];
+    var railroad_announcements_data = [];
+    
+    var promise_1 = new Promise(function (resolve, reject) {
+        fetch_announcements(null, false, function (announcements_data, last_read_timestamp) {
+            for (var announcement of announcements_data) {
+                if (announcement["show_on_post_screen"]) {
+                    common_announcements_data.push(announcement);
+                }
+            }
+            
+            resolve();
+        });
+    });
+    
+    var promise_2 = new Promise(function (resolve, reject) {
+        fetch_announcements(railroad_info["railroad_id"], false, function (announcements_data, last_read_timestamp) {
+            for (var announcement of announcements_data) {
+                if (announcement["show_on_post_screen"]) {
+                    railroad_announcements_data.push(announcement);
+                }
+            }
+            
+            resolve();
+        });
+    });
+    
+    Promise.all([promise_1, promise_2]).then(function () {
+        var announcements_data = common_announcements_data.concat(railroad_announcements_data);
+        
+        document.getElementById("write_operation_data_announcement_area").classList.remove("loading_icon");
+        draw_announcements(false, announcements_data, null, "write_operation_data_announcement_area");
+    });
 }
 
 function select_train_number (railroad_id, operation_number, now_hh_mm) {
