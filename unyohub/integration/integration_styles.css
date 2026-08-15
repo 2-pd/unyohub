@@ -607,6 +607,39 @@ footer {
     display: none;
 }
 
+#announcements_area input[type="checkbox"] + label.drop_down {
+    width: calc(100% - 60px);
+    
+    padding: 10px 30px;
+}
+
+.important_announcement {
+    background-image: url(data:image/webp;base64,UklGRnIBAABXRUJQVlA4TGYBAAAvNUANELfBKpJkJ/3IGQQggT/8K0trg1EbSY68EcDy53i6/wRWkSQ76UfOIAAJ/OFfWVpWsW0ruffh/kskshKCCJRwd7cToHRwubTBAJ8bAHAAAIACAAySwkgMDIaEA7dBi7BmIi4KIBflj6SA9mWETVFR8PtFRqavv7aN1q+6+i0KvDLKJimly1Tfun3iCZe3BMM/POMYqdXSMQ5ax0rnOuneN8G1bdtms5PL1LZtt///bw1OTo2HiP5PAAKnnU3KyFhNatOZIuIwJ5nW5mFEU0m2qiUC1gXJOj/2EXnJvOheNSX7OoClojkcfQ80qg/kJe3F8b3QyCom8hbktH0bvc1tVLK3kbS3YeVt0P9HOZ19T9xeQI9qt/fdUSUyVBfH90KVqt5GqXMb3dFtrJC7hSqw0DSHo++BRvUBtGjibQCAyHErulcY53nlxvAXdcVHN7YIOStzqQ4QcdSrpGw8Nl3qjRAI);
+    background-repeat: no-repeat;
+    background-size: 18px;
+    background-position: 6px 50%;
+}
+
+.announcement {
+    padding: 14px;
+    
+    border: 1px solid #dddddd;
+    
+    font-size: 18px;
+    text-align: left;
+    word-break: break-all;
+    
+    small {
+        display: block;
+        
+        margin-top: 10px;
+        
+        font-size: 16px;
+        color: #666666;
+        text-align: right;
+    }
+}
+
 .link_block {
     padding: 15px 0 10px 0;
     

@@ -807,7 +807,7 @@ a.connecting_railroad_link h5, .connecting_railroad_link a {
     font-size: 16px;
 }
 
-#announcements_area input[type="checkbox"] + label.drop_down {
+:is(#announcements_area, #write_operation_data_announcements_area) input[type="checkbox"] + label.drop_down {
     width: calc(100% - 80px);
     
     padding: 10px 40px;

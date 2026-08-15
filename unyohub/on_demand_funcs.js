@@ -2584,7 +2584,7 @@ function write_operation_data (railroad_id, yyyy_mm_dd, operation_number, train_
         return;
     }
     
-    var buf = "<div id='write_operation_data_announcement_area' class='loading_icon'></div>";
+    var buf = "<div id='write_operation_data_announcements_area' class='loading_icon'></div>";
     
     var yyyy_mm_dd_today = get_date_string(get_timestamp());
     
@@ -2735,8 +2735,8 @@ function write_operation_data (railroad_id, yyyy_mm_dd, operation_number, train_
     Promise.all([promise_1, promise_2]).then(function () {
         var announcements_data = common_announcements_data.concat(railroad_announcements_data);
         
-        document.getElementById("write_operation_data_announcement_area").classList.remove("loading_icon");
-        draw_announcements(false, announcements_data, null, "write_operation_data_announcement_area");
+        document.getElementById("write_operation_data_announcements_area").classList.remove("loading_icon");
+        draw_announcements(false, announcements_data, null, "write_operation_data_announcements_area");
     });
 }
 
