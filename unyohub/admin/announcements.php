@@ -39,6 +39,7 @@ $publication_datetime = "";
 $expiration_datetime = date("Y-m-d", $ts + 86400)."T04:00";
 
 $important_checked = "";
+$show_on_post_screen_checked = "";
 
 $drop_down_checked = "";
 
@@ -77,7 +78,7 @@ if (isset($_POST["title"], $_POST["content"])) {
             
             $announcement_id = date("Ymd", $ts)."_".mt_rand();
             
-            $db_obj->exec("INSERT INTO `unyohub_announcements`(`announcement_id`, `title`, `is_important`, `content`, `user_id`, `publication_datetime`, `expiration_datetime`) VALUES ('".$announcement_id."', '".$db_obj->escapeString($_POST["title"])."', ".(empty($_POST["is_important"]) ? "0" : "1").", '".$db_obj->escapeString($_POST["content"])."', '".$user->get_id()."', '".$publication_datetime_str."', '".date("Y-m-d H:i:s", $expiration_timestamp)."')");
+            $db_obj->exec("INSERT INTO `unyohub_announcements`(`announcement_id`, `title`, `is_important`, `show_on_post_screen`, `content`, `user_id`, `publication_datetime`, `expiration_datetime`) VALUES ('".$announcement_id."', '".$db_obj->escapeString($_POST["title"])."', ".(empty($_POST["is_important"]) ? "0" : "1").", ".(empty($_POST["show_on_post_screen"]) ? "0" : "1").", '".$db_obj->escapeString($_POST["content"])."', '".$user->get_id()."', '".$publication_datetime_str."', '".date("Y-m-d H:i:s", $expiration_timestamp)."')");
             
             foreach ($railroad_ids as $railroad) {
                 $resource_id = $railroad === "/" ? "railroads" : "railroads/".$railroad;
@@ -109,6 +110,7 @@ if (isset($_POST["title"], $_POST["content"])) {
         
         $title_escaped = addslashes($_POST["title"]);
         $important_checked = empty($_POST["is_important"]) ? "" : " checked='checked'";
+        $show_on_post_screen_checked = empty($_POST["show_on_post_screen"]) ? "" : " checked='checked'";
         $content_html = htmlspecialchars($_POST["content"]);
         $publication_datetime = empty($_POST["publication_datetime"]) ? "" : addslashes($_POST["publication_datetime"]);
         $expiration_datetime = empty($_POST["expiration_datetime"]) ? "" : addslashes($_POST["expiration_datetime"]);
@@ -128,6 +130,9 @@ if (isset($_POST["title"], $_POST["content"])) {
                 $title_escaped = addslashes($announcement_data["title"]);
                 if ($announcement_data["is_important"]) {
                     $important_checked = " checked='checked'";
+                }
+                if ($announcement_data["show_on_post_screen"]) {
+                    $show_on_post_screen_checked = " checked='checked'";
                 }
                 $content_html = htmlspecialchars($announcement_data["content"]);
                 $publication_datetime = $announcement_data["publication_datetime"] >= $datetime_now ? substr($announcement_data["publication_datetime"], 0, 10)."T".substr($announcement_data["publication_datetime"], 11, 5) : "";
@@ -223,7 +228,7 @@ if ($railroad_id !== "/") {
 print "<h3>件名</h3>";
 print "<input type='text' name='title' value='".$title_escaped."'>";
 
-print "<div class='chip_wrapper'><input type='checkbox' name='is_important' id='is_important' class='chip' value='YES'".$important_checked."><label for='is_important'>重要なお知らせ</label></div>";
+print "<div class='chip_wrapper'><input type='checkbox' name='is_important' id='is_important' class='chip' value='YES'".$important_checked."><label for='is_important'>重要なお知らせ</label><input type='checkbox' name='show_on_post_screen' id='show_on_post_screen' class='chip' value='YES'".$show_on_post_screen_checked."><label for='show_on_post_screen'>投稿画面に表示</label></div>";
 
 print "<h3>本文</h3>";
 print "<textarea name='content' class='announcement_content'>".$content_html."</textarea>";
@@ -286,6 +291,9 @@ while ($announcement_data = $announcements_r->fetchArray(SQLITE3_ASSOC)) {
     print htmlspecialchars($announcement_data["title"]);
     print "</label>";
     print "<div><div class='announcement'>";
+    if ($announcement_data["show_on_post_screen"]) {
+        print "<b>&lt;投稿画面に表示&gt;</b><br>";
+    }
     print nl2br(htmlspecialchars($announcement_data["content"]));
     print "<small>";
     if ($railroad_id !== "/") {

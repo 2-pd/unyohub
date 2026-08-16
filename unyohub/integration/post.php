@@ -76,6 +76,7 @@ if (empty($assign_order_maxima)) {
 }
 ?>
         <div id="login_status">サーバに接続しています...</div>
+        <div id="announcements_area"></div>
         <div id="form_area">
 <?php
 print "            <h2>".htmlspecialchars($_GET["operation_number"])."運用</h2>\n";
@@ -209,7 +210,44 @@ print "        var comment_character_limit = ".$main_config["comment_character_l
             check_post_operation_data (url_obj.searchParams.get("railroad_id"), url_obj.searchParams.get("date"), url_obj.searchParams.get("operation_number"), assign_order, document.getElementById("operation_data_formation").value, document.getElementById("train_number_select").value, document.getElementById("identify_method_quote").checked, comment_text);
         }
         
-        window.addEventListener("load", function () { check_logged_in(update_user_data, on_guest_mode, function () {  document.getElementById("login_status").innerHTML = "ログイン状態の確認に失敗しました"; }); });
+        window.addEventListener("load", function () {
+            check_logged_in(update_user_data, on_guest_mode, function () {
+                document.getElementById("login_status").innerHTML = "ログイン状態の確認に失敗しました";
+            });
+            
+            var common_announcements_data = [];
+            var railroad_announcements_data = [];
+            
+            var promise_1 = new Promise(function (resolve, reject) {
+                fetch_announcements(null, function (announcements_data) {
+                    for (var announcement of announcements_data) {
+                        if (announcement["show_on_post_screen"]) {
+                            common_announcements_data.push(announcement);
+                        }
+                    }
+                    
+                    resolve();
+                });
+            });
+            
+            var promise_2 = new Promise(function (resolve, reject) {
+                fetch_announcements("<?php print $railroad_id; ?>", function (announcements_data,) {
+                    for (var announcement of announcements_data) {
+                        if (announcement["show_on_post_screen"]) {
+                            railroad_announcements_data.push(announcement);
+                        }
+                    }
+                    
+                    resolve();
+                });
+            });
+            
+            Promise.all([promise_1, promise_2]).then(function () {
+                var announcements_data = common_announcements_data.concat(railroad_announcements_data);
+                
+                draw_announcements(false, announcements_data);
+            });
+        });
     </script>
 <?php
 footer:

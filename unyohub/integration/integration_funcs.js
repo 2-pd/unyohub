@@ -58,10 +58,29 @@ function add_slashes (text) {
     return text.replace(/\\/g, "\\\\").replace(/'/g, "\\'").replace(/"/g, "\\\"");
 }
 
+function convert_to_html (text) {
+    var split_text = escape_html(text).replace(/https?:\/\/[^\s\\`\|\[\]\{\}\^]+/g, "<a href='$&' target='_blank' class='external_link'>$&</a>").split("\n");
+    
+    for (var cnt = 0; cnt < split_text.length; cnt++) {
+        if (split_text[cnt].substring(0, 2) === "# ") {
+            split_text[cnt] = "<h4>" + split_text[cnt].substring(2) + "</h4>";
+        } else if (cnt + 1 < split_text.length && split_text[cnt + 1].substring(2) !== "# ") {
+            split_text[cnt] += "<br>";
+        }
+    }
+    
+    return split_text.join("");
+}
+
 function str_to_halfwidth (str) {
     return str.replace(/[Ａ-Ｚａ-ｚ０-９]/g, function (char) {
         return String.fromCharCode(char.charCodeAt(0) - 0xFEE0);
     });
+}
+
+
+function get_timestamp () {
+    return Math.floor(Date.now() / 1000);
 }
 
 
@@ -386,6 +405,44 @@ function user_logout (callback_func) {
         });
     }
 }
+
+
+function fetch_announcements (railroad_id, callback_func) {
+    ajax_post("announcements.php", railroad_id === null ? "" : "railroad_id=" + escape_form_data(railroad_id), function (response, last_modified) {
+        if (response === "NEW_ANNOUNCEMENTS_NOT_EXIST" || response === false) {
+            callback_func([]);
+        } else {
+            callback_func(JSON.parse(response));
+        }
+    });
+}
+
+function draw_announcements (railroad_id, announcements_data, area_id = "announcements_area") {
+    var buf = "";
+    
+    var ts = get_timestamp();
+    
+    for (var cnt = 0; cnt < announcements_data.length; cnt++) {
+        if (announcements_data[cnt]["expiration_timestamp"] < ts) {
+            continue;
+        }
+        
+        buf += "<input type='checkbox' id='" + area_id + "_announcement_" + cnt + "'><label for='" + area_id + "_announcement_" + cnt + "' class='drop_down";
+        
+        if (announcements_data[cnt]["is_important"]) {
+            buf += " important_announcement";
+        }
+        
+        buf += "'>" + escape_html(announcements_data[cnt]["title"]) + "</label>";
+        
+        var dt = new Date(announcements_data[cnt]["last_modified_timestamp"] * 1000);
+        
+        buf += "<div><div class='announcement'>" + convert_to_html(announcements_data[cnt]["content"]) + "<small>" + escape_html(announcements_data[cnt]["user_name"]) + "　" + dt.getFullYear() + "/" + (dt.getMonth() + 1) + "/" + dt.getDate() + " " + dt.getHours() + ":" + ("0" + dt.getMinutes()).slice(-2) + "</small></div></div>";
+    }
+    
+    document.getElementById(area_id).innerHTML = buf;
+}
+
 
 function get_one_time_token () {
     if (one_time_token === false) {
