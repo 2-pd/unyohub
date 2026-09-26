@@ -5,7 +5,8 @@
 --------------------------------------------------------------------------------
 
 # APIエンドポイント
-※HTTPステータスコードは個別の記載がなければ200
+※HTTPステータスコードは個別の記載がなければ200  
+※特に記載のない限り、日付・時刻を扱うエンドポイントでは、4時〜28時を運転ダイヤ上の1日として処理する
 
 ## instance_info.php
 鉄道運用Hubのインスタンス情報を取得する  
@@ -137,10 +138,10 @@ railroads.jsonを取得する
 🔀別オリジンから利用可能
 
 ### 引数
-**$_POST["last_modified_timestamp"]** : タイムスタンプ(UTC)
+**$_POST["last_modified_timestamp"]** : タイムスタンプ(UTC、省略可能)
 
 ### 応答
-**railroads.jsonの変更日時がタイムスタンプより新しかった場合** :  
+**タイムスタンプが省略されるか、railroads.jsonの変更日時がタイムスタンプより新しかった場合** :  
 railroads.jsonの内容を返す  
 ▲クライアント端末からAccept-Encodingヘッダーが送信されていた場合、このデータは自動的にgzip圧縮される  
   
@@ -159,10 +160,10 @@ railroads.jsonの内容を返す
 
 ### 引数
 **$_POST["railroad_id"]** : 路線系統識別名  
-**$_POST["last_modified_timestamp"]** : タイムスタンプ(UTC)
+**$_POST["last_modified_timestamp"]** : タイムスタンプ(UTC、省略可能)
 
 ### 応答
-**railroad_info.jsonの変更日時がタイムスタンプより新しかった場合** :  
+**タイムスタンプが省略されるか、railroad_info.jsonの変更日時がタイムスタンプより新しかった場合** :  
 railroad_info.jsonの内容を返す  
 ▲クライアント端末からAccept-Encodingヘッダーが送信されていた場合、このデータは自動的にgzip圧縮される  
   
@@ -181,10 +182,10 @@ railroad_info.jsonの内容を返す
 
 ### 引数
 **$_POST["railroad_id"]** : 路線系統識別名  
-**$_POST["last_modified_timestamp"]** : タイムスタンプ(UTC)
+**$_POST["last_modified_timestamp"]** : タイムスタンプ(UTC、省略可能)
 
 ### 応答
-**train_icons.jsonの変更日時がタイムスタンプより新しかった場合** :  
+**タイムスタンプが省略されるか、train_icons.jsonの変更日時がタイムスタンプより新しかった場合** :  
 train_icons.jsonの内容を返す  
 ▲クライアント端末からAccept-Encodingヘッダーが送信されていた場合、このデータは自動的にgzip圧縮される  
   
@@ -203,10 +204,10 @@ train_icons.jsonの内容を返す
 
 ### 引数
 **$_POST["railroad_id"]** : 路線系統識別名  
-**$_POST["last_modified_timestamp"]** : タイムスタンプ(UTC)
+**$_POST["last_modified_timestamp"]** : タイムスタンプ(UTC、省略可能)
 
 ### 応答
-**formations.jsonの変更日時がタイムスタンプより新しかった場合** :  
+**タイムスタンプが省略されるか、formations.jsonの変更日時がタイムスタンプより新しかった場合** :  
 formations.jsonの内容を返す  
 ▲クライアント端末からAccept-Encodingヘッダーが送信されていた場合、このデータは自動的にgzip圧縮される  
   
@@ -225,10 +226,10 @@ formations.jsonの内容を返す
 
 ### 引数
 **$_POST["railroad_id"]** : 路線系統識別名  
-**$_POST["last_modified_timestamp"]** : タイムスタンプ(UTC)
+**$_POST["last_modified_timestamp"]** : タイムスタンプ(UTC、省略可能)
 
 ### 応答
-**タイムスタンプの時刻より後に概要情報が更新された編成があった場合** :  
+**タイムスタンプが省略されるか、タイムスタンプの時刻より後に概要情報が更新された編成があった場合** :  
 {  
     "編成名" : {  
         "caption" : 1行見出し,  
@@ -346,10 +347,10 @@ formations.jsonの内容を返す
 
 ### 引数
 **$_POST["railroad_id"]** : 路線系統識別名  
-**$_POST["last_modified_timestamp"]** : タイムスタンプ(UTC)
+**$_POST["last_modified_timestamp"]** : タイムスタンプ(UTC、省略可能)
 
 ### 応答
-**diagram_revisions.txtの変更日時がタイムスタンプより新しかった場合** :  
+**タイムスタンプが省略されるか、diagram_revisions.txtの変更日時がタイムスタンプより新しかった場合** :  
 diagram_revisions.txtの各行の文字列を要素とする配列をJSON化した文字列を返す  
 ▲クライアント端末からAccept-Encodingヘッダーが送信されていた場合、このデータは自動的にgzip圧縮される  
   
@@ -368,11 +369,11 @@ diagram_revisions.txtの各行の文字列を要素とする配列をJSON化し�
 
 ### 引数
 **$_POST["railroad_id"]** : 路線系統識別名  
-**$_POST["diagram_revision"]** : ダイヤ改正識別名  
-**$_POST["last_modified_timestamp"]** : タイムスタンプ(UTC)
+**$_POST["diagram_revision"]** : ダイヤ改正識別名(現行のダイヤ情報を取得する場合は省略可能)  
+**$_POST["last_modified_timestamp"]** : タイムスタンプ(UTC、省略可能)
 
 ### 応答
-**diagram_info.jsonの変更日時がタイムスタンプより新しかった場合** :  
+**タイムスタンプが省略されるか、diagram_info.jsonの変更日時がタイムスタンプより新しかった場合** :  
 diagram_info.jsonの内容を返す  
 ▲クライアント端末からAccept-Encodingヘッダーが送信されていた場合、このデータは自動的にgzip圧縮される  
   
@@ -391,12 +392,12 @@ diagram_info.jsonの内容を返す
 
 ### 引数
 **$_POST["railroad_id"]** : 路線系統識別名  
-**$_POST["diagram_revision"]** : ダイヤ改正識別名  
-**$_POST["diagram_id"]** : ダイヤ識別名  
-**$_POST["last_modified_timestamp"]** : タイムスタンプ(UTC)
+**$_POST["diagram_revision"]** : ダイヤ改正識別名(当日の運用表を取得する場合は省略可能)  
+**$_POST["diagram_id"]** : ダイヤ識別名(当日の運用表を取得する場合は省略可能)  
+**$_POST["last_modified_timestamp"]** : タイムスタンプ(UTC、省略可能)
 
 ### 応答
-**JSON化された運用表の変更日時がタイムスタンプより新しかった場合** :  
+**タイムスタンプが省略されるか、JSON化された運用表の変更日時がタイムスタンプより新しかった場合** :  
 JSON化された運用表の内容を返す  
 ▲クライアント端末からAccept-Encodingヘッダーが送信されていた場合、このデータは自動的にgzip圧縮される  
   
@@ -415,12 +416,12 @@ JSON化された運用表の内容を返す
 
 ### 引数
 **$_POST["railroad_id"]** : 路線系統識別名  
-**$_POST["diagram_revision"]** : ダイヤ改正識別名  
-**$_POST["timetable_id"]** : 時刻表識別名  
-**$_POST["last_modified_timestamp"]** : タイムスタンプ(UTC)
+**$_POST["diagram_revision"]** : ダイヤ改正識別名(当日の時刻表を取得する場合は省略可能)  
+**$_POST["timetable_id"]** : 時刻表識別名(当日の時刻表を取得する場合は省略可能)  
+**$_POST["last_modified_timestamp"]** : タイムスタンプ(UTC、省略可能)
 
 ### 応答
-**JSON化された時刻表の変更日時がタイムスタンプより新しかった場合** :  
+**タイムスタンプが省略されるか、JSON化された時刻表の変更日時がタイムスタンプより新しかった場合** :  
 JSON化された時刻表の内容を返す  
 ▲クライアント端末からAccept-Encodingヘッダーが送信されていた場合、このデータは自動的にgzip圧縮される  
   
@@ -439,12 +440,12 @@ JSON化された時刻表の内容を返す
 
 ### 引数
 **$_POST["railroad_id"]** : 路線系統識別名  
-**$_POST["date"]** : YYYY-MM-DD形式の日付  
+**$_POST["date"]** : YYYY-MM-DD形式の日付(当日の運用情報を取得する場合は省略可能)  
 **$_POST["last_modified_timestamp"]** : タイムスタンプ(UTC、省略可能)  
 **$_POST["require_last_posted_datetime"]** : 各運用の情報に最終投稿日時を含める場合は空でない文字列(「yes」など)を指定する(通常は省略)
 
 ### 応答
-**タイムスタンプの時刻より後に運用情報が投稿されていた場合** :  
+**タイムスタンプが省略されるか、タイムスタンプの時刻より後に運用情報が投稿されていた場合** :  
 {  
     "運用番号(タイムスタンプが指定された場合はその時刻より後に情報投稿のあったもののみ)" : { 当該の運用番号に投稿された情報が全て取り消された場合、この連想配列ではなくnullが格納される  
         "formations" : 編成名(最も新しい投稿の情報を前位側・奇数向きから順に各編成を「+」で区切った文字列。運休の場合は空文字列),  
@@ -477,7 +478,7 @@ JSON化された時刻表の内容を返す
 **$_COOKIE["unyohub_login_token"]** : Wakaranaのログイントークン(ある場合。別オリジンからの要求時は無視される)  
   
 **$_POST["railroad_id"]** : 路線系統識別名  
-**$_POST["date"]** : YYYY-MM-DD形式の日付  
+**$_POST["date"]** : YYYY-MM-DD形式の日付(当日の運用情報を取得する場合は省略可能)  
 **$_POST["operation_numbers"]** : 運用番号(複数ある場合はカンマ区切りで)
 
 ### 応答

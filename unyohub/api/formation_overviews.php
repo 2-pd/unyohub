@@ -1,7 +1,7 @@
 <?php
 header("Access-Control-Allow-Origin: *");
 
-if (!isset($_POST["railroad_id"], $_POST["last_modified_timestamp"])) {
+if (!isset($_POST["railroad_id"])) {
     print "ERROR: 送信値が不正です";
     exit;
 }
@@ -11,7 +11,7 @@ $db_obj = new SQLite3("../data/".basename($_POST["railroad_id"])."/railroad.db")
 $db_obj->busyTimeout(5000);
 
 
-$updated_datetime = $db_obj->querySingle("SELECT `overview_updated` FROM `unyohub_formations` WHERE `currently_registered` = 1 AND `overview_updated` > '".date("Y-m-d H:i:s", intval($_POST["last_modified_timestamp"]))."' ORDER BY `overview_updated` DESC LIMIT 1");
+$updated_datetime = $db_obj->querySingle("SELECT `overview_updated` FROM `unyohub_formations` WHERE `currently_registered` = 1".(!empty($_POST["last_modified_timestamp"]) ? " AND `overview_updated` > '".date("Y-m-d H:i:s", intval($_POST["last_modified_timestamp"]))."'" : "")." ORDER BY `overview_updated` DESC LIMIT 1");
 
 if (empty($updated_datetime)) {
     print "NO_UPDATES_AVAILABLE";

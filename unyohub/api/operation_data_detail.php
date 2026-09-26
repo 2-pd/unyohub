@@ -3,7 +3,7 @@ include "../libs/wakarana/main.php";
 
 header("Access-Control-Allow-Origin: *");
 
-if (!isset($_POST["railroad_id"], $_POST["date"], $_POST["operation_numbers"])) {
+if (!isset($_POST["railroad_id"], $_POST["operation_numbers"])) {
     print "ERROR: 送信値が不正です";
     exit;
 }
@@ -25,11 +25,20 @@ if (is_object($access_user) && $access_user->check_permission("railroads/".$_POS
 $db_obj = new SQLite3("../data/".basename($_POST["railroad_id"])."/railroad.db");
 $db_obj->busyTimeout(5000);
 
+
+if (!empty($_POST["date"])) {
+    $date_q = $db_obj->escapeString($_POST["date"]);
+} else {
+    $ts = time() - 14400;
+    $date_q = date("Y-m-d", $ts);
+}
+
+
 $operation_numbers = explode(",", $_POST["operation_numbers"]);
 
 $operation_data = array();
 for ($cnt = 0; $cnt < count($operation_numbers); $cnt++) {
-    $operations_r = $db_obj->query("SELECT * FROM `unyohub_data` WHERE `operation_date` = '".$db_obj->escapeString($_POST["date"])."' AND `operation_number` = '".$db_obj->escapeString($operation_numbers[$cnt])."' ORDER BY `assign_order` DESC, `posted_datetime` DESC");
+    $operations_r = $db_obj->query("SELECT * FROM `unyohub_data` WHERE `operation_date` = '".$date_q."' AND `operation_number` = '".$db_obj->escapeString($operation_numbers[$cnt])."' ORDER BY `assign_order` DESC, `posted_datetime` DESC");
     
     $data = array();
     for ($cnt_2 = 0; $operation = $operations_r->fetchArray(SQLITE3_ASSOC); $cnt_2++) {
