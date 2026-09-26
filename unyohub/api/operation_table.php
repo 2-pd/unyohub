@@ -14,7 +14,9 @@ if (!empty($_POST["diagram_revision"]) && !empty($_POST["diagram_id"])) {
 } else {
     include "__operation_data_functions.php";
     
-    load_railroad_data($railroad_id);
+    if (!load_railroad_data($railroad_id)) {
+        exit;
+    }
     
     $ts = time() - 14400;
     
