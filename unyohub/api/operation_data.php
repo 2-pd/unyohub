@@ -1,7 +1,7 @@
 <?php
 header("Access-Control-Allow-Origin: *");
 
-if (!isset($_POST["railroad_id"], $_POST["date"])) {
+if (!isset($_POST["railroad_id"])) {
     print "ERROR: 送信値が不正です";
     exit;
 }
@@ -9,8 +9,17 @@ if (!isset($_POST["railroad_id"], $_POST["date"])) {
 $db_obj = new SQLite3("../data/".basename($_POST["railroad_id"])."/railroad.db");
 $db_obj->busyTimeout(5000);
 
-$assigned_formations_r = $db_obj->query("SELECT `operation_number`, `formations` FROM `unyohub_assigned_formation_caches` WHERE `operation_date` = '".$db_obj->escapeString($_POST["date"])."'".(!empty($_POST["last_modified_timestamp"]) ? " AND `updated_datetime` > '".date("Y-m-d H:i:s", intval($_POST["last_modified_timestamp"]))."'" : "")." ORDER BY `updated_datetime` DESC, `operation_number` DESC, `assign_order` DESC");
-$metadata_r = $db_obj->query("SELECT `operation_number`, `posts_count`, `variant_exists`, `comment_exists`, `from_beginner`, `is_quotation`, `updated_datetime`, `confirmed_train_final_arrival_time` FROM `unyohub_metadata_caches` WHERE `operation_date` = '".$db_obj->escapeString($_POST["date"])."'".(!empty($_POST["last_modified_timestamp"]) ? " AND `updated_datetime` > '".date("Y-m-d H:i:s", intval($_POST["last_modified_timestamp"]))."'" : "")." ORDER BY `updated_datetime` DESC, `operation_number` DESC");
+
+if (!empty($_POST["date"])) {
+    $date_q = $db_obj->escapeString($_POST["date"]);
+} else {
+    $ts = time() - 14400;
+    $date_q = date("Y-m-d", $ts);
+}
+
+
+$assigned_formations_r = $db_obj->query("SELECT `operation_number`, `formations` FROM `unyohub_assigned_formation_caches` WHERE `operation_date` = '".$date_q."'".(!empty($_POST["last_modified_timestamp"]) ? " AND `updated_datetime` > '".date("Y-m-d H:i:s", intval($_POST["last_modified_timestamp"]))."'" : "")." ORDER BY `updated_datetime` DESC, `operation_number` DESC, `assign_order` DESC");
+$metadata_r = $db_obj->query("SELECT `operation_number`, `posts_count`, `variant_exists`, `comment_exists`, `from_beginner`, `is_quotation`, `updated_datetime`, `confirmed_train_final_arrival_time` FROM `unyohub_metadata_caches` WHERE `operation_date` = '".$date_q."'".(!empty($_POST["last_modified_timestamp"]) ? " AND `updated_datetime` > '".date("Y-m-d H:i:s", intval($_POST["last_modified_timestamp"]))."'" : "")." ORDER BY `updated_datetime` DESC, `operation_number` DESC");
 
 $operation_data = array();
 $assigned_formation_data = $assigned_formations_r->fetchArray(SQLITE3_ASSOC);
