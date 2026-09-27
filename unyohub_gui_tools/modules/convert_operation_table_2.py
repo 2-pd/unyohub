@@ -116,15 +116,22 @@ def convert_operation_table_2 (mes, main_dir, file_name):
             else:
                 operation_group_names.add(operation_group_name)
             
-            group_color = operation_data[cnt][1].strip()
-            if len(group_color) >= 1:
-                operation_groups[-1]["main_color"] = group_color
+            if len(operation_data[cnt]) >= 2:
+                group_color = operation_data[cnt][1].strip()
+                if len(group_color) >= 1:
+                    operation_groups[-1]["main_color"] = group_color
             
             if len(group_divisions) >= 1:
                 group_divisions[-1]["operation_group_names"].append(operation_group_name)
             
             cnt += 1
         else:
+            while len(operation_data) < cnt + 4:
+                operation_data.append([""] * len(operation_data[cnt]))
+            
+            if not (len(operation_data[cnt]) == len(operation_data[cnt + 1]) == len(operation_data[cnt + 2]) >= 4):
+                mes("変換元CSVファイルにセルの数が不足している行が存在します", True)
+            
             if operation_number.startswith("@"):
                 operation_number = correct_train_number(operation_number[1:].strip())
                 hidden_by_default = True
@@ -190,7 +197,7 @@ def convert_operation_table_2 (mes, main_dir, file_name):
             else:
                 default_icon = None
             
-            if len(operation_data) >= cnt + 4 and len(operation_data[cnt + 3]) >= 1 and len(operation_data[cnt + 3][0]) >= 1:
+            if len(operation_data[cnt + 3]) >= 1 and len(operation_data[cnt + 3][0]) >= 1:
                 comment = operation_data[cnt + 3][0]
             else:
                 comment = None
@@ -280,19 +287,25 @@ def convert_operation_table_2 (mes, main_dir, file_name):
                             train_number = train_number[1:] + "__" + str(id_cnt)
                             id_cnt += 1
                         
-                        starting_station_initial = operation_data[cnt + 1][cnt_2][0]
-                        if starting_station_initial in station_initial_info:
-                            starting_station = station_initial_info[starting_station_initial]["station_name"]
-                            starting_line_set = station_initial_info[starting_station_initial]["line_set"]
+                        if len(operation_data[cnt + 1][cnt_2]) >= 1:
+                            starting_station_initial = operation_data[cnt + 1][cnt_2][0]
+                            if starting_station_initial in station_initial_info:
+                                starting_station = station_initial_info[starting_station_initial]["station_name"]
+                                starting_line_set = station_initial_info[starting_station_initial]["line_set"]
+                            else:
+                                mes("「" + starting_station_initial + "」に一致する駅がありません: " + str(cnt + 2) + "行目 " + str(cnt_2 + 1) + "列目", True)
                         else:
-                            mes("「" + starting_station_initial + "」に一致する駅がありません: " + str(cnt + 2) + "行目 " + str(cnt_2 + 1) + "列目", True)
+                            mes("始発駅情報が入力されていません: " + str(cnt + 2) + "行目 " + str(cnt_2 + 1) + "列目", True)
                         
-                        terminal_station_initial = operation_data[cnt + 2][cnt_2][0]
-                        if terminal_station_initial in station_initial_info:
-                            terminal_station = station_initial_info[terminal_station_initial]["station_name"]
-                            terminal_line_set = station_initial_info[terminal_station_initial]["line_set"]
+                        if len(operation_data[cnt + 2][cnt_2]) >= 1:
+                            terminal_station_initial = operation_data[cnt + 2][cnt_2][0]
+                            if terminal_station_initial in station_initial_info:
+                                terminal_station = station_initial_info[terminal_station_initial]["station_name"]
+                                terminal_line_set = station_initial_info[terminal_station_initial]["line_set"]
+                            else:
+                                mes("「" + terminal_station_initial + "」に一致する駅がありません: " + str(cnt + 3) + "行目 " + str(cnt_2 + 1) + "列目", True)
                         else:
-                            mes("「" + terminal_station_initial + "」に一致する駅がありません: " + str(cnt + 3) + "行目 " + str(cnt_2 + 1) + "列目", True)
+                            mes("終着駅情報が入力されていません: " + str(cnt + 3) + "行目 " + str(cnt_2 + 1) + "列目", True)
                         
                         if len(operations[operation_number]["trains"]) >= 1 and (not operations[operation_number]["trains"][-1]["train_number"].startswith(".")):
                             canonical_starting_station_name = starting_station
