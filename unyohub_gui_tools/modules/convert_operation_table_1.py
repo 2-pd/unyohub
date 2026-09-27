@@ -322,6 +322,10 @@ def convert_operation_table_1 (mes, main_dir, file_name, json_file_name, digits_
                 mes("運用系統を指定せずに運用を記載することはできません", True)
                 error_occurred = True
             
+            if len(operation) < 6:
+                mes("《注意》必要な列が不足している行に記載された運用を無視します: " + operation[0], True)
+                continue
+            
             operation[1] = operation[1].strip()
             
             if len(operation[1]) == 0:
@@ -369,10 +373,15 @@ def convert_operation_table_1 (mes, main_dir, file_name, json_file_name, digits_
                     
                     previous_train_name = train_cell
                 elif train_cell != "" and train_cell != "○" and train_cell != "△":
+                    if "[" in train_cell and "(" in train_cell and train_cell.find("[") < train_cell.find("("):
+                        mes("運転区間を組成位置より前に記載することはできません: " + train_cell, True)
+                        error_occurred = True
+                        continue
+                    
                     train_time = train_cell.split("[")
                     
                     train_name_car_count = train_time[0].split("(")
-                    if train_name_car_count[0][0:1] != "?":
+                    if not train_name_car_count[0].startswith("?"):
                         train_name = train_name_car_count[0].zfill(digits_count)
                     else:
                         train_name = train_name_car_count[0]
